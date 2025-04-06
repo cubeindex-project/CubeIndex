@@ -1,54 +1,38 @@
-# CubeIndex
+# sv
 
-**CubeIndex** is a personal project and cubing knowledge hub — a growing database that catalogs everything related to speedcubing: puzzles, algorithms, records, brands, solving methods, and more.
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-Built with **SvelteKit** and **TailwindCSS**, CubeIndex focuses on clean design, fast performance, and useful information. It also features a built-in cube timer — a practical bonus for practicing what you learn.
+## Creating a project
 
----
+If you're seeing this, you've probably already done this step. Congrats!
 
-## Features (In Progress)
+```bash
+# create a new project in the current directory
+npx sv create
 
-- [x] SvelteKit + TailwindCSS setup
-- [ ] Full WCA puzzle database with metadata
-- [ ] Algorithm collection (by method, step, and case)
-- [ ] Brand & model catalog (with release dates and features)
-- [ ] Speedcubing records by event and region
-- [ ] Cube timer with inspection and stats (bonus feature)
-- [ ] Historical cubing timeline
-- [ ] Filtering and search across all categories
-- [ ] Mobile-first responsive design
+# create a new project in my-app
+npx sv create my-app
+```
 
----
+## Developing
 
-## Tech Stack
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-- **Frontend:** SvelteKit
-- **Styling:** TailwindCSS
-- **Data:** Markdown / JSON (for now)
-- **Hosting:** Vercel / Netlify
-- **Optional backend:** Supabase / Firebase (TBD)
+```bash
+npm run dev
 
----
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-## Why I'm Building This
+## Building
 
-I'm Ilan (aka [Saterz](https://saterz.dev)), a 15-year-old self-taught dev and cubing nerd. I built CubeIndex to merge two passions: **coding** and **cubing**. It’s both a personal learning journey and a tool I wish existed when I started speedcubing.
+To create a production version of your app:
 
----
+```bash
+npm run build
+```
 
-## Roadmap
+You can preview the production build with `npm run preview`.
 
-- [ ] MVP release with timer, puzzles, and algs
-- [ ] Add filtering, search, and personal notes
-- [ ] Optimize mobile UX
-- [ ] Consider community contributions
-
----
-
-## License
-
-MIT — open source, fork-friendly, and always evolving.
-
----
-
-> Built by a cuber, for cubers.
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

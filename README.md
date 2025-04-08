@@ -6,6 +6,7 @@
  
  - **Frontend:** SvelteKit and TailwindCSS
  - **Backend:** Supabase
+ - **Hosting:** Vercel
 
  ---
  
@@ -15,4 +16,4 @@ This project is under the Apache 2.0 License.
  
  ---
  
- > Your collection deserves more than just a photo post.
+ > The speedcubing collection manager built for cubers, by cubers.

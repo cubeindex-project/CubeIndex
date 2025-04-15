@@ -46,6 +46,9 @@
 		"@node-rs/argon2": "^2.0.2",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"@supabase/supabase-js": "^2.49.4",
+		"@sveltejs/adapter-vercel": "^5.7.0",
+		"@tailwindcss/typography": "^0.5.16",
 		"drizzle-orm": "^0.40.0",
 		"postgres": "^3.4.5"
 	}

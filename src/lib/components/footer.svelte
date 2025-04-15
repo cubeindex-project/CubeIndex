@@ -81,7 +81,7 @@
 
     <!-- Bottom -->
     <div class="mt-10 text-center text-xs text-gray-500">
-        &copy; 2025 - {new Date().getFullYear()} CubeIndex by Saterz Studio. All
+        &copy; 2025 - {new Date().getFullYear()} CubeIndex by <a href='https://saterz.dev/studio' class="underline">Saterz Studio</a>. All
         rights reserved.
     </div>
 </footer>

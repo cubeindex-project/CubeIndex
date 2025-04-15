@@ -1,4 +1,5 @@
 <script>
+	let showDisclaimer = true;
 	const user = {
 		username: 'Saterz_',
 		bio: 'A 15yo Caribbean-born, Gabon-based bilingual aspiring developer.',
@@ -16,7 +17,7 @@
 			{ name: 'GAN 365 i3', condition: 'New' }
 		],
 		badges: [
-			{ name: 'Founder', type: 'epic', description: 'Founder and developer of CubeIndex.'},
+			{ name: 'Founder', type: 'epic', description: 'Founder and developer of CubeIndex.' },
 			{ name: '3x3 Collector', type: 'standard', description: 'Owns multiple 3x3 cubes' },
 			{ name: 'GAN Enthusiast', type: 'standard', description: 'Collects GAN brand cubes' },
 			{ name: 'Early Cuber', type: 'gold', description: 'Joined CubeIndex during its beta' }
@@ -122,9 +123,32 @@
 	</div>
 
 	<!-- Disclaimer -->
-	<div class="fixed right-4 bottom-4 z-50 text-xs text-gray-500 opacity-80">
-		<p>You're viewing a demo build. UI and features are subject to change.</p>
-	</div>
+	{#if showDisclaimer}
+		<div
+			class="animate-disclaimer-pop fixed right-6 bottom-6 z-[100] w-[95vw] max-w-[90%] rounded-3xl border-2 border-white/20 bg-gradient-to-br from-fuchsia-600 via-purple-700 to-blue-600 p-6 text-white shadow-2xl ring-2 ring-white/10 sm:w-[30rem]"
+		>
+			<!-- Header -->
+			<div class="mb-2 flex items-start justify-between">
+				<h2 class="text-2xl font-black tracking-wider text-white uppercase drop-shadow">
+					🚧 Temporary User Page
+				</h2>
+				<button
+					on:click={() => (showDisclaimer = false)}
+					class="-mt-1 text-3xl leading-none font-bold text-white/80 transition hover:text-white"
+					aria-label="Close"
+				>
+					&times;
+				</button>
+			</div>
+
+			<!-- Message -->
+			<p class="text-base leading-relaxed font-medium text-white/90 drop-shadow-sm">
+				This is a temporary user page of CubeIndex — the final release will look and feel
+				<em class="font-semibold underline decoration-white/40">completely different</em>. UI,
+				features, and layout are in active development.
+			</p>
+		</div>
+	{/if}
 </section>
 
 <style>
@@ -136,7 +160,7 @@
 	}
 
 	.badge-epic {
-		background: linear-gradient(90deg, #1D4ED8, #8A2BE2);
+		background: linear-gradient(90deg, #1d4ed8, #8a2be2);
 		color: black;
 		box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
 		animation: epic-shimmer-glow 2.5s ease-in-out infinite;
@@ -160,5 +184,19 @@
 		50% {
 			box-shadow: 0 0 40px rgba(29, 78, 216, 1);
 		}
+	}
+
+	@keyframes disclaimerPop {
+		0% {
+			opacity: 0;
+			transform: scale(0.95) translateY(20px);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1) translateY(0);
+		}
+	}
+	.animate-disclaimer-pop {
+		animation: disclaimerPop 0.5s ease-out;
 	}
 </style>

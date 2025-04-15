@@ -38,7 +38,7 @@
 	</div>
 
 	<!-- Profile Card -->
-	<div class="relative z-10 mt-16 flex justify-center px-4">
+	<div class="relative z-10 mt-24 flex justify-center px-4">
 		<div class="w-full max-w-4xl rounded-2xl bg-neutral-800 p-6 text-center shadow-lg sm:p-8">
 			<!-- Avatar -->
 			<div class="-mt-20 mb-4 flex justify-center">
@@ -102,7 +102,7 @@
 	</div>
 
 	<!-- Cube Collection Card -->
-	<div class="relative z-10 mt-8 mb-16 w-full max-w-4xl px-4">
+	<div class="relative z-10 mt-8 mb-24 w-full max-w-4xl px-4">
 		<div class="rounded-2xl bg-neutral-800 p-6 shadow-lg sm:p-8">
 			<h2 class="mb-4 text-center text-xl font-semibold text-white">Cube Collection</h2>
 
@@ -155,10 +155,10 @@
 	@keyframes epic-shimmer-glow {
 		0%,
 		100% {
-			box-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
+			box-shadow: 0 0 20px rgba(29, 78, 216, 0.5);
 		}
 		50% {
-			box-shadow: 0 0 30px rgba(29, 78, 216, 1);
+			box-shadow: 0 0 40px rgba(29, 78, 216, 1);
 		}
 	}
 </style>

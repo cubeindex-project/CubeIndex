@@ -1,71 +1,47 @@
 <script>
-    let isOpen = false;
+	let isOpen = false;
 
-    const navLinks = [
-        { name: "Explore", href: "/explore" },
-        { name: "Badges", href: "/badges" },
-        { name: "About", href: "/about" },
-    ];
+	const navLinks = [];
 </script>
 
 <header class="bg-black text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-3">
-            <img
-                src="/images/CubeIndex removebg.png"
-                alt="CubeIndex logo"
-                class="w-10 h-10"
-            />
-            <span class="text-xl font-clash font-bold">CubeIndex</span>
-        </a>
+	<div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+		<!-- Logo -->
+		<a href="/" class="flex items-center gap-3">
+			<img src="/images/CubeIndex removebg.png" alt="CubeIndex logo" class="h-10 w-10" />
+			<span class="font-clash text-xl font-bold">CubeIndex</span>
+		</a>
 
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-8">
-            {#each navLinks as link}
-                <a
-                    href={link.href}
-                    class="text-sm hover:text-blue-400 transition"
-                    >{link.name}</a
-                >
-            {/each}
-            <a
-                href="/login"
-                class="px-4 py-2 bg-blue-600 rounded-xl text-sm hover:bg-blue-700 transition"
-            >
-                Log In
-            </a>
-        </nav>
+		<!-- Desktop Nav -->
+		<nav class="hidden items-center gap-8 md:flex">
+			<a href="https://discord.gg/YvhEjgQ7Fq" class="rounded-xl bg-blue-600 px-4 py-2 text-sm transition hover:bg-blue-700">
+				Join the Discord
+			</a>
+		</nav>
 
-        <!-- Mobile Menu Button -->
-        <button on:click={() => (isOpen = !isOpen)} class="md:hidden focus:outline-none" aria-label="Open menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-    </div>
+		<!-- Mobile Menu Button -->
+		<button
+			on:click={() => (isOpen = !isOpen)}
+			class="focus:outline-none md:hidden cursor-pointer"
+			aria-label="Open menu"
+		>
+			<i class="fa-solid fa-bars"></i>
+		</button>
+	</div>
 
-    <!-- Mobile Nav -->
-    {#if isOpen}
-        <nav class="md:hidden bg-black px-6 pb-4">
-            <ul class="flex flex-col gap-3">
-                {#each navLinks as link}
-                    <li>
-                        <a
-                            href={link.href}
-                            class="block py-2 text-sm border-b border-gray-800 hover:text-blue-400"
-                        >
-                            {link.name}
-                        </a>
-                    </li>
-                {/each}
-                <li>
-                    <a
-                        href="/login"
-                        class="block mt-2 py-2 text-center bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition"
-                    >
-                        Log In
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    {/if}
+	<!-- Mobile Nav -->
+	{#if isOpen}
+		<nav class="bg-black px-6 pb-4 md:hidden">
+			<ul class="flex flex-col gap-3">
+				<li>
+					<a
+						href="https://discord.gg/YvhEjgQ7Fq"
+						class="mt-2 block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
+					>
+						Join the Discord
+					</a>
+				</li>
+			</ul>
+		</nav>
+	{/if}
 </header>

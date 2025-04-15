@@ -22,17 +22,10 @@
             <h3 class="text-white font-semibold mb-3">Navigation</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/collection" class="hover:text-white"
-                        >My Collection</a
+                    <a href="/demo" class="hover:text-white"
+                        >Demo</a
                     >
                 </li>
-                <li>
-                    <a href="/explore" class="hover:text-white"
-                        >Explore Database</a
-                    >
-                </li>
-                <li><a href="/badges" class="hover:text-white">Badges</a></li>
-                <li><a href="/about" class="hover:text-white">About</a></li>
             </ul>
         </div>
 
@@ -40,6 +33,13 @@
         <div>
             <h3 class="text-white font-semibold mb-3">Socials</h3>
             <ul class="space-y-2 text-sm">
+                <li>
+                    <a
+                        href="https://discord.gg/YvhEjgQ7Fq"
+                        target="_blank"
+                        class="hover:text-white">Discord</a
+                    >
+                </li>
                 <li>
                     <a
                         href="https://github.com/Saterz/cubeindex"

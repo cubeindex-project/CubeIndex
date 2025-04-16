@@ -22,10 +22,17 @@
             <h3 class="text-white font-semibold mb-3">Navigation</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/demo" class="hover:text-white"
-                        >Demo</a
+                    <a href="/collection" class="hover:text-white"
+                        >My Collection</a
                     >
                 </li>
+                <li>
+                    <a href="/explore" class="hover:text-white"
+                        >Explore Database</a
+                    >
+                </li>
+                <li><a href="/badges" class="hover:text-white">Badges</a></li>
+                <li><a href="/about" class="hover:text-white">About</a></li>
             </ul>
         </div>
 
@@ -55,8 +62,9 @@
                     >
                 </li>
                 <li>
-                    <a href="mailto:thecubeindex@gmail.com" class="hover:text-white"
-                        >Email</a
+                    <a
+                        href="mailto:thecubeindex@gmail.com"
+                        class="hover:text-white">Email</a
                     >
                 </li>
             </ul>
@@ -81,7 +89,8 @@
 
     <!-- Bottom -->
     <div class="mt-10 text-center text-xs text-gray-500">
-        &copy; 2025 - {new Date().getFullYear()} CubeIndex by <a href='https://saterz.dev/studio' class="underline">Saterz Studio</a>. All
-        rights reserved.
+        &copy; 2025 - {new Date().getFullYear()} CubeIndex by
+        <a href="https://saterz.dev/studio" class="underline">Saterz Studio</a>.
+        All rights reserved.
     </div>
 </footer>

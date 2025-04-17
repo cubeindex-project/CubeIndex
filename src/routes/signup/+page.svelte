@@ -1,7 +1,6 @@
 <script lang="ts">
     import { supabase } from "$lib/supabaseClient";
 
-    let username: string;
     let email: string;
     let password: string;
     let confirmPassword: string;
@@ -56,18 +55,6 @@
             Create a free account to start tracking your collection
         </p>
         <form onsubmit={handleAuth} class="space-y-6">
-            <div>
-                <label for="username" class="block text-sm font-medium text-white"
-                    >Username</label
-                >
-                <input
-                    id="username"
-                    type="username"
-                    bind:value={username}
-                    class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    required
-                />
-            </div>
 
             <div>
                 <label for="email" class="block text-sm font-medium text-white"

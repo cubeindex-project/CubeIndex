@@ -1,12 +1,32 @@
 <script lang="ts">
-    let email = "";
-    let password = "";
+    import { supabase } from "$lib/supabaseClient";
+    import { goto } from "$app/navigation";
 
-    const handleLogin = (e: Event) => {
+    let email = $state("");
+    let password = $state("");
+    let error = $state("");
+    let message = $state("");
+    let showPassword = $state(false);
+
+    async function handleAuth(e: Event) {
         e.preventDefault();
-        // Replace this with your Supabase auth logic
-        console.log("Logging in with", email, password);
-    };
+        error = "";
+        message = "";
+
+        const { data, error: authError } =
+            await supabase.auth.signInWithPassword({ email, password });
+
+        if (authError) {
+            error = authError.message;
+        } else {
+            message = "Logged in successfully!";
+            goto("/");
+        }
+    }
+
+    function togglePasswordVisibility() {
+        showPassword = !showPassword;
+    }
 </script>
 
 <section
@@ -29,8 +49,7 @@
         <p class="text-center text-gray-400 text-sm mb-8">
             Login to your CubeIndex profile
         </p>
-
-        <form on:submit={handleLogin} class="space-y-6">
+        <form onsubmit={handleAuth} class="space-y-6">
             <div>
                 <label for="email" class="block text-sm font-medium text-white"
                     >Email</label
@@ -40,7 +59,6 @@
                     type="email"
                     bind:value={email}
                     class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="you@example.com"
                     required
                 />
             </div>
@@ -50,15 +68,29 @@
                     for="password"
                     class="block text-sm font-medium text-white">Password</label
                 >
-                <input
-                    id="password"
-                    type="password"
-                    bind:value={password}
-                    class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    placeholder="••••••••"
-                    required
-                />
+                <div class="flex flex-row items-center">
+                    <input
+                        type={showPassword ? "text" : "password"}
+                        bind:value={password}
+                        class="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    />
+                    <button
+                        type="button"
+                        class="fa-solid {showPassword
+                            ? 'fa-eye-slash'
+                            : 'fa-eye'} ml-4 cursor-pointer text-white"
+                        onclick={togglePasswordVisibility}
+                        aria-label="Toggle Password Visibility"
+                    ></button>
+                </div>
             </div>
+
+            <p class="text-sm text-gray-500 -mt-5">
+                Forgot your password?
+                <a href="/signup" class="text-blue-400 hover:underline ml-1">
+                    Reset</a
+                >
+            </p>
 
             <button
                 type="submit"
@@ -66,11 +98,21 @@
             >
                 Log In
             </button>
+
+            {#if error}
+                <p class="text-sm text-red-500 text-center mt-2">{error}</p>
+            {/if}
+
+            {#if message}
+                <p class="text-sm text-green-400 text-center mt-2">{message}</p>
+            {/if}
         </form>
 
         <p class="text-sm text-center text-gray-500 mt-6">
             Don't have an account?
-            <a href="/signup" class="text-blue-400 hover:underline">Sign up</a>
+            <a href="/signup" class="text-blue-400 hover:underline ml-1">
+                Sign Up
+            </a>
         </p>
     </div>
 </section>

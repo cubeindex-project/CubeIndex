@@ -15,7 +15,7 @@
         </p>
 
         <button
-            class="absolute right-6 text-xl cursor-pointer hover:text-red-400 transition"
+            class="absolute right-6 text-xl cursor-pointer"
             aria-label="Close"
             onclick={dismiss}
         >

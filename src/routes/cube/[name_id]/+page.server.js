@@ -3,12 +3,12 @@ import { supabase } from '$lib/supabaseClient';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
-	const { id } = params;
+	const { name_id } = params;
 
 	const { data: cube, error } = await supabase
 		.from('cubes')
 		.select('*')
-		.eq('id', id)
+		.eq('name_id', name_id)
 		.single();
 
 	if (error || !cube) {

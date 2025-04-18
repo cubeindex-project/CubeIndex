@@ -26,16 +26,16 @@
 
         <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <a
-                href="https://discord.gg/YvhEjgQ7Fq"
-                class="px-6 py-3 bg-blue-600 rounded-xl hover:bg-blue-700 transition text-white text-lg font-medium"
+                href="/signup"
+                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors rounded-xl text-white text-lg font-medium"
             >
-                Join the Discord
+                Start Collecting
             </a>
             <a
-                href="/demo"
+                href="/explore"
                 class="px-6 py-3 border border-white rounded-xl text-lg text-white hover:bg-white hover:text-black transition font-medium"
             >
-                See Demo
+                Explore Cubes
             </a>
         </div>
     </div>

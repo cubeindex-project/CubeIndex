@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
     export let data;
-    let loading = true;
     const { cubes } = data;
+    let loading = true;
 
     onMount(() => {
         loading = false;

@@ -22,16 +22,12 @@
             <h3 class="text-white font-semibold mb-3">Navigation</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/collection" class="hover:text-white"
-                        >My Collection</a
-                    >
-                </li>
-                <li>
                     <a href="/explore" class="hover:text-white"
-                        >Explore Database</a
+                        >Explore</a
                     >
                 </li>
                 <li><a href="/badges" class="hover:text-white">Badges</a></li>
+                <li><a href="/collectors" class="hover:text-white">Collectors</a></li>
                 <li><a href="/about" class="hover:text-white">About</a></li>
             </ul>
         </div>
@@ -78,7 +74,7 @@
                     >
                 </li>
                 <li>
-                    <a href="/report" class="hover:text-white">Report abuse</a>
+                    <a href="/report" class="hover:text-white">Report</a>
                 </li>
                 <li>
                     <a href="/tos" class="hover:text-white">Terms of Service</a>

@@ -1,5 +1,18 @@
 <script lang="ts">
-	export let data;
+	interface Badge {
+		icon: string;
+		name: string;
+		description: string;
+		legendary?: boolean;
+		epic?: boolean;
+		rare?: boolean;
+	}
+
+	interface Data {
+		badges: Badge[];
+	}
+
+	export let data: Data;
 
 	const { badges } = data;
 
@@ -7,7 +20,7 @@
 		black: "bg-black",
 		blue: "bg-blue-900",
 		purple: "bg-purple-900",
-		yellow: "bg-yellow-300",
+		yellow: "bg-radial from-[#f59e0b] to-[#facc15]",
 	};
 </script>
 

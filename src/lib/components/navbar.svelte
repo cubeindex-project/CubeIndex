@@ -3,7 +3,9 @@
 	import { supabase } from "$lib/supabaseClient";
 
 	let isOpen = false;
-	let user;
+	import type { User } from "@supabase/supabase-js";
+
+	let user: User | null = null;
 
 	const navLinks = [
 		{ name: "Explore", href: "/explore" },

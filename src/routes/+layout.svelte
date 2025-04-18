@@ -5,11 +5,11 @@
 	import Disclaimer from "$lib/components/disclaimer.svelte";
 
 	let { children } = $props();
-
+  
 	import { injectAnalytics } from "@vercel/analytics/sveltekit";
-	import { injectSpeedInsights } from "@vercel/speed-insights";
+	import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
 
-	injectAnalytics();
+	injectAnalytics()
 	injectSpeedInsights();
 </script>
 

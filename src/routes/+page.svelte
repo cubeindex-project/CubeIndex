@@ -27,7 +27,7 @@
         <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <a
                 href="/signup"
-                class="px-6 py-3 bg-blue-600 rounded-xl hover:bg-blue-700 transition text-white text-lg font-medium"
+                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors rounded-xl text-white text-lg font-medium"
             >
                 Start Collecting
             </a>

@@ -94,7 +94,7 @@
 
             <button
                 type="submit"
-                class="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition rounded-lg px-6 py-3 font-semibold text-white text-lg"
+                class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 transition rounded-lg px-6 py-3 font-semibold text-white text-lg"
             >
                 Log In
             </button>

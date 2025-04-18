@@ -38,11 +38,19 @@
             WCA Legal: {cube.wca_legal ? "✅" : "❌"}
         </p>
         {#if cube.where_to_buy}
-            <div class="flex flex-row gap-2 items-center">
+            <div class="flex gap-2 items-center">
                 <p class="text-gray-400 mb-2 items-center">Available at:</p>
                 {#each cube.where_to_buy as shop}
-                    <button class="bg-neutral-900 border-1 rounded-xl p-2 border-black">
-                        <a href={shop.url}><p>{shop.label}</p></a>
+                    <button
+                        class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10"
+                    >
+                        <a
+                            href={shop.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {shop.label}
+                        </a>
                     </button>
                 {/each}
             </div>

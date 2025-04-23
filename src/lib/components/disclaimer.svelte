@@ -10,7 +10,7 @@
         class="flex items-center justify-between p-4 bg-black text-white w-full"
     >
         <p class="text-center w-full">
-            🚧 CubeIndex is in Beta — This is an early version and currently in
+            🚧 CubeIndex is in Early Preview — This is an early version and currently in
             active development. Features and design are still evolving.
         </p>
 

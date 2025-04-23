@@ -48,10 +48,10 @@
         {:else}
             <p class="text-gray-300 text-lg">{message}</p>
             <a
-                href="/login"
+                href="/"
                 class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition"
             >
-                Continue to Login
+                Continue to your profile
             </a>
         {/if}
     </div>

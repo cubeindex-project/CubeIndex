@@ -14,7 +14,6 @@
 		{ name: "About", href: "/about" },
 	];
 
-	// load the current user and their profile
 	async function isUserConnected() {
 		// 1) get current user
 		const {

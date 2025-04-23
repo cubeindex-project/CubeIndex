@@ -13,9 +13,8 @@
         } = await supabase.auth.getSession();
 
         if (error || !session) {
-            message = "Verification failed. Please try logging in.";
+            message = "Verification failed. Please try signing up again.";
         } else {
-            // Optionally, update the user's profile to mark as verified
             const { error: updateError } = await supabase
                 .from("profiles")
                 .update({ is_verified: true })

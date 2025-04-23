@@ -27,6 +27,10 @@
     function togglePasswordVisibility() {
         showPassword = !showPassword;
     }
+
+    async function resetPassword() {
+        let { data, error } = await supabase.auth.resetPasswordForEmail(email)
+    }
 </script>
 
 <section
@@ -87,8 +91,8 @@
 
             <p class="text-sm text-gray-500 -mt-5">
                 Forgot your password?
-                <a href="/signup" class="text-blue-400 hover:underline ml-1">
-                    Reset</a
+                <button onclick={resetPassword} class="text-blue-400 hover:underline ml-1 cursor-pointer">
+                    Reset</button
                 >
             </p>
 

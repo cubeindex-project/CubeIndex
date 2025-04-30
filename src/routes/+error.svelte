@@ -1,84 +1,51 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	let typed = "";
-	let showEasterEgg = false;
 
-	let cubeX = 80; // starting position %
-	let cubeY = 20;
+	// 1) Declare the injected props
+	export let status: number;
+	export let error: { message?: string } | string | undefined;
 
-	let cubeEl;
+	// 2) Compute a safe display message
+	//    - If error is an object, use its message
+	//    - Otherwise, coerce to string or show a literal fallback
+	const message =
+		typeof error === "object"
+			? (error?.message ?? "Unknown error")
+			: (error ?? "Unknown error");
 
-	let messages = [
-		"Not this time!",
-		"Too slow 😏",
-		"You missed me!",
-		"Gotta be faster!",
-		"CubeIndex is life.",
-		"Nice try, human.",
-		"👀",
-		"Catch me if you can!",
-		"Scrambling away!",
-	];
+	// DVD‐logo bouncing cube state
+	let cubeX = 50;
+	let cubeY = 50;
+	let velX = 0.8;
+	let velY = 0.6;
+	let rafId: number;
 
-	let currentMessage = "";
-	let showMessage = false;
-
-	function triggerBubble() {
-		currentMessage = messages[Math.floor(Math.random() * messages.length)];
-		showMessage = true;
-
-		// Hide after 2.5s
-		setTimeout(() => (showMessage = false), 5000);
+	function bounce() {
+		cubeX += velX;
+		cubeY += velY;
+		if (cubeX <= 0 || cubeX >= 100) velX = -velX;
+		if (cubeY <= 0 || cubeY >= 100) velY = -velY;
+		cubeX = Math.min(100, Math.max(0, cubeX));
+		cubeY = Math.min(100, Math.max(0, cubeY));
+		rafId = requestAnimationFrame(bounce);
 	}
 
 	onMount(() => {
-		const listener = (e) => {
-			typed += e.key.toUpperCase();
-			if (typed.includes("CUBE")) {
-				showEasterEgg = true;
-				typed = "";
-			}
-			if (typed.length > 10) typed = typed.slice(-4);
-		};
-		window.addEventListener("keydown", listener);
-
-		window.addEventListener("mousemove", (e) => {
-			if (!showEasterEgg || !cubeEl) return;
-
-			const cubeRect = cubeEl.getBoundingClientRect();
-			const dx = e.clientX - (cubeRect.left + cubeRect.width / 2);
-			const dy = e.clientY - (cubeRect.top + cubeRect.height / 2);
-			const distance = Math.sqrt(dx * dx + dy * dy);
-
-			if (distance < 150) {
-				// Move away from cursor
-				cubeX += (dx > 0 ? -1 : 1) * 5;
-				cubeY += (dy > 0 ? -1 : 1) * 5;
-
-				// Keep within bounds (0–100%)
-				cubeX = Math.max(0, Math.min(90, cubeX));
-				cubeY = Math.max(0, Math.min(90, cubeY));
-
-				triggerBubble();
-			}
-		});
-
-		return () => window.removeEventListener("keydown", listener);
+		rafId = requestAnimationFrame(bounce);
 	});
 </script>
 
 <section
 	class="relative flex min-h-screen flex-col items-center justify-center bg-black px-6 text-center text-white grid-bg overflow-hidden"
 >
-	<!-- Animated 404 -->
 	<div class="relative z-10">
 		<h1
 			class="font-clash text-[6rem] sm:text-[8rem] font-black text-blue-500 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
 		>
-			404
+			{status}
 		</h1>
 		<p class="mb-6 text-xl font-medium text-gray-300 sm:text-2xl">
-			<strong>CUBE</strong> not found.
+			<strong>{message}</strong>
 		</p>
 	</div>
 
@@ -94,25 +61,13 @@
 		🏠 Return Home
 	</a>
 
-	<!-- 🎁 Easter Egg Cube -->
-	{#if showEasterEgg}
-		<img
-			bind:this={cubeEl}
-			src="/images/legendary-cube.png"
-			alt="Legendary Cube"
-			class="w-20 sm:w-24 fixed z-30 pointer-events-none transition-transform duration-200 ease-in-out"
-			style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
-		/>
-
-		{#if showMessage}
-			<div
-				class="absolute z-40 bg-white text-black text-sm px-3 py-2 rounded-full shadow-lg border border-neutral-200 max-w-xs transition-opacity duration-300"
-				style="top: {cubeY - 10}%; left: {cubeX + 5}%;"
-			>
-				{currentMessage}
-			</div>
-		{/if}
-	{/if}
+	<!-- Bouncing Cube -->
+	<img
+		src="/images/legendary-cube.png"
+		alt="Legendary Cube"
+		class="w-20 sm:w-24 fixed z-30 pointer-events-none"
+		style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
+	/>
 </section>
 
 <style>
@@ -128,6 +83,6 @@
 			transparent 40px
 		);
 		z-index: 0;
-		opacity: 0.2; /* More visible but not overpowering */
+		opacity: 0.2;
 	}
 </style>

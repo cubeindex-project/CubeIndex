@@ -1,18 +1,5 @@
 <script lang="ts">
-	interface Badge {
-		icon: string;
-		name: string;
-		description: string;
-		legendary?: boolean;
-		epic?: boolean;
-		rare?: boolean;
-	}
-
-	interface Data {
-		badges: Badge[];
-	}
-
-	export let data: Data;
+	export let data;
 
 	const { badges } = data;
 
@@ -43,14 +30,12 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 			{#each badges as badge}
 				<div
-					class={`rounded-2xl p-6 ${badge.legendary ? color.yellow : badge.epic ? color.purple : badge.rare ? color.blue : color.black} shadow-md border border-white/10 ${badge.legendary ? "text-black" : "text-white"}`}
+					class={`rounded-2xl p-6 ${badge.rarity === 'legendary' ? color.yellow : badge.rarity === 'epic' ? color.purple : badge.rarity === 'rare' ? color.blue : color.black} shadow-md border border-white/10 ${badge.legendary ? "text-black" : "text-white"}`}
 				>
 					<div class="text-4xl mb-3">{badge.icon}</div>
-					<h2 class="text-xl font-bold mb-1">{badge.name}</h2>
+					<h2 class={`text-xl font-bold mb-1 ${badge.rarity === 'legendary' ? 'text-black' : 'text-white/90'}`}>{badge.name}</h2>
 					<p
-						class="text-sm ${badge.legendary
-							? 'text-black'
-							: 'text-white/90'}"
+						class={`text-sm ${badge.rarity === 'legendary' ? 'text-black' : 'text-white/90'}`}
 					>
 						{badge.description}
 					</p>

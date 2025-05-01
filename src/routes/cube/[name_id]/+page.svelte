@@ -1,6 +1,7 @@
 <script>
     export let data;
     const { cube } = data;
+    const { cubes_availability } = data;
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-16">
@@ -37,10 +38,10 @@
         <p class="text-gray-400 mb-2">
             WCA Legal: {cube.wca_legal ? "✅" : "❌"}
         </p>
-        {#if cube.where_to_buy}
+        {#if cubes_availability}
             <div class="flex gap-2 items-center">
                 <p class="text-gray-400 mb-2 items-center">Available at:</p>
-                {#each cube.where_to_buy as shop}
+                {#each cubes_availability as shop}
                     <button
                         class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10"
                     >
@@ -49,7 +50,7 @@
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            {shop.label}
+                            {shop.vendor_id}
                         </a>
                     </button>
                 {/each}

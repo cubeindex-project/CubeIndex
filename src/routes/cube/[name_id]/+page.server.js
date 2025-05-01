@@ -15,14 +15,14 @@ export async function load({ params }) {
     return { status: 404 };
   }
 
-  let { data: cubes_availability, error: availError } = await supabase
+  const { data: availability, error: availError } = await supabase
     .from('cubes_availability')
     .select("*")
-    .eq('cube_id', cube.name_id);
+    .eq('cube_id', name_id);
 
   if (availError) {
     console.error('Error loading availability:', availError);
   }
 
-  return { cube, cubes_availability };
+  return { cube, availability };
 }

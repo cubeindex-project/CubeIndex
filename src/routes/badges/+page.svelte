@@ -7,7 +7,8 @@
 		black: "bg-black",
 		blue: "bg-blue-900",
 		purple: "bg-purple-900",
-		yellow: "bg-radial from-[#f59e0b] to-[#facc15]",
+		yellow: "bg-linear-to-r from-[#f59e0b] to-[#facc15]",
+		special: "bg-linear-to-r from-[#41295A] to-[#2F0743]"
 	};
 </script>
 
@@ -30,7 +31,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 			{#each badges as badge}
 				<div
-					class={`rounded-2xl p-6 ${badge.rarity === "legendary" ? color.yellow : badge.rarity === "epic" ? color.purple : badge.rarity === "rare" ? color.blue : color.black} shadow-md border border-white/10 ${badge.legendary ? "text-black" : "text-white"}`}
+					class={`rounded-2xl p-6 ${badge.rarity === "special" ? color.special : badge.rarity === "legendary" ? color.yellow : badge.rarity === "epic" ? color.purple : badge.rarity === "rare" ? color.blue : color.black} shadow-md ${badge.legendary ? "text-black" : "text-white"}`}
 				>
 					<div class="flex flex-row justify-between">
 						<div class="text-4xl mb-3 grid justify-baseline">{badge.icon}</div>

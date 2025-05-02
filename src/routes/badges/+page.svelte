@@ -30,12 +30,23 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 			{#each badges as badge}
 				<div
-					class={`rounded-2xl p-6 ${badge.rarity === 'legendary' ? color.yellow : badge.rarity === 'epic' ? color.purple : badge.rarity === 'rare' ? color.blue : color.black} shadow-md border border-white/10 ${badge.legendary ? "text-black" : "text-white"}`}
+					class={`rounded-2xl p-6 ${badge.rarity === "legendary" ? color.yellow : badge.rarity === "epic" ? color.purple : badge.rarity === "rare" ? color.blue : color.black} shadow-md border border-white/10 ${badge.legendary ? "text-black" : "text-white"}`}
 				>
-					<div class="text-4xl mb-3">{badge.icon}</div>
-					<h2 class={`text-xl font-bold mb-1 ${badge.rarity === 'legendary' ? 'text-black' : 'text-white/90'}`}>{badge.name}</h2>
+					<div class="flex flex-row justify-between">
+						<div class="text-4xl mb-3 grid justify-baseline">{badge.icon}</div>
+						<div
+							class={`text-sm ${badge.rarity === "legendary" ? "text-black" : "text-white/90"} justify-end grid`}
+						>
+							<p class="capitalize p-2">{badge.rarity}</p>
+						</div>
+					</div>
+					<h2
+						class={`text-xl font-bold mb-1 ${badge.rarity === "legendary" ? "text-black" : "text-white/90"}`}
+					>
+						{badge.name}
+					</h2>
 					<p
-						class={`text-sm ${badge.rarity === 'legendary' ? 'text-black' : 'text-white/90'}`}
+						class={`text-sm ${badge.rarity === "legendary" ? "text-black" : "text-white/90"}`}
 					>
 						{badge.description}
 					</p>

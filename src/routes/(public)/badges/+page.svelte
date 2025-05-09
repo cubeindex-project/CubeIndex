@@ -31,7 +31,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 			{#each badges as badge}
 				<div
-					class={`rounded-2xl p-6 ${badge.rarity === "special" ? color.special : badge.rarity === "legendary" ? color.yellow : badge.rarity === "epic" ? color.purple : badge.rarity === "rare" ? color.blue : color.black} shadow-md ${badge.legendary ? "text-black" : "text-white"}`}
+					class={`rounded-2xl p-6 ${badge.rarity === "special" ? color.special : badge.rarity === "legendary" ? color.yellow : badge.rarity === "epic" ? color.purple : badge.rarity === "rare" ? color.blue : color.black} shadow-md`}
 				>
 					<div class="flex flex-row justify-between">
 						<div class="text-4xl mb-3 grid justify-baseline">{badge.icon}</div>

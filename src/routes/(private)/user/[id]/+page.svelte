@@ -1,51 +1,51 @@
-<section
-    class="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 text-center relative stripe-bg overflow-hidden"
->
-    <div class="relative z-10">
-        <div
-            class="text-6xl sm:text-8xl font-extrabold text-yellow-400 drop-shadow-[0_0_30px_rgba(255,215,0,0.4)]"
-        >
-            🚧
-        </div>
-        <h1 class="text-4xl sm:text-5xl font-bold mt-4">
-            Page in Construction
-        </h1>
-        <p class="mt-4 text-gray-400 text-lg max-w-xl">
-            We're currently working hard to finish this part of the site. Check
-            back soon for something awesome!
-        </p>
+<script lang="ts">
+    const { data } = $props();
+    const { profiles } = data;
+    const profile = profiles?.[0];
 
-        <a
-            href="/"
-            class="inline-block mt-6 px-6 py-3 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-black font-semibold shadow-md transition"
-        >
-            🏠 Return Home
-        </a>
+    const default_profile_picture = "/images/default-profile.png";
+
+    function formatJoinDate(dateString: string): string {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        }).format(date);
+    }
+
+    const formattedJoinDate = formatJoinDate(profile?.created_at)
+</script>
+
+<section class="min-h-screen bg-black text-white px-6 py-12">
+    <!-- Profile Header -->
+    <div
+        class="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6"
+    >
+        <img
+            src={`${profile?.profile_picture && profile.profile_picture !== "" ? profile.profile_picture : default_profile_picture}`}
+            alt="Avatar"
+            class="w-32 h-32 rounded-full border-4 border-blue-600 object-cover"
+        />
+        <div class="flex-1">
+            <h2 class="text-3xl font-clash font-bold">{profile?.username}</h2>
+            <p class="text-gray-400">Member since : {formattedJoinDate}</p>
+        </div>
+    </div>
+
+    <!-- Badges Section -->
+    <div class="max-w-4xl mx-auto mt-12">
+        <h3 class="text-2xl font-semibold mb-4">Badges Earned</h3>
+        <div class="bg-gray-800 rounded-lg p-6 text-center text-gray-300 shadow-md">
+            <span class="text-lg font-medium">Badges coming soon!</span>
+        </div>
+    </div>
+
+    <!-- Cube Collection -->
+    <div class="max-w-4xl mx-auto mt-12">
+        <h3 class="text-2xl font-semibold mb-4">Cube Collection</h3>
+        <div class="bg-gray-800 rounded-lg p-6 text-center text-gray-300 shadow-md">
+            <span class="text-lg font-medium">Cubes coming soon!</span>
+        </div>
     </div>
 </section>
-
-<style>
-    .stripe-bg::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(
-            45deg,
-            rgba(255, 215, 0, 0.05),
-            rgba(255, 215, 0, 0.05) 10px,
-            transparent 10px,
-            transparent 20px
-        );
-        animation: stripes 3s linear infinite;
-        z-index: 0;
-    }
-
-    @keyframes stripes {
-        from {
-            background-position: 0 0;
-        }
-        to {
-            background-position: 40px 40px;
-        }
-    }
-</style>

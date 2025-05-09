@@ -1,11 +1,26 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { supabase } from "$lib/supabaseClient";
+	import { onMount } from "svelte";
 	import type { User } from "@supabase/supabase-js";
 
-	let isOpen = false;
-	let user: User | null = null;
-	let profile: { id: string; username: string } | null = null;
+	let loading = $state(true);
+	let isOpen = $state(false);
+	let profile: { id: any; username: any } | null = $state(null);
+	let { user } = $props();
+
+	async function loadProfile(user: User) {
+		let { data, error } = await supabase
+			.from("profiles")
+			.select("id, username")
+			.eq("user_id", user.id)
+			.maybeSingle();
+
+		if (error) {
+			console.error(error);
+		} else {
+			profile = data;
+		}
+	}
 
 	const navLinks = [
 		{ name: "Explore", href: "/explore" },
@@ -14,44 +29,9 @@
 		{ name: "About", href: "/about" },
 	];
 
-	async function isUserConnected() {
-		// 1) get current user
-		const {
-			data: { user: currentUser },
-		} = await supabase.auth.getUser();
-		user = currentUser;
-
-		if (user) {
-			// 2) fetch their single profile row
-			const { data: fetchedProfile, error } = await supabase
-				.from("profiles")
-				.select("id, username")
-				.eq("user_id", user.id)
-				.single();
-
-			if (!error && fetchedProfile) {
-				profile = fetchedProfile;
-			} else {
-				console.error("couldn't load profile:", error);
-			}
-		}
-
-		// 3) listen for future auth changes
-		supabase.auth.onAuthStateChange((_event, session) => {
-			user = session?.user ?? null;
-			if (!user) {
-				profile = null;
-			}
-		});
-	}
-
-	// sign out
-	async function signOut() {
-		await supabase.auth.signOut();
-	}
-
 	onMount(() => {
-		isUserConnected();
+		if (user) loadProfile(user);
+		loading = false;
 	});
 </script>
 
@@ -75,7 +55,9 @@
 				</a>
 			{/each}
 
-			{#if user && profile}
+			{#if loading}
+				<i class="fa-solid fa-spinner animate-spin"></i>
+			{:else if user && profile}
 				<!-- Now uses profile.id -->
 				<a
 					href={`/user/${profile.id}`}
@@ -83,15 +65,15 @@
 				>
 					{profile.username}
 				</a>
-				<button
-					on:click={signOut}
+				<a
+					href="/auth/logout"
 					class="rounded-xl bg-red-600 px-4 py-2 text-sm transition hover:bg-red-700 cursor-pointer"
 				>
 					Sign Out
-				</button>
+				</a>
 			{:else}
 				<a
-					href="/login"
+					href="/auth/login"
 					class="rounded-xl bg-blue-600 px-4 py-2 text-sm transition hover:bg-blue-700"
 				>
 					Login
@@ -101,7 +83,7 @@
 
 		<!-- Mobile Menu Button -->
 		<button
-			on:click={() => (isOpen = !isOpen)}
+			onclick={() => (isOpen = !isOpen)}
 			class="focus:outline-none md:hidden cursor-pointer"
 			aria-label="Open menu"
 		>
@@ -134,17 +116,17 @@
 						</a>
 					</li>
 					<li>
-						<button
-							on:click={signOut}
+						<a
+							href="/auth/logout"
 							class="block w-full rounded-xl bg-red-600 py-2 text-center text-white transition hover:bg-red-700 cursor-pointer"
 						>
 							Sign Out
-						</button>
+						</a>
 					</li>
 				{:else}
 					<li>
 						<a
-							href="/login"
+							href="/auth/login"
 							class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
 						>
 							Login

@@ -1,7 +1,7 @@
-<script>
-    export let data;
-    const { cube } = data;
-    const { availability } = data;
+<script lang="ts">
+	let { data } = $props();
+    let { cube } = $derived(data);
+    let { availability } = $derived(data);
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-16">

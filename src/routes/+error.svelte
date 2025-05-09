@@ -1,21 +1,10 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-
-	// 1) Declare the injected props
-	export let status: number;
-	export let error: { message?: string } | string | undefined;
-
-	// 2) Compute a safe display message
-	//    - If error is an object, use its message
-	//    - Otherwise, coerce to string or show a literal fallback
-	const message =
-		typeof error === "object"
-			? (error?.message ?? "Unknown error")
-			: (error ?? "Unknown error");
-
+	import { page } from '$app/stores';
+	
 	// DVD‐logo bouncing cube state
-	let cubeX = 50;
-	let cubeY = 50;
+	let cubeX = $state(50);
+	let cubeY = $state(50);
 	let velX = 0.8;
 	let velY = 0.6;
 	let rafId: number;
@@ -42,10 +31,10 @@
 		<h1
 			class="font-clash text-[6rem] sm:text-[8rem] font-black text-blue-500 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
 		>
-			{status}
+			{$page.status}
 		</h1>
 		<p class="mb-6 text-xl font-medium text-gray-300 sm:text-2xl">
-			<strong>{message}</strong>
+			<strong>{$page.error?.message}</strong>
 		</p>
 	</div>
 

@@ -1,41 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { supabase } from "$lib/supabaseClient";
-    import type { User } from "@supabase/supabase-js";
-
-    let user: User | null = null;
-    let profile: { id: string; username: string } | null = null;
-
-    async function isUserConnected() {
-        // 1) get current user
-        const {
-            data: { user: currentUser },
-        } = await supabase.auth.getUser();
-        user = currentUser;
-
-        if (user) {
-            // 2) fetch their single profile row
-            const { data: fetchedProfile, error } = await supabase
-                .from("profiles")
-                .select("id, username")
-                .eq("user_id", user.id)
-                .single();
-
-            if (!error && fetchedProfile) {
-                profile = fetchedProfile;
-            } else {
-                console.error("couldn't load profile:", error);
-            }
-        }
-
-        supabase.auth.onAuthStateChange((_event, session) => {
-            user = session?.user ?? null;
-        });
-    }
-
-    onMount(() => {
-        isUserConnected();
-    });
+    let data = $props();
+    const { profile } = data;
 </script>
 
 <section
@@ -59,7 +24,7 @@
         </p>
 
         <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            {#if user && profile}
+            {#if profile}
                 <a
                     href={`/user/${profile.id}`}
                     class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors rounded-xl text-white text-lg font-medium"
@@ -68,7 +33,7 @@
                 </a>
             {:else}
                 <a
-                    href="/signup"
+                    href="/auth/signup"
                     class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-colors rounded-xl text-white text-lg font-medium"
                 >
                     Start Collecting

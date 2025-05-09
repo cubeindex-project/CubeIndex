@@ -1,35 +1,12 @@
 <script lang="ts">
-    import { supabase } from "$lib/supabaseClient";
-    import { goto } from "$app/navigation";
-
-    let email = $state("");
-    let password = $state("");
-    let error = $state("");
+    const data = $props();
+    let { error } = data;
     let message = $state("");
     let showPassword = $state(false);
-
-    async function handleAuth(e: Event) {
-        e.preventDefault();
-        error = "";
-        message = "";
-
-        const { data, error: authError } =
-            await supabase.auth.signInWithPassword({ email, password });
-
-        if (authError) {
-            error = authError.message;
-        } else {
-            message = "Logged in successfully!";
-            goto("/");
-        }
-    }
+    let email = $state("");
 
     function togglePasswordVisibility() {
         showPassword = !showPassword;
-    }
-
-    async function resetPassword() {
-        let { data, error } = await supabase.auth.resetPasswordForEmail(email)
     }
 </script>
 
@@ -53,13 +30,13 @@
         <p class="text-center text-gray-400 text-sm mb-8">
             Login to your CubeIndex profile
         </p>
-        <form onsubmit={handleAuth} class="space-y-6">
+        <form method="POST" action="?/login" class="space-y-6">
             <div>
                 <label for="email" class="block text-sm font-medium text-white"
                     >Email</label
                 >
                 <input
-                    id="email"
+                    name="email"
                     type="email"
                     bind:value={email}
                     class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -74,8 +51,8 @@
                 >
                 <div class="flex flex-row items-center">
                     <input
+                        name="password"
                         type={showPassword ? "text" : "password"}
-                        bind:value={password}
                         class="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     />
                     <button
@@ -91,7 +68,9 @@
 
             <p class="text-sm text-gray-500 -mt-5">
                 Forgot your password?
-                <button onclick={resetPassword} class="text-blue-400 hover:underline ml-1 cursor-pointer">
+                <button
+                    class="text-blue-400 hover:underline ml-1 cursor-pointer"
+                >
                     Reset</button
                 >
             </p>

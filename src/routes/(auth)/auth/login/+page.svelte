@@ -93,7 +93,7 @@
 
         <p class="text-sm text-center text-gray-500 mt-6">
             Don't have an account?
-            <a href="/signup" class="text-blue-400 hover:underline ml-1">
+            <a href="/auth/signup" class="text-blue-400 hover:underline ml-1">
                 Sign Up
             </a>
         </p>

@@ -19,11 +19,7 @@
             const { data: signUpData, error: signUpError } =
                 await supabase.auth.signUp({
                     email,
-                    password,
-                    options: {
-                        emailRedirectTo:
-                            "https://cube-index-beta.vercel.app/verify-success",
-                    },
+                    password
                 });
 
             if (signUpError) {

@@ -54,11 +54,13 @@
 						>
 							{badge.description}
 						</p>
-						<div
-							class="absolute bottom-3 right-3 flex items-center gap-1 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow"
-						>
-							<span>Unlockable</span>
-							<span>✅</span>
+						<div class="mt-5">
+							<div
+								class="absolute bottom-3 right-3 flex items-center gap-1 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow"
+							>
+								<span>Unlockable</span>
+								<span>✅</span>
+							</div>
 						</div>
 					</div>
 				{:else}

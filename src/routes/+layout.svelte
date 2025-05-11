@@ -1,9 +1,9 @@
 <script lang="ts">
 	// Components and style
 	import "../app.css";
-	import Navbar from "./navbar.svelte";
-	import Footer from "./footer.svelte";
-	import Disclaimer from "./disclaimer.svelte";
+	import Navbar from "../lib/components/navbar.svelte";
+	import Footer from "../lib/components/footer.svelte";
+	import Disclaimer from "../lib/components/disclaimer.svelte";
 
 	let { data, children } = $props();
 

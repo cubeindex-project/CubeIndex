@@ -10,11 +10,11 @@
     // 1) Filter state (year is string 'All' or a year text)
     const selectedType = writable<string>("All");
     const selectedBrand = writable<string>("All");
-    const WCALegal = writable<boolean>(undefined);
-    const magnetic = writable<boolean>(undefined);
-    const smart = writable<boolean>(undefined);
+    const WCALegal = writable<boolean | undefined>(undefined);
+    const magnetic = writable<boolean | undefined>(undefined);
+    const smart = writable<boolean | undefined>(undefined);
     const selectedYear = writable<string>("All");
-    const modded = writable<boolean>(undefined);
+    const modded = writable<boolean | undefined>(undefined);
 
     // 2) Options
     const allTypes = Array.from(new Set(cubes.map((c) => c.type))).sort();
@@ -25,7 +25,15 @@
 
     // 3) Reactive filtered list
     const filteredCubes = derived(
-        [selectedType, selectedBrand, WCALegal, magnetic, smart, selectedYear, modded],
+        [
+            selectedType,
+            selectedBrand,
+            WCALegal,
+            magnetic,
+            smart,
+            selectedYear,
+            modded,
+        ],
         ([$type, $brand, $wca, $mag, $smart, $year, $modded]) => {
             return cubes.filter((c) => {
                 // only apply year check when a specific year is picked
@@ -43,6 +51,16 @@
             });
         },
     );
+
+    function resetFilters() {
+        selectedType.set("All");
+        selectedBrand.set("All");
+        WCALegal.set(undefined);
+        magnetic.set(undefined);
+        smart.set(undefined);
+        selectedYear.set("All");
+        modded.set(undefined);
+    }
 
     onMount(() => {
         loading = false;
@@ -163,6 +181,17 @@
                         <option value={year}>{year}</option>
                     {/each}
                 </select>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="resetFilters" class="text-sm opacity-0 select-none">Reset</label>
+                <button
+                    class="cursor-pointer px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 transition flex items-center justify-center"
+                    aria-label="Reset Filters"
+                    onclick={resetFilters}
+                >
+                    <i class="fa-solid fa-arrow-rotate-left fa-2x text-gray-300 hover:text-white transition"></i>
+                </button>
             </div>
         </div>
 

@@ -1,12 +1,12 @@
 import { supabase } from '$lib/supabaseClient';
 
 export async function load({ params }) {
-  const { cube_name_id } = params;
+  const { cube_id } = params;
 
   const { data: cube, error: cubeError } = await supabase
-    .from('cubes')
+    .from('cube_models')
     .select("*")
-    .eq('name_id', cube_name_id)
+    .eq('name_id', cube_id)
     .single();
 
 
@@ -16,12 +16,12 @@ export async function load({ params }) {
   }
 
   const { data: availability, error: availError } = await supabase
-    .from('cubes_availability')
+    .from('cube_vendor_links')
     .select("*")
-    .eq('cube_id', cube_name_id);
+    .eq('cube_id', cube_id);
 
   if (availError) {
-    console.error('Error loading availability:', availError);
+    console.error('Error loading vendor links:', availError);
   }
 
   return { cube, availability };

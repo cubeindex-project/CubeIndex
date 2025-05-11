@@ -2,7 +2,7 @@ import { supabase } from '$lib/supabaseClient';
 
 export async function load() {
   const { data: cubes, error } = await supabase
-    .from('cubes')
+    .from('cube_models')
     .select('*')
     .order('name', { ascending: true })
 

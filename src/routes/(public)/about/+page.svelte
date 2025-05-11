@@ -9,15 +9,6 @@
 <section
     class="min-h-screen bg-black text-white px-6 py-24 relative overflow-hidden"
 >
-    <!-- Background Grid -->
-    <div class="absolute inset-0 opacity-10 pointer-events-none select-none">
-        <img
-            src="/images/hero-bg.png"
-            alt=""
-            class="w-full h-full object-cover"
-        />
-    </div>
-
     <div class="relative z-10 max-w-4xl mx-auto space-y-12 text-center">
         <!-- Logo -->
         <div class="flex justify-center">

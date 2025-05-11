@@ -68,15 +68,6 @@
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-16 relative">
-    <!-- Background -->
-    <div class="absolute inset-0 opacity-10">
-        <img
-            src="/images/hero-bg.png"
-            alt=""
-            class="w-full h-full object-cover"
-        />
-    </div>
-
     <div class="relative z-10 max-w-7xl mx-auto">
         <h1 class="text-4xl font-bold text-center mb-6 font-clash">
             Explore Cubes
@@ -184,13 +175,17 @@
             </div>
 
             <div class="flex flex-col gap-2">
-                <label for="resetFilters" class="text-sm opacity-0 select-none">Reset</label>
+                <label for="resetFilters" class="text-sm opacity-0 select-none"
+                    >Reset</label
+                >
                 <button
                     class="cursor-pointer px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 transition flex items-center justify-center"
                     aria-label="Reset Filters"
                     onclick={resetFilters}
                 >
-                    <i class="fa-solid fa-arrow-rotate-left fa-2x text-gray-300 hover:text-white transition"></i>
+                    <i
+                        class="fa-solid fa-arrow-rotate-left fa-2x text-gray-300 hover:text-white transition"
+                    ></i>
                 </button>
             </div>
         </div>

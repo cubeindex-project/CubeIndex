@@ -56,14 +56,6 @@
 <section
     class="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 relative overflow-hidden"
 >
-    <div class="absolute inset-0 opacity-10">
-        <img
-            src="/images/hero-bg.png"
-            alt=""
-            class="w-full h-full object-cover"
-        />
-    </div>
-
     <div
         class="w-full max-w-md bg-neutral-900 border border-neutral-700 rounded-2xl shadow-lg p-8 z-10"
     >

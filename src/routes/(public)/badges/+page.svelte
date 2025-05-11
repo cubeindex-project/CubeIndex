@@ -13,14 +13,6 @@
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-24 relative">
-	<div class="absolute inset-0 opacity-10">
-		<img
-			src="/images/hero-bg.png"
-			alt=""
-			class="w-full h-full object-cover"
-		/>
-	</div>
-
 	<div class="relative z-10 max-w-6xl mx-auto">
 		<h1 class="text-4xl font-bold text-center mb-6">🏅 Badges</h1>
 		<p class="text-center text-gray-400 mb-12">

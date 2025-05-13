@@ -78,7 +78,7 @@
 
         <!-- Filter Bar -->
         <div
-            class="flex flex-col sm:flex-row gap-4 items-center justify-center mb-12"
+            class="flex w-full overflow-x-auto flex-row gap-4 items-center mb-12 sm:overflow-hidden"
         >
             <!-- Type Filter -->
             <div class="flex flex-col gap-2">

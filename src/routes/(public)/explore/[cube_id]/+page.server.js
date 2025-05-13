@@ -15,14 +15,14 @@ export async function load({ params }) {
     return { status: 404 };
   }
 
-  const { data: availability, error: availError } = await supabase
+  const { data: vendor_links, error: vendorError } = await supabase
     .from('cube_vendor_links')
     .select("*")
     .eq('cube_id', cube_id);
 
-  if (availError) {
-    console.error('Error loading vendor links:', availError);
+  if (vendorError) {
+    console.error('Error loading vendor links:', vendorError);
   }
 
-  return { cube, availability };
+  return { cube, vendor_links };
 }

@@ -1,7 +1,18 @@
 <script lang="ts">
 	let { data } = $props();
     let { cube } = $derived(data);
-    let { availability } = $derived(data);
+    let { vendor_links } = $derived(data);
+
+    function formatReleaseDate(dateString: string): string {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        }).format(date);
+    }
+
+    const formattedReleaseDate = formatReleaseDate(cube.release_date)
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-16">
@@ -25,7 +36,7 @@
             Type: <span class="text-white">{cube.type}</span>
         </p>
         <p class="text-gray-400 mb-2">
-            Release Year: <span class="text-white">{cube.release_year}</span>
+            Release Date: <span class="text-white">{formattedReleaseDate}</span>
         </p>
         <p class="text-gray-400 mb-2">
             Rating: <span class="text-yellow-400 font-semibold"
@@ -41,10 +52,10 @@
         <p class="text-gray-400 mb-2">
             WCA Legal: {cube.wca_legal ? "✅" : "❌"}
         </p>
-        {#if availability}
+        {#if vendor_links}
             <div class="flex gap-2 items-center">
                 <p class="text-gray-400 mb-2 items-center">Available at:</p>
-                {#each availability as shop}
+                {#each vendor_links as shop}
                     <button
                         class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10"
                     >

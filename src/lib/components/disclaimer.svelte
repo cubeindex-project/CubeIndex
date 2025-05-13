@@ -22,10 +22,17 @@
 
 {#if isOpen}
     <div
-        class="flex flex-col items-center justify-between p-4 bg-black text-white w-full"
+        class="flex items-center justify-center bg-black text-white w-full pt-3 flex-col relative"
     >
+        <button
+            class="md:absolute md:right-6 text-xl cursor-pointer static self-start mb-2"
+            aria-label="Close"
+            onclick={dismiss}
+        >
+            <i class="fa-solid fa-xmark hover:text-red"></i>
+        </button>
         {#each disclaimer as disclaimer}
-            <p class={`text-center w-full mb-5`}></p>
+            <p class={`px-5 my-1`}></p>
             <p
                 class={disclaimer.purpose === "warning"
                     ? "text-red-400"
@@ -45,14 +52,8 @@
             >
                 {disclaimer.icon}
                 {disclaimer.message}
+                {disclaimer.icon}
             </p>
         {/each}
-        <button
-            class="absolute right-6 text-xl cursor-pointer"
-            aria-label="Close"
-            onclick={dismiss}
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
     </div>
 {/if}

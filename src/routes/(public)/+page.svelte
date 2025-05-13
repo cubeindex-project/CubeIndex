@@ -2,7 +2,7 @@
 </script>
 
 <section
-    class="relative flex min-h-screen flex-col items-center justify-center bg-black text-white overflow-hidden"
+    class="px-5 relative flex min-h-screen flex-col items-center justify-center bg-black text-white overflow-hidden"
 >
     <div class="relative z-10 text-center max-w-3xl space-y-6">
         <h1 class="text-5xl sm:text-7xl font-clash font-bold">

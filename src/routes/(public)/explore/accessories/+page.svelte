@@ -36,12 +36,6 @@
                     <div class="p-5 space-y-2">
                         <h2 class="text-xl font-bold">{acc.name}</h2>
                         <p class="text-sm text-gray-400">{acc.brand}</p>
-                        {#if acc.category}
-                            <p class="text-sm">
-                                <strong>Category:</strong>
-                                {acc.category}
-                            </p>
-                        {/if}
                         {#if acc.compatibility}
                             <p class="text-sm">
                                 <strong>Compatibility:</strong>
@@ -51,7 +45,13 @@
                         <div class="text-sm text-yellow-400">
                             ⭐ {acc.rating}
                         </div>
-                        <p class="text-xs text-gray-500">
+                        {#if acc.category}
+                            <p class="text-sm text-gray-400">
+                                {acc.category.charAt(0).toUpperCase() +
+                                    acc.category.slice(1)}
+                            </p>
+                        {/if}
+                        <p class="text-sm text-gray-500">
                             Released: {formatDate(acc.release_date)}
                         </p>
                     </div>

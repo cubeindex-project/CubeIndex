@@ -29,42 +29,73 @@
         <h1 class="text-4xl font-clash font-bold text-white mb-4">
             {cube.name}
         </h1>
-        <p class="text-gray-400 mb-2">
-            Brand: <span class="text-white">{cube.brand}</span>
-        </p>
-        <p class="text-gray-400 mb-2">
-            Type: <span class="text-white">{cube.type}</span>
-        </p>
-        <p class="text-gray-400 mb-2">
-            Release Date: <span class="text-white">{formattedReleaseDate}</span>
-        </p>
-        <p class="text-gray-400 mb-2">
-            Rating: <span class="text-yellow-400 font-semibold"
-                >⭐ {cube.rating}</span
-            >
-        </p>
-        <p class="text-gray-400 mb-2">
-            Magnetic: {cube.magnetic ? "✅" : "❌"}
-        </p>
-        <p class="text-gray-400 mb-2">
-            Modded: {cube.modded ? "✅" : "❌"}
-        </p>
-        <p class="text-gray-400 mb-2">
-            WCA Legal: {cube.wca_legal ? "✅" : "❌"}
-        </p>
-        {#if vendor_links}
-            <div class="flex gap-2 items-center overflow-scroll md:overflow-hidden">
-                <p class="text-gray-400 mb-2 items-center">Available at:</p>
-                {#each vendor_links as shop}
-                    <a
-                        href={shop.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10 inline-block"
-                    >
-                        {shop.vendor_name}
-                    </a>
-                {/each}
+        <div class="mb-4 p-4 bg-neutral-900 rounded-xl border border-neutral-800 shadow-sm">
+            <p class="text-gray-300 leading-relaxed">
+            Description:
+            <span class="block mt-2 text-white">
+            The <span class="font-bold text-blue-400">{cube.name}</span> is a <span class="font-bold text-blue-400">{cube.type}</span> twisty puzzle released on <span class="font-bold text-blue-400">{formattedReleaseDate}</span>.
+            It is <span class="font-bold text-blue-400">{cube.magnetic ? "magnetic" : "non-magnetic"}</span>, <span class="font-bold text-blue-400">{cube.smart ? "smart" : "non-smart"}</span>, and <span class="font-bold text-blue-400">{cube.wca_legal ? "WCA-legal" : "not WCA-legal"}</span>.
+            Currently, it is <span class="font-bold text-blue-400">{cube.discontinued ? "discontinued" : "available"}</span>, has a community rating of <span class="font-bold text-blue-400">{cube.rating}/5</span>, and is <span class="font-bold text-blue-400">{cube.modded ? "modded" : "original"}</span>.
+            </span>
+            </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+            <div class="bg-neutral-900 rounded-xl p-4 flex flex-col gap-2 border border-neutral-800">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Brand:</span>
+                <span class="text-white font-medium">{cube.brand}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Type:</span>
+                <span class="text-white font-medium">{cube.type}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Release Date:</span>
+                <span class="text-white font-medium">{formattedReleaseDate}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Rating:</span>
+                <span class="text-yellow-400 font-semibold">⭐ {cube.rating}</span>
+            </div>
+            </div>
+            <div class="bg-neutral-900 rounded-xl p-4 flex flex-col gap-2 border border-neutral-800">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Smart:</span>
+                <span class="text-xl">{cube.smart ? "✅" : "❌"}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Magnetic:</span>
+                <span class="text-xl">{cube.magnetic ? "✅" : "❌"}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Modded:</span>
+                <span class="text-xl">{cube.modded ? "✅" : "❌"}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">WCA Legal:</span>
+                <span class="text-xl">{cube.wca_legal ? "✅" : "❌"}</span>
+            </div>
+            </div>
+        </div>
+        {#if vendor_links && vendor_links.length > 0}
+            <div class="my-8">
+                <h2 class="text-lg font-semibold text-gray-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Available at:
+                </h2>
+                <div class="flex flex-wrap gap-3">
+                    {#each vendor_links as shop}
+                        <a
+                            href={shop.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex items-center gap-2 border border-blue-500/30 hover:border-blue-400 text-white font-medium px-4 py-2 rounded-xl transition duration-200 bg-blue-500/10 hover:bg-blue-500/20 shadow-sm hover:shadow-lg"
+                        >
+                            <i class="fa-solid fa-check"></i>
+                            {shop.vendor_name}
+                        </a>
+                    {/each}
+                </div>
             </div>
         {/if}
 

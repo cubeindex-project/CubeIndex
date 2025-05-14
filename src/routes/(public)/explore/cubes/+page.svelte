@@ -225,7 +225,7 @@
                                 ⭐ {cube.rating}
                             </div>
                             <a
-                                href={`/explore/${cube.name_id}`}
+                                href={`/explore/cubes/${cube.name_id}`}
                                 class="mt-4 inline-block text-blue-400 hover:underline"
                             >
                                 View Details →

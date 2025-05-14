@@ -72,7 +72,7 @@
         {/if}
 
         <a
-            href="/explore"
+            href="/explore/cubes"
             class="inline-block mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white transition"
         >
             ← Back to Explore

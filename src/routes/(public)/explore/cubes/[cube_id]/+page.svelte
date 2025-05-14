@@ -53,7 +53,7 @@
             WCA Legal: {cube.wca_legal ? "✅" : "❌"}
         </p>
         {#if vendor_links}
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-center overflow-scroll">
                 <p class="text-gray-400 mb-2 items-center">Available at:</p>
                 {#each vendor_links as shop}
                     <button

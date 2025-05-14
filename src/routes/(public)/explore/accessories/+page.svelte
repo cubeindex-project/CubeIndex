@@ -47,8 +47,7 @@
                         </div>
                         {#if acc.category}
                             <p class="text-sm text-gray-400">
-                                {acc.category.charAt(0).toUpperCase() +
-                                    acc.category.slice(1)}
+                                {acc.category}
                             </p>
                         {/if}
                         <p class="text-sm text-gray-500">

@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { data } = $props();
+    let { data } = $props();
     let { cube } = $derived(data);
     let { vendor_links } = $derived(data);
 
@@ -12,7 +12,7 @@
         }).format(date);
     }
 
-    const formattedReleaseDate = formatReleaseDate(cube.release_date)
+    const formattedReleaseDate = formatReleaseDate(cube.release_date);
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-16">
@@ -53,23 +53,31 @@
             WCA Legal: {cube.wca_legal ? "✅" : "❌"}
         </p>
         {#if vendor_links}
-            <div class="flex gap-2 items-center overflow-scroll">
+            <div class="flex gap-2 items-center overflow-scroll md:overflow-hidden">
                 <p class="text-gray-400 mb-2 items-center">Available at:</p>
                 {#each vendor_links as shop}
-                    <button
-                        class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10"
+                    <a
+                        href={shop.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="border border-white/20 hover:border-white/50 text-white font-medium px-4 py-2 rounded-xl transition duration-200 backdrop-blur-sm bg-white/5 hover:bg-white/10 inline-block"
                     >
-                        <a
-                            href={shop.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {shop.vendor_name}
-                        </a>
-                    </button>
+                        {shop.vendor_name}
+                    </a>
                 {/each}
             </div>
         {/if}
+
+        <div class="mt-4">
+            <a
+                href="https://discord.gg/YvhEjgQ7Fq"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition"
+            >
+                🚩 Report incorrect data
+            </a>
+        </div>
 
         <a
             href="/explore/cubes"

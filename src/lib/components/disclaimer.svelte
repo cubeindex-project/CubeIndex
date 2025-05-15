@@ -1,59 +1,24 @@
 <script>
-    import { supabase } from "$lib/supabaseClient";
-    import { onMount } from "svelte";
-
-    /** @type {any[]} */
-    let disclaimer = [];
-
-    async function getMessages() {
-        let { data, error } = await supabase.from("disclaimer").select("*");
-
-        disclaimer = data || [];
-    }
-
-    let isOpen = true;
-
+    let isOpen = $state(true);
     function dismiss() {
         isOpen = false;
     }
-
-    onMount(getMessages);
 </script>
 
 {#if isOpen}
-    <div
-        class="flex items-center justify-center bg-black text-white w-full pt-3 flex-col relative"
+  <div class="relative flex flex-col sm:flex-row items-center sm:justify-between p-4 bg-black text-white w-full mx-auto pt-4">
+    <p class="text-center sm:text-left flex-1">
+      🚧 <strong>CubeIndex</strong> is in Early Preview — This is an early version and currently in
+      active development. Features and design are still evolving.
+    </p>
+
+    <button
+      class="sm:static absolute right-6 top-3 sm:top-auto sm:ml-4 text-xl cursor-pointer"
+      aria-label="Close"
+      onclick={dismiss}
     >
-        <button
-            class="md:absolute md:right-6 text-xl cursor-pointer static self-start mb-2"
-            aria-label="Close"
-            onclick={dismiss}
-        >
-            <i class="fa-solid fa-xmark hover:text-red"></i>
-        </button>
-        {#each disclaimer as disclaimer}
-            <p class={`px-5 my-1`}></p>
-            <p
-                class={disclaimer.purpose === "warning"
-                    ? "text-red-400"
-                    : disclaimer.purpose === "legal"
-                      ? "text-yellow-300"
-                      : disclaimer.purpose === "maintenance"
-                        ? "text-orange-400"
-                        : disclaimer.purpose === "announcement"
-                          ? "text-blue-400"
-                          : disclaimer.purpose === "alert"
-                            ? "text-red-600 font-bold"
-                            : disclaimer.purpose === "promo"
-                              ? "text-green-400"
-                              : disclaimer.purpose === "update"
-                                ? "text-purple-400"
-                                : "text-white"}
-            >
-                {disclaimer.icon}
-                {disclaimer.message}
-                {disclaimer.icon}
-            </p>
-        {/each}
-    </div>
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 {/if}
+

@@ -4,6 +4,7 @@
 	import Navbar from "../lib/components/navbar.svelte";
 	import Footer from "../lib/components/footer.svelte";
 	import Disclaimer from "../lib/components/disclaimer.svelte";
+	import Announcement from "$lib/components/announcement.svelte";
 
 	let { data, children } = $props();
 
@@ -32,6 +33,8 @@
 <Disclaimer />
 
 <Navbar user={data.user} />
+
+<Announcement />
 
 {@render children()}
 

@@ -20,14 +20,14 @@
                 href="/explore"
                 class="px-6 py-3 border border-white rounded-xl text-lg hover:bg-white hover:text-black transition"
             >
-                Explore Cubes
+                Explore Database
             </a>
         </div>
     </div>
 </section>
 
 <section
-    class="bg-black text-white min-h-screen px-5 relative flex flex-col items-center justify-centeroverflow-hidden"
+    class="bg-black text-white pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
 >
     <h2 class="text-4xl font-clash font-bold text-center mb-8">Our Partners</h2>
     <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -38,8 +38,8 @@
             <div class="text-6xl">🐼</div>
             <h3 class="mt-4 text-2xl font-semibold">CubingPanda</h3>
             <p class="mt-2 text-gray-400">
-                CubePanda is the go-to community for Rubik’s Cube fans at every
-                skill level—whether you’re a veteran speedcuber or someone who’s
+                CubingPanda is the go-to community for Rubik's Cube fans at every
+                skill level—whether you're a veteran speedcuber or someone who's
                 never solved a single face.
             </p>
             <a

@@ -14,7 +14,7 @@
         }).format(date);
     }
 
-    const formattedJoinDate = formatJoinDate(profile?.created_at)
+    const formattedJoinDate = formatJoinDate(profile?.created_at);
 </script>
 
 <section class="min-h-screen bg-black text-white px-6 py-12">

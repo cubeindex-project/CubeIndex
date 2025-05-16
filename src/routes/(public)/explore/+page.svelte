@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { PageData } from './$types';
+  import type { PageData } from "./$types";
 
-    let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props();
 </script>
 
 <section
@@ -33,6 +33,18 @@
       <h2 class="text-2xl font-semibold">Accessories</h2>
       <p class="text-gray-400">
         Discover timers, mats, lubricants, and everything else you need.
+      </p>
+    </a>
+
+    <!-- Explore Vendors Card -->
+    <a
+      href="/explore/vendors"
+      class="group block bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
+    >
+      <p class="text-2xl group-hover:scale-110 transition-transform">🏬</p>
+      <h2 class="text-2xl font-semibold">Vendors</h2>
+      <p class="text-gray-400">
+        Find trusted cube shops and compare prices from top vendors worldwide.
       </p>
     </a>
   </div>

@@ -34,7 +34,6 @@
                 <h2 class="text-2xl font-semibold mb-1">
                     {collector.username}
                 </h2>
-                <p class="text-gray-400 text-sm mb-4">ID: {collector.id}</p>
                 <div class="w-full flex justify-between text-center mb-4">
                     <div>
                         <div class="text-xl font-bold">

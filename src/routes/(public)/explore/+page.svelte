@@ -15,9 +15,9 @@
     <!-- Explore Cubes Card -->
     <a
       href="/explore/cubes"
-      class="group block bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
+      class="group bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
     >
-      <p class="text-2xl group-hover:scale-110 transition-transform">🧊</p>
+      <p class="text-2xl">🧊</p>
       <h2 class="text-2xl font-semibold">Cubes</h2>
       <p class="text-gray-400">
         Browse thousands of cubes by brand, type, and community rating.
@@ -27,9 +27,9 @@
     <!-- Explore Accessories Card -->
     <a
       href="/explore/accessories"
-      class="group block bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
+      class="group bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
     >
-      <p class="text-2xl group-hover:scale-110 transition-transform">🧰</p>
+      <p class="text-2xl">🧰</p>
       <h2 class="text-2xl font-semibold">Accessories</h2>
       <p class="text-gray-400">
         Discover timers, mats, lubricants, and everything else you need.
@@ -39,12 +39,24 @@
     <!-- Explore Vendors Card -->
     <a
       href="/explore/vendors"
-      class="group block bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
+      class="group bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
     >
-      <p class="text-2xl group-hover:scale-110 transition-transform">🏬</p>
+      <p class="text-2xl">🏬</p>
       <h2 class="text-2xl font-semibold">Vendors</h2>
       <p class="text-gray-400">
         Find trusted cube shops and compare prices from top vendors worldwide.
+      </p>
+    </a>
+
+    <!-- Explore Users Card -->
+    <a
+      href="/explore/users"
+      class="group bg-neutral-900 hover:bg-neutral-800 transition rounded-2xl p-8 text-center flex flex-col items-center space-y-4"
+    >
+      <p class="text-2xl">🧍</p>
+      <h2 class="text-2xl font-semibold">Users</h2>
+      <p class="text-gray-400">
+        Explore user profiles, discover top solvers, and see community activity.
       </p>
     </a>
   </div>

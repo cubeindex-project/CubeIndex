@@ -1,5 +1,5 @@
 import { supabase } from '$lib/supabaseClient';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from '../../collectors/$types';
 
 export const load = (async () => {
     const { data: profiles, error } = await supabase

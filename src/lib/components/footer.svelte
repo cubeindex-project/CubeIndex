@@ -27,7 +27,6 @@
                     >
                 </li>
                 <li><a href="/badges" class="hover:text-white">Badges</a></li>
-                <li><a href="/collectors" class="hover:text-white">Collectors</a></li>
                 <li><a href="/about" class="hover:text-white">About</a></li>
             </ul>
         </div>

@@ -35,7 +35,9 @@
                     />
                     <div class="p-5 space-y-2">
                         <h2 class="text-xl font-bold">{acc.name}</h2>
-                        <p class="text-sm text-gray-400">{acc.brand}</p>
+                        <p class="text-sm text-gray-400">
+                            {acc.brand} ・ {acc.category}
+                        </p>
                         {#if acc.compatibility}
                             <p class="text-sm">
                                 <strong>Compatibility:</strong>
@@ -45,11 +47,6 @@
                         <div class="text-sm text-yellow-400">
                             ⭐ {acc.rating}
                         </div>
-                        {#if acc.category}
-                            <p class="text-sm text-gray-400">
-                                {acc.category}
-                            </p>
-                        {/if}
                         <p class="text-sm text-gray-500">
                             Released: {formatDate(acc.release_date)}
                         </p>

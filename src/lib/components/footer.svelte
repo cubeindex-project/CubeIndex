@@ -26,7 +26,7 @@
                         >Explore</a
                     >
                 </li>
-                <li><a href="/badges" class="hover:text-white">Badges</a></li>
+                <li><a href="/achievements" class="hover:text-white">Achievements</a></li>
                 <li><a href="/about" class="hover:text-white">About</a></li>
             </ul>
         </div>

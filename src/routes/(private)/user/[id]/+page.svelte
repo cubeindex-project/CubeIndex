@@ -59,9 +59,12 @@
             <div class="flex-1 w-full">
                 <div class="flex items-center justify-between w-full gap-2">
                     <h2
-                        class="text-3xl sm:text-4xl font-clash font-extrabold break-all tracking-tight text-white"
+                        class="text-3xl sm:text-4xl font-clash flex flex-row font-extrabold gap-4 break-all items-center tracking-tight text-white"
                     >
                         {profile?.username}
+                        <!-- {#if profile.certified}
+                            
+                        {/if} -->
                     </h2>
                     {#if user?.id === profile?.user_id}
                         <a
@@ -152,18 +155,6 @@
                                     >
                                 </a>
                             {/if}
-                            {#if profile?.socials?.github}
-                                <a
-                                    href={`https://github.com/${profile.socials.github}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-700 text-white font-medium shadow transition"
-                                    aria-label="GitHub"
-                                >
-                                    <i class="fa-brands fa-github"></i>
-                                    <span class="hidden sm:inline">GitHub</span>
-                                </a>
-                            {/if}
                             {#if profile?.socials?.x}
                                 <a
                                     href={`https://twitter.com/${profile.socials.x}`}
@@ -213,11 +204,11 @@
     {#if !profile.private || user?.id === profile.user_id}
         <!-- Badges Section -->
         <div class="max-w-4xl mx-auto mt-16 px-4">
-            <h3 class="text-2xl font-bold mb-4 text-white">Badges Earned</h3>
+            <h3 class="text-2xl font-bold mb-4 text-white">Achievements Earned</h3>
             <div
                 class="bg-gradient-to-r from-neutral-800 via-blue-950 to-neutral-800 rounded-xl p-6 text-center text-gray-300 shadow-lg border border-neutral-700"
             >
-                <span class="text-lg font-medium">Badges coming soon!</span>
+                <span class="text-lg font-medium">Achievements coming soon!</span>
             </div>
         </div>
 

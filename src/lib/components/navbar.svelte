@@ -2,11 +2,13 @@
 	import { supabase } from "$lib/supabaseClient";
 	import { onMount } from "svelte";
 	import type { User } from "@supabase/supabase-js";
+	import ConfirmSignOut from "./confirmSignOut.svelte";
 
 	let loading = $state(true);
 	let isOpen = $state(false);
 	let profile: { id: any; username: any } | null = $state(null);
 	let { user } = $props();
+	let signOutConfirmation = $state(false);
 
 	async function loadProfile(user: User) {
 		let { data, error } = await supabase
@@ -64,12 +66,12 @@
 				>
 					{profile.username}
 				</a>
-				<a
-					href="/auth/logout"
+				<button
+					onclick={() => (signOutConfirmation = true)}
 					class="rounded-xl bg-red-600 px-4 py-2 text-sm transition hover:bg-red-700 cursor-pointer"
 				>
 					Sign Out
-				</a>
+				</button>
 			{:else}
 				<a
 					href="/auth/login"
@@ -115,12 +117,12 @@
 						</a>
 					</li>
 					<li>
-						<a
-							href="/auth/logout"
+						<button
+							onclick={() => (signOutConfirmation = true)}
 							class="block w-full rounded-xl bg-red-600 py-2 text-center text-white transition hover:bg-red-700 cursor-pointer"
 						>
 							Sign Out
-						</a>
+						</button>
 					</li>
 				{:else}
 					<li>
@@ -136,3 +138,12 @@
 		</nav>
 	{/if}
 </header>
+
+{#if signOutConfirmation}
+	<ConfirmSignOut
+		onConfirm="/auth/logout"
+		onCancel={() => {
+			signOutConfirmation = false;
+		}}
+	/>
+{/if}

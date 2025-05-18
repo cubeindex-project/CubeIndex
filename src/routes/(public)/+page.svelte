@@ -4,7 +4,7 @@
         emoji: string;
         description: string;
         links: { label: string; url: string; color: string }[];
-        border?: boolean; // true if you want a right border on desktop
+        border?: boolean;
     };
 
     const partners: Partner[] = [

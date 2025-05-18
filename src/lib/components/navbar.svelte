@@ -141,7 +141,6 @@
 
 {#if signOutConfirmation}
 	<ConfirmSignOut
-		onConfirm="/auth/logout"
 		onCancel={() => {
 			signOutConfirmation = false;
 		}}

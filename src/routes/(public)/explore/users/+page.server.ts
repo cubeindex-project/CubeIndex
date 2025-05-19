@@ -1,12 +1,13 @@
 import { supabase } from '$lib/supabaseClient';
-import type { PageServerLoad } from '../../collectors/$types';
+import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
 
 export const load = (async () => {
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error: err } = await supabase
         .from('profiles')
         .select('*')
         .order('id', { ascending: true });
 
-    if (error) console.error(error)
+    if (err) throw error(500, err.message);
     return { profiles };
 }) satisfies PageServerLoad;

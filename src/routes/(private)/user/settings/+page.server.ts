@@ -2,16 +2,17 @@ import { supabase } from '$lib/supabaseClient';
 import type { PageServerLoad } from './$types';
 import type { Actions } from './$types';
 import { fail } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 export const load = (async ({ locals }) => {
     const { user } = await locals.safeGetSession();
 
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error: err } = await supabase
         .from('profiles')
         .select('*')
         .eq("user_id", user?.id);
 
-    if (error) console.error(error)
+    if (err) throw error(500, err.message);
     return { profiles };
 }) satisfies PageServerLoad;
 

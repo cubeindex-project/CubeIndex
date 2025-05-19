@@ -1,16 +1,15 @@
-import { supabase } from '$lib/supabaseClient';
-import type { PageServerLoad } from './$types';
+import { error } from '@sveltejs/kit';
 
-export const load = (async ({params, locals}) => {
+export const load = (async ({ params, locals }) => {
     const { id } = params;
 
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error: err } = await locals.supabase
         .from('profiles')
         .select('*')
-        .eq("id", id );
+        .eq('id', id);
 
-    const { user } = await locals.safeGetSession()
+    if (err) throw error(500, err.message);
+    if (!profiles?.length) throw error(404, 'User not found');
 
-    if (error) console.error(error)
-    return { profiles, user };
-}) satisfies PageServerLoad;
+    return { profile: profiles[0] };
+});

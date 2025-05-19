@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	
 	// DVD‐logo bouncing cube state
 	let cubeX = $state(50);
@@ -31,24 +31,34 @@
 		<h1
 			class="font-clash text-[6rem] sm:text-[8rem] font-black text-blue-500 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
 		>
-			{$page.status}
+			{page.status}
 		</h1>
 		<p class="mb-6 text-xl font-medium text-gray-300 sm:text-2xl">
-			<strong>{$page.error?.message}</strong>
+			<strong>{page.error?.message}</strong>
 		</p>
 	</div>
 
 	<p class="mb-8 max-w-md text-gray-400 relative z-10">
-		The page you’re looking for might have been scrambled or doesn’t exist.
-		Try a different algorithm.
+		It seems you encountered an error.<br>
+		If you think this is a bug, please let us know!
 	</p>
 
-	<a
-		href="/"
-		class="relative z-10 inline-block rounded-xl bg-blue-600 hover:bg-blue-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] transition"
-	>
-		🏠 Return Home
-	</a>
+	<div class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative">
+		<a
+			href="/"
+			class="inline-block rounded-xl bg-blue-600 hover:bg-blue-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] transition"
+		>
+			🏠 Return Home
+		</a>
+		<a
+			href="https://discord.gg/VHhYR6nyzs"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="inline-block rounded-xl bg-purple-600 hover:bg-purple-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(149,76,233,0.5)] transition"
+		>
+			🐞 Report the Bug on Discord
+		</a>
+	</div>
 
 	<!-- Bouncing Cube -->
 	<img

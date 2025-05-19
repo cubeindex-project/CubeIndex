@@ -1,24 +1,20 @@
 import { supabase } from '$lib/supabaseClient';
+import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
-	const { data: achievements, error } = await supabase
+	const { data: achievements, error: err } = await supabase
 		.from('achievements')
 		.select('*')
 		.order('name', { ascending: true });
+
+	if (err) throw error(500, err.message);
 
 	const { data: profiles, error: profilesError } = await supabase
 		.from('profiles')
 		.select('id, username');
 
-	if (error) {
-		console.error('Error fetching badges:', error.message);
-		return {
-			achievements: []
-		};
-	}
-
-	if (profilesError) console.error('Error fetching badges:', profilesError.message);
+	if (profilesError) throw error(500, profilesError.message);
 
 	return {
 		profiles,

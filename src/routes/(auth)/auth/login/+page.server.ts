@@ -1,4 +1,4 @@
-import { redirect } from '@sveltejs/kit'
+import { fail, redirect, error } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 export const actions: Actions = {
@@ -7,25 +7,20 @@ export const actions: Actions = {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) {
-      console.error(error)
-      return (error)
-    } else {
-      const { data: { user } } = await supabase.auth.getUser()
+    const { error: e } = await supabase.auth.signInWithPassword({ email, password })
+    if (e) return fail(400, { message: e.message });
 
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select('id, role')
-        .eq('user_id', user?.id)
+    const { data: { user } } = await supabase.auth.getUser()
 
-      if (error) {
-        console.error('Couldn\'t load profiles in login:', error)
-      }
+    const { data: profiles, error: err } = await supabase
+      .from('profiles')
+      .select('id, role')
+      .eq('user_id', user?.id)
 
-      const profile = profiles?.[0]
+    if (err) throw error(500, err.message);
 
-      redirect(303, `/user/${profile?.id}`)
-    }
+    const profile = profiles?.[0]
+
+    redirect(303, `/user/${profile?.id}`)
   },
 };

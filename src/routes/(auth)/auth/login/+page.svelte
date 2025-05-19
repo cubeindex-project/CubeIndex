@@ -3,9 +3,7 @@
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import { onMount } from "svelte";
 
-    const data = $props();
-    let { error } = data;
-    let message = $state("");
+    let { form } = $props();
     let showPassword = $state(false);
     let email = $state("");
     let login = $state(true);
@@ -36,7 +34,11 @@
             <p class="text-center text-gray-400 text-sm mb-8">
                 Login to your CubeIndex profile
             </p>
-            <form method="POST" action="?/login" class="space-y-6">
+            <form
+                method="POST"
+                action="?/login"
+                class="space-y-6"
+            >
                 <div>
                     <label
                         for="email"
@@ -91,13 +93,9 @@
                     Log In
                 </button>
 
-                {#if error}
-                    <p class="text-sm text-red-500 text-center mt-2">{error}</p>
-                {/if}
-
-                {#if message}
-                    <p class="text-sm text-green-400 text-center mt-2">
-                        {message}
+                {#if form?.message}
+                    <p class="text-sm text-red-500 text-center mt-2">
+                        {form.message}
                     </p>
                 {/if}
             </form>

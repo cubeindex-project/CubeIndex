@@ -1,10 +1,10 @@
 <script lang="ts">
 	// Components and style
 	import "../app.css";
-	import Navbar from "../lib/components/navbar.svelte";
-	import Footer from "../lib/components/footer.svelte";
-	import Disclaimer from "../lib/components/disclaimer.svelte";
-	import Announcement from "$lib/components/announcement.svelte";
+	import Navbar from "$lib/components/navbar.svelte";
+    import Footer from "$lib/components/footer.svelte";
+    import Disclaimer from "$lib/components/disclaimer.svelte";
+	import { Toaster } from "svelte-sonner";
 
 	let { data, children } = $props();
 
@@ -32,9 +32,9 @@
 
 <Disclaimer />
 
-<Navbar user={data.user} />
+<Navbar session={data.session} />
 
-<Announcement />
+<Toaster />
 
 {@render children()}
 

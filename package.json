@@ -28,7 +28,6 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
-		"@zerodevx/svelte-toast": "^0.9.6",
 		"drizzle-kit": "^0.30.2",
 		"esbuild": "^0.25.2",
 		"eslint": "^9.18.0",
@@ -55,6 +54,7 @@
 		"@vercel/speed-insights": "^1.2.0",
 		"configcat-js": "^9.5.1",
 		"drizzle-orm": "^0.40.0",
-		"postgres": "^3.4.5"
+		"postgres": "^3.4.5",
+		"svelte-sonner": "^1.0.1"
 	}
 }

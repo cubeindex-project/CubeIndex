@@ -31,6 +31,15 @@
         }
     }
 
+    async function signUpDiscord() {
+        await supabase.auth.signInWithOAuth({
+            provider: 'discord',
+            options: {
+                redirectTo: `https://cube-index-beta.vercel.app/auth/signup-callback`,
+            },
+        });
+    }
+
     function togglePasswordVisibility() {
         showPassword = !showPassword;
     }
@@ -185,14 +194,14 @@
                 </div>
 
                 <!-- Sign Up with Discord Button -->
-                <a
+                <button
                     type="button"
-                    href="/auth/login/discord"
+                    onclick={signUpDiscord}
                     class="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] transition px-6 py-3 mt-6 rounded-lg font-semibold text-white text-lg shadow-lg cursor-pointer"
                 >
                     <i class="fa-brands fa-discord text-2xl"></i>
                     Sign Up with Discord
-                </a>
+                </button>
 
                 {#if form?.message}
                     <p class="text-sm text-red-500 text-center mt-2">

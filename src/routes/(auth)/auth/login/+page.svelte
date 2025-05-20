@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { supabase } from "$lib/supabaseClient.js";
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import { onMount } from "svelte";
@@ -7,6 +8,10 @@
     let showPassword = $state(false);
     let email = $state("");
     let login = $state(true);
+
+    async function signInDiscord() {
+        await supabase.auth.signInWithOAuth({ provider: 'discord' });
+    }
 
     function togglePasswordVisibility() {
         showPassword = !showPassword;
@@ -34,11 +39,7 @@
             <p class="text-center text-gray-400 text-sm mb-8">
                 Login to your CubeIndex profile
             </p>
-            <form
-                method="POST"
-                action="?/login"
-                class="space-y-6"
-            >
+            <form method="POST" action="?/login" class="space-y-6">
                 <div>
                     <label
                         for="email"
@@ -91,6 +92,23 @@
                     class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 transition rounded-lg px-6 py-3 font-semibold text-white text-lg"
                 >
                     Log In
+                </button>
+
+                <!-- OR Divider -->
+                <div class="flex items-center gap-4 my-2">
+                    <div class="flex-1 h-px bg-neutral-700"></div>
+                    <span class="text-gray-400 text-xs">or</span>
+                    <div class="flex-1 h-px bg-neutral-700"></div>
+                </div>
+
+                <!-- Sign Up with Discord Button -->
+                <button
+                    type="button"
+                    onclick={signInDiscord}
+                    class="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] transition px-6 py-3 mt-6 rounded-lg font-semibold text-white text-lg shadow-lg cursor-pointer"
+                >
+                    <i class="fa-brands fa-discord text-2xl"></i>
+                    Sign In with Discord
                 </button>
 
                 {#if form?.message}

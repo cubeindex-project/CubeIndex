@@ -1,5 +1,5 @@
 import { sequence } from '@sveltejs/kit/hooks';
-import { type Handle, redirect } from '@sveltejs/kit';
+import { type Handle, redirect, error } from '@sveltejs/kit';
 import { createServerClient } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
 
@@ -63,22 +63,33 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	event.locals.user = user
 
 	if (user) {
-		const { data: profiles, error } = await event.locals.supabase
+		const { data: profiles, error: err } = await event.locals.supabase
 			.from('profiles')
-			.select('id, role')
+			.select('username')
 			.eq('user_id', user?.id)
 
-		if (error) {
-			console.error('Couldn\'t load profiles in hooks:', error)
-		}
+		if (err) throw error(500, err.message);
 
 		const profile = profiles?.[0]
 
+		const { data: user_roles, error: rolesErr } = await event.locals.supabase
+			.from('user_roles')
+			.select('*')
+			.eq('user', profile.username);
+
+		if (rolesErr) throw error(500, rolesErr.message);
+
+		let user_role: { role: string };
+		if (!user_roles || user_roles.length === 0) {
+			user_role = { role: "user" };
+		} else {
+			user_role = user_roles[0];
+		}
 
 		if (event.locals.session && event.url.pathname === '/auth') {
 			redirect(303, `/user/${profile?.id}`)
 		}
-		if (event.locals.session && event.url.pathname.startsWith('/admin') && profile?.role !== 'admin') {
+		if (event.locals.session && event.url.pathname.startsWith('/admin') && user_role.role !== 'admin') {
 			redirect(303, '/')
 		}
 	}

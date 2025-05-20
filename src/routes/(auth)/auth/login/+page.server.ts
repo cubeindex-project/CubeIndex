@@ -14,7 +14,7 @@ export const actions: Actions = {
 
     const { data: profiles, error: err } = await supabase
       .from('profiles')
-      .select('id, role')
+      .select('id')
       .eq('user_id', user?.id)
 
     if (err) throw error(500, err.message);

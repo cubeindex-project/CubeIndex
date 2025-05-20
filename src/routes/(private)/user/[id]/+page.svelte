@@ -1,7 +1,6 @@
 <script lang="ts">
     const { data } = $props();
-    const { user } = data;
-    const { profile } = data;
+    const { user, profile, user_role } = data;
 
     const default_profile_picture = "/images/default-profile.png";
 
@@ -58,9 +57,36 @@
             <div class="flex-1 w-full">
                 <div class="flex items-center justify-between w-full gap-2">
                     <h2
-                        class="text-3xl sm:text-4xl font-clash flex flex-row font-extrabold gap-4 break-all items-center tracking-tight text-white"
+                        class="text-3xl sm:text-4xl flex flex-row font-extrabold gap-4 break-all items-center tracking-tight text-white"
                     >
-                        {profile?.username}
+                        <span class="font-clash">{profile?.username}</span>
+                        <!-- Badge Section -->
+                        <span class="flex flex-row gap-2 ml-2">
+                            {#if user_role.role === "official"}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded bg-blue-600 text-sm font-semibold text-white ml-2"
+                                    title="Official Account"
+                                >
+                                    <i class="fa-solid fa-certificate mr-1"></i> Official
+                                </span>
+                            {/if}
+                            {#if user_role.role === "admin"}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded bg-red-600 text-sm font-semibold text-white"
+                                    title="Admin"
+                                >
+                                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin
+                                </span>
+                            {/if}
+                            {#if user_role.role === "test"}
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded bg-yellow-600 text-sm font-semibold text-white ml-2"
+                                    title="Text Account"
+                                >
+                                    <i class="fa-solid fa-vial mr-1"></i> Test Account
+                                </span>
+                            {/if}
+                        </span>
                     </h2>
                     {#if user?.id === profile?.user_id}
                         <a
@@ -89,7 +115,7 @@
                 </div>
 
                 <!-- Socials Section -->
-                {#if profile?.socials }
+                {#if profile?.socials}
                     <div class="mt-4">
                         <h4 class="text-lg font-bold text-white mb-2">
                             Socials

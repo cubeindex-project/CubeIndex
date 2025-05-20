@@ -49,15 +49,17 @@
 						<!-- Rarity Color Bar -->
 						<div
 							class={"w-2 flex-shrink-0 " +
-								(achievement.rarity == "Legendary"
-									? "bg-yellow-400"
-									: achievement.rarity == "Epic"
-										? "bg-purple-600"
-										: achievement.rarity == "Rare"
-											? "bg-blue-600"
-											: achievement.rarity == "Special"
-												? "bg-pink-600"
-												: "bg-neutral-700")}
+								(achievement.rarity == "Mythic"
+									? "bg-red-600"
+									: achievement.rarity == "Legendary"
+										? "bg-yellow-400"
+										: achievement.rarity == "Exotic"
+											? "bg-teal-400"
+											: achievement.rarity == "Epic"
+												? "bg-purple-600"
+												: achievement.rarity == "Rare"
+													? "bg-blue-600"
+													: "bg-neutral-700")}
 						></div>
 						<!-- Card Content -->
 						<div class="flex-1 p-6">

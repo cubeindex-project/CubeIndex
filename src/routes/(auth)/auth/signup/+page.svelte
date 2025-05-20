@@ -1,10 +1,11 @@
 <script lang="ts">
+    import { supabase } from "$lib/supabaseClient.js";
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import { onMount } from "svelte";
     import { enhance } from "$app/forms";
 
-    let { form } = $props()
+    let { form } = $props();
     let username: string = $state("");
     let email: string = $state("");
     let password: string = $state("");
@@ -28,6 +29,10 @@
             error = "Please enter a valid email address";
             return;
         }
+    }
+
+    async function signUpDiscord() {
+        await supabase.auth.signInWithOAuth({ provider: 'discord' });
     }
 
     function togglePasswordVisibility() {
@@ -56,7 +61,12 @@
             <p class="text-center text-gray-400 text-sm mb-8">
                 Create a free account to start tracking your collection
             </p>
-            <form method="POST" action="?/signup" use:enhance={signUpVerification} class="space-y-6">
+            <form
+                method="POST"
+                action="?/signup"
+                use:enhance={signUpVerification}
+                class="space-y-6"
+            >
                 <!-- Username -->
                 <div>
                     <label
@@ -171,22 +181,22 @@
                     Sign Up
                 </button>
 
-                <!-- OR Divider
+                <!-- OR Divider -->
                 <div class="flex items-center gap-4 my-2">
                     <div class="flex-1 h-px bg-neutral-700"></div>
                     <span class="text-gray-400 text-xs">or</span>
                     <div class="flex-1 h-px bg-neutral-700"></div>
                 </div>
 
-                Sign Up with Discord Button
+                <!-- Sign Up with Discord Button -->
                 <button
                     type="button"
-                    onclick={signupWithDiscord}
+                    onclick={signUpDiscord}
                     class="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] transition px-6 py-3 mt-6 rounded-lg font-semibold text-white text-lg shadow-lg cursor-pointer"
                 >
                     <i class="fa-brands fa-discord text-2xl"></i>
                     Sign Up with Discord
-                </button> -->
+                </button>
 
                 {#if form?.message}
                     <p class="text-sm text-red-500 text-center mt-2">

@@ -1,16 +1,7 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { type Handle, redirect } from '@sveltejs/kit';
-import { paraglideMiddleware } from '$lib/paraglide/server';
 import { createServerClient } from '@supabase/ssr';
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
-
-const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
-		event.request = request;
-		return resolve(event, {
-			transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale)
-		});
-	});
 
 const supabase: Handle = async ({ event, resolve }) => {
 	/**
@@ -102,7 +93,6 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 
 export const handle: Handle = sequence(
-	handleParaglide,
 	supabase,
 	authGuard
 );

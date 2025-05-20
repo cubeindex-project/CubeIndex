@@ -40,7 +40,7 @@
                 <span class="text-xs text-gray-400 flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>0 Cubes
                   <span class="mx-1">•</span>
-                  <i class="fa-solid fa-medal"></i>0 Badges
+                  <i class="fa-solid fa-medal"></i>0 Achievements
                 </span>
               </div>
               <p class="text-gray-300 text-xs truncate max-w-full mt-1">

@@ -1,28 +1,23 @@
 import { supabase } from '$lib/supabaseClient';
+import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-  const { cube_id } = params;
+  const { slug } = params;
 
   const { data: cube, error: cubeError } = await supabase
     .from('cube_models')
     .select("*")
-    .eq('name_id', cube_id)
+    .eq('slug', slug)
     .single();
 
-
-  if (cubeError || !cube) {
-    console.error(cubeError);
-    return { status: 404 };
-  }
+  if (cubeError) throw error(500, cubeError.message);
 
   const { data: vendor_links, error: vendorError } = await supabase
     .from('cube_vendor_links')
     .select("*")
-    .eq('cube_id', cube_id);
+    .eq('cube', cube.models);
 
-  if (vendorError) {
-    console.error('Error loading vendor links:', vendorError);
-  }
+  if (vendorError) throw error(500, vendorError.message);
 
   return { cube, vendor_links };
 }

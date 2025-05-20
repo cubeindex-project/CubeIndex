@@ -12,7 +12,7 @@ export const GET = async ({ url, locals: { supabase } }) => {
 
       const { error: profileError } = await supabase
         .from("profiles")
-        .upsert({ user_id: userId, username });
+        .upsert({ user_id: userId, username, verified: 'TRUE' });
 
       if (profileError) throw error(500, profileError.message);
 

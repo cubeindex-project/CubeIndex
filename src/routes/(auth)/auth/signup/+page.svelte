@@ -32,7 +32,12 @@
     }
 
     async function signUpDiscord() {
-        await supabase.auth.signInWithOAuth({ provider: "discord" });
+        await supabase.auth.signInWithOAuth({
+            provider: 'discord',
+            options: {
+                redirectTo: `https://cube-index-2nr0s9wpc-saterz-studio.vercel.app/auth/callback`,
+            },
+        });
     }
 
     function togglePasswordVisibility() {

@@ -13,7 +13,7 @@
         await supabase.auth.signInWithOAuth({
             provider: 'discord',
             options: {
-                redirectTo: `https://cube-index-beta.vercel.app/auth/login-callback`,
+                redirectTo: `${location.origin}/auth/login-callback`,
             },
         });
     }

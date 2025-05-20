@@ -19,11 +19,11 @@
 
     const formattedReleaseDate = formatReleaseDate(cube.release_date);
 
-    onMount(() =>
-        configCatClient.getValueAsync("database", false).then((value) => {
-            databaseAvailability = value;
-        }),
-    );
+    // onMount(() =>
+    //     configCatClient.getValueAsync("database", false).then((value) => {
+    //         databaseAvailability = value;
+    //     }),
+    // );
 </script>
 
 {#if databaseAvailability}
@@ -39,7 +39,7 @@
                 </div>
             {/if}
             <h1 class="text-4xl font-clash font-bold text-white mb-4">
-                {cube.name}
+                {cube.series} {cube.model}
             </h1>
             <div
                 class="mb-4 p-4 bg-neutral-900 rounded-xl border border-neutral-800 shadow-sm"
@@ -48,7 +48,7 @@
                     Description:
                     <span class="block mt-2 text-white">
                         The <span class="font-bold text-blue-400"
-                            >{cube.name}</span
+                            >{cube.series} {cube.model}</span
                         >
                         is a
                         <span class="font-bold text-blue-400">{cube.type}</span>

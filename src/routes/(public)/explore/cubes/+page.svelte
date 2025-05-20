@@ -26,6 +26,7 @@
     const allYears = Array.from(new Set(cubes.map((c) => c.release_year))).sort(
         (a, b) => Number(b) - Number(a),
     );
+    const allSeries = Array.from(new Set(cubes.map((c) => c.series))).sort();
 
     // 3) Reactive filtered list
     const filteredCubes = derived(
@@ -40,9 +41,6 @@
         ],
         ([$type, $brand, $wca, $mag, $smart, $year, $modded]) => {
             return cubes.filter((c) => {
-                // only apply year check when a specific year is picked
-                const yearCheck = $year === "All" || c.release_year === $year;
-
                 return (
                     ($type === "All" || c.type === $type) &&
                     ($brand === "All" || c.brand === $brand) &&
@@ -50,7 +48,7 @@
                     ($mag === undefined || c.magnetic === $mag) &&
                     ($modded === undefined || c.modded === $modded) &&
                     ($smart === undefined || c.smart === $smart) &&
-                    yearCheck
+                    ($year === "All" || c.release_year === $year)
                 );
             });
         },
@@ -70,12 +68,12 @@
         loading = false;
     });
 
-    configCatClient.getValueAsync("database", false).then((value) => {
-        databaseAvailability = value;
-    });
-    configCatClient.getValueAsync("cubes", false).then((value) => {
-        cubesAvailability = value;
-    });
+    // configCatClient.getValueAsync("database", false).then((value) => {
+    //     databaseAvailability = value;
+    // });
+    // configCatClient.getValueAsync("cubes", false).then((value) => {
+    //     cubesAvailability = value;
+    // });
 
     let search = $state("");
     let showFilters = $state(false);
@@ -317,7 +315,8 @@
                                     />
                                     <div class="p-5">
                                         <h2 class="text-xl font-bold mb-1">
-                                            {cube.name}
+                                            {cube.series}
+                                            {cube.model}
                                         </h2>
                                         <p class="text-sm text-gray-400">
                                             {cube.brand} ・ {cube.type}
@@ -328,7 +327,7 @@
                                             ⭐ {cube.rating}
                                         </div>
                                         <a
-                                            href={`/explore/cubes/${cube.name_id}`}
+                                            href={`/explore/cubes/${cube.slug}`}
                                             class="mt-4 inline-block text-blue-400 hover:underline"
                                             >View Details →</a
                                         >

@@ -68,12 +68,12 @@
         loading = false;
     });
 
-    // configCatClient.getValueAsync("database", false).then((value) => {
-    //     databaseAvailability = value;
-    // });
-    // configCatClient.getValueAsync("cubes", false).then((value) => {
-    //     cubesAvailability = value;
-    // });
+    configCatClient.getValueAsync("database", false).then((value) => {
+        databaseAvailability = value;
+    });
+    configCatClient.getValueAsync("cubes", false).then((value) => {
+        cubesAvailability = value;
+    });
 
     let search = $state("");
     let showFilters = $state(false);

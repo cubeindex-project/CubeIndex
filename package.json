@@ -52,7 +52,7 @@
 		"@tailwindcss/typography": "^0.5.16",
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/speed-insights": "^1.2.0",
-		"configcat-js": "^9.5.1",
+		"configcat-js-ssr": "^8.4.5",
 		"drizzle-orm": "^0.40.0",
 		"postgres": "^3.4.5",
 		"svelte-sonner": "^1.0.1"

@@ -1,11 +1,11 @@
 <script lang="ts">
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-    import { onMount } from "svelte";
 
     let { data } = $props();
     const { accessories } = data;
     let databaseAvailability: boolean = $state(true);
+    let accessoriesAvailability: boolean = $state(true);
 
     // Helper to format YYYY-MM-DD
     function formatDate(d: string) {
@@ -16,14 +16,15 @@
         });
     }
 
-    onMount(() =>
-        configCatClient.getValueAsync("database", false).then((value) => {
-            databaseAvailability = value;
-        }),
-    );
+    configCatClient.getValueAsync("database", false).then((value) => {
+        databaseAvailability = value;
+    });
+    configCatClient.getValueAsync("accessories", false).then((value) => {
+        accessoriesAvailability = value;
+    });
 </script>
 
-{#if databaseAvailability}
+{#if databaseAvailability && accessoriesAvailability}
     <section class="min-h-screen bg-black text-white px-6 py-16 relative">
         <div class="relative z-10 max-w-7xl mx-auto">
             <h1 class="text-4xl font-bold mb-6 font-clash text-center">
@@ -68,6 +69,8 @@
             </div>
         </div>
     </section>
-{:else}
+{:else if !accessoriesAvailability}
+    <FeatureDisabled featureName="The accessories explore page is" />
+{:else if !databaseAvailability}
     <FeatureDisabled featureName="The database is" />
 {/if}

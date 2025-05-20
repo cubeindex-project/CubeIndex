@@ -9,6 +9,7 @@
     const { cubes } = data;
     let loading = $state(true);
     let databaseAvailability: boolean = $state(true);
+    let cubesAvailability: boolean = $state(true);
 
     // 1) Filter state (year is string 'All' or a year text)
     const selectedType = writable<string>("All");
@@ -67,16 +68,20 @@
 
     onMount(() => {
         loading = false;
-        configCatClient.getValueAsync("database", false).then((value) => {
-            databaseAvailability = value;
-        });
+    });
+
+    configCatClient.getValueAsync("database", false).then((value) => {
+        databaseAvailability = value;
+    });
+    configCatClient.getValueAsync("cubes", false).then((value) => {
+        cubesAvailability = value;
     });
 
     let search = $state("");
     let showFilters = $state(false);
 </script>
 
-{#if databaseAvailability}
+{#if databaseAvailability && cubesAvailability}
     <section class="min-h-screen bg-black text-white px-6 py-16">
         <div class="max-w-7xl mx-auto">
             <h1 class="text-4xl font-clash font-bold mb-6 text-center">
@@ -343,6 +348,8 @@
             </div>
         </div>
     </section>
-{:else}
+{:else if !cubesAvailability}
+    <FeatureDisabled featureName="The cubes explore page is" />
+{:else if !databaseAvailability}
     <FeatureDisabled featureName="The database is" />
 {/if}

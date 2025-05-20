@@ -6,9 +6,7 @@ export async function load() {
     .from('cube_models')
     .select('*');
 
-  if (error) {
-    if (err) throw error(500, err.message);
-  }
+  if (err) throw error(500, err.message);
 
   return { cubes };
 }

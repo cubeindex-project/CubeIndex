@@ -7,6 +7,7 @@
     let { data }: { data: PageData } = $props();
     const vendors = data.vendors ?? [];
     let databaseAvailability: boolean = $state(true);
+    let vendorsAvailability: boolean = $state(true);
 
     // Function to convert ISO country code to flag emoji
     function getFlagEmoji(countryCode: string): string {
@@ -18,11 +19,12 @@
         );
     }
 
-    onMount(() =>
-        configCatClient.getValueAsync("database", false).then((value) => {
-            databaseAvailability = value;
-        }),
-    );
+    configCatClient.getValueAsync("database", false).then((value) => {
+        databaseAvailability = value;
+    });
+    configCatClient.getValueAsync("vendors", false).then((value) => {
+        vendorsAvailability = value;
+    });
 </script>
 
 {#if databaseAvailability}
@@ -71,6 +73,8 @@
             </div>
         </div>
     </section>
-{:else}
+{:else if !vendorsAvailability}
+    <FeatureDisabled featureName="The vendors explore page is" />
+{:else if !databaseAvailability}
     <FeatureDisabled featureName="The database is" />
 {/if}

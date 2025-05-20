@@ -1,4 +1,4 @@
-import * as configcat from "configcat-js";
+import * as configcat from "configcat-js-ssr";
 
 const logger = configcat.createConsoleLogger(configcat.LogLevel.Info); // Set the log level to INFO to track how your feature flags were evaluated. When moving to production, you can remove this line to avoid too detailed logging.
 

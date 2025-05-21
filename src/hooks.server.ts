@@ -72,24 +72,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 		const profile = profiles?.[0]
 
-		const { data: user_roles, error: rolesErr } = await event.locals.supabase
-			.from('user_roles')
-			.select('*')
-			.eq('user', profile.username);
-
-		if (rolesErr) throw error(500, rolesErr.message);
-
-		let user_role: { role: string };
-		if (!user_roles || user_roles.length === 0) {
-			user_role = { role: "user" };
-		} else {
-			user_role = user_roles[0];
-		}
-
 		if (event.locals.session && event.url.pathname === '/auth') {
 			redirect(303, `/user/${profile?.id}`)
 		}
-		if (event.locals.session && event.url.pathname.startsWith('/admin') && user_role.role !== 'admin') {
+		if (event.locals.session && event.url.pathname.startsWith('/admin') && profile.role !== 'Admin') {
 			redirect(303, '/')
 		}
 	}

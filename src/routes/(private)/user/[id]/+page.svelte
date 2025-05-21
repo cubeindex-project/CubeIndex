@@ -1,6 +1,6 @@
 <script lang="ts">
     const { data } = $props();
-    const { user, profile, user_role } = data;
+    const { user, profile } = data;
 
     const default_profile_picture = "/images/default-profile.png";
 
@@ -62,28 +62,12 @@
                         <span class="font-clash">{profile?.username}</span>
                         <!-- Badge Section -->
                         <span class="flex flex-row gap-2 ml-2">
-                            {#if user_role.role === "official"}
-                                <span
-                                    class="inline-flex items-center px-2 py-1 rounded bg-blue-600 text-sm font-semibold text-white ml-2"
-                                    title="Official Account"
-                                >
-                                    <i class="fa-solid fa-certificate mr-1"></i> Official
-                                </span>
-                            {/if}
-                            {#if user_role.role === "admin"}
+                            {#if profile.role === "Admin"}
                                 <span
                                     class="inline-flex items-center px-2 py-1 rounded bg-red-600 text-sm font-semibold text-white"
                                     title="Admin"
                                 >
                                     <i class="fa-solid fa-shield-halved mr-1"></i> Admin
-                                </span>
-                            {/if}
-                            {#if user_role.role === "test"}
-                                <span
-                                    class="inline-flex items-center px-2 py-1 rounded bg-yellow-600 text-sm font-semibold text-white ml-2"
-                                    title="Text Account"
-                                >
-                                    <i class="fa-solid fa-vial mr-1"></i> Test Account
                                 </span>
                             {/if}
                         </span>

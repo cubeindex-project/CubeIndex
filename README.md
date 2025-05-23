@@ -1,48 +1,114 @@
 # CubeIndex
- 
- **CubeIndex** is a website where you can manage your speed (or non speed) cube collection, it is built with **SvelteKit**, **TailwindCSS**, **Supabase**, and more...
- 
-## Tech Stack
- 
- - **Frontend:** SvelteKit and TailwindCSS
- - **Backend:** Supabase and PostgreSQL
- - **Hosting:** Vercel
 
-## 🙌 Supporting the Project
+**CubeIndex** is a web app for speedcubers to track, explore, and manage their cube collections. Whether you're into speedcubes or collectibles, CubeIndex helps you organize and showcase your cubes with ease.
 
-If you want to support its development and help it grow, here are some ways you can contribute:
+## 🧠 Tech Stack
 
-### ⭐ Star the Repository
-One of the easiest ways to support CubeIndex is by starring the repository. It helps increase visibility and shows your support for the project.
+- **Frontend:** SvelteKit, Tailwind CSS
+- **Backend:** Supabase (PostgreSQL), Drizzle ORM
+- **Auth:** Custom session-based authentication
+- **i18n:** Inlang for multi-language support
+- **Tooling:** TypeScript, ESLint, Vitest, Vite
 
-### 🗣️ Spread the Word
-Share CubeIndex with fellow cubers!  
-You can post about it on:
-- Discord communities
-- Reddit (r/Cubers, r/Speedcubing, etc.)
-- Twitter/X
-- Facebook cubing groups  
+## 🗂 Project Structure
 
-The more people who know about CubeIndex, the stronger the community becomes.
+- `src/routes/` – Pages and endpoints
+- `src/lib/components/` – UI components
+- `src/lib/server/db/` – Drizzle schema and DB access
+- `src/lib/server/auth.ts` – Custom auth logic
+- `messages/` – Translations (i18n)
 
-### 🔧 Contribute to the Code
-If you’re a developer, feel free to:
-- Open issues for bugs or feature suggestions  
-- Submit pull requests to improve the app  
-- Help with documentation and tutorials  
+## 🛠 Setup Instructions
 
-Check out the [Contributing Guidelines](./CONTRIBUTING.md) for more information.
+1. **Clone the Repo**
+   ```bash
+   git clone https://github.com/Saterz/CubeIndex.git
+   cd CubeIndex
+   ```
 
-### 💬 Join the Community
-Get involved by joining our [Discord server](https://discord.gg/YvhEjgQ7Fq).  
-You can:
-- Share ideas and feedback  
-- Participate in early previews  
-- Report bugs and suggest new features  
+2. **Install Dependencies**
 
-### 🥐 Buy Me a Croissant
-If you’d like to support development costs, consider [buying me a croissant](https://ko-fi.com/saterz_).
- 
- ## License
+   ```bash
+   npm install
+   ```
 
-This project is under the Apache 2.0 License.
+3. **Configure Environment**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Update `.env` with your `DATABASE_URL` (e.g. from Supabase).
+
+4. **Set Up Database**
+
+   ```bash
+   npm run db:push
+   ```
+
+5. **Start the Dev Server**
+
+   ```bash
+   npm run dev
+   ```
+
+Visit [http://localhost:5173](http://localhost:5173)
+
+## 🧪 Running Tests
+
+Run all tests:
+
+```bash
+npm run test
+```
+
+Watch mode:
+
+```bash
+npm run test:unit
+```
+
+Lint your code:
+
+```bash
+npm run lint
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to get started:
+
+* **Fork & branch off `developer`**
+* Use clear names like `feature/add-cube-model`
+* Follow code style (TypeScript, ESLint)
+* Add tests for new features
+* Commit clearly (e.g. `fix: login bug`)
+* Open a PR with description and context
+* Reference issues when applicable (e.g. `Closes #12`)
+* Chat with us on Discord for guidance
+
+### 🧩 Contribution Example
+
+```bash
+git checkout -b feature/my-feature
+# Make your changes
+npm run lint && npm run test
+git commit -m "feat: add new feature"
+git push origin feature/my-feature
+```
+
+Then open a Pull Request to `developer` on GitHub.
+
+## 👥 Community & Support
+
+* Join us on **Discord**
+* Create issues for bugs or feature ideas
+* Check the docs/comments for guidance
+
+## 📄 License
+
+This project is licensed under the **Apache 2.0 License**. See the `LICENSE` file for details.
+
+---
+
+Thanks for helping build CubeIndex! 🧊

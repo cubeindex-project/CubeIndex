@@ -59,7 +59,7 @@
                 >
                 and join the community on
                 <a
-                    href="https://discord.gg/YvhEjgQ7Fq"
+                    href="https://discord.gg/WpqqfCGCUs"
                     target="_blank"
                     class="text-blue-400 hover:underline">Discord</a
                 >.

@@ -101,7 +101,7 @@ Then open a Pull Request to `developer` on GitHub.
 
 ## 👥 Community & Support
 
-* Join us on **Discord**
+* Join us on **[Discord](https://discord.gg/WpqqfCGCUs)**
 * Create issues for bugs or feature ideas
 * Check the docs/comments for guidance
 

@@ -157,7 +157,7 @@
 
             <div class="mt-4">
                 <a
-                    href="https://discord.gg/YvhEjgQ7Fq"
+                    href="https://discord.gg/76ExrEAE7s"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-block px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition"

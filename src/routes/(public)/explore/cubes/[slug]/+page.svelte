@@ -2,7 +2,7 @@
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import { onMount } from "svelte";
-    
+
     let { data } = $props();
     let { cube } = $derived(data);
     let { vendor_links } = $derived(data);
@@ -19,11 +19,11 @@
 
     const formattedReleaseDate = formatReleaseDate(cube.release_date);
 
-    // onMount(() =>
-    //     configCatClient.getValueAsync("database", false).then((value) => {
-    //         databaseAvailability = value;
-    //     }),
-    // );
+    onMount(() =>
+        configCatClient.getValueAsync("database", false).then((value) => {
+            databaseAvailability = value;
+        }),
+    );
 </script>
 
 {#if databaseAvailability}
@@ -39,7 +39,8 @@
                 </div>
             {/if}
             <h1 class="text-4xl font-clash font-bold text-white mb-4">
-                {cube.series} {cube.model}
+                {cube.series}
+                {cube.model}
             </h1>
             <div
                 class="mb-4 p-4 bg-neutral-900 rounded-xl border border-neutral-800 shadow-sm"
@@ -94,6 +95,12 @@
                         <span class="text-white font-medium">{cube.type}</span>
                     </div>
                     <div class="flex items-center justify-between">
+                        <span class="text-gray-400">Weight:</span>
+                        <span class="text-white font-medium"
+                            >{cube.weight} g</span
+                        >
+                    </div>
+                    <div class="flex items-center justify-between">
                         <span class="text-gray-400">Release Date:</span>
                         <span class="text-white font-medium"
                             >{formattedReleaseDate}</span
@@ -128,6 +135,10 @@
                         <span class="text-xl"
                             >{cube.wca_legal ? "✅" : "❌"}</span
                         >
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-400">Maglev:</span>
+                        <span class="text-xl">{cube.maglev ? "✅" : "❌"}</span>
                     </div>
                 </div>
             </div>

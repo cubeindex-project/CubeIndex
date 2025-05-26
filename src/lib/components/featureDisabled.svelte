@@ -1,6 +1,6 @@
 <script lang="ts">
     const { featureName } = $props();
-    const discordInvite = "https://discord.gg/YvhEjgQ7Fq"
+    const discordInvite = "https://discord.gg/76ExrEAE7s"
 </script>
 
 <section class="min-h-screen bg-black flex items-center justify-center px-6 py-12">

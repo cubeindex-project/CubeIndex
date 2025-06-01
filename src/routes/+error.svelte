@@ -51,7 +51,7 @@
 			🏠 Return Home
 		</a>
 		<a
-			href="https://discord.gg/VHhYR6nyzs"
+			href="https://discord.gg/76ExrEAE7s"
 			target="_blank"
 			rel="noopener noreferrer"
 			class="inline-block rounded-xl bg-purple-600 hover:bg-purple-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(149,76,233,0.5)] transition"

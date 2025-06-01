@@ -109,7 +109,7 @@
 
 				{#if notificationOpen}
 					<div
-						class="absolute left-1/2 -translate-x-1/2 top-10 mt-2 z-50 w-80 max-w-xs rounded-2xl shadow-2xl ring-1 ring-white/20 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 transition-all overflow-hidden"
+						class="absolute -right-0 top-10 mt-2 z-50 w-80 max-w-xs rounded-2xl shadow-2xl ring-1 ring-white/20 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 transition-all overflow-hidden"
 						style="min-width: 320px;"
 					>
 						<div

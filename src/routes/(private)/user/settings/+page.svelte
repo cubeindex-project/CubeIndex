@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
@@ -17,6 +18,22 @@
   let discord = $state(profile.socials.discord);
   let youtube = $state(profile.socials.youtube);
   let x = $state(profile.socials.x);
+  let password = $state("");
+  let error = $state("");
+  let message = $state("");
+
+  function verifySettings() {
+    if (password.length < 8) {
+      error = "Password must be at least 8 characters.";
+      return;
+    }
+  }
+  function updatePassword() {
+    if (password.length < 8) {
+      error = "Password must be at least 8 characters.";
+      return;
+    }
+  }
 </script>
 
 <section
@@ -29,7 +46,7 @@
       User Settings
     </h1>
 
-    <form method="POST">
+    <form method="POST" use:enhance={verifySettings}>
       <!-- Profile Information -->
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
@@ -134,7 +151,7 @@
           </h2>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-6">
           <!-- Website -->
           <div>
             <label class="block text-sm font-semibold text-gray-300 mb-2">
@@ -155,7 +172,7 @@
               Twitter/X
               <div class="flex">
                 <span
-                  class="inline-flex items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
+                  class="sm:inline-flex hidden items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
                 >
                   https://x.com/
                 </span>
@@ -164,7 +181,7 @@
                   name="x"
                   bind:value={x}
                   placeholder="your handle"
-                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg rounded-l-lg sm:rounded-l-none border border-neutral-700 focus:border-blue-500 outline-none transition"
                 />
               </div>
             </label>
@@ -176,16 +193,16 @@
               WCA ID
               <div class="flex">
                 <span
-                  class="inline-flex items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
+                  class="sm:inline-flex items-center hidden px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
                 >
-                  "worldcubeassociation.org/persons/"
+                  worldcubeassociation.org/persons/
                 </span>
                 <input
                   type="text"
                   name="wca"
                   bind:value={wca}
                   placeholder="2023EXAM01"
-                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg rounded-l-lg sm:rounded-l-none border border-neutral-700 focus:border-blue-500 outline-none transition"
                 />
               </div>
             </label>
@@ -197,7 +214,7 @@
               Discord ID
               <div class="flex">
                 <span
-                  class="inline-flex items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
+                  class="sm:inline-flex hidden items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
                 >
                   discord.com/users/
                 </span>
@@ -206,7 +223,7 @@
                   name="discord"
                   bind:value={discord}
                   placeholder="123456789012345678"
-                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg rounded-l-lg sm:rounded-l-none border border-neutral-700 focus:border-blue-500 outline-none transition"
                 />
               </div>
             </label>
@@ -218,7 +235,7 @@
               YouTube Handle or Channel ID
               <div class="flex">
                 <span
-                  class="inline-flex items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
+                  class="sm:inline-flex hidden items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
                 >
                   youtube.com/
                 </span>
@@ -227,7 +244,7 @@
                   name="youtube"
                   bind:value={youtube}
                   placeholder="@your channel or channel/UCxxxx"
-                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg rounded-l-lg sm:rounded-l-none border border-neutral-700 focus:border-blue-500 outline-none transition"
                 />
               </div>
             </label>
@@ -239,7 +256,7 @@
               Reddit
               <div class="flex">
                 <span
-                  class="inline-flex items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
+                  class="sm:inline-flex hidden items-center px-3 rounded-l-lg bg-neutral-800 border border-r-0 border-neutral-700 text-gray-400 text-sm"
                 >
                   reddit.com/u/
                 </span>
@@ -248,7 +265,7 @@
                   name="reddit"
                   bind:value={reddit}
                   placeholder="your username"
-                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                  class="w-full bg-neutral-900 text-white p-3 rounded-r-lg rounded-l-lg sm:rounded-l-none border border-neutral-700 focus:border-blue-500 outline-none transition"
                 />
               </div>
             </label>
@@ -291,14 +308,10 @@
 
         <button
           class="mt-4 px-5 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg text-white font-semibold transition cursor-pointer"
-          disabled
-          title="Password update not implemented yet"
+          onclick={updatePassword}
         >
-          Update Password (not implemented yet)
+          Update Password
         </button>
-        <p class="text-sm text-yellow-400 mt-2">
-          Password update does not work yet.
-        </p>
       </div>
 
       <div class="flex justify-end pt-6">

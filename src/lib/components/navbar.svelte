@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { supabase } from "$lib/supabaseClient";
 	import { onMount } from "svelte";
-	import type { User } from "@supabase/supabase-js";
 	import ConfirmSignOut from "./confirmSignOut.svelte";
+	import { blur, draw } from "svelte/transition";
 
 	let loading = $state(true);
 	let isOpen = $state(false);
-	let profile: { id: any; username: any } | null = $state(null);
+	let profile: { id: any; username: any; role: any } | null = $state(null);
 	let { session } = $props();
 	let signOutConfirmation = $state(false);
 	let notificationOpen = $state(false);
@@ -14,7 +14,7 @@
 	async function loadProfile() {
 		let { data, error } = await supabase
 			.from("profiles")
-			.select("id, username")
+			.select("id, username, role")
 			.eq("user_id", session.user.id)
 			.maybeSingle();
 
@@ -62,6 +62,9 @@
 		if (session) loadProfile();
 		loading = false;
 	});
+
+	let profileDropdown = $state(false);
+	let mobileProfileDropdown = $state(false);
 </script>
 
 <header class="bg-black text-white shadow-md">
@@ -111,6 +114,7 @@
 					<div
 						class="absolute -right-0 top-10 mt-2 z-50 w-80 max-w-xs rounded-2xl shadow-2xl ring-1 ring-white/20 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 transition-all overflow-hidden"
 						style="min-width: 320px;"
+						transition:blur
 					>
 						<div
 							class="flex items-center px-5 py-4 border-b border-neutral-800"
@@ -163,14 +167,14 @@
 											{/if}
 											<span
 												class="font-semibold text-white"
-												>{n.title}</span
 											>
+												{n.title}
+											</span>
 											<span
 												class="ml-auto text-xs text-gray-400"
-												>{formatDate(
-													n.created_at,
-												)}</span
 											>
+												{formatDate(n.created_at)}
+											</span>
 										</div>
 										<div class="text-gray-300 text-sm">
 											{n.message}
@@ -209,19 +213,69 @@
 			{#if loading}
 				<i class="fa-solid fa-spinner animate-spin"></i>
 			{:else if session && profile}
-				<!-- Now uses profile.id -->
-				<a
-					href={`/user/${profile.id}`}
-					class="text-sm rounded-xl bg-blue-600 px-4 py-2 transition hover:bg-blue-700"
-				>
-					{profile.username}
-				</a>
-				<button
-					onclick={() => (signOutConfirmation = true)}
-					class="rounded-xl bg-red-600 px-4 py-2 text-sm transition hover:bg-red-700 cursor-pointer"
-				>
-					Sign Out
-				</button>
+				<div class="relative inline-block">
+					<button
+						aria-label="Toggle profile options"
+						onclick={() => (profileDropdown = !profileDropdown)}
+						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-blue-600 transition hover:bg-blue-700 focus:outline-none"
+					>
+						<span class="px-4 py-2 border-r border-blue-500">
+							{profile.username}
+						</span>
+						<span class="px-4 py-2">
+							<i
+								class="fa-solid {profileDropdown
+									? 'fa-caret-up'
+									: 'fa-caret-down'}"
+							></i>
+						</span>
+					</button>
+					{#if profileDropdown}
+						<div
+							class="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-md shadow-lg z-50"
+							transition:blur
+						>
+							<a
+								href={`/user/${profile.id}`}
+								onclick={() => {
+									profileDropdown = false;
+								}}
+								class="block px-4 py-2 text-sm hover:bg-neutral-800"
+							>
+								Profile
+							</a>
+							<a
+								href={`/user/settings`}
+								onclick={() => {
+									profileDropdown = false;
+								}}
+								class="block px-4 py-2 text-sm hover:bg-neutral-800"
+							>
+								Settings
+							</a>
+							{#if profile.role === "Admin"}
+								<a
+									href="/admin/dashboard"
+									onclick={() => {
+										profileDropdown = false;
+									}}
+									class="block px-4 py-2 text-sm hover:bg-neutral-800"
+								>
+									Admin Dashboard
+								</a>
+							{/if}
+							<button
+								onclick={() => {
+									signOutConfirmation = true;
+									profileDropdown = false;
+								}}
+								class="w-full cursor-pointer text-left block px-4 py-2 text-sm hover:bg-neutral-800"
+							>
+								Sign Out
+							</button>
+						</div>
+					{/if}
+				</div>
 			{:else}
 				<a
 					href="/auth/login"
@@ -244,13 +298,17 @@
 
 	<!-- Mobile Nav -->
 	{#if isOpen}
-		<nav class="bg-black px-6 pb-4 md:hidden">
+		<nav
+			class="bg-black px-6 pb-4 md:hidden absolute z-20 w-full rounded-b-4xl border-b-neutral-800 border-b-2"
+			transition:blur={{ duration: 250 }}
+		>
 			<ul class="flex flex-col gap-3">
 				{#each navLinks as { name, href }}
 					<li>
 						<a
 							{href}
 							class="block py-2 text-sm border-b border-gray-800 hover:text-blue-400"
+							onclick={() => (isOpen = false)}
 						>
 							{name}
 						</a>
@@ -263,6 +321,7 @@
 						class="flex items-center w-full text-left py-2"
 						aria-label="Notifications"
 						href="/notifications"
+						onclick={() => (isOpen = false)}
 					>
 						<i class="fa-solid fa-bell fa-xl"></i>
 						<span class="ml-2">Notifications</span>
@@ -275,26 +334,74 @@
 				</li>
 
 				{#if session && profile}
-					<li>
-						<a
-							href={`/user/${profile.id}`}
-							class="block py-2 text-center rounded-xl bg-blue-600 px-4 transition hover:bg-blue-700"
+					<li class="relative">
+						<button
+							onclick={() =>
+								(mobileProfileDropdown =
+									!mobileProfileDropdown)}
+							class="w-full text-center rounded-xl bg-blue-600 px-4 py-2 text-sm transition hover:bg-blue-700 focus:outline-none"
 						>
 							{profile.username}
-						</a>
-					</li>
-					<li>
-						<button
-							onclick={() => (signOutConfirmation = true)}
-							class="block w-full rounded-xl bg-red-600 py-2 text-center text-white transition hover:bg-red-700 cursor-pointer"
-						>
-							Sign Out
+							<i
+								class="fa-solid {mobileProfileDropdown
+									? 'fa-caret-up'
+									: 'fa-caret-down'}"
+							></i>
 						</button>
+						{#if mobileProfileDropdown}
+							<ul
+								class="mt-2 space-y-2"
+								transition:blur={{ duration: 250 }}
+							>
+								<li>
+									<a
+										href={`/user/${profile.id}`}
+										onclick={() => (isOpen = false)}
+										class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+									>
+										Profile
+									</a>
+								</li>
+								<li>
+									<a
+										href={`/user/settings`}
+										onclick={() => (isOpen = false)}
+										class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+									>
+										Settings
+									</a>
+								</li>
+								{#if profile.role === "Admin"}
+									<li>
+										<a
+											href="/admin/dashboard"
+											onclick={() => (isOpen = false)}
+											class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+										>
+											Admin Dashboard
+										</a>
+									</li>
+								{/if}
+								<li>
+									<button
+										onclick={() => {
+											signOutConfirmation = true;
+											mobileProfileDropdown = false;
+											isOpen = false;
+										}}
+										class="w-full text-left cursor-pointer block px-4 py-2 hover:bg-neutral-800 rounded"
+									>
+										Sign Out
+									</button>
+								</li>
+							</ul>
+						{/if}
 					</li>
 				{:else}
 					<li>
 						<a
 							href="/auth/login"
+							onclick={() => (isOpen = false)}
 							class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
 						>
 							Login

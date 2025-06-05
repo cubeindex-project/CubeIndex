@@ -11,7 +11,7 @@
 	let signOutConfirmation = $state(false);
 	let notificationOpen = $state(false);
 
-	async function loadProfile(user: User) {
+	async function loadProfile() {
 		let { data, error } = await supabase
 			.from("profiles")
 			.select("id, username")
@@ -59,7 +59,7 @@
 
 	onMount(() => {
 		getMessages();
-		if (session) loadProfile(session);
+		if (session) loadProfile();
 		loading = false;
 	});
 </script>

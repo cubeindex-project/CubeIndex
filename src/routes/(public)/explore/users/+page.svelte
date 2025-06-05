@@ -4,7 +4,7 @@
   import { onMount } from "svelte";
 
   const { data } = $props();
-  const { profiles } = data;
+  const { profiles, user_achievements } = data;
   let databaseAvailability: boolean = $state(true);
 
   onMount(() =>
@@ -40,7 +40,7 @@
                 <span class="text-xs text-gray-400 flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>0 Cubes
                   <span class="mx-1">•</span>
-                  <i class="fa-solid fa-medal"></i>0 Achievements
+                    <i class="fa-solid fa-medal"></i>{user_achievements.filter(ua => ua.username === profile.username).length || 0} Achievements
                 </span>
               </div>
               <p class="text-gray-300 text-xs truncate max-w-full mt-1">

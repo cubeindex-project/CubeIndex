@@ -1,6 +1,6 @@
 <script lang="ts">
     const { data } = $props();
-    const { user, profile } = data;
+    const { user, profile, user_achievements, achievements } = data;
 
     const default_profile_picture = "/images/default-profile.png";
 
@@ -13,7 +13,24 @@
         }).format(date);
     }
 
+    const userAchievementNames = new Set(
+        user_achievements.map((ua) => ua.achievement),
+    );
+
+    const userAchievementsFromAll = achievements.filter((achievement) =>
+        userAchievementNames.has(achievement.name),
+    );
+
     const formattedJoinDate = formatJoinDate(profile?.created_at);
+
+    let showAllAchievements = $state(false);
+    let achievementsToShow: any[] = $state([]);
+    // Show either all achievements or just the first 3, based on toggle state
+    $effect(() => {
+        achievementsToShow = showAllAchievements
+            ? userAchievementsFromAll
+            : userAchievementsFromAll.slice(0, 2);
+    });
 </script>
 
 <section class="min-h-screen bg-black text-white px-0 py-12 pt-0">
@@ -67,7 +84,8 @@
                                     class="inline-flex items-center px-2 py-1 rounded bg-red-600 text-sm font-semibold text-white"
                                     title="Admin"
                                 >
-                                    <i class="fa-solid fa-shield-halved mr-1"></i> Admin
+                                    <i class="fa-solid fa-shield-halved mr-1"
+                                    ></i> Admin
                                 </span>
                             {/if}
                         </span>
@@ -213,13 +231,54 @@
             <h3 class="text-2xl font-bold mb-4 text-white">
                 Achievements Earned
             </h3>
-            <div
-                class="bg-gradient-to-r from-neutral-800 via-blue-950 to-neutral-800 rounded-xl p-6 text-center text-gray-300 shadow-lg border border-neutral-700"
-            >
-                <span class="text-lg font-medium"
-                    >Achievements coming soon!</span
+            {#if user_achievements && user_achievements.length > 0}
+                <ul
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
                 >
-            </div>
+                    {#each achievementsToShow as achievement}
+                        <li
+                            class="{achievement.rarity == 'Mythic'
+                                ? 'bg-gradient-to-r from-red-600 to-rose-700'
+                                : achievement.rarity == 'Legendary'
+                                  ? 'bg-gradient-to-r from-yellow-300 to-yellow-500'
+                                  : achievement.rarity == 'Exotic'
+                                    ? 'bg-teal-400'
+                                    : achievement.rarity == 'Epic'
+                                      ? 'bg-purple-600'
+                                      : achievement.rarity == 'Rare'
+                                        ? 'bg-blue-600'
+                                        : 'bg-neutral-700'} 
+                                            {achievement.rarity ==
+                                'Legendary' || achievement.rarity == 'Exotic'
+                                ? 'text-black'
+                                : 'text-white'} rounded-xl p-4 text-center shadow-lg border border-neutral-700"
+                        >
+                            {achievement.icon}
+                            <span class="text-lg font-medium"
+                                >{achievement.name}</span
+                            >
+                        </li>
+                    {/each}
+
+                    {#if userAchievementsFromAll.length > 2}
+                        <button
+                            onclick={() =>
+                                (showAllAchievements = !showAllAchievements)}
+                            class="bg-neutral-700 text-white rounded-xl p-4 text-center shadow-lg border border-neutral-700 cursor-pointer hover:bg-neutral-800 transition"
+                        >
+                            {showAllAchievements ? "Show Less" : "Show More"}
+                        </button>
+                    {/if}
+                </ul>
+            {:else}
+                <div
+                    class="bg-gradient-to-r from-neutral-800 via-blue-950 to-neutral-800 rounded-xl p-6 text-center text-gray-300 shadow-lg border border-neutral-700"
+                >
+                    <span class="text-lg font-medium"
+                        >No achievements earned yet!</span
+                    >
+                </div>
+            {/if}
         </div>
 
         <!-- Cube Collection -->

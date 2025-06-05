@@ -1,13 +1,4 @@
 <script lang="ts">
-  /**
-   * open: whether the modal is visible
-   * onConfirm: called when user confirms sign-out
-   * onCancel: called when user cancels
-   */
-  //   export let open: boolean;
-  //   export let onConfirm: () => void;
-  //   export let onCancel: () => void;
-
   let { onCancel } = $props();
 </script>
 

@@ -45,7 +45,7 @@
 </script>
 
 <section
-    class="px-5 relative flex min-h-screen flex-col items-center justify-center bg-black text-white overflow-hidden"
+    class="px-5 relative flex min-h-screen flex-col items-center justify-center overflow-hidden"
 >
     <div class="relative z-10 text-center max-w-3xl space-y-6">
         <h1 class="text-5xl sm:text-7xl font-clash font-bold">
@@ -58,13 +58,13 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a
                 href="/auth/signup"
-                class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 rounded-xl text-white text-lg font-medium"
+                class="btn btn-xl btn-primary"
             >
                 Start Collecting
             </a>
             <a
                 href="/explore"
-                class="px-6 py-3 border border-white rounded-xl text-lg hover:bg-white hover:text-black transition"
+                class="btn btn-xl"
             >
                 Explore Database
             </a>
@@ -73,7 +73,7 @@
 </section>
 
 <section
-    class="bg-black text-white pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
+    class="pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
 >
     <h2 class="text-4xl font-clash font-bold text-center mb-12">
         Our Partners
@@ -101,9 +101,9 @@
                                 rel="noopener noreferrer"
                                 class="px-4 py-2 rounded-lg font-medium shadow transition
                   {link.color === 'blue'
-                                    ? 'bg-blue-600 hover:bg-blue-700'
+                                    ? 'bg-primary text-primary-content hover:bg-primary'
                                     : link.color === 'green'
-                                      ? 'bg-green-600 hover:bg-green-700'
+                                      ? 'bg-secondary text-secondary-content'
                                       : 'bg-neutral-700 hover:bg-neutral-800'}"
                             >
                                 {link.label}

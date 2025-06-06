@@ -82,7 +82,7 @@
 		<!-- Desktop Nav -->
 		<nav class="hidden items-center gap-8 md:flex">
 			{#each navLinks as { name, href }}
-				<a {href} class="text-sm hover:text-blue-400 transition">
+				<a {href} class="link link-hover text-sm transition">
 					{name}
 				</a>
 			{/each}
@@ -90,7 +90,7 @@
 			<div class="relative inline-block">
 				<!-- Notification Bell -->
 				<button
-					class="relative focus:outline-none cursor-pointer hover:text-blue-400 transition"
+					class="relative focus:outline-none cursor-pointer transition"
 					aria-label="Notifications"
 					style="margin-right: 0.5rem;"
 					onclick={() => {
@@ -104,9 +104,10 @@
 							: ''}"
 					></i>
 					{#if notifications.length !== 0}
-						<span
-							class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-black"
-						></span>
+						<div
+							class="status status-info animate-ping absolute top-0 right-0"
+						></div>
+						<div class="absolute top-0 right-0 status status-info"></div>
 					{/if}
 				</button>
 
@@ -213,7 +214,7 @@
 			<!-- Theme Switcher Dropdown -->
 			<div class="dropdown dropdown-end">
 				<button
-					class="inline-flex cursor-pointer text-sm rounded-xl dropdown dropdown-end mx-2 bg-base-300"
+					class="inline-flex cursor-pointer text-sm rounded-xl mx-2 bg-base-300"
 				>
 					<span class="px-4 py-2">Theme</span>
 					<span class="pr-4 py-2">
@@ -227,7 +228,7 @@
 						<input
 							type="radio"
 							name="theme-dropdown"
-							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
 							aria-label="Classic Light"
 							value="classic light"
 						/>
@@ -236,7 +237,7 @@
 						<input
 							type="radio"
 							name="theme-dropdown"
-							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
 							aria-label="Classic Dark"
 							value="classic dark"
 						/>
@@ -245,7 +246,7 @@
 						<input
 							type="radio"
 							name="theme-dropdown"
-							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
 							aria-label="Premium Dark"
 							value="premium dark"
 						/>
@@ -260,15 +261,15 @@
 					<button
 						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary transition focus:outline-none"
 					>
-						<span class="px-4 py-2 border-r border-blue-500">
+						<span class="px-4 py-2">
 							{profile.username}
 						</span>
-						<span class="px-4 py-2">
+						<span class="pr-4">
 							<i class="fa-solid fa-caret-down"></i>
 						</span>
 					</button>
 					<ul
-						class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+						class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
 					>
 						<li>
 							<a

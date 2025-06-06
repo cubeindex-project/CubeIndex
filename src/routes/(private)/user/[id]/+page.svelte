@@ -42,7 +42,7 @@
             <img
                 src={profile.banner}
                 alt="User banner"
-                class="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105"
+                class="w-full h-full object-cover object-center transition-transform duration-300"
                 loading="lazy"
             />
             <div

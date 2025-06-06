@@ -2,8 +2,8 @@
 	// Components and style
 	import "../app.css";
 	import Navbar from "$lib/components/navbar.svelte";
-    import Footer from "$lib/components/footer.svelte";
-    import Disclaimer from "$lib/components/disclaimer.svelte";
+	import Footer from "$lib/components/footer.svelte";
+	import Disclaimer from "$lib/components/disclaimer.svelte";
 	import { Toaster } from "svelte-sonner";
 
 	let { data, children } = $props();
@@ -36,6 +36,10 @@
 
 <Toaster />
 
-{@render children()}
+<section
+	class="bg-base-100"
+>
+	{@render children()}
+</section>
 
 <Footer />

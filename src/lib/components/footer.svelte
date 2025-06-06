@@ -1,4 +1,4 @@
-<footer class="bg-black text-gray-300 px-6 py-10">
+<footer class="bg-base-100 px-6 py-10">
     <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
         <!-- Brand Info -->
         <div>
@@ -8,7 +8,7 @@
                     alt="CubeIndex logo"
                     class="w-10 h-10"
                 />
-                <span class="text-2xl font-clash font-bold text-white"
+                <span class="text-2xl font-clash font-bold"
                     >CubeIndex</span
                 >
             </div>
@@ -19,47 +19,47 @@
 
         <!-- Site Links -->
         <div>
-            <h3 class="text-white font-semibold mb-3">Navigation</h3>
+            <h3 class="font-semibold mb-3">Navigation</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/explore" class="hover:text-white"
+                    <a href="/explore"
                         >Explore</a
                     >
                 </li>
-                <li><a href="/achievements" class="hover:text-white">Achievements</a></li>
-                <li><a href="/about" class="hover:text-white">About</a></li>
+                <li><a href="/achievements">Achievements</a></li>
+                <li><a href="/about">About</a></li>
             </ul>
         </div>
 
         <!-- Social & Legal -->
         <div>
-            <h3 class="text-white font-semibold mb-3">Socials</h3>
+            <h3 class="font-semibold mb-3">Socials</h3>
             <ul class="space-y-2 text-sm">
                 <li>
                     <a
                         href="https://discord.gg/76ExrEAE7s"
                         target="_blank"
-                        class="hover:text-white">Discord</a
+                        class="">Discord</a
                     >
                 </li>
                 <li>
                     <a
                         href="https://github.com/Saterz/cubeindex"
                         target="_blank"
-                        class="hover:text-white">GitHub</a
+                        class="">GitHub</a
                     >
                 </li>
                 <li>
                     <a
                         href="https://twitter.com/thecubeindex"
                         target="_blank"
-                        class="hover:text-white">Twitter</a
+                        class="">Twitter</a
                     >
                 </li>
                 <li>
                     <a
                         href="mailto:thecubeindex@gmail.com"
-                        class="hover:text-white">Email</a
+                        class="">Email</a
                     >
                 </li>
             </ul>
@@ -68,15 +68,15 @@
             <h3 class="font-semibold mb-3">Legal</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/privacy" class="hover:text-white"
+                    <a href="/privacy" class=""
                         >Privacy Policy</a
                     >
                 </li>
                 <li>
-                    <a href="/report" class="hover:text-white">Report</a>
+                    <a href="/report" class="">Report</a>
                 </li>
                 <li>
-                    <a href="/tos" class="hover:text-white">Terms of Service</a>
+                    <a href="/tos" class="">Terms of Service</a>
                 </li>
             </ul>
         </div>

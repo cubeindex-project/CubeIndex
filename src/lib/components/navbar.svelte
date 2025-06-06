@@ -2,7 +2,7 @@
 	import { supabase } from "$lib/supabaseClient";
 	import { onMount } from "svelte";
 	import ConfirmSignOut from "./confirmSignOut.svelte";
-	import { blur, draw } from "svelte/transition";
+	import { blur } from "svelte/transition";
 
 	let loading = $state(true);
 	let isOpen = $state(false);
@@ -10,6 +10,7 @@
 	let { session } = $props();
 	let signOutConfirmation = $state(false);
 	let notificationOpen = $state(false);
+	let mobileThemeDropdown = $state(false);
 
 	async function loadProfile() {
 		let { data, error } = await supabase
@@ -63,11 +64,10 @@
 		loading = false;
 	});
 
-	let profileDropdown = $state(false);
 	let mobileProfileDropdown = $state(false);
 </script>
 
-<header class="bg-black text-white shadow-md">
+<header class="bg-base-100">
 	<div class="mx-auto flex max-w-7xl items-center justify-between px-2 py-4">
 		<!-- Logo -->
 		<a href="/" class="flex items-center gap-2">
@@ -210,76 +210,108 @@
 				{/if}
 			</div>
 
+			<!-- Theme Switcher Dropdown -->
+			<div class="dropdown dropdown-end">
+				<button
+					class="inline-flex cursor-pointer text-sm rounded-xl dropdown dropdown-end mx-2 bg-base-300"
+				>
+					<span class="px-4 py-2">Theme</span>
+					<span class="pr-4 py-2">
+						<i class="fa-solid fa-caret-down"></i>
+					</span>
+				</button>
+				<ul
+					class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm"
+				>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Classic Light"
+							value="classic light"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Classic Dark"
+							value="classic dark"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Premium Dark"
+							value="premium dark"
+						/>
+					</li>
+				</ul>
+			</div>
+
 			{#if loading}
 				<i class="fa-solid fa-spinner animate-spin"></i>
 			{:else if session && profile}
-				<div class="relative inline-block">
+				<div class="dropdown dropdown-end">
 					<button
-						aria-label="Toggle profile options"
-						onclick={() => (profileDropdown = !profileDropdown)}
-						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-blue-600 transition hover:bg-blue-700 focus:outline-none"
+						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary transition focus:outline-none"
 					>
 						<span class="px-4 py-2 border-r border-blue-500">
 							{profile.username}
 						</span>
 						<span class="px-4 py-2">
-							<i
-								class="fa-solid {profileDropdown
-									? 'fa-caret-up'
-									: 'fa-caret-down'}"
-							></i>
+							<i class="fa-solid fa-caret-down"></i>
 						</span>
 					</button>
-					{#if profileDropdown}
-						<div
-							class="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-md shadow-lg z-50"
-							transition:blur
-						>
+					<ul
+						class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+					>
+						<li>
 							<a
 								href={`/user/${profile.id}`}
-								onclick={() => {
-									profileDropdown = false;
-								}}
-								class="block px-4 py-2 text-sm hover:bg-neutral-800"
+								class="block px-4 py-2 text-sm"
 							>
 								Profile
 							</a>
+						</li>
+						<li>
 							<a
-								href={`/user/settings`}
-								onclick={() => {
-									profileDropdown = false;
-								}}
-								class="block px-4 py-2 text-sm hover:bg-neutral-800"
+								href="/user/settings"
+								class="block px-4 py-2 text-sm"
 							>
 								Settings
 							</a>
-							{#if profile.role !== "User"}
+						</li>
+						{#if profile.role !== "User"}
+							<li>
 								<a
 									href="/staff/dashboard"
-									onclick={() => {
-										profileDropdown = false;
-									}}
-									class="block px-4 py-2 text-sm hover:bg-neutral-800"
+									class="block px-4 py-2 text-sm"
 								>
 									Staff Dashboard
 								</a>
-							{/if}
+							</li>
+						{/if}
+						<li>
 							<button
 								onclick={() => {
 									signOutConfirmation = true;
-									profileDropdown = false;
 								}}
-								class="w-full cursor-pointer text-left block px-4 py-2 text-sm hover:bg-neutral-800"
+								class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
 							>
 								Sign Out
 							</button>
-						</div>
-					{/if}
+						</li>
+					</ul>
 				</div>
 			{:else}
 				<a
 					href="/auth/login"
-					class="rounded-xl bg-blue-600 px-4 py-2 text-sm transition hover:bg-blue-700"
+					class="rounded-xl bg-primary px-4 py-2 text-sm transition"
 				>
 					Login
 				</a>
@@ -330,6 +362,51 @@
 						<span
 							class="absolute top-1/2 right-2 -translate-y-1/2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-black"
 						></span>
+					{/if}
+				</li>
+
+				<!-- Theme Switcher (Mobile) -->
+				<li>
+					<button
+						onclick={() =>
+							(mobileThemeDropdown = !mobileThemeDropdown)}
+						class="w-full text-center rounded-xl bg-green-600 px-4 py-2 text-sm transition hover:bg-green-700 focus:outline-none"
+					>
+						Theme
+						<i
+							class="fa-solid {mobileThemeDropdown
+								? 'fa-caret-up'
+								: 'fa-caret-down'}"
+						></i>
+					</button>
+					{#if mobileThemeDropdown}
+						<ul
+							class="mt-2 space-y-2"
+							transition:blur={{ duration: 250 }}
+						>
+							<li>
+								<button
+									onclick={() => {
+										mobileThemeDropdown = false;
+										isOpen = false;
+									}}
+									class="block text-left w-full px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+								>
+									Classic White / Dark
+								</button>
+							</li>
+							<li>
+								<button
+									onclick={() => {
+										mobileThemeDropdown = false;
+										isOpen = false;
+									}}
+									class="block text-left w-full px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+								>
+									Premium Dark
+								</button>
+							</li>
+						</ul>
 					{/if}
 				</li>
 

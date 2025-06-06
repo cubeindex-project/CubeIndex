@@ -253,15 +253,15 @@
 							>
 								Settings
 							</a>
-							{#if profile.role === "Admin"}
+							{#if profile.role !== "User"}
 								<a
-									href="/admin/dashboard"
+									href="/staff/dashboard"
 									onclick={() => {
 										profileDropdown = false;
 									}}
 									class="block px-4 py-2 text-sm hover:bg-neutral-800"
 								>
-									Admin Dashboard
+									Staff Dashboard
 								</a>
 							{/if}
 							<button
@@ -371,14 +371,14 @@
 										Settings
 									</a>
 								</li>
-								{#if profile.role === "Admin"}
+								{#if profile.role !== "User"}
 									<li>
 										<a
-											href="/admin/dashboard"
+											href="/staff/dashboard"
 											onclick={() => (isOpen = false)}
 											class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
 										>
-											Admin Dashboard
+											Staff Dashboard
 										</a>
 									</li>
 								{/if}

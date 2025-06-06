@@ -6,7 +6,7 @@
 </script>
 
 {#if isOpen}
-  <div class="relative flex flex-col sm:flex-row items-center sm:justify-between p-4 bg-black text-white w-full mx-auto pt-4">
+  <div class="relative flex flex-col sm:flex-row items-center sm:justify-between p-4 bg-base-100 w-full mx-auto pt-4">
     <p class="text-center sm:text-left flex-1">
       🚧 <strong>CubeIndex</strong> is in Early Preview — This is an early version and currently in
       active development. Features and design are still evolving.

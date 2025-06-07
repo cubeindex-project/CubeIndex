@@ -11,6 +11,7 @@
 	// Vercel's Analytics and Speed Insights
 	import { injectAnalytics } from "@vercel/analytics/sveltekit";
 	import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
+	import { UmamiAnalyticsEnv } from '@lukulent/svelte-umami';
 
 	injectAnalytics();
 	injectSpeedInsights();
@@ -29,6 +30,8 @@
 		return () => data.subscription.unsubscribe();
 	});
 </script>
+
+<UmamiAnalyticsEnv />
 
 <Disclaimer />
 

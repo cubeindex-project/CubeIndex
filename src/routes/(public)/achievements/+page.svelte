@@ -73,38 +73,72 @@
 								</span>
 							</div>
 
-							<!-- Name and Description -->
 							<h2 class="text-xl font-bold mb-1">
 								{achievement.name}
 							</h2>
-							<p class="text-sm text-gray-300 mb-4">
+							<p class="text-sm text-gray-300 mb-2">
 								{achievement.description}
 							</p>
 
-							<!-- Metadata -->
-							<div class="text-xs text-gray-400 space-y-1">
-								<p>
-									<strong>Category:</strong>
-									{achievement.category}
+							{#if achievement.title}
+								<div
+									class="inline-flex items-center gap-2 rounded-full border border-blue-400/60 bg-blue-900/20 px-3 py-1 text-xs font-semibold tracking-wide text-blue-200 mb-2"
+								>
+									<i class="fa-regular fa-star"></i>
+									<span>
+										<span class="opacity-80 font-normal"
+											>Title Reward:</span
+										>
+										<span class="font-bold ml-1"
+											>"{achievement.title}"</span
+										>
+									</span>
+								</div>
+							{/if}
+
+							<div class="space-y-2 text-sm text-gray-300">
+								<p class="flex justify-between">
+									<span class="font-semibold text-gray-400"
+										>Category:</span
+									>
+									<span>{achievement.category}</span>
 								</p>
-								<p>
-									<strong>Unlock Method:</strong>
-									{achievement.unlock_method}
+
+								<p class="flex justify-between">
+									<span class="font-semibold text-gray-400"
+										>Unlock Method:</span
+									>
+									<span>{achievement.unlock_method}</span>
 								</p>
-								<a href={idOfUser(achievement.submitted_by)}>
-									<strong>Submitted by:</strong>
+
+								<a
+									href={idOfUser(achievement.submitted_by)}
+									class="flex justify-between hover:text-indigo-300 transition"
+								>
+									<span class="font-semibold text-gray-400"
+										>Submitted by:</span
+									>
 									<span class="underline"
 										>{achievement.submitted_by}</span
 									>
 								</a>
-								<p>
-									<strong>Created at:</strong>
-									{formatDate(achievement.created_at)}
+
+								<p class="flex justify-between">
+									<span class="font-semibold text-gray-400"
+										>Created at:</span
+									>
+									<span
+										>{formatDate(
+											achievement.created_at,
+										)}</span
+									>
 								</p>
+
 								{#if !achievement.unlockable}
 									<p
-										class="flex items-center gap-2 mt-3 text-red-100 font-bold bg-red-500 border-2 border-red-600 rounded-lg px-4 py-2 shadow-lg uppercase tracking-wide"
+										class="inline-flex items-center gap-2 rounded-full bg-red-600/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-red-200 ring-1 ring-inset ring-red-500"
 									>
+										<i class="fa-solid fa-xmark"></i>
 										Not currently unlockable
 									</p>
 								{/if}

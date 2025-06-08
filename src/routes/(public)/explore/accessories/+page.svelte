@@ -1,6 +1,7 @@
 <script lang="ts">
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+    import StarRating from "$lib/components/starRating.svelte";
 
     let { data } = $props();
     const { accessories } = data;
@@ -25,12 +26,12 @@
 </script>
 
 {#if databaseAvailability && accessoriesAvailability}
-    <section class="min-h-screen bg-black text-white px-6 py-16 relative">
+    <section class="min-h-screen px-6 py-16 relative">
         <div class="relative z-10 max-w-7xl mx-auto">
             <h1 class="text-4xl font-bold mb-6 font-clash text-center">
                 Explore Accessories
             </h1>
-            <p class="text-gray-400 mb-12 text-center">
+            <p class="mb-12 text-center">
                 Discover the best cube timers, mats, lubricants, and
                 more—handpicked by our community.
             </p>
@@ -38,7 +39,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {#each accessories as acc}
                     <div
-                        class="bg-neutral-900 border border-neutral-700 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+                        class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
                     >
                         <img
                             src={acc.image_url ??
@@ -48,7 +49,7 @@
                         />
                         <div class="p-5 space-y-2">
                             <h2 class="text-xl font-bold">{acc.name}</h2>
-                            <p class="text-sm text-gray-400">
+                            <p class="text-sm">
                                 {acc.brand} ・ {acc.category}
                             </p>
                             {#if acc.compatibility}
@@ -58,9 +59,9 @@
                                 </p>
                             {/if}
                             <div class="text-sm text-yellow-400">
-                                ⭐ {acc.rating}
+                                <StarRating rating={acc.rating} large={false}/>
                             </div>
-                            <p class="text-sm text-gray-500">
+                            <p class="text-sm">
                                 Released: {formatDate(acc.release_date)}
                             </p>
                         </div>

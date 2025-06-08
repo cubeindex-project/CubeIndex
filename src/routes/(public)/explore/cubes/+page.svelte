@@ -29,7 +29,9 @@
         new Set(cubes.map((c) => new Date(c.release_date).getFullYear())),
     ).sort((a, b) => b - a);
     const allSubType = Array.from(new Set(cubes.map((c) => c.sub_type))).sort();
-    const allCubeTypes = Array.from(new Set(cubes.map((c) => c.version_types))).sort();
+    const allCubeTypes = Array.from(
+        new Set(cubes.map((c) => c.version_types)),
+    ).sort();
 
     // 3) Reactive filtered list
     const filteredCubes = derived(
@@ -44,7 +46,17 @@
             stickered,
             searchTerm,
         ],
-        ([$type, $brand, $wca, $mag, $smart, $year, $modded, $stickered, $searchTerm]) => {
+        ([
+            $type,
+            $brand,
+            $wca,
+            $mag,
+            $smart,
+            $year,
+            $modded,
+            $stickered,
+            $searchTerm,
+        ]) => {
             return cubes
                 .filter((c) => c.version_type === "Base")
                 .filter((c) => c.approved === true)
@@ -56,7 +68,8 @@
                         ($wca === undefined || c.wca_legal === $wca) &&
                         ($mag === undefined || c.magnetic === $mag) &&
                         ($modded === undefined || c.modded === $modded) &&
-                        ($stickered === undefined || c.stickered === $stickered) &&
+                        ($stickered === undefined ||
+                            c.stickered === $stickered) &&
                         ($smart === undefined || c.smart === $smart) &&
                         ($year === "All" || cubeYear === +$year)
                     );
@@ -114,8 +127,8 @@
     let showFilters = $state(false);
 </script>
 
-{#if databaseAvailability && cubesAvailability}
-<section class="min-h-screen bg-black text-white px-6 py-16">
+<!-- {#if databaseAvailability && cubesAvailability} -->
+<section class="min-h-screenpx-6 py-16">
     <div class="max-w-7xl mx-auto">
         <h1 class="text-4xl font-clash font-bold mb-6 text-center">
             Explore Cubes
@@ -127,7 +140,7 @@
         <!-- Search Bar + Toggle -->
         <div class="flex items-center mb-6">
             <button
-                class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-neutral-900 border border-neutral-700 border-r-0 text-gray-300 hover:text-white hover:bg-neutral-800 transition flex items-center"
+                class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
                 aria-label="Toggle Filters"
                 onclick={() => (showFilters = !showFilters)}
                 type="button"
@@ -140,18 +153,12 @@
                     type="text"
                     placeholder="Search Your Cube"
                     bind:value={$searchTerm}
-                    class="w-full py-3 pl-12 pr-4 rounded-r-xl bg-neutral-900 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition"
-                    style="border-top-left-radius:0; border-bottom-left-radius:0;"
+                    class="input w-full h-12.5 rounded-l-none border-base-300"
                 />
-                <span
-                    class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                >
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                {#if $searchTerm}
+                {#if $searchTerm.length}
                     <button
                         type="button"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral cursor-pointer"
                         onclick={() => ($searchTerm = "")}
                         aria-label="Clear"
                     >
@@ -166,7 +173,7 @@
             {#if showFilters}
                 <aside class="w-full lg:w-64">
                     <div
-                        class="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 sticky lg:top-24"
+                        class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky lg:top-24"
                     >
                         <div class="flex items-center justify-between mb-4">
                             <span class="font-semibold text-lg">Filters</span>
@@ -178,7 +185,7 @@
                                     >Type:
                                     <select
                                         bind:value={$selectedType}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option>All</option>
                                         {#each allTypes as t}
@@ -193,7 +200,7 @@
                                     >Brand:
                                     <select
                                         bind:value={$selectedBrand}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option>All</option>
                                         {#each allBrands as b}
@@ -208,7 +215,7 @@
                                     >WCA Legal:
                                     <select
                                         bind:value={$WCALegal}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option value={undefined}>All</option>
                                         <option value={true}>True</option>
@@ -222,7 +229,7 @@
                                     >Magnetic:
                                     <select
                                         bind:value={$magnetic}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option value={undefined}>All</option>
                                         <option value={true}>True</option>
@@ -236,7 +243,7 @@
                                     >Smart:
                                     <select
                                         bind:value={$smart}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option value={undefined}>All</option>
                                         <option value={true}>True</option>
@@ -250,7 +257,7 @@
                                     >Modded:
                                     <select
                                         bind:value={$modded}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option value={undefined}>All</option>
                                         <option value={true}>True</option>
@@ -264,7 +271,7 @@
                                     >Release Year:
                                     <select
                                         bind:value={$selectedYear}
-                                        class="w-full px-4 py-2 rounded-lg bg-neutral-800 border border-neutral-700"
+                                        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
                                     >
                                         <option>All</option>
                                         {#each allYears as year}
@@ -276,7 +283,7 @@
                             <!-- Reset -->
                             <div>
                                 <button
-                                    class="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 transition cursor-pointer"
+                                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
                                     onclick={resetFilters}
                                     type="button"
                                 >
@@ -303,7 +310,7 @@
                         <select
                             id="itemsPerPage"
                             bind:value={$itemsPerPage}
-                            class="px-7 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-white"
+                            class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
                             style="width:auto"
                         >
                             <option value={6}>6</option>
@@ -317,7 +324,7 @@
                     <div>
                         <a
                             href="/explore/cubes/compare"
-                            class="inline-flex items-center px-5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow transition"
+                            class="btn bg-primary text-primary-content"
                         >
                             <i class="fa-solid fa-code-compare mr-2"></i>
                             Compare Cubes
@@ -365,38 +372,36 @@
                 {/await}
 
                 <div class="flex items-center justify-center gap-4 mt-10">
-                    <button
-                        onclick={goToPreviousPage}
-                        disabled={$currentPage === 1}
-                        class="px-5 py-2 rounded-xl cursor-pointer font-semibold bg-neutral-800 border border-neutral-700 text-white transition hover:bg-blue-700 hover:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Previous page"
-                    >
-                        <i class="fa-solid fa-chevron-left mr-2"></i>
-                        Previous
-                    </button>
-                    <span
-                        class="text-lg font-medium text-white bg-neutral-900 px-4 py-2 rounded-xl border border-neutral-700 select-none"
-                    >
-                        Page {$currentPage}
-                        <span class="text-gray-400">of</span>
-                        {$totalPages}
-                    </span>
-                    <button
-                        onclick={goToNextPage}
-                        disabled={$currentPage === $totalPages}
-                        class="px-5 py-2 rounded-xl cursor-pointer font-semibold bg-neutral-800 border border-neutral-700 text-white transition hover:bg-blue-700 hover:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                        aria-label="Next page"
-                    >
-                        Next
-                        <i class="fa-solid fa-chevron-right ml-2"></i>
-                    </button>
+                    <div class="join">
+                        <button
+                            class="join-item btn btn-lg"
+                            onclick={goToPreviousPage}
+                            disabled={$currentPage === 1}
+                            aria-label="Previous page"
+                        >
+                            <i class="fa-solid fa-chevron-left mr-2"></i>
+                            Previous
+                        </button>
+                        <button class="join-item btn btn-lg">
+                            Page {$currentPage} of {$totalPages}
+                        </button>
+                        <button
+                            onclick={goToNextPage}
+                            class="join-item btn btn-lg"
+                            disabled={$currentPage === $totalPages}
+                            aria-label="Next page"
+                        >
+                            Next
+                            <i class="fa-solid fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-{:else if !cubesAvailability}
+<!-- {:else if !cubesAvailability}
     <FeatureDisabled featureName="The cubes explore page is" />
 {:else if !databaseAvailability}
     <FeatureDisabled featureName="The database is" />
-{/if}
+{/if} -->

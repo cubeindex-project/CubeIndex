@@ -1,6 +1,7 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import Badge from "$lib/components/badge.svelte";
   import { onMount } from "svelte";
 
   const { data } = $props();
@@ -15,7 +16,7 @@
 </script>
 
 {#if databaseAvailability}
-  <section class="min-h-screen bg-black text-white px-4 py-12">
+  <section class="min-h-screen px-4 py-12">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-10 text-center">
         Explore Users
@@ -24,31 +25,45 @@
         {#each profiles as profile}
           <a
             href={`/user/${profile.id}`}
-            class="flex items-center gap-4 bg-neutral-900/80 hover:bg-neutral-900 rounded-xl px-4 py-4 shadow border border-neutral-800 transition group"
+            class="flex items-center gap-4 bg-base-200 rounded-xl px-4 py-4 shadow border border-base-300 transition group"
           >
-            <img
-              src={profile.profile_picture || "/images/default-profile.png"}
-              alt={profile.username}
-              class="w-14 h-14 rounded-full border-2 border-blue-500 object-cover shadow"
-            />
+            {#if profile.profile_picture}
+              <img
+                src={profile.profile_picture}
+                alt={profile.username}
+                class="w-14 h-14 rounded-full border-2 border-primary object-cover shadow"
+              />
+            {:else}
+              <div class="avatar avatar-placeholder">
+                <div
+                  class="bg-base-300 w-14 h-14 rounded-full border-2 border-primary"
+                >
+                  <span class="text-2xl uppercase font-clash"
+                    >{profile.username.charAt(0)}</span
+                  >
+                </div>
+              </div>
+            {/if}
             <div class="flex-1 min-w-0">
               <div class="flex flex-col gap-0.5">
-                <span
-                  class="font-semibold text-base group-hover:text-blue-400 truncate"
-                  >{profile.username}</span
+                <span class="font-semibold truncate"
+                  >{profile.username}
+                  <Badge {profile} textSize="xs" /></span
                 >
-                <span class="text-xs text-gray-400 flex items-center gap-2">
+                <span class="text-xs flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>0 Cubes
                   <span class="mx-1">•</span>
-                    <i class="fa-solid fa-medal"></i>{user_achievements.filter(ua => ua.username === profile.username).length || 0} Achievements
+                  <i class="fa-solid fa-medal"></i>{user_achievements.filter(
+                    (ua) => ua.username === profile.username,
+                  ).length || 0} Achievements
                 </span>
               </div>
-              <p class="text-gray-300 text-xs truncate max-w-full mt-1">
+              <p class="text-xs truncate max-w-full mt-1">
                 {profile.bio || "No bio provided."}
               </p>
             </div>
             <span
-              class="ml-2 text-blue-500 group-hover:translate-x-1 transition-transform"
+              class="ml-2 text-primary group-hover:translate-x-1 transition-transform"
             >
               <i class="fa-solid fa-arrow-right"></i>
             </span>

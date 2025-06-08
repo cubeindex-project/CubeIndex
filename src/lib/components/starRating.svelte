@@ -9,24 +9,33 @@
   $effect(() => {
     fullStars = Math.floor(rating);
     halfStar = rating - fullStars >= 0.25 && rating - fullStars < 0.75;
-    emptyStars = max - fullStars - (halfStar ? 1 : 0);
   });
 </script>
 
-<div class="flex items-center space-x-1">
-  {#each Array(fullStars) as _, i}
-    <i class="fa-solid fa-star {large === true ? 'fa-2x' : ''} text-yellow-300"></i>
-  {/each}
-  {#if halfStar}
-    <i
-      class="fa-solid fa-star-half-stroke {large === 2
-        ? 'fa-2x'
-        : ''} text-yellow-300"
-    ></i>
-  {/if}
-  {#each Array(emptyStars) as _, i}
-    <i class="fa-regular fa-star {large === true ? 'fa-2x' : ''} text-yellow-300"
-    ></i>
-  {/each}
-  <!-- <span class="ml-2 text-3xl text-white">{rating.toFixed(2)}</span> -->
+<div class="rating">
+  <div
+    class="mask mask-star-2 bg-yellow-300"
+    aria-label="1 star"
+    aria-current={fullStars === 1 ? "true" : undefined}
+  ></div>
+  <div
+    class="mask mask-star-2 bg-yellow-300"
+    aria-label="2 star"
+    aria-current={fullStars === 2 ? "true" : undefined}
+  ></div>
+  <div
+    class="mask mask-star-2 bg-yellow-300"
+    aria-label="3 star"
+    aria-current={fullStars === 3 ? "true" : undefined}
+  ></div>
+  <div
+    class="mask mask-star-2 bg-yellow-300"
+    aria-label="4 star"
+    aria-current={fullStars === 4 ? "true" : undefined}
+  ></div>
+  <div
+    class="mask mask-star-2 bg-yellow-300"
+    aria-label="5 star"
+    aria-current={fullStars === 5 ? "true" : undefined}
+  ></div>
 </div>

@@ -67,7 +67,7 @@
     ];
 </script>
 
-<section class="min-h-screen bg-black text-white px-4 py-12">
+<section class="min-h-screen px-4 py-12">
     <div class="max-w-5xl mx-auto">
         <h1 class="text-4xl font-clash font-bold text-center mb-10">
             Compare Cubes
@@ -78,7 +78,7 @@
                 <label class="block mb-2 text-lg font-semibold"
                     >Cube 1
                     <select
-                        class="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-700 text-white focus:border-blue-500 outline-none mb-4"
+                        class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
                         onchange={selectCube1}
                     >
                         <option value="" disabled selected
@@ -93,7 +93,7 @@
             <!-- VS -->
             <div class="flex justify-center items-center">
                 <span
-                    class="bg-neutral-800 rounded-full text-3xl px-7 py-4 text-blue-400 font-bold shadow"
+                    class="bg-base-300 rounded-full text-3xl px-7 py-4 text-primary font-bold"
                     >VS</span
                 >
             </div>
@@ -102,7 +102,7 @@
                 <label class="block mb-2 text-lg font-semibold"
                     >Cube 2
                     <select
-                        class="w-full px-4 py-3 rounded-xl bg-neutral-900 border border-neutral-700 text-white focus:border-blue-500 outline-none mb-4"
+                        class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
                         onchange={selectCube2}
                     >
                         <option value="" disabled selected
@@ -118,50 +118,50 @@
 
         <!-- Comparison Chart -->
         <div
-            class="overflow-x-auto mt-10 rounded-2xl shadow-lg border border-neutral-800 bg-neutral-900/80"
+            class="overflow-x-auto mt-10 rounded-2xl border border-base-200 bg-base-300"
         >
             <table class="min-w-full table-auto text-left text-base">
                 <thead>
-                    <tr class="bg-neutral-900/60">
+                    <tr class="">
                         <th
-                            class="py-4 px-3 font-bold text-blue-400 text-lg w-1/3"
+                            class="py-4 px-3 font-bold text-primary text-lg w-1/3"
                         >
                             Feature
                         </th>
                         <th
-                            class="py-4 px-3 font-bold text-white text-lg text-center w-1/3"
+                            class="py-4 px-3 font-bold text-lg text-center w-1/3"
                         >
                             {#if cube1}
                                 <span class="flex flex-col items-center">
                                     <img
                                         src={cube1.image_url}
                                         alt="{cube1.series} {cube1.model} {cube1.version_name}"
-                                        class="h-25 rounded mb-1 border border-neutral-700"
+                                        class="h-25 rounded-xl mb-1"
                                     />
                                     {cube1.series}
                                     {cube1.model}
                                     {cube1.version_name}
                                 </span>
                             {:else}
-                                <span class="text-neutral-500">Cube 1</span>
+                                <span>Cube 1</span>
                             {/if}
                         </th>
                         <th
-                            class="py-4 px-3 font-bold text-white text-lg text-center w-1/3"
+                            class="py-4 px-3 font-bold text-lg text-center w-1/3"
                         >
                             {#if cube2}
                                 <span class="flex flex-col items-center">
                                     <img
                                         src={cube2.image_url}
                                         alt="{cube2.series} {cube2.model} {cube2.version_name}"
-                                        class="h-25 rounded mb-1 border border-neutral-700"
+                                        class="h-25 rounded-xl mb-1"
                                     />
                                     {cube2.series}
                                     {cube2.model}
                                     {cube2.version_name}
                                 </span>
                             {:else}
-                                <span class="text-neutral-500">Cube 2</span>
+                                <span>Cube 2</span>
                             {/if}
                         </th>
                     </tr>
@@ -169,9 +169,9 @@
                 <tbody>
                     {#each fields as field}
                         <tr
-                            class="border-b border-neutral-800 last:border-b-0 hover:bg-neutral-800/40 transition"
+                            class="border-b border-base-200 last:border-b-0 hover:bg-base-200 transition"
                         >
-                            <td class="py-3 px-3 font-medium text-white/90">
+                            <td class="py-3 px-3 font-medium">
                                 {field.label}
                             </td>
                             <td class="py-3 px-3 text-center">
@@ -197,7 +197,7 @@
                 </tbody>
             </table>
             {#if !cube1 && !cube2}
-                <div class="text-center text-neutral-500 py-10 text-lg">
+                <div class="text-center py-10 text-lg">
                     Select at least one cube to compare.
                 </div>
             {/if}

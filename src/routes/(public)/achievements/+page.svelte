@@ -33,10 +33,10 @@
 </script>
 
 {#if achievementsAvailability}
-	<section class="min-h-screen bg-black text-white px-6 py-24">
+	<section class="min-h-screen px-6 py-24">
 		<div class="max-w-6xl mx-auto">
 			<h1 class="text-4xl font-bold text-center mb-6">🏅 Achievements</h1>
-			<p class="text-center text-gray-400 mb-12">
+			<p class="text-center mb-12">
 				Unlock achievements by participating in the CubeIndex community.
 				Collect them all to showcase your journey!
 			</p>
@@ -44,7 +44,7 @@
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 				{#each achievements as achievement}
 					<div
-						class="relative rounded-xl border border-neutral-700 p-0 shadow-md flex overflow-hidden bg-neutral-900"
+						class="relative rounded-xl border border-base-300 p-0 shadow-md flex overflow-hidden bg-base-200"
 					>
 						<!-- Rarity Color Bar -->
 						<div
@@ -67,7 +67,7 @@
 							<div class="flex items-center justify-between mb-4">
 								<div class="text-4xl">{achievement.icon}</div>
 								<span
-									class="text-sm capitalize px-3 py-1 rounded-full font-semibold bg-gray-700 text-white"
+									class="text-sm capitalize px-3 py-1 rounded-full font-semibold bg-base-300"
 								>
 									{achievement.rarity}
 								</span>
@@ -76,13 +76,13 @@
 							<h2 class="text-xl font-bold mb-1">
 								{achievement.name}
 							</h2>
-							<p class="text-sm text-gray-300 mb-2">
+							<p class="text-sm mb-2">
 								{achievement.description}
 							</p>
 
 							{#if achievement.title}
 								<div
-									class="inline-flex items-center gap-2 rounded-full border border-blue-400/60 bg-blue-900/20 px-3 py-1 text-xs font-semibold tracking-wide text-blue-200 mb-2"
+									class="inline-flex items-center gap-2 rounded-full border border-accent bg-accent px-3 py-1 text-xs font-semibold tracking-wide text-accent-content mb-2"
 								>
 									<i class="fa-regular fa-star"></i>
 									<span>
@@ -96,16 +96,16 @@
 								</div>
 							{/if}
 
-							<div class="space-y-2 text-sm text-gray-300">
+							<div class="space-y-2 text-sm">
 								<p class="flex justify-between">
-									<span class="font-semibold text-gray-400"
+									<span class="font-semibold"
 										>Category:</span
 									>
 									<span>{achievement.category}</span>
 								</p>
 
 								<p class="flex justify-between">
-									<span class="font-semibold text-gray-400"
+									<span class="font-semibold"
 										>Unlock Method:</span
 									>
 									<span>{achievement.unlock_method}</span>
@@ -113,18 +113,18 @@
 
 								<a
 									href={idOfUser(achievement.submitted_by)}
-									class="flex justify-between hover:text-indigo-300 transition"
+									class="flex justify-between transition"
 								>
-									<span class="font-semibold text-gray-400"
+									<span class="font-semibold"
 										>Submitted by:</span
 									>
-									<span class="underline"
+									<span class="link link-hover"
 										>{achievement.submitted_by}</span
 									>
 								</a>
 
 								<p class="flex justify-between">
-									<span class="font-semibold text-gray-400"
+									<span class="font-semibold"
 										>Created at:</span
 									>
 									<span
@@ -136,7 +136,7 @@
 
 								{#if !achievement.unlockable}
 									<p
-										class="inline-flex items-center gap-2 rounded-full bg-red-600/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-red-200 ring-1 ring-inset ring-red-500"
+										class="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1 text-xs font-bold uppercase tracking-wide text-error-content"
 									>
 										<i class="fa-solid fa-xmark"></i>
 										Not currently unlockable

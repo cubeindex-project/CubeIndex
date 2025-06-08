@@ -51,23 +51,15 @@
         <h1 class="text-5xl sm:text-7xl font-clash font-bold">
             Build Your Ultimate Cube Collection
         </h1>
-        <p class="text-lg sm:text-xl text-gray-300">
+        <p class="text-lg sm:text-xl">
             Track your cubes, unlock badges, and explore the world's largest
             cube database.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-                href="/auth/signup"
-                class="btn btn-xl btn-primary"
-            >
+            <a href="/auth/signup" class="btn btn-xl btn-primary">
                 Start Collecting
             </a>
-            <a
-                href="/explore"
-                class="btn btn-xl"
-            >
-                Explore Database
-            </a>
+            <a href="/explore" class="btn btn-xl"> Explore Database </a>
         </div>
     </div>
 </section>
@@ -83,14 +75,12 @@
     >
         {#each partners as partner, i}
             <div
-                class="flex flex-col sm:flex-row items-center sm:items-start gap-6
-          {partner.border &&
-                    'border-b border-neutral-700 pb-10 sm:pb-0 sm:border-b-0 sm:border-r pr-0 sm:pr-8'}"
+                class="flex flex-col sm:flex-row items-center sm:items-start gap-6"
             >
                 <span class="text-6xl sm:text-5xl">{partner.emoji}</span>
                 <div class="flex-1 flex flex-col items-center sm:items-start">
                     <h3 class="text-2xl font-semibold mb-1">{partner.name}</h3>
-                    <p class="text-gray-400 mb-4 text-center sm:text-left">
+                    <p class=" mb-4 text-center sm:text-left">
                         {partner.description}
                     </p>
                     <div class="flex gap-3 flex-wrap">
@@ -111,6 +101,11 @@
                         {/each}
                     </div>
                 </div>
+                {#if partner.border}
+                    <div
+                        class="divider divider-vertical sm:divider-horizontal"
+                    ></div>
+                {/if}
             </div>
         {/each}
     </div>

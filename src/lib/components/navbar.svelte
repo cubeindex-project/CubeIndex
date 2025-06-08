@@ -3,6 +3,7 @@
 	import { onMount } from "svelte";
 	import ConfirmSignOut from "./confirmSignOut.svelte";
 	import { blur } from "svelte/transition";
+	import { themeChange } from "theme-change";
 
 	let loading = $state(true);
 	let isOpen = $state(false);
@@ -63,6 +64,7 @@
 		if (session) loadProfile();
 		loading = false;
 	});
+	onMount(() => themeChange(false));
 
 	let mobileProfileDropdown = $state(false);
 </script>
@@ -107,40 +109,40 @@
 						<div
 							class="status status-info animate-ping absolute top-0 right-0"
 						></div>
-						<div class="absolute top-0 right-0 status status-info"></div>
+						<div
+							class="absolute top-0 right-0 status status-info"
+						></div>
 					{/if}
 				</button>
 
 				{#if notificationOpen}
 					<div
-						class="absolute -right-0 top-10 mt-2 z-50 w-80 max-w-xs rounded-2xl shadow-2xl ring-1 ring-white/20 bg-neutral-900/95 backdrop-blur-xl border border-neutral-800 transition-all overflow-hidden"
+						class="absolute -right-0 top-10 mt-2 z-50 w-80 max-w-xs rounded-2xl shadow-2xl ring-1 ring-white/20 bg-base-200 backdrop-blur-xl border border-base-300 transition-all overflow-hidden"
 						style="min-width: 320px;"
 						transition:blur
 					>
 						<div
-							class="flex items-center px-5 py-4 border-b border-neutral-800"
+							class="flex items-center px-5 py-4 border-b border-base-300"
 						>
-							<i class="fa-solid fa-bell text-blue-400 mr-2"></i>
-							<span
-								class="font-bold text-lg text-white tracking-tight"
-							>
+							<i class="fa-solid fa-bell text-primary mr-2"></i>
+							<span class="font-bold text-lg tracking-tight">
 								Notifications
 							</span>
-							<span class="ml-auto text-xs text-gray-400">
+							<span class="ml-auto text-xs">
 								{notifications.length} total
 							</span>
 						</div>
 						<div class="overflow-y-auto max-h-[50vh]">
 							{#if notifications.length === 0}
 								<div
-									class="py-12 flex items-center justify-center text-gray-400"
+									class="py-12 flex items-center justify-center"
 								>
 									No notifications yet.
 								</div>
 							{:else}
 								{#each notifications as n (n.id)}
 									<div
-										class="flex flex-col gap-1 px-5 py-4 border-b border-neutral-800 last:border-0 hover:bg-neutral-800/60 transition group"
+										class="flex flex-col gap-1 px-5 py-4 border-b border-base-300 last:border-0 hover:bg-base-200 transition group"
 									>
 										<div
 											class="flex items-center gap-2 mb-0.5"
@@ -151,33 +153,29 @@
 												>
 											{:else if n.purpose === "announcement"}
 												<i
-													class="fa-solid fa-bullhorn text-purple-400"
+													class="fa-solid fa-bullhorn text-info"
 												></i>
 											{:else if n.purpose === "alert"}
 												<i
-													class="fa-solid fa-triangle-exclamation text-red-400"
+													class="fa-solid fa-triangle-exclamation text-error"
 												></i>
 											{:else if n.purpose === "warning"}
 												<i
-													class="fa-solid fa-exclamation-circle text-yellow-400"
+													class="fa-solid fa-exclamation-circle text-warning"
 												></i>
 											{:else}
 												<i
-													class="fa-solid fa-bell text-blue-300"
+													class="fa-solid fa-bell text-primary"
 												></i>
 											{/if}
-											<span
-												class="font-semibold text-white"
-											>
+											<span class="font-semibold">
 												{n.title}
 											</span>
-											<span
-												class="ml-auto text-xs text-gray-400"
-											>
+											<span class="ml-auto text-xs">
 												{formatDate(n.created_at)}
 											</span>
 										</div>
-										<div class="text-gray-300 text-sm">
+										<div class="text-sm">
 											{n.message}
 										</div>
 										{#if n.link}
@@ -185,7 +183,7 @@
 												href={n.link}
 												target="_blank"
 												rel="noopener noreferrer"
-												class="text-blue-400 text-xs mt-1 hover:underline"
+												class="link link-hover link-primary text-xs mt-1"
 											>
 												{`${n.linkText === "" ? "More info" : n.linkText}`}
 												<i
@@ -198,10 +196,10 @@
 							{/if}
 						</div>
 						<div
-							class="px-5 py-3 bg-neutral-900 border-t border-neutral-800 flex justify-end gap-3"
+							class="px-5 py-3 bg-base-200 border-t border-base-300 flex justify-end gap-3"
 						>
 							<button
-								class="text-xs text-gray-400 hover:text-blue-400 cursor-pointer"
+								class="text-xs link link-hover cursor-pointer"
 								onclick={() => (notificationOpen = false)}
 							>
 								Close
@@ -229,8 +227,8 @@
 							type="radio"
 							name="theme-dropdown"
 							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-							aria-label="Classic Light"
-							value="classic light"
+							aria-label="Light"
+							data-set-theme="light"
 						/>
 					</li>
 					<li>
@@ -238,8 +236,8 @@
 							type="radio"
 							name="theme-dropdown"
 							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-							aria-label="Classic Dark"
-							value="classic dark"
+							aria-label="Lofi"
+							data-set-theme="lofi"
 						/>
 					</li>
 					<li>
@@ -247,8 +245,35 @@
 							type="radio"
 							name="theme-dropdown"
 							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-							aria-label="Premium Dark"
-							value="premium dark"
+							aria-label="Winter"
+							data-set-theme="winter"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Dark"
+							data-set-theme="dark"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Synthwave"
+							data-set-theme="synthwave"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Forest"
+							data-set-theme="forest"
 						/>
 					</li>
 				</ul>
@@ -259,7 +284,7 @@
 			{:else if session && profile}
 				<div class="dropdown dropdown-end">
 					<button
-						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary transition focus:outline-none"
+						class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary text-primary-content transition focus:outline-none"
 					>
 						<span class="px-4 py-2">
 							{profile.username}
@@ -312,7 +337,7 @@
 			{:else}
 				<a
 					href="/auth/login"
-					class="rounded-xl bg-primary px-4 py-2 text-sm transition"
+					class="rounded-xl bg-primary text-primary-content px-4 py-2 text-sm transition"
 				>
 					Login
 				</a>
@@ -332,7 +357,7 @@
 	<!-- Mobile Nav -->
 	{#if isOpen}
 		<nav
-			class="bg-black px-6 pb-4 md:hidden absolute z-20 w-full rounded-b-4xl border-b-neutral-800 border-b-2"
+			class="bg-base-100 px-6 pb-4 md:hidden absolute z-20 w-full rounded-b-4xl border-b-base-300 border-b-2"
 			transition:blur={{ duration: 250 }}
 		>
 			<ul class="flex flex-col gap-3">
@@ -340,7 +365,7 @@
 					<li>
 						<a
 							{href}
-							class="block py-2 text-sm border-b border-gray-800 hover:text-blue-400"
+							class="block py-2 text-sm border-b border-base-300"
 							onclick={() => (isOpen = false)}
 						>
 							{name}
@@ -360,54 +385,12 @@
 						<span class="ml-2">Notifications</span>
 					</a>
 					{#if notifications.length !== 0}
-						<span
-							class="absolute top-1/2 right-2 -translate-y-1/2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-black"
-						></span>
-					{/if}
-				</li>
-
-				<!-- Theme Switcher (Mobile) -->
-				<li>
-					<button
-						onclick={() =>
-							(mobileThemeDropdown = !mobileThemeDropdown)}
-						class="w-full text-center rounded-xl bg-green-600 px-4 py-2 text-sm transition hover:bg-green-700 focus:outline-none"
-					>
-						Theme
-						<i
-							class="fa-solid {mobileThemeDropdown
-								? 'fa-caret-up'
-								: 'fa-caret-down'}"
-						></i>
-					</button>
-					{#if mobileThemeDropdown}
-						<ul
-							class="mt-2 space-y-2"
-							transition:blur={{ duration: 250 }}
-						>
-							<li>
-								<button
-									onclick={() => {
-										mobileThemeDropdown = false;
-										isOpen = false;
-									}}
-									class="block text-left w-full px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
-								>
-									Classic White / Dark
-								</button>
-							</li>
-							<li>
-								<button
-									onclick={() => {
-										mobileThemeDropdown = false;
-										isOpen = false;
-									}}
-									class="block text-left w-full px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
-								>
-									Premium Dark
-								</button>
-							</li>
-						</ul>
+						<div
+							class="status status-info animate-ping absolute top-1/2 right-2 -translate-y-1/2"
+						></div>
+						<div
+							class="absolute top-1/2 right-2 -translate-y-1/2 status status-info"
+						></div>
 					{/if}
 				</li>
 

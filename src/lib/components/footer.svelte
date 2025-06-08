@@ -8,9 +8,7 @@
                     alt="CubeIndex logo"
                     class="w-10 h-10"
                 />
-                <span class="text-2xl font-clash font-bold"
-                    >CubeIndex</span
-                >
+                <span class="text-2xl font-clash font-bold">CubeIndex</span>
             </div>
             <p class="text-sm text-gray-400">
                 Track, explore and share your speedcube collection.
@@ -22,12 +20,14 @@
             <h3 class="font-semibold mb-3">Navigation</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/explore"
-                        >Explore</a
+                    <a href="/explore" class="link link-hover">Explore</a>
+                </li>
+                <li>
+                    <a href="/achievements" class="link link-hover"
+                        >Achievements</a
                     >
                 </li>
-                <li><a href="/achievements">Achievements</a></li>
-                <li><a href="/about">About</a></li>
+                <li><a href="/about" class="link link-hover">About</a></li>
             </ul>
         </div>
 
@@ -39,27 +39,27 @@
                     <a
                         href="https://discord.gg/76ExrEAE7s"
                         target="_blank"
-                        class="">Discord</a
+                        class="link link-hover">Discord</a
                     >
                 </li>
                 <li>
                     <a
                         href="https://github.com/Saterz/cubeindex"
                         target="_blank"
-                        class="">GitHub</a
+                        class="link link-hover">GitHub</a
                     >
                 </li>
                 <li>
                     <a
                         href="https://twitter.com/thecubeindex"
                         target="_blank"
-                        class="">Twitter</a
+                        class="link link-hover">Twitter</a
                     >
                 </li>
                 <li>
                     <a
                         href="mailto:thecubeindex@gmail.com"
-                        class="">Email</a
+                        class="link link-hover">Email</a
                     >
                 </li>
             </ul>
@@ -68,24 +68,23 @@
             <h3 class="font-semibold mb-3">Legal</h3>
             <ul class="space-y-2 text-sm">
                 <li>
-                    <a href="/privacy" class=""
-                        >Privacy Policy</a
+                    <a href="/privacy" class="link link-hover">Privacy Policy</a
                     >
                 </li>
                 <li>
-                    <a href="/report" class="">Report</a>
+                    <a href="/report" class="link link-hover">Report</a>
                 </li>
                 <li>
-                    <a href="/tos" class="">Terms of Service</a>
+                    <a href="/tos" class="link link-hover">Terms of Service</a>
                 </li>
             </ul>
         </div>
     </div>
 
     <!-- Bottom -->
-    <div class="mt-10 text-center text-xs text-gray-500">
+    <div class="mt-10 text-center text-xs">
         &copy; 2025 - {new Date().getFullYear()} CubeIndex by
-        <a href="https://saterz.dev/studio" class="underline">Saterz Studio</a>.
-        All rights reserved.
+        <a href="https://saterz.dev/studio" class="link">Saterz Studio</a>. All
+        rights reserved.
     </div>
 </footer>

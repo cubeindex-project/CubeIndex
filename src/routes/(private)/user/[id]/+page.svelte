@@ -1,4 +1,6 @@
 <script lang="ts">
+    import Badge from "$lib/components/badge.svelte";
+
     const { data } = $props();
     const { user, profile, user_achievements, achievements } = data;
 
@@ -33,20 +35,20 @@
     });
 </script>
 
-<section class="min-h-screen bg-black text-white px-0 py-12 pt-0">
+<section class="min-h-screen px-0 py-12 pt-0">
     <!-- Banner full width -->
     {#if profile.banner}
         <div
-            class="relative w-full h-60 sm:h-72 md:h-80 shadow-2xl overflow-hidden rounded-b-2xl"
+            class="relative h-full w-full sm:h-72 md:h-80 shadow-2xl overflow-hidden rounded-b-2xl"
         >
             <img
                 src={profile.banner}
-                alt="User banner"
+                alt="{profile.username}'s banner"
                 class="w-full h-full object-cover object-center transition-transform duration-300"
                 loading="lazy"
             />
             <div
-                class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"
+                class="absolute inset-0 pointer-events-none"
             ></div>
         </div>
     {:else}
@@ -58,60 +60,72 @@
     <div class="relative max-w-4xl mx-auto -mt-24 px-4">
         <!-- Card-like area: Profile header with avatar, username, settings, socials -->
         <div
-            class="bg-neutral-900 border border-neutral-800 rounded-2xl shadow-xl px-4 sm:px-10 py-10 flex flex-col sm:flex-row items-center gap-8"
+            class="bg-base-200 border border-base-300 rounded-2xl px-4 sm:px-10 py-10 flex flex-col sm:flex-row items-center gap-8"
         >
             <!-- Avatar left -->
-            <div
-                class="flex flex-col items-center sm:items-start min-w-[120px]"
-            >
-                <img
-                    src={`${profile?.profile_picture && profile.profile_picture !== "" ? profile.profile_picture : default_profile_picture}`}
-                    alt="Avatar"
-                    class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-blue-500 shadow-xl bg-black object-cover transition-transform duration-200"
-                />
-            </div>
+            {#if profile.profile_picture}
+                <div
+                    class="flex flex-col items-center sm:items-start min-w-[120px]"
+                >
+                    <img
+                        src={profile.profile_picture}
+                        alt="Avatar"
+                        class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-primary shadow-xl bg-black object-cover transition-transform duration-200"
+                    />
+                </div>
+            {:else}
+                <div class="avatar avatar-placeholder">
+                    <div
+                        class="bg-base-300 w-32 h-32 rounded-full border-4 border-primary"
+                    >
+                        <span class="text-5xl uppercase font-clash"
+                            >{profile.username.charAt(0)}</span
+                        >
+                    </div>
+                </div>
+            {/if}
             <!-- Info & Socials right -->
             <div class="flex-1 w-full">
                 <div class="flex items-center justify-between w-full gap-2">
                     <h2
-                        class="text-3xl sm:text-4xl flex flex-row font-extrabold gap-4 break-all items-center tracking-tight text-white"
+                        class="text-3xl sm:text-4xl flex flex-row font-extrabold gap-4 break-all items-center tracking-tight"
                     >
-                        <span class="font-clash">{profile?.username}</span>
+                        <span class="font-clash">{profile.username}</span>
                         <!-- Badge Section -->
                         <span class="flex flex-row gap-2 ml-2">
-                            {#if profile.role === "Admin"}
-                                <span
-                                    class="inline-flex items-center px-2 py-1 rounded bg-red-600 text-sm font-semibold text-white"
-                                    title="Admin"
-                                >
-                                    <i class="fa-solid fa-shield-halved mr-1"
-                                    ></i> Admin
-                                </span>
-                            {/if}
+                            <Badge {profile} textSize="sm" />
                         </span>
                     </h2>
-                    {#if user?.id === profile?.user_id}
+                    {#if user?.id === profile.user_id}
                         <a
                             href="settings"
-                            class="ml-4 flex-shrink-0 bg-neutral-950 border border-blue-500 rounded-xl flex items-center gap-2 px-5 py-2 shadow-lg hover:bg-blue-950 hover:border-cyan-400 transition font-medium"
+                            class="btn btn-lg btn-primary ml-4"
                             aria-label="User Settings"
                             title="User Settings"
                         >
                             <i class="fa-solid fa-gear"></i>
                             <span>Settings</span>
                         </a>
+                    {:else}
+                        <button
+                            class="btn btn-error"
+                            disabled
+                        >
+                            <i class="fa-solid fa-flag"></i>
+                            <span>Report</span>
+                        </button>
                     {/if}
                 </div>
-                <p class="text-gray-400 mt-2">
-                    Member since: <span class="font-mono text-white"
+                <p class="mt-2">
+                    Member since: <span class="font-mono"
                         >{formattedJoinDate}</span
                     >
                 </p>
 
                 <!-- Bio (no card, just text, spaced below join date) -->
                 <div class="mt-3 mb-4">
-                    <h4 class="text-lg font-bold mb-1 text-white">Bio</h4>
-                    <p class="text-gray-200 break-words">
+                    <h4 class="text-lg font-bold mb-1">Bio</h4>
+                    <p class="break-words">
                         {profile?.bio || "No bio provided."}
                     </p>
                 </div>
@@ -119,9 +133,7 @@
                 <!-- Socials Section -->
                 {#if profile?.socials}
                     <div class="mt-4">
-                        <h4 class="text-lg font-bold text-white mb-2">
-                            Socials
-                        </h4>
+                        <h4 class="text-lg font-bold mb-2">Socials</h4>
                         <div class="flex flex-wrap items-center gap-3">
                             {#if profile?.socials?.website}
                                 <a
@@ -228,9 +240,7 @@
     {#if !profile.private || user?.id === profile.user_id}
         <!-- Badges Section -->
         <div class="max-w-4xl mx-auto mt-16 px-4">
-            <h3 class="text-2xl font-bold mb-4 text-white">
-                Achievements Earned
-            </h3>
+            <h3 class="text-2xl font-bold mb-4">Achievements Earned</h3>
             {#if user_achievements && user_achievements.length > 0}
                 <ul
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
@@ -251,7 +261,7 @@
                                             {achievement.rarity ==
                                 'Legendary' || achievement.rarity == 'Exotic'
                                 ? 'text-black'
-                                : 'text-white'} rounded-xl p-4 text-center shadow-lg border border-neutral-700"
+                                : 'text-white'} rounded-xl p-4 text-center"
                         >
                             {achievement.icon}
                             <span class="text-lg font-medium"
@@ -264,7 +274,7 @@
                         <button
                             onclick={() =>
                                 (showAllAchievements = !showAllAchievements)}
-                            class="bg-neutral-700 text-white rounded-xl p-4 text-center shadow-lg border border-neutral-700 cursor-pointer hover:bg-neutral-800 transition"
+                            class="btn btn-base-200 h-15"
                         >
                             {showAllAchievements ? "Show Less" : "Show More"}
                         </button>
@@ -272,7 +282,7 @@
                 </ul>
             {:else}
                 <div
-                    class="bg-gradient-to-r from-neutral-800 via-blue-950 to-neutral-800 rounded-xl p-6 text-center text-gray-300 shadow-lg border border-neutral-700"
+                    class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
                 >
                     <span class="text-lg font-medium"
                         >No achievements earned yet!</span
@@ -283,9 +293,9 @@
 
         <!-- Cube Collection -->
         <div class="max-w-4xl mx-auto mt-12 px-4">
-            <h3 class="text-2xl font-bold mb-4 text-white">Cube Collection</h3>
+            <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
             <div
-                class="bg-gradient-to-r from-neutral-800 via-blue-950 to-neutral-800 rounded-xl p-6 text-center text-gray-300 shadow-lg border border-neutral-700"
+                class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
             >
                 <span class="text-lg font-medium">Cubes coming soon!</span>
             </div>

@@ -1,8 +1,10 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui";
 
+@plugin "daisyui" {
+    themes: all;
+}
 
 @theme {
     --font-clash: 'Clash Display', sans-serif;

@@ -25,20 +25,20 @@
 </script>
 
 <section
-	class="relative flex min-h-screen flex-col items-center justify-center bg-black px-6 text-center text-white grid-bg overflow-hidden"
+	class="relative flex min-h-screen flex-col items-center justify-center px-6 text-center grid-bg overflow-hidden"
 >
 	<div class="relative z-10">
 		<h1
-			class="font-clash text-[6rem] sm:text-[8rem] font-black text-blue-500 drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
+			class="font-clash text-[6rem] sm:text-[8rem] font-black text-primary drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
 		>
 			{page.status}
 		</h1>
-		<p class="mb-6 text-xl font-medium text-gray-300 sm:text-2xl">
+		<p class="mb-6 text-xl font-medium sm:text-2xl">
 			<strong>{page.error?.message}</strong>
 		</p>
 	</div>
 
-	<p class="mb-8 max-w-md text-gray-400 relative z-10">
+	<p class="mb-8 max-w-md relative z-10">
 		It seems you encountered an error.<br>
 		If you think this is a bug, please let us know!
 	</p>
@@ -46,7 +46,7 @@
 	<div class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative">
 		<a
 			href="/"
-			class="inline-block rounded-xl bg-blue-600 hover:bg-blue-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(59,130,246,0.5)] transition"
+			class="btn btn-lg btn-primary"
 		>
 			🏠 Return Home
 		</a>
@@ -54,7 +54,7 @@
 			href="https://discord.gg/76ExrEAE7s"
 			target="_blank"
 			rel="noopener noreferrer"
-			class="inline-block rounded-xl bg-purple-600 hover:bg-purple-700 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(149,76,233,0.5)] transition"
+			class="btn btn-lg btn-error"
 		>
 			🐞 Report the Bug on Discord
 		</a>
@@ -82,6 +82,6 @@
 			transparent 40px
 		);
 		z-index: 0;
-		opacity: 0.2;
+		opacity: 0.5;
 	}
 </style>

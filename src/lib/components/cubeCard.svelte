@@ -1,10 +1,11 @@
 <script lang="ts">
     import StarRating from "./starRating.svelte";
+    import CubeVersionType from "./cubeVersionType.svelte";
     let { cube, rate, add, details, badges } = $props();
 </script>
 
 <div
-    class="bg-neutral-900 border border-neutral-700 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
+    class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
 >
     <img
         src={cube.image_url}
@@ -19,26 +20,7 @@
                 <span class="text-blue-400">{cube.version_name}</span>
             {/if}
             {#if badges}
-                {#if cube.version_type === "Base"}
-                    <span
-                        class="ml-2 px-2 py-1 rounded bg-blue-700/80 text-xs font-semibold relative group"
-                    >
-                        <span class="font-clash uppercase">Base</span>
-                    </span>
-                {:else if cube.version_type === "Limited"}
-                    <span
-                        class="ml-2 px-2 py-1 rounded bg-yellow-500/80 text-xs font-semibold relative group"
-                    >
-                        <span class="font-clash uppercase">Limited Edition</span
-                        >
-                    </span>
-                {:else}
-                    <span
-                        class="ml-2 px-2 py-1 rounded bg-green-600/80 text-xs font-semibold relative group"
-                    >
-                        <span class="font-clash uppercase">Trim</span>
-                    </span>
-                {/if}
+                <CubeVersionType {cube} moreInfo={false} />
             {/if}
         </h2>
         <p class="text-sm text-gray-400">
@@ -50,7 +32,7 @@
         <div class="mt-4 flex gap-2">
             {#if add}
                 <button
-                    class="flex-1 px-3 py-2 cursor-pointer rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-semibold transition text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                    class="btn btn-secondary flex-1"
                     type="button"
                     aria-label="Add to Collection"
                     disabled
@@ -61,10 +43,10 @@
             {/if}
             {#if rate}
                 <button
-                    class="flex-1 px-3 py-2 cursor-pointer rounded-lg bg-yellow-600 hover:bg-yellow-700 text-white font-semibold transition text-sm"
+                    class="btn btn-accent flex-1"
                     type="button"
                     aria-label="Rate this Cube"
-                    onclick={() => alert(`Rate ${cube.series} ${cube.model}`)}
+                    disabled
                 >
                     <i class="fa-solid fa-star mr-2"></i>
                     Rate this Cube
@@ -73,8 +55,8 @@
         </div>
         {#if details}
             <a
-                href={`/explore/cubes/${cube.slug}`}
-                class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow transition duration-150"
+                href="/explore/cubes/{cube.slug}"
+                class="btn btn-primary mt-4"
                 aria-label="View Cube Details"
             >
                 View Details

@@ -75,7 +75,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
 		if (event.url.pathname === '/auth') {
 			redirect(303, `/user/${profile?.id}`)
 		}
-		if (event.url.pathname.startsWith('/admin') && profile.role !== 'Admin') {
+		if (event.url.pathname.startsWith('/admin') && profile.role === 'User') {
 			redirect(303, '/')
 		}
 	}

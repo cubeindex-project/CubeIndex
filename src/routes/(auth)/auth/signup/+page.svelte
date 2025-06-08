@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { supabase } from "$lib/supabaseClient.js";
     import { configCatClient } from "$lib/configcatClient";
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import { onMount } from "svelte";
@@ -16,12 +15,16 @@
     let acceptedTOS = $state(false);
 
     function signUpVerification() {
-        if (username.length <= 2 || username.length >= 12) {
-            error = "Username must be between 2 and 12 characters";
+        if (password.length < 8) {
+            error = "Password must be at least 8 characters.";
             return;
         }
         if (password !== confirmPassword) {
             error = "Passwords do not match";
+            return;
+        }
+        if (username.length <= 2 || username.length >= 12) {
+            error = "Username must be between 2 and 12 characters";
             return;
         }
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

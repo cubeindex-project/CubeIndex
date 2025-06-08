@@ -33,7 +33,7 @@
     }
 </script>
 
-{#if databaseAvailability}
+{#if databaseAvailability && cubesAvailability}
     <section class="min-h-screen px-6 py-16">
         <div class="max-w-4xl mx-auto">
             <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
@@ -43,9 +43,7 @@
                     class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
                 />
             </div>
-            <h1
-                class="text-4xl font-bold mb-4 flex items-center gap-3"
-            >
+            <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
                 <span class="font-clash">
                     {cube.series}
                     {cube.model}
@@ -117,15 +115,11 @@
                     </div>
                     <div class="flex items-center justify-between">
                         <span>Weight:</span>
-                        <span class="font-medium"
-                            >{cube.weight} g</span
-                        >
+                        <span class="font-medium">{cube.weight} g</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span>Surface Finish:</span>
-                        <span class="font-medium"
-                            >{cube.surface_finish}</span
-                        >
+                        <span class="font-medium">{cube.surface_finish}</span>
                     </div>
                     <div class="flex items-center justify-between">
                         <span>Release Date:</span>
@@ -177,7 +171,9 @@
                                 href={shop.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="btn btn-outline {shop.available ? "btn-primary" : "btn-error"}"
+                                class="btn btn-outline {shop.available
+                                    ? 'btn-primary'
+                                    : 'btn-error'}"
                             >
                                 {#if shop.available}
                                     <i class="fa-solid fa-check"></i>
@@ -192,9 +188,7 @@
             {/if}
 
             <div class="my-8">
-                <div
-                    class="bg-base-200 rounded-xl p-4 border border-base-300"
-                >
+                <div class="bg-base-200 rounded-xl p-4 border border-base-300">
                     <h2
                         class="text-lg font-semibold mb-3 flex items-center gap-2"
                     >
@@ -311,9 +305,7 @@
                 </div>
             {/if}
             <div class="mb-8">
-                <h2
-                    class="text-lg font-semibold mb-3 flex items-center gap-2"
-                >
+                <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
                     <i class="fa-solid fa-star"></i>
                     User Ratings
                 </h2>
@@ -331,7 +323,7 @@
                                     <span class="text-sm">
                                         by <a
                                             href={idOfUser(rating.username)}
-                                            class="underline "
+                                            class="underline"
                                             >{rating.username}</a
                                         >
                                     </span>
@@ -364,10 +356,7 @@
                 </a>
             </div>
 
-            <a
-                href="/explore/cubes"
-                class="btn btn-lg btn-primary mt-6"
-            >
+            <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
                 ← Back to Explore
             </a>
         </div>

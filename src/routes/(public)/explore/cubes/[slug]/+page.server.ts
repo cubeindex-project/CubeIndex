@@ -2,7 +2,7 @@ import { supabase } from '$lib/supabaseClient';
 import { error } from '@sveltejs/kit';
 import { configCatClient } from "$lib/configcatClient";
 
-export async function load({ params }) {
+export const load = async ({ params }) => {
   const { slug } = params;
 
   let databaseAvailability: boolean = true;

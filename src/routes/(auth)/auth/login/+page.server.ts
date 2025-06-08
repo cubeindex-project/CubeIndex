@@ -1,4 +1,4 @@
-import { fail, redirect, error } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
 
 export const actions: Actions = {
@@ -17,7 +17,7 @@ export const actions: Actions = {
       .select('id')
       .eq('user_id', user?.id)
 
-    if (err) throw error(500, err.message);
+    if (err) return fail(500, { message: err.message });
 
     const profile = profiles?.[0]
 

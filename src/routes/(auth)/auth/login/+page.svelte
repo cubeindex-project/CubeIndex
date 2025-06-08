@@ -98,7 +98,7 @@
 
                 <p class="text-sm text-gray-500 -mt-5">
                     Forgot your password?
-                    <button class="link link-primary"
+                    <button class="link link-primary link-hover"
                         >Reset</button
                     >
                 </p>
@@ -139,7 +139,7 @@
 
             <p class="text-sm text-center text-gray-500 mt-6">
                 Don't have an account?
-                <a href="/auth/signup" class="link link-primary ml-1">
+                <a href="/auth/signup" class="link link-primary link-hover ml-1">
                     Sign Up
                 </a>
             </p>

@@ -47,17 +47,15 @@
 
 {#if signup}
     <section
-        class="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 relative overflow-hidden"
+        class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
     >
         <div
-            class="w-full max-w-md bg-neutral-900 border border-neutral-700 rounded-2xl shadow-lg p-8 z-10"
+            class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
         >
-            <h1
-                class="text-3xl font-clash font-bold text-center mb-6 text-white"
-            >
+            <h1 class="text-3xl font-clash font-bold text-center mb-6">
                 Join CubeIndex
             </h1>
-            <p class="text-center text-gray-400 text-sm mb-8">
+            <p class="text-center text-sm mb-8">
                 Create a free account to start tracking your collection
             </p>
             <form
@@ -77,7 +75,7 @@
                         name="username"
                         type="text"
                         bind:value={username}
-                        class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        class="input w-full"
                         required
                     />
                 </div>
@@ -93,7 +91,7 @@
                         name="email"
                         type="email"
                         bind:value={email}
-                        class="w-full mt-1 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        class="input w-full"
                         required
                     />
                 </div>
@@ -110,17 +108,22 @@
                             name="password"
                             type={showPassword ? "text" : "password"}
                             bind:value={password}
-                            class="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                            class="input w-full"
                             required
                         />
-                        <button
-                            type="button"
-                            class="fa-solid {showPassword
-                                ? 'fa-eye-slash'
-                                : 'fa-eye'} ml-4 cursor-pointer text-white"
-                            onclick={togglePasswordVisibility}
-                            aria-label="Toggle Password Visibility"
-                        ></button>
+                        <label class="swap text-md">
+                            <input
+                                type="checkbox"
+                                onclick={togglePasswordVisibility}
+                                class="sr-only peer"
+                            />
+                            <i
+                                class="fa-solid fa-eye swap-off ml-2 cursor-pointer"
+                            ></i>
+                            <i
+                                class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"
+                            ></i>
+                        </label>
                     </div>
                 </div>
 
@@ -136,7 +139,7 @@
                         type="password"
                         name="confirmPassword"
                         bind:value={confirmPassword}
-                        class="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        class="input w-full"
                         required
                     />
                 </div>
@@ -144,12 +147,10 @@
                 <!-- Accept ToS and Privacy Policy -->
                 <div class="flex items-center gap-2">
                     <input
-                        id="acceptTOS"
                         type="checkbox"
                         name="acceptTOS"
                         bind:checked={acceptedTOS}
-                        class="accent-blue-600 w-5 h-5 rounded border border-neutral-600 bg-neutral-800 cursor-pointer"
-                        required
+                        class="checkbox bg-base-300"
                     />
                     <label
                         for="acceptTOS"
@@ -159,14 +160,14 @@
                         <a
                             href="/tos"
                             target="_blank"
-                            class="text-blue-400 hover:underline"
+                            class="link link-primary link-hover"
                             >Terms of Service</a
                         >
                         and
                         <a
                             href="/privacy"
                             target="_blank"
-                            class="text-blue-400 hover:underline"
+                            class="link link-primary link-hover"
                             >Privacy Policy</a
                         >
                     </label>
@@ -175,37 +176,33 @@
                 <!-- Main Sign Up Button -->
                 <button
                     type="submit"
-                    class="w-full cursor-pointer bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition rounded-lg px-6 py-3 font-semibold text-white text-lg"
+                    class="btn btn-xl bg-gradient-to-r from-primary to-purple-600 hover:to-purple-700 text-white w-full"
                 >
                     Sign Up
                 </button>
 
+                {#if form?.message}
+                    <p class="text-sm text-error text-center mt-2">
+                        {form.message}
+                    </p>
+                {/if}
+
                 <!-- OR Divider -->
-                <div class="flex items-center gap-4 my-2">
-                    <div class="flex-1 h-px bg-neutral-700"></div>
-                    <span class="text-gray-400 text-xs">or</span>
-                    <div class="flex-1 h-px bg-neutral-700"></div>
-                </div>
+                <div class="divider">or</div>
 
                 <!-- Sign Up with Discord Button -->
                 <a
                     type="button"
                     href="/auth/signup/discord"
-                    class="w-full flex items-center justify-center gap-3 bg-[#5865F2] hover:bg-[#4752C4] transition px-6 py-3 mt-6 rounded-lg font-semibold text-white text-lg shadow-lg cursor-pointer"
+                    class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
                 >
                     <i class="fa-brands fa-discord text-2xl"></i>
                     Sign Up with Discord
                 </a>
-
-                {#if form?.message}
-                    <p class="text-sm text-red-500 text-center mt-2">
-                        {form.message}
-                    </p>
-                {/if}
             </form>
-            <p class="text-sm text-center text-gray-500 mt-6">
+            <p class="text-sm text-center mt-6">
                 Already have an account?
-                <a href="/auth/login" class="text-blue-400 hover:underline ml-1"
+                <a href="/auth/login" class="link link-primary link-hover"
                     >Log in</a
                 >
             </p>

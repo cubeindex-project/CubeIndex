@@ -12,6 +12,7 @@ export const actions: Actions = {
 
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+        if (password.length < 8) return fail(400, { message: "Password must be at least 8 characters"})
         if (password !== confirmPassword) return fail(400, { message: "Passwords do not match" })
         if (!emailRegex.test(email)) return fail(400, { message: "Please enter a valid email address" })
         if (username.length <= 2 || username.length >= 12) return fail(400, { message: "Username must be between 2 and 12 characters" })
@@ -32,7 +33,7 @@ export const actions: Actions = {
         if (upsertError?.message === "duplicate key value violates unique constraint \"profiles_username_key\"") {
             return fail(400, { message: "This username is already taken. Please choose a different one." })
         }
-        if (upsertError) throw error(500, upsertError.message);
+        if (upsertError) return fail(400, { message: upsertError.message });
 
         return { message: "Check your email to verify your account" }
     },

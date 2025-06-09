@@ -56,7 +56,7 @@
             <p class="text-center text-sm mb-8">
                 Login to your CubeIndex profile
             </p>
-            <form method="POST" action="?/login" class="space-y-6">
+            <form method="POST" class="space-y-6">
                 <div>
                     <label for="email" class="block text-sm font-medium"
                         >Email</label

@@ -34,7 +34,7 @@
 
 		if (error) console.error("Error while loading announcement:", error);
 
-		notifications = data || [];
+		notifications = (data || []).filter(notification => notification.archived === false);
 	}
 
 	const navLinks = [

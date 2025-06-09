@@ -133,7 +133,7 @@
             <h1 class="text-4xl font-clash font-bold mb-6 text-center">
                 Explore Cubes
             </h1>
-            <p class="text-gray-400 mb-12 text-center">
+            <p class="mb-12 text-center">
                 Browse all your favorite cubes by type, brand, or rating.
             </p>
 

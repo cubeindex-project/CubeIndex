@@ -18,6 +18,11 @@
 - `src/lib/server/auth.ts` – Custom auth logic
 - `messages/` – Translations (i18n)
 
+## 🚀 Deployment
+
+- **Main Branch (Production):** [https://cube-index.vercel.app](https://cube-index.vercel.app)  
+- **Developer Branch (Beta Preview):** [https://cube-index-beta.vercel.app](https://cube-index-beta.vercel.app)
+
 ## 🛠 Setup Instructions
 
 1. **Clone the Repo**
@@ -54,26 +59,6 @@
 
 Visit [http://localhost:5173](http://localhost:5173)
 
-## 🧪 Running Tests
-
-Run all tests:
-
-```bash
-npm run test
-```
-
-Watch mode:
-
-```bash
-npm run test:unit
-```
-
-Lint your code:
-
-```bash
-npm run lint
-```
-
 ## 🤝 Contributing
 
 We welcome contributions! Here's how to get started:
@@ -81,7 +66,6 @@ We welcome contributions! Here's how to get started:
 * **Fork & branch off `developer`**
 * Use clear names like `feature/add-cube-model`
 * Follow code style (TypeScript, ESLint)
-* Add tests for new features
 * Commit clearly (e.g. `fix: login bug`)
 * Open a PR with description and context
 * Reference issues when applicable (e.g. `Closes #12`)
@@ -92,7 +76,6 @@ We welcome contributions! Here's how to get started:
 ```bash
 git checkout -b feature/my-feature
 # Make your changes
-npm run lint && npm run test
 git commit -m "feat: add new feature"
 git push origin feature/my-feature
 ```
@@ -104,6 +87,11 @@ Then open a Pull Request to `developer` on GitHub.
 * Join us on **[Discord](https://discord.gg/WpqqfCGCUs)**
 * Create issues for bugs or feature ideas
 * Check the docs/comments for guidance
+
+## 📦 Miscellaneous
+
+- **⭐ Star History:**  
+  [![Star History Chart](https://api.star-history.com/svg?repos=Saterz/CubeIndex&type=Date)](https://www.star-history.com/#Saterz/CubeIndex&Date)
 
 ## 📄 License
 

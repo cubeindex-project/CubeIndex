@@ -347,7 +347,7 @@
             </div>
             <div class="mt-4">
                 <a
-                    href="https://discord.gg/76ExrEAE7s"
+                    href="/discord"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn btn-error"

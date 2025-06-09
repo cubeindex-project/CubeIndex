@@ -37,7 +37,7 @@
             <ul class="space-y-2 text-sm">
                 <li>
                     <a
-                        href="https://discord.gg/76ExrEAE7s"
+                        href="/discord"
                         target="_blank"
                         class="link link-hover">Discord</a
                     >

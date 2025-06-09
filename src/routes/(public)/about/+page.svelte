@@ -51,7 +51,7 @@
                 >
                 and join the community on
                 <a
-                    href="https://discord.gg/76ExrEAE7s"
+                    href="/discord"
                     target="_blank"
                     class="link link-primary link-hover">Discord</a
                 >.

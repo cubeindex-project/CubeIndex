@@ -275,7 +275,7 @@
           </div>
         </div>
 
-        <button class="btn btn-lg btn-primary" onclick={updatePassword}>
+        <button class="btn btn-lg btn-primary" onclick={updatePassword} disabled>
           Update Password
         </button>
       </div>

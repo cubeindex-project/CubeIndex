@@ -1,6 +1,5 @@
 <script lang="ts">
   const { featureName } = $props();
-  const discordInvite = "https://discord.gg/76ExrEAE7s";
 </script>
 
 <section class="min-h-screen flex items-center justify-center px-6 py-12">
@@ -26,7 +25,7 @@
     </p>
 
     <a
-      href={discordInvite}
+      href="/discord"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-lg bg-primary text-primary-content"

@@ -9,15 +9,13 @@
     let isSubmitting: boolean = $state(false);
 
     async function toggleArchive(id: number, archive: boolean) {
-        // const { data, error: err } = await supabase
-        //     .from("announcement")
-        //     .update({ archived: archive })
-        //     .eq("id", id)
-        //     .select();
+        const { error: err } = await supabase
+            .from("announcement")
+            .update({ archived: archive })
+            .eq("id", id);
 
-        // if (err) throw error(500, err.message);
-
-        // console.log(data);
+        if (err) throw error(500, err.message);
+        window.location.reload();
     }
 
     function onSubmit() {

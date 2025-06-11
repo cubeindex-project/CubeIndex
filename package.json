@@ -46,6 +46,7 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
 		"@node-rs/argon2": "^2.0.2",
+		"@number-flow/svelte": "^0.3.9",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@supabase/ssr": "^0.6.1",

@@ -1,4 +1,19 @@
 <script lang="ts">
+    import NumberFlow, { continuous } from "@number-flow/svelte";
+    import { onMount } from "svelte";
+
+    const { data } = $props();
+    const { totalCubes, totalUsers, achievements } = $derived(data);
+    let mounted = $state(false);
+
+    const unlockAchi = () => {
+        return achievements.filter((ta) => ta.unlockable === true).length;
+    };
+
+    const totalAchi = () => {
+        return achievements.length;
+    };
+
     type Partner = {
         name: string;
         emoji: string;
@@ -42,6 +57,10 @@
             border: false,
         },
     ];
+
+    onMount(() => {
+        mounted = true;
+    });
 </script>
 
 <section
@@ -64,8 +83,70 @@
     </div>
 </section>
 
+<section class="py-16 px-5 text-center bg-base-200">
+    <h2 class="text-4xl font-clash font-extrabold mb-14">
+        CubeIndex in Numbers
+    </h2>
+
+    <div class="stats lg:stats-horizontal stats-vertical overflow-hidden">
+        <div class="stat flex-1">
+            <div class="stat-title text-sm uppercase tracking-wide">
+                <i class="fa-solid fa-cubes"></i>
+                Cubes Logged
+            </div>
+            <div class="stat-value text-5xl font-bold text-accent mb-2">
+                <NumberFlow
+                    value={mounted ? totalCubes : 0}
+                    plugins={[continuous]}
+                    transformTiming={{ duration: 50, easing: "linear" }}
+                    spinTiming={{ duration: totalCubes * 10, easing: "linear" }}
+                    opacityTiming={{ duration: 500, easing: "ease-out" }}
+                    class="inline-block"
+                />
+            </div>
+        </div>
+
+        <div class="stat flex-1">
+            <div class="stat-title text-sm uppercase tracking-wide">
+                <i class="fa-solid fa-people-group"></i>
+                Registered Users
+            </div>
+            <div class="stat-value text-5xl font-bold text-secondary mb-2">
+                <NumberFlow
+                    value={mounted ? totalUsers : 0}
+                    plugins={[continuous]}
+                    transformTiming={{ duration: 50, easing: "linear" }}
+                    spinTiming={{ duration: totalUsers * 10, easing: "linear" }}
+                    opacityTiming={{ duration: 500, easing: "ease-out" }}
+                    class="inline-block"
+                />
+            </div>
+        </div>
+
+        <div class="stat flex-1">
+            <div class="stat-title text-sm uppercase tracking-wide">
+                <i class="fa-solid fa-trophy"></i>
+                Unlockable Achievements
+            </div>
+            <div class="stat-value text-5xl font-bold text-info mb-2">
+                <NumberFlow
+                    value={mounted ? unlockAchi() : 0}
+                    plugins={[continuous]}
+                    transformTiming={{ duration: 50, easing: "linear" }}
+                    spinTiming={{
+                        duration: unlockAchi() * 10,
+                        easing: "linear",
+                    }}
+                    opacityTiming={{ duration: 500, easing: "ease-out" }}
+                    class="inline-block"
+                /> / {totalAchi()}
+            </div>
+        </div>
+    </div>
+</section>
+
 <section
-    class="pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
+    class="pt-16 pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
 >
     <h2 class="text-4xl font-clash font-bold text-center mb-12">
         Our Partners
@@ -108,5 +189,31 @@
                 {/if}
             </div>
         {/each}
+    </div>
+</section>
+
+<section
+    class="py-20 px-6 text-center bg-base-200 rounded-2xl shadow-inner mt-16"
+>
+    <h2 class="text-4xl font-bold font-clash mb-4">
+        Ready to level up your cube game?
+    </h2>
+    <p class="text-lg max-w-2xl mx-auto mb-8">
+        Join the CubeIndex community and start tracking your collection,
+        unlocking achievements, and connecting with cubers worldwide.
+    </p>
+    <div class="flex justify-center gap-4 flex-wrap">
+        <a
+            href="/auth/signup"
+            class="btn btn-primary btn-lg px-6 py-3 font-semibold transition-transform"
+        >
+            Get Started
+        </a>
+        <a
+            href="/explore"
+            class="btn btn-outline btn-lg px-6 py-3 font-semibold transition-transform"
+        >
+            Explore Cubes
+        </a>
     </div>
 </section>

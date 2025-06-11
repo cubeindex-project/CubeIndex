@@ -1,105 +1,55 @@
 <script lang="ts">
-    const { data } = $props();
+    import { enhance } from "$app/forms";
+    const { data, form } = $props();
     const { cubes, profiles } = $derived(data);
 
-    let series = $state();
-    let model = $state();
-    let slug = $state();
-    let brand = $state();
-    let type = $state();
-    let otherType = $state();
-    let image_url = $state();
-    let releaseDate = $state();
-    let weight = $state();
-    let size = $state();
-    let modOf = $state();
-    let limitedOf = $state();
-    let version = $state();
-    let cubeVersion = $state();
-    let submittedBy = $state();
-    let wca_legal = $state(false);
+    let slug = $state("");
+    let series = $state("");
+    let model = $state("");
+    let version = $state("");
+    let brand = $state("");
+    let otherBrand = $state("");
+    let type = $state("");
+    let releaseDate = $state("");
+    let imageUrl = $state("");
+    let surfaceFinish = $state("");
+    let weight = $state(0);
+    let size = $state(0);
+    let cubeVersion = $state("");
+    let submittedBy = $state("");
+    let relatedTo = $state("");
+    let wcaLegal = $state(false);
     let magnetic = $state(false);
     let smart = $state(false);
+    let modded = $state(false);
     let discontinued = $state(false);
     let maglev = $state(false);
-    let modded = $state(false);
-    let error: string | null = $state(null);
-    let message: string | null = $state(null);
 
     // Example: These could come from a load function or API
     const allTypes = () => Array.from(new Set(cubes.map((c) => c.type))).sort();
     const allBrands = () =>
         Array.from(new Set(cubes.map((c) => c.brand))).sort();
-    const allSlug = () => Array.from(new Set(cubes.map((c) => c.slug))).sort();
     const allUsernames = () =>
         Array.from(new Set(profiles.map((p) => p.username))).sort();
-
-    async function handleSubmit(e: Event) {
-        e.preventDefault();
-        error = null;
-        message = null;
-
-        // Basic validation
-        if (
-            !slug ||
-            !series ||
-            !model ||
-            !brand ||
-            !type ||
-            !releaseDate ||
-            !image_url ||
-            !weight ||
-            !size ||
-            !cubeVersion ||
-            !submittedBy ||
-            brand === "disabled" ||
-            type === "disabled" ||
-            cubeVersion === "disabled" ||
-            submittedBy === "disabled"
-        ) {
-            error = "Please fill in all required fields.";
-            return;
-        }
-
-        if (brand === "___other" && !otherType) {
-            error = "Please specify the other brand.";
-            return;
-        }
-        if (type === "___other" && !otherType) {
-            error = "Please specify the other type.";
-            return;
-        }
-        if ((cubeVersion === "Trim" || cubeVersion === "Limited") && !version) {
-            error = "Please specify the version.";
-            return;
-        }
-        if (modded && !modOf) {
-            error = "Please select the model this is a mod of.";
-            return;
-        }
-        if (cubeVersion === "Limited" && !limitedOf) {
-            error = "Please select the model this is a limited edition of.";
-            return;
-        }
-        if (smart && wca_legal) {
-            error = "Smart cubes cannot be WCA legal.";
-            return;
-        }
-
-        message = "Cube added successfully!";
-    }
+    const allCubes = () =>
+        Array.from(
+            new Set(
+                cubes.map((c) => ({
+                    label: `${c.series} ${c.model} ${c.version_name}`,
+                    value: c.slug,
+                })),
+            ),
+        ).sort();
 </script>
 
 <section
-    class="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 relative overflow-hidden py-10"
+    class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden py-10"
 >
-    <div
-        class="w-full max-w-xl bg-neutral-900 border border-neutral-700 rounded-2xl shadow-lg p-8 z-10"
-    >
+    <div class="w-full p-8 z-10">
         <h1 class="text-3xl font-clash font-bold text-center mb-6">
             Add a Cube
         </h1>
-        <form class="space-y-6" onsubmit={handleSubmit} method="POST">
+        <form method="POST" use:enhance class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <label class="block text-sm mb-1"
@@ -109,21 +59,20 @@
                             type="text"
                             placeholder="gan-356-maglev"
                             bind:value={slug}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
                 </div>
                 <div>
                     <label class="block text-sm mb-1"
-                        >Series <span class="text-red-500">*</span>
+                        >Series
                         <input
                             name="series"
                             type="text"
                             placeholder="GAN356"
                             bind:value={series}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
-                            required
+                            class="input w-full input-lg"
                         />
                     </label>
                 </div>
@@ -135,7 +84,7 @@
                             type="text"
                             placeholder="Maglev"
                             bind:value={model}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
@@ -149,7 +98,7 @@
                                 type="text"
                                 placeholder="UV / 10 Year Edition"
                                 bind:value={version}
-                                class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                                class="input w-full input-lg"
                                 required
                             />
                         </label>
@@ -161,7 +110,7 @@
                         <select
                             name="brand"
                             bind:value={brand}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="select select-lg w-full"
                             required
                         >
                             <option value="disabled" selected
@@ -181,8 +130,8 @@
                             <input
                                 name="otherBrand"
                                 type="text"
-                                bind:value={otherType}
-                                class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                                bind:value={otherBrand}
+                                class="input w-full input-lg"
                                 required
                             />
                         </label>
@@ -194,7 +143,7 @@
                         <select
                             name="type"
                             bind:value={type}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="select select-lg w-full"
                             required
                         >
                             <option value="disabled" selected
@@ -207,20 +156,6 @@
                         </select>
                     </label>
                 </div>
-                {#if type === "___other"}
-                    <div>
-                        <label class="block text-sm mb-1"
-                            >Other Type <span class="text-red-500">*</span>
-                            <input
-                                name="otherType"
-                                type="text"
-                                bind:value={otherType}
-                                class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
-                                required
-                            />
-                        </label>
-                    </div>
-                {/if}
                 <div>
                     <label class="block text-sm mb-1"
                         >Release Date <span class="text-red-500">*</span>
@@ -228,7 +163,7 @@
                             name="releaseDate"
                             type="date"
                             bind:value={releaseDate}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
@@ -239,9 +174,22 @@
                         <input
                             name="imageUrl"
                             type="url"
-                            bind:value={image_url}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            bind:value={imageUrl}
+                            class="input w-full input-lg"
                             placeholder="https://..."
+                            required
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1"
+                        >Surface Finish <span class="text-red-500">*</span>
+                        <input
+                            name="surfaceFinish"
+                            type="text"
+                            placeholder="Frosted"
+                            bind:value={surfaceFinish}
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
@@ -252,9 +200,10 @@
                         <input
                             name="weight"
                             type="number"
-                            min=0
+                            min="0"
+                            step="0.1"
                             bind:value={weight}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
@@ -265,9 +214,10 @@
                         <input
                             name="size"
                             type="number"
-                            min=0
+                            min="0"
+                            step="0.1"
                             bind:value={size}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="input w-full input-lg"
                             required
                         />
                     </label>
@@ -278,7 +228,7 @@
                         <select
                             name="cubeVersion"
                             bind:value={cubeVersion}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                            class="select select-lg w-full"
                             required
                         >
                             <option value="disabled" selected
@@ -292,12 +242,11 @@
                 </div>
                 <div>
                     <label class="block text-sm mb-1"
-                        >Submitted By <span class="text-red-500">*</span>
+                        >Submitted By (if not specified it will default to you)
                         <select
                             name="submittedBy"
                             bind:value={submittedBy}
-                            class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
-                            required
+                            class="select select-lg w-full"
                         >
                             <option value="disabled" selected
                                 >Select User</option
@@ -308,43 +257,21 @@
                         </select>
                     </label>
                 </div>
-                {#if modded === true}
+                {#if modded || cubeVersion === "Trim" || cubeVersion === "Limited"}
                     <div>
                         <label class="block text-sm mb-1"
-                            >Mod Of <span class="text-red-500">*</span>
+                            >Related To <span class="text-red-500">*</span>
                             <select
-                                name="modOf"
-                                bind:value={modOf}
-                                class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
+                                name="relatedTo"
+                                bind:value={relatedTo}
+                                class="select select-lg w-full"
                                 required
                             >
                                 <option value="disabled" selected
                                     >Select Model</option
                                 >
-                                {#each allSlug() as s}
-                                    <option value={s}>{s}</option>
-                                {/each}
-                            </select>
-                        </label>
-                    </div>
-                {/if}
-                {#if cubeVersion === "Limited"}
-                    <div>
-                        <label class="block text-sm mb-1"
-                            >Limited Edition Of <span class="text-red-500"
-                                >*</span
-                            >
-                            <select
-                                name="limitedOf"
-                                bind:value={limitedOf}
-                                class="w-full bg-neutral-800 text-white p-3 rounded-lg border border-neutral-700 focus:border-blue-500 outline-none transition"
-                                required
-                            >
-                                <option value="disabled" selected
-                                    >Select Model</option
-                                >
-                                {#each allSlug() as s}
-                                    <option value={s}>{s}</option>
+                                {#each allCubes() as c}
+                                    <option value={c.value}>{c.label}</option>
                                 {/each}
                             </select>
                         </label>
@@ -358,8 +285,8 @@
                     <input
                         name="wcaLegal"
                         type="checkbox"
-                        bind:checked={wca_legal}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        bind:checked={wcaLegal}
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="wca_legal" class="text-sm">WCA Legal</label>
                 </div>
@@ -368,7 +295,7 @@
                         name="magnetic"
                         type="checkbox"
                         bind:checked={magnetic}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="magnetic" class="text-sm">Magnetic</label>
                 </div>
@@ -377,7 +304,7 @@
                         name="smart"
                         type="checkbox"
                         bind:checked={smart}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="smart" class="text-sm">Smart</label>
                 </div>
@@ -386,7 +313,7 @@
                         name="modded"
                         type="checkbox"
                         bind:checked={modded}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="modded" class="text-sm">Modded</label>
                 </div>
@@ -395,7 +322,7 @@
                         name="discontinued"
                         type="checkbox"
                         bind:checked={discontinued}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="discontinued" class="text-sm"
                         >Discontinued</label
@@ -406,25 +333,19 @@
                         name="maglev"
                         type="checkbox"
                         bind:checked={maglev}
-                        class="h-5 w-5 rounded border-neutral-700 bg-neutral-800 text-blue-500 focus:ring-blue-500"
+                        class="checkbox checkbox-md bg-base-100"
                     />
                     <label for="maglev" class="text-sm">Maglev</label>
                 </div>
             </div>
 
-            <button
-                type="submit"
-                class="w-full cursor-pointer bg-blue-600 hover:bg-blue-700 transition rounded-lg px-6 py-3 font-semibold text-white text-lg"
-            >
+            <button type="submit" class="btn btn-primary btn-lg w-full">
                 Add Cube
             </button>
-
-            {#if error}
-                <p class="text-sm text-red-500 text-center mt-2">{error}</p>
-            {/if}
-            {#if message}
-                <p class="text-sm text-green-400 text-center mt-2">{message}</p>
-            {/if}
         </form>
+
+        {#if form?.message}
+            <p class="text-info text-center mt-4">{form.message}</p>
+        {/if}
     </div>
 </section>

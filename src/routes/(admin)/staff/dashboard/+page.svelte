@@ -83,7 +83,7 @@
       href: "/staff/cubes",
       icon: "🧊",
       label: "Manage Cubes",
-      implemented: false,
+      implemented: true,
     },
     {
       href: "/staff/users",
@@ -108,6 +108,18 @@
       icon: "📣",
       label: "Manage Announcement",
       implemented: true,
+    },
+    {
+      href: "/staff/reports",
+      icon: "🚩",
+      label: "User Reports",
+      implemented: false,
+    },
+    {
+      href: "/staff/feedback",
+      icon: "📝",
+      label: "User Feedbacks",
+      implemented: false,
     },
   ];
 

@@ -376,8 +376,10 @@
                                     {cube}
                                     add={true}
                                     rate={true}
+                                    staff={false}
                                     details={true}
                                     badges={true}
+                                    image={true}
                                 />
                             {/each}
                         </div>

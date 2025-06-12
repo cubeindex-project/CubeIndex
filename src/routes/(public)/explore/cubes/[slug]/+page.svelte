@@ -39,7 +39,7 @@
             <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
                 <img
                     src={cube.image_url}
-                    alt={cube.name}
+                    alt="{cube.series} {cube.model} {cube.version_name}"
                     class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
                 />
             </div>
@@ -50,7 +50,7 @@
                     {#if cube.version_type !== "Base"}
                         <span class="text-secondary">{cube.version_name}</span>
                     {/if}
-                    <CubeVersionType {cube} moreInfo={true} />
+                    <CubeVersionType version_type={cube.version_type} moreInfo={true} />
                 </span>
             </h1>
 
@@ -347,7 +347,7 @@
             </div>
             <div class="mt-4">
                 <a
-                    href="https://discord.gg/76ExrEAE7s"
+                    href="/discord"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn btn-error"

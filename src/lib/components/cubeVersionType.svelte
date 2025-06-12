@@ -1,8 +1,8 @@
 <script>
-    const { cube, moreInfo } = $props();
+    const { version_type, moreInfo } = $props();
 </script>
 
-{#if cube.version_type === "Base"}
+{#if version_type === "Base"}
     <span
         class="ml-2 px-2 py-1 rounded bg-blue-700/80 text-xs font-semibold relative group"
     >
@@ -16,7 +16,7 @@
             </span>
         {/if}
     </span>
-{:else if cube.version_type === "Limited"}
+{:else if version_type === "Limited"}
     <span
         class="ml-2 px-2 py-1 rounded bg-yellow-500/80 text-xs font-semibold relative group"
     >

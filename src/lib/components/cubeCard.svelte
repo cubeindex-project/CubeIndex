@@ -1,17 +1,19 @@
 <script lang="ts">
     import StarRating from "./starRating.svelte";
     import CubeVersionType from "./cubeVersionType.svelte";
-    let { cube, rate, add, details, badges } = $props();
+    let { cube, rate, add, details, badges, staff, image } = $props();
 </script>
 
 <div
     class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
 >
-    <img
-        src={cube.image_url}
-        alt={cube.name}
-        class="w-full h-48 object-cover"
-    />
+    {#if image}
+        <img
+            src={cube.image_url}
+            alt={cube.name}
+            class="w-full h-48 object-cover"
+        />
+    {/if}
     <div class="p-5 flex-1 flex flex-col">
         <h2 class="text-xl font-bold mb-1">
             {cube.series}
@@ -20,7 +22,7 @@
                 <span class="text-blue-400">{cube.version_name}</span>
             {/if}
             {#if badges}
-                <CubeVersionType {cube} moreInfo={false} />
+                <CubeVersionType version_type={cube.version_type} moreInfo={false} />
             {/if}
         </h2>
         <p class="text-sm text-gray-400">
@@ -52,8 +54,24 @@
                     Rate this Cube
                 </button>
             {/if}
+            {#if staff}
+                <a
+                    href="/staff/cubes/{cube.slug}"
+                    class="btn btn-accent flex-1"
+                    type="button"
+                >
+                    <i class="fa-solid fa-pen"></i>
+                    Edit Cube
+                </a>
+            {/if}
+            {#if staff}
+                <button class="btn btn-error flex-1" type="button">
+                    <i class="fa-solid fa-trash"></i>
+                    Delete Cube
+                </button>
+            {/if}
         </div>
-        {#if details}
+        {#if details && !staff}
             <a
                 href="/explore/cubes/{cube.slug}"
                 class="btn btn-primary mt-4"

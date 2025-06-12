@@ -26,7 +26,7 @@
 
         <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
             <a
-                href="https://discord.gg/YvhEjgQ7Fq"
+                href="https://cube-index-beta.vercel.app/discord"
                 class="px-6 py-3 bg-blue-600 rounded-xl hover:bg-blue-700 transition text-white text-lg font-medium"
             >
                 Join the Discord

@@ -118,6 +118,10 @@
                         <span class="font-medium">{cube.weight} g</span>
                     </div>
                     <div class="flex items-center justify-between">
+                        <span>Size:</span>
+                        <span class="font-medium">{cube.size} mm3</span>
+                    </div>
+                    <div class="flex items-center justify-between">
                         <span>Surface Finish:</span>
                         <span class="font-medium">{cube.surface_finish}</span>
                     </div>
@@ -154,6 +158,10 @@
                     <div class="flex items-center justify-between">
                         <span>Maglev:</span>
                         <span class="text-xl">{cube.maglev ? "✅" : "❌"}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span>Discontinued:</span>
+                        <span class="text-xl">{cube.discontinued ? "✅" : "❌"}</span>
                     </div>
                 </div>
             </div>

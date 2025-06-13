@@ -53,19 +53,6 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                     <label class="block text-sm mb-1"
-                        >Slug <span class="text-red-500">*</span>
-                        <input
-                            name="slug"
-                            type="text"
-                            placeholder="gan-356-maglev"
-                            bind:value={slug}
-                            class="input w-full input-lg"
-                            required
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label class="block text-sm mb-1"
                         >Series
                         <input
                             name="series"

@@ -1,5 +1,4 @@
 <script lang="ts">
-    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import CubeCard from "$lib/components/cubeCard.svelte";
     import { writable, derived } from "svelte/store";
 
@@ -321,6 +320,16 @@
                             <option value={96}>96</option>
                         </select>
                     </div>
+
+                    <div>
+                        <a
+                            href="/staff/cubes/add"
+                            class="btn bg-primary text-primary-content"
+                        >
+                            <i class="fa-solid fa-plus"></i>
+                            Add a Cube
+                        </a>
+                    </div>
                 </div>
 
                 {#await cubes}
@@ -353,10 +362,12 @@
                         {#each $paginatedCubes as cube}
                             <CubeCard
                                 {cube}
-                                add={true}
-                                rate={true}
+                                add={false}
+                                rate={false}
                                 details={true}
                                 badges={true}
+                                image={true}
+                                staff={true}
                             />
                         {/each}
                     </div>

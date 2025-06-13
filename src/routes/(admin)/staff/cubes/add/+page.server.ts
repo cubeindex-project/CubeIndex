@@ -1,6 +1,7 @@
 // +page.server.ts
 import type { PageServerLoad, Actions } from './$types';
 import { error, fail } from '@sveltejs/kit';
+import { slugify } from '$lib/components/slugify.svelte';
 
 export const load = (async ({ locals }) => {
     // Use locals.supabase so that row‐level security / auth works
@@ -22,7 +23,6 @@ export const actions: Actions = {
         const form = await request.formData();
 
         // Extract & cast all fields
-        const slug = form.get('slug')?.toString().trim() ?? '';
         const series = form.get('series')?.toString().trim() ?? '';
         const model = form.get('model')?.toString().trim() ?? '';
         const versionName = form.get('version')?.toString().trim() ?? '';
@@ -47,7 +47,6 @@ export const actions: Actions = {
 
         // Basic required‐fields validation
         if (
-            !slug ||
             !model ||
             !series ||
             !brandRaw ||
@@ -95,6 +94,8 @@ export const actions: Actions = {
         const submittedBy =
             submittedByRaw === 'disabled' ? me[0].username : submittedByRaw;
 
+        const slug = slugify(`${series} ${model} ${versionName}`);
+
         const payload = {
             slug,
             series,
@@ -109,6 +110,7 @@ export const actions: Actions = {
             size,
             version_type: cubeVersion,
             submitted_by: submittedBy,
+            verified_by: me[0].username,
             related_to: relatedTo || null,
             wca_legal: wcaLegal,
             magnetic,

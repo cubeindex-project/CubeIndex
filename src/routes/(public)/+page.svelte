@@ -94,7 +94,7 @@
                 <i class="fa-solid fa-cubes"></i>
                 Cubes Logged
             </div>
-            <div class="stat-value text-5xl font-bold text-accent mb-2">
+            <div class="stat-value text-5xl font-bold mb-2">
                 <NumberFlow
                     value={mounted ? totalCubes : 0}
                     plugins={[continuous]}
@@ -111,7 +111,7 @@
                 <i class="fa-solid fa-people-group"></i>
                 Registered Users
             </div>
-            <div class="stat-value text-5xl font-bold text-secondary mb-2">
+            <div class="stat-value text-5xl font-bold mb-2">
                 <NumberFlow
                     value={mounted ? totalUsers : 0}
                     plugins={[continuous]}
@@ -128,7 +128,7 @@
                 <i class="fa-solid fa-trophy"></i>
                 Unlockable Achievements
             </div>
-            <div class="stat-value text-5xl font-bold text-info mb-2">
+            <div class="stat-value text-5xl font-bold mb-2">
                 <NumberFlow
                     value={mounted ? unlockAchi() : 0}
                     plugins={[continuous]}
@@ -193,7 +193,7 @@
 </section>
 
 <section
-    class="py-20 px-6 text-center bg-base-200 rounded-2xl shadow-inner mt-16"
+    class="py-20 px-6 text-center bg-base-200 mt-16"
 >
     <h2 class="text-4xl font-bold font-clash mb-4">
         Ready to level up your cube game?

@@ -222,6 +222,8 @@
 				<ul
 					class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm"
 				>
+				
+					<div class="divider mt-0">Light</div>
 					<li>
 						<input
 							type="radio"
@@ -254,8 +256,27 @@
 							type="radio"
 							name="theme-dropdown"
 							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Lemonade"
+							data-set-theme="lemonade"
+						/>
+					</li>
+					<div class="divider">Dark</div>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
 							aria-label="Dark"
 							data-set-theme="dark"
+						/>
+					</li>
+					<li>
+						<input
+							type="radio"
+							name="theme-dropdown"
+							class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+							aria-label="Black"
+							data-set-theme="black"
 						/>
 					</li>
 					<li>

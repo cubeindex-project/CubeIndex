@@ -37,18 +37,32 @@
   "description": "Track and explore speedcubes",
   "screenshots": [
     {
-      "src": "/CubeIndex-desktop.webp",
+      "src": "/CI-desktop-home.webp",
       "sizes": "1920x1080",
       "type": "image/webp",
       "form_factor": "wide",
-      "label": "Home screen showing main navigation and featured content"
+      "label": "Home screen showing catchline"
     },
     {
-      "src": "/CubeIndex-mobile.webp",
+      "src": "/CI-mobile-home.webp",
       "sizes": "1440x3040",
       "type": "image/webp",
       "platform": "android",
-      "label": "Dashboard view displaying key metrics"
+      "label": "Home screen showing catchline"
+    },
+    {
+      "src": "/CI-desktop-cubes.webp",
+      "sizes": "1920x1080",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Page to explore the cubes database"
+    },
+    {
+      "src": "/CI-mobile-cubes.webp",
+      "sizes": "1440x3040",
+      "type": "image/webp",
+      "platform": "android",
+      "label": "Page to explore the cubes database"
     }
   ]
 }

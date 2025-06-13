@@ -1,0 +1,54 @@
+{
+  "name": "CubeIndex",
+  "short_name": "CubeIndex",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "display_override": ["window-controls-overlay"],
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "orientation": "natural",
+  "theme_color": "#044eb4",
+  "description": "Track and explore speedcubes",
+  "screenshots": [
+    {
+      "src": "/CubeIndex-desktop.webp",
+      "sizes": "1920x1080",
+      "type": "image/webp",
+      "form_factor": "wide",
+      "label": "Home screen showing main navigation and featured content"
+    },
+    {
+      "src": "/CubeIndex-mobile.webp",
+      "sizes": "1440x3040",
+      "type": "image/webp",
+      "platform": "android",
+      "label": "Dashboard view displaying key metrics"
+    }
+  ]
+}

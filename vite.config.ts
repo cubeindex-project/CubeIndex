@@ -3,9 +3,11 @@ import { svelteTesting } from "@testing-library/svelte/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig({
   plugins: [
+    devtoolsJson(),
     tailwindcss(),
     sveltekit(),
     VitePWA({
@@ -13,34 +15,8 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
-	  includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png'],
-      manifest: {
-        name: 'CubeIndex',
-        short_name: 'CubeIndex',
-        description: 'Track and explore speedcubes',
-        theme_color: '#0d0f2c',
-        background_color: '#ffffff',
-        display: 'standalone',
-        start_url: '/',
-        icons: [
-          {
-            src: '/pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: '/pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
+      manifest: false,
+      injectManifest: {},
     }),
   ],
   test: {

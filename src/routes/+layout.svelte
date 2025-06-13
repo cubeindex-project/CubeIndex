@@ -37,7 +37,9 @@
       try {
         const t = localStorage.getItem("theme");
         if (t) document.documentElement.dataset.theme = t;
-      } catch {}
+      } catch (e) {
+        console.error("Error initializing theme from localStorage:", e);
+      }
     })();
   </script>
 </svelte:head>

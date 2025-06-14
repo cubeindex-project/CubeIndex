@@ -355,6 +355,7 @@
                   rate={true}
                   details={true}
                   badges={true}
+                  image={true}
                 />
               {/each}
             </div>

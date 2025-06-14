@@ -3,7 +3,7 @@
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
 
-  let { cube, rate, add, details, badges } = $props();
+  let { cube, rate, add, details, badges, user_details = [], image } = $props();
 
   let open = $state(false);
 </script>
@@ -12,11 +12,13 @@
   <div
     class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
   >
+  {#if image}
     <img
       src={cube.image_url}
       alt={cube.name}
       class="w-full h-48 object-cover"
     />
+    {/if}
     <div class="p-5 flex-1 flex flex-col">
       <h2 class="text-xl font-bold mb-1">
         {cube.series}
@@ -58,6 +60,25 @@
             <i class="fa-solid fa-star mr-2"></i>
             Rate this Cube
           </button>
+        {/if}
+        {#if user_details.length > 0}
+        <div>
+          {#if user_details[0].condition}
+            <p><span class="font-bold">Condition:</span> {user_details[0].condition}</p>
+          {/if}
+          {#if user_details[0].status}
+            <p><span class="font-bold">Status:</span> {user_details[0].status}</p>
+          {/if}
+          {#if user_details[0].quantity}
+            <p><span class="font-bold">Quantity:</span> {user_details[0].quantity}</p>
+          {/if}
+          {#if user_details[0].notes}
+            <p><span class="font-bold">Notes:</span> {user_details[0].notes}</p>
+          {/if}
+          {#if user_details[0].acquired_date}
+            <p><span class="font-bold">Acquired Date:</span> {user_details[0].acquired_date}</p>
+          {/if}
+        </div>
         {/if}
       </div>
       {#if details}

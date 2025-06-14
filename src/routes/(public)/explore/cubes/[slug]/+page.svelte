@@ -2,6 +2,7 @@
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import StarRating from "$lib/components/starRating.svelte";
     import CubeVersionType from "$lib/components/cubeVersionType.svelte";
+    import { formatDate } from "$lib/components/formatDate.svelte";
 
     let { data } = $props();
     let {
@@ -15,15 +16,6 @@
         cubesAvailability,
         databaseAvailability,
     } = $derived(data);
-
-    function formatDate(dateString: string): string {
-        const date = new Date(dateString);
-        return new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        }).format(date);
-    }
 
     function idOfUser(user: string) {
         const profile = profiles?.find(

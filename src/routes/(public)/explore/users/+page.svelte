@@ -23,7 +23,7 @@
       </h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {#each profiles as profile}
-          <UserCard {profile} {user_achievements} />
+          <UserCard {profile} {user_achievements} staff={false} />
         {/each}
       </div>
     </div>

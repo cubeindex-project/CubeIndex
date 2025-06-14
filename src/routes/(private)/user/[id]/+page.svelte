@@ -1,10 +1,9 @@
 <script lang="ts">
     import Badge from "$lib/components/badge.svelte";
+  import CubeCard from "$lib/components/cubeCard.svelte";
 
     const { data } = $props();
-    const { user, profile, user_achievements, achievements } = data;
-
-    const default_profile_picture = "/images/default-profile.png";
+    const { user, profile, user_achievements, achievements, user_cubes, cubes } = data;
 
     function formatJoinDate(dateString: string): string {
         const date = new Date(dateString);
@@ -22,6 +21,12 @@
     const userAchievementsFromAll = achievements.filter((achievement) =>
         userAchievementNames.has(achievement.name),
     );
+
+    const userCubeName = new Set(
+        user_cubes.map((uc) => uc.cube),
+    );
+
+    const userCubesFromAll = cubes.filter((cube) => userCubeName.has(cube.slug));
 
     const formattedJoinDate = formatJoinDate(profile?.created_at);
 
@@ -294,11 +299,23 @@
         <!-- Cube Collection -->
         <div class="max-w-4xl mx-auto mt-12 px-4">
             <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
-            <div
-                class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
-            >
-                <span class="text-lg font-medium">Cubes coming soon!</span>
-            </div>
+            {#if user_cubes && user_cubes.length > 0}
+                <ul
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                >
+                    {#each userCubesFromAll as cube}
+                        <CubeCard {cube} rate={false} add={false} details={true} badges={false} user_details={user_cubes} image={true} />
+                    {/each}
+                </ul>
+            {:else}
+                <div
+                    class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
+                >
+                    <span class="text-lg font-medium"
+                        >This user has no cubes in their collection.</span
+                    >
+                </div>
+            {/if}
         </div>
     {:else}
         <section

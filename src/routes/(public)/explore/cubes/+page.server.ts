@@ -73,6 +73,6 @@ export const actions: Actions = {
     if (userCubesErr?.message === "duplicate key value violates unique constraint \"user_cubes_pkey\"") return fail(400, { message: "You have already added this cube to your profile!"})
     if (userCubesErr) throw error(500, userCubesErr.message);
 
-    return { message: "Cube added sucessfuly!"}
+    return { message: "Cube added successfully!"}
   },
 };

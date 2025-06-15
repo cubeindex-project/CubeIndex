@@ -235,7 +235,6 @@
                                     <span class="hidden sm:inline">Reddit</span>
                                 </a>
                             {/if}
-                            <!-- Add more platforms as needed, just duplicate the pattern above -->
                         </div>
                     </div>
                 {/if}

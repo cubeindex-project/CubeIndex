@@ -31,8 +31,8 @@
   });
 
   import { setContext } from "svelte";
-  setContext('user', () => data.user);
-  setContext('session', () => data.session)
+  setContext("user", () => data.user);
+  setContext("session", () => data.session);
 </script>
 
 <svelte:head>

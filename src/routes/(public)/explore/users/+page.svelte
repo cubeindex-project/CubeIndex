@@ -11,7 +11,7 @@
   onMount(() =>
     configCatClient.getValueAsync("database", false).then((value) => {
       databaseAvailability = value;
-    }),
+    })
   );
 </script>
 
@@ -52,11 +52,11 @@
                 >
                 <span class="text-xs flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>{user_cubes.filter(
-                    (uc) => uc.username === profile.username,
+                    (uc) => uc.username === profile.username
                   ).length || 0} Cubes
                   <span class="mx-1">•</span>
                   <i class="fa-solid fa-medal"></i>{user_achievements.filter(
-                    (ua) => ua.username === profile.username,
+                    (ua) => ua.username === profile.username
                   ).length || 0} Achievements
                 </span>
               </div>

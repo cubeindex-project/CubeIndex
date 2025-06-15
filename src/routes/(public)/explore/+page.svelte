@@ -39,7 +39,7 @@
   onMount(() =>
     configCatClient.getValueAsync("database", false).then((value) => {
       databaseAvailability = value;
-    }),
+    })
   );
 </script>
 

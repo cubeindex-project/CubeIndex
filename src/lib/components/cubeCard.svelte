@@ -14,12 +14,12 @@
   <div
     class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
   >
-  {#if image}
-    <img
-      src={cube.image_url}
-      alt={cube.name}
-      class="w-full h-48 object-cover"
-    />
+    {#if image}
+      <img
+        src={cube.image_url}
+        alt={cube.name}
+        class="w-full h-48 object-cover"
+      />
     {/if}
     <div class="p-5 flex-1 flex flex-col">
       <h2 class="text-xl font-bold mb-1">
@@ -64,23 +64,38 @@
           </button>
         {/if}
         {#if user_details.length > 0}
-        <div>
-          {#if user_details_cube[0].condition}
-            <p><span class="font-bold">Condition:</span> {user_details_cube[0].condition}</p>
-          {/if}
-          {#if user_details_cube[0].status}
-            <p><span class="font-bold">Status:</span> {user_details_cube[0].status}</p>
-          {/if}
-          {#if user_details_cube[0].quantity}
-            <p><span class="font-bold">Quantity:</span> {user_details[0].quantity}</p>
-          {/if}
-          {#if user_details_cube[0].notes}
-            <p><span class="font-bold">Notes:</span> {user_details_cube[0].notes}</p>
-          {/if}
-          {#if user_details_cube[0].acquired_date}
-            <p><span class="font-bold">Acquired Date:</span> {user_details_cube[0].acquired_date}</p>
-          {/if}
-        </div>
+          <div>
+            {#if user_details_cube[0].condition}
+              <p>
+                <span class="font-bold">Condition:</span>
+                {user_details_cube[0].condition}
+              </p>
+            {/if}
+            {#if user_details_cube[0].status}
+              <p>
+                <span class="font-bold">Status:</span>
+                {user_details_cube[0].status}
+              </p>
+            {/if}
+            {#if user_details_cube[0].quantity}
+              <p>
+                <span class="font-bold">Quantity:</span>
+                {user_details[0].quantity}
+              </p>
+            {/if}
+            {#if user_details_cube[0].notes}
+              <p>
+                <span class="font-bold">Notes:</span>
+                {user_details_cube[0].notes}
+              </p>
+            {/if}
+            {#if user_details_cube[0].acquired_date}
+              <p>
+                <span class="font-bold">Acquired Date:</span>
+                {user_details_cube[0].acquired_date}
+              </p>
+            {/if}
+          </div>
         {/if}
       </div>
       {#if details}

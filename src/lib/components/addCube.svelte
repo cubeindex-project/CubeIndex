@@ -10,7 +10,7 @@
 
   let username: string = $state("");
 
-  const form: { message:any } = getContext("form-cubes-add")
+  const form: { message: any } = getContext("form-cubes-add");
   const getUser = getContext<() => { id: any }>("user");
   let user = getUser();
 

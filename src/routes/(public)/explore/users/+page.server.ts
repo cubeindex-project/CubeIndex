@@ -16,5 +16,11 @@ export const load = (async () => {
 
     if (userAchieveError) throw error(500, userAchieveError.message);
 
-    return { profiles, user_achievements };
+    const { data: user_cubes, error: userCubesError } = await supabase
+            .from('user_cubes')
+            .select('*');
+    
+    if (userCubesError) throw error(500, userCubesError.message);
+
+    return { profiles, user_achievements, user_cubes };
 }) satisfies PageServerLoad;

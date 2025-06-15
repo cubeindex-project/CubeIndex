@@ -1,61 +1,118 @@
-<script>
-    const features = [
-        "📦 Create and manage your cube collection",
-        "🏆 Earn badges and show off your collection",
-        "🔍 Explore a searchable cube database",
-    ];
+<script lang="ts">
+  import Badge from "$lib/components/badge.svelte";
+  const { data } = $props();
+  const { profiles } = data;
+
+  const features = [
+    {
+      title: "Organize Your Cubes",
+      icon: "fa-solid fa-boxes",
+      desc: "Keep track of your entire collection with ease.",
+    },
+    {
+      title: "Discover New Models",
+      icon: "fa-solid fa-search",
+      desc: "Explore popular, limited, and community submissions.",
+    },
+    {
+      title: "Track Achievements",
+      icon: "fa-solid fa-trophy",
+      desc: "Earn badges and milestones for your cubing journey.",
+    },
+    {
+      title: "Community Driven",
+      icon: "fa-solid fa-users",
+      desc: "Contribute entries, rate cubes, and engage with fellow cubers.",
+    },
+  ];
+
+  const team = profiles.filter((p: any) => p.role !== "User" && p.username !== "CubeIndex");
+
+  const logoDesigner = profiles.filter((p: any) => p.username === "CubeLite")
 </script>
 
-<section class="min-h-screen px-6 py-24 relative overflow-hidden">
-    <div class="relative z-10 max-w-4xl mx-auto space-y-12 text-center">
-        <div class="flex justify-center">
-            <img
-                src="/images/CubeIndex.png"
-                alt="CubeIndex Logo"
-                class="avatar w-32 rounded-xl"
-            />
-        </div>
+<div class="space-y-16 px-5 py-12 max-w-5xl mx-auto">
+  <!-- Hero -->
+  <section class="text-center space-y-2">
+    <img
+      src="/images/CubeIndex - Pixel Art.png"
+      alt="CubeIndex Logo"
+      class="mx-auto w-32 h-32 rounded-2xl"
+    />
+    <!-- Disclaimer -->
+    <p class="text-xs text-gray-500 italic">Logo designed by <a href="/user/{logoDesigner[0].id}" class="link">{logoDesigner[0].username}</a>.</p>
+    <h1 class="text-5xl font-bold">Welcome to CubeIndex</h1>
+    <p class="text-lg max-w-2xl mx-auto">
+      CubeIndex is your ultimate speedcubing companion. Organize, explore, and
+      showcase your cube collection — all in one place.
+    </p>
+  </section>
 
-        <div>
-            <h1 class="text-4xl font-bold mb-4">About CubeIndex</h1>
-            <p class="text-lg">
-                CubeIndex is your all-in-one hub for speedcubing — whether
-                you're a seasoned solver, beginner, or collector.
-            </p>
+  <!-- Feature Highlights -->
+  <section>
+    <h2 class="text-3xl font-semibold text-center mb-8">What You Can Do</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      {#each features as f}
+        <div
+          class="card bg-base-200 shadow transform transition p-6 text-center"
+        >
+          <div class="stat-figure text-primary mb-4">
+            <i class="{f.icon} text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-medium mb-2">{f.title}</h3>
+          <p>{f.desc}</p>
         </div>
-
-        <div class="card p-6 bg-base-300">
-            <h2 class="text-2xl font-semibold mb-2">🔧 What You Can Do</h2>
-            <ul class="text-left space-y-2">
-                {#each features as item}
-                    <li class="flex items-center gap-2">
-                        <span>{item}</span>
-                    </li>
-                {/each}
-            </ul>
-        </div>
-
-        <div class="mt-12">
-            <p>
-                Built with ❤️‍🔥 by <a
-                    href="https://saterz.dev/studio"
-                    class="link link-primary link-hover">Saterz Studio</a
-                >.
-            </p>
-            <p class="mt-2">
-                Follow progress on
-                <a
-                    href="https://github.com/Saterz/CubeIndex"
-                    class="link link-primary link-hover"
-                    target="_blank">GitHub</a
-                >
-                and join the community on
-                <a
-                    href="/discord"
-                    target="_blank"
-                    class="link link-primary link-hover">Discord</a
-                >.
-            </p>
-        </div>
+      {/each}
     </div>
-</section>
+  </section>
+
+  <!-- Team Spotlight -->
+  <section>
+    <h2 class="text-3xl font-semibold text-center mb-8">Meet the Team</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {#each team as member}
+        <div class="card card-compact bg-base-200 rounded-md p-6 text-center">
+          <div class="flex justify-center mb-4">
+            {#if member.profile_picture}
+              <img
+                src={member.profile_picture}
+                alt="Avatar"
+                class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary shadow-xl object-cover transition-transform duration-200"
+              />
+            {:else}
+              <div
+                class="avatar avatar-placeholder flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary bg-base-300 shadow-xl"
+              >
+                <span class="text-5xl uppercase font-bold">
+                  {member.username.charAt(0)}
+                </span>
+              </div>
+            {/if}
+          </div>
+          <h3 class="text-xl font-semibold mb-2">{member.username}</h3>
+          <div class="mb-4">
+            <Badge textSize="sm" profile={member} />
+          </div>
+          <a href="/user/{member.id}" class="btn btn-neutral w-full">
+            Visit Profile <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      {/each}
+      <div
+        class="card card-compact bg-base-200 shadow-md hover:shadow-xl transform transition-all rounded-md p-6 text-center"
+      >
+        <div class="flex justify-center mb-4">
+          <img
+            src="/images/we want you.webp"
+            alt="Avatar"
+            class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary shadow-xl object-cover transition-transform duration-200"
+          />
+        </div>
+        <h3 class="text-xl font-semibold mb-2">You</h3>
+        <a href="https://tally.so/r/w7gbd9" class="btn btn-neutral w-full">
+          Apply <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

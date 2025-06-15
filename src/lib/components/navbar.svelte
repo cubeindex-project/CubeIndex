@@ -74,9 +74,9 @@
 		<!-- Logo -->
 		<a href="/" class="flex items-center gap-2">
 			<img
-				src="/images/CubeIndex removebg.png"
+				src="/images/CubeIndex - Pixel Art.png"
 				alt="CubeIndex logo"
-				class="h-12 w-12"
+				class="h-12 w-12 rounded-full"
 			/>
 			<span class="font-clash text-3xl font-bold">CubeIndex</span>
 		</a>

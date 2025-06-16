@@ -1,13 +1,12 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
 @plugin "daisyui";
 
 @theme {
-    --font-clash: 'Clash Display', sans-serif;
+  --font-clash: "Clash Display", sans-serif;
 }
-
 
 @plugin "daisyui/theme" {
   name: "light";
@@ -44,8 +43,6 @@
   --noise: 0;
 }
 
-
-
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
@@ -80,7 +77,6 @@
   --depth: 0;
   --noise: 0;
 }
-
 
 @plugin "daisyui/theme" {
   name: "lofi";
@@ -117,7 +113,6 @@
   --noise: 0;
 }
 
-
 @plugin "daisyui/theme" {
   name: "winter";
   default: false;
@@ -152,7 +147,6 @@
   --depth: 0;
   --noise: 0;
 }
-
 
 @plugin "daisyui/theme" {
   name: "forest";
@@ -189,7 +183,6 @@
   --noise: 0;
 }
 
-
 @plugin "daisyui/theme" {
   name: "synthwave";
   default: false;
@@ -225,8 +218,6 @@
   --noise: 0;
 }
 
-
-
 @plugin "daisyui/theme" {
   name: "black";
   default: false;
@@ -261,7 +252,6 @@
   --depth: 0;
   --noise: 0;
 }
-
 
 @plugin "daisyui/theme" {
   name: "lemonade";

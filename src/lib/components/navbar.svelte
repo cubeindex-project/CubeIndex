@@ -121,7 +121,7 @@
           </span>
         </button>
         <ul
-          class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm"
+          class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
         >
           <div class="divider mt-0">Light</div>
           <li>
@@ -215,7 +215,7 @@
             </span>
           </button>
           <ul
-            class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
+            class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
             <li>
               <a href={`/user/${profile.id}`} class="block px-4 py-2 text-sm">

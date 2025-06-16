@@ -69,7 +69,7 @@
             type="checkbox"
             name="main"
             bind:checked={main}
-            class="toggle"
+            class="toggle bg-base-100"
           />
           <span>Main Cube</span>
         </label>

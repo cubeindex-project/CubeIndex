@@ -65,16 +65,16 @@
 </script>
 
 <header class="bg-base-100">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-2 py-4">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2">
-      <img
-        src="/images/CubeIndex removebg.png"
-        alt="CubeIndex logo"
-        class="h-12 w-12"
-      />
-      <span class="font-clash text-3xl font-bold">CubeIndex</span>
-    </a>
+	<div class="mx-auto flex max-w-7xl items-center justify-between px-2 py-4">
+		<!-- Logo -->
+		<a href="/" class="flex items-center gap-2">
+			<img
+				src="/images/CubeIndex - Pixel Art.png"
+				alt="CubeIndex logo"
+				class="h-12 w-12 rounded-full"
+			/>
+			<span class="font-clash text-3xl font-bold">CubeIndex</span>
+		</a>
 
     <!-- Desktop Nav -->
     <nav class="hidden items-center gap-8 md:flex">

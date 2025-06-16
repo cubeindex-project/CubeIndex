@@ -10,7 +10,7 @@
 
   let username: string = $state("");
 
-  const form: { message: any } = getContext("form-cubes-add");
+  const form: { message:any } = getContext("form-cubes-add")
   const getUser = getContext<() => { id: any }>("user");
   let user = getUser();
 
@@ -69,7 +69,7 @@
             type="checkbox"
             name="main"
             bind:checked={main}
-            class="toggle bg-base-100"
+            class="toggle"
           />
           <span>Main Cube</span>
         </label>

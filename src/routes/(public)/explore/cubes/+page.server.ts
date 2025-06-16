@@ -16,10 +16,11 @@ export const load = async () => {
 
   if (databaseAvailability || cubesAvailability) {
     const { data: cubes, error: err } = await supabase
-      .from("cube_models")
-      .select("*")
-      .order("model", { ascending: true })
-      .order("series", { ascending: true });
+      .from('cube_models')
+      .select('*')
+      .order('model', { ascending: true })
+      .order('series', { ascending: true });
+
 
     if (err) throw error(500, err.message);
 

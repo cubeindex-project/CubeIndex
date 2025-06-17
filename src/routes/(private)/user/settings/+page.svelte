@@ -19,7 +19,6 @@
   let discord = $state(profile.socials.discord);
   let youtube = $state(profile.socials.youtube);
   let x = $state(profile.socials.x);
-  let currentPassword = $state("");
   let newPassword = $state("");
   let confirmPassword = $state("");
   let error = $state("");

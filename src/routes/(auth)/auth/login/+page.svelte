@@ -87,7 +87,11 @@
 
         <p class="text-sm text-gray-500 -mt-5">
           Forgot your password?
-          <button class="link link-primary link-hover" on:click={resetPassword}>
+          <button
+            type="button"
+            class="link link-primary link-hover"
+            on:click={resetPassword}
+          >
             Reset
           </button>
         </p>

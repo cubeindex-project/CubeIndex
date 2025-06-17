@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
+  import { supabase } from "$lib/supabaseClient.js";
 
   let { data }: { data: PageData } = $props();
   const { profiles } = data;
@@ -18,21 +19,60 @@
   let discord = $state(profile.socials.discord);
   let youtube = $state(profile.socials.youtube);
   let x = $state(profile.socials.x);
-  let password = $state("");
+  let currentPassword = $state("");
+  let newPassword = $state("");
+  let confirmPassword = $state("");
   let error = $state("");
   let message = $state("");
 
   function verifySettings() {
-    if (password.length < 8) {
-      error = "Password must be at least 8 characters.";
+    error = "";
+    message = "";
+  }
+
+  async function sendResetEmail() {
+    error = "";
+    const {
+      data: { user },
+      error: err,
+    } = await supabase.auth.getUser();
+    if (err) {
+      error = err.message;
       return;
+    }
+    if (!user?.email) {
+      error = "Unable to determine email";
+      return;
+    }
+    const { error: e } = await supabase.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
+    if (e) {
+      error = e.message;
+    } else {
+      message = "Check your email to reset your password";
     }
   }
-  function updatePassword() {
-    if (password.length < 8) {
+
+  async function updatePassword() {
+    error = "";
+    message = "";
+    if (newPassword.length < 8) {
       error = "Password must be at least 8 characters.";
       return;
     }
+    if (newPassword !== confirmPassword) {
+      error = "Passwords do not match";
+      return;
+    }
+    const { error: err } = await supabase.auth.updateUser({ password: newPassword });
+    if (err) {
+      error = err.message;
+      return;
+    }
+    newPassword = "";
+    confirmPassword = "";
+    message = "Password updated";
   }
 </script>
 
@@ -260,26 +300,33 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-semibold mb-2">
-              Current Password
-              <input type="password" class="input w-full" />
+              New Password
+              <input type="password" class="input w-full" bind:value={newPassword} />
             </label>
           </div>
 
           <div>
             <label class="block text-sm font-semibold mb-2">
-              New Password
-              <input type="password" class="input w-full" />
+              Confirm Password
+              <input type="password" class="input w-full" bind:value={confirmPassword} />
             </label>
           </div>
         </div>
 
-        <button
-          class="btn btn-lg btn-primary"
-          onclick={updatePassword}
-          disabled
-        >
-          Update Password
-        </button>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button class="btn btn-primary flex-1" on:click={updatePassword}>
+            Update Password
+          </button>
+          <button class="btn flex-1" type="button" on:click={sendResetEmail}>
+            Send Reset Email
+          </button>
+        </div>
+        {#if error}
+          <p class="text-sm text-red-500">{error}</p>
+        {/if}
+        {#if message}
+          <p class="text-sm text-green-400">{message}</p>
+        {/if}
       </div>
 
       <div class="flex justify-end pt-6">

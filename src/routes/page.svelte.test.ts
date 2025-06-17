@@ -5,7 +5,8 @@ import Page from "./(public)/+page.svelte";
 
 describe("/+page.svelte", () => {
   test("should render h1", () => {
-    render(Page);
+    const data = { totalCubes: 0, totalUsers: 0, achievements: [] };
+    render(Page, { data });
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
   });
 });

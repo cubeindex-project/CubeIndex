@@ -11,26 +11,23 @@
   let localError: string = $state("");
   let message: string = $state("");
 
-  // async function resetPassword(e: Event) {
-  //     e.preventDefault();
-  //     if (!email) {
-  //         localError = "Please enter an email";
-  //         return;
-  //     }
-  //     const { error: err } = await supabase.auth.resetPasswordForEmail(
-  //         email,
-  //         {
-  //             redirectTo: "https://cube-index-beta.vercel.app/auth/reset",
-  //         },
-  //     );
+  async function resetPassword(e: Event) {
+    e.preventDefault();
+    if (!email) {
+      localError = "Please enter an email";
+      return;
+    }
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
 
-  //     if (err) {
-  //         localError = err.message;
-  //         return;
-  //     }
+    if (err) {
+      localError = err.message;
+      return;
+    }
 
-  //     message = "Check your email to reset your password";
-  // }
+    message = "Check your email to reset your password";
+  }
 
   function togglePasswordVisibility() {
     showPassword = !showPassword;
@@ -90,7 +87,9 @@
 
         <p class="text-sm text-gray-500 -mt-5">
           Forgot your password?
-          <button class="link link-primary link-hover">Reset</button>
+          <button class="link link-primary link-hover" on:click={resetPassword}>
+            Reset
+          </button>
         </p>
 
         <button type="submit" class="btn w-full btn-primary btn-lg">

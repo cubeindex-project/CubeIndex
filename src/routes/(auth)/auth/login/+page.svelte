@@ -90,7 +90,7 @@
           <button
             type="button"
             class="link link-primary link-hover"
-            on:click={resetPassword}
+            onclick={resetPassword}
           >
             Reset
           </button>

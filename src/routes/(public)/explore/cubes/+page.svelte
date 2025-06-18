@@ -5,10 +5,8 @@
   import { setContext } from "svelte";
 
   // Props and loading
-  let { data, form } = $props();
+  let { data } = $props();
   let { cubes = [], cubesAvailability, databaseAvailability } = data;
-
-  setContext("form-cubes-add", form);
 
   // 1) Filter state (year is string 'All' or a year text)
   const selectedType = writable<string>("All");

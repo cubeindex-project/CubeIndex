@@ -1,11 +1,11 @@
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
-  import CubeVersionType from "./cubeVersionType.svelte";
-  import AddCube from "./addCube.svelte";
+  import StarRating from "$lib/components/starRating.svelte";
+  import CubeVersionType from "$lib/components/cubeVersionType.svelte";
+  import AddCube from "$lib/components/addCube.svelte";
 
   let { cube, rate, add, details, badges, user_details = [], image } = $props();
 
-  let open = $state(false);
+  let openAddCard = $state(false);
 
   const user_details_cube = user_details.filter((ud) => ud.cube === cube.slug);
 </script>
@@ -44,7 +44,7 @@
             class="btn btn-secondary flex-1"
             type="button"
             onclick={() => {
-              open = !open;
+              openAddCard = !openAddCard;
             }}
             aria-label="Add to Collection"
           >
@@ -110,5 +110,12 @@
       {/if}
     </div>
   </div>
-  <AddCube {open} slug={cube.slug} />
+  {#if openAddCard}
+    <AddCube
+      onCancel={() => {
+        openAddCard = !openAddCard;
+      }}
+      {cube}
+    />
+  {/if}
 </div>

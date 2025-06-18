@@ -75,7 +75,7 @@ export const actions: Actions = {
       return fail(400, {
         message: "You have already added this cube to your profile!",
       });
-    if (userCubesErr) throw error(500, userCubesErr.message);
+    if (userCubesErr) return fail(500, { message: userCubesErr.message });
 
     return { message: "Cube added successfully!" };
   },

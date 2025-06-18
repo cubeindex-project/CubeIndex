@@ -2,6 +2,7 @@
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
+  import AddCube from "$lib/components/addCube.svelte";
 
   let { data } = $props();
   let {
@@ -15,6 +16,8 @@
     cubesAvailability,
     databaseAvailability,
   } = $derived(data);
+
+  let openAddCard = $state(false);
 
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -43,16 +46,28 @@
           class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
         />
       </div>
-      <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
+      <h1 class="text-4xl font-bold mb-4 flex gap-3 items-center">
         <span class="font-clash">
           {cube.series}
           {cube.model}
           {#if cube.version_type !== "Base"}
             <span class="text-secondary">{cube.version_name}</span>
           {/if}
-          <CubeVersionType {cube} moreInfo={true} />
         </span>
+        <CubeVersionType {cube} moreInfo={true} />
       </h1>
+
+      <button
+        class="btn btn-secondary flex-1 mb-4"
+        type="button"
+        onclick={() => {
+          openAddCard = !openAddCard;
+        }}
+        aria-label="Add to Collection"
+      >
+        <i class="fa-solid fa-plus mr-2"></i>
+        Add to Collection
+      </button>
 
       <!-- Highlighted Rating -->
       <div
@@ -334,4 +349,13 @@
   <FeatureDisabled featureName="The cubes explore page is" />
 {:else if !databaseAvailability}
   <FeatureDisabled featureName="The database is" />
+{/if}
+
+{#if openAddCard}
+  <AddCube
+    onCancel={() => {
+      openAddCard = !openAddCard;
+    }}
+    {cube}
+  />
 {/if}

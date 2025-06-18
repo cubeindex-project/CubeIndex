@@ -15,6 +15,7 @@
     user_ratings,
     cubesAvailability,
     databaseAvailability,
+    cubeUserCount,
   } = $derived(data);
 
   let openAddCard = $state(false);
@@ -56,6 +57,11 @@
         </span>
         <CubeVersionType {cube} moreInfo={true} />
       </h1>
+
+      <p class="mb-4">
+        {cubeUserCount?.length} user{cubeUserCount?.length === 1 ? "" : "s"} have
+        this cube
+      </p>
 
       <button
         class="btn btn-secondary flex-1 mb-4"

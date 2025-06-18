@@ -1,13 +1,11 @@
 <script lang="ts">
-  import StarRating from "$lib/components/starRating.svelte";
-  import CubeVersionType from "$lib/components/cubeVersionType.svelte";
-  import AddCube from "$lib/components/addCube.svelte";
+  import StarRating from "./starRating.svelte";
+  import CubeVersionType from "./cubeVersionType.svelte";
+  import AddCube from "./addCube.svelte";
 
-  let { cube, rate, add, details, badges, user_details = [], image } = $props();
+  let { cube, rate, add, details, badges, image } = $props();
 
   let openAddCard = $state(false);
-
-  const user_details_cube = user_details.filter((ud) => ud.cube === cube.slug);
 </script>
 
 <div>
@@ -17,7 +15,7 @@
     {#if image}
       <img
         src={cube.image_url}
-        alt={cube.name}
+        alt="{cube.series} {cube.model} {cube.version_name}"
         class="w-full h-48 object-cover"
       />
     {/if}
@@ -47,6 +45,7 @@
               openAddCard = !openAddCard;
             }}
             aria-label="Add to Collection"
+            disabled
           >
             <i class="fa-solid fa-plus mr-2"></i>
             Add to Collection
@@ -62,40 +61,6 @@
             <i class="fa-solid fa-star mr-2"></i>
             Rate this Cube
           </button>
-        {/if}
-        {#if user_details.length > 0}
-          <div>
-            {#if user_details_cube[0].condition}
-              <p>
-                <span class="font-bold">Condition:</span>
-                {user_details_cube[0].condition}
-              </p>
-            {/if}
-            {#if user_details_cube[0].status}
-              <p>
-                <span class="font-bold">Status:</span>
-                {user_details_cube[0].status}
-              </p>
-            {/if}
-            {#if user_details_cube[0].quantity}
-              <p>
-                <span class="font-bold">Quantity:</span>
-                {user_details[0].quantity}
-              </p>
-            {/if}
-            {#if user_details_cube[0].notes}
-              <p>
-                <span class="font-bold">Notes:</span>
-                {user_details_cube[0].notes}
-              </p>
-            {/if}
-            {#if user_details_cube[0].acquired_date}
-              <p>
-                <span class="font-bold">Acquired Date:</span>
-                {user_details_cube[0].acquired_date}
-              </p>
-            {/if}
-          </div>
         {/if}
       </div>
       {#if details}

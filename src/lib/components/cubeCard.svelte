@@ -5,7 +5,7 @@
 
   let { cube, rate, add, details, badges, image } = $props();
 
-  let open = $state(false);
+  let openAddCard = $state(false);
 </script>
 
 <div>
@@ -42,10 +42,9 @@
             class="btn btn-secondary flex-1"
             type="button"
             onclick={() => {
-              open = !open;
+              openAddCard = !openAddCard;
             }}
             aria-label="Add to Collection"
-            disabled
           >
             <i class="fa-solid fa-plus mr-2"></i>
             Add to Collection
@@ -75,5 +74,12 @@
       {/if}
     </div>
   </div>
-  <AddCube {open} slug={cube.slug} />
+  {#if openAddCard}
+    <AddCube
+      onCancel={() => {
+        openAddCard = !openAddCard;
+      }}
+      {cube}
+    />
+  {/if}
 </div>

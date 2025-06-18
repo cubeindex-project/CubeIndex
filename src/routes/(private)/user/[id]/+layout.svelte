@@ -1,6 +1,5 @@
 <script lang="ts">
   import Badge from "$lib/components/badge.svelte";
-  import UserCubeCard from "$lib/components/userCubeCard.svelte";
 
   const { data, children } = $props();
   const { user, profile } = data;

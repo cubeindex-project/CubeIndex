@@ -28,12 +28,6 @@
     }
   }
 
-  const navLinks = [
-    { name: "Explore", href: "/explore" },
-    { name: "Achievements", href: "/achievements" },
-    { name: "About", href: "/about" },
-  ];
-
   let notifications: any[] = $state([]);
 
   async function getMessages() {
@@ -42,6 +36,21 @@
     if (error) console.error("Error while loading announcement:", error);
 
     notifications = data || [];
+  }
+
+  const navLinks = [
+    { name: "Explore", href: "/explore" },
+    { name: "Achievements", href: "/achievements" },
+    { name: "About", href: "/about" },
+  ];
+
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(date);
   }
 
   let bellAnimate = $state(false);
@@ -53,9 +62,6 @@
 
   onMount(() => {
     getMessages();
-  });
-
-  onMount(() => {
     if (session) loadProfile();
     loading = false;
   });

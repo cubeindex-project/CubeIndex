@@ -6,11 +6,13 @@
   import { getContext } from "svelte";
   import { enhance } from "$app/forms";
 
-  let { open, slug } = $props();
+  let { onCancel, cube } = $props();
 
   let username: string = $state("");
+  let isSubmitting = $state(false);
+  let showSuccess = $state(false);
+  let formMessage = $state("");
 
-  const form: { message:any } = getContext("form-cubes-add")
   const getUser = getContext<() => { id: any }>("user");
   let user = getUser();
 
@@ -25,6 +27,7 @@
     return { username };
   });
 
+  let slug = $derived(cube.slug);
   let quantity = $state(1);
   let condition = $state("");
   let main = $state(false);
@@ -33,15 +36,35 @@
   let acquired_at = $state();
 </script>
 
-{#if open}
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
+  transition:blur
+>
   <form
     method="POST"
     class="card w-full max-w-lg transform -translate-y-17 absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100"
-    transition:blur
-    use:enhance
+    use:enhance={() => {
+      isSubmitting = true;
+      formMessage = "";
+      return async ({ result, update }) => {
+        isSubmitting = false;
+        await update();
+        if (result.type === "success") {
+          showSuccess = true;
+          setTimeout(() => {
+            onCancel();
+          }, 1000);
+        }
+      };
+    }}
   >
     <div class="card-body">
-      <h2 class="card-title">➕ Add Cube</h2>
+      <h2 class="card-title">
+        You are adding the {cube.series}
+        {cube.model}
+        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection
+        as {username ? username : "Unknown"}
+      </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
           type="text"
@@ -57,7 +80,8 @@
           <input
             name="quantity"
             type="number"
-            min="1"
+            min=1
+            max=999
             bind:value={quantity}
             class="input w-full"
             required
@@ -69,7 +93,7 @@
             type="checkbox"
             name="main"
             bind:checked={main}
-            class="toggle"
+            class="checkbox bg-base-100"
           />
           <span>Main Cube</span>
         </label>
@@ -115,10 +139,9 @@
           <span class="label-text">Notes</span>
           <textarea
             name="notes"
-            rows="3"
             placeholder="Any special notes..."
             bind:value={notes}
-            class="textarea textarea-bordered w-full"
+            class="textarea textarea-bordered rounded-2xl w-full max-h-50"
           ></textarea>
         </label>
         <label class="flex flex-col">
@@ -133,14 +156,28 @@
       </div>
     </div>
 
-    <div class="card-actions justify-end p-4">
-      <button class="btn btn-primary" type="submit">Add Cube</button>
-    </div>
+    <div class="flex justify-between">
+      <div class="card-actions p-4">
+        <button
+          class="btn btn-secondary"
+          onclick={onCancel}
+          disabled={isSubmitting}>Cancel</button
+        >
+      </div>
 
-    {#if form?.message}
-      <p class="text-sm text-error mt-2">
-        {form.message}
-      </p>
-    {/if}
+      <div class="card-actions p-4">
+        <button class="btn btn-primary" type="submit" disabled={isSubmitting}>
+          {#if isSubmitting}
+            <span class="loading loading-spinner"></span>
+            Adding...
+          {:else if showSuccess}
+            <i class="fa-solid fa-check"></i>
+            Added!
+          {:else}
+            Add Cube
+          {/if}
+        </button>
+      </div>
+    </div>
   </form>
-{/if}
+</div>

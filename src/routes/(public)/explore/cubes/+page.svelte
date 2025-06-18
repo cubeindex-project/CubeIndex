@@ -1,14 +1,11 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import CubeCard from "$lib/components/cubeCard.svelte";
-  import { writable, derived } from "svelte/store";
-  import { setContext } from "svelte";
+    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+    import CubeCard from "$lib/components/cubeCard.svelte";
+    import { writable, derived } from "svelte/store";
 
   // Props and loading
-  let { data, form } = $props();
+  let { data } = $props();
   let { cubes = [], cubesAvailability, databaseAvailability } = data;
-
-  setContext("form-cubes-add", form);
 
   // 1) Filter state (year is string 'All' or a year text)
   const selectedType = writable<string>("All");

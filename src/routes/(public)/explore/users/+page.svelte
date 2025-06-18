@@ -51,13 +51,22 @@
                   <Badge {profile} textSize="xs" /></span
                 >
                 <span class="text-xs flex items-center gap-2">
-                  <i class="fa-solid fa-cube"></i>{user_cubes.filter(
+                  <i class="fa-solid fa-cube"></i>
+                  {user_cubes.filter((uc) => uc.username === profile.username)
+                    .length} Cube{user_cubes.filter(
                     (uc) => uc.username === profile.username
-                  ).length || 0} Cubes
+                  ).length === 1
+                    ? ""
+                    : "s"}
                   <span class="mx-1">•</span>
-                  <i class="fa-solid fa-medal"></i>{user_achievements.filter(
+                  <i class="fa-solid fa-medal"></i>
+                  {user_achievements.filter(
                     (ua) => ua.username === profile.username
-                  ).length || 0} Achievements
+                  ).length} Achievement{user_achievements.filter(
+                    (ua) => ua.username === profile.username
+                  ).length === 1
+                    ? ""
+                    : "s"}
                 </span>
               </div>
               <p class="text-xs truncate max-w-full mt-1">

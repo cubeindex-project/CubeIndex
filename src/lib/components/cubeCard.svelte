@@ -45,7 +45,6 @@
               openAddCard = !openAddCard;
             }}
             aria-label="Add to Collection"
-            disabled
           >
             <i class="fa-solid fa-plus mr-2"></i>
             Add to Collection

@@ -80,7 +80,8 @@
           <input
             name="quantity"
             type="number"
-            min="1"
+            min=1
+            max=999
             bind:value={quantity}
             class="input w-full"
             required

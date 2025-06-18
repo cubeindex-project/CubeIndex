@@ -8,6 +8,16 @@ export const GET = async ({ url, locals: { supabase } }) => {
     throw error(500, "Authorization code is missing.");
   }
 
+  const { data: maxData, error: maxError } = await supabase
+    .from("profiles")
+    .select("id")
+    .order("id", { ascending: false })
+    .limit(1);
+
+  if (maxError) return error(500, { message: maxError.message });
+
+  const newId = maxData[0].id + 1;
+
   const { data, error: err } = await supabase.auth.exchangeCodeForSession(code);
   if (!err) {
     const userId = data.user?.id;
@@ -15,7 +25,7 @@ export const GET = async ({ url, locals: { supabase } }) => {
 
     const { error: profileError } = await supabase
       .from("profiles")
-      .upsert({ user_id: userId, username, verified: "TRUE" });
+      .upsert({ id: newId, user_id: userId, username, verified: "TRUE" });
 
     if (profileError) throw error(500, profileError.message);
 

@@ -97,6 +97,14 @@ export const load = async ({ params }) => {
     if (ratingsError)
       throw error(500, `Failed to fetch profiles: ${ratingsError.message}`);
 
+    const { data: cubeUserCount, error: userCubesErr } = await supabase
+      .from("user_cubes")
+      .select("*")
+      .eq("cube", cube.slug);
+
+    if (userCubesErr)
+      throw error(500, `Failed to fetch profiles: ${userCubesErr.message}`);
+
     return {
       cube,
       cubeTrims,
@@ -107,6 +115,7 @@ export const load = async ({ params }) => {
       user_ratings,
       databaseAvailability,
       cubesAvailability,
+      cubeUserCount,
     };
   }
 

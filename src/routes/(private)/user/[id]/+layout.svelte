@@ -293,7 +293,7 @@
     {@render children()}
   {:else}
     <section
-      class="bg-black text-white px-4 py-12 flex items-center justify-center"
+      class="px-4 py-12 flex items-center justify-center"
     >
       <div class="text-center">
         <h1 class="text-3xl font-bold mb-4">This profile is private</h1>

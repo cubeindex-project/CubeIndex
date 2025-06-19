@@ -35,7 +35,7 @@
 {#if achievementsAvailability}
   <section class="min-h-screen px-6 py-24">
     <div class="max-w-6xl mx-auto">
-      <h1 class="text-4xl font-bold text-center mb-6">🏅 Achievements</h1>
+      <h1 class="text-4xl font-bold text-center mb-6">Achievements</h1>
       <p class="text-center mb-12">
         Unlock achievements by participating in the CubeIndex community. Collect
         them all to showcase your journey!

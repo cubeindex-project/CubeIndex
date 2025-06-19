@@ -43,7 +43,7 @@ export const actions: Actions = {
 
     if (maxError) return fail(500, { message: maxError.message });
 
-    const newId = maxData[0].id + 1;
+    const newId = maxData?.length ? maxData[0].id + 1 : 1;
 
     const { error: upsertError } = await supabase
       .from("profiles")

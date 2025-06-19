@@ -254,9 +254,7 @@
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
           <span class="text-2xl">🔒</span>
-          <h2 class="text-2xl font-bold tracking-tight">
-            Account Security
-          </h2>
+          <h2 class="text-2xl font-bold tracking-tight">Account Security</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -275,16 +273,17 @@
           </div>
         </div>
 
-        <button class="btn btn-lg btn-primary" onclick={updatePassword} disabled>
+        <button
+          class="btn btn-lg btn-primary"
+          onclick={updatePassword}
+          disabled
+        >
           Update Password
         </button>
       </div>
 
       <div class="flex justify-end pt-6">
-        <button
-          type="submit"
-          class="btn btn-primary btn-xl"
-        >
+        <button type="submit" class="btn btn-primary btn-xl">
           Save Changes
         </button>
       </div>

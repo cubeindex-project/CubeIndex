@@ -1,5 +1,5 @@
 <script>
-    const { version_type, moreInfo } = $props();
+  const { version_type, moreInfo } = $props();
 </script>
 
 {#if version_type === "Base"}
@@ -32,17 +32,17 @@
         {/if}
     </span>
 {:else}
-    <span
-        class="ml-2 px-2 py-1 rounded bg-green-600/80 text-xs font-semibold relative group"
-    >
-        <span class="font-clash uppercase">Trim</span>
-        {#if moreInfo}
-            <span
-                class="absolute -right-0 top-full mt-2 w-max max-w-xs bg-neutral-800 text-white text-xs rounded p-2 shadow-lg opacity-0 group-hover:opacity-100 group-focus:opacity-100 pointer-events-none transition-opacity z-20"
-            >
-                Trim versions are alternate variants of the base model, often
-                with different colors, finishes, or minor features.
-            </span>
-        {/if}
-    </span>
+  <span
+    class="ml-2 px-2 py-1 rounded bg-green-600/80 text-xs font-semibold relative group"
+  >
+    <span class="font-clash uppercase">Trim</span>
+    {#if moreInfo}
+      <span
+        class="absolute -right-0 top-full mt-2 w-max max-w-xs bg-neutral-800 text-white text-xs rounded p-2 shadow-lg opacity-0 group-hover:opacity-100 group-focus:opacity-100 pointer-events-none transition-opacity z-20"
+      >
+        Trim versions are alternate variants of the base model, often with
+        different colors, finishes, or minor features.
+      </span>
+    {/if}
+  </span>
 {/if}

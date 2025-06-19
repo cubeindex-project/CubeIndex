@@ -5,13 +5,13 @@
   import UserCard from "$lib/components/userCard.svelte";
 
   const { data } = $props();
-  const { profiles, user_achievements } = data;
+  const { profiles, user_achievements, user_cubes } = data;
   let databaseAvailability: boolean = $state(true);
 
   onMount(() =>
     configCatClient.getValueAsync("database", false).then((value) => {
       databaseAvailability = value;
-    }),
+    })
   );
 </script>
 

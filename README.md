@@ -4,8 +4,6 @@
 
 CubeIndex is set to release in August 2025. We are currently in the beta stage of development, which you can try out here: [cube-index-beta.vercel.app](https://cube-index-beta.vercel.app)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
-
 ## 🧠 Tech Stack
 
 - **Frontend:** SvelteKit, Tailwind CSS
@@ -24,8 +22,10 @@ CubeIndex is set to release in August 2025. We are currently in the beta stage o
 
 ## 🚀 Deployment
 
-- **Main Branch (Production):** [cube-index.vercel.app](https://cube-index.vercel.app)  
-- **Developer Branch (Beta Preview):** [cube-index-beta.vercel.app](https://cube-index-beta.vercel.app)
+- **Main Branch (Production):** [cubeindex.netlify.app](https://cubeindex.netlify.app)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
+- **Developer Branch (Beta Preview):** [cubeindexbeta.netlify.app](https://cubeindexbeta.netlify.app)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7b27c12d-e420-4e63-85be-e459ff3a4ae5/deploy-status)](https://app.netlify.com/projects/cubeindexbeta/deploys)
 
 ## 🛠 Setup Instructions
 

@@ -2,6 +2,7 @@
   import { supabase } from "$lib/supabaseClient.js";
   import { onMount } from "svelte";
   let password = $state("");
+  let showPassword = $state(false);
   let confirmPassword = $state("");
   let message = $state("");
   let error = $state("");
@@ -43,23 +44,38 @@
     </h1>
     <form onsubmit={resetPassword} class="space-y-6">
       <div>
-        <label class="block text-sm font-medium">New Password
-        <input
-          type="password"
-          bind:value={password}
-          class="input w-full"
-          required
-        />
+        <label class="block text-sm font-medium"
+          >New Password
+          <div class="flex flex-row items-center">
+            <input
+              bind:value={password}
+              type={showPassword ? "text" : "password"}
+              class="input w-full"
+              required
+            />
+            <label class="swap text-md">
+              <input
+                type="checkbox"
+                onclick={() => {
+                  showPassword = !showPassword;
+                }}
+                class="sr-only peer"
+              />
+              <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
+              <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"></i>
+            </label>
+          </div>
         </label>
       </div>
       <div>
-        <label class="block text-sm font-medium">Confirm Password
-        <input
-          type="password"
-          bind:value={confirmPassword}
-          class="input w-full"
-          required
-        />
+        <label class="block text-sm font-medium"
+          >Confirm Password
+          <input
+            type="password"
+            bind:value={confirmPassword}
+            class="input w-full"
+            required
+          />
         </label>
       </div>
       <button type="submit" class="btn btn-primary w-full"

@@ -12,28 +12,21 @@
   let message: string = $state("");
 
   async function resetPassword(e: Event) {
-      e.preventDefault();
-      if (!email) {
-          localError = "Please enter an email";
-          return;
-      }
-      const { error: err } = await supabase.auth.resetPasswordForEmail(
-          email,
-          {
-              redirectTo: `${window.location.origin}/auth/reset`,
-          },
-      );
+    e.preventDefault();
+    if (!email) {
+      localError = "Please enter an email";
+      return;
+    }
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
 
-      if (err) {
-          localError = err.message;
-          return;
-      }
+    if (err) {
+      localError = err.message;
+      return;
+    }
 
-      message = "Check your email to reset your password";
-  }
-
-  function togglePasswordVisibility() {
-    showPassword = !showPassword;
+    message = "Check your email to reset your password";
   }
 
   onMount(() =>
@@ -79,7 +72,9 @@
             <label class="swap text-md">
               <input
                 type="checkbox"
-                onclick={togglePasswordVisibility}
+                onclick={() => {
+                  showPassword = !showPassword;
+                }}
                 class="sr-only peer"
               />
               <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
@@ -90,7 +85,11 @@
 
         <p class="text-sm text-gray-500 -mt-5">
           Forgot your password?
-          <button type="button" class="link link-primary link-hover" onclick={resetPassword}>Reset</button>
+          <button
+            type="button"
+            class="link link-primary link-hover"
+            onclick={resetPassword}>Reset</button
+          >
         </p>
 
         <button type="submit" class="btn w-full btn-primary btn-lg">

@@ -8,13 +8,7 @@
 
   let { data, children } = $props();
 
-  // Vercel's Analytics and Speed Insights
-  import { injectAnalytics } from "@vercel/analytics/sveltekit";
-  import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import { UmamiAnalyticsEnv } from "@lukulent/svelte-umami";
-
-  injectAnalytics();
-  injectSpeedInsights();
 
   // Keeping user fresh in the browser
   import { invalidate } from "$app/navigation";

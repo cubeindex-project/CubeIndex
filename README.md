@@ -4,6 +4,8 @@
 
 CubeIndex is set to release in August 2025. We are currently in the beta stage of development, which you can try out here: [cube-index-beta.vercel.app](https://cube-index-beta.vercel.app)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
+
 ## 🧠 Tech Stack
 
 - **Frontend:** SvelteKit, Tailwind CSS

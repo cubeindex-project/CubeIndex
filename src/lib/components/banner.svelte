@@ -8,7 +8,7 @@
 {#if isOpen}
   <div class="relative flex flex-col sm:flex-row items-center sm:justify-between p-4 bg-black w-full mx-auto pt-4 text-white">
     <p class="text-center flex-1">
-      CubeIndex is set to fully release in <strong>August 2025</strong>, but you can try the <strong>beta</strong> version now<a href="https://cube-index-beta.vercel.app/" class="text-blue-600 hover:underline ml-1">by clicking here</a>! Features and design are subject to change.
+      CubeIndex is set to fully release in <strong>August 2025</strong>, but you can try the <strong>beta</strong> version now<a href="https://cubeindexbeta.netlify.app/" class="text-blue-600 hover:underline ml-1">by clicking here</a>! Features and design are subject to change.
     </p>
 
     <button

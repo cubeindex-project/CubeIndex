@@ -1,11 +1,11 @@
 import type { RequestHandler } from "./$types";
 import { redirect } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ locals: { supabase } }) => {
+export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const { data } = await supabase.auth.signInWithOAuth({
     provider: "discord",
     options: {
-      redirectTo: `${window.location.origin}/auth/login-callback`,
+      redirectTo: `${url.origin}/auth/login-callback`,
     },
   });
 

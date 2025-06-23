@@ -66,6 +66,7 @@
     "postgres": "^3.4.5",
     "release-please": "^17.1.0",
     "svelte-sonner": "^1.0.1",
+    "sveltekit-top-loader": "^0.1.0",
     "theme-change": "^2.5.0"
   },
   "overrides": {

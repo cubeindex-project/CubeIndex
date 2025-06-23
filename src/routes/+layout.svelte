@@ -5,6 +5,7 @@
   import Footer from "$lib/components/footer.svelte";
   import Disclaimer from "$lib/components/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
+  import { SvelteKitTopLoader } from 'sveltekit-top-loader';
 
   let { data, children } = $props();
 
@@ -43,6 +44,8 @@
 </svelte:head>
 
 <UmamiAnalyticsEnv />
+
+<SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Disclaimer />
 

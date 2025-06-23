@@ -143,7 +143,7 @@
         <!-- Sign Up with Discord Button -->
         <a
           type="button"
-          href="/auth/login/discord"
+          href="/auth/discord"
           class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
         >
           <i class="fa-brands fa-discord text-2xl"></i>

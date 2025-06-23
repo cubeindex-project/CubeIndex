@@ -90,7 +90,7 @@
             <label class="swap text-md">
               <input
                 type="checkbox"
-                onclick={() => showPassword = !showPassword}
+                onclick={() => (showPassword = !showPassword)}
                 class="sr-only peer"
               />
               <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
@@ -170,7 +170,7 @@
         <!-- Sign Up with Discord Button -->
         <a
           type="button"
-          href="/auth/signup/discord"
+          href="/auth/discord"
           class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
         >
           <i class="fa-brands fa-discord text-2xl"></i>

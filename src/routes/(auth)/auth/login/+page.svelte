@@ -7,14 +7,18 @@
   let { form } = $props();
   let showPassword = $state(false);
   let email = $state("");
+  let password = $state("");
   let login = $state(true);
-  let localError: string = $state("");
-  let message: string = $state("");
+  let resetError: string = $state("");
+  let resetMessage: string = $state("");
+  let isSubmitting = $state(false);
 
   async function resetPassword(e: Event) {
     e.preventDefault();
+    resetError = "";
+    resetMessage = "";
     if (!email) {
-      localError = "Please enter an email";
+      resetError = "Please enter an email";
       return;
     }
     const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
@@ -22,11 +26,11 @@
     });
 
     if (err) {
-      localError = err.message;
+      resetError = err.message;
       return;
     }
 
-    message = "Check your email to reset your password";
+    resetMessage = "Check your email to reset your password";
   }
 
   onMount(() =>
@@ -47,7 +51,13 @@
         Welcome Back
       </h1>
       <p class="text-center text-sm mb-8">Login to your CubeIndex profile</p>
-      <form method="POST" class="space-y-6">
+      <form
+        method="POST"
+        class="space-y-6"
+        onsubmit={() => {
+          isSubmitting = true;
+        }}
+      >
         <div>
           <label for="email" class="block text-sm font-medium">Email</label>
           <input
@@ -66,6 +76,7 @@
           <div class="flex flex-row items-center">
             <input
               name="password"
+              bind:value={password}
               type={showPassword ? "text" : "password"}
               class="input w-full"
             />
@@ -92,23 +103,37 @@
           >
         </p>
 
-        <button type="submit" class="btn w-full btn-primary btn-lg">
-          Log In
+        <button
+          type="submit"
+          class="btn w-full btn-primary btn-lg"
+          disabled={isSubmitting || !email || !password}
+        >
+          {#if isSubmitting}
+            <span class="loading loading-spinner"></span>
+            Logging In...
+          {:else}
+            Log In
+          {/if}
         </button>
 
+        {#if resetMessage}
+          <p class="text-sm text-success text-center mt-2">
+            {resetMessage}
+          </p>
+        {/if}
         {#if form?.message}
-          <p class="text-sm text-red-500 text-center mt-2">
+          <p class="text-sm text-success text-center mt-2">
             {form.message}
           </p>
         {/if}
-        {#if localError && !form?.message}
-          <p class="text-sm text-red-500 text-center mt-2">
-            {localError}
+        {#if resetError}
+          <p class="text-sm text-error text-center mt-2">
+            {resetError}
           </p>
         {/if}
-        {#if message}
-          <p class="text-sm text-green-400 text-center mt-2">
-            {message}
+        {#if form?.error}
+          <p class="text-sm text-error text-center mt-2">
+            {form.error}
           </p>
         {/if}
 

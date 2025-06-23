@@ -9,34 +9,10 @@
   let email: string = $state("");
   let password: string = $state("");
   let confirmPassword: string = $state("");
-  let error: string = $state("");
   let showPassword: boolean = $state(false);
   let signup: boolean = $state(true);
   let acceptedTOS = $state(false);
-
-  function signUpVerification() {
-    if (password.length < 8) {
-      error = "Password must be at least 8 characters.";
-      return;
-    }
-    if (password !== confirmPassword) {
-      error = "Passwords do not match";
-      return;
-    }
-    if (username.length <= 2 || username.length >= 12) {
-      error = "Username must be between 2 and 12 characters";
-      return;
-    }
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(email)) {
-      error = "Please enter a valid email address";
-      return;
-    }
-  }
-
-  function togglePasswordVisibility() {
-    showPassword = !showPassword;
-  }
+  let isSubmitting = $state(false);
 
   onMount(() =>
     configCatClient.getValueAsync("signup", false).then((value) => {
@@ -61,12 +37,20 @@
       <form
         method="POST"
         action="?/signup"
-        use:enhance={signUpVerification}
+        use:enhance={() => {
+          return async ({ update }) => {
+            await update({ reset: false });
+            isSubmitting = false;
+          };
+        }}
+        onsubmit={() => {
+          isSubmitting = true;
+        }}
         class="space-y-6"
       >
         <!-- Username -->
         <div>
-          <label for="username" class="block text-sm font-medium text-white"
+          <label for="username" class="block text-sm font-medium"
             >Username</label
           >
           <input
@@ -80,9 +64,7 @@
 
         <!-- Email -->
         <div>
-          <label for="email" class="block text-sm font-medium text-white"
-            >Email</label
-          >
+          <label for="email" class="block text-sm font-medium">Email</label>
           <input
             name="email"
             type="email"
@@ -94,7 +76,7 @@
 
         <!-- Password -->
         <div>
-          <label for="password" class="block text-sm font-medium text-white"
+          <label for="password" class="block text-sm font-medium"
             >Password</label
           >
           <div class="flex flex-row items-center">
@@ -108,7 +90,7 @@
             <label class="swap text-md">
               <input
                 type="checkbox"
-                onclick={togglePasswordVisibility}
+                onclick={() => showPassword = !showPassword}
                 class="sr-only peer"
               />
               <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
@@ -119,9 +101,8 @@
 
         <!-- Confirm Password -->
         <div>
-          <label
-            for="confirmPassword"
-            class="block text-sm font-medium text-white">Confirm Password</label
+          <label for="confirmPassword" class="block text-sm font-medium"
+            >Confirm Password</label
           >
           <input
             id="confirmPassword"
@@ -141,16 +122,14 @@
             bind:checked={acceptedTOS}
             class="checkbox bg-base-300"
           />
-          <label for="acceptTOS" class="text-sm text-gray-400 select-none">
+          <label for="acceptTOS" class="text-sm select-none">
             I accept the
-            <a href="/tos" target="_blank" class="link link-primary link-hover"
+            <a href="/tos" target="_blank" class="link link-primary"
               >Terms of Service</a
             >
             and
-            <a
-              href="/privacy"
-              target="_blank"
-              class="link link-primary link-hover">Privacy Policy</a
+            <a href="/privacy" target="_blank" class="link link-primary"
+              >Privacy Policy</a
             >
           </label>
         </div>
@@ -158,14 +137,30 @@
         <!-- Main Sign Up Button -->
         <button
           type="submit"
-          class="btn btn-xl bg-gradient-to-r from-primary to-purple-600 hover:to-purple-700 text-white w-full"
+          class="btn btn-xl w-full btn-primary"
+          disabled={isSubmitting ||
+            !email ||
+            !password ||
+            !acceptedTOS ||
+            !confirmPassword ||
+            !username}
         >
-          Sign Up
+          {#if isSubmitting}
+            <span class="loading loading-spinner"></span>
+            Signing Up...
+          {:else}
+            Sign Up
+          {/if}
         </button>
 
         {#if form?.message}
-          <p class="text-sm text-error text-center mt-2">
+          <p class="text-sm text-success text-center mt-2">
             {form.message}
+          </p>
+        {/if}
+        {#if form?.error}
+          <p class="text-sm text-error text-center mt-2">
+            {form.error}
           </p>
         {/if}
 

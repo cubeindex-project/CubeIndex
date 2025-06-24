@@ -2,6 +2,7 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
 import { slugify } from "$lib/components/slugify.svelte";
+import { getSubTypes } from "$lib/components/subType.svelte";
 
 export const load = (async ({ locals }) => {
   // Use locals.supabase so that row‐level security / auth works
@@ -93,10 +94,10 @@ export const actions: Actions = {
     const { data: me, error: meErr } = await locals.supabase
       .from("profiles")
       .select("username")
-      .eq("user_id", locals.user?.id);
-    if (meErr || !me?.length)
-      throw error(500, meErr?.message || "Profile not found");
-    const submittedBy = me[0].username;
+      .eq("user_id", locals.user?.id)
+      .single();
+
+    if (meErr) throw error(500, meErr.message);
 
     const slug = slugify(`${series} ${model} ${versionName}`);
 
@@ -107,15 +108,14 @@ export const actions: Actions = {
       version_name: versionName,
       brand,
       type,
+      sub_type: getSubTypes(type),
       release_date: releaseDate,
       image_url: imageUrl,
       surface_finish: surfaceFinish,
       weight,
       size,
-      approved: false,
       version_type: cubeVersion,
-      submitted_by: submittedBy,
-      verified_by: me[0].username,
+      submitted_by: me.username,
       related_to: relatedTo || null,
       wca_legal: wcaLegal,
       magnetic,
@@ -123,14 +123,15 @@ export const actions: Actions = {
       modded,
       discontinued,
       maglev,
+      status: "Pending",
     };
 
     const { error: insertErr } = await locals.supabase
-      .from("cube_models")
-      .insert(payload)
-      .select();
-    if (insertErr) return fail(500, { message: insertErr.message });
+      .from("cube_submissions")
+      .insert(payload);
 
-    return { message: "Cube added successfully!" };
+    if (insertErr) return fail(500, { error: insertErr.message });
+
+    return { message: "Cube submitted successfully!" };
   },
 };

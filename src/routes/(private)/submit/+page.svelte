@@ -3,18 +3,20 @@
   const { data, form } = $props();
   const { cubes, profile } = $derived(data);
 
-  let series = $state("");
-  let model = $state("");
-  let version = $state("");
-  let brand = $state("");
+  let series = $state("GAN356 i");
+  let model = $state("Pyraminx M");
+  let version = $state("MagLev");
+  let brand = $state("GAN");
   let otherBrand = $state("");
-  let type = $state("");
-  let releaseDate = $state("");
-  let imageUrl = $state("");
-  let surfaceFinish = $state("");
-  let weight = $state(0);
-  let size = $state(0);
-  let cubeVersion = $state("");
+  let type = $state("3x3x3");
+  let releaseDate = $state("3527-05-31");
+  let imageUrl = $state(
+    "https://www.thecubicle.com/cdn/shop/products/Kkk0hWPmcv7e3.jpg"
+  );
+  let surfaceFinish = $state("Frosted");
+  let weight = $state(43);
+  let size = $state(12);
+  let cubeVersion = $state("Base");
   let relatedTo = $state("");
   let wcaLegal = $state(false);
   let magnetic = $state(false);
@@ -119,7 +121,8 @@
         {/if}
         <div>
           <label class="block text-sm mb-1"
-            >Type <span class="text-red-500">*</span> (If the type you need isn't listed, please contact the staff.)
+            >Type <span class="text-red-500">*</span> (If the type you need
+            isn't listed, please contact the staff.)
             <select
               name="type"
               bind:value={type}
@@ -296,11 +299,17 @@
       <button type="submit" class="btn btn-primary btn-lg w-full">
         Submit Cube
       </button>
-      <p class="p-1 text-center">You are submitting as {profile.username}. <a href="/auth/login" class="link link-primary link-hover">Not you?</a></p>
+      <p class="p-1 text-center">
+        You are submitting as {profile.username}.
+        <a href="/auth/login" class="link link-primary link-hover">Not you?</a>
+      </p>
     </form>
 
     {#if form?.message}
-      <p class="text-info text-center mt-4">{form.message}</p>
+      <p class="text-success text-center mt-4">{form.message}</p>
+    {/if}
+    {#if form?.error}
+      <p class="text-error text-center mt-4">{form.error}</p>
     {/if}
   </div>
 </section>

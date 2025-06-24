@@ -11,7 +11,7 @@ export const actions: Actions = {
       email,
       password,
     });
-    if (e) return fail(400, { message: e.message });
+    if (e) return fail(400, { error: e.message });
 
     const {
       data: { user },
@@ -22,10 +22,12 @@ export const actions: Actions = {
       .select("id")
       .eq("user_id", user?.id);
 
-    if (err) return fail(500, { message: err.message });
+    if (err) return fail(500, { error: err.message });
 
     const profile = profiles?.[0];
 
     redirect(303, `/user/${profile?.id}`);
+
+    return { message: "Logged in successfully!" };
   },
 };

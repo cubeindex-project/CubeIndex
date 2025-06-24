@@ -5,16 +5,11 @@
   import Footer from "$lib/components/footer.svelte";
   import Disclaimer from "$lib/components/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
+  import { SvelteKitTopLoader } from 'sveltekit-top-loader';
 
   let { data, children } = $props();
 
-  // Vercel's Analytics and Speed Insights
-  import { injectAnalytics } from "@vercel/analytics/sveltekit";
-  import { injectSpeedInsights } from "@vercel/speed-insights/sveltekit";
   import { UmamiAnalyticsEnv } from "@lukulent/svelte-umami";
-
-  injectAnalytics();
-  injectSpeedInsights();
 
   // Keeping user fresh in the browser
   import { invalidate } from "$app/navigation";
@@ -49,6 +44,8 @@
 </svelte:head>
 
 <UmamiAnalyticsEnv />
+
+<SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Disclaimer />
 

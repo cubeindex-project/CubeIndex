@@ -3,7 +3,9 @@
   import { onMount } from "svelte";
 
   const { data } = $props();
-  const { totalCubes, totalUsers, achievements } = $derived(data);
+  const { totalCubes, totalUsers, achievements } = $derived(
+    data || { totalCubes: 0, totalUsers: 0, achievements: [] }
+  );
   let mounted = $state(false);
 
   const unlockAchi = () => {

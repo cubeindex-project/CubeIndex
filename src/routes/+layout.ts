@@ -48,3 +48,5 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
 
   return { session, supabase, user };
 };
+
+export const prerender = true;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages.js";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { onMount } from "svelte";
 
@@ -28,11 +29,10 @@
     {
       name: "CubingPanda",
       emoji: "🐼",
-      description:
-        "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
+      description: `${m.ago_lost_nuthatch_belong()}`,
       links: [
         {
-          label: "Join Discord",
+          label: `${m.still_petty_gazelle_cheer()}`,
           url: "https://discord.gg/VHhYR6nyzs",
           color: "blue",
         },
@@ -42,16 +42,15 @@
     {
       name: "AlgArchive",
       emoji: "📚",
-      description:
-        "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
+      description: `${m.neat_slow_snail_comfort()}`,
       links: [
         {
-          label: "Visit Site",
+          label: `${m.icy_due_chipmunk_belong()}`,
           url: "https://alg-archive.vercel.app/",
           color: "green",
         },
         {
-          label: "Join Discord",
+          label: `${m.still_petty_gazelle_cheer()}`,
           url: "https://discord.gg/NYPG43xe9t",
           color: "blue",
         },
@@ -70,29 +69,32 @@
 >
   <div class="relative z-10 text-center max-w-3xl space-y-6">
     <h1 class="text-5xl sm:text-7xl font-clash font-bold">
-      Build Your Ultimate Cube Collection
+      {m.front_spare_sparrow_dart()}
     </h1>
     <p class="text-lg sm:text-xl">
-      Track your cubes, unlock badges, and explore the world's largest cube
-      database.
+      {m.weary_next_capybara_startle()}
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <a href="/auth/signup" class="btn btn-xl btn-primary">
-        Start Collecting
+        {m.male_tangy_lamb_treasure()}
       </a>
-      <a href="/explore" class="btn btn-xl"> Explore Database </a>
+      <a href="/explore" class="btn btn-xl">
+        {m.alive_factual_goat_forgive()}
+      </a>
     </div>
   </div>
 </section>
 
 <section class="py-16 px-5 text-center bg-base-200">
-  <h2 class="text-4xl font-clash font-extrabold mb-14">CubeIndex in Numbers</h2>
+  <h2 class="text-4xl font-clash font-extrabold mb-14">
+    {m.ornate_swift_cobra_slurp()}
+  </h2>
 
   <div class="stats lg:stats-horizontal stats-vertical overflow-hidden">
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-cubes"></i>
-        Cubes Logged
+        {m.flat_wild_swallow_pop()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -109,7 +111,7 @@
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-people-group"></i>
-        Registered Users
+        {m.weird_direct_rook_pride()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -126,7 +128,7 @@
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-trophy"></i>
-        Unlockable Achievements
+        {m.happy_short_lobster_endure()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -148,7 +150,9 @@
 <section
   class="pt-16 pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
 >
-  <h2 class="text-4xl font-clash font-bold text-center mb-12">Our Partners</h2>
+  <h2 class="text-4xl font-clash font-bold text-center mb-12">
+    {m.real_teal_polecat_aim()}
+  </h2>
   <div
     class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-y-12 gap-x-8 w-full"
   >
@@ -188,24 +192,23 @@
 
 <section class="py-20 px-6 text-center bg-base-200 mt-16">
   <h2 class="text-4xl font-bold font-clash mb-4">
-    Ready to level up your cube game?
+    {m.orange_candid_finch_heal()}
   </h2>
   <p class="text-lg max-w-2xl mx-auto mb-8">
-    Join the CubeIndex community and start tracking your collection, unlocking
-    achievements, and connecting with cubers worldwide.
+    {m.large_large_ostrich_feel()}
   </p>
   <div class="flex justify-center gap-4 flex-wrap">
     <a
       href="/auth/signup"
       class="btn btn-primary btn-lg px-6 py-3 font-semibold transition-transform"
     >
-      Get Started
+      {m.just_loud_lamb_nudge()}
     </a>
     <a
       href="/explore"
       class="btn btn-outline btn-lg px-6 py-3 font-semibold transition-transform"
     >
-      Explore Cubes
+      {m.light_just_cuckoo_gaze()}
     </a>
   </div>
 </section>

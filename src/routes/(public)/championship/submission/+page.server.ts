@@ -11,17 +11,31 @@ export const actions: Actions = {
     const username = formData.get("username") as string;
     const submission = formData.get("submission");
 
-    console.log("Submission type:", typeof submission, submission);
-    console.log("Is File:", submission instanceof File);
-
     if (!(submission instanceof File)) {
       throw error(400, "Submission is not a file");
     }
 
+    // List existing submissions for the user to determine the next submission number
+    const { data: existing, error: listError } = await supabase.storage
+      .from("submissions")
+      .list(`CubeIndex Championship 2025/${username}/`);
+
+    if (listError) throw error(500, listError.message);
+
+    // Count existing submissions to determine the next number
+    const count = existing ? existing.length : 0;
+    const suffix = ["1st", "2nd", "3rd"];
+    const ordinal = count < 3 ? suffix[count] : `${count + 1}th`;
+    const filename = `${ordinal} submission${
+      submission.name
+        ? submission.name.substring(submission.name.lastIndexOf("."))
+        : ""
+    }`;
+
     const { error: err } = await supabase.storage
       .from("submissions")
       .upload(
-        `CubeIndex Championship 2025/${username}/submission.mp4`,
+        `CubeIndex Championship 2025/${username}/${filename}`,
         submission,
         {
           cacheControl: "3600",

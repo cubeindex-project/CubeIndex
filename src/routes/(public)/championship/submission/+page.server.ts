@@ -18,7 +18,7 @@ export const actions: Actions = {
       throw error(400, "Submission is not a file");
     }
 
-    const { data, error: err } = await supabase.storage
+    const { error: err } = await supabase.storage
       .from("submissions")
       .upload(
         `CubeIndex Championship 2025/${username}/submission.mp4`,
@@ -29,8 +29,6 @@ export const actions: Actions = {
           contentType: submission.type,
         }
       );
-
-    console.log(data);
 
     if (err) throw error(500, err.message);
   },

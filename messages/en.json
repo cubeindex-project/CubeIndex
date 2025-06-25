@@ -1,5 +1,27 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+  "disclaimer": {
+    "zesty_funny_panther_buzz": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving."
+  },
+  "home": {
+    "male_tangy_lamb_treasure": "Start Collecting",
+    "alive_factual_goat_forgive": "Explore Database",
+    "ornate_swift_cobra_slurp": "CubeIndex in Numbers",
+    "flat_wild_swallow_pop": "Cubes Logged",
+    "weary_next_capybara_startle": "Track your cubes, unlock badges, and explore the world's largest cube database.",
+    "front_spare_sparrow_dart": "Build Your Ultimate Cube Collection",
+    "still_petty_gazelle_cheer": "Join Discord",
+    "icy_due_chipmunk_belong": "Visit Site",
+    "weird_direct_rook_pride": "Registered Users",
+    "happy_short_lobster_endure": "Unlockable Achievements",
+    "real_teal_polecat_aim": "Our Partners",
+    "orange_candid_finch_heal": "Ready to level up your cube game?",
+    "large_large_ostrich_feel": "Join the CubeIndex community and start tracking your collection, unlocking achievements, and connecting with cubers worldwide.",
+    "just_loud_lamb_nudge": "Get Started",
+    "light_just_cuckoo_gaze": "Explore Cubes",
+    "ago_lost_nuthatch_belong": "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
+    "neat_slow_snail_comfort": "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets."
+  },
   "male_tangy_lamb_treasure": "Start Collecting",
   "alive_factual_goat_forgive": "Explore Database",
   "ornate_swift_cobra_slurp": "CubeIndex in Numbers",

@@ -4,6 +4,8 @@
 
 CubeIndex is set to release in August 2025. We are currently in the beta stage of development, which you can try out here: [cubeindexbeta.netlify.app](https://cubeindexbeta.netlify.app/)
 
+[![Crowdin](https://badges.crowdin.net/cubeindex/localized.svg)](https://crowdin.com/project/cubeindex)
+
 ## 🧠 Tech Stack
 
 - **Frontend:** SvelteKit, Tailwind CSS

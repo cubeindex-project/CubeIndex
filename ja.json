@@ -10,7 +10,7 @@
     {
         "identifier": "male_tangy_lamb_treasure",
         "source_string": "Start Collecting",
-        "translation": "Start Collecting",
+        "translation": "収集を開始",
         "context": " -> male_tangy_lamb_treasure",
         "labels": null,
         "max_length": null
@@ -18,7 +18,7 @@
     {
         "identifier": "alive_factual_goat_forgive",
         "source_string": "Explore Database",
-        "translation": "Explore Database",
+        "translation": "データベースを探索",
         "context": " -> alive_factual_goat_forgive",
         "labels": null,
         "max_length": null
@@ -26,7 +26,7 @@
     {
         "identifier": "ornate_swift_cobra_slurp",
         "source_string": "CubeIndex in Numbers",
-        "translation": "CubeIndex in Numbers",
+        "translation": "数字のCubeインデックス",
         "context": " -> ornate_swift_cobra_slurp",
         "labels": null,
         "max_length": null
@@ -34,7 +34,7 @@
     {
         "identifier": "flat_wild_swallow_pop",
         "source_string": "Cubes Logged",
-        "translation": "Cubes Logged",
+        "translation": "キューブを記録しました",
         "context": " -> flat_wild_swallow_pop",
         "labels": null,
         "max_length": null
@@ -42,7 +42,7 @@
     {
         "identifier": "weary_next_capybara_startle",
         "source_string": "Track your cubes, unlock badges, and explore the world's largest cube database.",
-        "translation": "Track your cubes, unlock badges, and explore the world's largest cube database.",
+        "translation": "キューブを追跡したり、バッジをアンロックしたり、世界最大の立方体データベースを探索したりできます。",
         "context": " -> weary_next_capybara_startle",
         "labels": null,
         "max_length": null
@@ -50,7 +50,7 @@
     {
         "identifier": "front_spare_sparrow_dart",
         "source_string": "Build Your Ultimate Cube Collection",
-        "translation": "Build Your Ultimate Cube Collection",
+        "translation": "究極のキューブコレクションを作る",
         "context": " -> front_spare_sparrow_dart",
         "labels": null,
         "max_length": null
@@ -58,7 +58,7 @@
     {
         "identifier": "still_petty_gazelle_cheer",
         "source_string": "Join Discord",
-        "translation": "Join Discord",
+        "translation": "Discord に参加",
         "context": " -> still_petty_gazelle_cheer",
         "labels": null,
         "max_length": null
@@ -66,7 +66,7 @@
     {
         "identifier": "icy_due_chipmunk_belong",
         "source_string": "Visit Site",
-        "translation": "Visit Site",
+        "translation": "サイトを訪問",
         "context": " -> icy_due_chipmunk_belong",
         "labels": null,
         "max_length": null
@@ -74,7 +74,7 @@
     {
         "identifier": "weird_direct_rook_pride",
         "source_string": "Registered Users",
-        "translation": "Registered Users",
+        "translation": "登録ユーザー",
         "context": " -> weird_direct_rook_pride",
         "labels": null,
         "max_length": null
@@ -82,7 +82,7 @@
     {
         "identifier": "happy_short_lobster_endure",
         "source_string": "Unlockable Achievements",
-        "translation": "Unlockable Achievements",
+        "translation": "ロック解除可能な実績",
         "context": " -> happy_short_lobster_endure",
         "labels": null,
         "max_length": null
@@ -90,7 +90,7 @@
     {
         "identifier": "real_teal_polecat_aim",
         "source_string": "Our Partners",
-        "translation": "Our Partners",
+        "translation": "パートナー",
         "context": " -> real_teal_polecat_aim",
         "labels": null,
         "max_length": null
@@ -98,7 +98,7 @@
     {
         "identifier": "orange_candid_finch_heal",
         "source_string": "Ready to level up your cube game?",
-        "translation": "Ready to level up your cube game?",
+        "translation": "キューブゲームをレベルアップする準備はできましたか？",
         "context": " -> orange_candid_finch_heal",
         "labels": null,
         "max_length": null
@@ -106,7 +106,7 @@
     {
         "identifier": "large_large_ostrich_feel",
         "source_string": "Join the CubeIndex community and start tracking your collection, unlocking achievements, and connecting with cubers worldwide.",
-        "translation": "Join the CubeIndex community and start tracking your collection, unlocking achievements, and connecting with cubers worldwide.",
+        "translation": "CubeIndex コミュニティに参加し、コレクションの追跡、アチーブメントのロックの解除、世界中のキューバ人とのつながりを開始しましょう。",
         "context": " -> large_large_ostrich_feel",
         "labels": null,
         "max_length": null
@@ -114,7 +114,7 @@
     {
         "identifier": "just_loud_lamb_nudge",
         "source_string": "Get Started",
-        "translation": "Get Started",
+        "translation": "はじめよう",
         "context": " -> just_loud_lamb_nudge",
         "labels": null,
         "max_length": null
@@ -122,7 +122,7 @@
     {
         "identifier": "light_just_cuckoo_gaze",
         "source_string": "Explore Cubes",
-        "translation": "Explore Cubes",
+        "translation": "キューブを探索",
         "context": " -> light_just_cuckoo_gaze",
         "labels": null,
         "max_length": null
@@ -130,7 +130,7 @@
     {
         "identifier": "ago_lost_nuthatch_belong",
         "source_string": "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
-        "translation": "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
+        "translation": "CubingPandaはあらゆるスキルレベルのRubik's Cubeファンのための絶好のコミュニティです。あなたがベテランのスピードキューバーであろうと、単一の顔を解決したことのない人であろうと。",
         "context": " -> ago_lost_nuthatch_belong",
         "labels": null,
         "max_length": null
@@ -138,7 +138,7 @@
     {
         "identifier": "neat_slow_snail_comfort",
         "source_string": "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
-        "translation": "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
+        "translation": "キューブアルゴリズムのオープンアーカイブ。全てのパズルタイプのコミュニティで検討されたソリューションをブラウズし、平均5でタグ付けし、PBクラッシュの秘密を共有します。",
         "context": " -> neat_slow_snail_comfort",
         "labels": null,
         "max_length": null

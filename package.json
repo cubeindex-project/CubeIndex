@@ -21,6 +21,8 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
+    "@inlang/cli": "^3.0.12",
+    "@inlang/paraglide-js": "2.1.0",
     "@lukulent/svelte-umami": "^0.0.4",
     "@sveltejs/adapter-netlify": "^5.0.2",
     "@sveltejs/adapter-vercel": "^0.0.3",
@@ -48,9 +50,7 @@
     "vite-plugin-devtools-json": "^0.2.0",
     "vite-plugin-pwa": "^1.0.0",
     "vitest": "^3.0.0",
-    "zod": "^3.25.64",
-    "@inlang/paraglide-js": "2.1.0",
-    "@inlang/cli": "^3.0.0"
+    "zod": "^3.25.64"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

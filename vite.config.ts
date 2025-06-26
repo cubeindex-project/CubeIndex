@@ -11,19 +11,21 @@ export default defineConfig({
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: './src/lib/paraglide',
-      strategy: ["preferredLanguage", "baseLocale"],
+      strategy: ["preferredLanguage", "url", "baseLocale"]
     }),
     devtoolsJson(),
     tailwindcss(),
     sveltekit(),
     VitePWA({
       registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
+      devOptions: { enabled: true },
       manifest: false,
-      injectManifest: {},
+      injectManifest: {}
     }),
+    paraglideVitePlugin({
+      project: "./project.inlang",
+      outdir: "./src/lib/paraglide"
+    })
   ],
   test: {
     workspace: [
@@ -36,8 +38,8 @@ export default defineConfig({
           clearMocks: true,
           include: ["src/**/*.svelte.{test,spec}.{js,ts}"],
           exclude: ["src/lib/server/**"],
-          setupFiles: ["./vitest-setup-client.ts"],
-        },
+          setupFiles: ["./vitest-setup-client.ts"]
+        }
       },
       {
         extends: "./vite.config.ts",
@@ -45,9 +47,9 @@ export default defineConfig({
           name: "server",
           environment: "node",
           include: ["src/**/*.{test,spec}.{js,ts}"],
-          exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
-        },
-      },
-    ],
-  },
+          exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"]
+        }
+      }
+    ]
+  }
 });

@@ -29,10 +29,10 @@
     {
       name: "CubingPanda",
       emoji: "🐼",
-      description: `${m["home:ago_lost_nuthatch_belong"]()}`,
+      description: `${m.ago_lost_nuthatch_belong()}`,
       links: [
         {
-          label: `${m["home:still_petty_gazelle_cheer"]()}`,
+          label: `${m.still_petty_gazelle_cheer()}`,
           url: "https://discord.gg/VHhYR6nyzs",
           color: "blue",
         },
@@ -42,15 +42,15 @@
     {
       name: "AlgArchive",
       emoji: "📚",
-      description: `${m["home:neat_slow_snail_comfort"]()}`,
+      description: `${m.neat_slow_snail_comfort()}`,
       links: [
         {
-          label: `${m["home:icy_due_chipmunk_belong"]()}`,
+          label: `${m.icy_due_chipmunk_belong()}`,
           url: "https://alg-archive.vercel.app/",
           color: "green",
         },
         {
-          label: `${m["home:still_petty_gazelle_cheer"]()}`,
+          label: `${m.still_petty_gazelle_cheer()}`,
           url: "https://discord.gg/NYPG43xe9t",
           color: "blue",
         },
@@ -69,17 +69,17 @@
 >
   <div class="relative z-10 text-center max-w-3xl space-y-6">
     <h1 class="text-5xl sm:text-7xl font-clash font-bold">
-      {m["home:front_spare_sparrow_dart"]()}
+      {m.front_spare_sparrow_dart()}
     </h1>
     <p class="text-lg sm:text-xl">
-      {m["home:weary_next_capybara_startle"]()}
+      {m.weary_next_capybara_startle()}
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <a href="/auth/signup" class="btn btn-xl btn-primary">
-        {m["home:male_tangy_lamb_treasure"]()}
+        {m.male_tangy_lamb_treasure()}
       </a>
       <a href="/explore" class="btn btn-xl">
-        {m["home:alive_factual_goat_forgive"]()}
+        {m.alive_factual_goat_forgive()}
       </a>
     </div>
   </div>
@@ -87,14 +87,14 @@
 
 <section class="py-16 px-5 text-center bg-base-200">
   <h2 class="text-4xl font-clash font-extrabold mb-14">
-    {m["home:ornate_swift_cobra_slurp"]()}
+    {m.ornate_swift_cobra_slurp()}
   </h2>
 
   <div class="stats lg:stats-horizontal stats-vertical overflow-hidden">
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-cubes"></i>
-        {m["home:flat_wild_swallow_pop"]()}
+        {m.flat_wild_swallow_pop()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -111,7 +111,7 @@
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-people-group"></i>
-        {m["home:weird_direct_rook_pride"]()}
+        {m.weird_direct_rook_pride()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -128,7 +128,7 @@
     <div class="stat flex-1">
       <div class="stat-title text-sm uppercase tracking-wide">
         <i class="fa-solid fa-trophy"></i>
-        {m["home:happy_short_lobster_endure"]()}
+        {m.happy_short_lobster_endure()}
       </div>
       <div class="stat-value text-5xl font-bold mb-2">
         <NumberFlow
@@ -151,7 +151,7 @@
   class="pt-16 pb-24 px-5 relative flex flex-col items-center justify-center overflow-hidden"
 >
   <h2 class="text-4xl font-clash font-bold text-center mb-12">
-    {m["home:real_teal_polecat_aim"]()}
+    {m.real_teal_polecat_aim()}
   </h2>
   <div
     class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-y-12 gap-x-8 w-full"
@@ -192,23 +192,23 @@
 
 <section class="py-20 px-6 text-center bg-base-200 mt-16">
   <h2 class="text-4xl font-bold font-clash mb-4">
-    {m["home:orange_candid_finch_heal"]()}
+    {m.orange_candid_finch_heal()}
   </h2>
   <p class="text-lg max-w-2xl mx-auto mb-8">
-    {m["home:large_large_ostrich_feel"]()}
+    {m.large_large_ostrich_feel()}
   </p>
   <div class="flex justify-center gap-4 flex-wrap">
     <a
       href="/auth/signup"
       class="btn btn-primary btn-lg px-6 py-3 font-semibold transition-transform"
     >
-      {m["home:just_loud_lamb_nudge"]()}
+      {m.just_loud_lamb_nudge()}
     </a>
     <a
       href="/explore"
       class="btn btn-outline btn-lg px-6 py-3 font-semibold transition-transform"
     >
-      {m["home:light_just_cuckoo_gaze"]()}
+      {m.light_just_cuckoo_gaze()}
     </a>
   </div>
 </section>

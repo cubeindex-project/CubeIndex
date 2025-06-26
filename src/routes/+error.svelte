@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages.js";
   import { onMount } from "svelte";
   import { page } from "$app/state";
 
@@ -39,21 +40,20 @@
   </div>
 
   <p class="mb-8 max-w-md relative z-10">
-    It seems you encountered an error.<br />
-    If you think this is a bug, please let us know!
+    {m.lost_dizzy_turtle_support()}
   </p>
 
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
+    <a href="/" class="btn btn-lg btn-primary"> {m.grand_great_cow_work()} </a>
     <a
       href="https://discord.gg/76ExrEAE7s"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-lg btn-error"
     >
-      🐞 Report the Bug on Discord
+      {m.every_jolly_goldfish_comfort()}
     </a>
   </div>
 

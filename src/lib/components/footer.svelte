@@ -1,3 +1,7 @@
+<script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+</script>
+
 <footer class="bg-base-100 px-6 py-10">
   <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
     <!-- Brand Info -->
@@ -58,16 +62,16 @@
       </ul>
     </div>
     <div>
-      <h3 class="font-semibold mb-3">Legal</h3>
+      <h3 class="font-semibold mb-3">{m.legal()}</h3>
       <ul class="space-y-2 text-sm">
         <li>
-          <a href="/privacy" class="link link-hover">Privacy Policy</a>
+          <a href="/privacy" class="link link-hover">{m.privacy_policy()}</a>
         </li>
         <li>
-          <a href="/report" class="link link-hover">Report</a>
+          <a href="/report" class="link link-hover">{m.report()}</a>
         </li>
         <li>
-          <a href="/tos" class="link link-hover">Terms of Service</a>
+          <a href="/tos" class="link link-hover">{m.terms_of_service()}</a>
         </li>
       </ul>
     </div>
@@ -76,7 +80,6 @@
   <!-- Bottom -->
   <div class="mt-10 text-center text-xs">
     &copy; 2025 - {new Date().getFullYear()} CubeIndex by
-    <a href="https://saterz.dev/studio" class="link">Saterz Studio</a>. All
-    rights reserved.
+    <a href="https://saterz.dev/studio" class="link">Saterz Studio</a>. {m.rights_reserved()}
   </div>
 </footer>

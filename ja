@@ -6,5 +6,13 @@
         "context": " -> $schema",
         "labels": null,
         "max_length": null
+    },
+    {
+        "identifier": "zesty_funny_panther_buzz",
+        "source_string": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
+        "translation": "早期プレビュー版です — これは初期バージョンであり、現在開発中です。機能とデザインは現在も進化を続けています。",
+        "context": " -> zesty_funny_panther_buzz",
+        "labels": null,
+        "max_length": null
     }
 ]

@@ -3,6 +3,7 @@
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data } = $props();
   let {
@@ -59,8 +60,7 @@
       </h1>
 
       <p class="mb-4">
-        {cubeUserCount?.length} user{cubeUserCount?.length === 1 ? "" : "s"} have
-        this cube
+        {m.cube_user_count({ cubeUserCount: cubeUserCount?.length })}
       </p>
 
       <button
@@ -72,7 +72,7 @@
         aria-label="Add to Collection"
       >
         <i class="fa-solid fa-plus mr-2"></i>
-        Add to Collection
+        {m.add_to_collection()}
       </button>
 
       <!-- Highlighted Rating -->
@@ -86,33 +86,19 @@
         class="mb-4 p-4 bg-base-200 rounded-xl border border-base-300 shadow-sm"
       >
         <p class="leading-relaxed">
-          Description:
+          {m.description()}:
           <span class="block mt-2">
-            The <span class="font-bold text-primary"
-              >{`${cube.series} ${cube.model} ${cube.version_type !== "Base" ? cube.version_name : ""}`}</span
-            >
-            is a
-            <span class="font-bold text-primary">{cube.type}</span>
-            twisty puzzle released on
-            <span class="font-bold text-primary"
-              >{formatDate(cube.release_date)}</span
-            >. It is
-            <span class="font-bold text-primary"
-              >{cube.magnetic ? "magnetic" : "non-magnetic"}</span
-            >,
-            <span class="font-bold text-primary"
-              >{cube.smart ? "smart" : "non-smart"}</span
-            >, and
-            <span class="font-bold text-primary"
-              >{cube.wca_legal ? "WCA-legal" : "not WCA-legal"}</span
-            >. Currently, it is
-            <span class="font-bold text-primary"
-              >{cube.discontinued ? "discontinued" : "available"}</span
-            >, has a community rating of
-            <span class="font-bold text-primary">{cube.rating}/5</span>, and is
-            <span class="font-bold text-primary"
-              >{cube.modded ? "modded" : "original"}</span
-            >.
+            {@html m.cube_description({
+              cube_name: `${cube.series} ${cube.model}${cube.version_type !== "Base" ? " " + cube.version_name : ""}`,
+              type: cube.type,
+              release: formatDate(cube.release_date),
+              magnetic: cube.magnetic,
+              smart: cube.smart,
+              wca: cube.wca_legal,
+              availability: cube.discontinued,
+              rating: cube.rating,
+              modded: cube.modded ? "modded" : "original",
+            })}
           </span>
         </p>
       </div>
@@ -121,27 +107,27 @@
           class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
         >
           <div class="flex items-center justify-between">
-            <span>Brand:</span>
+            <span>{m.brand_label()}</span>
             <span class="font-medium">{cube.brand}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span>Type:</span>
+            <span>{m.type_label()}</span>
             <span class="font-medium">{cube.type}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span>Weight:</span>
+            <span>{m.weight_label()}</span>
             <span class="font-medium">{cube.weight} g</span>
           </div>
           <div class="flex items-center justify-between">
-            <span>Size:</span>
+            <span>{m.size_label()}</span>
             <span class="font-medium">{cube.size} mm3</span>
           </div>
           <div class="flex items-center justify-between">
-            <span>Surface Finish:</span>
+            <span>{m.surface_finish_label()}</span>
             <span class="font-medium">{cube.surface_finish}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span>Release Date:</span>
+            <span>{m.release_date_label()}</span>
             <span class="font-medium">{formatDate(cube.release_date)}</span>
           </div>
         </div>
@@ -149,25 +135,25 @@
           class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
         >
           <div class="flex items-center justify-between">
-            <span>Smart:</span>
+            <span>{m.smart_label()}</span>
             <span class="text-xl">{cube.smart ? "✅" : "❌"}</span>
           </div>
-          <div class="flex items-center justify-between">
-            <span>Magnetic:</span>
+            <div class="flex items-center justify-between">
+            <span>{m.magnetic_label()}</span>
             <span class="text-xl">{cube.magnetic ? "✅" : "❌"}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Modded:</span>
+            </div>
+            <div class="flex items-center justify-between">
+            <span>{m.modded_label()}</span>
             <span class="text-xl">{cube.modded ? "✅" : "❌"}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>WCA Legal:</span>
+            </div>
+            <div class="flex items-center justify-between">
+            <span>{m.wca_legal_label()}</span>
             <span class="text-xl">{cube.wca_legal ? "✅" : "❌"}</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span>Maglev:</span>
+            </div>
+            <div class="flex items-center justify-between">
+            <span>{m.maglev_label()}</span>
             <span class="text-xl">{cube.maglev ? "✅" : "❌"}</span>
-          </div>
+            </div>
         </div>
       </div>
       {#if vendor_links && vendor_links.length > 0}
@@ -202,31 +188,31 @@
         <div class="bg-base-200 rounded-xl p-4 border border-base-300">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-regular fa-clock"></i>
-            Database Info:
+            {m.database_info_label()}
           </h2>
           <div class="flex flex-col sm:flex-row gap-6">
             <div class="flex items-center gap-2">
-              <span>ID:</span>{cube.id}
+              <span>{m.id_label()}</span>{cube.id}
             </div>
             <div class="flex items-center gap-2">
-              <span>Added:</span>
+              <span>{m.added_label()}</span>
               <span class="font-medium">
                 {formatDate(cube.created_at)}
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span>Last Updated:</span>
+              <span>{m.last_updated()}</span>
               <span class="font-medium">
                 {formatDate(cube.updated_at)}
               </span>
             </div>
             <div class="flex items-center gap-2">
-              <span>Submitted by:</span>
+              <span>{m.submitted_by()}</span>
               <a
                 class="font-medium underline"
                 href={idOfUser(cube.submitted_by)}
               >
-                {cube.submitted_by || "Unknown"}
+                {cube.submitted_by || m.unknown()}
               </a>
             </div>
           </div>
@@ -236,7 +222,7 @@
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
-            Select Trim:
+            {m.select_trim_label()}
           </h2>
           <div class="flex gap-4">
             {#each cubeTrims ?? [] as trim}
@@ -259,7 +245,7 @@
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
-            Related To:
+            {m.related_to_label()}
           </h2>
           <div class="flex gap-4">
             <a
@@ -283,7 +269,7 @@
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-solid fa-layer-group"></i>
-            In the Same Series:
+            {m.same_series_label()}
           </h2>
           <div class="flex flex-wrap gap-4">
             {#each sameSeries as seriesCube}
@@ -308,7 +294,7 @@
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
           <i class="fa-solid fa-star"></i>
-          User Ratings
+          {m.user_ratings()}
         </h2>
         {#if user_ratings && user_ratings.length > 0}
           <div class="flex flex-col gap-4">
@@ -319,7 +305,7 @@
                 <div class="flex items-center gap-3 mb-2">
                   <StarRating rating={cube.rating} large={false} />
                   <span class="text-sm">
-                    by <a href={idOfUser(rating.username)} class="underline"
+                    {m.by()} <a href={idOfUser(rating.username)} class="underline"
                       >{rating.username}</a
                     >
                   </span>
@@ -336,7 +322,7 @@
             {/each}
           </div>
         {:else}
-          <div>No user ratings yet. Be the first to rate this cube!</div>
+          <div>{m.no_user_ratings()}</div>
         {/if}
       </div>
       <div class="mt-4">
@@ -346,12 +332,12 @@
           rel="noopener noreferrer"
           class="btn btn-error"
         >
-          🚩 Report incorrect/missing data
+          {m.report_data()}
         </a>
       </div>
 
       <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
-        ← Back to Explore
+        ← {m.back_to_explore()}
       </a>
     </div>
   </section>

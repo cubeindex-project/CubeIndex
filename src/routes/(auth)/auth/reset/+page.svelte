@@ -1,5 +1,6 @@
 <script lang="ts">
   import { supabase } from "$lib/supabaseClient.js";
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   let password = $state("");
   let showPassword = $state(false);
@@ -19,11 +20,11 @@
     e.preventDefault();
     error = "";
     if (password.length < 8) {
-      error = "Password must be at least 8 characters.";
+      error = m.password_at_least_eight();
       return;
     }
     if (password !== confirmPassword) {
-      error = "Passwords do not match";
+      error = m.passwords_do_not_match();
       return;
     }
     const { error: err } = await supabase.auth.updateUser({ password });
@@ -31,7 +32,7 @@
       error = err.message;
       return;
     }
-    message = "Password updated. You can now log in.";
+    message = m.password_updated();
   }
 </script>
 
@@ -40,12 +41,12 @@
     class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
   >
     <h1 class="text-3xl font-clash font-bold text-center mb-6">
-      Reset Password
+      {m.reset_password()}
     </h1>
     <form onsubmit={resetPassword} class="space-y-6">
       <div>
         <label class="block text-sm font-medium"
-          >New Password
+          >{m.label_new_password()}
           <div class="flex flex-row items-center">
             <input
               bind:value={password}
@@ -69,7 +70,7 @@
       </div>
       <div>
         <label class="block text-sm font-medium"
-          >Confirm Password
+          >{m.label_confirm_password()}
           <input
             type="password"
             bind:value={confirmPassword}
@@ -79,7 +80,7 @@
         </label>
       </div>
       <button type="submit" class="btn btn-primary w-full"
-        >Update Password</button
+        >{m.update_password()}</button
       >
       {#if error}
         <p class="text-sm text-red-500 text-center mt-2">{error}</p>

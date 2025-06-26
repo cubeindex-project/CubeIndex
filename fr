@@ -6,13 +6,5 @@
         "context": " -> $schema",
         "labels": null,
         "max_length": null
-    },
-    {
-        "identifier": "zesty_funny_panther_buzz",
-        "source_string": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
-        "translation": "est en préversion : il s'agit d'une version préliminaire actuellement en développement. Les fonctionnalités et le design sont encore en évolution.",
-        "context": " -> zesty_funny_panther_buzz",
-        "labels": null,
-        "max_length": null
     }
 ]

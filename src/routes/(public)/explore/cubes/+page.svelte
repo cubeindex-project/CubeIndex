@@ -1,6 +1,7 @@
 <script lang="ts">
     import FeatureDisabled from "$lib/components/featureDisabled.svelte";
     import CubeCard from "$lib/components/cubeCard.svelte";
+    import { m } from "$lib/paraglide/messages";
     import { writable, derived } from "svelte/store";
 
   // Props and loading
@@ -129,10 +130,10 @@
   <section class="min-h-screenpx-6 py-16">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-6 text-center">
-        Explore Cubes
+        {m.explore_cubes_title()}
       </h1>
       <p class="mb-12 text-center">
-        Browse all your favorite cubes by type, brand, or rating.
+        {m.explore_cubes_desc()}
       </p>
 
       <!-- Search Bar + Toggle -->
@@ -149,7 +150,7 @@
         <div class="relative flex-1">
           <input
             type="text"
-            placeholder="Search Your Cube"
+            placeholder={m.search_your_cube()}
             bind:value={$searchTerm}
             class="input w-full h-12.5 rounded-l-none border-base-300"
           />
@@ -174,13 +175,13 @@
               class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky lg:top-24"
             >
               <div class="flex items-center justify-between mb-4">
-                <span class="font-semibold text-lg">Filters</span>
+                <span class="font-semibold text-lg">{m.filters()}</span>
               </div>
               <div class="flex flex-col gap-4">
                 <!-- Type -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Type:
+                    >{m.type_label()}
                     <select
                       bind:value={$selectedType}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -195,7 +196,7 @@
                 <!-- Brand -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Brand:
+                    >{m.brand_label()}
                     <select
                       bind:value={$selectedBrand}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -210,7 +211,7 @@
                 <!-- WCA Legal -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >WCA Legal:
+                    >{m.wca_legal_label()}
                     <select
                       bind:value={$WCALegal}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -224,7 +225,7 @@
                 <!-- Magnetic -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Magnetic:
+                    >{m.magnetic_label()}
                     <select
                       bind:value={$magnetic}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -238,7 +239,7 @@
                 <!-- Smart -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Smart:
+                    >{m.smart_label()}
                     <select
                       bind:value={$smart}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -252,7 +253,7 @@
                 <!-- Modded -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Modded:
+                    >{m.modded_label()}
                     <select
                       bind:value={$modded}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -266,7 +267,7 @@
                 <!-- Release Year -->
                 <div>
                   <label class="block text-sm mb-1"
-                    >Release Year:
+                    >{m.release_year_label()}
                     <select
                       bind:value={$selectedYear}
                       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
@@ -286,7 +287,7 @@
                     type="button"
                   >
                     <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                    Reset Filters
+                    {m.reset_filters()}
                   </button>
                 </div>
               </div>
@@ -301,7 +302,7 @@
           >
             <div class="flex items-center">
               <label class="text-sm mr-2" for="itemsPerPage"
-                >Cubes per page:</label
+                >{m.cubes_per_page()}</label
               >
               <select
                 id="itemsPerPage"
@@ -323,7 +324,7 @@
                 class="btn bg-primary text-primary-content"
               >
                 <i class="fa-solid fa-code-compare mr-2"></i>
-                Compare Cubes
+                {m.compare_cubes()}
               </a>
             </div>
           </div>
@@ -367,7 +368,7 @@
                 aria-label="Previous page"
               >
                 <i class="fa-solid fa-chevron-left mr-2"></i>
-                Previous
+                {m.previous()}
               </button>
               <button class="join-item btn btn-lg">
                 Page {$currentPage} of {$totalPages}
@@ -378,7 +379,7 @@
                 disabled={$currentPage === $totalPages}
                 aria-label="Next page"
               >
-                Next
+                {m.next()}
                 <i class="fa-solid fa-chevron-right ml-2"></i>
               </button>
             </div>

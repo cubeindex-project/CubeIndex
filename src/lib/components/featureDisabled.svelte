@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   const { featureName } = $props();
 </script>
 
@@ -15,14 +16,11 @@
 
     <!-- Headline -->
     <h1 class="text-3xl sm:text-4xl font-clash font-extrabold">
-      {featureName} Temporarily Disabled
+      {featureName} {m.temporarily_disabled()}
     </h1>
 
     <!-- Explanatory text -->
-    <p>
-      We're working behind the scenes to bring it back online. Thanks for your
-      patience!
-    </p>
+    <p>{m.feature_disabled_message()}</p>
 
     <a
       href="/discord"
@@ -31,13 +29,13 @@
       class="btn btn-lg bg-primary text-primary-content"
     >
       <i class="fa-brands fa-discord text-xl"></i>
-      Join our Discord for more info
+      {m.join_discord_for_info()}
     </a>
 
     <!-- Return Home Button -->
     <a href="/" class="btn btn-lg bg-base-300">
       <i class="fa-solid fa-house"></i>
-      Return Home
+      {m.return_home()}
     </a>
   </div>
 </section>

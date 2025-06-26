@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   const { user_achievements, achievements } = data;
@@ -24,7 +25,7 @@
 </script>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
-  <h3 class="text-2xl font-bold mb-4">Achievements Earned</h3>
+  <h3 class="text-2xl font-bold mb-4">{m.achievements_earned()}</h3>
   {#if user_achievements && user_achievements.length > 0}
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each achievementsToShow as achievement}
@@ -55,7 +56,7 @@
           onclick={() => (showAllAchievements = !showAllAchievements)}
           class="btn btn-base-200 h-15"
         >
-          {showAllAchievements ? "Show Less" : "Show More"}
+          {showAllAchievements ? m.show_less() : m.show_more()}
         </button>
       {/if}
     </ul>
@@ -63,7 +64,7 @@
     <div
       class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
     >
-      <span class="text-lg font-medium">No achievements earned yet!</span>
+      <span class="text-lg font-medium">{m.no_achievements_yet()}</span>
     </div>
   {/if}
 </div>

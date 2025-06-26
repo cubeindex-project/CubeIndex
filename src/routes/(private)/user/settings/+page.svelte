@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   const { profiles } = data;
@@ -41,7 +42,7 @@
     <h1
       class="text-4xl sm:text-5xl font-clash font-extrabold mb-8 tracking-tight text-primary"
     >
-      User Settings
+      {m.user_settings()}
     </h1>
 
     <form method="POST" use:enhance={verifySettings}>

@@ -40,9 +40,9 @@
   }
 
   const navLinks = [
-    { name: "Explore", href: "/explore" },
-    { name: "Achievements", href: "/achievements" },
-    { name: "About", href: "/about" },
+    { name: m.nav_explore(), href: "/explore" },
+    { name: m.nav_achievements(), href: "/achievements" },
+    { name: m.nav_about(), href: "/about" },
   ];
 
   function formatDate(dateString: string): string {

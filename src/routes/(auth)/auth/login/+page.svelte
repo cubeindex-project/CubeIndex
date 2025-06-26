@@ -1,6 +1,7 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient.js";
 
@@ -18,7 +19,7 @@
     resetError = "";
     resetMessage = "";
     if (!email) {
-      resetError = "Please enter an email";
+      resetError = m.please_enter_email();
       return;
     }
     const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
@@ -30,7 +31,7 @@
       return;
     }
 
-    resetMessage = "Check your email to reset your password";
+    resetMessage = m.check_email_reset();
   }
 
   onMount(() =>
@@ -48,9 +49,9 @@
       class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
     >
       <h1 class="text-3xl font-clash font-bold text-center mb-6">
-        Welcome Back
+        {m.welcome_back()}
       </h1>
-      <p class="text-center text-sm mb-8">Login to your CubeIndex profile</p>
+      <p class="text-center text-sm mb-8">{m.login_subtitle()}</p>
       <form
         method="POST"
         class="space-y-6"
@@ -59,7 +60,7 @@
         }}
       >
         <div>
-          <label for="email" class="block text-sm font-medium">Email</label>
+          <label for="email" class="block text-sm font-medium">{m.label_email()}</label>
           <input
             name="email"
             type="email"
@@ -71,7 +72,7 @@
 
         <div>
           <label for="password" class="block text-sm font-medium"
-            >Password</label
+            >{m.label_password()}</label
           >
           <div class="flex flex-row items-center">
             <input
@@ -95,11 +96,11 @@
         </div>
 
         <p class="text-sm text-gray-500 -mt-5">
-          Forgot your password?
+          {m.forgot_password()}
           <button
             type="button"
             class="link link-primary link-hover"
-            onclick={resetPassword}>Reset</button
+            onclick={resetPassword}>{m.reset()}</button
           >
         </p>
 
@@ -110,9 +111,9 @@
         >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
-            Logging In...
+            {m.logging_in()}
           {:else}
-            Log In
+            {m.log_in()}
           {/if}
         </button>
 
@@ -138,7 +139,7 @@
         {/if}
 
         <!-- OR Divider -->
-        <div class="divider">or</div>
+        <div class="divider">{m.or()}</div>
 
         <!-- Sign Up with Discord Button -->
         <a
@@ -147,14 +148,14 @@
           class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
         >
           <i class="fa-brands fa-discord text-2xl"></i>
-          Sign In with Discord
+          {m.sign_in_with_discord()}
         </a>
       </form>
 
       <p class="text-sm text-center text-gray-500 mt-6">
-        Don't have an account?
+        {m.no_account()}
         <a href="/auth/signup" class="link link-primary link-hover ml-1">
-          Sign Up
+          {m.sign_up()}
         </a>
       </p>
     </div>

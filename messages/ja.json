@@ -298,7 +298,7 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "ユーザの実績を入力",
+        "input user_achievements",
         "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [

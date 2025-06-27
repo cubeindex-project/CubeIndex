@@ -16,7 +16,9 @@
       .eq("user_id", user?.id);
 
     if (profileErr) throw error(500, profileErr.message);
-    username = profiles[0].username;
+    if (profiles && profiles.length > 0) {
+      username = profiles[0].username;
+    }
     return { username };
   });
 </script>

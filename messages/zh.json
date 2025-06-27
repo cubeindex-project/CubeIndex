@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
-        "local achievementsPlural = user_achievements: plural"
+        "输入用户的成就",
+        "局部成就 复数 = 用户成就：复数"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "local cubesMulal = user_cub：复数"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,5 +328,16 @@
     }
   ],
   "track_explore_share": "曲目，探索和分享您的快递收藏。",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetc_lower": "magnetic",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

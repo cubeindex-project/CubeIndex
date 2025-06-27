@@ -244,7 +244,7 @@
     }
   ],
   "description": "Descrição:",
-  "cube_description": "O <span class=\"font-bold text-primary\">{cube_name}</span> é um <span class=\"font-bold text-primary\">{type}</span> quebra-cabeças lançados em <span class=\"font-bold text-primary\">{release}</span>. É <span class=\"font-bold text-primary\">{magnético ? \"magnético\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, e <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Atualmente, é <span class=\"font-bold text-primary\">{availability ? \"descontinuado\" : \"disponível\"}</span>, tem uma classificação da comunidade de <span class=\"font-bold text-primary\">{rating}/5</span>e é <span class=\"font-bold text-primary\">{modificado? \"modded\" : \"original\"}</span>.",
+  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic}</span>, <span class=\"font-bold text-primary\">{smart}</span>, and <span class=\"font-bold text-primary\">{wca}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded}</span>.",
   "brand": "Bandeira",
   "weight_label": "Peso:",
   "size_label": "Tamanho:",
@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
-        "local achievementsPlural = user_achievements: plural"
+        "entrada _conquistas_usuários",
+        "conquistas locais Plural = user_achievements: plural"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "cubesPlural local = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,5 +328,16 @@
     }
   ],
   "track_explore_share": "Rastrear, explorar e compartilhar sua coleção de velocípulos.",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetc_lower": "magnetic",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

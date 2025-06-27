@@ -3,6 +3,7 @@
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
   import Badge from "$lib/components/badge.svelte";
   import { onMount } from "svelte";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
   const { profiles, user_achievements, user_cubes } = data;
@@ -19,7 +20,7 @@
   <section class="min-h-screen px-4 py-12">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-10 text-center">
-        Explore Users
+        {m.explore_users_title()}
       </h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {#each profiles as profile}
@@ -52,25 +53,22 @@
                 >
                 <span class="text-xs flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>
-                  {user_cubes.filter((uc) => uc.username === profile.username)
-                    .length} Cube{user_cubes.filter(
-                    (uc) => uc.username === profile.username
-                  ).length === 1
-                    ? ""
-                    : "s"}
+                  {m.user_cubes_count({
+                    user_cubes: user_cubes.filter(
+                      (uc) => uc.username === profile.username
+                    ).length,
+                  })}
                   <span class="mx-1">•</span>
                   <i class="fa-solid fa-medal"></i>
-                  {user_achievements.filter(
-                    (ua) => ua.username === profile.username
-                  ).length} Achievement{user_achievements.filter(
-                    (ua) => ua.username === profile.username
-                  ).length === 1
-                    ? ""
-                    : "s"}
+                  {m.user_achievements_count({
+                    user_achievements: user_achievements.filter(
+                      (ua) => ua.username === profile.username
+                    ).length,
+                  })}
                 </span>
               </div>
               <p class="text-xs truncate max-w-full mt-1">
-                {profile.bio || "No bio provided."}
+                {profile.bio || m.no_bio_provided()}
               </p>
             </div>
             <span

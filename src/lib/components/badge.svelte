@@ -1,21 +1,26 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   const { profile, textSize } = $props();
 
   const roles = [
-    { role: "Admin", bgColor: "bg-red-600", icon: "fa-shield-halved" },
+    { role: `${m.admin}`, bgColor: "bg-red-600", icon: "fa-shield-halved" },
     {
-      role: "Moderator",
+      role: `${m.moderator()}`,
       bgColor: "bg-green-600",
       icon: "fa-shield-halved",
     },
-    { role: "Lead Developer", bgColor: "bg-blue-600", icon: "fa-computer" },
     {
-      role: "Community Manager",
+      role: `${m.lead_developer()}`,
+      bgColor: "bg-blue-600",
+      icon: "fa-computer",
+    },
+    {
+      role: `${m.community_manager()}`,
       bgColor: "bg-purple-600",
       icon: "fa-people-group",
     },
     {
-      role: "Database Manager",
+      role: `${m.database_manager()}`,
       bgColor: "bg-orange-600",
       icon: "fa-database",
     },

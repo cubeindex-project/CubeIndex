@@ -237,9 +237,9 @@
         "cubeUserCountsPlural"
       ],
       "match": {
-        "cubeUserCountsPlural=one": "{cubeUserCount} user have this cube",
-        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube",
-        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube"
+        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=one": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
       }
     }
   ],

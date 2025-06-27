@@ -244,7 +244,7 @@
     }
   ],
   "description": "Descripción",
-  "cube_description": "La <span class=\"font-bold text-primary\">{cube_name}</span> es un rompecabezas torcido <span class=\"font-bold text-primary\">{type}</span> liberado en <span class=\"font-bold text-primary\">{release}</span>. Es <span class=\"font-bold text-primary\">{magnético ? \"magnético\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>y <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Actualmente, es <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, tiene una calificación comunitaria de <span class=\"font-bold text-primary\">{rating}/5</span>, y es <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
+  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic}</span>, <span class=\"font-bold text-primary\">{smart}</span>, and <span class=\"font-bold text-primary\">{wca}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded}</span>.",
   "brand": "Marca",
   "weight_label": "Peso:",
   "size_label": "Tamaño:",
@@ -298,7 +298,7 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
+        "introducir usuario_logros",
         "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "cubos locales Plural = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,5 +328,16 @@
     }
   ],
   "track_explore_share": "Rastrea, explora y comparte tu colección de veloces.",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetc_lower": "magnetic",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

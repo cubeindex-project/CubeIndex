@@ -227,7 +227,22 @@
   "private_profile": "此配置文件是私有的",
   "no_view_permission": "您没有查看此用户个人资料的权限。",
   "user_tabs_submissions": "提交的意见",
-  "cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} have this cube",
+  "cube_user_count": [
+    {
+      "declarations": [
+        "input cubeUserCount",
+        "local cubeUserCountsPlural = cubeUserCount: plural"
+      ],
+      "selectors": [
+        "cubeUserCountsPlural"
+      ],
+      "match": {
+        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=one": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
+      }
+    }
+  ],
   "description": "描述",
   "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, and <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
   "brand": "品牌版",

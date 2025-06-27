@@ -45,26 +45,26 @@
   };
 
   const fields: Field[] = [
-    { label: "Version Type", key: "version_type" },
-    { label: "Brand", key: "brand" },
-    { label: "Series", key: "series" },
-    { label: "Model", key: "model" },
-    { label: "Version Name", key: "version_name" },
-    { label: "Type", key: "type" },
-    { label: "Subtype", key: "sub_type" },
-    { label: "Surface Finish", key: "surface_finish" },
-    { label: "Stickered", key: "stickered", format: boolYesNo },
-    { label: "WCA Legal", key: "wca_legal", format: boolYesNo },
-    { label: "Magnetic", key: "magnetic", format: boolYesNo },
-    { label: "Maglev", key: "maglev", format: boolYesNo },
-    { label: "Smart", key: "smart", format: boolYesNo },
-    { label: "Modded", key: "modded", format: boolYesNo },
-    { label: "Discontinued", key: "discontinued", format: boolYesNo },
-    { label: "Related To", key: "related_to" },
-    { label: "Release Date", key: "release_date", format: formatDate },
-    { label: "Rating", key: "rating", format: formatFloat },
-    { label: "Weight (g)", key: "weight", format: formatFloat },
-    { label: "Size (mm3)", key: "size", format: formatFloat },
+    { label: `${m.cube_type_label()}`, key: "version_type" },
+    { label: `${m.brand()}`, key: "brand" },
+    { label: `${m.series()}`, key: "series" },
+    { label: `${m.model()}`, key: "model" },
+    { label: `${m.version_name()}`, key: "version_name" },
+    { label: `${m.type()}`, key: "type" },
+    { label: `${m.subtype()}`, key: "sub_type" },
+    { label: `${m.surface_finish()}`, key: "surface_finish" },
+    { label: `${m.stickered()}`, key: "stickered", format: boolYesNo },
+    { label: `${m.wca_legal()}`, key: "wca_legal", format: boolYesNo },
+    { label: `${m.magnetic()}`, key: "magnetic", format: boolYesNo },
+    { label: `${m.maglev()}`, key: "maglev", format: boolYesNo },
+    { label: `${m.smart()}`, key: "smart", format: boolYesNo },
+    { label: `${m.modded()}`, key: "modded", format: boolYesNo },
+    { label: `${m.discontinued()}`, key: "discontinued", format: boolYesNo },
+    { label: `${m.related_to()}`, key: "related_to" },
+    { label: `${m.release_date()}`, key: "release_date", format: formatDate },
+    { label: `${m.rating()}`, key: "rating", format: formatFloat },
+    { label: `${m.weight_g()}`, key: "weight", format: formatFloat },
+    { label: `${m.size_mm3()}`, key: "size", format: formatFloat },
   ];
 </script>
 
@@ -93,7 +93,7 @@
       <div class="flex justify-center items-center">
         <span
           class="bg-base-300 rounded-full text-3xl px-7 py-4 text-primary font-bold"
-          >VS</span
+          >{m.vs()}</span
         >
       </div>
       <!-- Cube 2 Select -->
@@ -136,7 +136,7 @@
                   {cube1.version_name}
                 </span>
               {:else}
-                <span>Cube 1</span>
+                <span>{m.cube1()}</span>
               {/if}
             </th>
             <th class="py-4 px-3 font-bold text-lg text-center w-1/3">
@@ -152,7 +152,7 @@
                   {cube2.version_name}
                 </span>
               {:else}
-                <span>Cube 2</span>
+                <span>{m.cube2()}</span>
               {/if}
             </th>
           </tr>

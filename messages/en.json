@@ -247,5 +247,71 @@
   "by": "by",
   "no_user_ratings": "No user ratings yet. Be the first to rate this cube!",
   "report_data": "🚩 Report incorrect/missing data",
-  "back_to_explore": "Back to Explore"
+  "back_to_explore": "Back to Explore",
+  "profile_information": "Profile Information",
+  "settings_avatar_url": "Avatar Image URL",
+  "image_must_be_valid": "Image must be a valid JPG, PNG, or GIF URL.",
+  "settings_banner_url": "Banner Image URL",
+  "optional_banner": "Optional banner shown at the top of your profile.",
+  "profile_privacy": "Profile Privacy",
+  "make_profile_private": "Make my profile private (only visible to me)",
+  "social_links": "Social Links",
+  "personal_website": "Personal Website",
+  "account_security": "Account Security",
+  "current_password": "Current Password",
+  "save_changes": "Save Changes",
+  "cube_type_label": "Cube Type",
+  "series": "Series",
+  "model": "Model",
+  "version_name": "Version Name",
+  "type": "Type",
+  "subtype": "Subtype",
+  "surface_finish": "Surface Finish",
+  "stickered": "Stickered",
+  "wca_legal": "WCA Legal",
+  "magnetic": "Magnetic",
+  "maglev": "Maglev",
+  "smart": "Smart",
+  "modded": "Modded",
+  "discontinued": "Discontinued",
+  "related_to": "Related To",
+  "release_date": "Release Date",
+  "rating": "Rating",
+  "weight_g": "Weight (g)",
+  "size_mm3": "Size (mm3)",
+  "vs": "VS",
+  "user_achievements_count": [
+    {
+      "declarations": [
+        "input user_achievements",
+        "local achievementsPlural = user_achievements: plural"
+      ],
+      "selectors": [
+        "achievementsPlural"
+      ],
+      "match": {
+        "achievementsPlural=one": "{user_achievements} Achievement",
+        "achievementsPlural=other": "{user_achievements} Achievements",
+        "achievementsPlural=*": "{user_achievements} Achievements"
+      }
+    }
+  ],
+  "user_cubes_count": [
+    {
+      "declarations": [
+        "input user_cubes",
+        "local cubesPlural = user_cubes: plural"
+      ],
+      "selectors": [
+        "cubesPlural"
+      ],
+      "match": {
+        "cubesPlural=*": "{user_cubes} Cubes",
+        "cubesPlural=one": "{user_cubes} Cube",
+        "cubesPlural=other": "{user_cubes} Cubes"
+      }
+    }
+  ],
+  "track_explore_share": "Track, explore and share your speedcube collection.",
+  "navigation": "Navigation"
 }

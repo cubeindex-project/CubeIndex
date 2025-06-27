@@ -50,13 +50,13 @@
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
           <span class="text-2xl">👤</span>
-          <h2 class="text-2xl font-bold tracking-tight">Profile Information</h2>
+          <h2 class="text-2xl font-bold tracking-tight">{m.profile_information()}</h2>
         </div>
 
         <!-- Avatar URL -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            Avatar Image URL
+            {m.settings_avatar_url()}
             <input
               type="url"
               name="profile_picture"
@@ -66,14 +66,14 @@
             />
           </label>
           <p class="text-gray-500 text-xs mt-1">
-            Image must be a valid JPG, PNG, or GIF URL.
+            {m.image_must_be_valid()}
           </p>
         </div>
 
         <!-- Banner URL -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            Banner Image URL
+            {m.settings_banner_url()}
             <input
               type="url"
               name="banner"
@@ -83,14 +83,14 @@
             />
           </label>
           <p class="text-gray-500 text-xs mt-1">
-            Optional banner shown at the top of your profile.
+            {m.optional_banner()}
           </p>
         </div>
 
         <!-- Username -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            Username
+            {m.label_username()}
             <input
               type="text"
               name="username"
@@ -102,7 +102,7 @@
 
         <!-- Bio -->
         <fieldset class="fieldset">
-          <legend class="fieldset-legend">Bio</legend>
+          <legend class="fieldset-legend">{m.bio()}</legend>
           <textarea
             class="textarea h-24 w-full max-h-50"
             name="bio"
@@ -115,7 +115,7 @@
         <fieldset
           class="fieldset bg-base-200 border-base-100 rounded-box w-64 border p-4"
         >
-          <legend class="fieldset-legend">Profile Privacy</legend>
+          <legend class="fieldset-legend">{m.profile_privacy()}</legend>
           <label class="label">
             <input
               type="checkbox"
@@ -123,7 +123,7 @@
               bind:checked={private_profile}
               class="checkbox bg-base-100"
             />
-            Make my profile private (only visible to me)
+            {m.make_profile_private()}
           </label>
         </fieldset>
       </div>
@@ -134,14 +134,14 @@
       <div class="mt-10 mb-10 space-y-6">
         <div class="flex items-center gap-4">
           <span class="text-2xl">🌐</span>
-          <h2 class="text-2xl font-bold tracking-tight">Social Links</h2>
+          <h2 class="text-2xl font-bold tracking-tight">{m.social_links()}</h2>
         </div>
 
         <div class="grid grid-cols-1 gap-6">
           <!-- Website -->
           <div>
             <label class="block text-sm font-semibold mb-2">
-              Personal Website
+              {m.personal_website()}
               <input
                 type="url"
                 name="website"
@@ -255,20 +255,20 @@
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
           <span class="text-2xl">🔒</span>
-          <h2 class="text-2xl font-bold tracking-tight">Account Security</h2>
+          <h2 class="text-2xl font-bold tracking-tight">{m.account_security()}</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-semibold mb-2">
-              Current Password
+              {m.current_password()}
               <input type="password" class="input w-full" />
             </label>
           </div>
 
           <div>
             <label class="block text-sm font-semibold mb-2">
-              New Password
+              {m.label_new_password()}
               <input type="password" class="input w-full" />
             </label>
           </div>
@@ -279,13 +279,13 @@
           onclick={updatePassword}
           disabled
         >
-          Update Password
+          {m.update_password()}
         </button>
       </div>
 
       <div class="flex justify-end pt-6">
         <button type="submit" class="btn btn-primary btn-xl">
-          Save Changes
+          {m.save_changes()}
         </button>
       </div>
     </form>

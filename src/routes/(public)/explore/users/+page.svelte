@@ -53,21 +53,18 @@
                 >
                 <span class="text-xs flex items-center gap-2">
                   <i class="fa-solid fa-cube"></i>
-                  {user_cubes.filter((uc) => uc.username === profile.username)
-                    .length} Cube{user_cubes.filter(
-                    (uc) => uc.username === profile.username
-                  ).length === 1
-                    ? ""
-                    : "s"}
+                  {m.user_cubes_count({
+                    user_cubes: user_cubes.filter(
+                      (uc) => uc.username === profile.username
+                    ).length,
+                  })}
                   <span class="mx-1">•</span>
                   <i class="fa-solid fa-medal"></i>
-                  {user_achievements.filter(
-                    (ua) => ua.username === profile.username
-                  ).length} Achievement{user_achievements.filter(
-                    (ua) => ua.username === profile.username
-                  ).length === 1
-                    ? ""
-                    : "s"}
+                  {m.user_achievements_count({
+                    user_achievements: user_achievements.filter(
+                      (ua) => ua.username === profile.username
+                    ).length,
+                  })}
                 </span>
               </div>
               <p class="text-xs truncate max-w-full mt-1">

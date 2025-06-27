@@ -15,27 +15,27 @@
         <span class="text-2xl font-clash font-bold">CubeIndex</span>
       </div>
       <p class="text-sm text-gray-400">
-        Track, explore and share your speedcube collection.
+        {m.track_explore_share()}
       </p>
     </div>
 
     <!-- Site Links -->
     <div>
-      <h3 class="font-semibold mb-3">Navigation</h3>
+      <h3 class="font-semibold mb-3">{m.navigation()}</h3>
       <ul class="space-y-2 text-sm">
         <li>
-          <a href="/explore" class="link link-hover">Explore</a>
+          <a href="/explore" class="link link-hover">{m.nav_explore()}</a>
         </li>
         <li>
-          <a href="/achievements" class="link link-hover">Achievements</a>
+          <a href="/achievements" class="link link-hover">{m.nav_achievements()}</a>
         </li>
-        <li><a href="/about" class="link link-hover">About</a></li>
+        <li><a href="/about" class="link link-hover">{m.nav_about()}</a></li>
       </ul>
     </div>
 
     <!-- Social & Legal -->
     <div>
-      <h3 class="font-semibold mb-3">Socials</h3>
+      <h3 class="font-semibold mb-3">{m.socials()}</h3>
       <ul class="space-y-2 text-sm">
         <li>
           <a href="/discord" target="_blank" class="link link-hover">Discord</a>
@@ -79,7 +79,7 @@
 
   <!-- Bottom -->
   <div class="mt-10 text-center text-xs">
-    &copy; 2025 - {new Date().getFullYear()} CubeIndex by
-    <a href="https://saterz.dev/studio" class="link">Saterz Studio</a>. {m.rights_reserved()}
+    &copy; 2025 - {new Date().getFullYear()} CubeIndex {m.by()}
+    <a href="https://saterz.dev/" class="link">Saterz_</a>. {m.rights_reserved()}
   </div>
 </footer>

@@ -1,7 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "report_bug": "🐞 Report the Bug on Discord",
-  "disclaimer": "🚧 <strong>CubeIndex</strong> is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
+  "disclaimer": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
   "cancel": "Cancel",
   "confirm_sign_out": "Confirm Sign Out",
   "start_collecting": "Start Collecting",

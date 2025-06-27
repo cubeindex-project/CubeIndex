@@ -227,7 +227,22 @@
   "private_profile": "Этот профиль является приватным",
   "no_view_permission": "У вас недостаточно прав для просмотра профиля этого пользователя.",
   "user_tabs_submissions": "Представления",
-  "cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} имеет этот куб",
+  "cube_user_count": [
+    {
+      "declarations": [
+        "input cubeUserCount",
+        "local cubeUserCountsPlural = cubeUserCount: plural"
+      ],
+      "selectors": [
+        "cubeUserCountsPlural"
+      ],
+      "match": {
+        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=one": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
+      }
+    }
+  ],
   "description": "Описание",
   "cube_description": "<span class=\"font-bold text-primary\">{cube_name}</span> это головоломка <span class=\"font-bold text-primary\">{type}</span> , выпущенная на <span class=\"font-bold text-primary\">{release}</span>. Это <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"умная\" : \"неумная\"}</span>и <span class=\"font-bold text-primary\">{wca ?\" : \"Не WCA-легальная\"}</span>. В настоящее время это <span class=\"font-bold text-primary\">{доступность? \"discontinued\" : \"available\"}</span>, имеет рейтинг сообщества <span class=\"font-bold text-primary\">{rating}/5</span>, и является <span class=\"font-bold text-primary\">{modded ? \"модные\" : \"оригинал\"}</span>.",
   "brand": "Бренд",

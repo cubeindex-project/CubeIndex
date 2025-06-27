@@ -15,7 +15,9 @@
       .eq("user_id", user?.id);
 
     if (profileErr) throw error(500, profileErr.message);
-    username = profiles[0].username;
+    if (profiles && profiles.length > 0) {
+      username = profiles[0].username;
+    }
     return { username };
   });
 </script>
@@ -45,7 +47,7 @@
     />
     <button class="btn" type="submit" disabled={!username}>Submit</button>
     {#if !username}
-      <p class="text-error">You must be logged in to submit.</p>
+      <p class="text-error">You must create a profile or log in to submit.</p>
     {/if}
   </form>
 </section>

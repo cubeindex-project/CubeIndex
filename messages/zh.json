@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "输入用户的成就",
-        "局部成就 复数 = 用户成就：复数"
+        "input user_achievements",
+        "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesMulal = user_cub：复数"
+        "local cubesPlural = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"

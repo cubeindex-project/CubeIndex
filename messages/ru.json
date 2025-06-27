@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
-        "local achievementsPlural = user_achievements: plural"
+        "ввести _достижения пользователя",
+        "локальные достижения множественного числа = user_achieves: plural"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "локальная кубическая множественная = пользователь_кубики: множественное число"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,5 +328,16 @@
     }
   ],
   "track_explore_share": "Отслеживайте, исследуйте и делитесь своей коллекцией скорости.",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetc_lower": "magnetic",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

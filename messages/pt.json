@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "entrada _conquistas_usuários",
-        "conquistas locais Plural = user_achievements: plural"
+        "input user_achievements",
+        "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "cubesPlural local = user_cubes: plural"
+        "local cubesPlural = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,16 +328,5 @@
     }
   ],
   "track_explore_share": "Rastrear, explorar e compartilhar sua coleção de velocípulos.",
-  "navigation": "Navigation",
-  "magnetc_lower": "magnetic",
-  "magnetic_lower": "magnetic",
-  "original_lower": "original",
-  "smart_lower": "smart",
-  "modded_lower": "modded",
-  "non_magnetic_lower": "non-magnetic",
-  "non_smart_lower": "non-smart",
-  "wca_legal_lower": "WCA-legal",
-  "non_wca_lower": "not WCA-legal",
-  "discontinued_lower": "discontinued",
-  "available_lower": "available"
+  "navigation": "Navigation"
 }

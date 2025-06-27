@@ -298,7 +298,7 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
+        "introducir usuario_logros",
         "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "cubos locales Plural = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"

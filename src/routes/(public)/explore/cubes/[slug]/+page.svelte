@@ -60,7 +60,7 @@
       </h1>
 
       <p class="mb-4">
-        {m.cube_user_count({ cubeUserCount: cubeUserCount?.length })}
+        {m.cube_user_count({ cubeUserCount: cubeUserCount?.length ?? 0 })}
       </p>
 
       <button
@@ -92,12 +92,22 @@
               cube_name: `${cube.series} ${cube.model}${cube.version_type !== "Base" ? " " + cube.version_name : ""}`,
               type: cube.type,
               release: formatDate(cube.release_date),
-              magnetic: cube.magnetic,
-              smart: cube.smart,
-              wca: cube.wca_legal,
-              availability: cube.discontinued,
+              magnetic: cube.magnetic
+                ? `${m.magnetic_lower()}`
+                : `${m.non_magnetic_lower()}`,
+              smart: cube.smart
+                ? `${m.smart_lower()}`
+                : `${m.non_smart_lower()}`,
+              wca: cube.wca_legal
+                ? `${m.wca_legal_lower()}`
+                : `${m.non_wca_lower()}`,
+              availability: cube.discontinued
+                ? `${m.discontinued_lower()}`
+                : `${m.available_lower()}`,
               rating: cube.rating,
-              modded: cube.modded ? "modded" : "original",
+              modded: cube.modded
+                ? `${m.modded_lower()}`
+                : `${m.original_lower()}`,
             })}
           </span>
         </p>
@@ -138,22 +148,22 @@
             <span>{m.smart_label()}</span>
             <span class="text-xl">{cube.smart ? "✅" : "❌"}</span>
           </div>
-            <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between">
             <span>{m.magnetic_label()}</span>
             <span class="text-xl">{cube.magnetic ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
+          </div>
+          <div class="flex items-center justify-between">
             <span>{m.modded_label()}</span>
             <span class="text-xl">{cube.modded ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
+          </div>
+          <div class="flex items-center justify-between">
             <span>{m.wca_legal_label()}</span>
             <span class="text-xl">{cube.wca_legal ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
+          </div>
+          <div class="flex items-center justify-between">
             <span>{m.maglev_label()}</span>
             <span class="text-xl">{cube.maglev ? "✅" : "❌"}</span>
-            </div>
+          </div>
         </div>
       </div>
       {#if vendor_links && vendor_links.length > 0}
@@ -305,7 +315,8 @@
                 <div class="flex items-center gap-3 mb-2">
                   <StarRating rating={cube.rating} large={false} />
                   <span class="text-sm">
-                    {m.by()} <a href={idOfUser(rating.username)} class="underline"
+                    {m.by()}
+                    <a href={idOfUser(rating.username)} class="underline"
                       >{rating.username}</a
                     >
                   </span>

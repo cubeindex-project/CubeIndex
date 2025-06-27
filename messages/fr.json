@@ -1,2362 +1,297 @@
-[
-    {
-        "identifier": "$schema",
-        "source_string": "https://inlang.com/schema/inlang-message-format",
-        "translation": "https://inlang.com/schema/inlang-message-format",
-        "context": " -> $schema",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "report_bug",
-        "source_string": "🐞 Report the Bug on Discord",
-        "translation": "🐞 Signaler le bug sur Discord",
-        "context": " -> report_bug",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "disclaimer",
-        "source_string": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
-        "translation": "est dans l'aperçu anticipé — Il s'agit d'une version précoce et en cours de développement actif. Les fonctionnalités et la conception sont en constante évolution.",
-        "context": " -> disclaimer",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cancel",
-        "source_string": "Cancel",
-        "translation": "Abandonner",
-        "context": " -> cancel",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "confirm_sign_out",
-        "source_string": "Confirm Sign Out",
-        "translation": "Confirmer la déconnexion",
-        "context": " -> confirm_sign_out",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "start_collecting",
-        "source_string": "Start Collecting",
-        "translation": "Commencer à collecter",
-        "context": " -> start_collecting",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_database",
-        "source_string": "Explore Database",
-        "translation": "Explorer la base de données",
-        "context": " -> explore_database",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cubeindex_in_numbers",
-        "source_string": "CubeIndex in Numbers",
-        "translation": "Index cube en nombres",
-        "context": " -> cubeindex_in_numbers",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cubes_logged",
-        "source_string": "Cubes Logged",
-        "translation": "Cubes logués",
-        "context": " -> cubes_logged",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "track_unlock_explore",
-        "source_string": "Track your cubes, unlock badges, and explore the world's largest cube database.",
-        "translation": "Suivez vos cubes, débloquez des badges et explorez la plus grande base de données cube du monde.",
-        "context": " -> track_unlock_explore",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "build_ultimate_collection",
-        "source_string": "Build Your Ultimate Cube Collection",
-        "translation": "Construisez votre collection cube ultime",
-        "context": " -> build_ultimate_collection",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "join_discord",
-        "source_string": "Join Discord",
-        "translation": "Rejoindre Discord",
-        "context": " -> join_discord",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "visit_site",
-        "source_string": "Visit Site",
-        "translation": "Visiter le site",
-        "context": " -> visit_site",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "registered_users",
-        "source_string": "Registered Users",
-        "translation": "Utilisateurs enregistrés",
-        "context": " -> registered_users",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "unlockable_achievements",
-        "source_string": "Unlockable Achievements",
-        "translation": "Achievements Déverrouillables",
-        "context": " -> unlockable_achievements",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "our_partners",
-        "source_string": "Our Partners",
-        "translation": "Nos partenaires",
-        "context": " -> our_partners",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "ready_to_level_up",
-        "source_string": "Ready to level up your cube game?",
-        "translation": "Prêt à monter au niveau de votre jeu de cube?",
-        "context": " -> ready_to_level_up",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "join_community",
-        "source_string": "Join the CubeIndex community and start tracking your collection, unlocking achievements, and connecting with cubers worldwide.",
-        "translation": "Rejoignez la communauté CubeIndex et commencez à suivre votre collection, à débloquer des réalisations et à communiquer avec des cubes dans le monde entier.",
-        "context": " -> join_community",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "get_started",
-        "source_string": "Get Started",
-        "translation": "Commencer",
-        "context": " -> get_started",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_cubes",
-        "source_string": "Explore Cubes",
-        "translation": "Explorer les cubes",
-        "context": " -> explore_cubes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cubingpanda_community",
-        "source_string": "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
-        "translation": "CubaPanda est la communauté des fans du Cube de Rubik à tous les niveaux, que vous soyez un vétéran speedcuber ou quelqu'un qui n'a jamais résolu un seul visage.",
-        "context": " -> cubingpanda_community",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "open_archive_algorithms",
-        "source_string": "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
-        "translation": "Les archives ouvertes pour les algorithmes de cube. Parcourez les solutions vérifiées par la communauté à travers chaque type de puzzle, taguez-les avec votre moyenne de 5 et partagez vos secrets PB-écrasant.",
-        "context": " -> open_archive_algorithms",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "return_home",
-        "source_string": "🏠 Return Home",
-        "translation": "🏠 Retour à la maison",
-        "context": " -> return_home",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "error_message",
-        "source_string": "It seems you encountered an error.\nIf you think this is a bug, please let us know!",
-        "translation": "Il semble que vous avez rencontré une erreur.\nSi vous pensez qu'il s'agit d'un bogue, faites-le nous savoir !",
-        "context": " -> error_message",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "theme",
-        "source_string": "Theme",
-        "translation": "Thème",
-        "context": " -> theme",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "light",
-        "source_string": "Light",
-        "translation": "Lumière",
-        "context": " -> light",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "dark",
-        "source_string": "Dark",
-        "translation": "Sombre",
-        "context": " -> dark",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "black",
-        "source_string": "Black",
-        "translation": "Noir",
-        "context": " -> black",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "profile",
-        "source_string": "Profile",
-        "translation": "Profil",
-        "context": " -> profile",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "settings",
-        "source_string": "Settings",
-        "translation": "Réglages",
-        "context": " -> settings",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "staff_dashboard",
-        "source_string": "Staff Dashboard",
-        "translation": "Tableau de bord du personnel",
-        "context": " -> staff_dashboard",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "sign_out",
-        "source_string": "Sign Out",
-        "translation": "Déconnexion",
-        "context": " -> sign_out",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "login",
-        "source_string": "Login",
-        "translation": "Se connecter",
-        "context": " -> login",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "notifications",
-        "source_string": "Notifications",
-        "translation": "Notifications",
-        "context": " -> notifications",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "confirm_sign_out_message",
-        "source_string": "Are you sure you want to sign out?",
-        "translation": "Êtes-vous sûr de vouloir vous déconnecter?",
-        "context": " -> confirm_sign_out_message",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_notifications_yet",
-        "source_string": "You have no notifications yet.",
-        "translation": "Vous n'avez pas encore de notifications.",
-        "context": " -> no_notifications_yet",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "base",
-        "source_string": "Base",
-        "translation": "Base",
-        "context": " -> base",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "base_version",
-        "source_string": "The base version is the original or standard version of this cube model.",
-        "translation": "La version de base est la version originale ou standard de ce modèle de cube.",
-        "context": " -> base_version",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "limited_edition",
-        "source_string": "Limited Edition",
-        "translation": "Edition Limitée",
-        "context": " -> limited_edition",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "limited_version",
-        "source_string": "Limited Edition versions are produced in restricted quantities and may feature unique colors, packaging, or other special characteristics.",
-        "translation": "Les versions en édition limitée sont produites en quantités restreintes et peuvent présenter des couleurs uniques, des emballages ou d'autres caractéristiques spéciales.",
-        "context": " -> limited_version",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "trim",
-        "source_string": "Trim",
-        "translation": "Ajuster",
-        "context": " -> trim",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "trim_version",
-        "source_string": "Trim versions are alternate variants of the base model, often with different colors, finishes, or minor features.",
-        "translation": "Les versions de découpage sont des variantes alternatives du modèle de base, souvent avec des couleurs différentes, des finitions ou des caractéristiques mineures.",
-        "context": " -> trim_version",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "view_details",
-        "source_string": "View Details",
-        "translation": "Voir les détails",
-        "context": " -> view_details",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rate_cube",
-        "source_string": "Rate this Cube",
-        "translation": "Noter ce Cube",
-        "context": " -> rate_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "add_to_collection",
-        "source_string": "Add to Collection",
-        "translation": "Ajouter à la collection",
-        "context": " -> add_to_collection",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "moderator",
-        "source_string": "Moderator",
-        "translation": "Modérateur",
-        "context": " -> moderator",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "lead_developer",
-        "source_string": "Lead Developer",
-        "translation": "Développeur principal",
-        "context": " -> lead_developer",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "community_manager",
-        "source_string": "Community Manager",
-        "translation": "Responsable de la communauté",
-        "context": " -> community_manager",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "database_manager",
-        "source_string": "Database Manager",
-        "translation": "Gestionnaire de la base de données",
-        "context": " -> database_manager",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "admin",
-        "source_string": "Admin",
-        "translation": "Administrateur",
-        "context": " -> admin",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "you_are_adding",
-        "source_string": "You are adding the {cube_name} to your collection as {username}",
-        "translation": "Vous ajoutez l' {cube_name} à votre collection en tant que {username}",
-        "context": " -> you_are_adding",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "quantity",
-        "source_string": "Quantity",
-        "translation": "Quantité",
-        "context": " -> quantity",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "main_cube",
-        "source_string": "Main Cube",
-        "translation": "Cube principal",
-        "context": " -> main_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition",
-        "source_string": "Condition",
-        "translation": "Condition",
-        "context": " -> condition",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_new_in_box",
-        "source_string": "New in box",
-        "translation": "Nouveau dans la boite",
-        "context": " -> condition_new_in_box",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_new",
-        "source_string": "New",
-        "translation": "Nouveau",
-        "context": " -> condition_new",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_good",
-        "source_string": "Good",
-        "translation": "Bon",
-        "context": " -> condition_good",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_fair",
-        "source_string": "Fair",
-        "translation": "Équitable",
-        "context": " -> condition_fair",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_worn",
-        "source_string": "Worn",
-        "translation": "Porté",
-        "context": " -> condition_worn",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_poor",
-        "source_string": "Poor",
-        "translation": "Mauvais",
-        "context": " -> condition_poor",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "condition_broken",
-        "source_string": "Broken",
-        "translation": "Cassés",
-        "context": " -> condition_broken",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status",
-        "source_string": "Status",
-        "translation": "Statut",
-        "context": " -> status",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status_owned",
-        "source_string": "Owned",
-        "translation": "Possédé",
-        "context": " -> status_owned",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status_wishlist",
-        "source_string": "Wishlist",
-        "translation": "Liste d'envies",
-        "context": " -> status_wishlist",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status_loaned",
-        "source_string": "Loaned",
-        "translation": "Prêt",
-        "context": " -> status_loaned",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status_borrowed",
-        "source_string": "Borrowed",
-        "translation": "Emprunté",
-        "context": " -> status_borrowed",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "status_lost",
-        "source_string": "Lost",
-        "translation": "Perdu",
-        "context": " -> status_lost",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "notes",
-        "source_string": "Notes",
-        "translation": "Notes",
-        "context": " -> notes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "acquired_the",
-        "source_string": "Acquired The",
-        "translation": "Acquis le",
-        "context": " -> acquired_the",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "add_cube",
-        "source_string": "Add Cube",
-        "translation": "Ajouter un Cube",
-        "context": " -> add_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "adding_cube",
-        "source_string": "Adding...",
-        "translation": "Ajout en cours...",
-        "context": " -> adding_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube_added",
-        "source_string": "Added!",
-        "translation": "Ajouté !",
-        "context": " -> cube_added",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "welcome_back",
-        "source_string": "Welcome Back",
-        "translation": "Bienvenue de retour",
-        "context": " -> welcome_back",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "login_subtitle",
-        "source_string": "Login to your CubeIndex profile",
-        "translation": "Connectez-vous à votre profil CubeIndex",
-        "context": " -> login_subtitle",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "label_email",
-        "source_string": "Email",
-        "translation": "Courriel",
-        "context": " -> label_email",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "label_password",
-        "source_string": "Password",
-        "translation": "Mot de passe",
-        "context": " -> label_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "forgot_password",
-        "source_string": "Forgot your password?",
-        "translation": "Mot de passe oublié ?",
-        "context": " -> forgot_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "reset",
-        "source_string": "Reset",
-        "translation": "Reset",
-        "context": " -> reset",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "logging_in",
-        "source_string": "Logging In...",
-        "translation": "Connexion en cours...",
-        "context": " -> logging_in",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "log_in",
-        "source_string": "Log In",
-        "translation": "Se connecter",
-        "context": " -> log_in",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "or",
-        "source_string": "or",
-        "translation": "ou",
-        "context": " -> or",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "sign_in_with_discord",
-        "source_string": "Sign In with Discord",
-        "translation": "Se connecter avec Discord",
-        "context": " -> sign_in_with_discord",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_account",
-        "source_string": "Don't have an account?",
-        "translation": "Vous n'avez pas de compte ?",
-        "context": " -> no_account",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "sign_up",
-        "source_string": "Sign Up",
-        "translation": "S'inscrire",
-        "context": " -> sign_up",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "please_enter_email",
-        "source_string": "Please enter an email",
-        "translation": "Veuillez saisir un e-mail",
-        "context": " -> please_enter_email",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "check_email_reset",
-        "source_string": "Check your email to reset your password",
-        "translation": "Vérifiez votre email pour réinitialiser votre mot de passe",
-        "context": " -> check_email_reset",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "join_cubeindex",
-        "source_string": "Join CubeIndex",
-        "translation": "Rejoindre l'index cube",
-        "context": " -> join_cubeindex",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "create_free_account",
-        "source_string": "Create a free account to start tracking your collection",
-        "translation": "Créez un compte gratuit pour commencer à suivre votre collection",
-        "context": " -> create_free_account",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "label_username",
-        "source_string": "Username",
-        "translation": "Nom d'utilisateur",
-        "context": " -> label_username",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "label_confirm_password",
-        "source_string": "Confirm Password",
-        "translation": "Confirmer le mot de passe",
-        "context": " -> label_confirm_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "accept_terms_prefix",
-        "source_string": "I accept the",
-        "translation": "J'accepte les",
-        "context": " -> accept_terms_prefix",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "terms_of_service",
-        "source_string": "Terms of Service",
-        "translation": "Conditions d'utilisation",
-        "context": " -> terms_of_service",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "and",
-        "source_string": "and",
-        "translation": "et",
-        "context": " -> and",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "privacy_policy",
-        "source_string": "Privacy Policy",
-        "translation": "Politique de confidentialité",
-        "context": " -> privacy_policy",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "signing_up",
-        "source_string": "Signing Up...",
-        "translation": "Inscription...",
-        "context": " -> signing_up",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "already_have_account",
-        "source_string": "Already have an account?",
-        "translation": "Vous avez déjà un compte ?",
-        "context": " -> already_have_account",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "log_in_lower",
-        "source_string": "Log in",
-        "translation": "Se connecter",
-        "context": " -> log_in_lower",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "sign_up_with_discord",
-        "source_string": "Sign Up with Discord",
-        "translation": "S'inscrire avec Discord",
-        "context": " -> sign_up_with_discord",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "reset_password",
-        "source_string": "Reset Password",
-        "translation": "Réinitialiser le mot de passe",
-        "context": " -> reset_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "label_new_password",
-        "source_string": "New Password",
-        "translation": "Nouveau mot de passe",
-        "context": " -> label_new_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "update_password",
-        "source_string": "Update Password",
-        "translation": "Mettre à jour le mot de passe",
-        "context": " -> update_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "password_at_least_eight",
-        "source_string": "Password must be at least 8 characters.",
-        "translation": "Le mot de passe doit comporter au moins 8 caractères.",
-        "context": " -> password_at_least_eight",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "passwords_do_not_match",
-        "source_string": "Passwords do not match",
-        "translation": "Les mots de passe ne correspondent pas",
-        "context": " -> passwords_do_not_match",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "password_updated",
-        "source_string": "Password updated. You can now log in.",
-        "translation": "Mot de passe mis à jour. Vous pouvez maintenant vous connecter.",
-        "context": " -> password_updated",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_welcome",
-        "source_string": "Welcome to CubeIndex",
-        "translation": "Bienvenue dans CubeIndex",
-        "context": " -> about_welcome",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_description",
-        "source_string": "CubeIndex is your ultimate speedcubing companion. Organize, explore, and showcase your cube collection — all in one place.",
-        "translation": "CubeIndex est votre compagnon vedette ultime. Organisez, explorez et présentez votre collection de cubes, le tout au même endroit.",
-        "context": " -> about_description",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_features_heading",
-        "source_string": "What You Can Do",
-        "translation": "Ce que vous pouvez faire",
-        "context": " -> about_features_heading",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_organize",
-        "source_string": "Organize Your Cubes",
-        "translation": "Organisez vos cubes",
-        "context": " -> about_feature_organize",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_organize_desc",
-        "source_string": "Keep track of your entire collection with ease.",
-        "translation": "Gardez une trace de toute votre collection en toute simplicité.",
-        "context": " -> about_feature_organize_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_discover",
-        "source_string": "Discover New Models",
-        "translation": "Découvrez de nouveaux modèles",
-        "context": " -> about_feature_discover",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_discover_desc",
-        "source_string": "Explore popular, limited, and community submissions.",
-        "translation": "Explorez les soumissions populaires, limitées et communautaires.",
-        "context": " -> about_feature_discover_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_track",
-        "source_string": "Track Achievements",
-        "translation": "Suivre les hauts faits",
-        "context": " -> about_feature_track",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_track_desc",
-        "source_string": "Earn badges and milestones for your cubing journey.",
-        "translation": "Gagnez des badges et des jalons pour votre voyage de cubare.",
-        "context": " -> about_feature_track_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_community",
-        "source_string": "Community Driven",
-        "translation": "Conduite communautaire",
-        "context": " -> about_feature_community",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_feature_community_desc",
-        "source_string": "Contribute entries, rate cubes, and engage with fellow cubers.",
-        "translation": "Contribuez aux entrées, évaluez les cubes et engagez avec d'autres cubateurs.",
-        "context": " -> about_feature_community_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_team_heading",
-        "source_string": "Meet the Team",
-        "translation": "Rencontrez l'équipe",
-        "context": " -> about_team_heading",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_you",
-        "source_string": "You",
-        "translation": "Vous",
-        "context": " -> about_you",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_apply",
-        "source_string": "Apply",
-        "translation": "Appliquer",
-        "context": " -> about_apply",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "about_logo_by",
-        "source_string": "Logo designed by",
-        "translation": "Logo conçu par",
-        "context": " -> about_logo_by",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "visit_profile",
-        "source_string": "Visit Profile",
-        "translation": "Visiter le profil",
-        "context": " -> visit_profile",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "page_in_construction",
-        "source_string": "Page in Construction",
-        "translation": "Page dans Construction",
-        "context": " -> page_in_construction",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "construction_message",
-        "source_string": "We're currently working hard to finish this part of the site. Check back soon for something awesome!",
-        "translation": "Nous travaillons actuellement dur pour terminer cette partie du site. Revenez bientôt pour découvrir quelque chose de génial !",
-        "context": " -> construction_message",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "nav_explore",
-        "source_string": "Explore",
-        "translation": "Explorer",
-        "context": " -> nav_explore",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "nav_achievements",
-        "source_string": "Achievements",
-        "translation": "Succès",
-        "context": " -> nav_achievements",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "nav_about",
-        "source_string": "About",
-        "translation": "À propos de",
-        "context": " -> nav_about",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "legal",
-        "source_string": "Legal",
-        "translation": "Mentions légales",
-        "context": " -> legal",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "report",
-        "source_string": "Report",
-        "translation": "Rapporter",
-        "context": " -> report",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rights_reserved",
-        "source_string": "All rights reserved.",
-        "translation": "Tous droits réservés.",
-        "context": " -> rights_reserved",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "achievements_title",
-        "source_string": "Achievements",
-        "translation": "Succès",
-        "context": " -> achievements_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "achievements_subtitle",
-        "source_string": "Unlock achievements by participating in the CubeIndex community. Collect them all to showcase your journey!",
-        "translation": "Débloquez les exploits en participant à la communauté CubeIndex. Collectez-les tous pour montrer votre voyage!",
-        "context": " -> achievements_subtitle",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "title_reward",
-        "source_string": "Title Reward:",
-        "translation": "Récompense du titre:",
-        "context": " -> title_reward",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "category_label",
-        "source_string": "Category:",
-        "translation": "Catégorie:",
-        "context": " -> category_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "unlock_method",
-        "source_string": "Unlock Method:",
-        "translation": "Méthode de déverrouillage :",
-        "context": " -> unlock_method",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "submitted_by",
-        "source_string": "Submitted by:",
-        "translation": "Soumis par:",
-        "context": " -> submitted_by",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "created_at",
-        "source_string": "Created at:",
-        "translation": "Créé le :",
-        "context": " -> created_at",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "not_unlockable",
-        "source_string": "Not currently unlockable",
-        "translation": "Non déverrouillable pour le moment",
-        "context": " -> not_unlockable",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_prompt",
-        "source_string": "What would you like to explore?",
-        "translation": "Que voulez-vous explorer?",
-        "context": " -> explore_prompt",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_cubes_title",
-        "source_string": "Cubes",
-        "translation": "Cubes",
-        "context": " -> explore_card_cubes_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_cubes_desc",
-        "source_string": "Browse thousands of cubes by brand, type, and community rating.",
-        "translation": "Parcourez des milliers de cubes par marque, type et classement communautaire.",
-        "context": " -> explore_card_cubes_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_accessories_title",
-        "source_string": "Accessories",
-        "translation": "Accessoires",
-        "context": " -> explore_card_accessories_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_accessories_desc",
-        "source_string": "Discover timers, mats, lubricants, and everything else you need.",
-        "translation": "Découvrez les minuteurs, les matelas, les lubrifiants et tout ce dont vous avez besoin.",
-        "context": " -> explore_card_accessories_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_vendors_title",
-        "source_string": "Vendors",
-        "translation": "Fournisseurs",
-        "context": " -> explore_card_vendors_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_vendors_desc",
-        "source_string": "Find trusted cube shops and compare prices from top vendors worldwide.",
-        "translation": "Trouvez des magasins cubes de confiance et comparez les prix des meilleurs vendeurs du monde entier.",
-        "context": " -> explore_card_vendors_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_users_title",
-        "source_string": "Users",
-        "translation": "Utilisateurs",
-        "context": " -> explore_card_users_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_card_users_desc",
-        "source_string": "Explore user profiles, discover top solvers, and see community activity.",
-        "translation": "Explorez les profils d'utilisateurs, découvrez les meilleurs solvants et découvrez l'activité de la communauté.",
-        "context": " -> explore_card_users_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_cubes_title",
-        "source_string": "Explore Cubes",
-        "translation": "Explorer les cubes",
-        "context": " -> explore_cubes_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_cubes_desc",
-        "source_string": "Browse all your favorite cubes by type, brand, or rating.",
-        "translation": "Parcourez tous vos cubes favoris par type, marque ou note.",
-        "context": " -> explore_cubes_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "search_your_cube",
-        "source_string": "Search Your Cube",
-        "translation": "Rechercher dans votre Cube",
-        "context": " -> search_your_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "filters",
-        "source_string": "Filters",
-        "translation": "Filtres",
-        "context": " -> filters",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "type_label",
-        "source_string": "Type:",
-        "translation": "Type :",
-        "context": " -> type_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "brand_label",
-        "source_string": "Brand:",
-        "translation": "Marque :",
-        "context": " -> brand_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "wca_legal_label",
-        "source_string": "WCA Legal:",
-        "translation": "WCA Legal:",
-        "context": " -> wca_legal_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "magnetic_label",
-        "source_string": "Magnetic:",
-        "translation": "Magnétique:",
-        "context": " -> magnetic_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "smart_label",
-        "source_string": "Smart:",
-        "translation": "Intelligent :",
-        "context": " -> smart_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "modded_label",
-        "source_string": "Modded:",
-        "translation": "Modifié :",
-        "context": " -> modded_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "release_year_label",
-        "source_string": "Release Year:",
-        "translation": "Année de sortie :",
-        "context": " -> release_year_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "reset_filters",
-        "source_string": "Reset Filters",
-        "translation": "Réinitialiser les filtres",
-        "context": " -> reset_filters",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cubes_per_page",
-        "source_string": "Cubes per page:",
-        "translation": "Cubes per page:",
-        "context": " -> cubes_per_page",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "compare_cubes",
-        "source_string": "Compare Cubes",
-        "translation": "Comparer les cubes",
-        "context": " -> compare_cubes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "previous",
-        "source_string": "Previous",
-        "translation": "Précédent",
-        "context": " -> previous",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "next",
-        "source_string": "Next",
-        "translation": "Suivant",
-        "context": " -> next",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_accessories_title",
-        "source_string": "Explore Accessories",
-        "translation": "Explorer les accessoires",
-        "context": " -> explore_accessories_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_accessories_desc",
-        "source_string": "Discover the best cube timers, mats, lubricants, and more—handpicked by our community.",
-        "translation": "Découvrez les meilleurs minuteurs, mats, lubrifiants et plus encore, choisis par notre communauté.",
-        "context": " -> explore_accessories_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "compatibility",
-        "source_string": "Compatibility:",
-        "translation": "Compatibilité :",
-        "context": " -> compatibility",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "released",
-        "source_string": "Released:",
-        "translation": "Libéré :",
-        "context": " -> released",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_vendors_title",
-        "source_string": "Explore Vendors",
-        "translation": "Explorer les vendeurs",
-        "context": " -> explore_vendors_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_vendors_desc",
-        "source_string": "Find the best shops and trusted vendors in the cubing world.",
-        "translation": "Trouvez les meilleurs magasins et vendeurs de confiance dans le monde de la cubare.",
-        "context": " -> explore_vendors_desc",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "explore_users_title",
-        "source_string": "Explore Users",
-        "translation": "Explorer les utilisateurs",
-        "context": " -> explore_users_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_bio_provided",
-        "source_string": "No bio provided.",
-        "translation": "Aucune bio fournie.",
-        "context": " -> no_bio_provided",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "privacy_policy_title",
-        "source_string": "Privacy Policy",
-        "translation": "Politique de confidentialité",
-        "context": " -> privacy_policy_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "last_updated",
-        "source_string": "Last updated:",
-        "translation": "Dernière mise à jour :",
-        "context": " -> last_updated",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "tos_title",
-        "source_string": "Terms of Service",
-        "translation": "Conditions d'utilisation",
-        "context": " -> tos_title",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "select_cube",
-        "source_string": "Select a cube…",
-        "translation": "Sélectionnez un cube…",
-        "context": " -> select_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube1",
-        "source_string": "Cube 1",
-        "translation": "Cube 1",
-        "context": " -> cube1",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube2",
-        "source_string": "Cube 2",
-        "translation": "Cube 2",
-        "context": " -> cube2",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "feature",
-        "source_string": "Feature",
-        "translation": "Fonctionnalités",
-        "context": " -> feature",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "select_at_least_one_cube",
-        "source_string": "Select at least one cube to compare.",
-        "translation": "Sélectionnez au moins un cube à comparer.",
-        "context": " -> select_at_least_one_cube",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "more_info",
-        "source_string": "More info",
-        "translation": "Plus d'infos",
-        "context": " -> more_info",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "temporarily_disabled",
-        "source_string": "Temporarily Disabled",
-        "translation": "Désactivé temporairement",
-        "context": " -> temporarily_disabled",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "feature_disabled_message",
-        "source_string": "We're working behind the scenes to bring it back online. Thanks for your patience!",
-        "translation": "Nous travaillons en coulisses pour le ramener en ligne. Merci pour votre patience!",
-        "context": " -> feature_disabled_message",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "join_discord_for_info",
-        "source_string": "Join our Discord for more info",
-        "translation": "Rejoignez notre Discord pour plus d'infos",
-        "context": " -> join_discord_for_info",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "total",
-        "source_string": "total",
-        "translation": "total",
-        "context": " -> total",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "close",
-        "source_string": "Close",
-        "translation": "Fermer",
-        "context": " -> close",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "remove",
-        "source_string": "Remove",
-        "translation": "Retirer",
-        "context": " -> remove",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "any_special_notes",
-        "source_string": "Any special notes...",
-        "translation": "Toutes les notes spéciales...",
-        "context": " -> any_special_notes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "acquired_date",
-        "source_string": "Acquired Date:",
-        "translation": "Date d'acquisition :",
-        "context": " -> acquired_date",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "editing",
-        "source_string": "Editing...",
-        "translation": "Édition...",
-        "context": " -> editing",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "edited",
-        "source_string": "Edited!",
-        "translation": "Modifié !",
-        "context": " -> edited",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "save",
-        "source_string": "Save",
-        "translation": "Enregistrer",
-        "context": " -> save",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "show",
-        "source_string": "Show",
-        "translation": "Afficher",
-        "context": " -> show",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "hide",
-        "source_string": "Hide",
-        "translation": "Cacher",
-        "context": " -> hide",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube_collection",
-        "source_string": "Cube Collection",
-        "translation": "Collection de cubes",
-        "context": " -> cube_collection",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "you_have_no_cubes",
-        "source_string": "You have no cubes in your collection.",
-        "translation": "Vous n'avez pas de cubes dans votre collection.",
-        "context": " -> you_have_no_cubes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "this_user_has_no_cubes",
-        "source_string": "This user has no cubes in their collection.",
-        "translation": "Cet utilisateur n'a pas de cubes dans sa collection.",
-        "context": " -> this_user_has_no_cubes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "edit",
-        "source_string": "Edit",
-        "translation": "Editer",
-        "context": " -> edit",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "achievements_earned",
-        "source_string": "Achievements Earned",
-        "translation": "Accomplissements gagnés",
-        "context": " -> achievements_earned",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "show_more",
-        "source_string": "Show More",
-        "translation": "Afficher plus",
-        "context": " -> show_more",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "show_less",
-        "source_string": "Show Less",
-        "translation": "Afficher moins",
-        "context": " -> show_less",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_achievements_yet",
-        "source_string": "No achievements earned yet!",
-        "translation": "Pas encore de succès gagné!",
-        "context": " -> no_achievements_yet",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "coming_soon",
-        "source_string": "Coming Soon",
-        "translation": "Bientôt disponible",
-        "context": " -> coming_soon",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "stay_tuned",
-        "source_string": "Stay tuned for more!",
-        "translation": "Restez à l'écoute pour plus !",
-        "context": " -> stay_tuned",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "check_back_later",
-        "source_string": "Check back later for user reviews and feedback!",
-        "translation": "Revenez plus tard pour connaître les avis et les commentaires des utilisateurs!",
-        "context": " -> check_back_later",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "send_submission_heading",
-        "source_string": "Send your Submission to CubeIndex",
-        "translation": "Envoyer votre soumission à CubeIndex",
-        "context": " -> send_submission_heading",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "submit",
-        "source_string": "Submit",
-        "translation": "Soumettre",
-        "context": " -> submit",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "must_be_logged_in",
-        "source_string": "You must be logged in to submit.",
-        "translation": "Vous devez être connecté pour soumettre.",
-        "context": " -> must_be_logged_in",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_settings",
-        "source_string": "User Settings",
-        "translation": "Paramètres de l'utilisateur",
-        "context": " -> user_settings",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "unlock_method_manual",
-        "source_string": "Manual",
-        "translation": "Manuelle",
-        "context": " -> unlock_method_manual",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "unlock_method_auto",
-        "source_string": "Automatic",
-        "translation": "Automatique",
-        "context": " -> unlock_method_auto",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_special",
-        "source_string": "Mythic",
-        "translation": "Mythique",
-        "context": " -> rarity_special",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_legendary",
-        "source_string": "Legendary",
-        "translation": "Légendaire",
-        "context": " -> rarity_legendary",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_exotic",
-        "source_string": "Exotic",
-        "translation": "Exotique",
-        "context": " -> rarity_exotic",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_epic",
-        "source_string": "Epic",
-        "translation": "Epique",
-        "context": " -> rarity_epic",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_rare",
-        "source_string": "Rare",
-        "translation": "Rare",
-        "context": " -> rarity_rare",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_common",
-        "source_string": "Common",
-        "translation": "Commun",
-        "context": " -> rarity_common",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rarity_mythic",
-        "source_string": "Mythic",
-        "translation": "Mythique",
-        "context": " -> rarity_mythic",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_overview",
-        "source_string": "Overview",
-        "translation": "Aperçu",
-        "context": " -> user_tabs_overview",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_cubes",
-        "source_string": "Cubes",
-        "translation": "Cubes",
-        "context": " -> user_tabs_cubes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_achievements",
-        "source_string": "Achievements",
-        "translation": "Succès",
-        "context": " -> user_tabs_achievements",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_stats",
-        "source_string": "Stats",
-        "translation": "Stats",
-        "context": " -> user_tabs_stats",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_reviews",
-        "source_string": "Reviews",
-        "translation": "Revues",
-        "context": " -> user_tabs_reviews",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_social",
-        "source_string": "Social",
-        "translation": "Réseaux sociaux",
-        "context": " -> user_tabs_social",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "member_since",
-        "source_string": "Member since",
-        "translation": "Membre depuis",
-        "context": " -> member_since",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "bio",
-        "source_string": "Bio",
-        "translation": "Bio",
-        "context": " -> bio",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "socials",
-        "source_string": "Socials",
-        "translation": "Socials",
-        "context": " -> socials",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "socials_website",
-        "source_string": "Website",
-        "translation": "Site Web",
-        "context": " -> socials_website",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "private_profile",
-        "source_string": "This profile is private",
-        "translation": "Ce profil est privé",
-        "context": " -> private_profile",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_view_permission",
-        "source_string": "You do not have permission to view this user's profile.",
-        "translation": "Vous n'avez pas la permission de voir le profil de cet utilisateur.",
-        "context": " -> no_view_permission",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_tabs_submissions",
-        "source_string": "Submissions",
-        "translation": "Soumissions",
-        "context": " -> user_tabs_submissions",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube_user_count",
-        "source_string": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} have this cube",
-        "translation": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} ont ce cube",
-        "context": " -> cube_user_count",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "description",
-        "source_string": "Description",
-        "translation": "Libellé",
-        "context": " -> description",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube_description",
-        "source_string": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, and <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
-        "translation": "La <span class=\"font-bold text-primary\">{cube_name}</span> est un puzzle <span class=\"font-bold text-primary\">{type}</span> tourné sur <span class=\"font-bold text-primary\">{release}</span>. C'est <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"intelligent\" : \"non-intelligent\"}</span>et <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Actuellement, c'est <span class=\"font-bold text-primary\">{available ? \"discontinued\" : \"available\"}</span>, a une note communautaire de <span class=\"font-bold text-primary\">{rating}/5</span>, et <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
-        "context": " -> cube_description",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "brand",
-        "source_string": "Brand",
-        "translation": "Marque",
-        "context": " -> brand",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "weight_label",
-        "source_string": "Weight:",
-        "translation": "Poids :",
-        "context": " -> weight_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "size_label",
-        "source_string": "Size:",
-        "translation": "Taille:",
-        "context": " -> size_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "surface_finish_label",
-        "source_string": "Surface Finish:",
-        "translation": "Finition de la surface :",
-        "context": " -> surface_finish_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "release_date_label",
-        "source_string": "Release Date:",
-        "translation": "Date de sortie :",
-        "context": " -> release_date_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "maglev_label",
-        "source_string": "Maglev:",
-        "translation": "Maglev:",
-        "context": " -> maglev_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "database_info_label",
-        "source_string": "Database Info:",
-        "translation": "Informations sur la base de données:",
-        "context": " -> database_info_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "id_label",
-        "source_string": "ID:",
-        "translation": "ID:",
-        "context": " -> id_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "added_label",
-        "source_string": "Added:",
-        "translation": "Ajouté:",
-        "context": " -> added_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "unknown",
-        "source_string": "Unknown",
-        "translation": "Inconnu",
-        "context": " -> unknown",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "related_to_label",
-        "source_string": "Related To:",
-        "translation": "Lié à :",
-        "context": " -> related_to_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "select_trim_label",
-        "source_string": "Select Trim:",
-        "translation": "Sélectionnez Couper :",
-        "context": " -> select_trim_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "same_series_label",
-        "source_string": "In the Same Series:",
-        "translation": "Dans la même série :",
-        "context": " -> same_series_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_ratings",
-        "source_string": "User Ratings",
-        "translation": "Évaluations des utilisateurs",
-        "context": " -> user_ratings",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "by",
-        "source_string": "by",
-        "translation": "par",
-        "context": " -> by",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "no_user_ratings",
-        "source_string": "No user ratings yet. Be the first to rate this cube!",
-        "translation": "Aucune note utilisateur pour le moment. Soyez le premier à noter ce cube!",
-        "context": " -> no_user_ratings",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "report_data",
-        "source_string": "🚩 Report incorrect/missing data",
-        "translation": "🚩 Signaler des données incorrectes/manquantes",
-        "context": " -> report_data",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "back_to_explore",
-        "source_string": "Back to Explore",
-        "translation": "Retour à l'exploration",
-        "context": " -> back_to_explore",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "profile_information",
-        "source_string": "Profile Information",
-        "translation": "Informations sur le profil",
-        "context": " -> profile_information",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "settings_avatar_url",
-        "source_string": "Avatar Image URL",
-        "translation": "URL de l'image de l'avatar",
-        "context": " -> settings_avatar_url",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "image_must_be_valid",
-        "source_string": "Image must be a valid JPG, PNG, or GIF URL.",
-        "translation": "L'image doit être une URL JPG, PNG, ou GIF valide.",
-        "context": " -> image_must_be_valid",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "settings_banner_url",
-        "source_string": "Banner Image URL",
-        "translation": "URL de l'image de la bannière",
-        "context": " -> settings_banner_url",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "optional_banner",
-        "source_string": "Optional banner shown at the top of your profile.",
-        "translation": "Bannière optionnelle affichée en haut de votre profil.",
-        "context": " -> optional_banner",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "profile_privacy",
-        "source_string": "Profile Privacy",
-        "translation": "Confidentialité du profil",
-        "context": " -> profile_privacy",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "make_profile_private",
-        "source_string": "Make my profile private (only visible to me)",
-        "translation": "Rendre mon profil privé (visible uniquement pour moi)",
-        "context": " -> make_profile_private",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "social_links",
-        "source_string": "Social Links",
-        "translation": "Liens sociaux",
-        "context": " -> social_links",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "personal_website",
-        "source_string": "Personal Website",
-        "translation": "Site Web personnel",
-        "context": " -> personal_website",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "account_security",
-        "source_string": "Account Security",
-        "translation": "Sécurité du compte",
-        "context": " -> account_security",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "current_password",
-        "source_string": "Current Password",
-        "translation": "Mot de passe actuel",
-        "context": " -> current_password",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "save_changes",
-        "source_string": "Save Changes",
-        "translation": "Enregistrer les modifications",
-        "context": " -> save_changes",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "cube_type_label",
-        "source_string": "Cube Type",
-        "translation": "Type de cube",
-        "context": " -> cube_type_label",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "series",
-        "source_string": "Series",
-        "translation": "Séries",
-        "context": " -> series",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "model",
-        "source_string": "Model",
-        "translation": "Modélisation",
-        "context": " -> model",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "version_name",
-        "source_string": "Version Name",
-        "translation": "Nom de la version",
-        "context": " -> version_name",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "type",
-        "source_string": "Type",
-        "translation": "Type de texte",
-        "context": " -> type",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "subtype",
-        "source_string": "Subtype",
-        "translation": "Sous-type",
-        "context": " -> subtype",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "surface_finish",
-        "source_string": "Surface Finish",
-        "translation": "Finition de surface",
-        "context": " -> surface_finish",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "stickered",
-        "source_string": "Stickered",
-        "translation": "Épinglé",
-        "context": " -> stickered",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "wca_legal",
-        "source_string": "WCA Legal",
-        "translation": "Mentions légales WCA",
-        "context": " -> wca_legal",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "magnetic",
-        "source_string": "Magnetic",
-        "translation": "Magnétique",
-        "context": " -> magnetic",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "maglev",
-        "source_string": "Maglev",
-        "translation": "Maglev",
-        "context": " -> maglev",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "smart",
-        "source_string": "Smart",
-        "translation": "Intelligent",
-        "context": " -> smart",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "modded",
-        "source_string": "Modded",
-        "translation": "Modifié",
-        "context": " -> modded",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "discontinued",
-        "source_string": "Discontinued",
-        "translation": "Interrompu",
-        "context": " -> discontinued",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "related_to",
-        "source_string": "Related To",
-        "translation": "Lié à",
-        "context": " -> related_to",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "release_date",
-        "source_string": "Release Date",
-        "translation": "Date de sortie",
-        "context": " -> release_date",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "rating",
-        "source_string": "Rating",
-        "translation": "Évaluation",
-        "context": " -> rating",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "weight_g",
-        "source_string": "Weight (g)",
-        "translation": "Poids (g)",
-        "context": " -> weight_g",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "size_mm3",
-        "source_string": "Size (mm3)",
-        "translation": "Taille (mm3)",
-        "context": " -> size_mm3",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "vs",
-        "source_string": "VS",
-        "translation": "VS",
-        "context": " -> vs",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.declarations.0",
-        "source_string": "input user_achievements",
-        "translation": "saisissez les succès utilisateur",
-        "context": "user_achievements_count -> 0 -> declarations -> 0",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.declarations.1",
-        "source_string": "local achievementsPlural = user_achievements: plural",
-        "translation": "accomplissements locaux Plural = utilisateur_achievements: pluriel",
-        "context": "user_achievements_count -> 0 -> declarations -> 1",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.selectors.0",
-        "source_string": "achievementsPlural",
-        "translation": "achievementsPlural",
-        "context": "user_achievements_count -> 0 -> selectors -> 0",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.match.achievementsPlural=one",
-        "source_string": "{user_achievements} Achievement",
-        "translation": "Achievement {user_achievements}",
-        "context": "user_achievements_count -> 0 -> match -> achievementsPlural=one",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.match.achievementsPlural=other",
-        "source_string": "{user_achievements} Achievements",
-        "translation": "Achievements {user_achievements}",
-        "context": "user_achievements_count -> 0 -> match -> achievementsPlural=other",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_achievements_count.0.match.achievementsPlural=*",
-        "source_string": "{user_achievements} Achievements",
-        "translation": "Achievements {user_achievements}",
-        "context": "user_achievements_count -> 0 -> match -> achievementsPlural=*",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.declarations.0",
-        "source_string": "input user_cubes",
-        "translation": "input user_cubes",
-        "context": "user_cubes_count -> 0 -> declarations -> 0",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.declarations.1",
-        "source_string": "local cubesPlural = user_cubes: plural",
-        "translation": "cubesPlural local = user_cubes : pluriel",
-        "context": "user_cubes_count -> 0 -> declarations -> 1",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.selectors.0",
-        "source_string": "cubesPlural",
-        "translation": "cubesPlural",
-        "context": "user_cubes_count -> 0 -> selectors -> 0",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.match.cubesPlural=*",
-        "source_string": "{user_cubes} Cubes",
-        "translation": "{user_cubes} Cubes",
-        "context": "user_cubes_count -> 0 -> match -> cubesPlural=*",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.match.cubesPlural=one",
-        "source_string": "{user_cubes} Cube",
-        "translation": "Cube {user_cubes}",
-        "context": "user_cubes_count -> 0 -> match -> cubesPlural=one",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "user_cubes_count.0.match.cubesPlural=other",
-        "source_string": "{user_cubes} Cubes",
-        "translation": "{user_cubes} Cubes",
-        "context": "user_cubes_count -> 0 -> match -> cubesPlural=other",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "track_explore_share",
-        "source_string": "Track, explore and share your speedcube collection.",
-        "translation": "Parcourez, explorez et partagez votre collection de speedcube.",
-        "context": " -> track_explore_share",
-        "labels": null,
-        "max_length": null
-    },
-    {
-        "identifier": "navigation",
-        "source_string": "Navigation",
-        "translation": "Navigation",
-        "context": " -> navigation",
-        "labels": null,
-        "max_length": null
-    }
-]
+{
+	"$schema": "https://inlang.com/schema/inlang-message-format",
+	"report_bug": "🐞 Signaler le bug sur Discord",
+	"disclaimer": "est dans l'aperçu anticipé — Il s'agit d'une version précoce et en cours de développement actif. Les fonctionnalités et la conception sont en constante évolution.",
+	"cancel": "Abandonner",
+	"confirm_sign_out": "Confirmer la déconnexion",
+	"start_collecting": "Commencer à collecter",
+	"explore_database": "Explorer la base de données",
+	"cubeindex_in_numbers": "Index cube en nombres",
+	"cubes_logged": "Cubes logués",
+	"track_unlock_explore": "Suivez vos cubes, débloquez des badges et explorez la plus grande base de données cube du monde.",
+	"build_ultimate_collection": "Construisez votre collection cube ultime",
+	"join_discord": "Rejoindre Discord",
+	"visit_site": "Visiter le site",
+	"registered_users": "Utilisateurs enregistrés",
+	"unlockable_achievements": "Achievements Déverrouillables",
+	"our_partners": "Nos partenaires",
+	"ready_to_level_up": "Prêt à monter au niveau de votre jeu de cube?",
+	"join_community": "Rejoignez la communauté CubeIndex et commencez à suivre votre collection, à débloquer des réalisations et à communiquer avec des cubes dans le monde entier.",
+	"get_started": "Commencer",
+	"explore_cubes": "Explorer les cubes",
+	"cubingpanda_community": "CubaPanda est la communauté des fans du Cube de Rubik à tous les niveaux, que vous soyez un vétéran speedcuber ou quelqu'un qui n'a jamais résolu un seul visage.",
+	"open_archive_algorithms": "Les archives ouvertes pour les algorithmes de cube. Parcourez les solutions vérifiées par la communauté à travers chaque type de puzzle, taguez-les avec votre moyenne de 5 et partagez vos secrets PB-écrasant.",
+	"return_home": "🏠 Retour à la maison",
+	"error_message": "Il semble que vous avez rencontré une erreur.\nSi vous pensez qu'il s'agit d'un bogue, faites-le nous savoir !",
+	"theme": "Thème",
+	"light": "Lumière",
+	"dark": "Sombre",
+	"black": "Noir",
+	"profile": "Profil",
+	"settings": "Réglages",
+	"staff_dashboard": "Tableau de bord du personnel",
+	"sign_out": "Déconnexion",
+	"login": "Se connecter",
+	"notifications": "Notifications",
+	"confirm_sign_out_message": "Êtes-vous sûr de vouloir vous déconnecter?",
+	"no_notifications_yet": "Vous n'avez pas encore de notifications.",
+	"base": "Base",
+	"base_version": "La version de base est la version originale ou standard de ce modèle de cube.",
+	"limited_edition": "Edition Limitée",
+	"limited_version": "Les versions en édition limitée sont produites en quantités restreintes et peuvent présenter des couleurs uniques, des emballages ou d'autres caractéristiques spéciales.",
+	"trim": "Ajuster",
+	"trim_version": "Les versions de découpage sont des variantes alternatives du modèle de base, souvent avec des couleurs différentes, des finitions ou des caractéristiques mineures.",
+	"view_details": "Voir les détails",
+	"rate_cube": "Noter ce Cube",
+	"add_to_collection": "Ajouter à la collection",
+	"moderator": "Modérateur",
+	"lead_developer": "Développeur principal",
+	"community_manager": "Responsable de la communauté",
+	"database_manager": "Gestionnaire de la base de données",
+	"admin": "Administrateur",
+	"you_are_adding": "Vous ajoutez l' {cube_name} à votre collection en tant que {username}",
+	"quantity": "Quantité",
+	"main_cube": "Cube principal",
+	"condition": "Condition",
+	"condition_new_in_box": "Nouveau dans la boite",
+	"condition_new": "Nouveau",
+	"condition_good": "Bon",
+	"condition_fair": "Équitable",
+	"condition_worn": "Porté",
+	"condition_poor": "Mauvais",
+	"condition_broken": "Cassés",
+	"status": "Statut",
+	"status_owned": "Possédé",
+	"status_wishlist": "Liste d'envies",
+	"status_loaned": "Prêt",
+	"status_borrowed": "Emprunté",
+	"status_lost": "Perdu",
+	"notes": "Notes",
+	"acquired_the": "Acquis le",
+	"add_cube": "Ajouter un Cube",
+	"adding_cube": "Ajout en cours...",
+	"cube_added": "Ajouté !",
+	"welcome_back": "Bienvenue de retour",
+	"login_subtitle": "Connectez-vous à votre profil CubeIndex",
+	"label_email": "Courriel",
+	"label_password": "Mot de passe",
+	"forgot_password": "Mot de passe oublié ?",
+	"reset": "Reset",
+	"logging_in": "Connexion en cours...",
+	"log_in": "Se connecter",
+	"or": "ou",
+	"sign_in_with_discord": "Se connecter avec Discord",
+	"no_account": "Vous n'avez pas de compte ?",
+	"sign_up": "S'inscrire",
+	"please_enter_email": "Veuillez saisir un e-mail",
+	"check_email_reset": "Vérifiez votre email pour réinitialiser votre mot de passe",
+	"join_cubeindex": "Rejoindre l'index cube",
+	"create_free_account": "Créez un compte gratuit pour commencer à suivre votre collection",
+	"label_username": "Nom d'utilisateur",
+	"label_confirm_password": "Confirmer le mot de passe",
+	"accept_terms_prefix": "J'accepte les",
+	"terms_of_service": "Conditions d'utilisation",
+	"and": "et",
+	"privacy_policy": "Politique de confidentialité",
+	"signing_up": "Inscription...",
+	"already_have_account": "Vous avez déjà un compte ?",
+	"log_in_lower": "Se connecter",
+	"sign_up_with_discord": "S'inscrire avec Discord",
+	"reset_password": "Réinitialiser le mot de passe",
+	"label_new_password": "Nouveau mot de passe",
+	"update_password": "Mettre à jour le mot de passe",
+	"password_at_least_eight": "Le mot de passe doit comporter au moins 8 caractères.",
+	"passwords_do_not_match": "Les mots de passe ne correspondent pas",
+	"password_updated": "Mot de passe mis à jour. Vous pouvez maintenant vous connecter.",
+	"about_welcome": "Bienvenue dans CubeIndex",
+	"about_description": "CubeIndex est votre compagnon vedette ultime. Organisez, explorez et présentez votre collection de cubes, le tout au même endroit.",
+	"about_features_heading": "Ce que vous pouvez faire",
+	"about_feature_organize": "Organisez vos cubes",
+	"about_feature_organize_desc": "Gardez une trace de toute votre collection en toute simplicité.",
+	"about_feature_discover": "Découvrez de nouveaux modèles",
+	"about_feature_discover_desc": "Explorez les soumissions populaires, limitées et communautaires.",
+	"about_feature_track": "Suivre les hauts faits",
+	"about_feature_track_desc": "Gagnez des badges et des jalons pour votre voyage de cubare.",
+	"about_feature_community": "Conduite communautaire",
+	"about_feature_community_desc": "Contribuez aux entrées, évaluez les cubes et engagez avec d'autres cubateurs.",
+	"about_team_heading": "Rencontrez l'équipe",
+	"about_you": "Vous",
+	"about_apply": "Appliquer",
+	"about_logo_by": "Logo conçu par",
+	"visit_profile": "Visiter le profil",
+	"page_in_construction": "Page dans Construction",
+	"construction_message": "Nous travaillons actuellement dur pour terminer cette partie du site. Revenez bientôt pour découvrir quelque chose de génial !",
+	"nav_explore": "Explorer",
+	"nav_achievements": "Succès",
+	"nav_about": "À propos de",
+	"legal": "Mentions légales",
+	"report": "Rapporter",
+	"rights_reserved": "Tous droits réservés.",
+	"achievements_title": "Succès",
+	"achievements_subtitle": "Débloquez les exploits en participant à la communauté CubeIndex. Collectez-les tous pour montrer votre voyage!",
+	"title_reward": "Récompense du titre:",
+	"category_label": "Catégorie:",
+	"unlock_method": "Méthode de déverrouillage :",
+	"submitted_by": "Soumis par:",
+	"created_at": "Créé le :",
+	"not_unlockable": "Non déverrouillable pour le moment",
+	"explore_prompt": "Que voulez-vous explorer?",
+	"explore_card_cubes_title": "Cubes",
+	"explore_card_cubes_desc": "Parcourez des milliers de cubes par marque, type et classement communautaire.",
+	"explore_card_accessories_title": "Accessoires",
+	"explore_card_accessories_desc": "Découvrez les minuteurs, les matelas, les lubrifiants et tout ce dont vous avez besoin.",
+	"explore_card_vendors_title": "Fournisseurs",
+	"explore_card_vendors_desc": "Trouvez des magasins cubes de confiance et comparez les prix des meilleurs vendeurs du monde entier.",
+	"explore_card_users_title": "Utilisateurs",
+	"explore_card_users_desc": "Explorez les profils d'utilisateurs, découvrez les meilleurs solvants et découvrez l'activité de la communauté.",
+	"explore_cubes_title": "Explorer les cubes",
+	"explore_cubes_desc": "Parcourez tous vos cubes favoris par type, marque ou note.",
+	"search_your_cube": "Rechercher dans votre Cube",
+	"filters": "Filtres",
+	"type_label": "Type :",
+	"brand_label": "Marque :",
+	"wca_legal_label": "WCA Legal:",
+	"magnetic_label": "Magnétique:",
+	"smart_label": "Intelligent :",
+	"modded_label": "Modifié :",
+	"release_year_label": "Année de sortie :",
+	"reset_filters": "Réinitialiser les filtres",
+	"cubes_per_page": "Cubes per page:",
+	"compare_cubes": "Comparer les cubes",
+	"previous": "Précédent",
+	"next": "Suivant",
+	"explore_accessories_title": "Explorer les accessoires",
+	"explore_accessories_desc": "Découvrez les meilleurs minuteurs, mats, lubrifiants et plus encore, choisis par notre communauté.",
+	"compatibility": "Compatibilité :",
+	"released": "Libéré :",
+	"explore_vendors_title": "Explorer les vendeurs",
+	"explore_vendors_desc": "Trouvez les meilleurs magasins et vendeurs de confiance dans le monde de la cubare.",
+	"explore_users_title": "Explorer les utilisateurs",
+	"no_bio_provided": "Aucune bio fournie.",
+	"privacy_policy_title": "Politique de confidentialité",
+	"last_updated": "Dernière mise à jour :",
+	"tos_title": "Conditions d'utilisation",
+	"select_cube": "Sélectionnez un cube…",
+	"cube1": "Cube 1",
+	"cube2": "Cube 2",
+	"feature": "Fonctionnalités",
+	"select_at_least_one_cube": "Sélectionnez au moins un cube à comparer.",
+	"more_info": "Plus d'infos",
+	"temporarily_disabled": "Désactivé temporairement",
+	"feature_disabled_message": "Nous travaillons en coulisses pour le ramener en ligne. Merci pour votre patience!",
+	"join_discord_for_info": "Rejoignez notre Discord pour plus d'infos",
+	"total": "total",
+	"close": "Fermer",
+	"remove": "Retirer",
+	"any_special_notes": "Toutes les notes spéciales...",
+	"acquired_date": "Date d'acquisition :",
+	"editing": "Édition...",
+	"edited": "Modifié !",
+	"save": "Enregistrer",
+	"show": "Afficher",
+	"hide": "Cacher",
+	"cube_collection": "Collection de cubes",
+	"you_have_no_cubes": "Vous n'avez pas de cubes dans votre collection.",
+	"this_user_has_no_cubes": "Cet utilisateur n'a pas de cubes dans sa collection.",
+	"edit": "Editer",
+	"achievements_earned": "Accomplissements gagnés",
+	"show_more": "Afficher plus",
+	"show_less": "Afficher moins",
+	"no_achievements_yet": "Pas encore de succès gagné!",
+	"coming_soon": "Bientôt disponible",
+	"stay_tuned": "Restez à l'écoute pour plus !",
+	"check_back_later": "Revenez plus tard pour connaître les avis et les commentaires des utilisateurs!",
+	"send_submission_heading": "Envoyer votre soumission à CubeIndex",
+	"submit": "Soumettre",
+	"must_be_logged_in": "Vous devez être connecté pour soumettre.",
+	"user_settings": "Paramètres de l'utilisateur",
+	"unlock_method_manual": "Manuelle",
+	"unlock_method_auto": "Automatique",
+	"rarity_special": "Mythique",
+	"rarity_legendary": "Légendaire",
+	"rarity_exotic": "Exotique",
+	"rarity_epic": "Epique",
+	"rarity_rare": "Rare",
+	"rarity_common": "Commun",
+	"rarity_mythic": "Mythique",
+	"user_tabs_overview": "Aperçu",
+	"user_tabs_cubes": "Cubes",
+	"user_tabs_achievements": "Succès",
+	"user_tabs_stats": "Stats",
+	"user_tabs_reviews": "Revues",
+	"user_tabs_social": "Réseaux sociaux",
+	"member_since": "Membre depuis",
+	"bio": "Bio",
+	"socials": "Socials",
+	"socials_website": "Site Web",
+	"private_profile": "Ce profil est privé",
+	"no_view_permission": "Vous n'avez pas la permission de voir le profil de cet utilisateur.",
+	"user_tabs_submissions": "Soumissions",
+	"cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} ont ce cube",
+	"description": "Libellé",
+	"cube_description": "La <span class=\"font-bold text-primary\">{cube_name}</span> est un puzzle <span class=\"font-bold text-primary\">{type}</span> tourné sur <span class=\"font-bold text-primary\">{release}</span>. C'est <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"intelligent\" : \"non-intelligent\"}</span>et <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Actuellement, c'est <span class=\"font-bold text-primary\">{available ? \"discontinued\" : \"available\"}</span>, a une note communautaire de <span class=\"font-bold text-primary\">{rating}/5</span>, et <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
+	"brand": "Marque",
+	"weight_label": "Poids :",
+	"size_label": "Taille:",
+	"surface_finish_label": "Finition de la surface :",
+	"release_date_label": "Date de sortie :",
+	"maglev_label": "Maglev:",
+	"database_info_label": "Informations sur la base de données:",
+	"id_label": "ID:",
+	"added_label": "Ajouté:",
+	"unknown": "Inconnu",
+	"related_to_label": "Lié à :",
+	"select_trim_label": "Sélectionnez Couper :",
+	"same_series_label": "Dans la même série :",
+	"user_ratings": "Évaluations des utilisateurs",
+	"by": "par",
+	"no_user_ratings": "Aucune note utilisateur pour le moment. Soyez le premier à noter ce cube!",
+	"report_data": "🚩 Signaler des données incorrectes/manquantes",
+	"back_to_explore": "Retour à l'exploration",
+	"profile_information": "Informations sur le profil",
+	"settings_avatar_url": "URL de l'image de l'avatar",
+	"image_must_be_valid": "L'image doit être une URL JPG, PNG, ou GIF valide.",
+	"settings_banner_url": "URL de l'image de la bannière",
+	"optional_banner": "Bannière optionnelle affichée en haut de votre profil.",
+	"profile_privacy": "Confidentialité du profil",
+	"make_profile_private": "Rendre mon profil privé (visible uniquement pour moi)",
+	"social_links": "Liens sociaux",
+	"personal_website": "Site Web personnel",
+	"account_security": "Sécurité du compte",
+	"current_password": "Mot de passe actuel",
+	"save_changes": "Enregistrer les modifications",
+	"cube_type_label": "Type de cube",
+	"series": "Séries",
+	"model": "Modélisation",
+	"version_name": "Nom de la version",
+	"type": "Type de texte",
+	"subtype": "Sous-type",
+	"surface_finish": "Finition de surface",
+	"stickered": "Épinglé",
+	"wca_legal": "Mentions légales WCA",
+	"magnetic": "Magnétique",
+	"maglev": "Maglev",
+	"smart": "Intelligent",
+	"modded": "Modifié",
+	"discontinued": "Interrompu",
+	"related_to": "Lié à",
+	"release_date": "Date de sortie",
+	"rating": "Évaluation",
+	"weight_g": "Poids (g)",
+	"size_mm3": "Taille (mm3)",
+	"vs": "VS",
+	"user_achievements_count.0.declarations.0": "saisissez les succès utilisateur",
+	"user_achievements_count.0.declarations.1": "accomplissements locaux Plural = utilisateur_achievements: pluriel",
+	"user_achievements_count.0.selectors.0": "achievementsPlural",
+	"user_achievements_count.0.match.achievementsPlural=one": "Achievement {user_achievements}",
+	"user_achievements_count.0.match.achievementsPlural=other": "Achievements {user_achievements}",
+	"user_achievements_count.0.match.achievementsPlural=*": "Achievements {user_achievements}",
+	"user_cubes_count.0.declarations.0": "input user_cubes",
+	"user_cubes_count.0.declarations.1": "cubesPlural local = user_cubes : pluriel",
+	"user_cubes_count.0.selectors.0": "cubesPlural",
+	"user_cubes_count.0.match.cubesPlural=*": "{user_cubes} Cubes",
+	"user_cubes_count.0.match.cubesPlural=one": "Cube {user_cubes}",
+	"user_cubes_count.0.match.cubesPlural=other": "{user_cubes} Cubes",
+	"track_explore_share": "Parcourez, explorez et partagez votre collection de speedcube.",
+	"navigation": "Navigation"
+}

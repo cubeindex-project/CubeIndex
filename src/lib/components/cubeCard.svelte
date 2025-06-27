@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import StarRating from "./starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
@@ -47,7 +48,7 @@
             aria-label="Add to Collection"
           >
             <i class="fa-solid fa-plus mr-2"></i>
-            Add to Collection
+            {m.add_to_collection()}
           </button>
         {/if}
         {#if rate}
@@ -58,7 +59,7 @@
             disabled
           >
             <i class="fa-solid fa-star mr-2"></i>
-            Rate this Cube
+            {m.rate_cube()}
           </button>
         {/if}
       </div>
@@ -68,7 +69,7 @@
           class="btn btn-primary mt-4"
           aria-label="View Cube Details"
         >
-          View Details
+          {m.view_details()}
           <i class="fa-solid fa-arrow-right"></i>
         </a>
       {/if}

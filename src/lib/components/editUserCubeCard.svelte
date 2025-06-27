@@ -1,6 +1,7 @@
 <script lang="ts">
   import CubeVersionType from "./cubeVersionType.svelte";
   import { supabase } from "$lib/supabaseClient";
+  import { m } from "$lib/paraglide/messages";
 
   let { cube, user_details = [], image } = $props();
 
@@ -76,7 +77,7 @@
       onclick={remove}
     >
       <i class="fa-solid fa-trash"></i>
-      Remove
+      {m.remove()}
     </button>
   </div>
   {#if image}
@@ -101,7 +102,7 @@
     <div class="mt-4 flex gap-2">
       <div>
         <label class="flex flex-col">
-          <span class="font-bold">Quantity:</span>
+          <span class="font-bold">{m.quantity()}</span>
           <input
             name="quantity"
             type="number"
@@ -114,52 +115,52 @@
         </label>
         <p>
           <label class="flex flex-col">
-            <span class="font-bold">Condition:</span>
+          <span class="font-bold">{m.condition()}</span>
             <select
               name="condition"
               bind:value={condition}
               class="select w-full"
               required
             >
-              <option value="New in box">New in box</option>
-              <option value="New">New</option>
-              <option value="Good">Good</option>
-              <option value="Fair">Fair</option>
-              <option value="Worn">Worn</option>
-              <option value="Poor">Poor</option>
-              <option value="Broken">Broken</option>
+              <option value="New in box">{m.condition_new_in_box()}</option>
+              <option value="New">{m.condition_new()}</option>
+              <option value="Good">{m.condition_good()}</option>
+              <option value="Fair">{m.condition_fair()}</option>
+              <option value="Worn">{m.condition_worn()}</option>
+              <option value="Poor">{m.condition_poor()}</option>
+              <option value="Broken">{m.condition_broken()}</option>
             </select>
           </label>
         </p>
         <p>
           <label class="flex flex-col">
-            <span class="font-bold">Status:</span>
+            <span class="font-bold">{m.status()}</span>
             <select
               name="status"
               bind:value={status}
               class="select w-full"
               required
             >
-              <option value="Owned">Owned</option>
-              <option value="Wishlist">Wishlist</option>
-              <option value="Loaned">Loaned</option>
-              <option value="Borrowed">Borrowed</option>
-              <option value="Lost">Lost</option>
+              <option value="Owned">{m.status_owned()}</option>
+              <option value="Wishlist">{m.status_wishlist()}</option>
+              <option value="Loaned">{m.status_loaned()}</option>
+              <option value="Borrowed">{m.status_borrowed()}</option>
+              <option value="Lost">{m.status_lost()}</option>
             </select>
           </label>
         </p>
         <label class="flex flex-col">
-          <span class="font-bold">Notes:</span>
+          <span class="font-bold">{m.notes()}</span>
           <textarea
             name="notes"
-            placeholder="Any special notes..."
+            placeholder={m.any_special_notes()}
             bind:value={notes}
             class="textarea textarea-bordered rounded-2xl w-full max-h-50"
           ></textarea>
         </label>
         <p>
           <label class="flex flex-col">
-            <span class="font-bold">Acquired Date:</span>
+            <span class="font-bold">{m.acquired_date()}</span>
             <input
               name="acquiredAt"
               type="date"
@@ -177,13 +178,13 @@
     >
       {#if isSubmitting}
         <span class="loading loading-spinner"></span>
-        Editing...
+        {m.editing()}
       {:else if showSuccess}
         <i class="fa-solid fa-check"></i>
-        Edited!
+        {m.edited()}
       {:else}
         <i class="fa-solid fa-floppy-disk"></i>
-        Save
+        {m.save()}
       {/if}
     </button>
 

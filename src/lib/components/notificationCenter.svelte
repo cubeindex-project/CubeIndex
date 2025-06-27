@@ -1,5 +1,6 @@
 <script lang="ts">
   import { blur } from "svelte/transition";
+  import { m } from "$lib/paraglide/messages";
 
   let { notificationOpen, notifications } = $props();
 
@@ -20,15 +21,15 @@
 >
   <div class="flex items-center px-5 py-4 border-b border-base-300">
     <i class="fa-solid fa-bell text-primary mr-2"></i>
-    <span class="font-bold text-lg tracking-tight"> Notifications </span>
+    <span class="font-bold text-lg tracking-tight">{m.notifications()}</span>
     <span class="ml-auto text-xs">
-      {notifications.length} total
+      {notifications.length} {m.total()}
     </span>
   </div>
   <div class="overflow-y-auto max-h-[50vh]">
     {#if notifications.length === 0}
       <div class="py-12 flex items-center justify-center">
-        No notifications yet.
+        {m.no_notifications_yet()}
       </div>
     {:else}
       {#each notifications as n (n.id)}
@@ -64,7 +65,7 @@
               rel="noopener noreferrer"
               class="link link-hover link-primary text-xs mt-1"
             >
-              {`${n.linkText === "" ? "More info" : n.linkText}`}
+              {`${n.linkText === "" ? m.more_info() : n.linkText}`}
               <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
             </a>
           {/if}
@@ -79,7 +80,7 @@
       class="text-xs link link-hover cursor-pointer"
       onclick={() => (notificationOpen = false)}
     >
-      Close
+      {m.close()}
     </button>
   </div>
 </div>

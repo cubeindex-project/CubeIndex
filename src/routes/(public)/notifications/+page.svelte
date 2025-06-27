@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages.js";
   import { onMount } from "svelte";
   import type { PageData } from "./$types";
   import { supabase } from "$lib/supabaseClient";
@@ -29,13 +30,13 @@
 <section class="min-h-screen px-4 py-12">
   <div class="max-w-2xl mx-auto">
     <h1 class="text-4xl font-clash font-bold text-center mb-8">
-      Notifications
+      {m.notifications()}
     </h1>
     <div class="rounded-2xl bg-base-200 border border-base-300 overflow-hidden">
       {#if notifications.length === 0}
         <div class="py-16 text-center text-gray-400 text-lg">
           <i class="fa-solid fa-bell-slash text-3xl mb-2"></i><br />
-          You have no notifications yet.
+          {m.no_notifications_yet()}
         </div>
       {:else}
         <ul class="flex flex-col gap-4 px-4 py-8">
@@ -79,7 +80,7 @@
                   rel="noopener noreferrer"
                   class="text-blue-400 text-sm mt-1 hover:underline"
                 >
-                  {`${n.linkText === "" ? "More info" : n.linkText}`}
+                  {`${n.linkText === "" ? m.more_info() : n.linkText}`}
                   <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
                 </a>
               {/if}

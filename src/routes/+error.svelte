@@ -40,20 +40,20 @@
   </div>
 
   <p class="mb-8 max-w-md relative z-10">
-    {m.lost_dizzy_turtle_support()}
+    {m.error_message()}
   </p>
 
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href="/" class="btn btn-lg btn-primary"> {m.grand_great_cow_work()} </a>
+    <a href="/" class="btn btn-lg btn-primary"> {m.return_home()} </a>
     <a
       href="https://discord.gg/76ExrEAE7s"
       target="_blank"
       rel="noopener noreferrer"
       class="btn btn-lg btn-error"
     >
-      {m.every_jolly_goldfish_comfort()}
+      {m.report_bug()}
     </a>
   </div>
 

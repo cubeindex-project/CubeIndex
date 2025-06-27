@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import { supabase } from "$lib/supabaseClient";
@@ -60,10 +61,10 @@
   >
     <div class="card-body">
       <h2 class="card-title">
-        You are adding the {cube.series}
-        {cube.model}
-        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection
-        as {username ? username : "Unknown"}
+        {m.you_are_adding({
+          cube_name: `${cube.series} ${cube.model} ${cube.version_name}`,
+          username: username ? username : "Unknown",
+        })}
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
@@ -76,12 +77,12 @@
         <input type="text" name="slug" bind:value={slug} class="input" hidden />
         <!-- Quantity -->
         <label class="flex flex-col">
-          <span class="label-text">Quantity</span>
+          <span class="label-text">{m.quantity()}</span>
           <input
             name="quantity"
             type="number"
-            min=1
-            max=999
+            min="1"
+            max="999"
             bind:value={quantity}
             class="input w-full"
             required
@@ -95,40 +96,40 @@
             bind:checked={main}
             class="checkbox bg-base-100"
           />
-          <span>Main Cube</span>
+          <span>{m.main_cube()}</span>
         </label>
         <!-- Condition -->
         <label class="flex flex-col">
-          <span class="label-text">Condition</span>
+          <span class="label-text">{m.condition()}</span>
           <select
             name="condition"
             bind:value={condition}
             class="select w-full"
             required
           >
-            <option value="New in box">New in box</option>
-            <option value="New">New</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Worn">Worn</option>
-            <option value="Poor">Poor</option>
-            <option value="Broken">Broken</option>
+            <option value="New in box">{m.condition_new_in_box()}</option>
+            <option value="New">{m.condition_new()}</option>
+            <option value="Good">{m.condition_good()}</option>
+            <option value="Fair">{m.condition_fair()}</option>
+            <option value="Worn">{m.condition_worn()}</option>
+            <option value="Poor">{m.condition_poor()}</option>
+            <option value="Broken">{m.condition_broken()}</option>
           </select>
         </label>
         <!-- Status -->
         <label class="flex flex-col">
-          <span class="label-text">Status</span>
+          <span class="label-text">{m.status()}</span>
           <select
             name="status"
             bind:value={status}
             class="select w-full"
             required
           >
-            <option value="Owned">Owned</option>
-            <option value="Wishlist">Wishlist</option>
-            <option value="Loaned">Loaned</option>
-            <option value="Borrowed">Borrowed</option>
-            <option value="Lost">Lost</option>
+            <option value="Owned">{m.status_owned()}</option>
+            <option value="Wishlist">{m.status_wishlist()}</option>
+            <option value="Loaned">{m.status_loaned()}</option>
+            <option value="Borrowed">{m.status_borrowed()}</option>
+            <option value="Lost">{m.status_lost()}</option>
           </select>
         </label>
       </div>
@@ -136,7 +137,7 @@
       <!-- Full-width fields -->
       <div class="mt-4 space-y-4">
         <label class="flex flex-col">
-          <span class="label-text">Notes</span>
+          <span class="label-text">{m.notes()}</span>
           <textarea
             name="notes"
             placeholder="Any special notes..."
@@ -145,7 +146,7 @@
           ></textarea>
         </label>
         <label class="flex flex-col">
-          <span class="label-text">Acquired The</span>
+          <span class="label-text">{m.acquired_the()}</span>
           <input
             name="acquiredAt"
             type="date"
@@ -161,7 +162,7 @@
         <button
           class="btn btn-secondary"
           onclick={onCancel}
-          disabled={isSubmitting}>Cancel</button
+          disabled={isSubmitting}>{m.cancel()}</button
         >
       </div>
 
@@ -169,12 +170,12 @@
         <button class="btn btn-primary" type="submit" disabled={isSubmitting}>
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
-            Adding...
+            {m.adding_cube()}
           {:else if showSuccess}
             <i class="fa-solid fa-check"></i>
-            Added!
+            {m.cube_added()}
           {:else}
-            Add Cube
+            {m.add_cube()}
           {/if}
         </button>
       </div>

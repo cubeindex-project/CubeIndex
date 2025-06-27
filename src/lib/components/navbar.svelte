@@ -40,9 +40,9 @@
   }
 
   const navLinks = [
-    { name: "Explore", href: "/explore" },
-    { name: "Achievements", href: "/achievements" },
-    { name: "About", href: "/about" },
+    { name: m.nav_explore(), href: "/explore" },
+    { name: m.nav_achievements(), href: "/achievements" },
+    { name: m.nav_about(), href: "/about" },
   ];
 
   function formatDate(dateString: string): string {
@@ -122,7 +122,7 @@
         <button
           class="inline-flex cursor-pointer text-sm rounded-xl mx-2 bg-base-300"
         >
-          <span class="px-4 py-2">{m.topical_away_pug_dare()}</span>
+          <span class="px-4 py-2">{m.theme()}</span>
           <span class="pr-4 py-2">
             <i class="fa-solid fa-caret-down"></i>
           </span>
@@ -130,13 +130,13 @@
         <ul
           class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
         >
-          <div class="divider mt-0">{m.quiet_jolly_lemming_rise()}</div>
+          <div class="divider mt-0">{m.light()}</div>
           <li>
             <input
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label={m.quiet_jolly_lemming_rise()}
+              aria-label={m.light()}
               data-set-theme="light"
             />
           </li>
@@ -167,13 +167,13 @@
               data-set-theme="lemonade"
             />
           </li>
-          <div class="divider">{m.legal_super_nuthatch_spin()}</div>
+          <div class="divider">{m.dark()}</div>
           <li>
             <input
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label={m.legal_super_nuthatch_spin()}
+              aria-label={m.dark()}
               data-set-theme="dark"
             />
           </li>
@@ -182,7 +182,7 @@
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label={m.quiet_loud_moth_race()}
+              aria-label={m.black()}
               data-set-theme="black"
             />
           </li>
@@ -226,18 +226,18 @@
           >
             <li>
               <a href={`/user/${profile.id}`} class="block px-4 py-2 text-sm">
-                {m.wacky_just_newt_grasp()}
+                {m.profile()}
               </a>
             </li>
             <li>
               <a href="/user/settings" class="block px-4 py-2 text-sm">
-                {m.sharp_suave_hare_drip()}
+                {m.settings()}
               </a>
             </li>
             {#if profile.role !== "User"}
               <li>
                 <a href="/staff/dashboard" class="block px-4 py-2 text-sm">
-                  {m.vexed_last_wren_link()}
+                  {m.staff_dashboard()}
                 </a>
               </li>
             {/if}
@@ -248,7 +248,7 @@
                 }}
                 class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
               >
-                {m.trick_zesty_racoon_embrace()}
+                {m.sign_out()}
               </button>
             </li>
           </ul>
@@ -258,7 +258,7 @@
           href="/auth/login"
           class="rounded-xl bg-primary text-primary-content px-4 py-2 text-sm transition"
         >
-          {m.few_sharp_warbler_twirl()}
+          {m.login()}
         </a>
       {/if}
     </nav>
@@ -301,7 +301,7 @@
             onclick={() => (isOpen = false)}
           >
             <i class="fa-solid fa-bell fa-xl"></i>
-            <span class="ml-2">{m.loved_key_grizzly_skip()}</span>
+            <span class="ml-2">{m.notifications()}</span>
           </a>
           {#if notifications.length !== 0}
             <div
@@ -334,7 +334,7 @@
                     onclick={() => (isOpen = false)}
                     class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                   >
-                    {m.wacky_just_newt_grasp()}
+                    {m.profile()}
                   </a>
                 </li>
                 <li>
@@ -343,7 +343,7 @@
                     onclick={() => (isOpen = false)}
                     class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                   >
-                    {m.sharp_suave_hare_drip()}
+                    {m.settings()}
                   </a>
                 </li>
                 {#if profile.role !== "User"}
@@ -353,7 +353,7 @@
                       onclick={() => (isOpen = false)}
                       class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                     >
-                      {m.vexed_last_wren_link()}
+                      {m.staff_dashboard()}
                     </a>
                   </li>
                 {/if}
@@ -366,7 +366,7 @@
                     }}
                     class="w-full text-left cursor-pointer block px-4 py-2 hover:bg-neutral-800 rounded"
                   >
-                    {m.trick_zesty_racoon_embrace()}
+                    {m.sign_out()}
                   </button>
                 </li>
               </ul>
@@ -379,7 +379,7 @@
               onclick={() => (isOpen = false)}
               class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
             >
-              {m.few_sharp_warbler_twirl()}
+              {m.login()}
             </a>
           </li>
         {/if}

@@ -227,7 +227,22 @@
   "private_profile": "Este perfil es privado",
   "no_view_permission": "No tiene permiso para ver el perfil de este usuario.",
   "user_tabs_submissions": "Envíos",
-  "cube_user_count": "{cubeUserCount} usuario{cubeUserCount === 1 ? \"\" : \"s\"} tienen este cubo",
+  "cube_user_count": [
+    {
+      "declarations": [
+        "input cubeUserCount",
+        "local cubeUserCountsPlural = cubeUserCount: plural"
+      ],
+      "selectors": [
+        "cubeUserCountsPlural"
+      ],
+      "match": {
+        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=one": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
+      }
+    }
+  ],
   "description": "Descripción",
   "cube_description": "La <span class=\"font-bold text-primary\">{cube_name}</span> es un rompecabezas torcido <span class=\"font-bold text-primary\">{type}</span> liberado en <span class=\"font-bold text-primary\">{release}</span>. Es <span class=\"font-bold text-primary\">{magnético ? \"magnético\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>y <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Actualmente, es <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, tiene una calificación comunitaria de <span class=\"font-bold text-primary\">{rating}/5</span>, y es <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
   "brand": "Marca",

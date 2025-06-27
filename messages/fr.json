@@ -244,7 +244,7 @@
     }
   ],
   "description": "Libellé",
-  "cube_description": "La <span class=\"font-bold text-primary\">{cube_name}</span> est un puzzle <span class=\"font-bold text-primary\">{type}</span> tourné sur <span class=\"font-bold text-primary\">{release}</span>. C'est <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"intelligent\" : \"non-intelligent\"}</span>et <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Actuellement, c'est <span class=\"font-bold text-primary\">{available ? \"discontinued\" : \"available\"}</span>, a une note communautaire de <span class=\"font-bold text-primary\">{rating}/5</span>, et <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
+  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic}</span>, <span class=\"font-bold text-primary\">{smart}</span>, and <span class=\"font-bold text-primary\">{wca}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded}</span>.",
   "brand": "Marque",
   "weight_label": "Poids :",
   "size_label": "Taille:",
@@ -298,8 +298,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "input user_achievements",
-        "local achievementsPlural = user_achievements: plural"
+        "saisissez les succès utilisateur",
+        "accomplissements locaux Plural = utilisateur_achievements: pluriel"
       ],
       "selectors": [
         "achievementsPlural"
@@ -315,7 +315,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "local cubesPlural = user_cubes: plural"
+        "cubesPlural local = user_cubes : pluriel"
       ],
       "selectors": [
         "cubesPlural"
@@ -328,5 +328,16 @@
     }
   ],
   "track_explore_share": "Parcourez, explorez et partagez votre collection de speedcube.",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetc_lower": "magnetic",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

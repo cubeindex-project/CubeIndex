@@ -332,5 +332,6 @@
   "wca_legal_lower": "WCA-legal",
   "non_wca_lower": "not WCA-legal",
   "discontinued_lower": "discontinued",
-  "available_lower": "available"
+  "available_lower": "available",
+  "test": "test"
 }

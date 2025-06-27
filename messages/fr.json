@@ -1,7 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "report_bug": "🐞 Signaler le bug sur Discord",
-  "disclaimer": "est dans l'aperçu anticipé — Il s'agit d'une version précoce et en cours de développement actif. Les fonctionnalités et la conception sont en constante évolution.",
+  "disclaimer": "🚧 <strong>CubeIndex</strong> is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
   "cancel": "Abandonner",
   "confirm_sign_out": "Confirmer la déconnexion",
   "start_collecting": "Commencer à collecter",
@@ -227,9 +227,24 @@
   "private_profile": "Ce profil est privé",
   "no_view_permission": "Vous n'avez pas la permission de voir le profil de cet utilisateur.",
   "user_tabs_submissions": "Soumissions",
-  "cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} have this cube",
+  "cube_user_count": [
+    {
+      "declarations": [
+        "input cubeUserCount",
+        "local cubeUserCountsPlural = cubeUserCount: plural"
+      ],
+      "selectors": [
+        "cubeUserCountsPlural"
+      ],
+      "match": {
+        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
+        "cubeUserCountsPlural=one": "{cubeUserCount} user have this cube",
+        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
+      }
+    }
+  ],
   "description": "Libellé",
-  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, and <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
+  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic}</span>, <span class=\"font-bold text-primary\">{smart}</span>, and <span class=\"font-bold text-primary\">{wca}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded}</span>.",
   "brand": "Marque",
   "weight_label": "Poids :",
   "size_label": "Taille:",
@@ -313,5 +328,15 @@
     }
   ],
   "track_explore_share": "Parcourez, explorez et partagez votre collection de speedcube.",
-  "navigation": "Navigation"
+  "navigation": "Navigation",
+  "magnetic_lower": "magnetic",
+  "original_lower": "original",
+  "smart_lower": "smart",
+  "modded_lower": "modded",
+  "non_magnetic_lower": "non-magnetic",
+  "non_smart_lower": "non-smart",
+  "wca_legal_lower": "WCA-legal",
+  "non_wca_lower": "not WCA-legal",
+  "discontinued_lower": "discontinued",
+  "available_lower": "available"
 }

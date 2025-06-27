@@ -227,24 +227,9 @@
   "private_profile": "Este perfil es privado",
   "no_view_permission": "No tiene permiso para ver el perfil de este usuario.",
   "user_tabs_submissions": "Envíos",
-  "cube_user_count": [
-    {
-      "declarations": [
-        "input cubeUserCount",
-        "local cubeUserCountsPlural = cubeUserCount: plural"
-      ],
-      "selectors": [
-        "cubeUserCountsPlural"
-      ],
-      "match": {
-        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube",
-        "cubeUserCountsPlural=one": "{cubeUserCount} users have this cube",
-        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube"
-      }
-    }
-  ],
+  "cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} have this cube",
   "description": "Descripción",
-  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic}</span>, <span class=\"font-bold text-primary\">{smart}</span>, and <span class=\"font-bold text-primary\">{wca}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded}</span>.",
+  "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, and <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
   "brand": "Marca",
   "weight_label": "Peso:",
   "size_label": "Tamaño:",
@@ -328,16 +313,5 @@
     }
   ],
   "track_explore_share": "Rastrea, explora y comparte tu colección de veloces.",
-  "navigation": "Navigation",
-  "magnetc_lower": "magnetic",
-  "magnetic_lower": "magnetic",
-  "original_lower": "original",
-  "smart_lower": "smart",
-  "modded_lower": "modded",
-  "non_magnetic_lower": "non-magnetic",
-  "non_smart_lower": "non-smart",
-  "wca_legal_lower": "WCA-legal",
-  "non_wca_lower": "not WCA-legal",
-  "discontinued_lower": "discontinued",
-  "available_lower": "available"
+  "navigation": "Navigation"
 }

@@ -11,7 +11,7 @@
     class="relative flex flex-col sm:flex-row items-center sm:justify-between p-4 bg-base-100 w-full mx-auto pt-4"
   >
     <p class="text-center sm:text-left flex-1">
-      🚧 <strong>CubeIndex</strong> {m.disclaimer()}
+      {@html m.disclaimer()}
     </p>
 
     <button

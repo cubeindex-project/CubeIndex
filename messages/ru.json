@@ -283,8 +283,8 @@
   "user_achievements_count": [
     {
       "declarations": [
-        "ввести _достижения пользователя",
-        "локальные достижения множественного числа = user_achieves: plural"
+        "input user_achievements",
+        "local achievementsPlural = user_achievements: plural"
       ],
       "selectors": [
         "achievementsPlural"
@@ -300,7 +300,7 @@
     {
       "declarations": [
         "input user_cubes",
-        "локальная кубическая множественная = пользователь_кубики: множественное число"
+        "local cubesPlural = user_cubes: plural"
       ],
       "selectors": [
         "cubesPlural"

@@ -1,7 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "report_bug": "🐞 Report the Bug on Discord",
-  "disclaimer": "🚧 <strong>CubeIndex</strong> is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
+  "disclaimer": "is in Early Preview — This is an early version and currently in active development. Features and design are still evolving.",
   "cancel": "Cancel",
   "confirm_sign_out": "Confirm Sign Out",
   "start_collecting": "Start Collecting",
@@ -227,22 +227,7 @@
   "private_profile": "This profile is private",
   "no_view_permission": "You do not have permission to view this user's profile.",
   "user_tabs_submissions": "Submissions",
-  "cube_user_count": [
-    {
-      "declarations": [
-        "input cubeUserCount",
-        "local cubeUserCountsPlural = cubeUserCount: plural"
-      ],
-      "selectors": [
-        "cubeUserCountsPlural"
-      ],
-      "match": {
-        "cubeUserCountsPlural=one": "{cubeUserCount} user have this cube",
-        "cubeUserCountsPlural=other": "{cubeUserCount} users have this cube",
-        "cubeUserCountsPlural=*": "{cubeUserCount} users have this cube"
-      }
-    }
-  ],
+  "cube_user_count": "{cubeUserCount} user{cubeUserCount === 1 ? \"\" : \"s\"} have this cube",
   "description": "Description",
   "cube_description": "The <span class=\"font-bold text-primary\">{cube_name}</span> is a <span class=\"font-bold text-primary\">{type}</span> twisty puzzle released on <span class=\"font-bold text-primary\">{release}</span>. It is <span class=\"font-bold text-primary\">{magnetic ? \"magnetic\" : \"non-magnetic\"}</span>, <span class=\"font-bold text-primary\">{smart ? \"smart\" : \"non-smart\"}</span>, and <span class=\"font-bold text-primary\">{wca ? \"WCA-legal\" : \"not WCA-legal\"}</span>. Currently, it is <span class=\"font-bold text-primary\">{availability ? \"discontinued\" : \"available\"}</span>, has a community rating of <span class=\"font-bold text-primary\">{rating}/5</span>, and is <span class=\"font-bold text-primary\">{modded ? \"modded\" : \"original\"}</span>.",
   "brand": "Brand",

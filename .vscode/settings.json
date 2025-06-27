@@ -28,5 +28,9 @@
     "fs",
     "http",
     "net"
+  ],
+  "i18n-ally.localesPaths": [
+    "messages",
+    "src/lib/paraglide/messages"
   ]
 }

@@ -24,6 +24,7 @@
   let modded = $state(false);
   let discontinued = $state(false);
   let maglev = $state(false);
+  let stickered = $state(false);
 
   // Example: These could come from a load function or API
   const allTypes = () => Array.from(new Set(cubes.map((c) => c.type))).sort();
@@ -293,6 +294,15 @@
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="maglev" class="text-sm">Maglev</label>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            name="stickered"
+            type="checkbox"
+            bind:checked={stickered}
+            class="checkbox checkbox-md bg-base-100"
+          />
+          <label for="maglev" class="text-sm">Stickered</label>
         </div>
       </div>
 

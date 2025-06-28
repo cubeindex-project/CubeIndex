@@ -47,6 +47,7 @@ export const actions: Actions = {
     const modded = form.get("modded") !== null;
     const discontinued = form.get("discontinued") !== null;
     const maglev = form.get("maglev") !== null;
+    const stickered = form.get("stickered") !== null;
 
     // Basic required‐fields validation
     if (
@@ -65,29 +66,29 @@ export const actions: Actions = {
     // “Other” dropdowns
     const brand = brandRaw === "___other" ? otherBrand : brandRaw;
     if (brandRaw === "___other" && !otherBrand) {
-      return fail(400, { message: "Please specify the other brand." });
+      return fail(400, { error: "Please specify the other brand." });
     }
 
     // Version field for Trim/Limited
     if ((cubeVersion === "Trim" || cubeVersion === "Limited") && !versionName) {
-      return fail(400, { message: "Please specify the version name." });
+      return fail(400, { error: "Please specify the version name." });
     }
 
     // Relation requirements
     if (modded && !relatedTo) {
       return fail(400, {
-        message: "Please select the model this is a mod of.",
+        error: "Please select the model this is a mod of.",
       });
     }
     if ((cubeVersion === "Trim" || cubeVersion === "Limited") && !relatedTo) {
       return fail(400, {
-        message: "Please select the model this is a limited edition of.",
+        error: "Please select the model this is a limited edition of.",
       });
     }
 
     // Business rule: smart cubes cannot be WCA‐legal
     if (smart && wcaLegal) {
-      return fail(400, { message: "Smart cubes cannot be WCA legal." });
+      return fail(400, { error: "Smart cubes cannot be WCA legal." });
     }
 
     // Figure out who’s submitting
@@ -123,6 +124,7 @@ export const actions: Actions = {
       modded,
       discontinued,
       maglev,
+      stickered,
       status: "Pending",
     };
 
@@ -130,6 +132,11 @@ export const actions: Actions = {
       .from("cube_submissions")
       .insert(payload);
 
+    if (
+      insertErr?.message ===
+      'duplicate key value violates unique constraint "cube_submissions_pkey"'
+    )
+      return fail(500, { error: "This cube already exist!" });
     if (insertErr) return fail(500, { error: insertErr.message });
 
     return { message: "Cube submitted successfully!" };

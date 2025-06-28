@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import Badge from "$lib/components/badge.svelte";
 
   const { data, children } = $props();
@@ -14,32 +15,32 @@
   }
 
   const formattedJoinDate = formatJoinDate(profile?.created_at);
-  let activeTab = $state("Overview");
+  let activeTab = $state("");
 
   const tabs = [
     {
       link: "",
-      title: "Overview",
+      title: `${m.user_tabs_overview()}`,
     },
     {
       link: "/cubes",
-      title: "Cubes",
+      title: `${m.user_tabs_cubes()}`,
     },
     {
       link: "/achievements",
-      title: "Achievements",
+      title: `${m.user_tabs_achievements()}`,
     },
     {
       link: "/stats",
-      title: "Stats",
+      title: `${m.user_tabs_stats()}`,
     },
     {
       link: "/reviews",
-      title: "Reviews",
+      title: `${m.user_tabs_reviews()}`,
     },
     {
       link: "/social",
-      title: "Social",
+      title: `${m.user_tabs_social()}`,
     },
   ];
 </script>
@@ -107,12 +108,12 @@
                 title="User Settings"
               >
                 <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
+                <span>{m.settings()}</span>
               </a>
             {:else}
               <button class="btn btn-error hidden md:flex" disabled>
                 <i class="fa-solid fa-flag"></i>
-                <span>Report</span>
+                <span>{m.report()}</span>
               </button>
             {/if}
             <button
@@ -137,32 +138,36 @@
                   title="User Settings"
                 >
                   <i class="fa-solid fa-gear"></i>
-                  <span>Settings</span>
+                  <span>{m.settings()}</span>
                 </a>
               {:else}
-                <button class="flex justify-end items-center gap-2 p-2" disabled>
+                <button
+                  class="flex justify-end items-center gap-2 p-2"
+                  disabled
+                >
                   <i class="fa-solid fa-flag"></i>
-                  <span>Report</span>
+                  <span>{m.report()}</span>
                 </button>
               {/if}
             </ul>
           </div>
           <p class="mt-2">
-            Member since: <span class="font-mono">{formattedJoinDate}</span>
+            {m.member_since()}:
+            <span class="font-mono">{formattedJoinDate}</span>
           </p>
 
           <!-- Bio (no card, just text, spaced below join date) -->
           <div class="mt-3 mb-4">
-            <h4 class="text-lg font-bold mb-1">Bio</h4>
+            <h4 class="text-lg font-bold mb-1">{m.bio()}</h4>
             <p class="break-words">
-              {profile?.bio || "No bio provided."}
+              {profile?.bio || m.no_bio_provided()}
             </p>
           </div>
 
           <!-- Socials Section -->
           {#if profile.socials}
             <div class="mt-4">
-              <h4 class="text-lg font-bold mb-2">Socials</h4>
+              <h4 class="text-lg font-bold mb-2">{m.socials()}</h4>
               <div class="flex flex-wrap items-center gap-3">
                 {#if profile.socials.website}
                   <a
@@ -173,7 +178,7 @@
                     aria-label="Website"
                   >
                     <i class="fa-solid fa-globe"></i>
-                    <span class="hidden sm:inline">Website</span>
+                    <span class="hidden sm:inline">{m.socials_website()}</span>
                   </a>
                 {/if}
                 {#if profile.socials.wca}
@@ -284,7 +289,7 @@
           activeTab = "Submissions";
         }}
       >
-        Submissions
+        {m.user_tabs_submissions()}
       </a>
     {/if}
   </div>
@@ -292,13 +297,11 @@
   {#if !profile.private || user?.id === profile.user_id}
     {@render children()}
   {:else}
-    <section
-      class="px-4 py-12 flex items-center justify-center"
-    >
+    <section class="px-4 py-12 flex items-center justify-center">
       <div class="text-center">
-        <h1 class="text-3xl font-bold mb-4">This profile is private</h1>
+        <h1 class="text-3xl font-bold mb-4">{m.private_profile()}</h1>
         <p class="text-gray-400">
-          You do not have permission to view this user's profile.
+          {m.no_view_permission()}
         </p>
       </div>
     </section>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
   import ConfirmSignOut from "./confirmSignOut.svelte";
@@ -39,9 +40,9 @@
   }
 
   const navLinks = [
-    { name: "Explore", href: "/explore" },
-    { name: "Achievements", href: "/achievements" },
-    { name: "About", href: "/about" },
+    { name: m.nav_explore(), href: "/explore" },
+    { name: m.nav_achievements(), href: "/achievements" },
+    { name: m.nav_about(), href: "/about" },
   ];
 
   function formatDate(dateString: string): string {
@@ -121,7 +122,7 @@
         <button
           class="inline-flex cursor-pointer text-sm rounded-xl mx-2 bg-base-300"
         >
-          <span class="px-4 py-2">Theme</span>
+          <span class="px-4 py-2">{m.theme()}</span>
           <span class="pr-4 py-2">
             <i class="fa-solid fa-caret-down"></i>
           </span>
@@ -129,13 +130,13 @@
         <ul
           class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
         >
-          <div class="divider mt-0">Light</div>
+          <div class="divider mt-0">{m.light()}</div>
           <li>
             <input
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Light"
+              aria-label={m.light()}
               data-set-theme="light"
             />
           </li>
@@ -166,13 +167,13 @@
               data-set-theme="lemonade"
             />
           </li>
-          <div class="divider">Dark</div>
+          <div class="divider">{m.dark()}</div>
           <li>
             <input
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Dark"
+              aria-label={m.dark()}
               data-set-theme="dark"
             />
           </li>
@@ -181,7 +182,7 @@
               type="radio"
               name="theme-dropdown"
               class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Black"
+              aria-label={m.black()}
               data-set-theme="black"
             />
           </li>
@@ -225,18 +226,18 @@
           >
             <li>
               <a href={`/user/${profile.id}`} class="block px-4 py-2 text-sm">
-                Profile
+                {m.profile()}
               </a>
             </li>
             <li>
               <a href="/user/settings" class="block px-4 py-2 text-sm">
-                Settings
+                {m.settings()}
               </a>
             </li>
             {#if profile.role !== "User"}
               <li>
                 <a href="/staff/dashboard" class="block px-4 py-2 text-sm">
-                  Staff Dashboard
+                  {m.staff_dashboard()}
                 </a>
               </li>
             {/if}
@@ -247,7 +248,7 @@
                 }}
                 class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
               >
-                Sign Out
+                {m.sign_out()}
               </button>
             </li>
           </ul>
@@ -257,7 +258,7 @@
           href="/auth/login"
           class="rounded-xl bg-primary text-primary-content px-4 py-2 text-sm transition"
         >
-          Login
+          {m.login()}
         </a>
       {/if}
     </nav>
@@ -300,7 +301,7 @@
             onclick={() => (isOpen = false)}
           >
             <i class="fa-solid fa-bell fa-xl"></i>
-            <span class="ml-2">Notifications</span>
+            <span class="ml-2">{m.notifications()}</span>
           </a>
           {#if notifications.length !== 0}
             <div
@@ -333,7 +334,7 @@
                     onclick={() => (isOpen = false)}
                     class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                   >
-                    Profile
+                    {m.profile()}
                   </a>
                 </li>
                 <li>
@@ -342,7 +343,7 @@
                     onclick={() => (isOpen = false)}
                     class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                   >
-                    Settings
+                    {m.settings()}
                   </a>
                 </li>
                 {#if profile.role !== "User"}
@@ -352,7 +353,7 @@
                       onclick={() => (isOpen = false)}
                       class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
                     >
-                      Staff Dashboard
+                      {m.staff_dashboard()}
                     </a>
                   </li>
                 {/if}
@@ -365,7 +366,7 @@
                     }}
                     class="w-full text-left cursor-pointer block px-4 py-2 hover:bg-neutral-800 rounded"
                   >
-                    Sign Out
+                    {m.sign_out()}
                   </button>
                 </li>
               </ul>
@@ -378,7 +379,7 @@
               onclick={() => (isOpen = false)}
               class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
             >
-              Login
+              {m.login()}
             </a>
           </li>
         {/if}

@@ -5,7 +5,7 @@
   import Footer from "$lib/components/footer.svelte";
   import Disclaimer from "$lib/components/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
-  import { SvelteKitTopLoader } from 'sveltekit-top-loader';
+  import { SvelteKitTopLoader } from "sveltekit-top-loader";
 
   let { data, children } = $props();
 
@@ -26,8 +26,11 @@
   });
 
   import { setContext } from "svelte";
-  setContext('user', () => data.user);
-  setContext('session', () => data.session)
+  setContext("user", () => data.user);
+  setContext("session", () => data.session);
+
+  import { locales, localizeHref } from "$lib/paraglide/runtime";
+  import { page } from "$app/state";
 </script>
 
 <svelte:head>
@@ -56,5 +59,11 @@
 <section class="bg-base-100">
   {@render children()}
 </section>
+
+<div style="display:none">
+  {#each locales as locale}
+    <a href={localizeHref(page.url.pathname, { locale })}>{locale}</a>
+  {/each}
+</div>
 
 <Footer />

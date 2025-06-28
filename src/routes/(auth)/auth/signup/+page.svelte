@@ -1,6 +1,7 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { enhance } from "$app/forms";
 
@@ -29,10 +30,10 @@
       class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
     >
       <h1 class="text-3xl font-clash font-bold text-center mb-6">
-        Join CubeIndex
+        {m.join_cubeindex()}
       </h1>
       <p class="text-center text-sm mb-8">
-        Create a free account to start tracking your collection
+        {m.create_free_account()}
       </p>
       <form
         method="POST"
@@ -51,7 +52,7 @@
         <!-- Username -->
         <div>
           <label for="username" class="block text-sm font-medium"
-            >Username</label
+            >{m.label_username()}</label
           >
           <input
             name="username"
@@ -64,7 +65,7 @@
 
         <!-- Email -->
         <div>
-          <label for="email" class="block text-sm font-medium">Email</label>
+          <label for="email" class="block text-sm font-medium">{m.label_email()}</label>
           <input
             name="email"
             type="email"
@@ -77,7 +78,7 @@
         <!-- Password -->
         <div>
           <label for="password" class="block text-sm font-medium"
-            >Password</label
+            >{m.label_password()}</label
           >
           <div class="flex flex-row items-center">
             <input
@@ -102,7 +103,7 @@
         <!-- Confirm Password -->
         <div>
           <label for="confirmPassword" class="block text-sm font-medium"
-            >Confirm Password</label
+            >{m.label_confirm_password()}</label
           >
           <input
             id="confirmPassword"
@@ -114,7 +115,7 @@
           />
         </div>
 
-        <!-- Accept ToS and Privacy Policy -->
+        <!-- Accept ToS {m.and()} {m.privacy_policy()} -->
         <div class="flex items-center gap-2">
           <input
             type="checkbox"
@@ -123,9 +124,9 @@
             class="checkbox bg-base-300"
           />
           <label for="acceptTOS" class="text-sm select-none">
-            I accept the
+            {m.accept_terms_prefix()}
             <a href="/tos" target="_blank" class="link link-primary"
-              >Terms of Service</a
+              >{m.terms_of_service()}</a
             >
             and
             <a href="/privacy" target="_blank" class="link link-primary"
@@ -147,9 +148,9 @@
         >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
-            Signing Up...
+            {m.signing_up()}
           {:else}
-            Sign Up
+            {m.sign_up()}
           {/if}
         </button>
 
@@ -165,21 +166,21 @@
         {/if}
 
         <!-- OR Divider -->
-        <div class="divider">or</div>
+        <div class="divider">{m.or()}</div>
 
-        <!-- Sign Up with Discord Button -->
+        <!-- {m.sign_up_with_discord()} Button -->
         <a
           type="button"
           href="/auth/discord"
           class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
         >
           <i class="fa-brands fa-discord text-2xl"></i>
-          Sign Up with Discord
+          {m.sign_up_with_discord()}
         </a>
       </form>
       <p class="text-sm text-center mt-6">
-        Already have an account?
-        <a href="/auth/login" class="link link-primary link-hover">Log in</a>
+        {m.already_have_account()}
+        <a href="/auth/login" class="link link-primary link-hover">{m.log_in_lower()}</a>
       </p>
     </div>
   </section>

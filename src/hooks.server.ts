@@ -5,6 +5,7 @@ import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
+import { paraglideMiddleware } from "$lib/paraglide/server";
 
 const supabase: Handle = async ({ event, resolve }) => {
   /**
@@ -95,4 +96,17 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+const paraglideHandle: Handle = ({ event, resolve }) =>
+  paraglideMiddleware(
+    event.request,
+    ({ request: localizedRequest, locale }) => {
+      event.request = localizedRequest;
+      return resolve(event, {
+        transformPageChunk: ({ html }) => {
+          return html.replace("%lang%", locale);
+        },
+      });
+    }
+  );
+
+export const handle: Handle = sequence(supabase, authGuard, paraglideHandle);

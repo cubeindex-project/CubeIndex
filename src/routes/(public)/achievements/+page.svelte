@@ -1,6 +1,7 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
 
   const { data } = $props();
@@ -35,10 +36,11 @@
 {#if achievementsAvailability}
   <section class="min-h-screen px-6 py-24">
     <div class="max-w-6xl mx-auto">
-      <h1 class="text-4xl font-bold text-center mb-6">Achievements</h1>
+      <h1 class="text-4xl font-bold text-center mb-6">
+        {m.achievements_title()}
+      </h1>
       <p class="text-center mb-12">
-        Unlock achievements by participating in the CubeIndex community. Collect
-        them all to showcase your journey!
+        {m.achievements_subtitle()}
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -49,17 +51,19 @@
             <!-- Rarity Color Bar -->
             <div
               class={"w-2 flex-shrink-0 " +
-                (achievement.rarity == "Mythic"
-                  ? "bg-red-600"
-                  : achievement.rarity == "Legendary"
-                    ? "bg-yellow-400"
-                    : achievement.rarity == "Exotic"
-                      ? "bg-teal-400"
-                      : achievement.rarity == "Epic"
-                        ? "bg-purple-600"
-                        : achievement.rarity == "Rare"
-                          ? "bg-blue-600"
-                          : "bg-neutral-700")}
+                (achievement.rarity == "Special"
+                  ? "bg-gradient-to-b from-pink-500 via-yellow-400 to-blue-500"
+                  : achievement.rarity == "Mythic"
+                    ? "bg-red-600"
+                    : achievement.rarity == "Legendary"
+                      ? "bg-yellow-400"
+                      : achievement.rarity == "Exotic"
+                        ? "bg-teal-400"
+                        : achievement.rarity == "Epic"
+                          ? "bg-purple-600"
+                          : achievement.rarity == "Rare"
+                            ? "bg-blue-600"
+                            : "bg-neutral-700")}
             ></div>
             <!-- Card Content -->
             <div class="flex-1 p-6">
@@ -69,7 +73,19 @@
                 <span
                   class="text-sm capitalize px-3 py-1 rounded-full font-semibold bg-base-300"
                 >
-                  {achievement.rarity}
+                  {achievement.rarity === "Special"
+                    ? m.rarity_special()
+                    : achievement.rarity === "Mythic"
+                      ? m.rarity_mythic()
+                      : achievement.rarity === "Legendary"
+                        ? m.rarity_legendary()
+                        : achievement.rarity === "Exotic"
+                          ? m.rarity_exotic()
+                          : achievement.rarity === "Epic"
+                            ? m.rarity_epic()
+                            : achievement.rarity === "Rare"
+                              ? m.rarity_rare()
+                              : m.rarity_common()}
                 </span>
               </div>
 
@@ -86,7 +102,9 @@
                 >
                   <i class="fa-regular fa-star"></i>
                   <span>
-                    <span class="opacity-80 font-normal">Title Reward:</span>
+                    <span class="opacity-80 font-normal"
+                      >{m.title_reward()}</span
+                    >
                     <span class="font-bold ml-1">"{achievement.title}"</span>
                   </span>
                 </div>
@@ -94,26 +112,30 @@
 
               <div class="space-y-2 text-sm">
                 <p class="flex justify-between">
-                  <span class="font-semibold">Category:</span>
+                  <span class="font-semibold">{m.category_label()}</span>
                   <span>{achievement.category}</span>
                 </p>
 
                 <p class="flex justify-between">
-                  <span class="font-semibold">Unlock Method:</span>
-                  <span>{achievement.unlock_method}</span>
+                  <span class="font-semibold">{m.unlock_method()}</span>
+                  <span
+                    >{achievement.unlock_method === "Manual"
+                      ? m.unlock_method_manual()
+                      : m.unlock_method_auto()}</span
+                  >
                 </p>
 
                 <a
                   href={idOfUser(achievement.submitted_by)}
                   class="flex justify-between transition"
                 >
-                  <span class="font-semibold">Submitted by:</span>
+                  <span class="font-semibold">{m.submitted_by()}</span>
                   <span class="link link-hover">{achievement.submitted_by}</span
                   >
                 </a>
 
                 <p class="flex justify-between">
-                  <span class="font-semibold">Created at:</span>
+                  <span class="font-semibold">{m.created_at()}</span>
                   <span>{formatDate(achievement.created_at)}</span>
                 </p>
 
@@ -122,7 +144,7 @@
                     class="inline-flex items-center gap-2 rounded-full bg-error px-3 py-1 text-xs font-bold uppercase tracking-wide text-error-content"
                   >
                     <i class="fa-solid fa-xmark"></i>
-                    Not currently unlockable
+                    {m.not_unlockable()}
                   </p>
                 {/if}
               </div>

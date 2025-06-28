@@ -2,6 +2,7 @@
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
   import StarRating from "$lib/components/starRating.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data } = $props();
   const { accessories } = data;
@@ -29,11 +30,10 @@
   <section class="min-h-screen px-6 py-16 relative">
     <div class="relative z-10 max-w-7xl mx-auto">
       <h1 class="text-4xl font-bold mb-6 font-clash text-center">
-        Explore Accessories
+        {m.explore_accessories_title()}
       </h1>
       <p class="mb-12 text-center">
-        Discover the best cube timers, mats, lubricants, and more—handpicked by
-        our community.
+        {m.explore_accessories_desc()}
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -53,7 +53,7 @@
               </p>
               {#if acc.compatibility}
                 <p class="text-sm">
-                  <strong>Compatibility:</strong>
+                  <strong>{m.compatibility()}</strong>
                   {acc.compatibility}
                 </p>
               {/if}
@@ -61,7 +61,7 @@
                 <StarRating rating={acc.rating} large={false} />
               </div>
               <p class="text-sm">
-                Released: {formatDate(acc.release_date)}
+                {m.released()} {formatDate(acc.release_date)}
               </p>
             </div>
           </div>

@@ -1,7 +1,3 @@
-<script lang="ts">
-  import { m } from "$lib/paraglide/messages";
-</script>
-
 <footer class="bg-base-100 px-6 py-10">
   <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
     <!-- Brand Info -->
@@ -15,27 +11,27 @@
         <span class="text-2xl font-clash font-bold">CubeIndex</span>
       </div>
       <p class="text-sm text-gray-400">
-        {m.track_explore_share()}
+        Track, explore and share your speedcube collection.
       </p>
     </div>
 
     <!-- Site Links -->
     <div>
-      <h3 class="font-semibold mb-3">{m.navigation()}</h3>
+      <h3 class="font-semibold mb-3">Navigation</h3>
       <ul class="space-y-2 text-sm">
         <li>
-          <a href="/explore" class="link link-hover">{m.nav_explore()}</a>
+          <a href="/explore" class="link link-hover">Explore</a>
         </li>
         <li>
-          <a href="/achievements" class="link link-hover">{m.nav_achievements()}</a>
+          <a href="/achievements" class="link link-hover">Achievements</a>
         </li>
-        <li><a href="/about" class="link link-hover">{m.nav_about()}</a></li>
+        <li><a href="/about" class="link link-hover">About</a></li>
       </ul>
     </div>
 
     <!-- Social & Legal -->
     <div>
-      <h3 class="font-semibold mb-3">{m.socials()}</h3>
+      <h3 class="font-semibold mb-3">Socials</h3>
       <ul class="space-y-2 text-sm">
         <li>
           <a href="/discord" target="_blank" class="link link-hover">Discord</a>
@@ -62,16 +58,16 @@
       </ul>
     </div>
     <div>
-      <h3 class="font-semibold mb-3">{m.legal()}</h3>
+      <h3 class="font-semibold mb-3">Legal</h3>
       <ul class="space-y-2 text-sm">
         <li>
-          <a href="/privacy" class="link link-hover">{m.privacy_policy()}</a>
+          <a href="/privacy" class="link link-hover">Privacy Policy</a>
         </li>
         <li>
-          <a href="/report" class="link link-hover">{m.report()}</a>
+          <a href="/report" class="link link-hover">Report</a>
         </li>
         <li>
-          <a href="/tos" class="link link-hover">{m.terms_of_service()}</a>
+          <a href="/tos" class="link link-hover">Terms of Service</a>
         </li>
       </ul>
     </div>
@@ -79,7 +75,8 @@
 
   <!-- Bottom -->
   <div class="mt-10 text-center text-xs">
-    &copy; 2025 - {new Date().getFullYear()} CubeIndex {m.by()}
-    <a href="https://saterz.dev/" class="link">Saterz_</a>. {m.rights_reserved()}
+    &copy; 2025 - {new Date().getFullYear()} CubeIndex by
+    <a href="https://saterz.dev/studio" class="link">Saterz Studio</a>. All
+    rights reserved.
   </div>
 </footer>

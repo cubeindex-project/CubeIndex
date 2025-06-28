@@ -2,7 +2,6 @@
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
   import { onMount } from "svelte";
-  import { m } from "$lib/paraglide/messages";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
@@ -32,10 +31,10 @@
   <section class="min-h-screen bg-base-100 px-6 py-16">
     <div class="max-w-6xl mx-auto">
       <h1 class="text-4xl sm:text-5xl font-clash font-bold mb-10 text-center">
-        {m.explore_vendors_title()}
+        Explore Vendors
       </h1>
       <p class="text-center text-gray-400 mb-12">
-        {m.explore_vendors_desc()}
+        Find the best shops and trusted vendors in the cubing world.
       </p>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each vendors as vendor}

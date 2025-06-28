@@ -1,7 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import type { PageData } from "./$types";
-  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   const { profiles } = data;
@@ -42,7 +41,7 @@
     <h1
       class="text-4xl sm:text-5xl font-clash font-extrabold mb-8 tracking-tight text-primary"
     >
-      {m.user_settings()}
+      User Settings
     </h1>
 
     <form method="POST" use:enhance={verifySettings}>
@@ -50,13 +49,13 @@
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
           <span class="text-2xl">👤</span>
-          <h2 class="text-2xl font-bold tracking-tight">{m.profile_information()}</h2>
+          <h2 class="text-2xl font-bold tracking-tight">Profile Information</h2>
         </div>
 
         <!-- Avatar URL -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            {m.settings_avatar_url()}
+            Avatar Image URL
             <input
               type="url"
               name="profile_picture"
@@ -66,14 +65,14 @@
             />
           </label>
           <p class="text-gray-500 text-xs mt-1">
-            {m.image_must_be_valid()}
+            Image must be a valid JPG, PNG, or GIF URL.
           </p>
         </div>
 
         <!-- Banner URL -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            {m.settings_banner_url()}
+            Banner Image URL
             <input
               type="url"
               name="banner"
@@ -83,14 +82,14 @@
             />
           </label>
           <p class="text-gray-500 text-xs mt-1">
-            {m.optional_banner()}
+            Optional banner shown at the top of your profile.
           </p>
         </div>
 
         <!-- Username -->
         <div class="w-full">
           <label class="block text-sm font-semibold mb-2">
-            {m.label_username()}
+            Username
             <input
               type="text"
               name="username"
@@ -102,7 +101,7 @@
 
         <!-- Bio -->
         <fieldset class="fieldset">
-          <legend class="fieldset-legend">{m.bio()}</legend>
+          <legend class="fieldset-legend">Bio</legend>
           <textarea
             class="textarea h-24 w-full max-h-50"
             name="bio"
@@ -115,7 +114,7 @@
         <fieldset
           class="fieldset bg-base-200 border-base-100 rounded-box w-64 border p-4"
         >
-          <legend class="fieldset-legend">{m.profile_privacy()}</legend>
+          <legend class="fieldset-legend">Profile Privacy</legend>
           <label class="label">
             <input
               type="checkbox"
@@ -123,7 +122,7 @@
               bind:checked={private_profile}
               class="checkbox bg-base-100"
             />
-            {m.make_profile_private()}
+            Make my profile private (only visible to me)
           </label>
         </fieldset>
       </div>
@@ -134,14 +133,14 @@
       <div class="mt-10 mb-10 space-y-6">
         <div class="flex items-center gap-4">
           <span class="text-2xl">🌐</span>
-          <h2 class="text-2xl font-bold tracking-tight">{m.social_links()}</h2>
+          <h2 class="text-2xl font-bold tracking-tight">Social Links</h2>
         </div>
 
         <div class="grid grid-cols-1 gap-6">
           <!-- Website -->
           <div>
             <label class="block text-sm font-semibold mb-2">
-              {m.personal_website()}
+              Personal Website
               <input
                 type="url"
                 name="website"
@@ -255,20 +254,20 @@
       <div class="space-y-6 mt-10 mb-10">
         <div class="flex items-center gap-4">
           <span class="text-2xl">🔒</span>
-          <h2 class="text-2xl font-bold tracking-tight">{m.account_security()}</h2>
+          <h2 class="text-2xl font-bold tracking-tight">Account Security</h2>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label class="block text-sm font-semibold mb-2">
-              {m.current_password()}
+              Current Password
               <input type="password" class="input w-full" />
             </label>
           </div>
 
           <div>
             <label class="block text-sm font-semibold mb-2">
-              {m.label_new_password()}
+              New Password
               <input type="password" class="input w-full" />
             </label>
           </div>
@@ -279,13 +278,13 @@
           onclick={updatePassword}
           disabled
         >
-          {m.update_password()}
+          Update Password
         </button>
       </div>
 
       <div class="flex justify-end pt-6">
         <button type="submit" class="btn btn-primary btn-xl">
-          {m.save_changes()}
+          Save Changes
         </button>
       </div>
     </form>

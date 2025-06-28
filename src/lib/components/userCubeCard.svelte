@@ -1,6 +1,5 @@
 <script lang="ts">
   import CubeVersionType from "./cubeVersionType.svelte";
-  import { m } from "$lib/paraglide/messages";
 
   let { cube, user_details = [], image } = $props();
 
@@ -45,19 +44,19 @@
         <div>
           {#if user_details_cube[0].condition}
             <p>
-              <span class="font-bold">{m.condition()}</span>
+              <span class="font-bold">Condition:</span>
               {user_details_cube[0].condition}
             </p>
           {/if}
           {#if user_details_cube[0].status}
             <p>
-              <span class="font-bold">{m.status()}</span>
+              <span class="font-bold">Status:</span>
               {user_details_cube[0].status}
             </p>
           {/if}
           {#if user_details_cube[0].notes}
-            <span class="font-bold">{m.notes()}</span>
-            <button class="cursor-pointer link link-primary" onclick={() => {showNotes = !showNotes}}>{showNotes ? m.hide() : m.show()}</button>
+            <span class="font-bold">Notes:</span>
+            <button class="cursor-pointer link link-primary" onclick={() => {showNotes = !showNotes}}>Show</button>
             <div class="bg-base-300 border border-base-100 p-2 rounded-2xl {showNotes ? "flex" : "hidden"}">
               <p>
                 {user_details_cube[0].notes}
@@ -66,7 +65,7 @@
           {/if}
           {#if user_details_cube[0].acquired_date}
             <p>
-              <span class="font-bold">{m.acquired_date()}</span>
+              <span class="font-bold">Acquired Date:</span>
               {user_details_cube[0].acquired_date}
             </p>
           {/if}
@@ -78,7 +77,7 @@
       class="btn btn-primary mt-4"
       aria-label="View Cube Details"
     >
-      {m.view_details()}
+      View Details
       <i class="fa-solid fa-arrow-right"></i>
     </a>
   </div>

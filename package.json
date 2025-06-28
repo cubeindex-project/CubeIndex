@@ -15,14 +15,11 @@
     "test": "npm run test:unit -- --run",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio",
-    "machine-translate": "inlang machine translate --project project.inlang"
+    "db:studio": "drizzle-kit studio"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
-    "@inlang/cli": "^3.0.12",
-    "@inlang/paraglide-js": "2.1.0",
     "@lukulent/svelte-umami": "^0.0.4",
     "@sveltejs/adapter-netlify": "^5.0.2",
     "@sveltejs/adapter-vercel": "^0.0.3",
@@ -53,6 +50,7 @@
     "zod": "^3.25.64"
   },
   "dependencies": {
+    "@inlang/paraglide-js": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
     "@number-flow/svelte": "^0.3.9",
     "@oslojs/crypto": "^1.0.1",

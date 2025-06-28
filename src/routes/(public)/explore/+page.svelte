@@ -1,7 +1,6 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
 
   let databaseAvailability: boolean = $state(true);
@@ -10,26 +9,30 @@
     {
       href: "cubes",
       icon: "🧊",
-      title: m.explore_card_cubes_title(),
-      description: m.explore_card_cubes_desc(),
+      title: "Cubes",
+      description:
+        "Browse thousands of cubes by brand, type, and community rating.",
     },
     {
       href: "accessories",
       icon: "🧰",
-      title: m.explore_card_accessories_title(),
-      description: m.explore_card_accessories_desc(),
+      title: "Accessories",
+      description:
+        "Discover timers, mats, lubricants, and everything else you need.",
     },
     {
       href: "vendors",
       icon: "🏬",
-      title: m.explore_card_vendors_title(),
-      description: m.explore_card_vendors_desc(),
+      title: "Vendors",
+      description:
+        "Find trusted cube shops and compare prices from top vendors worldwide.",
     },
     {
       href: "users",
       icon: "🧍",
-      title: m.explore_card_users_title(),
-      description: m.explore_card_users_desc(),
+      title: "Users",
+      description:
+        "Explore user profiles, discover top solvers, and see community activity.",
     },
   ];
 
@@ -45,7 +48,7 @@
     class="min-h-screen flex flex-col items-center justify-center px-6 py-16 space-y-12"
   >
     <h1 class="text-4xl sm:text-5xl font-clash font-bold text-center">
-      {m.explore_prompt()}
+      What would you like to explore?
     </h1>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl w-full">

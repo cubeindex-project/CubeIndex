@@ -1,7 +1,3 @@
-<script lang="ts">
-  import { m } from "$lib/paraglide/messages.js";
-</script>
-
 <section
   class="min-h-screen flex flex-col items-center justify-center px-6 text-center relative stripe-bg overflow-hidden"
 >
@@ -12,13 +8,14 @@
       🚧
     </div>
     <h1 class="text-4xl text-warning sm:text-5xl font-bold mt-4">
-      {m.page_in_construction()}
+      Page in Construction
     </h1>
     <p class="mt-4 text-lg max-w-xl">
-      {m.construction_message()}
+      We're currently working hard to finish this part of the site. Check back
+      soon for something awesome!
     </p>
 
-    <a href="/" class="btn btn-warning btn-lg mt-6"> {m.return_home()} </a>
+    <a href="/" class="btn btn-warning btn-lg mt-6"> 🏠 Return Home </a>
   </div>
 </section>
 

@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   let { cubes } = data;
@@ -45,44 +44,44 @@
   };
 
   const fields: Field[] = [
-    { label: `${m.cube_type_label()}`, key: "version_type" },
-    { label: `${m.brand()}`, key: "brand" },
-    { label: `${m.series()}`, key: "series" },
-    { label: `${m.model()}`, key: "model" },
-    { label: `${m.version_name()}`, key: "version_name" },
-    { label: `${m.type()}`, key: "type" },
-    { label: `${m.subtype()}`, key: "sub_type" },
-    { label: `${m.surface_finish()}`, key: "surface_finish" },
-    { label: `${m.stickered()}`, key: "stickered", format: boolYesNo },
-    { label: `${m.wca_legal()}`, key: "wca_legal", format: boolYesNo },
-    { label: `${m.magnetic()}`, key: "magnetic", format: boolYesNo },
-    { label: `${m.maglev()}`, key: "maglev", format: boolYesNo },
-    { label: `${m.smart()}`, key: "smart", format: boolYesNo },
-    { label: `${m.modded()}`, key: "modded", format: boolYesNo },
-    { label: `${m.discontinued()}`, key: "discontinued", format: boolYesNo },
-    { label: `${m.related_to()}`, key: "related_to" },
-    { label: `${m.release_date()}`, key: "release_date", format: formatDate },
-    { label: `${m.rating()}`, key: "rating", format: formatFloat },
-    { label: `${m.weight_g()}`, key: "weight", format: formatFloat },
-    { label: `${m.size_mm3()}`, key: "size", format: formatFloat },
+    { label: "Version Type", key: "version_type" },
+    { label: "Brand", key: "brand" },
+    { label: "Series", key: "series" },
+    { label: "Model", key: "model" },
+    { label: "Version Name", key: "version_name" },
+    { label: "Type", key: "type" },
+    { label: "Subtype", key: "sub_type" },
+    { label: "Surface Finish", key: "surface_finish" },
+    { label: "Stickered", key: "stickered", format: boolYesNo },
+    { label: "WCA Legal", key: "wca_legal", format: boolYesNo },
+    { label: "Magnetic", key: "magnetic", format: boolYesNo },
+    { label: "Maglev", key: "maglev", format: boolYesNo },
+    { label: "Smart", key: "smart", format: boolYesNo },
+    { label: "Modded", key: "modded", format: boolYesNo },
+    { label: "Discontinued", key: "discontinued", format: boolYesNo },
+    { label: "Related To", key: "related_to" },
+    { label: "Release Date", key: "release_date", format: formatDate },
+    { label: "Rating", key: "rating", format: formatFloat },
+    { label: "Weight (g)", key: "weight", format: formatFloat },
+    { label: "Size (mm3)", key: "size", format: formatFloat },
   ];
 </script>
 
 <section class="min-h-screen px-4 py-12">
   <div class="max-w-5xl mx-auto">
     <h1 class="text-4xl font-clash font-bold text-center mb-10">
-      {m.compare_cubes()}
+      Compare Cubes
     </h1>
     <div class="flex flex-col md:flex-row gap-8 justify-center mb-12">
       <!-- Cube 1 Select -->
       <div class="flex-1">
         <label class="block mb-2 text-lg font-semibold"
-          >{m.cube1()}
+          >Cube 1
           <select
             class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
             onchange={selectCube1}
           >
-            <option value="" disabled selected>{m.select_cube()}</option>
+            <option value="" disabled selected>Select a cube…</option>
             {#each options as opt}
               <option value={opt.value}>{opt.label}</option>
             {/each}
@@ -93,18 +92,18 @@
       <div class="flex justify-center items-center">
         <span
           class="bg-base-300 rounded-full text-3xl px-7 py-4 text-primary font-bold"
-          >{m.vs()}</span
+          >VS</span
         >
       </div>
       <!-- Cube 2 Select -->
       <div class="flex-1">
         <label class="block mb-2 text-lg font-semibold"
-          >{m.cube2()}
+          >Cube 2
           <select
             class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
             onchange={selectCube2}
           >
-            <option value="" disabled selected>{m.select_cube()}</option>
+            <option value="" disabled selected>Select a cube…</option>
             {#each options as opt}
               <option value={opt.value}>{opt.label}</option>
             {/each}
@@ -121,7 +120,7 @@
         <thead>
           <tr class="">
             <th class="py-4 px-3 font-bold text-primary text-lg w-1/3">
-              {m.feature()}
+              Feature
             </th>
             <th class="py-4 px-3 font-bold text-lg text-center w-1/3">
               {#if cube1}
@@ -136,7 +135,7 @@
                   {cube1.version_name}
                 </span>
               {:else}
-                <span>{m.cube1()}</span>
+                <span>Cube 1</span>
               {/if}
             </th>
             <th class="py-4 px-3 font-bold text-lg text-center w-1/3">
@@ -152,7 +151,7 @@
                   {cube2.version_name}
                 </span>
               {:else}
-                <span>{m.cube2()}</span>
+                <span>Cube 2</span>
               {/if}
             </th>
           </tr>
@@ -189,7 +188,7 @@
       </table>
       {#if !cube1 && !cube2}
         <div class="text-center py-10 text-lg">
-          {m.select_at_least_one_cube()}
+          Select at least one cube to compare.
         </div>
       {/if}
     </div>

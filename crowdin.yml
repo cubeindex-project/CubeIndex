@@ -1,5 +1,0 @@
-bundles:
-  - 10
-files:
-  - source: /messages/en.json
-    translation: /messages/%two_letters_code%.json

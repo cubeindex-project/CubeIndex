@@ -6,26 +6,10 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, locals }) => {
-    const { supabase, user } = locals;
-    if (!user) {
-      throw error(401, "Not authenticated");
-    }
-
+  default: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
-    const providedUsername = formData.get("username") as string;
+    const username = formData.get("username") as string;
     const submission = formData.get("submission");
-
-    const { data: profiles, error: profileError } = await supabase
-      .from("profiles")
-      .select("username")
-      .eq("user_id", user.id);
-
-    if (profileError) throw error(500, profileError.message);
-    const username = profiles?.[0]?.username;
-    if (!username || username !== providedUsername) {
-      throw error(401, "Unauthorized");
-    }
 
     if (!(submission instanceof File)) {
       throw error(400, "Submission is not a file");

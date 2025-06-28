@@ -1,29 +1,28 @@
 <script lang="ts">
   import Badge from "$lib/components/badge.svelte";
-  import { m } from "$lib/paraglide/messages.js";
   const { data } = $props();
   const { profiles } = data;
 
   const features = [
     {
-      title: m.about_feature_organize(),
+      title: "Organize Your Cubes",
       icon: "fa-solid fa-boxes",
-      desc: m.about_feature_organize_desc(),
+      desc: "Keep track of your entire collection with ease.",
     },
     {
-      title: m.about_feature_discover(),
+      title: "Discover New Models",
       icon: "fa-solid fa-search",
-      desc: m.about_feature_discover_desc(),
+      desc: "Explore popular, limited, and community submissions.",
     },
     {
-      title: m.about_feature_track(),
+      title: "Track Achievements",
       icon: "fa-solid fa-trophy",
-      desc: m.about_feature_track_desc(),
+      desc: "Earn badges and milestones for your cubing journey.",
     },
     {
-      title: m.about_feature_community(),
+      title: "Community Driven",
       icon: "fa-solid fa-users",
-      desc: m.about_feature_community_desc(),
+      desc: "Contribute entries, rate cubes, and engage with fellow cubers.",
     },
   ];
 
@@ -41,16 +40,17 @@
       class="mx-auto w-32 h-32 rounded-2xl"
     />
     <!-- Disclaimer -->
-    <p class="text-xs text-gray-500 italic">{m.about_logo_by()} <a href="/user/{logoDesigner[0].id}" class="link">{logoDesigner[0].username}</a>.</p>
-    <h1 class="text-5xl font-bold">{m.about_welcome()}</h1>
+    <p class="text-xs text-gray-500 italic">Logo designed by <a href="/user/{logoDesigner[0].id}" class="link">{logoDesigner[0].username}</a>.</p>
+    <h1 class="text-5xl font-bold">Welcome to CubeIndex</h1>
     <p class="text-lg max-w-2xl mx-auto">
-      {m.about_description()}
+      CubeIndex is your ultimate speedcubing companion. Organize, explore, and
+      showcase your cube collection — all in one place.
     </p>
   </section>
 
   <!-- Feature Highlights -->
   <section>
-    <h2 class="text-3xl font-semibold text-center mb-8">{m.about_features_heading()}</h2>
+    <h2 class="text-3xl font-semibold text-center mb-8">What You Can Do</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       {#each features as f}
         <div
@@ -68,7 +68,7 @@
 
   <!-- Team Spotlight -->
   <section>
-    <h2 class="text-3xl font-semibold text-center mb-8">{m.about_team_heading()}</h2>
+    <h2 class="text-3xl font-semibold text-center mb-8">Meet the Team</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {#each team as member}
         <div class="card card-compact bg-base-200 rounded-md p-6 text-center">
@@ -94,7 +94,7 @@
             <Badge textSize="sm" profile={member} />
           </div>
           <a href="/user/{member.id}" class="btn btn-neutral w-full">
-            {m.visit_profile()} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            Visit Profile <i class="fa-solid fa-arrow-up-right-from-square"></i>
           </a>
         </div>
       {/each}
@@ -108,9 +108,9 @@
             class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary shadow-xl object-cover transition-transform duration-200"
           />
         </div>
-        <h3 class="text-xl font-semibold mb-2">{m.about_you()}</h3>
+        <h3 class="text-xl font-semibold mb-2">You</h3>
         <a href="https://tally.so/r/w7gbd9" class="btn btn-neutral w-full">
-          {m.about_apply()} <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          Apply <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
     </div>

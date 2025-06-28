@@ -2,7 +2,6 @@
   import { getContext, onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { error } from "@sveltejs/kit";
-  import { m } from "$lib/paraglide/messages";
 
   let username: string = $state("");
 
@@ -16,9 +15,7 @@
       .eq("user_id", user?.id);
 
     if (profileErr) throw error(500, profileErr.message);
-    if (profiles && profiles.length > 0) {
-      username = profiles[0].username;
-    }
+    username = profiles[0].username;
     return { username };
   });
 </script>
@@ -31,7 +28,7 @@
     enctype="multipart/form-data"
     class="flex justify-center flex-col items-center gap-4"
   >
-    <h1 class="font-clash text-5xl">{m.send_submission_heading()}</h1>
+    <h1 class="font-clash text-5xl">Send your Submission to CubeIndex</h1>
     <input
       type="text"
       class="input"
@@ -46,9 +43,9 @@
       accept="video/*"
       required
     />
-    <button class="btn" type="submit" disabled={!username}>{m.submit()}</button>
+    <button class="btn" type="submit" disabled={!username}>Submit</button>
     {#if !username}
-      <p class="text-error">You must create a profile or log in to submit.</p>
+      <p class="text-error">You must be logged in to submit.</p>
     {/if}
   </form>
 </section>

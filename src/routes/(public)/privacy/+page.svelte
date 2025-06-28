@@ -1,12 +1,11 @@
 <script>
-  import { m } from "$lib/paraglide/messages";
   const lastUpdated = "April 18, 2025";
 </script>
 
 <section class="min-h-screen px-6 py-24">
   <div class="max-w-3xl mx-auto space-y-10">
-    <h1 class="text-4xl font-bold text-center mb-4">{m.privacy_policy_title()}</h1>
-    <p class="text-center text-sm">{m.last_updated()} {lastUpdated}</p>
+    <h1 class="text-4xl font-bold text-center mb-4">Privacy Policy</h1>
+    <p class="text-center text-sm">Last updated: {lastUpdated}</p>
 
     <div class="space-y-8 leading-relaxed">
       <section>

@@ -7,25 +7,27 @@ export const actions: Actions = {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    const { error: e } = await supabase.auth.signInWithPassword({
+    const {
+      data: { user },
+      error: err,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (e) return fail(400, { message: e.message });
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    if (err) return fail(400, { error: err.message });
+    if (!user) return fail(500, { error: "User not returned by Supabase" });
 
-    const { data: profiles, error: err } = await supabase
+    const { data: profile, error: profileErr } = await supabase
       .from("profiles")
       .select("id")
-      .eq("user_id", user?.id);
+      .eq("user_id", user?.id)
+      .single();
 
-    if (err) return fail(500, { message: err.message });
-
-    const profile = profiles?.[0];
+    if (profileErr) return fail(500, { error: profileErr.message });
 
     redirect(303, `/user/${profile?.id}`);
+
+    return { message: "Logged in successfully!" };
   },
 };

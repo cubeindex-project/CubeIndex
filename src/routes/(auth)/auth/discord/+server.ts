@@ -5,7 +5,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const { data } = await supabase.auth.signInWithOAuth({
     provider: "discord",
     options: {
-      redirectTo: url.origin + "/auth/login-callback",
+      redirectTo: `${url.origin}/auth/callback`,
     },
   });
 

@@ -7,33 +7,30 @@
   let { form } = $props();
   let showPassword = $state(false);
   let email = $state("");
+  let password = $state("");
   let login = $state(true);
-  let localError: string = $state("");
-  let message: string = $state("");
+  let resetError: string = $state("");
+  let resetMessage: string = $state("");
+  let isSubmitting = $state(false);
 
-  // async function resetPassword(e: Event) {
-  //     e.preventDefault();
-  //     if (!email) {
-  //         localError = "Please enter an email";
-  //         return;
-  //     }
-  //     const { error: err } = await supabase.auth.resetPasswordForEmail(
-  //         email,
-  //         {
-  //             redirectTo: "https://cube-index-beta.vercel.app/auth/reset",
-  //         },
-  //     );
+  async function resetPassword(e: Event) {
+    e.preventDefault();
+    resetError = "";
+    resetMessage = "";
+    if (!email) {
+      resetError = "Please enter an email";
+      return;
+    }
+    const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`,
+    });
 
-  //     if (err) {
-  //         localError = err.message;
-  //         return;
-  //     }
+    if (err) {
+      resetError = err.message;
+      return;
+    }
 
-  //     message = "Check your email to reset your password";
-  // }
-
-  function togglePasswordVisibility() {
-    showPassword = !showPassword;
+    resetMessage = "Check your email to reset your password";
   }
 
   onMount(() =>
@@ -54,7 +51,13 @@
         Welcome Back
       </h1>
       <p class="text-center text-sm mb-8">Login to your CubeIndex profile</p>
-      <form method="POST" class="space-y-6">
+      <form
+        method="POST"
+        class="space-y-6"
+        onsubmit={() => {
+          isSubmitting = true;
+        }}
+      >
         <div>
           <label for="email" class="block text-sm font-medium">Email</label>
           <input
@@ -73,13 +76,16 @@
           <div class="flex flex-row items-center">
             <input
               name="password"
+              bind:value={password}
               type={showPassword ? "text" : "password"}
               class="input w-full"
             />
             <label class="swap text-md">
               <input
                 type="checkbox"
-                onclick={togglePasswordVisibility}
+                onclick={() => {
+                  showPassword = !showPassword;
+                }}
                 class="sr-only peer"
               />
               <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
@@ -90,26 +96,44 @@
 
         <p class="text-sm text-gray-500 -mt-5">
           Forgot your password?
-          <button class="link link-primary link-hover">Reset</button>
+          <button
+            type="button"
+            class="link link-primary link-hover"
+            onclick={resetPassword}>Reset</button
+          >
         </p>
 
-        <button type="submit" class="btn w-full btn-primary btn-lg">
-          Log In
+        <button
+          type="submit"
+          class="btn w-full btn-primary btn-lg"
+          disabled={isSubmitting || !email || !password}
+        >
+          {#if isSubmitting}
+            <span class="loading loading-spinner"></span>
+            Logging In...
+          {:else}
+            Log In
+          {/if}
         </button>
 
+        {#if resetMessage}
+          <p class="text-sm text-success text-center mt-2">
+            {resetMessage}
+          </p>
+        {/if}
         {#if form?.message}
-          <p class="text-sm text-red-500 text-center mt-2">
+          <p class="text-sm text-success text-center mt-2">
             {form.message}
           </p>
         {/if}
-        {#if localError && !form?.message}
-          <p class="text-sm text-red-500 text-center mt-2">
-            {localError}
+        {#if resetError}
+          <p class="text-sm text-error text-center mt-2">
+            {resetError}
           </p>
         {/if}
-        {#if message}
-          <p class="text-sm text-green-400 text-center mt-2">
-            {message}
+        {#if form?.error}
+          <p class="text-sm text-error text-center mt-2">
+            {form.error}
           </p>
         {/if}
 
@@ -119,7 +143,7 @@
         <!-- Sign Up with Discord Button -->
         <a
           type="button"
-          href="/auth/login/discord"
+          href="/auth/discord"
           class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
         >
           <i class="fa-brands fa-discord text-2xl"></i>

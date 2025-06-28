@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import { onMount } from "svelte";
-  import type { PageData } from "./$types";
+    import { configCatClient } from "$lib/configcatClient";
+    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+    import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
   const vendors = data.vendors ?? [];

@@ -3,6 +3,7 @@
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
+    import { formatDate } from "$lib/components/formatDate.svelte";
 
   let { data } = $props();
   let {
@@ -20,15 +21,6 @@
 
   let openAddCard = $state(false);
 
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
-
   function idOfUser(user: string) {
     const profile = profiles?.find(
       (p: { username: string }) => p.username === user
@@ -38,42 +30,25 @@
 </script>
 
 {#if databaseAvailability && cubesAvailability}
-  <section class="min-h-screen px-6 py-16">
-    <div class="max-w-4xl mx-auto">
-      <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
-        <img
-          src={cube.image_url}
-          alt={cube.name}
-          class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
-        />
-      </div>
-      <h1 class="text-4xl font-bold mb-4 flex gap-3 items-center">
-        <span class="font-clash">
-          {cube.series}
-          {cube.model}
-          {#if cube.version_type !== "Base"}
-            <span class="text-secondary">{cube.version_name}</span>
-          {/if}
-        </span>
-        <CubeVersionType {cube} moreInfo={true} />
-      </h1>
-
-      <p class="mb-4">
-        {cubeUserCount?.length} user{cubeUserCount?.length === 1 ? "" : "s"} have
-        this cube
-      </p>
-
-      <button
-        class="btn btn-secondary flex-1 mb-4"
-        type="button"
-        onclick={() => {
-          openAddCard = !openAddCard;
-        }}
-        aria-label="Add to Collection"
-      >
-        <i class="fa-solid fa-plus mr-2"></i>
-        Add to Collection
-      </button>
+    <section class="min-h-screen px-6 py-16">
+        <div class="max-w-4xl mx-auto">
+            <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
+                <img
+                    src={cube.image_url}
+                    alt="{cube.series} {cube.model} {cube.version_name}"
+                    class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
+                />
+            </div>
+            <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
+                <span class="font-clash">
+                    {cube.series}
+                    {cube.model}
+                    {#if cube.version_type !== "Base"}
+                        <span class="text-secondary">{cube.version_name}</span>
+                    {/if}
+                    <CubeVersionType version_type={cube.version_type} moreInfo={true} />
+                </span>
+            </h1>
 
       <!-- Highlighted Rating -->
       <div

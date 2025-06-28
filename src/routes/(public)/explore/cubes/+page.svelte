@@ -328,35 +328,46 @@
             </div>
           </div>
 
-          {#await cubes}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {#each Array(6) as i}
-                <div
-                  class="bg-neutral-800 rounded-2xl overflow-hidden animate-pulse"
-                >
-                  <div class="h-48 bg-neutral-700"></div>
-                  <div class="p-5 space-y-4">
-                    <div class="h-6 bg-neutral-700 rounded w-3/4"></div>
-                    <div class="h-4 bg-neutral-700 rounded w-1/2"></div>
-                    <div class="h-4 bg-neutral-700 rounded w-1/4"></div>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {:then}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {#each $paginatedCubes as cube}
-                <CubeCard
-                  {cube}
-                  add={true}
-                  rate={true}
-                  details={true}
-                  badges={true}
-                  image={true}
-                />
-              {/each}
-            </div>
-          {/await}
+                    {#await cubes}
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {#each Array(6) as i}
+                                <div
+                                    class="bg-neutral-800 rounded-2xl overflow-hidden animate-pulse"
+                                >
+                                    <div class="h-48 bg-neutral-700"></div>
+                                    <div class="p-5 space-y-4">
+                                        <div
+                                            class="h-6 bg-neutral-700 rounded w-3/4"
+                                        ></div>
+                                        <div
+                                            class="h-4 bg-neutral-700 rounded w-1/2"
+                                        ></div>
+                                        <div
+                                            class="h-4 bg-neutral-700 rounded w-1/4"
+                                        ></div>
+                                    </div>
+                                </div>
+                            {/each}
+                        </div>
+                    {:then}
+                        <div
+                            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {#each $paginatedCubes as cube}
+                                <CubeCard
+                                    {cube}
+                                    add={true}
+                                    rate={true}
+                                    staff={false}
+                                    details={true}
+                                    badges={true}
+                                    image={true}
+                                />
+                            {/each}
+                        </div>
+                    {/await}
 
           <div class="flex items-center justify-center gap-4 mt-10">
             <div class="join">

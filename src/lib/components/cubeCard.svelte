@@ -3,7 +3,7 @@
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
 
-  let { cube, rate, add, details, badges, image } = $props();
+  let { cube, rate, add, details, badges, staff, image } = $props();
 
   let openAddCard = $state(false);
 </script>
@@ -27,7 +27,7 @@
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
         {#if badges}
-          <CubeVersionType {cube} moreInfo={false} />
+          <CubeVersionType version_type={cube.version_type} moreInfo={false} />
         {/if}
       </h2>
       <p class="text-sm text-gray-400">

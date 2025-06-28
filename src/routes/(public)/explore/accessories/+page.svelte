@@ -1,21 +1,13 @@
 <script lang="ts">
-  import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import StarRating from "$lib/components/starRating.svelte";
+    import { configCatClient } from "$lib/configcatClient";
+    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+    import StarRating from "$lib/components/starRating.svelte";
+    import { formatDate } from "$lib/components/formatDate.svelte";
 
-  let { data } = $props();
-  const { accessories } = data;
-  let databaseAvailability: boolean = $state(true);
-  let accessoriesAvailability: boolean = $state(true);
-
-  // Helper to format YYYY-MM-DD
-  function formatDate(d: string) {
-    return new Date(d).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
+    let { data } = $props();
+    const { accessories } = data;
+    let databaseAvailability: boolean = $state(true);
+    let accessoriesAvailability: boolean = $state(true);
 
   configCatClient.getValueAsync("database", false).then((value) => {
     databaseAvailability = value;

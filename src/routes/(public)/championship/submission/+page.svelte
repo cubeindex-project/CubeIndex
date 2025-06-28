@@ -48,7 +48,7 @@
     />
     <button class="btn" type="submit" disabled={!username}>{m.submit()}</button>
     {#if !username}
-      <p class="text-error">{m.must_be_logged_in()}</p>
+      <p class="text-error">You must create a profile or log in to submit.</p>
     {/if}
   </form>
 </section>

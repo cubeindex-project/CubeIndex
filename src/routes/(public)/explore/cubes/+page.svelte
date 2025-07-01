@@ -59,7 +59,7 @@
     ]) => {
       return cubes
         .filter((c) => c.version_type === "Base")
-        .filter((c) => c.approved === true)
+        .filter((c) => c.status === "Approved")
         .filter((c) => {
           const cubeYear = new Date(c.release_date).getFullYear();
           return (

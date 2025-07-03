@@ -106,9 +106,7 @@
   });
 
   $effect(() => {
-    if (loading || !cubes.length) {
-      return;
-    }
+    if (loading || !cubes.length) return;
 
     const currentSlug = page.params.slug;
 
@@ -121,8 +119,7 @@
         c.model !== cube.model
     );
 
-    relatedCube =
-      cubes.find((c) => c.slug === cube.related_to) ?? (null);
+    relatedCube = cubes.find((c) => c.slug === cube.related_to) ?? null;
 
     cubeTrims = cubes.filter((c) => {
       c.related_to === cube.slug;

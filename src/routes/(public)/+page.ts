@@ -5,7 +5,8 @@ import { error } from "@sveltejs/kit";
 export const load = (async () => {
   const { data: cube_models, error: err } = await supabase
     .from("cube_models")
-    .select("id");
+    .select("id")
+    .eq("status", "Approved");
 
   if (err) throw error(500, err.message);
 

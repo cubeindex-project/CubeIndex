@@ -1,5 +1,4 @@
-import { supabase } from "$lib/supabaseClient";
-import { error, type Actions, fail } from "@sveltejs/kit";
+import { type Actions, fail } from "@sveltejs/kit";
 import { configCatClient } from "$lib/configcatClient";
 
 export const load = async () => {
@@ -13,18 +12,6 @@ export const load = async () => {
   configCatClient.getValueAsync("cubes", false).then((value) => {
     cubesAvailability = value;
   });
-
-  if (databaseAvailability || cubesAvailability) {
-    const { data: cubes, error: err } = await supabase
-      .from("cube_models")
-      .select("*")
-      .order("model", { ascending: true })
-      .order("series", { ascending: true });
-
-    if (err) throw error(500, err.message);
-
-    return { cubes, databaseAvailability, cubesAvailability };
-  }
 
   return { databaseAvailability, cubesAvailability };
 };

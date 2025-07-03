@@ -2,15 +2,65 @@
   import type { PageData } from "./$types";
   import UserCubeCard from "$lib/components/userCubeCard.svelte";
   import EditUserCubeCard from "$lib/components/editUserCubeCard.svelte";
+  import { supabase } from "$lib/supabaseClient";
+  import { onMount } from "svelte";
+  import type { CubeType } from "$lib/components/cube.svelte";
 
   let { data }: { data: PageData } = $props();
-  const { user_cubes, cubes, profile, user } = data;
+  const { profile, user } = data;
+
+  let user_cubes: any[] = $state([]);
+  let cubes: CubeType[] = $state([]);
+
+  let userCubesFromAll: CubeType[] = $state([]);
+
+  let loading = $state(true);
+
+  async function fetchUserCubes() {
+    const { data, error } = await supabase
+      .from("user_cubes")
+      .select("*")
+      .eq("username", profile.username);
+
+    if (error) {
+      console.error(500, `Failed to fetch the user cubes: ${error.message}`);
+      return;
+    }
+
+    user_cubes = data;
+    loading = false;
+  }
+
+  async function fetchCubes() {
+    const { data, error } = await supabase
+      .from("cube_models")
+      .select("*")
+      .eq("status", "Approved")
+      .order("model", { ascending: true })
+      .order("series", { ascending: true });
+
+    if (error) {
+      console.error(500, "Failed to fetch cubes", error.message);
+      return;
+    }
+
+    cubes = data;
+  }
+
+  onMount(() => {
+    fetchUserCubes();
+    fetchCubes();
+  });
 
   let edit = $state(false);
 
-  const userCubeName = new Set(user_cubes.map((uc) => uc.cube));
+  $effect(() => {
+    if (loading || !user_cubes.length) return;
 
-  const userCubesFromAll = cubes.filter((cube) => userCubeName.has(cube.slug));
+    const userCubeName = new Set(user_cubes.map((uc) => uc.cube));
+
+    userCubesFromAll = cubes.filter((cube) => userCubeName.has(cube.slug));
+  });
 </script>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
@@ -35,7 +85,20 @@
       </button>
     {/if}
   </div>
-  {#if user_cubes && user_cubes.length > 0}
+  {#if loading}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {#each Array(6) as i}
+        <div class="bg-neutral rounded-2xl overflow-hidden animate-pulse">
+          <div class="h-48 bg-neutral-content"></div>
+          <div class="p-5 space-y-4">
+            <div class="h-6 bg-neutral-content rounded w-3/4"></div>
+            <div class="h-4 bg-neutral-content rounded w-1/2"></div>
+            <div class="h-4 bg-neutral-content rounded w-1/4"></div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  {:else if user_cubes && user_cubes.length > 0}
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each userCubesFromAll as cube}
         {#if edit}

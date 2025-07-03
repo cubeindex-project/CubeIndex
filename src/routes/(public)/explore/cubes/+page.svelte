@@ -1,13 +1,37 @@
 <script lang="ts">
-    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-    import CubeCard from "$lib/components/cubeCard.svelte";
-    import { writable, derived } from "svelte/store";
+  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import CubeCard from "$lib/components/cubeCard.svelte";
+  import { writable, derived } from "svelte/store";
+  import { onMount } from "svelte";
+  import { supabase } from "$lib/supabaseClient";
+  import { blur } from "svelte/transition";
+  import type { CubeType } from "$lib/components/cube.svelte";
 
   // Props and loading
   let { data } = $props();
-  let { cubes = [], cubesAvailability, databaseAvailability } = data;
+  let { cubesAvailability, databaseAvailability } = data;
+
+  let loading = $state(true);
+
+  async function fetchCubes() {
+    const { data, error: err } = await supabase
+      .from("cube_models")
+      .select("*")
+      .eq("status", "Approved")
+      .order("model", { ascending: true })
+      .order("series", { ascending: true });
+
+    if (err) {
+      console.error("A 500 status code error occured:", err.message);
+      return;
+    }
+
+    cubes.set(data);
+    loading = false;
+  }
 
   // 1) Filter state (year is string 'All' or a year text)
+  const cubes = writable<CubeType[]>([]);
   const selectedType = writable<string>("All");
   const selectedBrand = writable<string>("All");
   const WCALegal = writable<boolean | undefined>(undefined);
@@ -16,26 +40,54 @@
   const selectedYear = writable<string>("All");
   const modded = writable<boolean | undefined>(undefined);
   const stickered = writable<boolean | undefined>(undefined);
-  const selectedCubeType = writable<string>("Base");
+  const selectedCubeType = writable<string>("All");
 
   const searchTerm = writable("");
   const currentPage = writable(1);
   const itemsPerPage = writable(12);
 
   // 2) Options
-  const allTypes = Array.from(new Set(cubes.map((c) => c.type))).sort();
-  const allBrands = Array.from(new Set(cubes.map((c) => c.brand))).sort();
-  const allYears = Array.from(
-    new Set(cubes.map((c) => new Date(c.release_date).getFullYear()))
-  ).sort((a, b) => b - a);
-  const allSubType = Array.from(new Set(cubes.map((c) => c.sub_type))).sort();
-  const allCubeTypes = Array.from(
-    new Set(cubes.map((c) => c.version_types))
-  ).sort();
+
+  let allTypes: string[] = $state([]);
+  let allBrands: string[] = $state([]);
+  let allYears: number[] = $state([]);
+  let allSubType: string[] = $state([]);
+  let allCubeTypes: string[] = $state([]);
+
+  function fetchAll() {
+    const Types = Array.from(
+      new Set($cubes.map((c: CubeType) => c.type))
+    ).sort();
+    const Brands = Array.from(
+      new Set($cubes.map((c: CubeType) => c.brand))
+    ).sort();
+    const Years = Array.from(
+      new Set(
+        $cubes.map((c: CubeType) => new Date(c.release_date).getFullYear())
+      )
+    ).sort((a, b) => b - a);
+    const SubType = Array.from(
+      new Set($cubes.map((c: CubeType) => c.sub_type))
+    ).sort();
+    const CubeTypes = Array.from(
+      new Set($cubes.map((c: CubeType) => c.version_type))
+    ).sort();
+
+    allBrands = Brands;
+    allTypes = Types;
+    allYears = Years;
+    allSubType = SubType;
+    allCubeTypes = CubeTypes;
+  }
+
+  onMount(() => {
+    fetchCubes();
+  });
 
   // 3) Reactive filtered list
   const filteredCubes = derived(
     [
+      cubes,
       selectedType,
       selectedBrand,
       WCALegal,
@@ -45,8 +97,10 @@
       modded,
       stickered,
       searchTerm,
+      selectedCubeType,
     ],
     ([
+      $cubes,
       $type,
       $brand,
       $wca,
@@ -56,10 +110,9 @@
       $modded,
       $stickered,
       $searchTerm,
+      $cubeType,
     ]) => {
-      return cubes
-        .filter((c) => c.version_type === "Base")
-        .filter((c) => c.approved === true)
+      return $cubes
         .filter((c) => {
           const cubeYear = new Date(c.release_date).getFullYear();
           return (
@@ -70,11 +123,13 @@
             ($modded === undefined || c.modded === $modded) &&
             ($stickered === undefined || c.stickered === $stickered) &&
             ($smart === undefined || c.smart === $smart) &&
-            ($year === "All" || cubeYear === +$year)
+            ($year === "All" || cubeYear === +$year) &&
+            ($cubeType === "All" || c.version_type === $cubeType)
           );
         })
         .filter((c) => {
-          const name = `${c.series ?? ""} ${c.model ?? ""}`.toLowerCase();
+          const name =
+            `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase();
           return name.includes($searchTerm.toLowerCase());
         });
     }
@@ -103,6 +158,8 @@
     smart.set(undefined);
     selectedYear.set("All");
     modded.set(undefined);
+    stickered.set(undefined);
+    selectedCubeType.set("All");
   }
 
   function goToPreviousPage() {
@@ -120,6 +177,11 @@
   $effect(() => {
     const _ = $filteredCubes;
     currentPage.set(1);
+  });
+
+  $effect(() => {
+    const _ = loading;
+    fetchAll();
   });
 
   let showFilters = $state(false);
@@ -171,7 +233,8 @@
         {#if showFilters}
           <aside class="w-full lg:w-64">
             <div
-              class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky lg:top-24"
+              class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-7"
+              transition:blur
             >
               <div class="flex items-center justify-between mb-4">
                 <span class="font-semibold text-lg">Filters</span>
@@ -278,6 +341,21 @@
                     </select>
                   </label>
                 </div>
+                <!-- Cube Type -->
+                <div>
+                  <label class="block text-sm mb-1"
+                    >Cube Type:
+                    <select
+                      bind:value={$selectedCubeType}
+                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+                    >
+                      <option>All</option>
+                      {#each allCubeTypes as cubeType}
+                        <option value={cubeType}>{cubeType}</option>
+                      {/each}
+                    </select>
+                  </label>
+                </div>
                 <!-- Reset -->
                 <div>
                   <button
@@ -328,23 +406,52 @@
             </div>
           </div>
 
-          {#await cubes}
+          <div class="flex items-center justify-center gap-4 mb-10">
+            <div class="join">
+              <button
+                class="join-item btn btn-lg"
+                onclick={goToPreviousPage}
+                disabled={$currentPage === 1}
+                aria-label="Previous page"
+              >
+                <i class="fa-solid fa-chevron-left mr-2"></i>
+                Previous
+              </button>
+              <button class="join-item btn btn-lg">
+                Page {$currentPage} of {$totalPages}
+              </button>
+              <button
+                onclick={goToNextPage}
+                class="join-item btn btn-lg"
+                disabled={$currentPage === $totalPages}
+                aria-label="Next page"
+              >
+                Next
+                <i class="fa-solid fa-chevron-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+
+          {#if loading}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {#each Array(6) as i}
                 <div
-                  class="bg-neutral-800 rounded-2xl overflow-hidden animate-pulse"
+                  class="bg-neutral rounded-2xl overflow-hidden animate-pulse"
                 >
-                  <div class="h-48 bg-neutral-700"></div>
+                  <div class="h-48 bg-neutral-content"></div>
                   <div class="p-5 space-y-4">
-                    <div class="h-6 bg-neutral-700 rounded w-3/4"></div>
-                    <div class="h-4 bg-neutral-700 rounded w-1/2"></div>
-                    <div class="h-4 bg-neutral-700 rounded w-1/4"></div>
+                    <div class="h-6 bg-neutral-content rounded w-3/4"></div>
+                    <div class="h-4 bg-neutral-content rounded w-1/2"></div>
+                    <div class="h-4 bg-neutral-content rounded w-1/4"></div>
                   </div>
                 </div>
               {/each}
             </div>
-          {:then}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {:else}
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              transition:blur
+            >
               {#each $paginatedCubes as cube}
                 <CubeCard
                   {cube}
@@ -356,7 +463,7 @@
                 />
               {/each}
             </div>
-          {/await}
+          {/if}
 
           <div class="flex items-center justify-center gap-4 mt-10">
             <div class="join">

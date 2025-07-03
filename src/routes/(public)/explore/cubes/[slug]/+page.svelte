@@ -3,127 +3,27 @@
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
-  import type { CubeType } from "$lib/components/cube.svelte";
-  import { supabase } from "$lib/supabaseClient.js";
-  import { onMount } from "svelte";
-  import { page } from "$app/state";
+  import type { CubeType } from "$lib/components/cube.svelte.js";
 
   let { data } = $props();
-  let { cubesAvailability, databaseAvailability } = $derived(data);
+  let {
+    cubesAvailability = true,
+    databaseAvailability = true,
+    cube = {} as CubeType,
+    cubeTrims = [],
+    cubeUserCount,
+    relatedCube = null,
+    sameSeries,
+    user_ratings,
+    profiles,
+    vendor_links,
+  } = $derived(data);
 
-  let cube: CubeType = $state({} as CubeType);
-  let cubes: CubeType[] = $state([]);
-  let user_ratings: any[] = $state([]);
-  let vendor_links: any[] = $state([]);
-  let cubeUserCount: any[] = $state([]);
-  let profiles: any[] = $state([]);
-  let sameSeries: CubeType[] = $state([]);
-  let relatedCube: CubeType | null = $state(null);
-  let cubeTrims: CubeType[] = $state([]);
   let loading = $state(true);
 
-  async function fetchCubes() {
-    const { data, error } = await supabase
-      .from("cube_models")
-      .select("*")
-      .eq("status", "Approved")
-      .order("model", { ascending: true })
-      .order("series", { ascending: true });
-
-    if (error) {
-      console.error("A 500 status code error occured:", error.message);
-      return;
-    }
-
-    cubes = data;
-    loading = false;
-  }
-
-  async function fetchRatings() {
-    const { data, error } = await supabase
-      .from("user_ratings")
-      .select("*")
-      .eq("cube_slug", cube.slug);
-
-    if (error) {
-      console.error(500, `Failed to fetch profiles: ${error.message}`);
-      return;
-    }
-
-    user_ratings = data;
-  }
-
-  async function fetchProfiles() {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, username");
-
-    if (error) {
-      console.error(500, `Failed to fetch profiles: ${error.message}`);
-      return;
-    }
-
-    profiles = data;
-  }
-
-  async function fetchVendors() {
-    const { data, error } = await supabase
-      .from("cube_vendor_links")
-      .select("*")
-      .eq("cube_slug", cube.slug);
-
-    if (error) {
-      console.error(
-        500,
-        `Failed to fetch vendor links for cube "${cube.slug}": ${error.message}`
-      );
-      return;
-    }
-
-    vendor_links = data;
-  }
-
-  async function fetchCubeUserCount() {
-    const { data, error } = await supabase
-      .from("user_cubes")
-      .select("*")
-      .eq("cube", cube.slug);
-
-    if (error) {
-      console.error(500, `Failed to fetch profiles: ${error.message}`);
-      return;
-    }
-
-    cubeUserCount = data;
-  }
-
-  onMount(() => {
-    fetchCubes();
-    fetchRatings();
-    fetchProfiles();
-    fetchVendors();
-    fetchCubeUserCount();
-  });
-
   $effect(() => {
-    if (loading || !cubes.length) return;
-
-    const currentSlug = page.params.slug;
-
-    cube = cubes.find((c) => c.slug === currentSlug) ?? ({} as CubeType);
-
-    sameSeries = cubes.filter(
-      (c) =>
-        c.series === cube.series &&
-        c.version_type === "Base" &&
-        c.model !== cube.model
-    );
-
-    relatedCube = cubes.find((c) => c.slug === cube.related_to) ?? null;
-
-    cubeTrims = cubes.filter((c) => {
-      c.related_to === cube.slug;
-    });
+    const _ = cube;
+    loading = false;
   });
 
   let openAddCard = $state(false);
@@ -263,6 +163,7 @@
           <img
             src={cube.image_url}
             alt="{cube.series} {cube.model} {cube.version_name}"
+            loading="lazy"
             class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
           />
         </div>

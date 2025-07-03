@@ -452,16 +452,41 @@
               class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
               transition:blur
             >
-              {#each $paginatedCubes as cube}
-                <CubeCard
-                  {cube}
-                  add={true}
-                  rate={true}
-                  details={true}
-                  badges={true}
-                  image={true}
-                />
-              {/each}
+              {$inspect($paginatedCubes)}
+              {#if $paginatedCubes.length > 0}
+                {#each $paginatedCubes as cube}
+                  <CubeCard
+                    {cube}
+                    add={true}
+                    rate={true}
+                    details={true}
+                    badges={true}
+                    image={true}
+                  />
+                {/each}
+              {:else}
+                <div
+                  class="col-span-full flex flex-col items-center justify-center py-20"
+                >
+                  <i class="fa-solid fa-cube fa-3x mb-4"></i>
+                  <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+                  <p class="mb-6 text-center max-w-xs">
+                    We couldn't find any cubes matching your search or filters.
+                    Try adjusting them or resetting to see everything.
+                  </p>
+                  <button
+                    onclick={() => {
+                      resetFilters();
+                      $searchTerm = "";
+                    }}
+                    class="btn btn-outline flex items-center"
+                    aria-label="Reset filters"
+                  >
+                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                    Reset
+                  </button>
+                </div>
+              {/if}
             </div>
           {/if}
 

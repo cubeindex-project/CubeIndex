@@ -12,6 +12,6 @@ export const load = (async ({ locals: { user, supabase } }) => {
 
   if (err) throw error(500, err.message);
 
-  if (profile.role !== "Admin" || profile.role !== "Database Manager")
+  if (profile.role !== "Admin" && profile.role !== "Database Manager")
     redirect(303, "/staff/dashboard");
 }) satisfies LayoutServerLoad;

@@ -32,7 +32,7 @@
   "display_override": ["window-controls-overlay"],
   "display": "standalone",
   "background_color": "#FFFFFF",
-  "orientation": "natural",
+  "orientation": "any",
   "theme_color": "#044eb4",
   "description": "Track and explore speedcubes",
   "screenshots": [

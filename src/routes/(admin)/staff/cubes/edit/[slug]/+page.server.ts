@@ -205,6 +205,11 @@ export const actions: Actions = {
       .from("cube_vendor_links")
       .upsert(vendorPayload);
 
+    if (
+      upsertVenErr?.message ===
+      'new row violates row-level security policy for table "cube_vendor_links"'
+    )
+      throw error(401, "You are not permitted to perform this action.");
     if (upsertVenErr) throw error(500, upsertVenErr.message);
 
     message(form, "Cube edited successfully!");

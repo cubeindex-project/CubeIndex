@@ -4,7 +4,7 @@
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
   import type { CubeType } from "$lib/components/cube.svelte.js";
-    import { formatDate } from "$lib/components/formatDate.svelte";
+  import { formatDate } from "$lib/components/formatDate.svelte";
 
   let { data } = $props();
   let {
@@ -36,10 +36,20 @@
     );
     return profile ? `/user/${profile.id}` : "#";
   }
+
+  const statuses = [
+    { label: "Smart", key: "smart" },
+    { label: "Magnetic", key: "magnetic" },
+    { label: "Modded", key: "modded" },
+    { label: "WCA Legal", key: "wca_legal" },
+    { label: "Maglev", key: "maglev" },
+    { label: "Discontinued", key: "discontinued" },
+    { label: "Stickered", key: "stickered" },
+  ];
 </script>
 
 {#if databaseAvailability && cubesAvailability}
-    <section class="min-h-screen px-6 py-16">
+  <section class="min-h-screen px-6 py-16">
     {#if loading}
       <div class="max-w-4xl mx-auto animate-pulse">
         <!-- IMAGE SKELETON -->
@@ -151,7 +161,7 @@
         </div>
       </div>
     {:else}
-          <div class="max-w-4xl mx-auto">
+      <div class="max-w-4xl mx-auto">
         {#if profile && cube.submitted_by === profile.username && cube.status !== "Approved"}
           <div
             class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
@@ -171,37 +181,37 @@
           </div>
         {:else if cube.status === "Rejected"}
           <div
-            class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error text-error font-semibold shadow-sm"
+            class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error font-semibold shadow-sm"
           >
             <i class="fa-solid fa-triangle-exclamation"></i>
             This cube has been rejected.
           </div>
         {:else if cube.status === "Pending"}
           <div
-            class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning text-warning font-semibold shadow-sm"
+            class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning font-semibold shadow-sm"
           >
             <i class="fa-solid fa-hourglass-half"></i>
             This cube is awaiting verification by moderators.
           </div>
         {/if}
-              <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
-                  <img
-                      src={cube.image_url}
-                      alt="{cube.series} {cube.model} {cube.version_name}"
+        <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
+          <img
+            src={cube.image_url}
+            alt="{cube.series} {cube.model} {cube.version_name}"
             loading="lazy"
-                      class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
-                  />
-              </div>
-              <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
-                  <span class="font-clash">
-                      {cube.series}
-                      {cube.model}
-                      {#if cube.version_type !== "Base"}
-                          <span class="text-secondary">{cube.version_name}</span>
-                      {/if}
-                      <CubeVersionType version_type={cube.version_type} moreInfo={true} />
-                </span>
-                </h1>
+            class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
+          />
+        </div>
+        <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
+          <span class="font-clash">
+            {cube.series}
+            {cube.model}
+            {#if cube.version_type !== "Base"}
+              <span class="text-secondary">{cube.version_name}</span>
+            {/if}
+            <CubeVersionType version_type={cube.version_type} moreInfo={true} />
+          </span>
+        </h1>
 
         <p class="mb-4">
           {cubeUserCount?.length} user{cubeUserCount?.length === 1 ? "" : "s"} have
@@ -308,28 +318,16 @@
             </div>
           </div>
           <div
-            class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
+            class="bg-base-200 rounded-xl p-4 space-y-2 border border-base-300"
           >
-            <div class="flex items-center justify-between">
-              <span>Smart:</span>
-              <span class="text-xl">{cube.smart ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Magnetic:</span>
-              <span class="text-xl">{cube.magnetic ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Modded:</span>
-              <span class="text-xl">{cube.modded ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>WCA Legal:</span>
-              <span class="text-xl">{cube.wca_legal ? "✅" : "❌"}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Maglev:</span>
-              <span class="text-xl">{cube.maglev ? "✅" : "❌"}</span>
-            </div>
+            {#each statuses as status}
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-sm">{status.label}</span>
+                <span class="text-xl">
+                  {cube[status.key as keyof CubeType] ? "✅" : "❌"}
+                </span>
+              </div>
+            {/each}
           </div>
         </div>
         {#if vendor_links && vendor_links.length > 0}
@@ -399,7 +397,8 @@
           <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
               <i class="fa-solid fa-note-sticky"></i>
-              Moderator Note <span class="text-xs">(Only you can see this)</span>
+              Moderator Note
+              <span class="text-xs">(Only you can see this)</span>
             </h2>
             <p class="whitespace-pre-line">{cube.notes}</p>
           </div>

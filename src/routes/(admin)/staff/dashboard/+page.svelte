@@ -107,7 +107,7 @@
       href: "/staff/announcements",
       icon: "📣",
       label: "Manage Announcement",
-      implemented: true,
+      implemented: false,
     },
     {
       href: "/staff/reports",

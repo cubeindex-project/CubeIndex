@@ -14,7 +14,7 @@ export interface CubeType {
   discontinued: boolean;
   release_date: string; // ISO date string or null
   submitted_by: string;
-  series?: string | null;
+  series: string;
   id: number;
   sub_type:
     | "NxNxN"
@@ -26,12 +26,12 @@ export interface CubeType {
     | "Corner‑Turning";
   weight: number;
   maglev: boolean;
-  related_to?: string | null;
+  related_to: string;
   size: number;
-  version_type: string; // Should match your cube_version_type enum/union
-  version_name?: string | null;
-  surface_finish?: string | null; // Should match your cube_surface_finish enum/union
-  verified_by?: string | null;
+  version_type: "Base" | "Trim" | "Limited"; // Should match your cube_version_type enum/union
+  version_name: string;
+  surface_finish: string; // Should match your cube_surface_finish enum/union
+  verified_by: string;
   stickered: boolean;
   status: string; // Should match your submission_status enum/union
   notes?: string;

@@ -3,7 +3,7 @@
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
 
-  let { cube, rate, add, details, badges, staff, image } = $props();
+  let { cube, rate, add, details, badges, image } = $props();
 
   let openAddCard = $state(false);
 </script>

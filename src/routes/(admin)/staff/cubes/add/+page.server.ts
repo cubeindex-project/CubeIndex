@@ -1,131 +1,135 @@
-// +page.server.ts
-import type { PageServerLoad, Actions } from './$types';
-import { error, fail } from '@sveltejs/kit';
-import { slugify } from '$lib/components/slugify.svelte';
+import type { PageServerLoad, Actions } from "./$types";
+import { error, redirect } from "@sveltejs/kit";
+import { slugify } from "$lib/components/slugify.svelte";
+import { getSubTypes } from "$lib/components/subType.svelte";
+import { z } from "zod/v4";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod4 } from "sveltekit-superforms/adapters";
+
+const schema = z
+  .object({
+    id: z.number(),
+    series: z.string().optional(),
+    model: z.string().nonempty("Model is required"),
+    versionType: z.literal(["Base", "Trim", "Limited"]),
+    versionName: z.string().optional(),
+    brand: z.string(),
+    otherBrand: z.string().nonempty("Brand is required"),
+    type: z.string().nonempty("Type is required"),
+    sub_type: z.string().optional(),
+    relatedTo: z.string().optional(),
+    releaseDate: z
+      .string()
+      .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
+        error: "Release date must be YYYY-MM-DD",
+      }),
+    imageUrl: z.url("Image URL must be valid"),
+    surfaceFinish: z.string().optional(),
+    weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
+    size: z.coerce.number().min(0, "Size must be ≥ 0"),
+    wcaLegal: z.boolean(),
+    magnetic: z.boolean(),
+    smart: z.boolean(),
+    modded: z.boolean(),
+    discontinued: z.boolean(),
+    maglev: z.boolean(),
+    stickered: z.boolean(),
+    vendorLinks: z.array(
+      z.object({
+        vendor_name: z.string().nonempty("Vendor name is required"),
+        url: z.url("Must be a valid URL"),
+        price: z.coerce.number().min(0, "Price must be ≥ 0"),
+        available: z.boolean(),
+      })
+    ),
+  })
+  // enforce versionName when versionType !== 'Base'
+  .check((data) => {
+    if (
+      data.value.versionType !== "Base" &&
+      data.value.versionName &&
+      data.value.versionName.trim() === ""
+    ) {
+      data.issues.push({
+        code: "custom",
+        message: "The version name is required when the cube type is not Base",
+        input: data.value.versionName,
+        path: ["versionName"],
+      });
+    }
+
+    if (data.value.smart === true && data.value.wcaLegal === true) {
+      data.issues.push({
+        code: "custom",
+        message: "Smart cubes can not be WCA Legal",
+        input: data.value.wcaLegal,
+        path: ["wcaLegal"],
+      });
+    }
+  });
 
 export const load = (async ({ locals }) => {
-    // Use locals.supabase so that row‐level security / auth works
-    const { data: cubes, error: cubesErr } = await locals.supabase
-        .from('cube_models')
-        .select('*');
-    if (cubesErr) throw error(500, cubesErr.message);
+  // Use locals.supabase so that row‐level security / auth works
+  const { data: cubes, error: cubesErr } = await locals.supabase
+    .from("cube_models")
+    .select("*");
+  if (cubesErr) throw error(500, cubesErr.message);
 
-    const { data: profiles, error: profilesErr } = await locals.supabase
-        .from('profiles')
-        .select('username');
-    if (profilesErr) throw error(500, profilesErr.message);
+  const form = await superValidate(zod4(schema), { errors: false });
 
-    return { cubes, profiles };
+  return { cubes, form };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-    default: async ({ request, locals }) => {
-        const form = await request.formData();
+  default: async ({ request, locals }) => {
+    const form = await superValidate(request, zod4(schema));
 
-        // Extract & cast all fields
-        const series = form.get('series')?.toString().trim() ?? '';
-        const model = form.get('model')?.toString().trim() ?? '';
-        const versionName = form.get('version')?.toString().trim() ?? '';
-        const brandRaw = form.get('brand')?.toString() ?? '';
-        const otherBrand = form.get('otherBrand')?.toString().trim() ?? '';
-        const type = form.get('type')?.toString() ?? '';
-        const releaseDate = form.get('releaseDate')?.toString() ?? '';
-        const imageUrl = form.get('imageUrl')?.toString().trim() ?? '';
-        const surfaceFinish = form.get('surfaceFinish')?.toString().trim() ?? '';
-        const weight = parseFloat(form.get('weight')?.toString() ?? '0');
-        const size = parseFloat(form.get('size')?.toString() ?? '0');
-        const cubeVersion = form.get('cubeVersion')?.toString() ?? '';
-        const submittedByRaw = form.get('submittedBy')?.toString() ?? '';
-        const relatedTo = form.get('relatedTo')?.toString() ?? '';
-        // Checkboxes return either "on" or null
-        const wcaLegal = form.get('wcaLegal') !== null;
-        const magnetic = form.get('magnetic') !== null;
-        const smart = form.get('smart') !== null;
-        const modded = form.get('modded') !== null;
-        const discontinued = form.get('discontinued') !== null;
-        const maglev = form.get('maglev') !== null;
+    const data = form.data;
 
-        // Basic required‐fields validation
-        if (
-            !model ||
-            !series ||
-            !brandRaw ||
-            !releaseDate ||
-            !imageUrl ||
-            isNaN(weight) ||
-            isNaN(size) ||
-            !cubeVersion
-        ) {
-            return fail(400, { message: 'Please fill in all required fields.' });
-        }
+    // Figure out who’s submitting
+    const { data: me, error: meErr } = await locals.supabase
+      .from("profiles")
+      .select("username")
+      .eq("user_id", locals.user?.id)
+      .single();
 
-        // “Other” dropdowns
-        const brand = brandRaw === '___other' ? otherBrand : brandRaw;
-        if (brandRaw === '___other' && !otherBrand) {
-            return fail(400, { message: 'Please specify the other brand.' });
-        }
+    if (meErr) throw error(500, meErr.message);
 
-        // Version field for Trim/Limited
-        if ((cubeVersion === 'Trim' || cubeVersion === 'Limited') && !versionName) {
-            return fail(400, { message: 'Please specify the version name.' });
-        }
+    const slug = slugify(`${data.series} ${data.model} ${data.versionName}`);
 
-        // Relation requirements
-        if (modded && !relatedTo) {
-            return fail(400, { message: 'Please select the model this is a mod of.' });
-        }
-        if ((cubeVersion === 'Trim' || cubeVersion === 'Limited') && !relatedTo) {
-            return fail(400, {
-                message: 'Please select the model this is a limited edition of.'
-            });
-        }
+    const payload = {
+      slug,
+      series: data.series,
+      model: data.model,
+      version_name: data.versionName,
+      brand: data.brand !== "___other" ? data.brand : data.otherBrand,
+      type: data.type,
+      sub_type: data.sub_type || getSubTypes(data.type),
+      release_date: data.releaseDate,
+      image_url: data.imageUrl,
+      surface_finish: data.surfaceFinish,
+      weight: data.weight,
+      size: data.size,
+      version_type: data.versionType,
+      submitted_by: me.username,
+      related_to: data.relatedTo,
+      wca_legal: data.wcaLegal,
+      magnetic: data.magnetic,
+      smart: data.smart,
+      modded: data.modded,
+      discontinued: data.discontinued,
+      maglev: data.maglev,
+      stickered: data.stickered,
+      status: "Pending",
+    };
 
-        // Business rule: smart cubes cannot be WCA‐legal
-        if (smart && wcaLegal) {
-            return fail(400, { message: 'Smart cubes cannot be WCA legal.' });
-        }
+    const { error: insertErr } = await locals.supabase
+      .from("cube_models")
+      .insert(payload);
 
-        // Figure out who’s submitting
-        const { data: me, error: meErr } = await locals.supabase
-            .from('profiles')
-            .select('username')
-            .eq('user_id', locals.user?.id);
-        if (meErr || !me?.length) throw error(500, meErr?.message || 'Profile not found');
-        const submittedBy =
-            submittedByRaw === 'disabled' ? me[0].username : submittedByRaw;
+    if (insertErr) throw error(500, insertErr.message);
 
-        const slug = slugify(`${series} ${model} ${versionName}`);
-
-        const payload = {
-            slug,
-            series,
-            model,
-            version_name: versionName,
-            brand,
-            type,
-            release_date: releaseDate,
-            image_url: imageUrl,
-            surface_finish: surfaceFinish,
-            weight,
-            size,
-            version_type: cubeVersion,
-            submitted_by: submittedBy,
-            verified_by: me[0].username,
-            related_to: relatedTo || null,
-            wca_legal: wcaLegal,
-            magnetic,
-            smart,
-            modded,
-            discontinued,
-            maglev
-        };
-
-        const { error: insertErr } = await locals.supabase
-            .from('cube_models')
-            .insert(payload)
-            .select();
-        if (insertErr) return fail(500, { message: insertErr.message });
-
-        return { message: 'Cube added successfully!' };
-    }
+    message(form, "Cube added successfully!");
+    throw redirect(301, `/explore/cubes/${slug}`);
+  },
 };

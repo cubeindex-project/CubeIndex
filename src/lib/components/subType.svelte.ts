@@ -4,10 +4,10 @@
  * community (Speedsolving Wiki, Ruwix, Cubelelo, etc.).
  *
  * @param {string} type – e.g. "Petaminx", "3x3x3", "2x2x3", "Mirror"
- * @returns {string[]}  sub-types, or [] if unknown
+ * @returns {string}  sub-types, or [] if unknown
  */
 export function getSubTypes(type: string) {
-  if (!type) return [];
+  if (!type) return "";
 
   const t = type.trim().toLowerCase();
 
@@ -55,5 +55,5 @@ export function getSubTypes(type: string) {
   }
 
   /* ---------- 8. FALLBACK ---------- */
-  return [];
+  return null;
 }

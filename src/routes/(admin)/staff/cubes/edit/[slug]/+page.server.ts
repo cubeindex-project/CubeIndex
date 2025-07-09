@@ -111,7 +111,7 @@ export const load: PageServerLoad = async ({ params }) => {
     .select("*")
     .eq("series", cube.series)
     .eq("version_type", "Base")
-    .eq("model", cube.model);
+    .neq("model", cube.model);
 
   if (ssErr) {
     throw error(500, "Failed same series fetch " + ssErr.message);

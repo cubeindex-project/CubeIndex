@@ -194,7 +194,7 @@
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-clash font-bold mb-6 text-center">Manage Cubes</h1>
     <p class="mb-12 text-center">
-      Browse all your favorite cubes by type, brand, or rating.
+      Add, and manage all cubes in the database from this page.
     </p>
 
     <!-- Search Bar + Toggle -->

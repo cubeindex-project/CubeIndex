@@ -71,34 +71,61 @@ const schema = z
 export const load: PageServerLoad = async ({ params }) => {
   const { slug } = params;
 
-  const { data: cubes, error: cErr } = await supabase
+  const { data: cube, error: cErr } = await supabase
     .from("cube_models")
     .select("*")
-    .order("model", { ascending: true })
-    .order("series", { ascending: true });
+    .eq("slug", slug)
+    .single();
 
   if (cErr) {
-    throw error(500, cErr.message);
+    throw error(500, "Failed cube fetch " + cErr.message);
   }
 
-  const cube = cubes.find((c) => c.slug === slug);
-  if (!cube) {
-    throw error(404, `Cube “${slug}” not found`);
+  const { data: cubeTrims, error: ctErr } = await supabase
+    .from("cube_models")
+    .select("*")
+    .eq("related_to", cube.slug);
+
+  if (ctErr) {
+    throw error(500, "Failed cube trims fetch " + ctErr.message);
   }
 
-  const cubeTrims = cubes.filter((c) => {
-    return c.related_to === cube.slug;
-  });
+  let relatedCube = [];
+
+  if (cube.related_to) {
+    const { data, error: rcErr } = await supabase
+      .from("cube_models")
+      .select("*")
+      .eq("slug", cube.related_to)
+      .single();
+
+    if (rcErr) {
+      throw error(500, "Failed related cube fetch " + rcErr.message);
+    }
+
+    relatedCube = data;
+  }
+
+  const { data: sameSeries, error: ssErr } = await supabase
+    .from("cube_models")
+    .select("*")
+    .eq("series", cube.series)
+    .eq("version_type", "Base")
+    .eq("model", cube.model);
+
+  if (ssErr) {
+    throw error(500, "Failed same series fetch " + ssErr.message);
+  }
 
   const { data: vendor_links, error: vendorError } = await supabase
     .from("cube_vendor_links")
     .select("*")
-    .eq("cube_slug", cube.slug);
+    .eq("cube_slug", slug);
 
   if (vendorError)
     throw error(
       500,
-      `Failed to fetch vendor links for cube "${cube.slug}": ${vendorError.message}`
+      `Failed to fetch vendor links for cube "${slug}": ${vendorError.message}`
     );
 
   const form = await superValidate(
@@ -140,7 +167,8 @@ export const load: PageServerLoad = async ({ params }) => {
   return {
     cube,
     cubeTrims,
-    cubes,
+    relatedCube,
+    sameSeries,
     vendor_links,
     profiles,
     form,

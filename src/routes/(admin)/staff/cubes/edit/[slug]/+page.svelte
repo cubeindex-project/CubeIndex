@@ -7,7 +7,7 @@
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, cubes } = data;
+  let { profiles, cubeTrims, relatedCube, sameSeries } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, constraints, message, enhance } = superForm(
@@ -24,35 +24,6 @@
 
   // Store the cube being edited
   const cube: CubeType = $state(data.cube);
-
-  // Reactive store for the related cube selected by slug
-  let relatedCube = $state(
-    cubes.find((c) => c.slug === $form.relatedTo) ?? null
-  );
-
-  // Reactive store for filtering cubes in the same series excluding current model
-  let sameSeries = $state(
-    cubes.filter(
-      (c) =>
-        c.series === cube.series &&
-        c.version_type === "Base" &&
-        c.model !== cube.model
-    )
-  );
-
-  // Single reactive effect to update relatedCube and sameSeries when form fields change
-  $effect(() => {
-    // Update related cube when relatedTo changes
-    relatedCube = cubes.find((c) => c.slug === $form.relatedTo) ?? null;
-
-    // Update sameSeries list when series or model changes
-    sameSeries = cubes.filter(
-      (c) =>
-        c.series === $form.series &&
-        c.version_type === "Base" &&
-        c.model !== $form.model
-    );
-  });
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);

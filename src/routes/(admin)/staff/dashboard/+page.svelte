@@ -98,12 +98,6 @@
       implemented: false,
     },
     {
-      href: "/staff/reports",
-      icon: "🛠️",
-      label: "View Reports",
-      implemented: false,
-    },
-    {
       href: "/staff/announcements",
       icon: "📣",
       label: "Manage Announcement",
@@ -113,12 +107,6 @@
       href: "/staff/reports",
       icon: "🚩",
       label: "User Reports",
-      implemented: false,
-    },
-    {
-      href: "/staff/feedback",
-      icon: "📝",
-      label: "User Feedbacks",
       implemented: false,
     },
   ];

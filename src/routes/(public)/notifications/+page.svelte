@@ -39,51 +39,53 @@
         </div>
       {:else}
         <ul class="flex flex-col gap-4 px-4 py-8">
-          {#each notifications as n, i (n.id)}
-            <li
-              class="rounded-xl bg-base-300 transition group p-5 flex flex-col gap-2 relative"
-            >
-              <div
-                class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1"
+          {#each notifications as n (n.id)}
+            {#if !n.archived}
+              <li
+                class="rounded-xl bg-base-300 transition group p-5 flex flex-col gap-2 relative"
               >
-                <!-- Icon and Title -->
-                <div class="flex items-center gap-2">
-                  {#if n.icon}
-                    <span class="text-2xl">{n.icon}</span>
-                  {:else if n.purpose === "announcement"}
-                    <i class="fa-solid fa-bullhorn text-purple-400 text-2xl"
-                    ></i>
-                  {:else if n.purpose === "alert"}
-                    <i
-                      class="fa-solid fa-triangle-exclamation text-red-400 text-2xl"
-                    ></i>
-                  {:else if n.purpose === "warning"}
-                    <i
-                      class="fa-solid fa-exclamation-circle text-yellow-400 text-2xl"
-                    ></i>
-                  {:else}
-                    <i class="fa-solid fa-bell text-blue-300 text-2xl"></i>
-                  {/if}
-                  <span class="font-semibold text-lg">{n.title}</span>
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-1"
+                >
+                  <!-- Icon and Title -->
+                  <div class="flex items-center gap-2">
+                    {#if n.icon}
+                      <span class="text-2xl">{n.icon}</span>
+                    {:else if n.purpose === "announcement"}
+                      <i class="fa-solid fa-bullhorn text-purple-400 text-2xl"
+                      ></i>
+                    {:else if n.purpose === "alert"}
+                      <i
+                        class="fa-solid fa-triangle-exclamation text-red-400 text-2xl"
+                      ></i>
+                    {:else if n.purpose === "warning"}
+                      <i
+                        class="fa-solid fa-exclamation-circle text-yellow-400 text-2xl"
+                      ></i>
+                    {:else}
+                      <i class="fa-solid fa-bell text-blue-300 text-2xl"></i>
+                    {/if}
+                    <span class="font-semibold text-lg">{n.title}</span>
+                  </div>
+                  <!-- Date: Below title on mobile, right on desktop -->
+                  <span class="text-sm sm:ml-auto sm:mt-0 mt-1"
+                    >{formatDate(n.created_at)}</span
+                  >
                 </div>
-                <!-- Date: Below title on mobile, right on desktop -->
-                <span class="text-sm sm:ml-auto sm:mt-0 mt-1"
-                  >{formatDate(n.created_at)}</span
-                >
-              </div>
-              <div class="text-base">{n.message}</div>
-              {#if n.link}
-                <a
-                  href={n.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-400 text-sm mt-1 hover:underline"
-                >
-                  {`${n.linkText === "" ? "More info" : n.linkText}`}
-                  <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
-                </a>
-              {/if}
-            </li>
+                <div class="text-base">{n.message}</div>
+                {#if n.link}
+                  <a
+                    href={n.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-400 text-sm mt-1 hover:underline"
+                  >
+                    {`${n.linkText === "" ? "More info" : n.linkText}`}
+                    <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
+                  </a>
+                {/if}
+              </li>
+            {/if}
           {/each}
         </ul>
       {/if}

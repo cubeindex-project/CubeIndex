@@ -34,7 +34,7 @@
       {#if cube.version_type !== "Base"}
         <span class="text-secondary">{cube.version_name}</span>
       {/if}
-      <CubeVersionType {cube} moreInfo={false} />
+      <CubeVersionType version_type={cube.version_type} moreInfo={false} />
     </h2>
     <p class="text-sm">
       {cube.type} ・ {cube.brand}

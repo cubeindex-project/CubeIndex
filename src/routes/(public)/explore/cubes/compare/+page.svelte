@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
+    import type { PageData } from "./$types";
+    import { formatDate } from "$lib/components/formatDate.svelte";
 
   let { data }: { data: PageData } = $props();
   let { cubes } = data;
@@ -21,21 +22,12 @@
     value: c.slug,
   }));
 
-  function boolYesNo(v: boolean) {
-    return v === true ? "Yes" : v === false ? "No" : "-";
-  }
-  function formatDate(d: string): string {
-    if (!d) return "-";
-    const date = new Date(d);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
-  function formatFloat(n: number) {
-    return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
-  }
+    function boolYesNo(v: boolean) {
+        return v === true ? "Yes" : v === false ? "No" : "-";
+    }
+    function formatFloat(n: number) {
+        return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
+    }
 
   type Field = {
     label: string;

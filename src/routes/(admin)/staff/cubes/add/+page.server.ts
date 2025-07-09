@@ -95,7 +95,11 @@ export const actions: Actions = {
 
     if (meErr) throw error(500, meErr.message);
 
-    const slug = slugify(`${data.series} ${data.model} ${data.versionName}`);
+    const slug = slugify(
+      `${data.series ? data.series : ""} ${data.model} ${
+        data.versionName ? data.versionName : ""
+      }`
+    );
 
     const payload = {
       slug,

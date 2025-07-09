@@ -155,7 +155,11 @@ export const actions: Actions = {
 
     if (!form.valid) return fail(400, { form });
 
-    const slug = slugify(`${data.series} ${data.model} ${data.versionName}`);
+    const slug = slugify(
+      `${data.series ? data.series : ""} ${data.model} ${
+        data.versionName ? data.versionName : ""
+      }`
+    );
 
     const cubePayload = {
       slug,

@@ -22,6 +22,7 @@
 
   // initialize note from existingNote
   let note = $state(existingNote);
+  let otherNote = $state("");
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state("");
@@ -51,7 +52,8 @@
       status: reason === "Accept" ? "Approved" : "Rejected",
       verified_by: reason === "Accept" ? username : "",
     };
-    if (reason === "Rejected") payload.reason = note;
+    if (reason === "Rejected")
+      payload.reason = note === "___other" ? otherNote : note;
 
     try {
       const res = await fetch("/api/update-cube-status", {
@@ -88,13 +90,32 @@
 
     {#if reason !== "Accept"}
       <div class="mt-4">
-        <label class="label">
+        <label class="label flex flex-col items-start">
           <span class="label-text">Reason</span>
-          <textarea
+          <select
+            name="brand"
             bind:value={note}
-            class="textarea textarea-bordered rounded-2xl w-full h-32"
+            class="select select-lg w-full mb-2"
             required
-          ></textarea>
+          >
+            <option value="Not a twisty puzzle" selected>
+              Not a twisty puzzle
+            </option>
+            <option value="Already in the database">
+              Already in the database
+            </option>
+            <option value="Not a valid trim">Not a valid trim</option>
+            <option value="___other">Other...</option>
+          </select>
+          {#if note === "___other"}
+            <span class="label-text">Other reason</span>
+            <textarea
+              bind:value={otherNote}
+              class="textarea textarea-bordered rounded-2xl w-full h-32 mt-3"
+              required
+              transition:blur
+            ></textarea>
+          {/if}
         </label>
       </div>
     {/if}

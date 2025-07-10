@@ -117,16 +117,23 @@ export const load: PageServerLoad = async ({ params }) => {
     throw error(500, "Failed same series fetch " + ssErr.message);
   }
 
-  const { data: vendor_links, error: vendorError } = await supabase
+  const { data: vendor_links, error: vlError } = await supabase
     .from("cube_vendor_links")
     .select("*")
     .eq("cube_slug", slug);
 
-  if (vendorError)
+  if (vlError)
     throw error(
       500,
-      `Failed to fetch vendor links for cube "${slug}": ${vendorError.message}`
+      `Failed to fetch vendor links for cube "${slug}": ${vlError.message}`
     );
+
+  const { data: vendors, error: vendorError } = await supabase
+    .from("vendors")
+    .select("name, base_url");
+
+  if (vendorError)
+    throw error(500, `Failed to fetch vendors: ${vendorError.message}`);
 
   const form = await superValidate(
     {
@@ -170,6 +177,7 @@ export const load: PageServerLoad = async ({ params }) => {
     relatedCube,
     sameSeries,
     vendor_links,
+    vendors,
     profiles,
     form,
   };

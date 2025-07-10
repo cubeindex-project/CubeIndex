@@ -7,7 +7,7 @@
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, relatedCube, sameSeries } = data;
+  let { profiles, cubeTrims, relatedCube, sameSeries, vendors } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, constraints, message, enhance } = superForm(
@@ -44,6 +44,14 @@
       (p: { username: string }) => p.username === user
     );
     return profile ? `/user/${profile.id}` : "#";
+  }
+
+  function findBaseUrl(i: number): string {
+    const vendorName = $form.vendorLinks[i]?.vendor_name;
+    if (!vendorName || !vendors) return "";
+
+    const vendor = vendors.find((v) => v.name === vendorName);
+    return vendor?.base_url ?? "";
   }
 
   // Define status toggles to bind to form fields dynamically in UI
@@ -358,12 +366,16 @@
                 {#each $form.vendorLinks as link, i}
                   <tr>
                     <td>
-                      <input
+                      <select
                         name="vendorLinks"
-                        type="text"
-                        class="input input-bordered w-full"
                         bind:value={$form.vendorLinks[i].vendor_name}
-                      />
+                        class="select select-lg w-full"
+                        required
+                      >
+                        {#each vendors as v}
+                          <option value={v.name}>{v.name}</option>
+                        {/each}
+                      </select>
                       {#if $errors.vendorLinks}
                         <span class="text-error"
                           >{$errors.vendorLinks[i].vendor_name}</span
@@ -376,6 +388,7 @@
                         type="url"
                         class="input input-bordered w-full"
                         bind:value={$form.vendorLinks[i].url}
+                        placeholder={findBaseUrl(i)}
                       />
                       {#if $errors.vendorLinks}
                         <span class="text-error"

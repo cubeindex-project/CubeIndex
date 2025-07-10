@@ -4,6 +4,9 @@
   import type { CubeType } from "$lib/components/cube.svelte.js";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
+  import { onMount } from "svelte";
+  import { supabase } from "$lib/supabaseClient";
+  import { error } from "@sveltejs/kit";
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -64,6 +67,36 @@
     { label: "Discontinued", key: () => $form.discontinued },
     { label: "Stickered", key: () => $form.stickered },
   ];
+
+  let cubes: CubeType[] = $state([]);
+  let allCubes: () => {
+    label: string;
+    value: string;
+  }[] = $state(() => []);
+
+  $effect(() => {
+    const _ = cubes;
+    allCubes = () =>
+      Array.from(
+        new Set(
+          cubes
+            .filter((c) => c.version_type === "Base")
+            .map((c) => ({
+              label: `${c.series} ${c.model} ${c.version_name}`,
+              value: c.slug,
+            }))
+        )
+      ).sort();
+  });
+
+  onMount(async () => {
+    const { data, error: cubesErr } = await supabase
+      .from("cube_models")
+      .select("*")
+      .neq("status", "Rejected");
+    if (cubesErr) throw error(500, cubesErr.message);
+    cubes = data;
+  });
 </script>
 
 <section class="min-h-screen px-6 py-16">
@@ -249,20 +282,26 @@
               <span class="text-error">{$errors.releaseDate}</span>
             {/if}
           </div>
-          <div>
-            <label class="block mb-1 font-medium"
-              >Related To
-              <input
-                id="relatedTo"
-                type="text"
-                class="input input-bordered w-full"
-                bind:value={$form.relatedTo}
-              />
-            </label>
-            {#if $errors.relatedTo}
-              <span class="text-error">{$errors.relatedTo}</span>
-            {/if}
-          </div>
+          {#if $form.modded || $form.versionType !== "Base"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Related To
+                <select
+                  name="relatedTo"
+                  bind:value={$form.relatedTo}
+                  class="select w-full"
+                  required
+                >
+                  {#each allCubes() as c}
+                    <option value={c.value}>{c.label}</option>
+                  {/each}
+                </select>
+              </label>
+              {#if $errors.relatedTo}
+                <span class="text-error">{$errors.relatedTo}</span>
+              {/if}
+            </div>
+          {/if}
           <div class="divider"></div>
           <div class="grid grid-cols-2 gap-4">
             <label class="flex items-center gap-2 cursor-pointer">

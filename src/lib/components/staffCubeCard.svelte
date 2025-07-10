@@ -6,14 +6,12 @@
   import UnapproveCube from "./unapproveCube.svelte";
 
   // single props destructure
-  let { cube } = $props();
+  let { cube, profile } = $props();
 
   // reactive state
   let openModNotes = $state(false);
   let openUnapproveConfirm = $state(false);
   let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
-
-  const cubeName = `${cube.series} ${cube.model} ${cube.version_name}`;
 
   function toggleModNotes(r: typeof reason) {
     reason = r;
@@ -164,20 +162,31 @@
         <StarRating rating={cube.rating} large={false} />
       </div>
 
-      <div class="py-4">
-        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-          Reason:
-        </h2>
-        <p class="whitespace-pre-line">{cube.notes}</p>
+      <div class="flex flex-col gap-4 mt-4">
+        <div class="flex flex-row items-center">
+          <h2 class="text-lg">
+            <span class="font-bold">Verified By:</span>
+            {cube.verified_by}
+          </h2>
+        </div>
+
+        <div>
+          <h2 class="text-lg font-bold flex items-center gap-2">
+            Reason:
+          </h2>
+          <p>{cube.notes}</p>
+        </div>
       </div>
 
-      <button
-        class="btn btn-warning mt-4"
-        onclick={() => toggleModNotes("Edit")}
-      >
-        <i class="fa-solid fa-pencil mr-2"></i>
-        {cube.notes ? "Edit" : "Write"} Mod Note
-      </button>
+      {#if profile.username === cube.verified_by}
+        <button
+          class="btn btn-warning mt-4"
+          onclick={() => toggleModNotes("Edit")}
+        >
+          <i class="fa-solid fa-pencil mr-2"></i>
+          {cube.notes ? "Edit" : "Write"} Mod Note
+        </button>
+      {/if}
       <a href={`/explore/cubes/${cube.slug}`} class="btn btn-primary mt-4">
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
@@ -187,7 +196,7 @@
 
 {#if openModNotes}
   <ManageCubeStatus
-    cube_name={cubeName}
+    cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
     cube_id={cube.id}
     existingNote={cube.notes}
     {reason}

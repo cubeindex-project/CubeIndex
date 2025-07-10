@@ -235,7 +235,7 @@
             </select>
           </label>
         </div>
-        {#if $form.modded || $form.versionType === "Trim" || $form.versionType === "Limited"}
+        {#if $form.modded || $form.versionType !== "Base"}
           <div transition:blur>
             <label class="block text-sm mb-1"
               >Related To <span class="text-red-500">*</span>

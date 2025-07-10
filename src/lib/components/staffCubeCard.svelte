@@ -13,14 +13,6 @@
   let openUnapproveConfirm = $state(false);
   let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
 
-  // map status → background class
-  const statusBg = () => {
-    if (cube.status === "Pending") return "bg-warning";
-    if (cube.status === "Rejected") return "bg-error";
-    if (cube.status === "Approved") return "bg-success";
-    return "bg-base-300";
-  };
-
   const cubeName = `${cube.series} ${cube.model} ${cube.version_name}`;
 
   function toggleModNotes(r: typeof reason) {

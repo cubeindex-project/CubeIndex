@@ -7,7 +7,7 @@
  * @returns {string}  sub-types, or [] if unknown
  */
 export function getSubTypes(type: string) {
-  if (!type) return "";
+  if (!type) return null;
 
   const t = type.trim().toLowerCase();
 

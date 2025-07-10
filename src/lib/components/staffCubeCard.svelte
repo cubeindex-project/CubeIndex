@@ -164,6 +164,14 @@
       <div class="mt-3">
         <StarRating rating={cube.rating} large={false} />
       </div>
+
+      <div class="py-4">
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          Reason:
+        </h2>
+        <p class="whitespace-pre-line">{cube.notes}</p>
+      </div>
+
       <button
         class="btn btn-warning mt-4"
         onclick={() => toggleModNotes("Edit")}

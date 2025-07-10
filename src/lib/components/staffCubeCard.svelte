@@ -54,6 +54,13 @@
       <div class="mt-3">
         <StarRating rating={cube.rating} large={false} />
       </div>
+
+      <div class="py-4">
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          Verified By: {cube.verified_by}
+        </h2>
+      </div>
+
       <div class="mt-4 flex gap-2">
         <a href={`cubes/edit/${cube.slug}`} class="btn btn-info flex-1">
           <i class="fa-solid fa-pencil mr-2"></i>Edit

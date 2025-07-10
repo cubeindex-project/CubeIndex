@@ -369,7 +369,7 @@
                       <select
                         name="vendorLinks"
                         bind:value={$form.vendorLinks[i].vendor_name}
-                        class="select select-lg w-full"
+                        class="select w-full"
                         required
                       >
                         {#each vendors as v}
@@ -668,6 +668,15 @@
               <span class="font-medium">
                 {formatDate(cube.updated_at)}
               </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span>Verified by:</span>
+              <a
+                class="font-medium underline"
+                href={idOfUser(cube.verified_by)}
+              >
+                {cube.verified_by || "Unknown"}
+              </a>
             </div>
             <div class="flex items-center gap-2">
               <span>Submitted by:</span>

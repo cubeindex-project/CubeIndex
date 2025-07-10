@@ -70,7 +70,6 @@
       formMessage = err.message;
     } finally {
       isSubmitting = false;
-      window.location.reload();
     }
   }
 </script>

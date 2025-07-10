@@ -196,7 +196,10 @@ export const actions: Actions = {
       version_name: data.versionName,
       brand: data.brand,
       type: data.type,
-      sub_type: data.sub_type ?? getSubTypes(data.type),
+      sub_type:
+        data.sub_type === ""
+          ? data.sub_type ?? getSubTypes(data.type)
+          : getSubTypes(data.type),
       release_date: data.releaseDate,
       image_url: data.imageUrl,
       surface_finish: data.surfaceFinish,

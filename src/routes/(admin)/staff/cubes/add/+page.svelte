@@ -1,9 +1,12 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
   import { blur } from "svelte/transition";
+  import { onMount } from "svelte";
+  import { error } from "@sveltejs/kit";
+  import { supabase } from "$lib/supabaseClient.js";
+  import type { CubeType } from "$lib/components/cube.svelte.js";
 
   const { data } = $props();
-  const { cubes } = $derived(data);
 
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, constraints, message, enhance } = superForm(
@@ -17,26 +20,40 @@
     }
   );
 
+  let cubes: CubeType[] = $state([]);
+  let allTypes: () => string[] = $state(() => []);
+  let allBrands: () => string[] = $state(() => []);
+  let allCubes: () => {
+    label: string;
+    value: string;
+  }[] = $state(() => []);
+
   // Example: These could come from a load function or API
-  const allTypes = () =>
-    Array.from(
-      new Set(cubes.filter((c) => c.status !== "Rejected").map((c) => c.type))
-    ).sort();
-  const allBrands = () =>
-    Array.from(
-      new Set(cubes.filter((c) => c.status !== "Rejected").map((c) => c.brand))
-    ).sort();
-  const allCubes = () =>
-    Array.from(
-      new Set(
-        cubes
-          .filter((c) => c.status !== "Rejected" && c.version_type === "Base")
-          .map((c) => ({
-            label: `${c.series} ${c.model} ${c.version_name}`,
-            value: c.slug,
-          }))
-      )
-    ).sort();
+  $effect(() => {
+    const _ = cubes;
+    allTypes = () => Array.from(new Set(cubes.map((c) => c.type))).sort();
+    allBrands = () => Array.from(new Set(cubes.map((c) => c.brand))).sort();
+    allCubes = () =>
+      Array.from(
+        new Set(
+          cubes
+            .filter((c) => c.version_type === "Base")
+            .map((c) => ({
+              label: `${c.series} ${c.model} ${c.version_name}`,
+              value: c.slug,
+            }))
+        )
+      ).sort();
+  });
+
+  onMount(async () => {
+    const { data, error: cubesErr } = await supabase
+      .from("cube_models")
+      .select("*")
+      .neq("status", "Rejected");
+    if (cubesErr) throw error(500, cubesErr.message);
+    cubes = data;
+  });
 </script>
 
 <section

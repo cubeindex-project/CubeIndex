@@ -15,18 +15,18 @@
   } = $props<{
     reason: "Accept" | "Reject" | "Edit";
     onCancel: () => void;
-    cube_id: string;
+    cube_id: number;
     cube_name: string;
-    existingNote?: string;
+    existingNote: string;
   }>();
 
   // initialize note from existingNote
-  let note = $state(existingNote);
-  let otherNote = $state("");
-  let isSubmitting = $state(false);
-  let showSuccess = $state(false);
-  let formMessage = $state("");
-  let username = $state("");
+  let note: string = $state(existingNote);
+  let otherNote: string = $state("");
+  let isSubmitting: boolean = $state(false);
+  let showSuccess: boolean = $state(false);
+  let formMessage: string = $state("");
+  let username: string = $state("");
 
   const getUser = getContext<() => { id: string }>("user");
   const user = getUser();
@@ -47,12 +47,17 @@
 
   async function changeStatus() {
     isSubmitting = true;
-    const payload: any = {
+    const payload: {
+      cube_id: number;
+      status: string;
+      verified_by: string;
+      reason?: string;
+    } = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
-      verified_by: reason === "Accept" ? username : "",
+      verified_by: reason !== "Reject" ? username : "",
     };
-    if (reason === "Rejected")
+    if (reason !== "Accept")
       payload.reason = note === "___other" ? otherNote : note;
 
     try {

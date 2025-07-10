@@ -49,8 +49,9 @@
     const payload: any = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
+      verified_by: reason === "Accept" ? username : "",
     };
-    if (reason !== "Accept") payload.reason = note;
+    if (reason === "Rejected") payload.reason = note;
 
     try {
       const res = await fetch("/api/update-cube-status", {

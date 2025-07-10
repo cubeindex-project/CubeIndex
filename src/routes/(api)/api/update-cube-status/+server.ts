@@ -6,11 +6,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     cube_id,
     status,
     reason = "",
-  }: { cube_id: string; status: string; reason: string } = await request.json();
+    verified_by = "",
+  }: {
+    cube_id: string;
+    status: string;
+    reason: string;
+    verified_by: string;
+  } = await request.json();
 
   const { error } = await locals.supabase
     .from("cube_models")
-    .update({ status, notes: reason })
+    .update({ status, notes: reason, verified_by })
     .eq("id", cube_id);
 
   if (error) {

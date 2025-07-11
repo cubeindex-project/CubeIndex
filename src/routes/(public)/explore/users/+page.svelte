@@ -23,7 +23,16 @@
       </h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {#each profiles as profile}
-          <UserCard {profile} {user_achievements} staff={false} />
+          <UserCard
+            {profile}
+            user_achievements_count={user_achievements.filter(
+              (ua: { username: any }) => ua.username === profile.username
+            ).length || 0}
+            user_cubes_count={user_cubes.filter(
+              (uc: { username: string }) => uc.username === profile.username
+            ).length || 0}
+            staff={false}
+          />
         {/each}
       </div>
     </div>

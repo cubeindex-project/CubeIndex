@@ -1,7 +1,8 @@
 <script lang="ts">
   import Badge from "./badge.svelte";
 
-  const { profile, user_achievements, staff } = $props();
+  const { profile, user_achievements_count, user_cubes_count, staff } =
+    $props();
 </script>
 
 <div class="bg-base-200 rounded-xl border border-base-300">
@@ -31,11 +32,15 @@
           <Badge {profile} textSize="xs" /></span
         >
         <span class="text-xs flex items-center gap-2">
-          <i class="fa-solid fa-cube"></i>0 Cubes
+          <i class="fa-solid fa-cube"></i>{user_cubes_count} Cube{user_cubes_count ===
+          1
+            ? ""
+            : "s"}
           <span class="mx-1">•</span>
-          <i class="fa-solid fa-medal"></i>{user_achievements.filter(
-            (ua: { username: any }) => ua.username === profile.username
-          ).length || 0} Achievements
+          <i class="fa-solid fa-medal"></i>{user_achievements_count} Achievement{user_achievements_count ===
+          1
+            ? ""
+            : "s"}
         </span>
       </div>
       <p class="text-xs truncate max-w-full mt-1">
@@ -49,10 +54,10 @@
     </span>
   </a>
   {#if staff}
-  <div class="flex p-2 justify-between">
-  <button class="btn btn-primary">View Logs</button>
-  <button class="btn btn-accent">Warn User</button>
-  <button class="btn btn-error">Ban User</button>
-  </div>
+    <div class="flex p-2 justify-between">
+      <button class="btn btn-primary">View Logs</button>
+      <button class="btn btn-accent">Warn User</button>
+      <button class="btn btn-error">Ban User</button>
+    </div>
   {/if}
 </div>

@@ -8,6 +8,7 @@
   import { supabase } from "$lib/supabaseClient";
   import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/formatDate.svelte";
+  import ManageCubeStatus from "$lib/components/manageCubeStatus.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -32,6 +33,9 @@
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
 
+  let openModNotes = $state(false);
+  let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
+
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
     const profile = profiles?.find(
@@ -48,6 +52,11 @@
     return vendor?.base_url ?? "";
   }
 
+  function toggleModNotes(r: typeof reason) {
+    reason = r;
+    openModNotes = !openModNotes;
+  }
+
   // Define status toggles to bind to form fields dynamically in UI
   const statuses = [
     { label: "Smart", key: () => $form.smart },
@@ -62,6 +71,7 @@
   let cubes: CubeType[] = $state([]);
   let allSubTypes: string[] = $state([]);
   let allSurfaces: string[] = $state([]);
+  let allBrands: string[] = $state([]);
   let allCubes: () => {
     label: string;
     value: string;
@@ -88,7 +98,15 @@
       .select("*")
       .neq("status", "Rejected");
     if (cubesErr) throw error(500, cubesErr.message);
+
     cubes = data;
+    allBrands = Array.from(
+      new Set(
+        cubes
+          .filter((c) => c.status === "Approved")
+          .map((c: CubeType) => c.brand)
+      )
+    ).sort();
 
     let { data: SubTypes } = await supabase.rpc("get_types", {
       enum_type: "cubes_subtypes",
@@ -187,18 +205,39 @@
           {/if}
           <div>
             <label class="block mb-1 font-medium">
-              Brand
-              <input
+              Brand (Only shows brands of approved cubes)
+              <select
                 name="brand"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.brand}
-              />
+                class="select w-full"
+                required
+              >
+                <option value="___other">+ Add Brand</option>
+                {#each allBrands as brand}
+                  <option value={brand}>{brand}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.brand}
               <span class="text-error">{$errors.brand}</span>
             {/if}
           </div>
+          {#if $form.brand === "___other"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Add Brand (To see the added brand in the list above, approve this cube)
+                <input
+                  name="brand"
+                  type="text"
+                  class="input input-bordered w-full"
+                  bind:value={$form.otherBrand}
+                />
+              </label>
+              {#if $errors.otherBrand}
+                <span class="text-error">{$errors.otherBrand}</span>
+              {/if}
+            </div>
+          {/if}
           <div>
             <label class="block mb-1 font-medium">
               Type
@@ -246,6 +285,7 @@
                 {#if allSubTypes.length === 0}
                   <option>Loading...</option>
                 {/if}
+                <option value="auto">Handle Automatically</option>
                 {#each allSubTypes as subType}
                   <option value={subType}>{subType}</option>
                 {/each}
@@ -603,7 +643,23 @@
           <i class="fa-solid fa-hourglass-half"></i>
           This submission is pending.
         </div>
+
+        <div class="mt-4 flex gap-2">
+          <button
+            class="btn btn-success flex-1"
+            onclick={() => toggleModNotes("Accept")}
+          >
+            <i class="fa-solid fa-check mr-2"></i>Accept
+          </button>
+          <button
+            class="btn btn-error flex-1"
+            onclick={() => toggleModNotes("Reject")}
+          >
+            <i class="fa-solid fa-xmark mr-2"></i>Reject
+          </button>
+        </div>
       {/if}
+
       <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src={$form.imageUrl}
@@ -666,12 +722,16 @@
         >
           <div class="flex items-center justify-between">
             <span>Brand:</span>
-            <span class="font-medium">{$form.brand}</span>
+            <span class="font-medium"
+              >{$form.brand !== "___other"
+                ? $form.brand
+                : $form.otherBrand}</span
+            >
           </div>
           <div class="flex items-center justify-between">
             <span>Type:</span>
             <span class="font-medium">
-              {$form.type !== "___other" ? $form.type?.trim() : $form.otherType}
+              {$form.type !== "___other" ? $form.type : $form.otherType}
             </span>
           </div>
           <div class="flex items-center justify-between">
@@ -684,7 +744,11 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>
-            <span class="font-medium">{$form.surfaceFinish !== "Loading..." ? $form.surfaceFinish : ""}</span>
+            <span class="font-medium"
+              >{$form.surfaceFinish !== "Loading..."
+                ? $form.surfaceFinish
+                : ""}</span
+            >
           </div>
           <div class="flex items-center justify-between">
             <span>Release Date:</span>
@@ -864,3 +928,13 @@
     </div>
   </div>
 </section>
+
+{#if openModNotes}
+  <ManageCubeStatus
+    cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
+    cube_id={cube.id}
+    existingNote={cube.notes ?? ""}
+    {reason}
+    onCancel={() => (openModNotes = false)}
+  />
+{/if}

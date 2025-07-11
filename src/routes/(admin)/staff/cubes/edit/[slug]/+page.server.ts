@@ -15,10 +15,11 @@ const schema = z
     model: z.string().nonempty("Model is required"),
     versionType: z.literal(["Base", "Trim", "Limited"]),
     versionName: z.string().optional(),
-    brand: z.string().nonempty("Brand is required"),
+    brand: z.string().optional(),
+    otherBrand: z.string().nonempty("Brand is required"),
     type: z.string().optional(),
     otherType: z.string().nonempty("Type is required"),
-    sub_type: z.string().optional(),
+    sub_type: z.string().nonempty("Sub Type is required"),
     relatedTo: z.string().optional(),
     releaseDate: z
       .string()
@@ -225,19 +226,15 @@ export const actions: Actions = {
       model: data.model.trim(),
       version_name:
         data.versionType === "Base" ? undefined : data.versionName?.trim(),
-      brand: data.brand.trim(),
+      brand: data.brand !== "___other" ? data.brand?.trim() : data.otherBrand,
       type: data.type !== "___other" ? data.type?.trim() : data.otherType,
       sub_type:
-        data.sub_type === ""
-          ? data.sub_type.trim() ??
-            getSubTypes(
+        data.sub_type === "auto"
+          ? getSubTypes(
               (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
                 ""
-            )?.trim()
-          : getSubTypes(
-              (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                ""
-            )?.trim(),
+            )
+          : data.sub_type,
       release_date: data.releaseDate.trim(),
       image_url: cleanLink(data.imageUrl),
       surface_finish: data.surfaceFinish?.trim(),

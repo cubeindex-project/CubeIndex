@@ -17,8 +17,8 @@ const schema = z
     versionName: z.string().optional(),
     brand: z.string().nonempty("Brand is required"),
     otherBrand: z.string(),
-    type: z.string(),
-    otherType: z.string().nonempty("Type is required"),
+    type: z.string().nonempty("Type is required"),
+    otherType: z.string(),
     sub_type: z.string().nonempty("Sub Type is required"),
     relatedTo: z.string().optional(),
     releaseDate: z
@@ -61,10 +61,6 @@ const schema = z
       });
     }
 
-    if (data.value.versionType === "Base" && data.value.versionName) {
-      data.value.versionName = "";
-    }
-
     if (data.value.smart === true && data.value.wcaLegal === true) {
       data.issues.push({
         code: "custom",
@@ -86,7 +82,7 @@ const schema = z
     if (data.value.type === "___other" && !data.value.otherType) {
       data.issues.push({
         code: "custom",
-        message: "Type is required",
+        message: "A Type is required",
         input: data.value.otherType,
         path: ["otherType"],
       });
@@ -247,7 +243,7 @@ export const actions: Actions = {
       series: data.series?.trim(),
       model: data.model.trim(),
       version_name:
-        data.versionType === "Base" ? undefined : data.versionName?.trim(),
+        data.versionType === "Base" ? "" : data.versionName?.trim(),
       brand: data.brand !== "___other" ? data.brand?.trim() : data.otherBrand,
       type: data.type !== "___other" ? data.type?.trim() : data.otherType,
       sub_type:

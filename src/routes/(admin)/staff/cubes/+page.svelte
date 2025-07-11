@@ -6,6 +6,9 @@
   import { blur } from "svelte/transition";
   import type { CubeType } from "$lib/components/cube.svelte";
 
+  const { data } = $props();
+  const { profile } = data;
+
   let loading = $state(true);
 
   async function fetchCubes() {
@@ -464,7 +467,7 @@
           >
             {#if $paginatedCubes.length > 0}
               {#each $paginatedCubes as cube}
-                <StaffCubeCard {cube} />
+                <StaffCubeCard {cube} {profile} />
               {/each}
             {:else}
               <div

@@ -4,23 +4,34 @@
   import type { CubeType } from "$lib/components/cube.svelte.js";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
+  import { onMount } from "svelte";
+  import { supabase } from "$lib/supabaseClient";
+  import { error } from "@sveltejs/kit";
+  import { formatDate } from "$lib/components/formatDate.svelte";
+  import ManageCubeStatus from "$lib/components/manageCubeStatus.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, relatedCube, sameSeries } = data;
+  let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
-  const { form, allErrors, errors, constraints, message, enhance } = superForm(
-    data.form,
-    {
-      dataType: "json",
-      resetForm: false,
-      onError({ result }) {
-        // Handle server validation errors gracefully
-        $message = result.error.message || "Unknown error";
-      },
-    }
-  );
+  const {
+    form,
+    allErrors,
+    errors,
+    constraints,
+    message,
+    enhance,
+    isTainted,
+    tainted,
+  } = superForm(data.form, {
+    dataType: "json",
+    resetForm: false,
+    onError({ result }) {
+      // Handle server validation errors gracefully
+      $message = result.error.message || "Unknown error";
+    },
+  });
 
   // Store the cube being edited
   const cube: CubeType = $state(data.cube);
@@ -28,15 +39,15 @@
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
 
-  // Utility function to format date strings nicely for display
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
+  let openModNotes = $state(false);
+  let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
+
+  let dirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $tainted;
+    dirty = isTainted();
+  });
 
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
@@ -44,6 +55,19 @@
       (p: { username: string }) => p.username === user
     );
     return profile ? `/user/${profile.id}` : "#";
+  }
+
+  function findBaseUrl(i: number): string {
+    const vendorName = $form.vendorLinks[i]?.vendor_name;
+    if (!vendorName || !vendors) return "";
+
+    const vendor = vendors.find((v) => v.name === vendorName);
+    return vendor?.base_url ?? "";
+  }
+
+  function toggleModNotes(r: typeof reason) {
+    reason = r;
+    openModNotes = !openModNotes;
   }
 
   // Define status toggles to bind to form fields dynamically in UI
@@ -56,6 +80,59 @@
     { label: "Discontinued", key: () => $form.discontinued },
     { label: "Stickered", key: () => $form.stickered },
   ];
+
+  let cubes: CubeType[] = $state([]);
+  let allSubTypes: string[] = $state([]);
+  let allSurfaces: string[] = $state([]);
+  let allBrands: string[] = $state([]);
+  let allCubes: () => {
+    label: string;
+    value: string;
+  }[] = $state(() => []);
+
+  $effect(() => {
+    const _ = cubes;
+    allCubes = () =>
+      Array.from(
+        new Set(
+          cubes
+            .filter((c) => c.version_type === "Base")
+            .map((c) => ({
+              label: `${c.series} ${c.model} ${c.version_name}`,
+              value: c.slug,
+            }))
+        )
+      ).sort();
+  });
+
+  onMount(async () => {
+    const { data, error: cubesErr } = await supabase
+      .from("cube_models")
+      .select("*")
+      .neq("status", "Rejected");
+    if (cubesErr) throw error(500, cubesErr.message);
+
+    cubes = data;
+    allBrands = Array.from(
+      new Set(
+        cubes
+          .filter((c) => c.status === "Approved")
+          .map((c: CubeType) => c.brand)
+      )
+    ).sort();
+
+    let { data: SubTypes } = await supabase.rpc("get_types", {
+      enum_type: "cubes_subtypes",
+    });
+
+    allSubTypes = SubTypes;
+
+    let { data: surfaces } = await supabase.rpc("get_types", {
+      enum_type: "cube_surface_finishes",
+    });
+
+    allSurfaces = surfaces;
+  });
 </script>
 
 <section class="min-h-screen px-6 py-16">
@@ -141,41 +218,92 @@
           {/if}
           <div>
             <label class="block mb-1 font-medium">
-              Brand
-              <input
+              Brand (Only shows brands of approved cubes)
+              <select
                 name="brand"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.brand}
-              />
+                class="select w-full"
+                required
+              >
+                <option value="___other">+ Add Brand</option>
+                {#each allBrands as brand}
+                  <option value={brand}>{brand}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.brand}
               <span class="text-error">{$errors.brand}</span>
             {/if}
           </div>
+          {#if $form.brand === "___other"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Add Brand (To see the added brand in the list above, approve
+                this cube)
+                <input
+                  name="brand"
+                  type="text"
+                  class="input input-bordered w-full"
+                  bind:value={$form.otherBrand}
+                />
+              </label>
+              {#if $errors.otherBrand}
+                <span class="text-error">{$errors.otherBrand}</span>
+              {/if}
+            </div>
+          {/if}
           <div>
             <label class="block mb-1 font-medium">
               Type
-              <input
+              <select
                 name="type"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.type}
-              />
+                class="select w-full"
+                required
+              >
+                <option value="___other">+ Create Type</option>
+                {#each types as type}
+                  <option value={type.type}>{type.type}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.type}
               <span class="text-error">{$errors.type}</span>
             {/if}
           </div>
+          {#if $form.type === "___other"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Create Type
+                <input
+                  name="type"
+                  type="text"
+                  class="input input-bordered w-full"
+                  bind:value={$form.otherType}
+                />
+              </label>
+              {#if $errors.otherType}
+                <span class="text-error">{$errors.otherType}</span>
+              {/if}
+            </div>
+          {/if}
           <div>
             <label class="block mb-1 font-medium">
               Sub Type
-              <input
-                name="type"
-                type="text"
-                class="input input-bordered w-full"
+              <select
+                name="subType"
                 bind:value={$form.sub_type}
-              />
+                class="select w-full"
+                required
+              >
+                {#if allSubTypes.length === 0}
+                  <option>Loading...</option>
+                {/if}
+                <option value="auto">Handle Automatically</option>
+                {#each allSubTypes as subType}
+                  <option value={subType}>{subType}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.sub_type}
               <span class="text-error">{$errors.sub_type}</span>
@@ -216,12 +344,19 @@
           <div>
             <label class="block mb-1 font-medium"
               >Surface Finish
-              <input
+              <select
                 name="surfaceFinish"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.surfaceFinish}
-              />
+                class="select w-full"
+                required
+              >
+                <!-- {#if allSurfaces.length === 0}
+                  <option>Loading...</option>
+                {/if} -->
+                {#each allSurfaces as surface}
+                  <option value={surface}>{surface}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.surfaceFinish}
               <span class="text-error">{$errors.surfaceFinish}</span>
@@ -241,20 +376,26 @@
               <span class="text-error">{$errors.releaseDate}</span>
             {/if}
           </div>
-          <div>
-            <label class="block mb-1 font-medium"
-              >Related To
-              <input
-                id="relatedTo"
-                type="text"
-                class="input input-bordered w-full"
-                bind:value={$form.relatedTo}
-              />
-            </label>
-            {#if $errors.relatedTo}
-              <span class="text-error">{$errors.relatedTo}</span>
-            {/if}
-          </div>
+          {#if $form.modded || $form.versionType !== "Base"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Related To
+                <select
+                  name="relatedTo"
+                  bind:value={$form.relatedTo}
+                  class="select w-full"
+                  required
+                >
+                  {#each allCubes() as c}
+                    <option value={c.value}>{c.label}</option>
+                  {/each}
+                </select>
+              </label>
+              {#if $errors.relatedTo}
+                <span class="text-error">{$errors.relatedTo}</span>
+              {/if}
+            </div>
+          {/if}
           <div class="divider"></div>
           <div class="grid grid-cols-2 gap-4">
             <label class="flex items-center gap-2 cursor-pointer">
@@ -358,12 +499,16 @@
                 {#each $form.vendorLinks as link, i}
                   <tr>
                     <td>
-                      <input
+                      <select
                         name="vendorLinks"
-                        type="text"
-                        class="input input-bordered w-full"
                         bind:value={$form.vendorLinks[i].vendor_name}
-                      />
+                        class="select w-full"
+                        required
+                      >
+                        {#each vendors as v}
+                          <option value={v.name}>{v.name}</option>
+                        {/each}
+                      </select>
                       {#if $errors.vendorLinks}
                         <span class="text-error"
                           >{$errors.vendorLinks[i].vendor_name}</span
@@ -376,6 +521,7 @@
                         type="url"
                         class="input input-bordered w-full"
                         bind:value={$form.vendorLinks[i].url}
+                        placeholder={findBaseUrl(i)}
                       />
                       {#if $errors.vendorLinks}
                         <span class="text-error"
@@ -511,7 +657,28 @@
           <i class="fa-solid fa-hourglass-half"></i>
           This submission is pending.
         </div>
+
+        <div class="mt-4 flex gap-2">
+          <button
+            class="btn btn-success flex-1"
+            onclick={() => toggleModNotes("Accept")}
+            disabled={dirty}
+          >
+            <i class="fa-solid fa-check mr-2"></i>Accept
+          </button>
+          <button
+            class="btn btn-error flex-1"
+            onclick={() => toggleModNotes("Reject")}
+            disabled={dirty}
+          >
+            <i class="fa-solid fa-xmark mr-2"></i>Reject
+          </button>
+        </div>
+        {#if dirty}
+          <p class="text-error">You have unsaved modifications</p>
+        {/if}
       {/if}
+
       <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
         <img
           src={$form.imageUrl}
@@ -540,7 +707,11 @@
               >{`${$form.series} ${$form.model} ${$form.versionType !== "Base" ? $form.versionName : ""}`}</span
             >
             is a
-            <span class="font-bold text-primary">{$form.type}</span>
+            <span class="font-bold text-primary"
+              >{$form.type !== "___other"
+                ? $form.type?.trim()
+                : $form.otherType}</span
+            >
             twisty puzzle released on
             <span class="font-bold text-primary"
               >{formatDate($form.releaseDate)}</span
@@ -570,11 +741,17 @@
         >
           <div class="flex items-center justify-between">
             <span>Brand:</span>
-            <span class="font-medium">{$form.brand}</span>
+            <span class="font-medium"
+              >{$form.brand !== "___other"
+                ? $form.brand
+                : $form.otherBrand}</span
+            >
           </div>
           <div class="flex items-center justify-between">
             <span>Type:</span>
-            <span class="font-medium">{$form.type}</span>
+            <span class="font-medium">
+              {$form.type !== "___other" ? $form.type : $form.otherType}
+            </span>
           </div>
           <div class="flex items-center justify-between">
             <span>Weight:</span>
@@ -586,7 +763,11 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>
-            <span class="font-medium">{$form.surfaceFinish}</span>
+            <span class="font-medium"
+              >{$form.surfaceFinish !== "Loading..."
+                ? $form.surfaceFinish
+                : ""}</span
+            >
           </div>
           <div class="flex items-center justify-between">
             <span>Release Date:</span>
@@ -655,6 +836,15 @@
               <span class="font-medium">
                 {formatDate(cube.updated_at)}
               </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span>Verified by:</span>
+              <a
+                class="font-medium underline"
+                href={idOfUser(cube.verified_by)}
+              >
+                {cube.verified_by || "Unknown"}
+              </a>
             </div>
             <div class="flex items-center gap-2">
               <span>Submitted by:</span>
@@ -757,3 +947,13 @@
     </div>
   </div>
 </section>
+
+{#if openModNotes}
+  <ManageCubeStatus
+    cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
+    cube_id={cube.id}
+    existingNote={cube.notes ?? ""}
+    {reason}
+    onCancel={() => (openModNotes = false)}
+  />
+{/if}

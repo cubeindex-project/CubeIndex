@@ -6,6 +6,7 @@ import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 import type { PageServerLoad } from "./$types.js";
+import { cleanLink } from "$lib/components/linkCleaner.js";
 
 const schema = z
   .object({
@@ -14,9 +15,11 @@ const schema = z
     model: z.string().nonempty("Model is required"),
     versionType: z.literal(["Base", "Trim", "Limited"]),
     versionName: z.string().optional(),
-    brand: z.string().nonempty("Brand is required"),
-    type: z.string().nonempty("Type is required"),
-    sub_type: z.string().optional(),
+    brand: z.string().optional(),
+    otherBrand: z.string().nonempty("Brand is required"),
+    type: z.string().optional(),
+    otherType: z.string().nonempty("Type is required"),
+    sub_type: z.string().nonempty("Sub Type is required"),
     relatedTo: z.string().optional(),
     releaseDate: z
       .string()
@@ -117,16 +120,30 @@ export const load: PageServerLoad = async ({ params }) => {
     throw error(500, "Failed same series fetch " + ssErr.message);
   }
 
-  const { data: vendor_links, error: vendorError } = await supabase
+  const { data: vendor_links, error: vlError } = await supabase
     .from("cube_vendor_links")
     .select("*")
     .eq("cube_slug", slug);
 
-  if (vendorError)
+  if (vlError)
     throw error(
       500,
-      `Failed to fetch vendor links for cube "${slug}": ${vendorError.message}`
+      `Failed to fetch vendor links for cube "${slug}": ${vlError.message}`
     );
+
+  const { data: vendors, error: vendorError } = await supabase
+    .from("vendors")
+    .select("name, base_url");
+
+  if (vendorError)
+    throw error(500, `Failed to fetch vendors: ${vendorError.message}`);
+
+  const { data: types, error: typesError } = await supabase
+    .from("cube_types")
+    .select("type");
+
+  if (typesError)
+    throw error(500, `Failed to fetch vendors: ${typesError.message}`);
 
   const form = await superValidate(
     {
@@ -170,7 +187,9 @@ export const load: PageServerLoad = async ({ params }) => {
     relatedCube,
     sameSeries,
     vendor_links,
+    vendors,
     profiles,
+    types,
     form,
   };
 };
@@ -184,29 +203,45 @@ export const actions: Actions = {
     if (!form.valid) return fail(400, { form });
 
     const slug = slugify(
-      `${data.series ? data.series : ""} ${data.model} ${
-        data.versionName ? data.versionName : ""
+      `${data.series ? data.series.trim() : ""} ${data.model.trim()} ${
+        data.versionType !== "Base"
+          ? data.versionName
+            ? data.versionName.trim()
+            : ""
+          : ""
       }`
     );
 
+    if (!data.type) {
+      const { error: err } = await supabase
+        .from("cube_types")
+        .insert([{ type: data.otherType }]);
+
+      if (err) throw error(500, err.message);
+    }
+
     const cubePayload = {
       slug,
-      series: data.series,
-      model: data.model,
-      version_name: data.versionName,
-      brand: data.brand,
-      type: data.type,
+      series: data.series?.trim(),
+      model: data.model.trim(),
+      version_name:
+        data.versionType === "Base" ? undefined : data.versionName?.trim(),
+      brand: data.brand !== "___other" ? data.brand?.trim() : data.otherBrand,
+      type: data.type !== "___other" ? data.type?.trim() : data.otherType,
       sub_type:
-        data.sub_type === ""
-          ? data.sub_type ?? getSubTypes(data.type)
-          : getSubTypes(data.type),
-      release_date: data.releaseDate,
-      image_url: data.imageUrl,
-      surface_finish: data.surfaceFinish,
+        data.sub_type === "auto"
+          ? getSubTypes(
+              (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
+                ""
+            )
+          : data.sub_type,
+      release_date: data.releaseDate.trim(),
+      image_url: cleanLink(data.imageUrl),
+      surface_finish: data.surfaceFinish?.trim(),
       weight: data.weight,
       size: data.size,
       version_type: data.versionType,
-      related_to: data.relatedTo,
+      related_to: data.relatedTo?.trim(),
       wca_legal: data.wcaLegal,
       magnetic: data.magnetic,
       smart: data.smart,
@@ -220,7 +255,7 @@ export const actions: Actions = {
     const vendorPayload = data.vendorLinks.map((vendorLink) => ({
       cube_slug: slug,
       vendor_name: vendorLink.vendor_name,
-      url: vendorLink.url,
+      url: cleanLink(vendorLink.url)?.trim(),
       available: vendorLink.available,
       price: vendorLink.price,
     }));

@@ -15,17 +15,18 @@
   } = $props<{
     reason: "Accept" | "Reject" | "Edit";
     onCancel: () => void;
-    cube_id: string;
+    cube_id: number;
     cube_name: string;
-    existingNote?: string;
+    existingNote: string;
   }>();
 
   // initialize note from existingNote
-  let note = $state(existingNote);
-  let isSubmitting = $state(false);
-  let showSuccess = $state(false);
-  let formMessage = $state("");
-  let username = $state("");
+  let note: string = $state(existingNote);
+  let otherNote: string = $state("");
+  let isSubmitting: boolean = $state(false);
+  let showSuccess: boolean = $state(false);
+  let formMessage: string = $state("");
+  let username: string = $state("");
 
   const getUser = getContext<() => { id: string }>("user");
   const user = getUser();
@@ -46,12 +47,18 @@
 
   async function changeStatus() {
     isSubmitting = true;
-    const payload: any = {
+    const payload: {
+      cube_id: number;
+      status: string;
+      verified_by: string;
+      reason?: string;
+    } = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
-      verified_by: reason === "Accept" ? username : "",
+      verified_by: reason !== "Edit" ? username : "",
     };
-    if (reason === "Rejected") payload.reason = note;
+    if (reason !== "Accept")
+      payload.reason = note === "___other" ? otherNote : note;
 
     try {
       const res = await fetch("/api/update-cube-status", {
@@ -70,13 +77,12 @@
       formMessage = err.message;
     } finally {
       isSubmitting = false;
-      window.location.reload();
     }
   }
 </script>
 
 <div
-  class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
+  class="fixed inset-0 bg-base-300/60 backdrop-blur-md flex items-center justify-center z-50"
   transition:blur
 >
   <form
@@ -89,13 +95,32 @@
 
     {#if reason !== "Accept"}
       <div class="mt-4">
-        <label class="label">
+        <label class="label flex flex-col items-start">
           <span class="label-text">Reason</span>
-          <textarea
+          <select
+            name="brand"
             bind:value={note}
-            class="textarea textarea-bordered rounded-2xl w-full h-32"
+            class="select select-lg w-full mb-2"
             required
-          ></textarea>
+          >
+            <option value="Not a twisty puzzle" selected>
+              Not a twisty puzzle
+            </option>
+            <option value="Already in the database">
+              Already in the database
+            </option>
+            <option value="Not a valid trim">Not a valid trim</option>
+            <option value="___other">Other...</option>
+          </select>
+          {#if note === "___other"}
+            <span class="label-text">Other reason</span>
+            <textarea
+              bind:value={otherNote}
+              class="textarea textarea-bordered rounded-2xl w-full h-32 mt-3"
+              required
+              transition:blur
+            ></textarea>
+          {/if}
         </label>
       </div>
     {/if}

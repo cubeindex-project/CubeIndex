@@ -68,16 +68,10 @@ const schema = z
     }
   });
 
-export const load = (async ({ locals }) => {
-  // Use locals.supabase so that row‐level security / auth works
-  const { data: cubes, error: cubesErr } = await locals.supabase
-    .from("cube_models")
-    .select("*");
-  if (cubesErr) throw error(500, cubesErr.message);
-
+export const load = (async () => {
   const form = await superValidate(zod4(schema), { errors: false });
 
-  return { cubes, form };
+  return { form };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

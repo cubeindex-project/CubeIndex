@@ -15,9 +15,9 @@ const schema = z
     model: z.string().nonempty("Model is required"),
     versionType: z.literal(["Base", "Trim", "Limited"]),
     versionName: z.string().optional(),
-    brand: z.string().optional(),
-    otherBrand: z.string().nonempty("Brand is required"),
-    type: z.string().optional(),
+    brand: z.string().nonempty("Brand is required"),
+    otherBrand: z.string(),
+    type: z.string(),
     otherType: z.string().nonempty("Type is required"),
     sub_type: z.string().nonempty("Sub Type is required"),
     relatedTo: z.string().optional(),
@@ -50,8 +50,8 @@ const schema = z
   .check((data) => {
     if (
       data.value.versionType !== "Base" &&
-      data.value.versionName &&
-      data.value.versionName.trim() === ""
+      ((data.value.versionName && data.value.versionName.trim() === "") ||
+        !data.value.versionName)
     ) {
       data.issues.push({
         code: "custom",
@@ -61,12 +61,34 @@ const schema = z
       });
     }
 
+    if (data.value.versionType === "Base" && data.value.versionName) {
+      data.value.versionName = "";
+    }
+
     if (data.value.smart === true && data.value.wcaLegal === true) {
       data.issues.push({
         code: "custom",
         message: "Smart cubes can not be WCA Legal",
         input: data.value.wcaLegal,
         path: ["wcaLegal"],
+      });
+    }
+
+    if (data.value.brand === "___other" && !data.value.otherBrand) {
+      data.issues.push({
+        code: "custom",
+        message: "Brand is required",
+        input: data.value.otherBrand,
+        path: ["otherBrand"],
+      });
+    }
+
+    if (data.value.type === "___other" && !data.value.otherType) {
+      data.issues.push({
+        code: "custom",
+        message: "Type is required",
+        input: data.value.otherType,
+        path: ["otherType"],
       });
     }
   });

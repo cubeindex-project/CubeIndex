@@ -189,13 +189,15 @@
             {/if}
           </div>
           <div>
-            <label class="block mb-1 font-medium" for="model">Model</label>
-            <input
-              name="model"
-              type="text"
-              class="input input-bordered w-full"
-              bind:value={$form.model}
-            />
+            <label class="block mb-1 font-medium">
+              Model
+              <input
+                name="model"
+                type="text"
+                class="input input-bordered w-full"
+                bind:value={$form.model}
+              />
+            </label>
             {#if $errors.model}
               <span class="text-error">{$errors.model}</span>
             {/if}

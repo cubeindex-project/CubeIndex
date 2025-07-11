@@ -10,7 +10,7 @@
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, relatedCube, sameSeries, vendors } = data;
+  let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, constraints, message, enhance } = superForm(
@@ -69,6 +69,7 @@
   ];
 
   let cubes: CubeType[] = $state([]);
+  let allSubTypes: string[] = $state([]);
   let allCubes: () => {
     label: string;
     value: string;
@@ -96,6 +97,12 @@
       .neq("status", "Rejected");
     if (cubesErr) throw error(500, cubesErr.message);
     cubes = data;
+
+    let { data: SubTypes } = await supabase.rpc("get_types", {
+      enum_type: "cubes_subtypes",
+    });
+
+    allSubTypes = SubTypes;
   });
 </script>
 
@@ -197,26 +204,51 @@
           <div>
             <label class="block mb-1 font-medium">
               Type
-              <input
+              <select
                 name="type"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.type}
-              />
+                class="select w-full"
+                required
+              >
+                <option value="___other">+ Create Type</option>
+                {#each types as type}
+                  <option value={type.type}>{type.type}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.type}
               <span class="text-error">{$errors.type}</span>
             {/if}
           </div>
+          {#if $form.type === "___other"}
+            <div transition:blur>
+              <label class="block mb-1 font-medium">
+                Create Type
+                <input
+                  name="type"
+                  type="text"
+                  class="input input-bordered w-full"
+                  bind:value={$form.otherType}
+                />
+              </label>
+              {#if $errors.type}
+                <span class="text-error">{$errors.type}</span>
+              {/if}
+            </div>
+          {/if}
           <div>
             <label class="block mb-1 font-medium">
               Sub Type
-              <input
-                name="type"
-                type="text"
-                class="input input-bordered w-full"
+              <select
+                name="subType"
                 bind:value={$form.sub_type}
-              />
+                class="select w-full"
+                required
+              >
+                {#each allSubTypes as subType}
+                  <option value={subType}>{subType}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.sub_type}
               <span class="text-error">{$errors.sub_type}</span>
@@ -592,7 +624,7 @@
               >{`${$form.series} ${$form.model} ${$form.versionType !== "Base" ? $form.versionName : ""}`}</span
             >
             is a
-            <span class="font-bold text-primary">{$form.type}</span>
+            <span class="font-bold text-primary">{$form.type !== "___other" ? $form.type?.trim() : $form.otherType}</span>
             twisty puzzle released on
             <span class="font-bold text-primary"
               >{formatDate($form.releaseDate)}</span
@@ -626,7 +658,9 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Type:</span>
-            <span class="font-medium">{$form.type}</span>
+            <span class="font-medium">
+              {$form.type !== "___other" ? $form.type?.trim() : $form.otherType}
+            </span>
           </div>
           <div class="flex items-center justify-between">
             <span>Weight:</span>

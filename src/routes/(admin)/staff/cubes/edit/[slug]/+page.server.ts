@@ -16,7 +16,8 @@ const schema = z
     versionType: z.literal(["Base", "Trim", "Limited"]),
     versionName: z.string().optional(),
     brand: z.string().nonempty("Brand is required"),
-    type: z.string().nonempty("Type is required"),
+    type: z.string().optional(),
+    otherType: z.string().nonempty("Type is required"),
     sub_type: z.string().optional(),
     relatedTo: z.string().optional(),
     releaseDate: z
@@ -136,6 +137,13 @@ export const load: PageServerLoad = async ({ params }) => {
   if (vendorError)
     throw error(500, `Failed to fetch vendors: ${vendorError.message}`);
 
+  const { data: types, error: typesError } = await supabase
+    .from("cube_types")
+    .select("type");
+
+  if (typesError)
+    throw error(500, `Failed to fetch vendors: ${typesError.message}`);
+
   const form = await superValidate(
     {
       id: cube.id,
@@ -180,6 +188,7 @@ export const load: PageServerLoad = async ({ params }) => {
     vendor_links,
     vendors,
     profiles,
+    types,
     form,
   };
 };
@@ -202,6 +211,14 @@ export const actions: Actions = {
       }`
     );
 
+    if (!data.type) {
+      const { error: err } = await supabase
+        .from("cube_types")
+        .insert([{ type: data.otherType }]);
+
+      if (err) throw error(500, err.message);
+    }
+
     const cubePayload = {
       slug,
       series: data.series?.trim(),
@@ -209,11 +226,18 @@ export const actions: Actions = {
       version_name:
         data.versionType === "Base" ? undefined : data.versionName?.trim(),
       brand: data.brand.trim(),
-      type: data.type.trim(),
+      type: data.type !== "___other" ? data.type?.trim() : data.otherType,
       sub_type:
         data.sub_type === ""
-          ? data.sub_type.trim() ?? getSubTypes(data.type)?.trim()
-          : getSubTypes(data.type)?.trim(),
+          ? data.sub_type.trim() ??
+            getSubTypes(
+              (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
+                ""
+            )?.trim()
+          : getSubTypes(
+              (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
+                ""
+            )?.trim(),
       release_date: data.releaseDate.trim(),
       image_url: cleanLink(data.imageUrl),
       surface_finish: data.surfaceFinish?.trim(),

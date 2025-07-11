@@ -97,7 +97,7 @@
     allSubTypes = SubTypes;
 
     let { data: surfaces } = await supabase.rpc("get_types", {
-      enum_type: "cube_surface_finish",
+      enum_type: "cube_surface_finishes",
     });
 
     allSurfaces = surfaces;

@@ -20,28 +20,20 @@ export const load = (async ({ parent, params, data }) => {
 
   const cube: CubeType = cubes.find((c) => c.slug === slug) ?? ({} as CubeType);
 
-  const sameSeries: CubeType[] = cubes.filter((c) => {
-    if (
-      c.series !== cube.series ||
-      c.version_type !== "Base" ||
-      c.model === cube.model
-    ) {
-      return false;
-    }
-
-    if (cube.status === "Approved") {
-      return c.status === "Approved";
-    }
-
-    return true;
-  });
+  const sameSeries: CubeType[] = cubes.filter(
+    (c) =>
+      c.series === cube.series &&
+      c.version_type === "Base" &&
+      c.model !== cube.model &&
+      c.status === "Approved"
+  );
 
   const relatedCube: CubeType | null =
     cubes.find((c) => c.slug === cube.related_to) ?? null;
 
-  const cubeTrims: CubeType[] = cubes.filter((c) => {
-    return c.related_to === cube.slug;
-  });
+  const cubeTrims: CubeType[] = cubes.filter(
+    (c) => c.related_to === cube.slug && c.status === "Approved"
+  );
 
   const { data: cubeUserCount, error: ucErr } = await supabase
     .from("user_cubes")

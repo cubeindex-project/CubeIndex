@@ -81,7 +81,11 @@
     { label: "Stickered", key: () => $form.stickered },
   ];
 
-  let cubes: CubeType[] = $state([]);
+  let cubes: CubeType[] = $state({} as typeof cubes);
+  let searchCubes: {
+    label: string;
+    value: string;
+  }[] = $state([]);
   let allSubTypes: string[] = $state([]);
   let allSurfaces: string[] = $state([]);
   let allBrands: string[] = $state([]);
@@ -90,13 +94,23 @@
     value: string;
   }[] = $state(() => []);
 
+  let search = $state("");
+
+  // whenever allCubes() or search changes, recompute filtered list
+  $effect(() => {
+    const _ = search;
+    searchCubes = allCubes().filter((c) =>
+      c.label.toLowerCase().includes(search.toLowerCase())
+    );
+  });
+
   $effect(() => {
     const _ = cubes;
     allCubes = () =>
       Array.from(
         new Set(
           cubes
-            .filter((c) => c.version_type === "Base")
+            .filter((c) => c.version_type === "Base" && c.status === "Approved")
             .map((c) => ({
               label: `${c.series} ${c.model} ${c.version_name}`,
               value: c.slug,
@@ -189,13 +203,15 @@
             {/if}
           </div>
           <div>
-            <label class="block mb-1 font-medium" for="model">Model</label>
-            <input
-              name="model"
-              type="text"
-              class="input input-bordered w-full"
-              bind:value={$form.model}
-            />
+            <label class="block mb-1 font-medium">
+              Model
+              <input
+                name="model"
+                type="text"
+                class="input input-bordered w-full"
+                bind:value={$form.model}
+              />
+            </label>
             {#if $errors.model}
               <span class="text-error">{$errors.model}</span>
             {/if}
@@ -380,17 +396,37 @@
             <div transition:blur>
               <label class="block mb-1 font-medium">
                 Related To
-                <select
-                  name="relatedTo"
-                  bind:value={$form.relatedTo}
-                  class="select w-full"
-                  required
-                >
-                  {#each allCubes() as c}
-                    <option value={c.value}>{c.label}</option>
-                  {/each}
-                </select>
+                <input
+                  type="text"
+                  placeholder="Search cubes…"
+                  bind:value={search}
+                  class="input w-full mb-2"
+                  aria-label="Search cubes"
+                />
+
+                <!-- filtered results list -->
+                <ul class="border rounded max-h-40 overflow-auto">
+                  {#if searchCubes.length === 0}
+                    <li class="p-2 italic">No matches</li>
+                  {:else}
+                    {#each searchCubes as c}
+                      <button
+                        class="p-2 hover:bg-base-200 cursor-pointer"
+                        type="button"
+                        onclick={() => {
+                          $form.relatedTo = c.value;
+                          search = c.label;
+                        }}
+                      >
+                        {c.label}
+                      </button>
+                    {/each}
+                  {/if}
+                </ul>
+
+                <input type="hidden" name="relatedTo" value={$form.relatedTo} />
               </label>
+
               {#if $errors.relatedTo}
                 <span class="text-error">{$errors.relatedTo}</span>
               {/if}

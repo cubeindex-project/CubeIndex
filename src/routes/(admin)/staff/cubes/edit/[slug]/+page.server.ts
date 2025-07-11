@@ -15,10 +15,10 @@ const schema = z
     model: z.string().nonempty("Model is required"),
     versionType: z.literal(["Base", "Trim", "Limited"]),
     versionName: z.string().optional(),
-    brand: z.string().optional(),
-    otherBrand: z.string().nonempty("Brand is required"),
-    type: z.string().optional(),
-    otherType: z.string().nonempty("Type is required"),
+    brand: z.string().nonempty("Brand is required"),
+    otherBrand: z.string(),
+    type: z.string().nonempty("Type is required"),
+    otherType: z.string(),
     sub_type: z.string().nonempty("Sub Type is required"),
     relatedTo: z.string().optional(),
     releaseDate: z
@@ -50,8 +50,8 @@ const schema = z
   .check((data) => {
     if (
       data.value.versionType !== "Base" &&
-      data.value.versionName &&
-      data.value.versionName.trim() === ""
+      ((data.value.versionName && data.value.versionName.trim() === "") ||
+        !data.value.versionName)
     ) {
       data.issues.push({
         code: "custom",
@@ -67,6 +67,24 @@ const schema = z
         message: "Smart cubes can not be WCA Legal",
         input: data.value.wcaLegal,
         path: ["wcaLegal"],
+      });
+    }
+
+    if (data.value.brand === "___other" && !data.value.otherBrand) {
+      data.issues.push({
+        code: "custom",
+        message: "Brand is required",
+        input: data.value.otherBrand,
+        path: ["otherBrand"],
+      });
+    }
+
+    if (data.value.type === "___other" && !data.value.otherType) {
+      data.issues.push({
+        code: "custom",
+        message: "A Type is required",
+        input: data.value.otherType,
+        path: ["otherType"],
       });
     }
   });
@@ -225,7 +243,7 @@ export const actions: Actions = {
       series: data.series?.trim(),
       model: data.model.trim(),
       version_name:
-        data.versionType === "Base" ? undefined : data.versionName?.trim(),
+        data.versionType === "Base" ? "" : data.versionName?.trim(),
       brand: data.brand !== "___other" ? data.brand?.trim() : data.otherBrand,
       type: data.type !== "___other" ? data.type?.trim() : data.otherType,
       sub_type:

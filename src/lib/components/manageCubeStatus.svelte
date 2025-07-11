@@ -82,7 +82,7 @@
 </script>
 
 <div
-  class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
+  class="fixed inset-0 bg-base-300/60 backdrop-blur-md flex items-center justify-center z-50"
   transition:blur
 >
   <form

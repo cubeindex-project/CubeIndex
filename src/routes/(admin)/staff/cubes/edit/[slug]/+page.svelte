@@ -15,17 +15,23 @@
   let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
-  const { form, allErrors, errors, constraints, message, enhance } = superForm(
-    data.form,
-    {
-      dataType: "json",
-      resetForm: false,
-      onError({ result }) {
-        // Handle server validation errors gracefully
-        $message = result.error.message || "Unknown error";
-      },
-    }
-  );
+  const {
+    form,
+    allErrors,
+    errors,
+    constraints,
+    message,
+    enhance,
+    isTainted,
+    tainted,
+  } = superForm(data.form, {
+    dataType: "json",
+    resetForm: false,
+    onError({ result }) {
+      // Handle server validation errors gracefully
+      $message = result.error.message || "Unknown error";
+    },
+  });
 
   // Store the cube being edited
   const cube: CubeType = $state(data.cube);
@@ -35,6 +41,13 @@
 
   let openModNotes = $state(false);
   let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
+
+  let dirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $tainted;
+    dirty = isTainted();
+  });
 
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
@@ -225,7 +238,8 @@
           {#if $form.brand === "___other"}
             <div transition:blur>
               <label class="block mb-1 font-medium">
-                Add Brand (To see the added brand in the list above, approve this cube)
+                Add Brand (To see the added brand in the list above, approve
+                this cube)
                 <input
                   name="brand"
                   type="text"
@@ -336,9 +350,9 @@
                 class="select w-full"
                 required
               >
-                {#if allSurfaces.length === 0}
+                <!-- {#if allSurfaces.length === 0}
                   <option>Loading...</option>
-                {/if}
+                {/if} -->
                 {#each allSurfaces as surface}
                   <option value={surface}>{surface}</option>
                 {/each}
@@ -648,16 +662,21 @@
           <button
             class="btn btn-success flex-1"
             onclick={() => toggleModNotes("Accept")}
+            disabled={dirty}
           >
             <i class="fa-solid fa-check mr-2"></i>Accept
           </button>
           <button
             class="btn btn-error flex-1"
             onclick={() => toggleModNotes("Reject")}
+            disabled={dirty}
           >
             <i class="fa-solid fa-xmark mr-2"></i>Reject
           </button>
         </div>
+        {#if dirty}
+          <p class="text-error">You have unsaved modifications</p>
+        {/if}
       {/if}
 
       <div class="my-6 flex flex-col sm:flex-row items-center gap-6">

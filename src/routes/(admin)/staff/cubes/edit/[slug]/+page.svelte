@@ -7,6 +7,7 @@
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { error } from "@sveltejs/kit";
+  import { formatDate } from "$lib/components/formatDate.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -30,16 +31,6 @@
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
-
-  // Utility function to format date strings nicely for display
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
 
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
@@ -70,6 +61,7 @@
 
   let cubes: CubeType[] = $state([]);
   let allSubTypes: string[] = $state([]);
+  let allSurfaces: string[] = $state([]);
   let allCubes: () => {
     label: string;
     value: string;
@@ -103,6 +95,12 @@
     });
 
     allSubTypes = SubTypes;
+
+    let { data: surfaces } = await supabase.rpc("get_types", {
+      enum_type: "cube_surface_finish",
+    });
+
+    allSurfaces = surfaces;
   });
 </script>
 
@@ -231,8 +229,8 @@
                   bind:value={$form.otherType}
                 />
               </label>
-              {#if $errors.type}
-                <span class="text-error">{$errors.type}</span>
+              {#if $errors.otherType}
+                <span class="text-error">{$errors.otherType}</span>
               {/if}
             </div>
           {/if}
@@ -245,6 +243,9 @@
                 class="select w-full"
                 required
               >
+                {#if allSubTypes.length === 0}
+                  <option>Loading...</option>
+                {/if}
                 {#each allSubTypes as subType}
                   <option value={subType}>{subType}</option>
                 {/each}
@@ -289,12 +290,19 @@
           <div>
             <label class="block mb-1 font-medium"
               >Surface Finish
-              <input
+              <select
                 name="surfaceFinish"
-                type="text"
-                class="input input-bordered w-full"
                 bind:value={$form.surfaceFinish}
-              />
+                class="select w-full"
+                required
+              >
+                {#if allSurfaces.length === 0}
+                  <option>Loading...</option>
+                {/if}
+                {#each allSurfaces as surface}
+                  <option value={surface}>{surface}</option>
+                {/each}
+              </select>
             </label>
             {#if $errors.surfaceFinish}
               <span class="text-error">{$errors.surfaceFinish}</span>
@@ -624,7 +632,11 @@
               >{`${$form.series} ${$form.model} ${$form.versionType !== "Base" ? $form.versionName : ""}`}</span
             >
             is a
-            <span class="font-bold text-primary">{$form.type !== "___other" ? $form.type?.trim() : $form.otherType}</span>
+            <span class="font-bold text-primary"
+              >{$form.type !== "___other"
+                ? $form.type?.trim()
+                : $form.otherType}</span
+            >
             twisty puzzle released on
             <span class="font-bold text-primary"
               >{formatDate($form.releaseDate)}</span
@@ -672,7 +684,7 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>
-            <span class="font-medium">{$form.surfaceFinish}</span>
+            <span class="font-medium">{$form.surfaceFinish !== "Loading..." ? $form.surfaceFinish : ""}</span>
           </div>
           <div class="flex items-center justify-between">
             <span>Release Date:</span>

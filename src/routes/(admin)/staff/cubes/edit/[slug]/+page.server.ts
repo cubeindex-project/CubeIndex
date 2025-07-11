@@ -6,6 +6,7 @@ import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 import type { PageServerLoad } from "./$types.js";
+import { cleanLink } from "$lib/components/linkCleaner.js";
 
 const schema = z
   .object({
@@ -192,29 +193,34 @@ export const actions: Actions = {
     if (!form.valid) return fail(400, { form });
 
     const slug = slugify(
-      `${data.series ? data.series : ""} ${data.model} ${
-        data.versionName ? data.versionName : ""
+      `${data.series ? data.series.trim() : ""} ${data.model.trim()} ${
+        data.versionType !== "Base"
+          ? data.versionName
+            ? data.versionName.trim()
+            : ""
+          : ""
       }`
     );
 
     const cubePayload = {
       slug,
-      series: data.series,
-      model: data.model,
-      version_name: data.versionName,
-      brand: data.brand,
-      type: data.type,
+      series: data.series?.trim(),
+      model: data.model.trim(),
+      version_name:
+        data.versionType === "Base" ? undefined : data.versionName?.trim(),
+      brand: data.brand.trim(),
+      type: data.type.trim(),
       sub_type:
         data.sub_type === ""
-          ? data.sub_type ?? getSubTypes(data.type)
-          : getSubTypes(data.type),
-      release_date: data.releaseDate,
-      image_url: data.imageUrl,
-      surface_finish: data.surfaceFinish,
+          ? data.sub_type.trim() ?? getSubTypes(data.type)?.trim()
+          : getSubTypes(data.type)?.trim(),
+      release_date: data.releaseDate.trim(),
+      image_url: cleanLink(data.imageUrl),
+      surface_finish: data.surfaceFinish?.trim(),
       weight: data.weight,
       size: data.size,
       version_type: data.versionType,
-      related_to: data.relatedTo,
+      related_to: data.relatedTo?.trim(),
       wca_legal: data.wcaLegal,
       magnetic: data.magnetic,
       smart: data.smart,
@@ -228,7 +234,7 @@ export const actions: Actions = {
     const vendorPayload = data.vendorLinks.map((vendorLink) => ({
       cube_slug: slug,
       vendor_name: vendorLink.vendor_name,
-      url: vendorLink.url,
+      url: cleanLink(vendorLink.url)?.trim(),
       available: vendorLink.available,
       price: vendorLink.price,
     }));

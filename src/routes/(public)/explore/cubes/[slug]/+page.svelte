@@ -3,24 +3,28 @@
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
-  import type { CubeType } from "$lib/components/cube.svelte.js";
+  import type { Cube } from "$lib/components/types/cube.js";
   import { formatDate } from "$lib/components/formatDate.svelte";
+  import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
+  import type { CubeModelsMetadata } from "$lib/components/types/cubeMeta.js";
 
   let { data } = $props();
   let {
     cubesAvailability = true,
     databaseAvailability = true,
-    cube = {} as CubeType,
-    cubeTrims = [],
-    cubeUserCount,
-    relatedCube = null,
-    sameSeries,
+    cube = {} as Cube,
+    profile,
     user_ratings,
     profiles,
-    vendor_links,
-    profile,
+    cubeTrims,
+    relatedCube,
+    sameSeries,
     features = [],
   } = $derived(data);
+
+  let vendor_links: CubeVendorLinks[] | undefined = $state(data.vendor_links);
+  let cube_metadata: CubeModelsMetadata = $state(data.cube_metadata);
+  let cubeUserCount: Cube[] | undefined = $state(data.cubeUserCount);
 
   let loading = $state(true);
 
@@ -164,31 +168,31 @@
       </div>
     {:else}
       <div class="max-w-4xl mx-auto">
-        {#if profile && cube.submitted_by === profile.username && cube.status !== "Approved"}
+        {#if profile && cube_metadata.submitted_by === profile.username && cube_metadata.status !== "Approved"}
           <div
-            class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
+            class="flex items-center gap-3 p-4 my-4 rounded-xl {cube_metadata.status ===
             'Pending'
               ? 'bg-warning'
               : 'bg-error'} font-semibold shadow-sm"
           >
-            {#if cube.status === "Pending"}
+            {#if cube_metadata.status === "Pending"}
               <i class="fa-solid fa-hourglass-half"></i>
             {:else}
               <i class="fa-solid fa-triangle-exclamation"></i>
             {/if}
 
-            Your submission {cube.status === "Pending"
+            Your submission {cube_metadata.status === "Pending"
               ? "is awaiting verification by moderators"
               : "has been rejected"}.
           </div>
-        {:else if cube.status === "Rejected"}
+        {:else if cube_metadata.status === "Rejected"}
           <div
             class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error font-semibold shadow-sm"
           >
             <i class="fa-solid fa-triangle-exclamation"></i>
             This cube has been rejected.
           </div>
-        {:else if cube.status === "Pending"}
+        {:else if cube_metadata.status === "Pending"}
           <div
             class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning font-semibold shadow-sm"
           >
@@ -220,7 +224,7 @@
           this cube
         </p>
 
-        {#if cube.status === "Approved"}
+        {#if cube_metadata.status === "Approved"}
           <button
             class="btn btn-secondary flex-1 mb-4"
             type="button"
@@ -267,21 +271,31 @@
                   : "Loading..."}
               </span>. It is
               <span class="font-bold text-primary"
-                >{cube.magnetic ? "magnetic" : "non-magnetic"}</span
+                >{features.some((f) => f.feature === "magnetic")
+                  ? "magnetic"
+                  : "non-magnetic"}</span
               >,
               <span class="font-bold text-primary"
-                >{cube.smart ? "smart" : "non-smart"}</span
+                >{features.some((f) => f.feature === "smart")
+                  ? "smart"
+                  : "non-smart"}</span
               >, and
               <span class="font-bold text-primary"
-                >{cube.wca_legal ? "WCA-legal" : "not WCA-legal"}</span
+                >{features.some((f) => f.feature === "wca_legal")
+                  ? "WCA-legal"
+                  : "not WCA-legal"}</span
               >. Currently, it is
               <span class="font-bold text-primary"
-                >{cube.discontinued ? "discontinued" : "available"}</span
+                >{features.some((f) => f.feature === "discontinued")
+                  ? "discontinued"
+                  : "available"}</span
               >, has a community rating of
               <span class="font-bold text-primary">{cube.rating}/5</span>, and
               is
               <span class="font-bold text-primary"
-                >{cube.modded ? "modded" : "original"}</span
+                >{features.some((f) => f.feature === "modded")
+                  ? "modded"
+                  : "original"}</span
               >.
             </span>
           </p>
@@ -326,7 +340,7 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                  {#if features.some((f) => f.cube === cube.slug && f.feature === status.key)}
+                  {#if features.some((f) => f.feature === status.key)}
                     ✅
                   {:else}
                     ❌
@@ -377,7 +391,9 @@
               <div class="flex items-center gap-2">
                 <span>Added:</span>
                 <span class="font-medium">
-                  {cube.created_at ? formatDate(cube.created_at) : "Loading..."}
+                  {cube_metadata.created_at
+                    ? formatDate(cube_metadata.created_at)
+                    : "Loading..."}
                 </span>
               </div>
               <div class="flex items-center gap-2">
@@ -390,32 +406,32 @@
                 <span>Verified by:</span>
                 <a
                   class="font-medium underline"
-                  href={idOfUser(cube.verified_by)}
+                  href={idOfUser(cube_metadata.verified_by)}
                 >
-                  {cube.verified_by || "Unknown"}
+                  {cube_metadata.verified_by || "Unknown"}
                 </a>
               </div>
               <div class="flex items-center gap-2">
                 <span>Submitted by:</span>
                 <a
                   class="font-medium underline"
-                  href={idOfUser(cube.submitted_by)}
+                  href={idOfUser(cube_metadata.submitted_by)}
                 >
-                  {cube.submitted_by || "Unknown"}
+                  {cube_metadata.submitted_by || "Unknown"}
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {#if cube.notes && profile && profile.username === cube.submitted_by}
+        {#if cube_metadata.notes && profile && profile.username === cube_metadata.submitted_by}
           <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
               <i class="fa-solid fa-note-sticky"></i>
               Moderator Note
               <span class="text-xs">(Only you can see this)</span>
             </h2>
-            <p class="whitespace-pre-line">{cube.notes}</p>
+            <p class="whitespace-pre-line">{cube_metadata.notes}</p>
           </div>
         {/if}
 
@@ -442,7 +458,7 @@
             </div>
           </div>
         {/if}
-        {#if (cube.version_type !== "Base" || cube.modded === true) && relatedCube}
+        {#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
           <div class="mb-8">
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
               <i class="fa-solid fa-palette"></i>

@@ -7,11 +7,26 @@
   import type { CubeType } from "$lib/components/cube.svelte.js";
 
   const { data } = $props();
+  const { brands, types, surfaces, subTypes } = data;
+
+  let search = $state("");
+  let searchCubes: {
+    label: string;
+    value: string;
+  }[] = $state([]);
+
+  $effect(() => {
+    const _ = search;
+    searchCubes = allCubes.filter((c) =>
+      c.label.toLowerCase().includes(search.toLowerCase())
+    );
+  });
 
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, constraints, message, enhance } = superForm(
     data.form,
     {
+      dataType: "json",
       resetForm: false,
       onError({ result }) {
         // Handle server validation errors gracefully
@@ -21,29 +36,24 @@
   );
 
   let cubes: CubeType[] = $state([]);
-  let allTypes: () => string[] = $state(() => []);
-  let allBrands: () => string[] = $state(() => []);
-  let allCubes: () => {
+  let allCubes: {
     label: string;
     value: string;
-  }[] = $state(() => []);
+  }[] = $state([]);
 
   // Example: These could come from a load function or API
   $effect(() => {
     const _ = cubes;
-    allTypes = () => Array.from(new Set(cubes.map((c) => c.type))).sort();
-    allBrands = () => Array.from(new Set(cubes.map((c) => c.brand))).sort();
-    allCubes = () =>
-      Array.from(
-        new Set(
-          cubes
-            .filter((c) => c.version_type === "Base")
-            .map((c) => ({
-              label: `${c.series} ${c.model} ${c.version_name}`,
-              value: c.slug,
-            }))
-        )
-      ).sort();
+    allCubes = Array.from(
+      new Set(
+        cubes
+          .filter((c) => c.version_type === "Base" && c.status === "Approved")
+          .map((c) => ({
+            label: `${c.series} ${c.model} ${c.version_name}`,
+            value: c.slug,
+          }))
+      )
+    ).sort();
   });
 
   onMount(async () => {
@@ -60,9 +70,7 @@
   class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden py-10"
 >
   <div class="w-full p-8 z-10">
-    <h1 class="text-3xl font-clash font-bold text-center mb-6">
-      Submit a Cube
-    </h1>
+    <h1 class="text-3xl font-clash font-bold text-center mb-6">Add a Cube</h1>
     <form method="POST" use:enhance class="space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
@@ -114,18 +122,17 @@
               class="select select-lg w-full"
               required
             >
-              <option value="disabled" selected>Select Brand</option>
-              {#each allBrands() as b}
-                <option value={b}>{b}</option>
+              <option value="___other">+ Add Brand</option>
+              {#each brands as b}
+                <option>{b.name}</option>
               {/each}
-              <option value="___other">Other...</option>
             </select>
           </label>
         </div>
         {#if $form.brand === "___other"}
           <div transition:blur>
             <label class="block text-sm mb-1"
-              >Other Brand <span class="text-red-500">*</span>
+              >Add Brand <span class="text-red-500">*</span>
               <input
                 name="otherBrand"
                 type="text"
@@ -138,20 +145,55 @@
         {/if}
         <div>
           <label class="block text-sm mb-1"
-            >Type <span class="text-red-500">*</span> (If the type you need
-            isn't listed, please contact the staff.)
+            >Type <span class="text-red-500">*</span>
             <select
               name="type"
               bind:value={$form.type}
               class="select select-lg w-full"
               required
             >
-              <option value="disabled" selected>Select Type</option>
-              {#each allTypes() as t}
-                <option value={t}>{t}</option>
+              <option value="___other">+ Create Type</option>
+              {#each types as t}
+                <option>{t.name}</option>
               {/each}
             </select>
           </label>
+        </div>
+        {#if $form.type === "___other"}
+          <div transition:blur>
+            <label class="block text-sm mb-1"
+              >Create Type <span class="text-red-500">*</span>
+              <input
+                name="otherType"
+                type="text"
+                bind:value={$form.otherType}
+                class="input w-full input-lg"
+                required
+              />
+            </label>
+          </div>
+        {/if}
+        <div>
+          <label class="block mb-1 text-sm">
+            Sub Type
+            <select
+              name="subType"
+              bind:value={$form.sub_type}
+              class="select select-lg w-full"
+              required
+            >
+              {#if subTypes.length === 0}
+                <option>Loading...</option>
+              {/if}
+              <option value="auto">Handle Automatically</option>
+              {#each subTypes as subType}
+                <option value={subType}>{subType}</option>
+              {/each}
+            </select>
+          </label>
+          {#if $errors.sub_type}
+            <span class="text-error">{$errors.sub_type}</span>
+          {/if}
         </div>
         <div>
           <label class="block text-sm mb-1"
@@ -181,14 +223,16 @@
         <div>
           <label class="block text-sm mb-1"
             >Surface Finish <span class="text-red-500">*</span>
-            <input
+            <select
               name="surfaceFinish"
-              type="text"
-              placeholder="Frosted"
               bind:value={$form.surfaceFinish}
-              class="input w-full input-lg"
+              class="select select-lg w-full"
               required
-            />
+            >
+              {#each surfaces as surface}
+                <option>{surface}</option>
+              {/each}
+            </select>
           </label>
         </div>
         <div>
@@ -228,29 +272,50 @@
               class="select select-lg w-full"
               required
             >
-              <option value="disabled" selected>Select Cube Type</option>
               <option value="Base">Base</option>
               <option value="Trim">Trim</option>
               <option value="Limited">Limited Edition</option>
             </select>
           </label>
         </div>
-        {#if $form.modded || $form.versionType !== "Base"}
+        {#if $form.features.modded || $form.versionType !== "Base"}
           <div transition:blur>
-            <label class="block text-sm mb-1"
-              >Related To <span class="text-red-500">*</span>
-              <select
-                name="relatedTo"
-                bind:value={$form.relatedTo}
-                class="select select-lg w-full"
-                required
-              >
-                <option value="disabled" selected>Select Model</option>
-                {#each allCubes() as c}
-                  <option value={c.value}>{c.label}</option>
-                {/each}
-              </select>
+            <label class="block mb-1 font-medium">
+              Related To (Only approved cubes are shown)
+              <input
+                type="text"
+                placeholder="Search cubes…"
+                bind:value={search}
+                class="input w-full mb-2"
+                aria-label="Search cubes"
+              />
+
+              <!-- filtered results list -->
+              <ul class="border rounded max-h-40 overflow-auto">
+                {#if searchCubes.length === 0}
+                  <li class="p-2 italic">No matches</li>
+                {:else}
+                  {#each searchCubes as c}
+                    <button
+                      class="p-2 hover:bg-base-200 cursor-pointer"
+                      type="button"
+                      onclick={() => {
+                        $form.relatedTo = c.value;
+                        search = c.label;
+                      }}
+                    >
+                      {c.label}
+                    </button>
+                  {/each}
+                {/if}
+              </ul>
+
+              <input type="hidden" name="relatedTo" value={$form.relatedTo} />
             </label>
+
+            {#if $errors.relatedTo}
+              <span class="text-error">{$errors.relatedTo}</span>
+            {/if}
           </div>
         {/if}
       </div>
@@ -261,7 +326,7 @@
           <input
             name="wcaLegal"
             type="checkbox"
-            bind:checked={$form.wcaLegal}
+            bind:checked={$form.features.wcaLegal}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="wca_legal" class="text-sm">WCA Legal</label>
@@ -270,7 +335,7 @@
           <input
             name="magnetic"
             type="checkbox"
-            bind:checked={$form.magnetic}
+            bind:checked={$form.features.magnetic}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="magnetic" class="text-sm">Magnetic</label>
@@ -279,7 +344,7 @@
           <input
             name="smart"
             type="checkbox"
-            bind:checked={$form.smart}
+            bind:checked={$form.features.smart}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="smart" class="text-sm">Smart</label>
@@ -288,7 +353,7 @@
           <input
             name="modded"
             type="checkbox"
-            bind:checked={$form.modded}
+            bind:checked={$form.features.modded}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="modded" class="text-sm">Modded</label>
@@ -297,7 +362,7 @@
           <input
             name="discontinued"
             type="checkbox"
-            bind:checked={$form.discontinued}
+            bind:checked={$form.features.discontinued}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="discontinued" class="text-sm">Discontinued</label>
@@ -306,7 +371,7 @@
           <input
             name="maglev"
             type="checkbox"
-            bind:checked={$form.maglev}
+            bind:checked={$form.features.maglev}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="maglev" class="text-sm">Maglev</label>
@@ -315,10 +380,19 @@
           <input
             name="stickered"
             type="checkbox"
-            bind:checked={$form.stickered}
+            bind:checked={$form.features.stickered}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="maglev" class="text-sm">Stickered</label>
+        </div>
+        <div class="flex items-center gap-3">
+          <input
+            name="ballCore"
+            type="checkbox"
+            bind:checked={$form.features.ballCore}
+            class="checkbox checkbox-md bg-base-100"
+          />
+          <label class="text-sm" for="ballCore">Ball Core</label>
         </div>
       </div>
 

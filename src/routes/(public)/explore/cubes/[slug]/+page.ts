@@ -18,6 +18,15 @@ export const load = (async ({ parent, params, data }) => {
     return;
   }
 
+  const { data: features, error: featErr } = await supabase
+    .from("cubes_model_features")
+    .select("*");
+
+  if (featErr) {
+    console.error("A 500 status code error occured:", featErr.message);
+    return;
+  }
+
   const cube: CubeType = cubes.find((c) => c.slug === slug) ?? ({} as CubeType);
 
   const sameSeries: CubeType[] = cubes.filter(
@@ -87,5 +96,6 @@ export const load = (async ({ parent, params, data }) => {
     user_ratings,
     profiles,
     vendor_links,
+    features,
   };
 }) satisfies PageLoad;

@@ -19,6 +19,7 @@
     profiles,
     vendor_links,
     profile,
+    features = [],
   } = $derived(data);
 
   let loading = $state(true);
@@ -45,6 +46,7 @@
     { label: "Maglev", key: "maglev" },
     { label: "Discontinued", key: "discontinued" },
     { label: "Stickered", key: "stickered" },
+    { label: "Ball Core", key: "ball_core" },
   ];
 </script>
 
@@ -324,7 +326,11 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                  {cube[status.key as keyof CubeType] ? "✅" : "❌"}
+                  {#if features.some((f) => f.cube === cube.slug && f.feature === status.key)}
+                    ✅
+                  {:else}
+                    ❌
+                  {/if}
                 </span>
               </div>
             {/each}

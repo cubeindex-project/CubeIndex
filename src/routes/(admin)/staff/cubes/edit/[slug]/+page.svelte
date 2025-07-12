@@ -97,7 +97,7 @@
   }[] = $state([]);
   let allSubTypes: string[] = $state([]);
   let allSurfaces: string[] = $state([]);
-  let allBrands: { brand: string }[] = $state([]);
+  let allBrands: { name: string }[] = $state([]);
   let allCubes: {
     label: string;
     value: string;
@@ -135,8 +135,8 @@
 
     const { data: brands, error: brandsErr } = await supabase
       .from("brands")
-      .select("brand")
-      .order("brand", { ascending: true });
+      .select("name")
+      .order("name", { ascending: true });
 
     if (brandsErr) throw error(500, brandsErr.message);
 
@@ -250,7 +250,7 @@
               >
                 <option value="___other">+ Add Brand</option>
                 {#each allBrands as brand}
-                  <option>{brand.brand}</option>
+                  <option>{brand.name}</option>
                 {/each}
               </select>
             </label>
@@ -285,7 +285,7 @@
               >
                 <option value="___other">+ Create Type</option>
                 {#each types as type}
-                  <option value={type.type}>{type.type}</option>
+                  <option value={type.name}>{type.name}</option>
                 {/each}
               </select>
             </label>
@@ -318,9 +318,6 @@
                 class="select w-full"
                 required
               >
-                {#if allSubTypes.length === 0}
-                  <option>Loading...</option>
-                {/if}
                 <option value="auto">Handle Automatically</option>
                 {#each allSubTypes as subType}
                   <option value={subType}>{subType}</option>

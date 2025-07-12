@@ -168,8 +168,8 @@ export const load: PageServerLoad = async ({ params }) => {
 
   const { data: types, error: typesError } = await supabase
     .from("cube_types")
-    .select("type")
-    .order("type", { ascending: true });
+    .select("name")
+    .order("name", { ascending: true });
 
   if (typesError)
     throw error(500, `Failed to fetch types: ${typesError.message}`);
@@ -268,7 +268,7 @@ export const actions: Actions = {
     if (data.type === "___other") {
       const { error: err } = await locals.supabase
         .from("cube_types")
-        .insert([{ type: data.otherType, added_by: currentUser.username }]);
+        .insert([{ name: data.otherType, added_by: currentUser.username }]);
 
       if (err)
         throw error(
@@ -279,7 +279,7 @@ export const actions: Actions = {
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
-        .insert([{ brand: data.otherBrand, added_by: currentUser.username }]);
+        .insert([{ name: data.otherBrand, added_by: currentUser.username }]);
 
       if (brandErr)
         throw error(
@@ -299,7 +299,7 @@ export const actions: Actions = {
         data.sub_type === "auto"
           ? getSubTypes(
               (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                ""
+                null
             )
           : data.sub_type,
       release_date: data.releaseDate.trim(),

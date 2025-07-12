@@ -372,9 +372,6 @@
                 class="select w-full"
                 required
               >
-                <!-- {#if allSurfaces.length === 0}
-                  <option>Loading...</option>
-                {/if} -->
                 {#each allSurfaces as surface}
                   <option value={surface}>{surface}</option>
                 {/each}
@@ -819,11 +816,9 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>
-            <span class="font-medium"
-              >{$form.surfaceFinish !== "Loading..."
-                ? $form.surfaceFinish
-                : ""}</span
-            >
+            <span class="font-medium">
+              {$form.surfaceFinish}
+            </span>
           </div>
           <div class="flex items-center justify-between">
             <span>Release Date:</span>

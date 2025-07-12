@@ -355,7 +355,7 @@ export const actions: Actions = {
     const normalizeKey = (key: string) =>
       key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
 
-    const { data: existingRows, error: rowsErr } = await supabase
+    const { data: existingRows, error: rowsErr } = await locals.supabase
       .from("cubes_model_features")
       .select("*")
       .eq("cube", slug);

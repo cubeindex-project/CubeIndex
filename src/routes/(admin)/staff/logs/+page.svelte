@@ -103,7 +103,9 @@
     filtered = logs.filter(
       (log) =>
         log.staff.toLowerCase().includes(debouncedSearch) ||
-        log.action.toLowerCase().includes(debouncedSearch)
+        log.action.toLowerCase().includes(debouncedSearch) ||
+        log.created_at.toLowerCase().includes(debouncedSearch) ||
+        log.target_table.toLowerCase().includes(debouncedSearch)
     );
   });
 

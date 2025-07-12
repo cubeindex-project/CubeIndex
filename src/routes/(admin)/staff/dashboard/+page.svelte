@@ -109,6 +109,12 @@
       label: "User Reports",
       implemented: false,
     },
+    {
+      href: "/staff/logs",
+      icon: "🗃️",
+      label: "Staff Logs",
+      implemented: true,
+    },
   ];
 
   const currentRole = roleData.find((r) => r.role === profile.role);

@@ -30,17 +30,6 @@ export const load = (async ({ parent, params, data }) => {
     return;
   }
 
-  const { data: cube_metadata, error: metaErr } = await supabase
-    .from("cube_models_metadata")
-    .select("*")
-    .eq("cube", cube.slug)
-    .single();
-
-  if (metaErr) {
-    console.error("A 500 status code error occured:", metaErr.message);
-    return;
-  }
-
   const sameSeries: Cube[] = cubes.filter(
     (c) =>
       c.series === cube.series &&
@@ -108,7 +97,6 @@ export const load = (async ({ parent, params, data }) => {
     user_ratings,
     profiles,
     vendor_links,
-    cube_metadata,
     features,
   };
 }) satisfies PageLoad;

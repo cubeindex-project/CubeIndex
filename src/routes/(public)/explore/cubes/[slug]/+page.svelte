@@ -6,7 +6,6 @@
   import type { Cube } from "$lib/components/types/cube.js";
   import { formatDate } from "$lib/components/formatDate.svelte";
   import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
-  import type { CubeModelsMetadata } from "$lib/components/types/cubeMeta.js";
 
   let { data } = $props();
   let {
@@ -23,7 +22,6 @@
   } = $derived(data);
 
   let vendor_links: CubeVendorLinks[] | undefined = $state(data.vendor_links);
-  let cube_metadata: CubeModelsMetadata = $state(data.cube_metadata);
   let cubeUserCount: Cube[] | undefined = $state(data.cubeUserCount);
 
   let loading = $state(true);
@@ -168,31 +166,31 @@
       </div>
     {:else}
       <div class="max-w-4xl mx-auto">
-        {#if profile && cube_metadata.submitted_by === profile.username && cube_metadata.status !== "Approved"}
+        {#if profile && cube.submitted_by === profile.username && cube.status !== "Approved"}
           <div
-            class="flex items-center gap-3 p-4 my-4 rounded-xl {cube_metadata.status ===
+            class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
             'Pending'
               ? 'bg-warning'
               : 'bg-error'} font-semibold shadow-sm"
           >
-            {#if cube_metadata.status === "Pending"}
+            {#if cube.status === "Pending"}
               <i class="fa-solid fa-hourglass-half"></i>
             {:else}
               <i class="fa-solid fa-triangle-exclamation"></i>
             {/if}
 
-            Your submission {cube_metadata.status === "Pending"
+            Your submission {cube.status === "Pending"
               ? "is awaiting verification by moderators"
               : "has been rejected"}.
           </div>
-        {:else if cube_metadata.status === "Rejected"}
+        {:else if cube.status === "Rejected"}
           <div
             class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error font-semibold shadow-sm"
           >
             <i class="fa-solid fa-triangle-exclamation"></i>
             This cube has been rejected.
           </div>
-        {:else if cube_metadata.status === "Pending"}
+        {:else if cube.status === "Pending"}
           <div
             class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning font-semibold shadow-sm"
           >
@@ -224,7 +222,7 @@
           this cube
         </p>
 
-        {#if cube_metadata.status === "Approved"}
+        {#if cube.status === "Approved"}
           <button
             class="btn btn-secondary flex-1 mb-4"
             type="button"
@@ -391,8 +389,8 @@
               <div class="flex items-center gap-2">
                 <span>Added:</span>
                 <span class="font-medium">
-                  {cube_metadata.created_at
-                    ? formatDate(cube_metadata.created_at)
+                  {cube.created_at
+                    ? formatDate(cube.created_at)
                     : "Loading..."}
                 </span>
               </div>
@@ -406,32 +404,32 @@
                 <span>Verified by:</span>
                 <a
                   class="font-medium underline"
-                  href={idOfUser(cube_metadata.verified_by)}
+                  href={idOfUser(cube.verified_by)}
                 >
-                  {cube_metadata.verified_by || "Unknown"}
+                  {cube.verified_by || "Unknown"}
                 </a>
               </div>
               <div class="flex items-center gap-2">
                 <span>Submitted by:</span>
                 <a
                   class="font-medium underline"
-                  href={idOfUser(cube_metadata.submitted_by)}
+                  href={idOfUser(cube.submitted_by)}
                 >
-                  {cube_metadata.submitted_by || "Unknown"}
+                  {cube.submitted_by || "Unknown"}
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        {#if cube_metadata.notes && profile && profile.username === cube_metadata.submitted_by}
+        {#if cube.notes && profile && profile.username === cube.submitted_by}
           <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
               <i class="fa-solid fa-note-sticky"></i>
               Moderator Note
               <span class="text-xs">(Only you can see this)</span>
             </h2>
-            <p class="whitespace-pre-line">{cube_metadata.notes}</p>
+            <p class="whitespace-pre-line">{cube.notes}</p>
           </div>
         {/if}
 

@@ -5,7 +5,6 @@
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
   import type { Cube } from "$lib/components/types/cube";
-  import { isFeatureAvail } from "$lib/components/featureAvail.svelte.js";
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -17,27 +16,18 @@
     _smart: boolean;
   };
 
-  // Props and loading
-  let { data } = $props();
-  let { cubesAvailability, databaseAvailability } = data;
+  const { data } = $props();
+  const { databaseAvailability, cubesAvailability } = data;
 
   let loading = $state(true);
-  let features: any[] = $state([]);
 
   async function fetch() {
-    const { data, error: err } = await supabase
-      .from("cube_models")
-      .select("*")
-      .eq("status", "Approved")
-      .order("model", { ascending: true })
-      .order("series", { ascending: true });
+    loading = true;
+    const BATCH = 2000;
+    let start = 0;
+    const featureMap = new Map<string, Set<string>>();
 
-    if (err) {
-      console.error("A 500 status code error occured:", err.message);
-      return;
-    }
-
-    const { data: fetchedFeat, error: featErr } = await supabase
+    const { data: features, error: featErr } = await supabase
       .from("cubes_model_features")
       .select("*");
 
@@ -46,39 +36,60 @@
       return;
     }
 
-    features = fetchedFeat;
+    for (const { cube, feature } of features) {
+      if (!featureMap.has(cube)) {
+        featureMap.set(cube, new Set());
+      }
+      featureMap.get(cube)!.add(feature);
+    }
+    while (true) {
+      const { data, error } = await supabase
+        .from("cube_models")
+        .select("*")
+        .eq("status", "Approved")
+        .range(start, start + BATCH - 1);
 
-    const cubesWithMeta = data.map((c) => ({
-      ...c,
-      _year: new Date(c.release_date ?? "").getFullYear(),
-      _name:
-        `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
-      _wcaLegal: isFeatureAvail(features, c, "wca_legal"),
-      _magnetic: isFeatureAvail(features, c, "magnetic"),
-      _modded: isFeatureAvail(features, c, "modded"),
-      _stickered: isFeatureAvail(features, c, "stickered"),
-      _smart: isFeatureAvail(features, c, "smart"),
-    }));
+      if (error) throw error;
+      if (data.length === 0) {
+        loading = false;
+        break;
+      }
 
-    cubes = cubesWithMeta;
-    loading = false;
+      const cubesWithMeta = data.map((c) => {
+        const feats = featureMap.get(c.slug) ?? new Set<string>();
+        return {
+          ...c,
+          _year: new Date(c.release_date ?? "").getFullYear(),
+          _name:
+            `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
+          _wcaLegal: feats.has("wca_legal"),
+          _magnetic: feats.has("magnetic"),
+          _modded: feats.has("modded"),
+          _stickered: feats.has("stickered"),
+          _smart: feats.has("smart"),
+        };
+      });
+
+      cubes = cubes.concat(cubesWithMeta);
+      start += BATCH;
+    }
   }
 
   // 1) Filter state (year is string 'All' or a year text)
-  let cubes = $state<CubeWithMeta[]>([]);
-  let selectedType = $state<string>("All");
-  let selectedBrand = $state<string>("All");
-  let WCALegal = $state<boolean | undefined>(undefined);
-  let magnetic = $state<boolean | undefined>(undefined);
-  let smart = $state<boolean | undefined>(undefined);
-  let selectedYear = $state<string>("All");
-  let modded = $state<boolean | undefined>(undefined);
-  let stickered = $state<boolean | undefined>(undefined);
-  let selectedCubeType = $state<string>("All");
+  let cubes: CubeWithMeta[] = $state([]);
+  let selectedType: string = $state("All");
+  let selectedBrand: string = $state("All");
+  let WCALegal: boolean | undefined = $state(undefined);
+  let magnetic: boolean | undefined = $state(undefined);
+  let smart: boolean | undefined = $state(undefined);
+  let selectedYear: string = $state("All");
+  let modded: boolean | undefined = $state(undefined);
+  let stickered: boolean | undefined = $state(undefined);
+  let selectedCubeType: string = $state("All");
 
-  let searchTerm = $state("");
-  let currentPage = $state(1);
-  let itemsPerPage = $state(12);
+  let searchTerm: string = $state("");
+  let currentPage: number = $state(1);
+  let itemsPerPage: number = $state(12);
 
   // 2) Options
 
@@ -88,17 +99,17 @@
   let allSubType: string[] = $state([]);
   let allCubeTypes: string[] = $state([]);
 
-  function fetchAll() {
-    const Types = Array.from(new Set(cubes.map((c) => c.type))).sort();
-    const Brands = Array.from(new Set(cubes.map((c) => c.brand))).sort();
+  function calcAll() {
+    const Types = Array.from(new Set(cubes.map((c: Cube) => c.type))).sort();
+    const Brands = Array.from(new Set(cubes.map((c: Cube) => c.brand))).sort();
     const Years = Array.from(
-      new Set(cubes.map((c) => new Date(c.release_date ?? "").getFullYear()))
+      new Set(cubes.map((c: Cube) => new Date(c.release_date!).getFullYear()))
     ).sort((a, b) => b - a);
     const SubType = Array.from(
-      new Set(cubes.map((c) => c.sub_type ?? ""))
+      new Set(cubes.map((c: Cube) => c.sub_type ?? ""))
     ).sort();
     const CubeTypes = Array.from(
-      new Set(cubes.map((c) => c.version_type))
+      new Set(cubes.map((c: Cube) => c.version_type))
     ).sort();
 
     allBrands = Brands;
@@ -174,7 +185,7 @@
 
   $effect(() => {
     const _ = loading;
-    fetchAll();
+    calcAll();
   });
 
   let showFilters = $state(false);

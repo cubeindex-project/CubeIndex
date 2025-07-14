@@ -21,6 +21,20 @@
     features = [],
   } = $derived(data);
 
+  const featureMap = new Map<string, Set<string>>();
+  let feats = $state(new Set<string>());
+
+  $effect(() => {
+    for (const { cube, feature } of features) {
+      if (!featureMap.has(cube)) {
+        featureMap.set(cube, new Set());
+      }
+      featureMap.get(cube)!.add(feature);
+    }
+
+    feats = featureMap.get(cube.slug) ?? new Set<string>();
+  });
+
   let vendor_links: CubeVendorLinks[] | undefined = $state(data.vendor_links);
   let cubeUserCount: Cube[] | undefined = $state(data.cubeUserCount);
 
@@ -338,10 +352,10 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                  {#if features.some((f) => f.feature === status.key)}
-                    ✅
+                  {#if status.key === "discontinued"}
+                    {cube.discontinued ? "✅" : "❌"}
                   {:else}
-                    ❌
+                    {feats.has(status.key) ? "✅" : "❌"}
                   {/if}
                 </span>
               </div>
@@ -389,9 +403,7 @@
               <div class="flex items-center gap-2">
                 <span>Added:</span>
                 <span class="font-medium">
-                  {cube.created_at
-                    ? formatDate(cube.created_at)
-                    : "Loading..."}
+                  {cube.created_at ? formatDate(cube.created_at) : "Loading..."}
                 </span>
               </div>
               <div class="flex items-center gap-2">

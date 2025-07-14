@@ -50,8 +50,8 @@
         .range(start, start + BATCH - 1);
 
       if (error) throw error;
+      loading = false;
       if (data.length === 0) {
-        loading = false;
         break;
       }
 

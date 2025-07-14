@@ -71,4 +71,7 @@ export interface Cube {
 
   /** Optional notes field */
   notes?: string | null;
+
+  /** Discontinued */
+  discontinued: boolean;
 }

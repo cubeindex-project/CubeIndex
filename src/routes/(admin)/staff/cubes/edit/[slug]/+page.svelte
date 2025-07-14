@@ -1,7 +1,7 @@
 <script lang="ts">
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
-  import type { CubeType } from "$lib/components/cube.svelte.js";
+  import type { Cube } from "$lib/components/types/cube.ts";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
@@ -9,18 +9,11 @@
   import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/formatDate.svelte";
   import ManageCubeStatus from "$lib/components/manageCubeStatus.svelte";
+  import SearchCubes from "$lib/components/searchCubes.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();
-  let {
-    profiles,
-    cubeTrims,
-    relatedCube,
-    sameSeries,
-    vendors,
-    types,
-    features,
-  } = data;
+  let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
 
   // Initialize form handling with options for JSON data and custom error handling
   const {
@@ -42,7 +35,7 @@
   });
 
   // Store the cube being edited
-  const cube: CubeType = $state(data.cube);
+  const cube: Cube = $state(data.cube);
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
@@ -90,11 +83,7 @@
     { label: "Ball Core", key: () => $form.features.ballCore },
   ];
 
-  let cubes: CubeType[] = $state([]);
-  let searchCubes: {
-    label: string;
-    value: string;
-  }[] = $state([]);
+  let cubes: Cube[] = $state([]);
   let allSubTypes: string[] = $state([]);
   let allSurfaces: string[] = $state([]);
   let allBrands: { name: string }[] = $state([]);
@@ -102,16 +91,6 @@
     label: string;
     value: string;
   }[] = $state([]);
-
-  let search = $state("");
-
-  // whenever allCubes() or search changes, recompute filtered list
-  $effect(() => {
-    const _ = search;
-    searchCubes = allCubes.filter((c) =>
-      c.label.toLowerCase().includes(search.toLowerCase())
-    );
-  });
 
   $effect(() => {
     const _ = cubes;
@@ -396,35 +375,17 @@
             <div transition:blur>
               <label class="block mb-1 font-medium">
                 Related To
-                <input
-                  type="text"
-                  placeholder="Search cubes…"
-                  bind:value={search}
-                  class="input w-full mb-2"
-                  aria-label="Search cubes"
+
+                <SearchCubes
+                  cubes={allCubes}
+                  bind:outputVar={$form.relatedTo}
                 />
 
-                <!-- filtered results list -->
-                <ul class="border rounded max-h-40 overflow-auto">
-                  {#if searchCubes.length === 0}
-                    <li class="p-2 italic">No matches</li>
-                  {:else}
-                    {#each searchCubes as c}
-                      <button
-                        class="p-2 hover:bg-base-200 cursor-pointer"
-                        type="button"
-                        onclick={() => {
-                          $form.relatedTo = c.value;
-                          search = c.label;
-                        }}
-                      >
-                        {c.label}
-                      </button>
-                    {/each}
-                  {/if}
-                </ul>
-
-                <input type="hidden" name="relatedTo" value={$form.relatedTo} />
+                <input
+                  type="hidden"
+                  name="relatedTo"
+                  bind:value={$form.relatedTo}
+                />
               </label>
 
               {#if $errors.relatedTo}
@@ -637,7 +598,13 @@
           </div>
           <div class="divider"></div>
           <div class="flex flex-col">
-            <button class="btn btn-primary btn-xl" type="submit"> Save </button>
+            <button
+              class="btn btn-primary btn-xl"
+              type="submit"
+              disabled={!dirty}
+            >
+              Save
+            </button>
             {#if $allErrors.length}
               <ul>
                 {#each $allErrors as error}
@@ -829,7 +796,11 @@
             <div class="flex items-center justify-between">
               <span class="font-medium text-sm">{status.label}</span>
               <span class="text-xl">
-                {status.key() ? "✅" : "❌"}
+                {#if status.label === "Discontinued"}
+                  {cube.discontinued ? "✅" : "❌"}
+                {:else}
+                  {status.key() ? "✅" : "❌"}
+                {/if}
               </span>
             </div>
           {/each}

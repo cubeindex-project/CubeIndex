@@ -4,7 +4,8 @@
   import { onMount } from "svelte";
   import { error } from "@sveltejs/kit";
   import { supabase } from "$lib/supabaseClient.js";
-  import type { CubeType } from "$lib/components/cube.svelte.js";
+  import type { Cube } from "$lib/components/types/cube.js";
+  import SearchCubes from "$lib/components/searchCubes.svelte";
 
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
@@ -35,7 +36,7 @@
     }
   );
 
-  let cubes: CubeType[] = $state([]);
+  let cubes: Cube[] = $state([]);
   let allCubes: {
     label: string;
     value: string;
@@ -282,35 +283,13 @@
           <div transition:blur>
             <label class="block mb-1 font-medium">
               Related To (Only approved cubes are shown)
+              <SearchCubes cubes={allCubes} bind:outputVar={$form.relatedTo} />
+
               <input
-                type="text"
-                placeholder="Search cubes…"
-                bind:value={search}
-                class="input w-full mb-2"
-                aria-label="Search cubes"
+                type="hidden"
+                name="relatedTo"
+                bind:value={$form.relatedTo}
               />
-
-              <!-- filtered results list -->
-              <ul class="border rounded max-h-40 overflow-auto">
-                {#if searchCubes.length === 0}
-                  <li class="p-2 italic">No matches</li>
-                {:else}
-                  {#each searchCubes as c}
-                    <button
-                      class="p-2 hover:bg-base-200 cursor-pointer"
-                      type="button"
-                      onclick={() => {
-                        $form.relatedTo = c.value;
-                        search = c.label;
-                      }}
-                    >
-                      {c.label}
-                    </button>
-                  {/each}
-                {/if}
-              </ul>
-
-              <input type="hidden" name="relatedTo" value={$form.relatedTo} />
             </label>
 
             {#if $errors.relatedTo}

@@ -4,101 +4,15 @@ import { slugify } from "$lib/components/slugify.svelte";
 import { getSubTypes } from "$lib/components/subType.svelte";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { z } from "zod/v4";
 import type { PageServerLoad } from "./$types.js";
 import { cleanLink } from "$lib/components/linkCleaner.js";
-import type { CubeType } from "$lib/components/cube.svelte.js";
-
-const schema = z
-  .object({
-    id: z.number(),
-    series: z.string().optional(),
-    model: z.string().nonempty("Model is required"),
-    versionType: z.literal(["Base", "Trim", "Limited"]),
-    versionName: z.string().optional(),
-    brand: z.string().nonempty("Brand is required"),
-    otherBrand: z.string(),
-    type: z.string().nonempty("Type is required"),
-    otherType: z.string(),
-    sub_type: z.string().nonempty("Sub Type is required"),
-    relatedTo: z.string().optional(),
-    releaseDate: z
-      .string()
-      .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
-        error: "Release date must be YYYY-MM-DD",
-      }),
-    imageUrl: z.url("Image URL must be valid"),
-    surfaceFinish: z.string().optional(),
-    weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
-    size: z.coerce.number().min(0, "Size must be ≥ 0"),
-    features: z
-      .object({
-        wcaLegal: z.boolean(),
-        magnetic: z.boolean(),
-        smart: z.boolean(),
-        modded: z.boolean(),
-        discontinued: z.boolean(),
-        maglev: z.boolean(),
-        stickered: z.boolean(),
-        ballCore: z.boolean(),
-      })
-      .check((data) => {
-        if (data.value.smart === true && data.value.wcaLegal === true) {
-          data.issues.push({
-            code: "custom",
-            message: "Smart cubes can not be WCA Legal",
-            input: data.value.wcaLegal,
-            path: ["wcaLegal"],
-          });
-        }
-      }),
-    vendorLinks: z.array(
-      z.object({
-        vendor_name: z.string().nonempty("Vendor name is required"),
-        url: z.url("Must be a valid URL"),
-        price: z.coerce.number().min(0, "Price must be ≥ 0"),
-        available: z.boolean(),
-      })
-    ),
-  })
-  // enforce versionName when versionType !== 'Base'
-  .check((data) => {
-    if (
-      data.value.versionType !== "Base" &&
-      ((data.value.versionName && data.value.versionName.trim() === "") ||
-        !data.value.versionName)
-    ) {
-      data.issues.push({
-        code: "custom",
-        message: "The version name is required when the cube type is not Base",
-        input: data.value.versionName,
-        path: ["versionName"],
-      });
-    }
-
-    if (data.value.brand === "___other" && !data.value.otherBrand) {
-      data.issues.push({
-        code: "custom",
-        message: "Brand is required",
-        input: data.value.otherBrand,
-        path: ["otherBrand"],
-      });
-    }
-
-    if (data.value.type === "___other" && !data.value.otherType) {
-      data.issues.push({
-        code: "custom",
-        message: "A Type is required",
-        input: data.value.otherType,
-        path: ["otherType"],
-      });
-    }
-  });
+import type { Cube } from "$lib/components/types/cube.js";
+import { cubeSchema } from "$lib/components/form_schemas/cubeForm.js";
 
 export const load: PageServerLoad = async ({ params }) => {
   const { slug } = params;
 
-  let cube: CubeType = {} as CubeType;
+  let cube: Cube = {} as Cube;
 
   const { data, error: cErr } = await supabase
     .from("cube_models")
@@ -189,7 +103,7 @@ export const load: PageServerLoad = async ({ params }) => {
       versionName: cube.version_name,
       brand: cube.brand,
       type: cube.type,
-      sub_type: cube.sub_type,
+      sub_type: cube.sub_type ?? "auto",
       releaseDate: cube.release_date,
       imageUrl: cube.image_url,
       surfaceFinish: cube.surface_finish,
@@ -209,7 +123,7 @@ export const load: PageServerLoad = async ({ params }) => {
       },
       vendorLinks: vendor_links,
     },
-    zod4(schema),
+    zod4(cubeSchema),
     { errors: false }
   );
 
@@ -236,14 +150,15 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
-    const form = await superValidate(request, zod4(schema));
+    const form = await superValidate(request, zod4(cubeSchema));
 
     const data = form.data;
 
     if (!form.valid)
       return fail(400, {
         form,
-        message: "There are errors in your submission. Please review the highlighted fields and try again.",
+        message:
+          "There are errors in your submission. Please review the highlighted fields and try again.",
       });
 
     const { data: currentUser, error: profileErr } = await locals.supabase
@@ -309,6 +224,7 @@ export const actions: Actions = {
       size: data.size,
       version_type: data.versionType,
       related_to: data.relatedTo?.trim(),
+      notes: "",
       updated_at: new Date().toISOString(),
     };
 

@@ -2,99 +2,13 @@ import type { PageServerLoad, Actions } from "./$types";
 import { error, redirect } from "@sveltejs/kit";
 import { slugify } from "$lib/components/slugify.svelte";
 import { getSubTypes } from "$lib/components/subType.svelte";
-import { z } from "zod/v4";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/linkCleaner";
-
-const schema = z
-  .object({
-    id: z.number(),
-    series: z.string().optional(),
-    model: z.string().nonempty("Model is required"),
-    versionType: z.literal(["Base", "Trim", "Limited"]),
-    versionName: z.string().optional(),
-    brand: z.string().nonempty("Brand is required"),
-    otherBrand: z.string(),
-    type: z.string().nonempty("Type is required"),
-    otherType: z.string(),
-    sub_type: z.string().nonempty("Sub Type is required"),
-    relatedTo: z.string().optional(),
-    releaseDate: z
-      .string()
-      .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
-        error: "Release date must be YYYY-MM-DD",
-      }),
-    imageUrl: z.url("Image URL must be valid"),
-    surfaceFinish: z.string().optional(),
-    weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
-    size: z.coerce.number().min(0, "Size must be ≥ 0"),
-    features: z
-      .object({
-        wcaLegal: z.boolean(),
-        magnetic: z.boolean(),
-        smart: z.boolean(),
-        modded: z.boolean(),
-        discontinued: z.boolean(),
-        maglev: z.boolean(),
-        stickered: z.boolean(),
-        ballCore: z.boolean(),
-      })
-      .check((data) => {
-        if (data.value.smart === true && data.value.wcaLegal === true) {
-          data.issues.push({
-            code: "custom",
-            message: "Smart cubes can not be WCA Legal",
-            input: data.value.wcaLegal,
-            path: ["wcaLegal"],
-          });
-        }
-      }),
-    vendorLinks: z.array(
-      z.object({
-        vendor_name: z.string().nonempty("Vendor name is required"),
-        url: z.url("Must be a valid URL"),
-        price: z.coerce.number().min(0, "Price must be ≥ 0"),
-        available: z.boolean(),
-      })
-    ),
-  })
-  // enforce versionName when versionType !== 'Base'
-  .check((data) => {
-    if (
-      data.value.versionType !== "Base" &&
-      ((data.value.versionName && data.value.versionName.trim() === "") ||
-        !data.value.versionName)
-    ) {
-      data.issues.push({
-        code: "custom",
-        message: "The version name is required when the cube type is not Base",
-        input: data.value.versionName,
-        path: ["versionName"],
-      });
-    }
-
-    if (data.value.brand === "___other" && !data.value.otherBrand) {
-      data.issues.push({
-        code: "custom",
-        message: "Brand is required",
-        input: data.value.otherBrand,
-        path: ["otherBrand"],
-      });
-    }
-
-    if (data.value.type === "___other" && !data.value.otherType) {
-      data.issues.push({
-        code: "custom",
-        message: "A Type is required",
-        input: data.value.otherType,
-        path: ["otherType"],
-      });
-    }
-  });
+import { cubeSchema } from "$lib/components/form_schemas/cubeForm";
 
 export const load = (async ({ locals }) => {
-  const form = await superValidate(zod4(schema), { errors: false });
+  const form = await superValidate(zod4(cubeSchema), { errors: false });
 
   const { data: brands, error: brandsErr } = await locals.supabase
     .from("brands")
@@ -116,15 +30,15 @@ export const load = (async ({ locals }) => {
   });
 
   const { data: subTypes } = await locals.supabase.rpc("get_types", {
-      enum_type: "cubes_subtypes",
-    });
+    enum_type: "cubes_subtypes",
+  });
 
   return { form, brands, types, surfaces, subTypes };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
-    const form = await superValidate(request, zod4(schema));
+    const form = await superValidate(request, zod4(cubeSchema));
 
     const data = form.data;
 
@@ -186,9 +100,13 @@ export const actions: Actions = {
       weight: data.weight,
       size: data.size,
       version_type: data.versionType,
-      submitted_by: me.username,
       related_to: data.relatedTo,
+      submitted_by: me.username,
       status: "Pending",
+      verified_by: null,
+      notes: "",
+      updated_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     };
 
     const { error: insertErr } = await locals.supabase

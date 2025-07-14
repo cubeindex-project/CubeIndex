@@ -3,6 +3,8 @@ export type CubeVersionType = "Base" | "Trim" | "Limited";
 
 export type CubeSurfaceFinishes = "Frosted" | "UV Coated" | "Glossy";
 
+export type SubmissionStatus = "Approved" | "Rejected" | "Pending";
+
 export interface Cube {
   /** Brand, defaults to empty string */
   brand: string;
@@ -14,7 +16,7 @@ export interface Cube {
   model: string;
 
   /** Optional rating (real), defaults to 0 */
-  rating?: number | null;
+  rating?: number | undefined;
 
   /** Primary key and slug */
   slug: string;
@@ -29,22 +31,22 @@ export interface Cube {
   type: string;
 
   /** Optional release date */
-  release_date?: string | null;
+  release_date: string | undefined;
 
   /** Optional series, defaults to empty string */
-  series?: string | null;
+  series?: string | undefined;
 
   /** Auto-generated ID */
   id: number;
 
   /** Optional subtype enum */
-  sub_type?: string | null;
+  sub_type?: string | undefined;
 
   /** Weight (real) */
   weight: number;
 
   /** Optional relation to another cube’s slug */
-  related_to?: string | null;
+  related_to?: string | undefined;
 
   /** Size (real) */
   size: number;
@@ -53,8 +55,20 @@ export interface Cube {
   version_type: CubeVersionType;
 
   /** Optional version name, defaults to empty string */
-  version_name?: string | null;
+  version_name?: string | undefined;
 
   /** Optional surface finish enum */
-  surface_finish?: CubeSurfaceFinishes | null;
+  surface_finish?: CubeSurfaceFinishes | undefined;
+
+  /** references profiles.username */
+  submitted_by: string;
+
+  /** references profiles.username */
+  verified_by: string;
+
+  /** public.submission_status, defaults to 'Pending' */
+  status: SubmissionStatus;
+
+  /** Optional notes field */
+  notes?: string | null;
 }

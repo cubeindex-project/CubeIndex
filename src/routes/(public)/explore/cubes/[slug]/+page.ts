@@ -1,6 +1,6 @@
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import type { CubeType } from "$lib/components/cube.svelte";
+import type { Cube } from "$lib/components/types/cube";
 
 export const load = (async ({ parent, params, data }) => {
   await parent();
@@ -18,9 +18,19 @@ export const load = (async ({ parent, params, data }) => {
     return;
   }
 
-  const cube: CubeType = cubes.find((c) => c.slug === slug) ?? ({} as CubeType);
+  const cube: Cube = cubes.find((c) => c.slug === slug) ?? ({} as Cube);
 
-  const sameSeries: CubeType[] = cubes.filter(
+  const { data: features, error: featErr } = await supabase
+    .from("cubes_model_features")
+    .select("*")
+    .eq("cube", cube.slug);
+
+  if (featErr) {
+    console.error("A 500 status code error occured:", featErr.message);
+    return;
+  }
+
+  const sameSeries: Cube[] = cubes.filter(
     (c) =>
       c.series === cube.series &&
       c.version_type === "Base" &&
@@ -28,10 +38,10 @@ export const load = (async ({ parent, params, data }) => {
       c.status === "Approved"
   );
 
-  const relatedCube: CubeType | null =
+  const relatedCube: Cube | null =
     cubes.find((c) => c.slug === cube.related_to) ?? null;
 
-  const cubeTrims: CubeType[] = cubes.filter(
+  const cubeTrims: Cube[] = cubes.filter(
     (c) => c.related_to === cube.slug && c.status === "Approved"
   );
 
@@ -87,5 +97,6 @@ export const load = (async ({ parent, params, data }) => {
     user_ratings,
     profiles,
     vendor_links,
+    features,
   };
 }) satisfies PageLoad;

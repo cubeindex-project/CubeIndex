@@ -1,5 +1,6 @@
 import { type Actions, fail } from "@sveltejs/kit";
 import { configCatClient } from "$lib/configcatClient";
+import type { Profiles } from "$lib/components/types/profile.js";
 
 export const load = async ({ locals }) => {
   let databaseAvailability: boolean = true;
@@ -13,7 +14,7 @@ export const load = async ({ locals }) => {
     cubesAvailability = value;
   });
 
-  const { data: profile, error: pErr } = await locals.supabase
+  const { data, error: pErr } = await locals.supabase
     .from("profiles")
     .select("username")
     .eq("user_id", locals.user?.id)
@@ -23,6 +24,8 @@ export const load = async ({ locals }) => {
     console.error(500, `Failed to fetch profiles: ${pErr.message}`);
     return;
   }
+
+  const profile: Profiles = data;
 
   return { databaseAvailability, cubesAvailability, profile };
 };

@@ -2,8 +2,23 @@
   import StarRating from "./starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
+  import type { Cube } from "./types/cube";
 
-  let { cube, rate, add, details, badges, image } = $props();
+  let {
+    cube,
+    rate,
+    add,
+    details,
+    badges,
+    image,
+  }: {
+    cube: Cube;
+    rate: boolean;
+    add: boolean;
+    details: boolean;
+    badges: boolean;
+    image: boolean;
+  } = $props();
 
   let openAddCard = $state(false);
 </script>

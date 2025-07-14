@@ -3,23 +3,40 @@
   import StarRating from "$lib/components/starRating.svelte";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import AddCube from "$lib/components/addCube.svelte";
-  import type { CubeType } from "$lib/components/cube.svelte.js";
+  import type { Cube } from "$lib/components/types/cube.js";
   import { formatDate } from "$lib/components/formatDate.svelte";
+  import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
 
   let { data } = $props();
   let {
     cubesAvailability = true,
     databaseAvailability = true,
-    cube = {} as CubeType,
-    cubeTrims = [],
-    cubeUserCount,
-    relatedCube = null,
-    sameSeries,
+    cube = {} as Cube,
+    profile,
     user_ratings,
     profiles,
-    vendor_links,
-    profile,
+    cubeTrims,
+    relatedCube,
+    sameSeries,
+    features = [],
   } = $derived(data);
+
+  const featureMap = new Map<string, Set<string>>();
+  let feats = $state(new Set<string>());
+
+  $effect(() => {
+    for (const { cube, feature } of features) {
+      if (!featureMap.has(cube)) {
+        featureMap.set(cube, new Set());
+      }
+      featureMap.get(cube)!.add(feature);
+    }
+
+    feats = featureMap.get(cube.slug) ?? new Set<string>();
+  });
+
+  let vendor_links: CubeVendorLinks[] | undefined = $state(data.vendor_links);
+  let cubeUserCount: Cube[] | undefined = $state(data.cubeUserCount);
 
   let loading = $state(true);
 
@@ -45,6 +62,7 @@
     { label: "Maglev", key: "maglev" },
     { label: "Discontinued", key: "discontinued" },
     { label: "Stickered", key: "stickered" },
+    { label: "Ball Core", key: "ball_core" },
   ];
 </script>
 
@@ -265,21 +283,31 @@
                   : "Loading..."}
               </span>. It is
               <span class="font-bold text-primary"
-                >{cube.magnetic ? "magnetic" : "non-magnetic"}</span
+                >{features.some((f) => f.feature === "magnetic")
+                  ? "magnetic"
+                  : "non-magnetic"}</span
               >,
               <span class="font-bold text-primary"
-                >{cube.smart ? "smart" : "non-smart"}</span
+                >{features.some((f) => f.feature === "smart")
+                  ? "smart"
+                  : "non-smart"}</span
               >, and
               <span class="font-bold text-primary"
-                >{cube.wca_legal ? "WCA-legal" : "not WCA-legal"}</span
+                >{features.some((f) => f.feature === "wca_legal")
+                  ? "WCA-legal"
+                  : "not WCA-legal"}</span
               >. Currently, it is
               <span class="font-bold text-primary"
-                >{cube.discontinued ? "discontinued" : "available"}</span
+                >{features.some((f) => f.feature === "discontinued")
+                  ? "discontinued"
+                  : "available"}</span
               >, has a community rating of
               <span class="font-bold text-primary">{cube.rating}/5</span>, and
               is
               <span class="font-bold text-primary"
-                >{cube.modded ? "modded" : "original"}</span
+                >{features.some((f) => f.feature === "modded")
+                  ? "modded"
+                  : "original"}</span
               >.
             </span>
           </p>
@@ -324,7 +352,11 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                  {cube[status.key as keyof CubeType] ? "✅" : "❌"}
+                  {#if status.key === "discontinued"}
+                    {cube.discontinued ? "✅" : "❌"}
+                  {:else}
+                    {feats.has(status.key) ? "✅" : "❌"}
+                  {/if}
                 </span>
               </div>
             {/each}
@@ -436,7 +468,7 @@
             </div>
           </div>
         {/if}
-        {#if (cube.version_type !== "Base" || cube.modded === true) && relatedCube}
+        {#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
           <div class="mb-8">
             <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
               <i class="fa-solid fa-palette"></i>

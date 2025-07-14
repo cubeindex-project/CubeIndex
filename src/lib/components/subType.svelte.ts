@@ -7,7 +7,7 @@
  * @returns {string}  sub-types, or [] if unknown
  */
 export function getSubTypes(type: string) {
-  if (!type) return null;
+  if (!type) return "Other";
 
   const t = type.trim().toLowerCase();
 
@@ -18,7 +18,7 @@ export function getSubTypes(type: string) {
   if (t.includes("pyraminx")) return "Pyraminx";
 
   /* ---------- 3. SQUARE-1 family ---------- */
-  if (t.startsWith("square-")) return "Square-1";
+  if (t.startsWith("square-")) return "Square-N";
 
   /* ---------- 4. CORNER-TURNING puzzles ---------- */
   if (
@@ -55,5 +55,5 @@ export function getSubTypes(type: string) {
   }
 
   /* ---------- 8. FALLBACK ---------- */
-  return null;
+  return "Other";
 }

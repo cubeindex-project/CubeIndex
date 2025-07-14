@@ -55,7 +55,7 @@
     } = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
-      verified_by: reason !== "Edit" ? username : "",
+      verified_by: username,
     };
     if (reason !== "Accept")
       payload.reason = note === "___other" ? otherNote : note;

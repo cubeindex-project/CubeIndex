@@ -1,7 +1,7 @@
 <script lang="ts">
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
-  import type { CubeType } from "$lib/components/cube.svelte.js";
+  import type { Cube } from "$lib/components/types/cube.ts";
   import CubeVersionType from "$lib/components/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
@@ -9,6 +9,7 @@
   import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/formatDate.svelte";
   import ManageCubeStatus from "$lib/components/manageCubeStatus.svelte";
+  import SearchCubes from "$lib/components/searchCubes.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -34,7 +35,7 @@
   });
 
   // Store the cube being edited
-  const cube: CubeType = $state(data.cube);
+  const cube: Cube = $state(data.cube);
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
@@ -72,51 +73,34 @@
 
   // Define status toggles to bind to form fields dynamically in UI
   const statuses = [
-    { label: "Smart", key: () => $form.smart },
-    { label: "Magnetic", key: () => $form.magnetic },
-    { label: "Modded", key: () => $form.modded },
-    { label: "WCA Legal", key: () => $form.wcaLegal },
-    { label: "Maglev", key: () => $form.maglev },
-    { label: "Discontinued", key: () => $form.discontinued },
-    { label: "Stickered", key: () => $form.stickered },
+    { label: "Smart", key: () => $form.features.smart },
+    { label: "Magnetic", key: () => $form.features.magnetic },
+    { label: "Modded", key: () => $form.features.modded },
+    { label: "WCA Legal", key: () => $form.features.wcaLegal },
+    { label: "Maglev", key: () => $form.features.maglev },
+    { label: "Discontinued", key: () => $form.features.discontinued },
+    { label: "Stickered", key: () => $form.features.stickered },
+    { label: "Ball Core", key: () => $form.features.ballCore },
   ];
 
-  let cubes: CubeType[] = $state({} as typeof cubes);
-  let searchCubes: {
+  let cubes: Cube[] = $state([]);
+  let allSubTypes: string[] = $state([]);
+  let allSurfaces: string[] = $state([]);
+  let allBrands: { name: string }[] = $state([]);
+  let allCubes: {
     label: string;
     value: string;
   }[] = $state([]);
-  let allSubTypes: string[] = $state([]);
-  let allSurfaces: string[] = $state([]);
-  let allBrands: string[] = $state([]);
-  let allCubes: () => {
-    label: string;
-    value: string;
-  }[] = $state(() => []);
-
-  let search = $state("");
-
-  // whenever allCubes() or search changes, recompute filtered list
-  $effect(() => {
-    const _ = search;
-    searchCubes = allCubes().filter((c) =>
-      c.label.toLowerCase().includes(search.toLowerCase())
-    );
-  });
 
   $effect(() => {
     const _ = cubes;
-    allCubes = () =>
-      Array.from(
-        new Set(
-          cubes
-            .filter((c) => c.version_type === "Base" && c.status === "Approved")
-            .map((c) => ({
-              label: `${c.series} ${c.model} ${c.version_name}`,
-              value: c.slug,
-            }))
-        )
-      ).sort();
+    allCubes = cubes
+      .filter((c) => c.version_type === "Base" && c.status === "Approved")
+      .map((c) => ({
+        label: `${c.series} ${c.model} ${c.version_name}`,
+        value: c.slug,
+      }))
+      .sort();
   });
 
   onMount(async () => {
@@ -127,13 +111,15 @@
     if (cubesErr) throw error(500, cubesErr.message);
 
     cubes = data;
-    allBrands = Array.from(
-      new Set(
-        cubes
-          .filter((c) => c.status === "Approved")
-          .map((c: CubeType) => c.brand)
-      )
-    ).sort();
+
+    const { data: brands, error: brandsErr } = await supabase
+      .from("brands")
+      .select("name")
+      .order("name", { ascending: true });
+
+    if (brandsErr) throw error(500, brandsErr.message);
+
+    allBrands = brands;
 
     let { data: SubTypes } = await supabase.rpc("get_types", {
       enum_type: "cubes_subtypes",
@@ -234,7 +220,7 @@
           {/if}
           <div>
             <label class="block mb-1 font-medium">
-              Brand (Only shows brands of approved cubes)
+              Brand
               <select
                 name="brand"
                 bind:value={$form.brand}
@@ -243,7 +229,7 @@
               >
                 <option value="___other">+ Add Brand</option>
                 {#each allBrands as brand}
-                  <option value={brand}>{brand}</option>
+                  <option>{brand.name}</option>
                 {/each}
               </select>
             </label>
@@ -254,8 +240,7 @@
           {#if $form.brand === "___other"}
             <div transition:blur>
               <label class="block mb-1 font-medium">
-                Add Brand (To see the added brand in the list above, approve
-                this cube)
+                Add Brand
                 <input
                   name="brand"
                   type="text"
@@ -279,7 +264,7 @@
               >
                 <option value="___other">+ Create Type</option>
                 {#each types as type}
-                  <option value={type.type}>{type.type}</option>
+                  <option value={type.name}>{type.name}</option>
                 {/each}
               </select>
             </label>
@@ -312,9 +297,6 @@
                 class="select w-full"
                 required
               >
-                {#if allSubTypes.length === 0}
-                  <option>Loading...</option>
-                {/if}
                 <option value="auto">Handle Automatically</option>
                 {#each allSubTypes as subType}
                   <option value={subType}>{subType}</option>
@@ -366,9 +348,6 @@
                 class="select w-full"
                 required
               >
-                <!-- {#if allSurfaces.length === 0}
-                  <option>Loading...</option>
-                {/if} -->
                 {#each allSurfaces as surface}
                   <option value={surface}>{surface}</option>
                 {/each}
@@ -392,39 +371,21 @@
               <span class="text-error">{$errors.releaseDate}</span>
             {/if}
           </div>
-          {#if $form.modded || $form.versionType !== "Base"}
+          {#if $form.features.modded || $form.versionType !== "Base"}
             <div transition:blur>
               <label class="block mb-1 font-medium">
                 Related To
-                <input
-                  type="text"
-                  placeholder="Search cubes…"
-                  bind:value={search}
-                  class="input w-full mb-2"
-                  aria-label="Search cubes"
+
+                <SearchCubes
+                  cubes={allCubes}
+                  bind:outputVar={$form.relatedTo}
                 />
 
-                <!-- filtered results list -->
-                <ul class="border rounded max-h-40 overflow-auto">
-                  {#if searchCubes.length === 0}
-                    <li class="p-2 italic">No matches</li>
-                  {:else}
-                    {#each searchCubes as c}
-                      <button
-                        class="p-2 hover:bg-base-200 cursor-pointer"
-                        type="button"
-                        onclick={() => {
-                          $form.relatedTo = c.value;
-                          search = c.label;
-                        }}
-                      >
-                        {c.label}
-                      </button>
-                    {/each}
-                  {/if}
-                </ul>
-
-                <input type="hidden" name="relatedTo" value={$form.relatedTo} />
+                <input
+                  type="hidden"
+                  name="relatedTo"
+                  bind:value={$form.relatedTo}
+                />
               </label>
 
               {#if $errors.relatedTo}
@@ -438,84 +399,96 @@
               <input
                 type="checkbox"
                 name="smart"
-                bind:checked={$form.smart}
+                bind:checked={$form.features.smart}
                 class="checkbox"
               />
               <span>Smart</span>
-              {#if $errors.smart}
-                <span class="text-error">{$errors.smart}</span>
+              {#if $errors.features?.smart}
+                <span class="text-error">{$errors.features.smart}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="magnetic"
-                bind:checked={$form.magnetic}
+                bind:checked={$form.features.magnetic}
                 class="checkbox"
               />
               <span>Magnetic</span>
-              {#if $errors.magnetic}
-                <span class="text-error">{$errors.magnetic}</span>
+              {#if $errors.features?.magnetic}
+                <span class="text-error">{$errors.features.magnetic}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="modded"
-                bind:checked={$form.modded}
+                bind:checked={$form.features.modded}
                 class="checkbox"
               />
               <span>Modded</span>
-              {#if $errors.modded}
-                <span class="text-error">{$errors.modded}</span>
+              {#if $errors.features?.modded}
+                <span class="text-error">{$errors.features.modded}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="wcaLegal"
-                bind:checked={$form.wcaLegal}
+                bind:checked={$form.features.wcaLegal}
                 class="checkbox"
               />
               <span>WCA Legal</span>
-              {#if $errors.wcaLegal}
-                <span class="text-error">{$errors.wcaLegal}</span>
+              {#if $errors.features?.wcaLegal}
+                <span class="text-error">{$errors.features.wcaLegal}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="maglev"
-                bind:checked={$form.maglev}
+                bind:checked={$form.features.maglev}
                 class="checkbox"
               />
               <span>Maglev</span>
-              {#if $errors.maglev}
-                <span class="text-error">{$errors.maglev}</span>
+              {#if $errors.features?.maglev}
+                <span class="text-error">{$errors.features.maglev}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="discontinued"
-                bind:checked={$form.discontinued}
+                bind:checked={$form.features.discontinued}
                 class="checkbox"
               />
               <span>Discontinued</span>
-              {#if $errors.discontinued}
-                <span class="text-error">{$errors.discontinued}</span>
+              {#if $errors.features?.discontinued}
+                <span class="text-error">{$errors.features.discontinued}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 name="stickered"
-                bind:checked={$form.stickered}
+                bind:checked={$form.features.stickered}
                 class="checkbox"
               />
               <span>Stickered</span>
-              {#if $errors.stickered}
-                <span class="text-error">{$errors.stickered}</span>
+              {#if $errors.features?.stickered}
+                <span class="text-error">{$errors.features.stickered}</span>
+              {/if}
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name="ballCore"
+                bind:checked={$form.features.ballCore}
+                class="checkbox"
+              />
+              <span>Ball Core</span>
+              {#if $errors.features?.ballCore}
+                <span class="text-error">{$errors.features.ballCore}</span>
               {/if}
             </label>
           </div>
@@ -625,7 +598,13 @@
           </div>
           <div class="divider"></div>
           <div class="flex flex-col">
-            <button class="btn btn-primary btn-xl" type="submit"> Save </button>
+            <button
+              class="btn btn-primary btn-xl"
+              type="submit"
+              disabled={!dirty}
+            >
+              Save
+            </button>
             {#if $allErrors.length}
               <ul>
                 {#each $allErrors as error}
@@ -753,20 +732,22 @@
               >{formatDate($form.releaseDate)}</span
             >. It is
             <span class="font-bold text-primary"
-              >{$form.magnetic ? "magnetic" : "non-magnetic"}</span
+              >{$form.features.magnetic ? "magnetic" : "non-magnetic"}</span
             >,
             <span class="font-bold text-primary"
-              >{$form.smart ? "smart" : "non-smart"}</span
+              >{$form.features.smart ? "smart" : "non-smart"}</span
             >, and
             <span class="font-bold text-primary"
-              >{$form.wcaLegal ? "WCA-legal" : "not WCA-legal"}</span
+              >{$form.features.wcaLegal ? "WCA-legal" : "not WCA-legal"}</span
             >. Currently, it is
             <span class="font-bold text-primary"
-              >{$form.discontinued ? "discontinued" : "available"}</span
+              >{$form.features.discontinued
+                ? "discontinued"
+                : "available"}</span
             >, has a community rating of
             <span class="font-bold text-primary">{cube.rating}/5</span>, and is
             <span class="font-bold text-primary"
-              >{$form.modded ? "modded" : "original"}</span
+              >{$form.features.modded ? "modded" : "original"}</span
             >.
           </span>
         </p>
@@ -799,11 +780,9 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>
-            <span class="font-medium"
-              >{$form.surfaceFinish !== "Loading..."
-                ? $form.surfaceFinish
-                : ""}</span
-            >
+            <span class="font-medium">
+              {$form.surfaceFinish}
+            </span>
           </div>
           <div class="flex items-center justify-between">
             <span>Release Date:</span>
@@ -817,7 +796,11 @@
             <div class="flex items-center justify-between">
               <span class="font-medium text-sm">{status.label}</span>
               <span class="text-xl">
-                {status.key() ? "✅" : "❌"}
+                {#if status.label === "Discontinued"}
+                  {cube.discontinued ? "✅" : "❌"}
+                {:else}
+                  {status.key() ? "✅" : "❌"}
+                {/if}
               </span>
             </div>
           {/each}
@@ -920,7 +903,7 @@
           </div>
         </div>
       {/if}
-      {#if relatedCube && ($form.versionType !== "Base" || $form.modded === true)}
+      {#if relatedCube && ($form.versionType !== "Base" || $form.features.modded === true)}
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>

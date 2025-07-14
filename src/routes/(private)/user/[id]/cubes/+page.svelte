@@ -4,15 +4,15 @@
   import EditUserCubeCard from "$lib/components/editUserCubeCard.svelte";
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
-  import type { CubeType } from "$lib/components/cube.svelte";
+  import type { Cube } from "$lib/components/types/cube";
 
   let { data }: { data: PageData } = $props();
   const { profile, user } = data;
 
   let user_cubes: any[] = $state([]);
-  let cubes: CubeType[] = $state([]);
+  let cubes: Cube[] = $state([]);
 
-  let userCubesFromAll: CubeType[] = $state([]);
+  let userCubesFromAll: Cube[] = $state([]);
 
   let loading = $state(true);
 

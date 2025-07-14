@@ -1,33 +1,108 @@
 <script lang="ts">
-    import type { PageData } from "./$types";
-    import { formatDate } from "$lib/components/formatDate.svelte";
+  import { formatDate } from "$lib/components/formatDate.svelte";
+  import { supabase } from "$lib/supabaseClient";
+  import type { Cube } from "$lib/components/types/cube";
+  import { onMount } from "svelte";
+  import SearchCubes from "$lib/components/searchCubes.svelte";
 
-  let { data }: { data: PageData } = $props();
-  let { cubes } = data;
+  type CubeWithMeta = Cube & {
+    _year: number;
+    _name: string;
+    _wcaLegal: boolean;
+    _magnetic: boolean;
+    _modded: boolean;
+    _stickered: boolean;
+    _smart: boolean;
+    _maglev: boolean;
+  };
+
+  let loading = $state(true);
+  let cubes: CubeWithMeta[] = $state([]);
+  let options: { label: string; value: string }[] = $state([]);
+
+  async function fetch() {
+    loading = true;
+    const BATCH = 2000;
+    let start = 0;
+    const featureMap = new Map<string, Set<string>>();
+
+    const { data: features, error: featErr } = await supabase
+      .from("cubes_model_features")
+      .select("*");
+
+    if (featErr) {
+      console.error("A 500 status code error occured:", featErr.message);
+      return;
+    }
+
+    for (const { cube, feature } of features) {
+      if (!featureMap.has(cube)) {
+        featureMap.set(cube, new Set());
+      }
+      featureMap.get(cube)!.add(feature);
+    }
+    while (true) {
+      const { data, error } = await supabase
+        .from("cube_models")
+        .select("*")
+        .eq("status", "Approved")
+        .range(start, start + BATCH - 1);
+
+      if (error) throw error;
+      loading = false;
+      if (data.length === 0) {
+        break;
+      }
+
+      const cubesWithMeta = data.map((c) => {
+        const feats = featureMap.get(c.slug) ?? new Set<string>();
+        return {
+          ...c,
+          _year: new Date(c.release_date ?? "").getFullYear(),
+          _name:
+            `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
+          _wca_legal: feats.has("wca_legal"),
+          _magnetic: feats.has("magnetic"),
+          _modded: feats.has("modded"),
+          _stickered: feats.has("stickered"),
+          _smart: feats.has("smart"),
+          _maglev: feats.has("maglev"),
+        };
+      });
+
+      cubes = cubes.concat(cubesWithMeta);
+      start += BATCH;
+    }
+    options = cubes.map((c) => ({
+      label: `${c.series} ${c.model} ${c.version_name}`,
+      value: c.slug,
+    }));
+  }
 
   let cube1: any = $state(null);
   let cube2: any = $state(null);
 
-  function selectCube1(e: Event) {
-    const slug = (e.target as HTMLSelectElement).value;
-    cube1 = cubes.find((c) => c.slug === slug);
+  let cube1Value: string = $state("");
+  let cube2Value: string = $state("");
+
+  $effect(() => {
+    const _ = cube1Value;
+    cube1 = cubes.find((c) => c.slug === cube1Value);
+  });
+
+  $effect(() => {
+    const _ = cube2Value;
+    cube2 = cubes.find((c) => c.slug === cube2Value);
+  });
+
+  function boolYesNo(v: boolean) {
+    return v ? "Yes" : "No";
   }
-  function selectCube2(e: Event) {
-    const slug = (e.target as HTMLSelectElement).value;
-    cube2 = cubes.find((c) => c.slug === slug);
+  function formatFloat(n: number) {
+    return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
   }
 
-  const options = cubes.map((c) => ({
-    label: `${c.series} ${c.model} ${c.version_name}`,
-    value: c.slug,
-  }));
-
-    function boolYesNo(v: boolean) {
-        return v === true ? "Yes" : v === false ? "No" : "-";
-    }
-    function formatFloat(n: number) {
-        return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
-    }
+  onMount(fetch);
 
   type Field = {
     label: string;
@@ -44,12 +119,12 @@
     { label: "Type", key: "type" },
     { label: "Subtype", key: "sub_type" },
     { label: "Surface Finish", key: "surface_finish" },
-    { label: "Stickered", key: "stickered", format: boolYesNo },
-    { label: "WCA Legal", key: "wca_legal", format: boolYesNo },
-    { label: "Magnetic", key: "magnetic", format: boolYesNo },
-    { label: "Maglev", key: "maglev", format: boolYesNo },
-    { label: "Smart", key: "smart", format: boolYesNo },
-    { label: "Modded", key: "modded", format: boolYesNo },
+    { label: "Stickered", key: "_stickered", format: boolYesNo },
+    { label: "WCA Legal", key: "_wca_legal", format: boolYesNo },
+    { label: "Magnetic", key: "_magnetic", format: boolYesNo },
+    { label: "Maglev", key: "_maglev", format: boolYesNo },
+    { label: "Smart", key: "_smart", format: boolYesNo },
+    { label: "Modded", key: "_modded", format: boolYesNo },
     { label: "Discontinued", key: "discontinued", format: boolYesNo },
     { label: "Related To", key: "related_to" },
     { label: "Release Date", key: "release_date", format: formatDate },
@@ -66,20 +141,24 @@
     </h1>
     <div class="flex flex-col md:flex-row gap-8 justify-center mb-12">
       <!-- Cube 1 Select -->
-      <div class="flex-1">
-        <label class="block mb-2 text-lg font-semibold"
-          >Cube 1
-          <select
-            class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
-            onchange={selectCube1}
-          >
-            <option value="" disabled selected>Select a cube…</option>
-            {#each options as opt}
-              <option value={opt.value}>{opt.label}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
+      {#if loading}
+        <!-- Cube 1 Skeleton -->
+        <div class="flex-1">
+          <div
+            class="block mb-2 h-6 w-20 rounded bg-base-300 animate-pulse"
+          ></div>
+          <div
+            class="w-full h-[48px] rounded-xl bg-base-200 border border-base-300 mb-4 animate-pulse"
+          ></div>
+        </div>
+      {:else}
+        <div class="flex-1">
+          <label class="block mb-2 text-lg font-semibold">
+            Cube 1
+            <SearchCubes cubes={options} bind:outputVar={cube1Value} />
+          </label>
+        </div>
+      {/if}
       <!-- VS -->
       <div class="flex justify-center items-center">
         <span
@@ -87,21 +166,25 @@
           >VS</span
         >
       </div>
-      <!-- Cube 2 Select -->
-      <div class="flex-1">
-        <label class="block mb-2 text-lg font-semibold"
-          >Cube 2
-          <select
-            class="w-full px-4 py-3 rounded-xl bg-base-200 border border-base-300 focus:border-blue-500 outline-none mb-4"
-            onchange={selectCube2}
-          >
-            <option value="" disabled selected>Select a cube…</option>
-            {#each options as opt}
-              <option value={opt.value}>{opt.label}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
+      {#if loading}
+        <!-- Cube 2 Skeleton -->
+        <div class="flex-1">
+          <div
+            class="block mb-2 h-6 w-20 rounded bg-base-300 animate-pulse"
+          ></div>
+          <div
+            class="w-full h-[48px] rounded-xl bg-base-200 border border-base-300 mb-4 animate-pulse"
+          ></div>
+        </div>
+      {:else}
+        <!-- Cube 2 Select -->
+        <div class="flex-1">
+          <label class="block mb-2 text-lg font-semibold">
+            Cube 2
+            <SearchCubes cubes={options} bind:outputVar={cube2Value} />
+          </label>
+        </div>
+      {/if}
     </div>
 
     <!-- Comparison Chart -->

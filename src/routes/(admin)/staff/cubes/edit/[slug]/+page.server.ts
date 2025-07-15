@@ -111,12 +111,12 @@ export const load: PageServerLoad = async ({ params }) => {
       size: cube.size,
       versionType: cube.version_type,
       relatedTo: cube.related_to,
+      discontinued: cube.discontinued,
       features: {
         wcaLegal: features.some((f) => f.feature === "wca_legal"),
         magnetic: features.some((f) => f.feature === "magnetic"),
         smart: features.some((f) => f.feature === "smart"),
         modded: features.some((f) => f.feature === "modded"),
-        discontinued: features.some((f) => f.feature === "discontinued"),
         maglev: features.some((f) => f.feature === "maglev"),
         stickered: features.some((f) => f.feature === "stickered"),
         ballCore: features.some((f) => f.feature === "ball_core"),
@@ -224,6 +224,7 @@ export const actions: Actions = {
       size: data.size,
       version_type: data.versionType,
       related_to: data.relatedTo?.trim(),
+      discontinued: data.discontinued,
       notes: "",
       updated_at: new Date().toISOString(),
     };

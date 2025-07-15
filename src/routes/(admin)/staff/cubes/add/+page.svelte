@@ -341,7 +341,7 @@
           <input
             name="discontinued"
             type="checkbox"
-            bind:checked={$form.features.discontinued}
+            bind:checked={$form.discontinued}
             class="checkbox checkbox-md bg-base-100"
           />
           <label for="discontinued" class="text-sm">Discontinued</label>

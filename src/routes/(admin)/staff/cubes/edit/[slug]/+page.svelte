@@ -78,7 +78,7 @@
     { label: "Modded", key: () => $form.features.modded },
     { label: "WCA Legal", key: () => $form.features.wcaLegal },
     { label: "Maglev", key: () => $form.features.maglev },
-    { label: "Discontinued", key: () => $form.features.discontinued },
+    { label: "Discontinued", key: () => $form.discontinued },
     { label: "Stickered", key: () => $form.features.stickered },
     { label: "Ball Core", key: () => $form.features.ballCore },
   ];
@@ -459,12 +459,12 @@
               <input
                 type="checkbox"
                 name="discontinued"
-                bind:checked={$form.features.discontinued}
+                bind:checked={$form.discontinued}
                 class="checkbox"
               />
               <span>Discontinued</span>
-              {#if $errors.features?.discontinued}
-                <span class="text-error">{$errors.features.discontinued}</span>
+              {#if $errors.discontinued}
+                <span class="text-error">{$errors.discontinued}</span>
               {/if}
             </label>
             <label class="flex items-center gap-2 cursor-pointer">
@@ -741,9 +741,7 @@
               >{$form.features.wcaLegal ? "WCA-legal" : "not WCA-legal"}</span
             >. Currently, it is
             <span class="font-bold text-primary"
-              >{$form.features.discontinued
-                ? "discontinued"
-                : "available"}</span
+              >{$form.discontinued ? "discontinued" : "available"}</span
             >, has a community rating of
             <span class="font-bold text-primary">{cube.rating}/5</span>, and is
             <span class="font-bold text-primary"

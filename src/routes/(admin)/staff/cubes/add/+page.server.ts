@@ -102,6 +102,7 @@ export const actions: Actions = {
       version_type: data.versionType,
       related_to: data.relatedTo,
       submitted_by: me.username,
+      discontinued: data.discontinued,
       status: "Pending",
       verified_by: null,
       notes: "",

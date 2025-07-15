@@ -22,13 +22,13 @@ export const cubeSchema = z
     surfaceFinish: z.string().optional(),
     weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
     size: z.coerce.number().min(0, "Size must be ≥ 0"),
+    discontinued: z.boolean(),
     features: z
       .object({
         wcaLegal: z.boolean(),
         magnetic: z.boolean(),
         smart: z.boolean(),
         modded: z.boolean(),
-        discontinued: z.boolean(),
         maglev: z.boolean(),
         stickered: z.boolean(),
         ballCore: z.boolean(),

@@ -74,4 +74,7 @@ export interface Cube {
 
   /** Discontinued */
   discontinued: boolean;
+
+  /** when the cube was verified by moderator, defaults to null */
+  verified_at: string | null;
 }

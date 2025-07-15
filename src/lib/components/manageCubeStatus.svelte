@@ -61,7 +61,7 @@
       payload.notes = note === "___other" ? otherNote : note;
 
     try {
-      const res = await fetch("/api/update-cube-status", {
+      const res = await fetch("/api/staff/update-cube-status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -91,7 +91,7 @@
     };
 
     try {
-      const res = await fetch("/api/edit-mod-notes", {
+      const res = await fetch("/api/staff/edit-mod-notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

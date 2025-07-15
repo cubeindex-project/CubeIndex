@@ -255,9 +255,7 @@
             >Size <span class="text-red-500">*</span>
             <input
               name="size"
-              type="number"
-              min="0"
-              step="0.1"
+              type="text"
               bind:value={$form.size}
               class="input w-full input-lg"
               required

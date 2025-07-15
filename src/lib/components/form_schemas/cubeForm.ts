@@ -21,7 +21,11 @@ export const cubeSchema = z
     imageUrl: z.url("Image URL must be valid"),
     surfaceFinish: z.string().optional(),
     weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
-    size: z.coerce.number().min(0, "Size must be ≥ 0"),
+    size: z.coerce
+      .string()
+      .refine((val) => /[0-9]+\sx\s[0-9]+\sx\s[0-9]+/.test(val), {
+        error: "Size must be num x num x num",
+      }),
     discontinued: z.boolean(),
     features: z
       .object({

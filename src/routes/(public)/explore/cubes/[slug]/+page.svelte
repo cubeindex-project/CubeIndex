@@ -339,7 +339,7 @@
             </div>
             <div class="flex items-center justify-between">
               <span>Size:</span>
-              <span class="font-medium">{cube.size} mm3</span>
+              <span class="font-medium">{cube.size} mm</span>
             </div>
             <div class="flex items-center justify-between">
               <span>Surface Finish:</span>

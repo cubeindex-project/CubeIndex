@@ -325,12 +325,10 @@
           </div>
           <div>
             <label class="block mb-1 font-medium"
-              >Size (mm3)
+              >Size (mm)
               <input
                 name="size"
-                type="number"
-                step="0.1"
-                min="0"
+                type="text"
                 class="input input-bordered w-full"
                 bind:value={$form.size}
               />
@@ -774,7 +772,7 @@
           </div>
           <div class="flex items-center justify-between">
             <span>Size:</span>
-            <span class="font-medium">{$form.size} mm3</span>
+            <span class="font-medium">{$form.size} mm</span>
           </div>
           <div class="flex items-center justify-between">
             <span>Surface Finish:</span>

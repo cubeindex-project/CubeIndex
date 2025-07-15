@@ -57,7 +57,7 @@
       status: reason === "Accept" ? "Approved" : "Rejected",
       verified_by: username,
     };
-    if (reason === "Rejected")
+    if (reason === "Reject")
       payload.notes = note === "___other" ? otherNote : note;
 
     try {

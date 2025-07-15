@@ -5,8 +5,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const {
     cube_id,
     status,
-    notes = "",
-    verified_by = "",
+    notes,
+    verified_by,
   }: {
     cube_id: string;
     status: string;

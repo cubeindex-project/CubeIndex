@@ -1,31 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { blur } from "svelte/transition";
-  import { supabase } from "$lib/supabaseClient";
-  import { error } from "@sveltejs/kit";
-  import { getContext } from "svelte";
-  import { enhance } from "$app/forms";
 
   let { onCancel, cube } = $props();
 
-  let username: string = $state("");
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state("");
-
-  const getUser = getContext<() => { id: any }>("user");
-  let user = getUser();
-
-  onMount(async () => {
-    const { data: profiles, error: profileErr } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user?.id);
-
-    if (profileErr) throw error(500, profileErr.message);
-    username = profiles[0].username;
-    return { username };
-  });
 
   let slug = $derived(cube.slug);
   let quantity = $state(1);
@@ -33,7 +13,42 @@
   let main = $state(false);
   let status = $state("");
   let notes = $state("");
-  let acquired_at = $state();
+  let acquired_at = $state("");
+
+  async function addCubeToCollec() {
+    isSubmitting = true;
+    formMessage = "";
+    const payload = {
+      cube: slug,
+      quantity,
+      main,
+      condition,
+      status,
+      notes,
+      acquired_at,
+    };
+
+    console.log(payload);
+
+    try {
+      const res = await fetch("/api/add-cube-to-collection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showSuccess = true;
+        setTimeout(onCancel(), 1000);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      formMessage = err.message;
+    } finally {
+      isSubmitting = false;
+    }
+  }
 </script>
 
 <div
@@ -41,47 +56,24 @@
   transition:blur
 >
   <form
-    method="POST"
-    class="card w-full max-w-lg transform -translate-y-17 absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100"
-    use:enhance={() => {
-      isSubmitting = true;
-      formMessage = "";
-      return async ({ result, update }) => {
-        isSubmitting = false;
-        await update();
-        if (result.type === "success") {
-          showSuccess = true;
-          setTimeout(() => {
-            onCancel();
-          }, 1000);
-        }
-      };
-    }}
+    class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
+    onsubmit={addCubeToCollec}
   >
     <div class="card-body">
       <h2 class="card-title">
         You are adding the {cube.series}
         {cube.model}
-        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection
-        as {username ? username : "Unknown"}
+        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection.
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="username"
-          bind:value={username}
-          class="input"
-          hidden
-        />
-        <input type="text" name="slug" bind:value={slug} class="input" hidden />
         <!-- Quantity -->
         <label class="flex flex-col">
           <span class="label-text">Quantity</span>
           <input
             name="quantity"
             type="number"
-            min=1
-            max=999
+            min="1"
+            max="999"
             bind:value={quantity}
             class="input w-full"
             required
@@ -179,5 +171,9 @@
         </button>
       </div>
     </div>
+
+    {#if formMessage}
+      <div class="text-error p-2 flex justify-center">{formMessage}</div>
+    {/if}
   </form>
 </div>

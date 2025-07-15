@@ -51,17 +51,47 @@
       cube_id: number;
       status: string;
       verified_by: string;
-      reason?: string;
+      notes?: string;
     } = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
       verified_by: username,
     };
-    if (reason !== "Accept")
-      payload.reason = note === "___other" ? otherNote : note;
+    if (reason === "Rejected")
+      payload.notes = note === "___other" ? otherNote : note;
 
     try {
-      const res = await fetch("/api/update-cube-status", {
+      const res = await fetch("/api/staff/update-cube-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showSuccess = true;
+        onCancel();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      formMessage = err.message;
+    } finally {
+      isSubmitting = false;
+    }
+  }
+
+  async function editNotes() {
+    isSubmitting = true;
+    const payload: {
+      cube_id: number;
+      notes: string;
+    } = {
+      cube_id,
+      notes: note
+    };
+
+    try {
+      const res = await fetch("/api/staff/edit-mod-notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -87,7 +117,7 @@
 >
   <form
     class="card w-full max-w-lg bg-base-100/80 backdrop-blur-3xl p-6"
-    onsubmit={changeStatus}
+    onsubmit={reason === "Edit" ? editNotes : changeStatus}
   >
     <h2 class="card-title">
       You are {reason.toLowerCase()}ing: {cube_name} as {username}

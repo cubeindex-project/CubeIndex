@@ -21,12 +21,33 @@
   } = $props();
 
   let openAddCard = $state(false);
+
+  function isNewCube(addedDateString: string | null): boolean {
+    if (!addedDateString) return false;
+
+    const addedDate = new Date(addedDateString);
+    const now = new Date();
+
+    const diffMs = now.getTime() - addedDate.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    return diffDays < 7;
+  }
 </script>
 
 <div>
   <div
-    class="bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
+    class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col"
   >
+    <div class="flex justify-end">
+      {#if isNewCube(cube.verified_at)}
+        <div
+          class="absolute top-4 right-[-32px] transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
+        >
+          NEW
+        </div>
+      {/if}
+    </div>
     {#if image}
       <img
         src={cube.image_url}
@@ -62,7 +83,7 @@
             aria-label="Add to Collection"
           >
             <i class="fa-solid fa-plus mr-2"></i>
-            Add to Collection
+            Add<span class="hidden sm:block">to Collection</span>
           </button>
         {/if}
         {#if rate}
@@ -73,7 +94,7 @@
             disabled
           >
             <i class="fa-solid fa-star mr-2"></i>
-            Rate this Cube
+            Rate<span class="hidden sm:block">this Cube</span>
           </button>
         {/if}
       </div>

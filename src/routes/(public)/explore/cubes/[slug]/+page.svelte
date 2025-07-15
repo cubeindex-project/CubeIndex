@@ -60,7 +60,6 @@
     { label: "Modded", key: "modded" },
     { label: "WCA Legal", key: "wca_legal" },
     { label: "Maglev", key: "maglev" },
-    { label: "Discontinued", key: "discontinued" },
     { label: "Stickered", key: "stickered" },
     { label: "Ball Core", key: "ball_core" },
   ];
@@ -212,6 +211,7 @@
             This cube is awaiting verification by moderators.
           </div>
         {/if}
+
         <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
           <img
             src={cube.image_url}
@@ -220,8 +220,12 @@
             class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
           />
         </div>
-        <h1 class="text-4xl font-bold mb-4 flex items-center gap-3">
-          <span class="font-clash">
+        <h1
+          class="text-4xl font-bold mb-4 flex sm:items-center gap-3 flex-col sm:flex-row items-start"
+        >
+          <span
+            class="font-clash flex-col flex sm:flex-row sm:items-center items-start"
+          >
             {cube.series}
             {cube.model}
             {#if cube.version_type !== "Base"}
@@ -229,6 +233,13 @@
             {/if}
             <CubeVersionType version_type={cube.version_type} moreInfo={true} />
           </span>
+          {#if cube.discontinued}
+            <span
+              class="sm:ml-3 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold flex items-center gap-1"
+            >
+              <i class="fa-solid fa-ban"></i> Discontinued
+            </span>
+          {/if}
         </h1>
 
         <p class="mb-4">
@@ -259,9 +270,7 @@
         {/if}
 
         <!-- Highlighted Rating -->
-        <div
-          class="flex flex-col items-center justify-center sm:items-start mb-5 sm:mt-0"
-        >
+        <div class="flex flex-col justify-center items-start mb-5 sm:mt-0">
           <StarRating rating={cube.rating} large={true} />
         </div>
 
@@ -352,11 +361,7 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                  {#if status.key === "discontinued"}
-                    {cube.discontinued ? "✅" : "❌"}
-                  {:else}
                     {feats.has(status.key) ? "✅" : "❌"}
-                  {/if}
                 </span>
               </div>
             {/each}

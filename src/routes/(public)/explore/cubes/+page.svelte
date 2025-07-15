@@ -5,6 +5,7 @@
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
   import type { Cube } from "$lib/components/types/cube";
+  import Pagination from "$lib/components/pagination.svelte";
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -166,18 +167,6 @@
     selectedCubeType = "All";
   }
 
-  function goToPreviousPage() {
-    if (currentPage > 1) {
-      currentPage -= 1;
-    }
-  }
-
-  function goToNextPage() {
-    if (currentPage < totalPages) {
-      currentPage += 1;
-    }
-  }
-
   $effect(() => {
     const _ = filteredCubes;
     currentPage = 1;
@@ -192,7 +181,7 @@
 </script>
 
 {#if databaseAvailability && cubesAvailability}
-  <section class="min-h-screenpx-6 py-16">
+  <section class="min-h-screen px-6 py-16">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-6 text-center">
         Explore Cubes
@@ -379,7 +368,7 @@
         <!-- Cube Cards Grid -->
         <div class="flex-1">
           <div
-            class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
+            class="flex flex-row items-start sm:items-center justify-between mb-4 gap-4"
           >
             <div class="flex items-center">
               <label class="text-sm mr-2" for="itemsPerPage"
@@ -404,36 +393,14 @@
                 href="/explore/cubes/compare"
                 class="btn bg-primary text-primary-content"
               >
-                <i class="fa-solid fa-code-compare mr-2"></i>
-                Compare Cubes
+                <i class="fa-solid fa-code-compare sm:mr-2"></i>
+                Compare <span class="hidden sm:block">Cubes</span>
               </a>
             </div>
           </div>
 
-          <div class="flex items-center justify-center gap-4 mb-10">
-            <div class="join">
-              <button
-                class="join-item btn btn-lg"
-                onclick={goToPreviousPage}
-                disabled={currentPage === 1}
-                aria-label="Previous page"
-              >
-                <i class="fa-solid fa-chevron-left mr-2"></i>
-                Previous
-              </button>
-              <button class="join-item btn btn-lg">
-                Page {currentPage} of {totalPages}
-              </button>
-              <button
-                onclick={goToNextPage}
-                class="join-item btn btn-lg"
-                disabled={currentPage === totalPages}
-                aria-label="Next page"
-              >
-                Next
-                <i class="fa-solid fa-chevron-right ml-2"></i>
-              </button>
-            </div>
+          <div class="mb-10">
+            <Pagination bind:currentPage {totalPages} />
           </div>
 
           {#if loading}
@@ -493,30 +460,8 @@
             </div>
           {/if}
 
-          <div class="flex items-center justify-center gap-4 mt-10">
-            <div class="join">
-              <button
-                class="join-item btn btn-lg"
-                onclick={goToPreviousPage}
-                disabled={currentPage === 1}
-                aria-label="Previous page"
-              >
-                <i class="fa-solid fa-chevron-left mr-2"></i>
-                Previous
-              </button>
-              <button class="join-item btn btn-lg">
-                Page {currentPage} of {totalPages}
-              </button>
-              <button
-                onclick={goToNextPage}
-                class="join-item btn btn-lg"
-                disabled={currentPage === totalPages}
-                aria-label="Next page"
-              >
-                Next
-                <i class="fa-solid fa-chevron-right ml-2"></i>
-              </button>
-            </div>
+          <div class="mt-10">
+            <Pagination bind:currentPage {totalPages} />
           </div>
         </div>
       </div>

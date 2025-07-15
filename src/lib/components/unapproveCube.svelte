@@ -9,7 +9,7 @@
   async function unapproveCube() {
     loading = true;
 
-    const res = await fetch("/api/update-cube-status", {
+    const res = await fetch("/api/staff/update-cube-status", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cube_id, status: "Pending" }),

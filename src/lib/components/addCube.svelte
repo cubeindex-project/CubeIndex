@@ -56,7 +56,7 @@
   transition:blur
 >
   <form
-    class="card w-full max-w-lg transform -translate-y-17 absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100"
+    class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
     onsubmit={addCubeToCollec}
   >
     <div class="card-body">

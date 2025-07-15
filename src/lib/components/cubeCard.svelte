@@ -83,7 +83,7 @@
             aria-label="Add to Collection"
           >
             <i class="fa-solid fa-plus mr-2"></i>
-            Add to Collection
+            Add<span class="hidden sm:block">to Collection</span>
           </button>
         {/if}
         {#if rate}
@@ -94,7 +94,7 @@
             disabled
           >
             <i class="fa-solid fa-star mr-2"></i>
-            Rate this Cube
+            Rate<span class="hidden sm:block">this Cube</span>
           </button>
         {/if}
       </div>

@@ -23,7 +23,7 @@ export const cubeSchema = z
     weight: z.coerce.number().min(0, "Weight must be ≥ 0"),
     size: z.coerce
       .string()
-      .refine((val) => /[0-9]+\sx\s[0-9]+\sx\s[0-9]+/.test(val), {
+      .refine((val) => /^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$/.test(val), {
         error: "Size must be num x num x num",
       }),
     discontinued: z.boolean(),

@@ -7,63 +7,78 @@
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let message = $state("");
+  let formMessage = $state("");
 
   $effect(() => {
     if (showSuccess) location.reload();
   });
 
-  const user_details_cube = user_details.filter((ud) => ud.cube === cube.slug);
+  const user_details_cube = user_details.find((ud) => ud.cube === cube.slug);
 
-  let username = $state(user_details_cube[0].username);
-  let slug = $state(user_details_cube[0].cube);
-  let quantity = $state(user_details_cube[0].quantity);
-  let condition = $state(user_details_cube[0].condition);
-  let main = $state(user_details_cube[0].main);
-  let status = $state(user_details_cube[0].status);
-  let notes = $state(user_details_cube[0].notes);
-  let acquired_at = $state(user_details_cube[0].acquired_date);
+  let username = $state(user_details_cube.username);
+  let slug = $state(user_details_cube.cube);
+  let quantity = $state(user_details_cube.quantity);
+  let condition = $state(user_details_cube.condition);
+  let main = $state(user_details_cube.main);
+  let status = $state(user_details_cube.status);
+  let notes = $state(user_details_cube.notes);
+  let acquired_at = $state(user_details_cube.acquired_at);
 
   async function update() {
     isSubmitting = true;
+    formMessage = "";
     const payload = {
+      slug,
       quantity,
-      condition,
       main,
+      condition,
       status,
       notes,
       acquired_at,
     };
 
-    const { error: err } = await supabase
-      .from("user_cubes")
-      .update(payload)
-      .eq("username", username)
-      .eq("cube", slug)
-      .select();
-
-    if (err) {
-      message = err.message;
+    try {
+      const res = await fetch("/api/update-cube-collection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showSuccess = true;
+        location.reload();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      formMessage = err.message;
+    } finally {
       isSubmitting = false;
-      return;
     }
-
-    isSubmitting = false;
-    showSuccess = true;
   }
 
   async function remove() {
-    const { error: err } = await supabase
-      .from("user_cubes")
-      .delete()
-      .eq("username", username)
-      .eq("cube", slug);
+    formMessage = "";
+    const payload = {
+      slug,
+    };
 
-    if (err) {
-      message = err.message;
-      return;
+    try {
+      const res = await fetch("/api/delete-cube-from-collection", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showSuccess = true;
+        location.reload();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err: any) {
+      formMessage = err.message;
     }
-
-    location.reload();
   }
 </script>
 
@@ -187,8 +202,8 @@
       {/if}
     </button>
 
-    {#if message.length > 0}
-      <p class="p-2 text-center">{message}</p>
+    {#if formMessage}
+      <div class="text-error p-2 flex justify-center">{formMessage}</div>
     {/if}
   </div>
 </div>

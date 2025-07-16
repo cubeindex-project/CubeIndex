@@ -1,6 +1,18 @@
 <script lang="ts">
-  const { data } = $props();
-  const { staff_logs } = data;
+  import { supabase } from "$lib/supabaseClient";
+  import { onMount } from "svelte";
+
+  let staff_logs: any[] = $state([]);
+
+  onMount(async () => {
+    const { data, error: err } = await supabase
+      .from("staff_logs")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (err) return console.error(500, err.message);
+    staff_logs = data;
+  });
 
   interface LogEntry {
     id: number;
@@ -13,7 +25,7 @@
     new_data: JSON;
   }
 
-  let logs: LogEntry[] = $state(staff_logs);
+  let logs: LogEntry[] = $derived(staff_logs);
   let debouncedSearch = $state("");
   let page = $state(1);
   let pageSize = $state(50);

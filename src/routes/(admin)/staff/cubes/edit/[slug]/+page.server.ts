@@ -1,11 +1,11 @@
 import { supabase } from "$lib/supabaseClient";
 import { type Actions, fail, error, redirect } from "@sveltejs/kit";
-import { slugify } from "$lib/components/slugify.svelte";
-import { getSubTypes } from "$lib/components/subType.svelte";
+import { slugify } from "$lib/components/helper_functions/slugify.svelte.js";
+import { getSubTypes } from "$lib/components/helper_functions/subType.svelte.js";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
-import { cleanLink } from "$lib/components/linkCleaner.js";
+import { cleanLink } from "$lib/components/helper_functions/linkCleaner.js";
 import type { Cube } from "$lib/components/types/cube.js";
 import { cubeSchema } from "$lib/components/form_schemas/cubeForm.js";
 

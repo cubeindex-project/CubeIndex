@@ -1,6 +1,6 @@
 <script lang="ts">
     import { configCatClient } from "$lib/configcatClient";
-    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+    import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
     import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();

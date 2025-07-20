@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import CubeCard from "$lib/components/cubeCard.svelte";
+  import CubeCard from "$lib/components/cube/cubeCard.svelte";
 
   let { data }: { data: PageData } = $props();
 

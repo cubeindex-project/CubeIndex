@@ -1,11 +1,11 @@
 <script lang="ts">
   // Components and style
   import "../app.css";
-  import Navbar from "$lib/components/navbar.svelte";
-  import Footer from "$lib/components/footer.svelte";
-  import Disclaimer from "$lib/components/disclaimer.svelte";
+  import Footer from "$lib/components/layout/footer.svelte";
+  import Navbar from "$lib/components/layout/navbar.svelte";
+  import Disclaimer from "$lib/components/layout/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
-  import { SvelteKitTopLoader } from 'sveltekit-top-loader';
+  import { SvelteKitTopLoader } from "sveltekit-top-loader";
 
   let { data, children } = $props();
 
@@ -26,8 +26,8 @@
   });
 
   import { setContext } from "svelte";
-  setContext('user', () => data.user);
-  setContext('session', () => data.session)
+  setContext("user", data.user);
+  setContext("session", data.session);
 </script>
 
 <svelte:head>

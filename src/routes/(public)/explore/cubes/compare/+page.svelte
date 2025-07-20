@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import { supabase } from "$lib/supabaseClient";
   import type { Cube } from "$lib/components/types/cube";
   import { onMount } from "svelte";
-  import SearchCubes from "$lib/components/searchCubes.svelte";
+  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   type CubeWithMeta = Cube & {
     _year: number;

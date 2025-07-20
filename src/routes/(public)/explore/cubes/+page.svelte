@@ -1,11 +1,11 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import CubeCard from "$lib/components/cubeCard.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
+  import CubeCard from "$lib/components/cube/cubeCard.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
   import type { Cube } from "$lib/components/types/cube";
-  import Pagination from "$lib/components/pagination.svelte";
+  import Pagination from "$lib/components/misc/pagination.svelte";
 
   type CubeWithMeta = Cube & {
     _year: number;

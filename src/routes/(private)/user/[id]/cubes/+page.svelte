@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import UserCubeCard from "$lib/components/userCubeCard.svelte";
-  import EditUserCubeCard from "$lib/components/editUserCubeCard.svelte";
+  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
+  import EditUserCubeCard from "$lib/components/cube/editUserCubeCard.svelte";
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
   import type { Cube } from "$lib/components/types/cube";

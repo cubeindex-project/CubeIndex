@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Badge from "$lib/components/badge.svelte";
+  import Badge from '$lib/components/user/badge.svelte';
 
   const { data, children } = $props();
   const { user, profile } = data;

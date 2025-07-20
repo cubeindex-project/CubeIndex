@@ -99,7 +99,7 @@
           value={mounted ? totalCubes : 0}
           plugins={[continuous]}
           transformTiming={{ duration: 50, easing: "linear" }}
-          spinTiming={{ duration: totalCubes * 10, easing: "linear" }}
+          spinTiming={{ duration: totalCubes / 10, easing: "linear" }}
           opacityTiming={{ duration: 500, easing: "ease-out" }}
           class="inline-block"
         />

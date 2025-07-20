@@ -1,8 +1,11 @@
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import AddCube from "./addCube.svelte";
-  import type { Cube } from "./types/cube";
+  import RateCube from "../rating/rateCube.svelte";
+  import type { Cube } from "../types/cube";
+  import type { User } from "@supabase/supabase-js";
+  import { getContext } from "svelte";
 
   let {
     cube,
@@ -20,7 +23,10 @@
     image: boolean;
   } = $props();
 
+  const user = getContext<User>("user");
+
   let openAddCard = $state(false);
+  let openRateCard = $state(false);
 
   function isNewCube(addedDateString: string | null): boolean {
     if (!addedDateString) return false;
@@ -69,8 +75,8 @@
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
       </p>
-      <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+      <div class="mt-3 flex justify-start">
+        <StarRating readOnly={true} score={cube.rating ?? 0} />
       </div>
       <div class="mt-4 flex gap-2">
         {#if add}
@@ -90,8 +96,10 @@
           <button
             class="btn btn-accent flex-1"
             type="button"
+            onclick={() => {
+              openRateCard = !openRateCard;
+            }}
             aria-label="Rate this Cube"
-            disabled
           >
             <i class="fa-solid fa-star mr-2"></i>
             Rate<span class="hidden sm:block">this Cube</span>
@@ -116,6 +124,15 @@
         openAddCard = !openAddCard;
       }}
       {cube}
+    />
+  {/if}
+  {#if openRateCard}
+    <RateCube
+      onCancel={() => {
+        openRateCard = !openRateCard;
+      }}
+      {cube}
+      isConnected={user}
     />
   {/if}
 </div>

@@ -1,6 +1,6 @@
 <!-- staffCubeCard.svelte -->
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import UnapproveCube from "./unapproveCube.svelte";
@@ -50,7 +50,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} score={cube.rating ?? 0} />
       </div>
 
       <div class="py-4">
@@ -106,7 +106,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} score={cube.rating ?? 0} />
       </div>
       <div class="mt-4 flex gap-2">
         <button
@@ -159,7 +159,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} score={cube.rating ?? 0} />
       </div>
 
       <div class="flex flex-col gap-4 mt-4">

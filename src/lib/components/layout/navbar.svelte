@@ -1,8 +1,8 @@
 <script lang="ts">
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
-  import ConfirmSignOut from "./confirmSignOut.svelte";
-  import NotificationCenter from "./notificationCenter.svelte";
+  import ConfirmSignOut from "../user/confirmSignOut.svelte";
+  import NotificationCenter from "../user/notificationCenter.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
 

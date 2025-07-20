@@ -15,6 +15,11 @@
   let notes = $state("");
   let acquired_at = $state("");
 
+  $effect(() => {
+    const _ = status;
+    if (status === "Wishlist") quantity = 1;
+  });
+
   async function addCubeToCollec() {
     isSubmitting = true;
     formMessage = "";
@@ -68,7 +73,11 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Quantity -->
         <label class="flex flex-col">
-          <span class="label-text">Quantity</span>
+          <span class="label-text"
+            >Quantity {status === "Wishlist"
+              ? "(Qty can't be changed for wishlisted cubes.)"
+              : ""}</span
+          >
           <input
             name="quantity"
             type="number"
@@ -76,6 +85,7 @@
             max="999"
             bind:value={quantity}
             class="input w-full"
+            readonly={status === "Wishlist"}
             required
           />
         </label>
@@ -152,6 +162,7 @@
       <div class="card-actions p-4">
         <button
           class="btn btn-secondary"
+          type="button"
           onclick={onCancel}
           disabled={isSubmitting}>Cancel</button
         >

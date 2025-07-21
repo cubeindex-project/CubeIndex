@@ -101,7 +101,7 @@
             </h2>
             {#if user?.id === profile.user_id}
               <a
-                href="settings"
+                href="/user/settings"
                 class="btn btn-lg btn-primary ml-4 hidden md:flex"
                 aria-label="User Settings"
                 title="User Settings"
@@ -131,7 +131,7 @@
             >
               {#if user?.id === profile.user_id}
                 <a
-                  href="settings"
+                  href="/user/settings"
                   class="flex justify-end items-center gap-2 p-2"
                   aria-label="User Settings"
                   title="User Settings"

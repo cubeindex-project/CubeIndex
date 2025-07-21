@@ -1,5 +1,6 @@
 <script lang="ts">
-  import Badge from '$lib/components/user/badge.svelte';
+  import Badge from "$lib/components/user/badge.svelte";
+  import { onMount } from "svelte";
 
   const { data, children } = $props();
   const { user, profile } = data;
@@ -140,7 +141,10 @@
                   <span>Settings</span>
                 </a>
               {:else}
-                <button class="flex justify-end items-center gap-2 p-2" disabled>
+                <button
+                  class="flex justify-end items-center gap-2 p-2"
+                  disabled
+                >
                   <i class="fa-solid fa-flag"></i>
                   <span>Report</span>
                 </button>
@@ -292,9 +296,7 @@
   {#if !profile.private || user?.id === profile.user_id}
     {@render children()}
   {:else}
-    <section
-      class="px-4 py-12 flex items-center justify-center"
-    >
+    <section class="px-4 py-12 flex items-center justify-center">
       <div class="text-center">
         <h1 class="text-3xl font-bold mb-4">This profile is private</h1>
         <p class="text-gray-400">

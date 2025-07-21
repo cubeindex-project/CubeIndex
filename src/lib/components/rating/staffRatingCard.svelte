@@ -31,7 +31,10 @@
       const res = await fetch("/api/rating/delete-rating", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cube_slug: cube.slug, username: user_rating.username}),
+        body: JSON.stringify({
+          cube_slug: cube.slug,
+          username: user_rating.username,
+        }),
       });
       const data = await res.json();
 

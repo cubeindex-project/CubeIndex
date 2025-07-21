@@ -5,18 +5,18 @@
   import Star from "./Star.svelte";
   let {
     readOnly = false,
-    score = $bindable(0.0),
+    rating = $bindable(0.0),
   }: {
     readOnly: boolean;
-    score: number;
+    rating: number;
   } = $props();
 
   let fills: number[] = $state([]);
 
   $effect(() => {
-    const _ = score;
+    const _ = rating;
     fills = Array.from({ length: 5 }, (_, i) =>
-      Math.max(0, Math.min(1, score - i))
+      Math.max(0, Math.min(1, rating - i))
     );
   });
 </script>
@@ -33,16 +33,16 @@
         <input
           class="opacity-0 cursor-pointer absolute h-full w-full"
           type="range"
-          min={readOnly ? score : 0.5}
-          max={readOnly ? score : 5}
+          min={readOnly ? rating : 0.5}
+          max={readOnly ? rating : 5}
           step={0.5}
-          bind:value={score}
+          bind:value={rating}
         />
       {/if}
     </div>
   </div>
 
   <span class="select-none text-sm">
-    {score}/5
+    {rating} out of 5
   </span>
 </section>

@@ -2,15 +2,13 @@
   import { blur } from "svelte/transition";
   import StarRating from "./starRating.svelte";
 
-  let { onCancel, cube, isConnected } = $props();
+  let { onCancel, cube, isConnected, rating = 0, comment = "" } = $props();
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state("");
 
   let slug = $derived(cube.slug);
-  let comment = $state("");
-  let score = $state(0);
 
   async function rateCube() {
     isSubmitting = true;
@@ -21,7 +19,7 @@
       comment: string;
     } = {
       cube_slug: slug,
-      rating: score,
+      rating,
       comment,
     };
 
@@ -62,7 +60,7 @@
             {cube.version_type !== "Base" ? cube.version_name : null}.
           </h2>
 
-          <StarRating readOnly={false} bind:score />
+          <StarRating readOnly={false} bind:rating />
 
           <!-- Full-width fields -->
           <div class="mt-4 space-y-4">

@@ -76,7 +76,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3 flex justify-start">
-        <StarRating readOnly={true} score={cube.rating ?? 0} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
       <div class="mt-4 flex gap-2">
         {#if add}
@@ -130,6 +130,7 @@
     <RateCube
       onCancel={() => {
         openRateCard = !openRateCard;
+        location.reload();
       }}
       {cube}
       isConnected={user}

@@ -50,7 +50,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating readOnly={true} score={cube.rating ?? 0} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
 
       <div class="py-4">
@@ -106,7 +106,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating readOnly={true} score={cube.rating ?? 0} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
       <div class="mt-4 flex gap-2">
         <button
@@ -159,7 +159,7 @@
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating readOnly={true} score={cube.rating ?? 0} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
 
       <div class="flex flex-col gap-4 mt-4">

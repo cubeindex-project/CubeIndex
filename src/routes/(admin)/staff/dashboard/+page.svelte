@@ -110,6 +110,12 @@
       implemented: false,
     },
     {
+      href: "/staff/ratings",
+      icon: "⭐",
+      label: "Manage Ratings",
+      implemented: true,
+    },
+    {
       href: "/staff/logs",
       icon: "🗃️",
       label: "Staff Logs",

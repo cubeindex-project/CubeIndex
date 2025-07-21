@@ -1,18 +1,20 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import StarRating from "$lib/components/starRating.svelte";
-  import CubeVersionType from "$lib/components/cubeVersionType.svelte";
-  import AddCube from "$lib/components/addCube.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
+  import StarRating from "$lib/components/rating/starRating.svelte";
+  import AddCube from "$lib/components/cube/addCube.svelte";
+  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import type { Cube } from "$lib/components/types/cube.js";
-  import { formatDate } from "$lib/components/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
+  import type { Profiles } from "$lib/components/types/profile.js";
+  import UserRatings from "$lib/components/rating/userRatings.svelte";
 
   let { data } = $props();
   let {
     cubesAvailability = true,
     databaseAvailability = true,
     cube = {} as Cube,
-    profile,
+    profile = {} as Profiles,
     user_ratings,
     profiles,
     cubeTrims,
@@ -221,10 +223,10 @@
           />
         </div>
         <h1
-          class="text-4xl font-bold mb-4 flex sm:items-center gap-3 flex-col sm:flex-row items-start"
+          class="text-4xl font-bold mb-4 flex sm:items-center flex-col sm:flex-row items-start"
         >
           <span
-            class="font-clash flex-col flex sm:flex-row sm:items-center items-start"
+            class="font-clash flex-col flex sm:flex-row sm:items-center items-start gap-2"
           >
             {cube.series}
             {cube.model}
@@ -270,8 +272,8 @@
         {/if}
 
         <!-- Highlighted Rating -->
-        <div class="flex flex-col justify-center items-start mb-5 sm:mt-0">
-          <StarRating rating={cube.rating} large={true} />
+        <div class="flex flex-col items-start mb-5 sm:mt-0">
+          <StarRating readOnly={true} rating={cube.rating ?? 0} />
         </div>
 
         <div
@@ -361,7 +363,7 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                    {feats.has(status.key) ? "✅" : "❌"}
+                  {feats.has(status.key) ? "✅" : "❌"}
                 </span>
               </div>
             {/each}
@@ -523,40 +525,7 @@
             </div>
           </div>
         {/if}
-        <div class="mb-8">
-          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-star"></i>
-            User Ratings
-          </h2>
-          {#if user_ratings && user_ratings.length > 0}
-            <div class="flex flex-col gap-4">
-              {#each user_ratings as rating}
-                <div
-                  class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm"
-                >
-                  <div class="flex items-center gap-3 mb-2">
-                    <StarRating rating={cube.rating} large={false} />
-                    <span class="text-sm">
-                      by <a href={idOfUser(rating.username)} class="underline"
-                        >{rating.username}</a
-                      >
-                    </span>
-                    <span class="text-xs ml-auto">
-                      <!-- {formatDate(rating.created_at)} -->
-                    </span>
-                  </div>
-                  {#if rating.comment}
-                    <div>
-                      {rating.comment}
-                    </div>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <div>No user ratings yet. Be the first to rate this cube!</div>
-          {/if}
-        </div>
+        <UserRatings user_ratings={user_ratings ?? []} {cube} />
         <div class="mt-4">
           <a
             href="/discord"

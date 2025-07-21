@@ -15,7 +15,7 @@ export const load = async ({ locals }) => {
 
   const { data, error: pErr } = await locals.supabase
     .from("profiles")
-    .select("username")
+    .select("*")
     .eq("user_id", locals.user?.id)
     .single();
 

@@ -2,14 +2,14 @@
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
   import type { Cube } from "$lib/components/types/cube.ts";
-  import CubeVersionType from "$lib/components/cubeVersionType.svelte";
+  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { error } from "@sveltejs/kit";
-  import { formatDate } from "$lib/components/formatDate.svelte";
-  import ManageCubeStatus from "$lib/components/manageCubeStatus.svelte";
-  import SearchCubes from "$lib/components/searchCubes.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import ManageCubeStatus from "$lib/components/cube/manageCubeStatus.svelte";
+  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   // Destructure props passed to the component
   let { data } = $props();

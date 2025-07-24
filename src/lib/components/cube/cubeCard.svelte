@@ -81,20 +81,19 @@
       <div class="mt-4 flex gap-2">
         {#if add}
           <button
-            class="btn btn-secondary flex-1"
+            class="btn btn-secondary flex-1 gap-1"
             type="button"
-            onclick={() => {
-              openAddCard = !openAddCard;
-            }}
+            onclick={() => (openAddCard = !openAddCard)}
             aria-label="Add to Collection"
           >
             <i class="fa-solid fa-plus mr-2"></i>
-            Add<span class="hidden sm:block">to Collection</span>
+            Add
+            <span class="hidden sm:block">to Collection</span>
           </button>
         {/if}
         {#if rate}
           <button
-            class="btn btn-accent flex-1"
+            class="btn btn-accent flex-1 gap-1"
             type="button"
             onclick={() => {
               openRateCard = !openRateCard;
@@ -102,7 +101,8 @@
             aria-label="Rate this Cube"
           >
             <i class="fa-solid fa-star mr-2"></i>
-            Rate<span class="hidden sm:block">this Cube</span>
+            Rate
+            <span class="hidden sm:block">this Cube</span>
           </button>
         {/if}
       </div>

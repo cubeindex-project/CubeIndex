@@ -4,9 +4,14 @@
   const { reports, profiles, user_cube_ratings } = data;
 
   let showImg: boolean[] = $state([]);
+  let showCom: boolean[] = $state([]);
 
   function toggleImg(i: number) {
     showImg[i] = !showImg[i];
+  }
+
+  function toggleCom(i: number) {
+    showCom[i] = !showCom[i];
   }
 
   async function markResolved(id: number) {
@@ -20,6 +25,8 @@
     if (!data.success) {
       alert("Failed: " + data.error);
     }
+
+    location.reload();
   }
 
   function getUser(reporter: string) {
@@ -105,16 +112,80 @@
           {/if}
         </td>
         <td>{r.title}</td>
-        <td>{r.comment}</td>
-        <td>
-          <button
-            class="cursor-pointer btn btn-primary"
-            onclick={() => toggleImg(i)}
-          >
-            {showImg[i] ? "Hide" : "Show"}
+        <td class="relative">
+          <button class="btn btn-primary" onclick={() => toggleCom(i)}>
+            {showCom[i] ? "Hide" : "Show"}
           </button>
-          {#if showImg[i]}
-            <img src={r.image_url} alt="User report" />
+
+          {#if showCom[i]}
+            <!-- backdrop -->
+            <button
+              class="fixed inset-0 bg-black/50 bg-opacity-50 z-40"
+              onclick={() => toggleCom(i)}
+              aria-label="Close Modal"
+            ></button>
+
+            <!-- modal -->
+            <div
+              class="fixed inset-0 flex items-center justify-center z-50 p-4"
+              role="dialog"
+              aria-modal="true"
+            >
+              <div
+                class="bg-base-200 rounded-xl shadow-xl max-w-md w-full p-6 relative"
+              >
+                <h3 class="text-lg font-semibold mb-4">Comment</h3>
+                <p class="whitespace-pre-wrap">{r.comment}</p>
+                <button
+                  class="btn btn-secondary mt-6"
+                  onclick={() => toggleCom(i)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          {/if}
+        </td>
+        <td class="relative">
+          {#if r.image_url}
+            <button class="btn btn-primary" onclick={() => toggleImg(i)}>
+              {showImg[i] ? "Hide" : "Show"}
+            </button>
+
+            {#if showImg[i]}
+              <!-- backdrop -->
+              <button
+                class="fixed inset-0 bg-black/50 bg-opacity-50 z-40"
+                onclick={() => toggleImg(i)}
+                aria-label="Close modal"
+              ></button>
+
+              <!-- modal -->
+              <div
+                class="fixed inset-0 flex items-center justify-center z-50 p-4"
+                role="dialog"
+                aria-modal="true"
+              >
+                <div
+                  class="bg-base-200 rounded-xl shadow-xl max-w-lg w-full p-6 relative"
+                >
+                  <h3 class="text-lg font-semibold mb-4">Reported Image</h3>
+                  <img
+                    src={r.image_url}
+                    alt="User report"
+                    class="max-h-[70vh] mx-auto rounded"
+                  />
+                  <button
+                    class="btn btn-secondary mt-6"
+                    onclick={() => toggleImg(i)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            {/if}
+          {:else}
+            <p>No image provided</p>
           {/if}
         </td>
         <td>{r.report_type}</td>
@@ -125,10 +196,12 @@
         </td>
         <td>{new Date(r.created_at).toLocaleString()}</td>
         <td class="space-x-2 flex flex-row">
-          {#if !r.resolved}
+          {#if r.resolved}
+            <div class="btn btn-sm btn-success">Resolved</div>
+          {:else}
             <button
               onclick={() => markResolved(r.id)}
-              class="btn btn-sm btn-success"
+              class="btn btn-sm btn-info"
             >
               Mark as Resolved
             </button>

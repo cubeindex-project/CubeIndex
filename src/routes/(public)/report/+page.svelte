@@ -4,8 +4,8 @@
   let { onCancel, reported } = $props();
 
   // then simply coerce to boolean
-  const user = hasContext('user')
-    ? /** @type {User} */ (getContext('user'))
+  const user = hasContext("user")
+    ? /** @type {User} */ (getContext("user"))
     : null;
 
   // then simply coerce to boolean
@@ -62,8 +62,8 @@
     formMessage = "";
     const payload = {
       title: bug.title,
-      reported,
-      comment: `**Steps:**\n${bug.steps}\n\n**Expected:**\n${bug.expected}\n\n**Actual:**\n${bug.actual}\n\n**Device:** ${bug.deviceType}\n**OS:** ${bug.os}\n**Browser:** ${bug.browser}\n\n**Extra:**\n${bug.extra}`,
+      reported: location.href,
+      comment: `Steps:\n${bug.steps}\n\nExpected:\n${bug.expected}\n\nActual:\n${bug.actual}\n\nDevice: ${bug.deviceType}\nOS: ${bug.os}\nBrowser: ${bug.browser}\n\nExtra:\n${bug.extra}`,
       report_type: "website",
       image_url: bug.imageUrl,
     };
@@ -92,7 +92,7 @@
     formMessage = "";
     const payload = {
       title: feature.title,
-      reported,
+      reported: location.href,
       comment: `**Description:**\n${feature.description}\n\n**Use Case:**\n${feature.useCase}\n\n**Priority:** ${feature.priority}\n\n**Extra:**\n${feature.extra}`,
       report_type: "website",
       image_url: "",
@@ -241,15 +241,7 @@
           placeholder="Anything else? (optional)"
         ></textarea>
       </label>
-      <div class="flex justify-between">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick={onCancel}
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
+      <div class="flex justify-end">
         <button
           type="submit"
           class="btn btn-primary"
@@ -335,13 +327,7 @@
         ></textarea>
       </label>
 
-      <div class="flex justify-between">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick={onCancel}
-          disabled={isSubmitting}>Cancel</button
-        >
+      <div class="flex justify-end">
         <button
           type="submit"
           class="btn btn-primary"

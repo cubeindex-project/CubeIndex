@@ -55,8 +55,8 @@ export const load = (async ({ parent, params, data }) => {
     return;
   }
 
-  const { data: user_ratings, error: urErr } = await supabase
-    .from("user_ratings")
+  const { data: user_cube_ratings, error: urErr } = await supabase
+    .from("user_cube_ratings")
     .select("*")
     .eq("cube_slug", cube.slug);
 
@@ -94,7 +94,7 @@ export const load = (async ({ parent, params, data }) => {
     relatedCube,
     cubeTrims,
     cubeUserCount,
-    user_ratings,
+    user_cube_ratings,
     profiles,
     vendor_links,
     features,

@@ -107,7 +107,7 @@
       href: "/staff/reports",
       icon: "🚩",
       label: "User Reports",
-      implemented: false,
+      implemented: true,
     },
     {
       href: "/staff/ratings",

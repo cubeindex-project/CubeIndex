@@ -2,8 +2,8 @@ import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
 
 export const load = (async () => {
-  const { data: user_ratings, error: urErr } = await supabase
-    .from("user_ratings")
+  const { data: user_cube_ratings, error: urErr } = await supabase
+    .from("user_cube_ratings")
     .select("*");
 
   if (urErr) {
@@ -21,5 +21,5 @@ export const load = (async () => {
     console.error("A 500 status code error occured:", cErr.message);
     return;
   }
-  return { user_ratings, cubes };
+  return { user_cube_ratings, cubes };
 }) satisfies PageLoad;

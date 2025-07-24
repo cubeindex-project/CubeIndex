@@ -6,8 +6,9 @@
   import { supabase } from "$lib/supabaseClient";
   import type { Profiles } from "../types/profile";
   import RateCube from "./rateCube.svelte";
+  import Report from "../report/report.svelte";
 
-  const { user_rating, cube, user, showCubeDetails } = $props();
+  const { user_rating, cube, isAuthor, showCubeDetails } = $props();
 
   let popoverId = $state(
     `popover-${user_rating.username}-${user_rating.cube_slug}`
@@ -18,6 +19,7 @@
 
   let confDeleteRating = $state(false);
   let editRating = $state(false);
+  let openReport = $state(false);
 
   function toggleDelRating() {
     confDeleteRating = !confDeleteRating;
@@ -25,6 +27,10 @@
 
   function toggleEditRating() {
     editRating = !editRating;
+  }
+
+  function toggleOpenReport() {
+    openReport = !openReport;
   }
 
   function onCancel() {
@@ -60,7 +66,10 @@
     const res = await fetch("/api/rating/helpful-rating", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ratingId: user_rating.id }),
+      body: JSON.stringify({
+        ratingId: user_rating.id,
+        rating_category: "cube",
+      }),
     });
     const data = await res.json();
 
@@ -85,8 +94,8 @@
   onMount(async () => {
     const { data, error: pErr } = await supabase
       .from("profiles")
-      .select("user_id")
-      .eq("username", user_rating.username)
+      .select("username")
+      .eq("user_id", user_rating.user_id)
       .single();
 
     if (pErr) {
@@ -97,7 +106,7 @@
     profile = data as Profiles;
 
     const { data: helpful, error: helpErr } = await supabase
-      .from("helpful_cube_rating")
+      .from("helpful_rating")
       .select("*")
       .eq("rating", user_rating.id);
 
@@ -137,15 +146,15 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(user_rating.username)} class="underline">
-        {user_rating.username}
+      <a href={idOfUser(profile.username)} class="underline">
+        {profile.username}
       </a>
     </span>
 
     <span class="text-xs ml-auto">
       {formatDate(user_rating.created_at)}
     </span>
-    {#if profile.user_id === user?.id}
+    {#if isAuthor}
       <div class="relative">
         <button
           class="btn"
@@ -229,28 +238,41 @@
     </p>
   {/if}
 
-  <div class="flex flex-row">
-    <button
-      class="link link-success link-hover mt-3"
-      onclick={setRatingHelpful}
-    >
-      <i class="fa-solid fa-thumbs-up"></i>
-      <span>Helpful</span>
-    </button>
-    <div class="divider-vertical mx-3 divider-primary"></div>
-    <button class="link link-error link-hover mt-3">
-      <i class="fa-solid fa-flag"></i>
-      <span>Report</span>
-    </button>
-  </div>
+  {#if !isAuthor}
+    <div class="flex flex-row">
+      <button
+        class="link link-success link-hover mt-3"
+        onclick={setRatingHelpful}
+      >
+        <i class="fa-solid fa-thumbs-up"></i>
+        <span>Helpful</span>
+      </button>
+      <div class="divider-vertical mx-3 divider-primary"></div>
+      <button
+        class="link link-error link-hover mt-3"
+        onclick={toggleOpenReport}
+      >
+        <i class="fa-solid fa-flag"></i>
+        <span>Report</span>
+      </button>
+    </div>
+  {/if}
 </div>
 
 {#if editRating}
   <RateCube
     onCancel={() => (editRating = !editRating)}
-    isConnected={user}
     {cube}
     rating={user_rating.rating}
     comment={user_rating.comment}
+  />
+{/if}
+
+{#if openReport}
+  <Report
+    onCancel={() => (openReport = !openReport)}
+    reportType="cube-rating"
+    reported={user_rating.id}
+    reporLabel="{profile.username}'s comment on the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}

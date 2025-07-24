@@ -1,25 +1,25 @@
 <script lang="ts">
   import UserRatingCard from "./userRatingCard.svelte";
   import RateCube from "./rateCube.svelte";
-  import type { User } from "@supabase/supabase-js";
-  import { getContext } from "svelte";
   import Pagination from "../misc/pagination.svelte";
   import StarRating from "./starRating.svelte";
   import type { Cube } from "../types/cube";
   import SearchBar from "../misc/searchBar.svelte";
+  import { getContext } from "svelte";
+  import type { User } from "@supabase/supabase-js";
 
-  const { user_ratings, cube }: { user_ratings: any[]; cube: Cube } = $props();
+  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: Cube } = $props();
 
-  const user = getContext<User>("user");
+  let user = getContext<User>("user");
   let openRateCard = $state(false);
 
   let searchTerm: string = $state("");
 
   let filterRating: number | undefined = $state();
   const ratings = [5, 4, 3, 2, 1, 0];
-  let total = user_ratings.length;
+  let total = user_cube_ratings.length;
   let stats = ratings.map((r) => {
-    const count = user_ratings.filter(
+    const count = user_cube_ratings.filter(
       (u: { rating: number }) => u.rating >= r && u.rating < r + 1
     ).length;
     const pct = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
@@ -27,7 +27,7 @@
   });
 
   const filteredRatings = $derived.by(() => {
-    const filtered = user_ratings.filter(
+    const filtered = user_cube_ratings.filter(
       (ur: {
         rating: number;
         comment: string;
@@ -86,13 +86,13 @@
     </button>
   </div>
 
-  {#if user_ratings.length}
+  {#if user_cube_ratings.length}
     <div class="mb-5">
       <div class="flex items-center mb-2">
         <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
       <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-        {user_ratings.length} total ratings
+        {user_cube_ratings.length} total ratings
       </p>
 
       {#each stats as { rating, pct }}
@@ -141,7 +141,12 @@
 
     <div class="flex flex-col gap-4">
       {#each paginatedRatings as user_rating (user_rating.id)}
-        <UserRatingCard {user_rating} {cube} {user} showCubeDetails={false} />
+        <UserRatingCard
+          {user_rating}
+          {cube}
+          isAuthor={user_rating.user_id === user.id}
+          showCubeDetails={false}
+        />
       {:else}
         <div
           class="col-span-full flex flex-col items-center justify-center py-20"
@@ -179,9 +184,7 @@
   <RateCube
     onCancel={() => {
       openRateCard = !openRateCard;
-      location.reload();
     }}
     {cube}
-    isConnected={user}
   />
 {/if}

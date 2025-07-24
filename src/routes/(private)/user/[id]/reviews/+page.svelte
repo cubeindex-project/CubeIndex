@@ -2,9 +2,13 @@
   import UserRatingCard from "$lib/components/rating/userRatingCard.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import type { PageData } from "./$types";
+  import { getContext } from "svelte";
+  import type { User } from "configcat-js-ssr";
 
   let { data }: { data: PageData } = $props();
-  let { user_ratings = [], user, cubes = [] } = data;
+  let { user_cube_ratings = [], cubes = [] } = data;
+
+  let user = getContext<User>("user");
 
   function findCube(user_rating: { cube_slug: string }) {
     return cubes.find((c) => user_rating.cube_slug === c.slug);
@@ -16,10 +20,10 @@
   const paginatedRatings = $derived.by(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return user_ratings.slice(start, end);
+    return user_cube_ratings.slice(start, end);
   });
 
-  const totalPages = $derived(Math.ceil(user_ratings.length / itemsPerPage));
+  const totalPages = $derived(Math.ceil(user_cube_ratings.length / itemsPerPage));
 </script>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
@@ -30,7 +34,7 @@
         <UserRatingCard
           {user_rating}
           cube={findCube(user_rating)}
-          {user}
+          isAuthor={user_rating.user_id === user?.id}
           showCubeDetails={true}
         />
       {/each}

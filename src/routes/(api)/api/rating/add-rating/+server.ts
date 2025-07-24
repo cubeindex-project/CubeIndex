@@ -12,36 +12,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     comment: string;
   } = await request.json();
 
-  const { data: profile, error: profileErr } = await locals.supabase
-    .from("profiles")
-    .select("username")
-    .eq("user_id", locals.user?.id)
-    .single();
-
-  if (profileErr)
-    return json(
-      {
-        success: false,
-        error: "Couldn't find connected user, check that you are logged in!",
-      },
-      { status: 500 }
-    );
-
   const { error: err } = await locals.supabase
-    .from("user_ratings")
-    .upsert([{ username: profile.username, cube_slug, rating, comment }]);
+    .from("user_cube_ratings")
+    .upsert([{ user_id: locals.user?.id, cube_slug, rating, comment }]);
 
-  if (
-    err?.message ===
-    'duplicate key value violates unique constraint "user_ratings_pkey"'
-  )
-    return json(
-      {
-        success: false,
-        error: "You have already rated this cube!",
-      },
-      { status: 500 }
-    );
   if (err)
     return json(
       { success: false, error: "An error occured: " + err.message },

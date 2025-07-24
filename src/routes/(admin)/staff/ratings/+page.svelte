@@ -4,15 +4,15 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
 
   let { data }: { data: PageData } = $props();
-  let { user_ratings, cubes = [] } = data;
+  let { user_cube_ratings, cubes = [] } = data;
 
   let searchTerm: string = $state("");
   let filteredRatings: any[] = $state([]);
 
   $effect(() => {
     const _ = searchTerm;
-    if (user_ratings) {
-      filteredRatings = user_ratings.filter(
+    if (user_cube_ratings) {
+      filteredRatings = user_cube_ratings.filter(
         (ur: {
           rating: number;
           comment: string;

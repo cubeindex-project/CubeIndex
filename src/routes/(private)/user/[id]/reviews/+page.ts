@@ -25,8 +25,8 @@ export const load = (async ({ params }) => {
     return;
   }
 
-  const { data: user_ratings, error: urErr } = await supabase
-    .from("user_ratings")
+  const { data: user_cube_ratings, error: urErr } = await supabase
+    .from("user_cube_ratings")
     .select("*")
     .eq("username", profile.username);
 
@@ -34,5 +34,5 @@ export const load = (async ({ params }) => {
     console.error(`Failed to fetch user ratings: ${urErr.message}`);
     return;
   }
-  return { cubes, user_ratings };
+  return { cubes, user_cube_ratings };
 }) satisfies PageLoad;

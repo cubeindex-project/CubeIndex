@@ -4,47 +4,32 @@ import { json } from "@sveltejs/kit";
 export const POST: RequestHandler = async ({ locals, request }) => {
   const {
     ratingId,
+    rating_category,
   }: {
     ratingId: number;
+    rating_category: "cube" | "accessory";
   } = await request.json();
 
-  const { data: profile, error: profileErr } = await locals.supabase
-    .from("profiles")
-    .select("username")
-    .eq("user_id", locals.user?.id)
-    .single();
-
-  if (profileErr)
-    return json(
-      {
-        success: false,
-        error: "Couldn't find connected user, check that you are logged in!",
-      },
-      { status: 500 }
-    );
-
   const { data, error: selecErr } = await locals.supabase
-    .from("helpful_cube_rating")
+    .from("helpful_rating")
     .select("*")
-    .eq("username", profile.username)
+    .eq("user_id", locals.user?.id)
     .eq("rating", ratingId);
 
   if (selecErr)
     return json(
       {
         success: false,
-        error:
-          "Couldn't fetch rows from helpful_cube_rating:" + selecErr.message,
+        error: "Couldn't fetch rows from helpful_rating:" + selecErr.message,
       },
       { status: 500 }
     );
 
   if (data.length) {
-    console.log("deleting");
     const { error: err } = await locals.supabase
-      .from("helpful_cube_rating")
+      .from("helpful_rating")
       .delete()
-      .eq("username", profile.username)
+      .eq("user_id", locals.user?.id)
       .eq("rating", ratingId);
 
     if (err)
@@ -56,10 +41,11 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         { status: 500 }
       );
   } else {
-    console.log("inserting");
     const { error: err } = await locals.supabase
-      .from("helpful_cube_rating")
-      .insert([{ username: profile.username, rating: ratingId }]);
+      .from("helpful_rating")
+      .insert([
+        { user_id: locals.user?.id, rating: ratingId, rating_category },
+      ]);
 
     if (err)
       return json(

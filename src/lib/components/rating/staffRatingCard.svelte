@@ -33,7 +33,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cube_slug: cube.slug,
-          username: user_rating.username,
+          user_id: user_rating.user_id,
         }),
       });
       const data = await res.json();
@@ -41,7 +41,10 @@
       if (data.success) {
         loading = false;
         success = true;
-        setTimeout(onCancel, 1000);
+        setTimeout(() => {
+          onCancel;
+          location.reload();
+        }, 1000);
       } else {
         loading = false;
         alert("Failed: " + data.error);

@@ -8,6 +8,7 @@
   import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
   import type { Profiles } from "$lib/components/types/profile.js";
   import UserRatings from "$lib/components/rating/userRatings.svelte";
+  import Report from "$lib/components/report/report.svelte";
 
   let { data } = $props();
   let {
@@ -15,7 +16,7 @@
     databaseAvailability = true,
     cube = {} as Cube,
     profile = {} as Profiles,
-    user_ratings,
+    user_cube_ratings,
     profiles,
     cubeTrims,
     relatedCube,
@@ -65,6 +66,12 @@
     { label: "Stickered", key: "stickered" },
     { label: "Ball Core", key: "ball_core" },
   ];
+
+  let openReport = $state(false);
+
+  function toggleOpenReport() {
+    openReport = !openReport;
+  }
 </script>
 
 {#if databaseAvailability && cubesAvailability}
@@ -525,16 +532,14 @@
             </div>
           </div>
         {/if}
-        <UserRatings user_ratings={user_ratings ?? []} {cube} />
+        <UserRatings user_cube_ratings={user_cube_ratings ?? []} {cube} />
         <div class="mt-4">
-          <a
-            href="/discord"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+          onclick={toggleOpenReport}
             class="btn btn-error"
           >
             🚩 Report incorrect/missing data
-          </a>
+        </button>
         </div>
 
         <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
@@ -548,6 +553,16 @@
 {:else if !databaseAvailability}
   <FeatureDisabled featureName="The database is" />
 {/if}
+
+{#if openReport}
+  <Report
+    onCancel={() => (openReport = !openReport)}
+    reportType="cube"
+    reported={cube.slug}
+    reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+  />
+{/if}
+
 
 {#if openAddCard}
   <AddCube

@@ -1,8 +1,11 @@
 <script lang="ts">
   import { blur } from "svelte/transition";
   import StarRating from "./starRating.svelte";
+  import { getContext } from "svelte";
 
-  let { onCancel, cube, isConnected, rating = 0, comment = "" } = $props();
+  let { onCancel, cube, rating = 0, comment = "" } = $props();
+
+  let isConnected = typeof getContext("user") !== undefined;
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);

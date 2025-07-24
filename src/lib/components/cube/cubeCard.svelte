@@ -130,10 +130,8 @@
     <RateCube
       onCancel={() => {
         openRateCard = !openRateCard;
-        location.reload();
       }}
       {cube}
-      isConnected={user}
     />
   {/if}
 </div>

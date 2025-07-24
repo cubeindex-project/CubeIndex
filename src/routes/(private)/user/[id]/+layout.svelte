@@ -1,20 +1,18 @@
 <script lang="ts">
   import Badge from "$lib/components/user/badge.svelte";
-  import { onMount } from "svelte";
+  import Report from "$lib/components/report/report.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   const { data, children } = $props();
   const { user, profile } = data;
 
-  function formatJoinDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
+  let openReport = $state(false);
+
+  function toggleOpenReport() {
+    openReport = !openReport;
   }
 
-  const formattedJoinDate = formatJoinDate(profile?.created_at);
+  const formattedJoinDate = formatDate(profile?.created_at);
   let activeTab = $state("Overview");
 
   const tabs = [
@@ -111,7 +109,10 @@
                 <span>Settings</span>
               </a>
             {:else}
-              <button class="btn btn-error hidden md:flex" disabled>
+              <button
+                class="btn btn-error hidden md:flex"
+                onclick={toggleOpenReport}
+              >
                 <i class="fa-solid fa-flag"></i>
                 <span>Report</span>
               </button>
@@ -143,7 +144,7 @@
               {:else}
                 <button
                   class="flex justify-end items-center gap-2 p-2"
-                  disabled
+                  onclick={toggleOpenReport}
                 >
                   <i class="fa-solid fa-flag"></i>
                   <span>Report</span>
@@ -306,3 +307,12 @@
     </section>
   {/if}
 </section>
+
+{#if openReport}
+  <Report
+    onCancel={() => (openReport = !openReport)}
+    reportType="user"
+    reported={profile.user_id}
+    reporLabel="{profile.username}'s account"
+  />
+{/if}

@@ -26,6 +26,7 @@
   });
 
   import { setContext } from "svelte";
+  import type { Profiles } from "$lib/components/types/profile";
   setContext("user", data.user);
   setContext("session", data.session);
 </script>

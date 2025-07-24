@@ -1,8 +1,8 @@
 // +page.server.ts
 import type { PageServerLoad, Actions } from "./$types";
 import { error, fail } from "@sveltejs/kit";
-import { slugify } from "$lib/components/slugify.svelte";
-import { getSubTypes } from "$lib/components/subType.svelte";
+import { slugify } from "$lib/components/helper_functions/slugify.svelte";
+import { getSubTypes } from "$lib/components/helper_functions/subType.svelte";
 
 export const load = (async ({ locals }) => {
   // Use locals.supabase so that row‐level security / auth works

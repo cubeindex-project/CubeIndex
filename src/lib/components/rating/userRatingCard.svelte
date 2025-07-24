@@ -15,6 +15,7 @@
   );
 
   let profile: Profiles = $state({} as Profiles);
+  let profiles: Profiles[] = $state([]);
   let helpful_ratings: any[] = $state([]);
 
   let confDeleteRating = $state(false);
@@ -92,18 +93,16 @@
   const maxCommentLength = 300;
 
   onMount(async () => {
-    const { data, error: pErr } = await supabase
-      .from("profiles")
-      .select("username")
-      .eq("user_id", user_rating.user_id)
-      .single();
+    const { data, error: pErr } = await supabase.from("profiles").select("*");
 
     if (pErr) {
       console.error(500, `Failed to fetch profiles: ${pErr.message}`);
       return;
     }
 
-    profile = data as Profiles;
+    profiles = data;
+    profile =
+      data.find((p) => p.usernmae === user_rating.username) ?? ({} as Profiles);
 
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_rating")
@@ -147,7 +146,7 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(profile.username)} class="underline">
+      <a href={idOfUser(profiles, profile.username)} class="underline">
         {profile.username}
       </a>
     </span>

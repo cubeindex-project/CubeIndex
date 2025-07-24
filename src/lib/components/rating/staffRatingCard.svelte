@@ -9,6 +9,7 @@
   const { user_rating, cube } = $props();
 
   let profile: Profiles = $state({} as Profiles);
+  let profiles: Profiles[] = $state([]);
   let helpful_ratings: any[] = $state([]);
 
   let confDeleteRating = $state(false);
@@ -64,18 +65,16 @@
   const maxCommentLength = 300;
 
   onMount(async () => {
-    const { data, error: pErr } = await supabase
-      .from("profiles")
-      .select("user_id")
-      .eq("username", user_rating.username)
-      .single();
+    const { data, error: pErr } = await supabase.from("profiles").select("*");
 
     if (pErr) {
       console.error(500, `Failed to fetch profiles: ${pErr.message}`);
       return;
     }
 
-    profile = data as Profiles;
+    profiles = data;
+    profile =
+      data.find((p) => p.usernmae === user_rating.username) ?? ({} as Profiles);
 
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_cube_rating")
@@ -109,7 +108,7 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(user_rating.username)} class="underline">
+      <a href={idOfUser(profiles, user_rating.username)} class="underline">
         {user_rating.username}
       </a>
     </span>
@@ -177,7 +176,7 @@
       this helpful :
     </p>
     {#each helpful_ratings as hr}
-      <a href={idOfUser(hr.username)}>{hr.username}</a>
+      <a href={idOfUser(profiles, hr.username)}>{hr.username}</a>
     {/each}
   {/if}
 </div>

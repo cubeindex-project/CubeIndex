@@ -1,5 +1,5 @@
 <script>
-  import InConstruction from "$lib/components/inConstruction.svelte";
+  import InConstruction from "$lib/components/misc/inConstruction.svelte";
 </script>
 
 <InConstruction />

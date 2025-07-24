@@ -49,8 +49,8 @@
                   {acc.compatibility}
                 </p>
               {/if}
-              <div class="text-sm text-yellow-400">
-                <StarRating readOnly={true} score={acc.rating ?? 0} />
+              <div class="text-sm">
+                <StarRating readOnly={true} rating={acc.rating ?? 0} />
               </div>
               <p class="text-sm">
                 Released: {formatDate(acc.release_date)}

@@ -3,6 +3,7 @@ import { supabase } from "$lib/supabaseClient";
 
 export const load = (async ({ params }) => {
   const id = params.id;
+
   const { data: cubes, error: cErr } = await supabase
     .from("cube_models")
     .select("*")
@@ -16,7 +17,7 @@ export const load = (async ({ params }) => {
 
   const { data: profile, error: profileErr } = await supabase
     .from("profiles")
-    .select("username")
+    .select("user_id")
     .eq("id", id)
     .single();
 
@@ -28,11 +29,12 @@ export const load = (async ({ params }) => {
   const { data: user_cube_ratings, error: urErr } = await supabase
     .from("user_cube_ratings")
     .select("*")
-    .eq("username", profile.username);
+    .eq("user_id", profile.user_id);
 
   if (urErr) {
     console.error(`Failed to fetch user ratings: ${urErr.message}`);
     return;
   }
+
   return { cubes, user_cube_ratings };
 }) satisfies PageLoad;

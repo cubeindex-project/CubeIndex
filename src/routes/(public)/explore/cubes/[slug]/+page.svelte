@@ -233,13 +233,15 @@
           class="text-4xl font-bold mb-4 flex sm:items-center flex-col sm:flex-row items-start"
         >
           <span
-            class="font-clash flex-col flex sm:flex-row sm:items-center items-start gap-2"
+            class="font-clash flex-col flex items-start gap-2"
           >
-            {cube.series}
-            {cube.model}
-            {#if cube.version_type !== "Base"}
-              <span class="text-secondary">{cube.version_name}</span>
-            {/if}
+            <p>
+              {cube.series}
+              {cube.model}
+              {#if cube.version_type !== "Base"}
+                <span class="text-secondary">{cube.version_name}</span>
+              {/if}
+            </p>
             <CubeVersionType version_type={cube.version_type} moreInfo={true} />
           </span>
           {#if cube.discontinued}
@@ -534,12 +536,9 @@
         {/if}
         <UserRatings user_cube_ratings={user_cube_ratings ?? []} {cube} />
         <div class="mt-4">
-          <button
-          onclick={toggleOpenReport}
-            class="btn btn-error"
-          >
+          <button onclick={toggleOpenReport} class="btn btn-error">
             🚩 Report incorrect/missing data
-        </button>
+          </button>
         </div>
 
         <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
@@ -562,7 +561,6 @@
     reporLabel="the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}
-
 
 {#if openAddCard}
   <AddCube

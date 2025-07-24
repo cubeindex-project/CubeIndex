@@ -52,7 +52,7 @@
   transition:blur
 >
   <div
-    class="card max-w-lg min-w-md transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
+    class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
   >
     {#if isConnected}
       <form onsubmit={rateCube}>
@@ -60,7 +60,7 @@
           <h2 class="card-title">
             You are rating the {cube.series}
             {cube.model}
-            {cube.version_type !== "Base" ? cube.version_name : null}.
+            {cube.version_type !== "Base" ? cube.version_name : null}
           </h2>
 
           <StarRating readOnly={false} bind:rating />
@@ -71,7 +71,7 @@
               <span class="label-text">Comment</span>
               <textarea
                 bind:value={comment}
-                class="textarea textarea-bordered rounded-2xl w-full max-h-50"
+                class="textarea textarea-bordered rounded-2xl w-full max-h-50 resize max-w-md"
               ></textarea>
             </label>
           </div>

@@ -68,7 +68,7 @@
       <h2 class="card-title">
         You are adding the {cube.series}
         {cube.model}
-        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection.
+        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Quantity -->

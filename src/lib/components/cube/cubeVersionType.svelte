@@ -4,7 +4,7 @@
 
 {#if version_type === "Base"}
     <span
-        class="ml-2 px-2 py-1 rounded bg-blue-700/80 text-xs font-semibold relative group"
+        class="px-2 py-1 rounded bg-blue-700/80 text-xs font-semibold relative group"
     >
         <span class="font-clash uppercase">Base</span>
         {#if moreInfo}
@@ -18,7 +18,7 @@
     </span>
 {:else if version_type === "Limited"}
     <span
-        class="ml-2 px-2 py-1 rounded bg-yellow-500/80 text-xs font-semibold relative group"
+        class="px-2 py-1 rounded bg-yellow-500/80 text-xs font-semibold relative group"
     >
         <span class="font-clash uppercase">Limited Edition</span>
         {#if moreInfo}
@@ -33,7 +33,7 @@
     </span>
 {:else}
   <span
-    class="ml-2 px-2 py-1 rounded bg-green-600/80 text-xs font-semibold relative group"
+    class="px-2 py-1 rounded bg-green-600/80 text-xs font-semibold relative group"
   >
     <span class="font-clash uppercase">Trim</span>
     {#if moreInfo}

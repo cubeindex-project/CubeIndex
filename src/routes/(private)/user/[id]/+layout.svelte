@@ -33,6 +33,10 @@
       title: "Stats",
     },
     {
+      link: "/ratings",
+      title: "Ratings",
+    },
+    {
       link: "/reviews",
       title: "Reviews",
     },

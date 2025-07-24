@@ -65,7 +65,6 @@
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
   <div class="flex justify-between">
-    <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
     {#if user?.id === profile.user_id && userCubesFromAll.length > 0}
       <button
         class="btn {edit
@@ -85,6 +84,7 @@
       </button>
     {/if}
   </div>
+  <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
   {#if loading}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {#each Array(6) as i}
@@ -109,13 +109,11 @@
       {/each}
     </ul>
   {:else}
-    <div
-      class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
-    >
-      <span class="text-lg font-medium"
-        >{user?.id === profile.user_id ? "You have" : "This user has"} no cubes in
-        {user?.id === profile.user_id ? "your" : "their"} collection.</span
-      >
+    <div class="col-span-full flex flex-col items-center justify-center py-20">
+      <i class="fa-solid fa-cube fa-3x mb-4"></i>
+      <h2 class="text-2xl font-semibold mb-2">
+        This user doesn't have any cube in their collection.
+      </h2>
     </div>
   {/if}
 </div>

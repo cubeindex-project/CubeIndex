@@ -24,8 +24,8 @@
 </script>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
-  <h3 class="text-2xl font-bold mb-4">Achievements Earned</h3>
   {#if user_achievements && user_achievements.length > 0}
+    <h3 class="text-2xl font-bold mb-4">Achievements Earned</h3>
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each achievementsToShow as achievement}
         <li
@@ -60,10 +60,9 @@
       {/if}
     </ul>
   {:else}
-    <div
-      class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
-    >
-      <span class="text-lg font-medium">No achievements earned yet!</span>
+    <div class="col-span-full flex flex-col items-center justify-center py-20">
+      <i class="fa-solid fa-trophy fa-3x mb-4"></i>
+      <h2 class="text-2xl font-semibold mb-2">This user didn't earn any achievements yet.</h2>
     </div>
   {/if}
 </div>

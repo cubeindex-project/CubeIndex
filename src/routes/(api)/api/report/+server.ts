@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     image_url: string;
   } = await request.json();
 
-  if (!report_type || !comment)
+  if (!report_type || !reported)
     return json(
       {
         success: false,
@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
       { status: 500 }
     );
 
-  if (!title || !reported)
+  if (!title || !comment)
     return json(
       {
         success: false,

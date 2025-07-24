@@ -102,7 +102,7 @@
 
     profiles = data;
     profile =
-      data.find((p) => p.usernmae === user_rating.username) ?? ({} as Profiles);
+      data.find((p) => p.user_id === user_rating.user_id) ?? ({} as Profiles);
 
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_rating")

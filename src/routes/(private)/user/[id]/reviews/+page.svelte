@@ -3,7 +3,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import type { PageData } from "./$types";
   import { getContext } from "svelte";
-  import type { User } from "configcat-js-ssr";
+  import type { User } from "@supabase/supabase-js";
 
   let { data }: { data: PageData } = $props();
   let { user_cube_ratings = [], cubes = [] } = data;

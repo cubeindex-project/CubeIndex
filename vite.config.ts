@@ -2,23 +2,10 @@ import tailwindcss from "@tailwindcss/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
 import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig({
-  plugins: [
-    devtoolsJson(),
-    tailwindcss(),
-    sveltekit(),
-    VitePWA({
-      registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
-      manifest: false,
-      injectManifest: {},
-    }),
-  ],
+  plugins: [devtoolsJson(), tailwindcss(), sveltekit()],
   test: {
     workspace: [
       {

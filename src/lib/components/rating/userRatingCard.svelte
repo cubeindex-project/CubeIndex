@@ -107,8 +107,7 @@
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_rating")
       .select("*")
-      .eq("rating", user_rating.id)
-      .eq("rating_category", "cube");
+      .eq("rating", user_rating.id);
 
     if (helpErr) {
       console.error(500, `Failed to fetch profiles: ${helpErr.message}`);

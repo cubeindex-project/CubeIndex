@@ -36,7 +36,7 @@
     {#if searchTerm.length}
       <button
         type="button"
-        class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral cursor-pointer"
+        class="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
         onclick={() => (searchTerm = "")}
         aria-label="Clear"
       >

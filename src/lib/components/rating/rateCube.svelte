@@ -5,7 +5,7 @@
 
   let { onCancel, cube, rating = 0, comment = "" } = $props();
 
-  let isConnected = typeof getContext("user") !== undefined;
+  let isConnected = getContext("user");
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
@@ -54,82 +54,65 @@
   <div
     class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
   >
-    {#if isConnected}
-      <form onsubmit={rateCube}>
-        <div class="card-body min-w-full">
-          <h2 class="card-title">
-            You are rating the {cube.series}
-            {cube.model}
-            {cube.version_type !== "Base" ? cube.version_name : null}
-          </h2>
-
-          <StarRating readOnly={false} bind:rating />
-
-          <!-- Full-width fields -->
-          <div class="mt-4 space-y-4">
-            <label class="flex flex-col">
-              <span class="label-text">Comment</span>
-              <textarea
-                bind:value={comment}
-                class="textarea textarea-bordered rounded-2xl w-full max-h-50 resize max-w-md"
-              ></textarea>
-            </label>
-          </div>
-        </div>
-
-        <div class="flex justify-between">
-          <div class="card-actions p-4">
-            <button
-              class="btn btn-secondary"
-              type="button"
-              onclick={onCancel}
-              disabled={isSubmitting}>Cancel</button
-            >
-          </div>
-
-          <div class="card-actions p-4">
-            <button
-              class="btn btn-primary"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {#if isSubmitting}
-                <span class="loading loading-spinner"></span>
-                Rating...
-              {:else if showSuccess}
-                <i class="fa-solid fa-check"></i>
-                Rated!
-              {:else}
-                Rate Cube
-              {/if}
-            </button>
-          </div>
-        </div>
-
-        {#if formMessage}
-          <div class="text-error p-2 flex justify-center">{formMessage}</div>
-        {/if}
-      </form>
-    {:else}
-      <div class="card-body w-full">
+    <form onsubmit={rateCube}>
+      <div class="card-body min-w-full">
         <h2 class="card-title">
-          Log In or Create an Account to rate {cube.series}
+          You are rating the {cube.series}
           {cube.model}
-          {cube.version_type !== "Base" ? cube.version_name : ""}.
+          {cube.version_type !== "Base" ? cube.version_name : null}
         </h2>
 
-        <div class="flex justify-between">
-          <div class="card-actions p-4">
-            <button class="btn btn-secondary" type="button" onclick={onCancel}
-              >Cancel</button
-            >
-          </div>
+        <StarRating readOnly={false} bind:rating />
 
-          <div class="card-actions p-4">
-            <a class="btn btn-primary" href="/auth/signup"> Sign Up </a>
-          </div>
+        <!-- Full-width fields -->
+        <div class="mt-4 space-y-4">
+          <label class="flex flex-col">
+            <span class="label-text">Comment</span>
+            <textarea
+              bind:value={comment}
+              class="textarea textarea-bordered rounded-2xl w-full max-h-50 resize max-w-md"
+            ></textarea>
+          </label>
         </div>
       </div>
-    {/if}
+
+      <div class="flex justify-between">
+        <div class="card-actions p-4">
+          <button
+            class="btn btn-secondary"
+            type="button"
+            onclick={onCancel}
+            disabled={isSubmitting}>Cancel</button
+          >
+        </div>
+
+        <div class="card-actions p-4">
+          <button
+            class="btn btn-primary"
+            type="submit"
+            disabled={isSubmitting || !isConnected}
+          >
+            {#if isSubmitting}
+              <span class="loading loading-spinner"></span>
+              Rating...
+            {:else if showSuccess}
+              <i class="fa-solid fa-check"></i>
+              Rated!
+            {:else}
+              Rate Cube
+            {/if}
+          </button>
+        </div>
+      </div>
+
+      {#if formMessage}
+        <div class="text-error p-2 flex justify-center">{formMessage}</div>
+      {/if}
+      {#if !isConnected}
+        <p class="text-error p-2 flex justify-center">
+          You must be logged in to perform this action
+        </p>
+      {/if}
+    </form>
   </div>
 </div>

@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { blur } from "svelte/transition";
 
   let { onCancel, cube } = $props();
+
+  let isConnected = getContext("user");
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
@@ -158,7 +161,7 @@
       </div>
     </div>
 
-    <div class="flex justify-between">
+    <div class="flex justify-between w-full">
       <div class="card-actions p-4">
         <button
           class="btn btn-secondary"
@@ -169,7 +172,11 @@
       </div>
 
       <div class="card-actions p-4">
-        <button class="btn btn-primary" type="submit" disabled={isSubmitting}>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          disabled={isSubmitting || !isConnected}
+        >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
             Adding...
@@ -185,6 +192,11 @@
 
     {#if formMessage}
       <div class="text-error p-2 flex justify-center">{formMessage}</div>
+    {/if}
+    {#if !isConnected}
+      <p class="text-error p-2 flex justify-center">
+        You must be logged in to perform this action
+      </p>
     {/if}
   </form>
 </div>

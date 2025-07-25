@@ -16,11 +16,20 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     .eq("user_id", locals.user?.id)
     .eq("rating", ratingId);
 
+  if (selecErr?.message === 'invalid input syntax for type uuid: "undefined"')
+    return json(
+      {
+        success: false,
+        error: "You must be logged in to perform this action!",
+      },
+      { status: 500 }
+    );
+
   if (selecErr)
     return json(
       {
         success: false,
-        error: "Couldn't fetch rows from helpful_rating:" + selecErr.message,
+        error: "Couldn't fetch rows from helpful_rating: " + selecErr.message,
       },
       { status: 500 }
     );

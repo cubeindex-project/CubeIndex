@@ -44,7 +44,7 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type}/>
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
@@ -100,7 +100,7 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type}/>
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
@@ -153,7 +153,7 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type} />
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}

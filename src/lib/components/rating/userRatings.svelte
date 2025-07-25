@@ -8,7 +8,8 @@
   import { getContext } from "svelte";
   import type { User } from "@supabase/supabase-js";
 
-  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: Cube } = $props();
+  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: Cube } =
+    $props();
 
   let user = getContext<User>("user");
   let openRateCard = $state(false);
@@ -73,7 +74,7 @@
       User Ratings
     </h2>
     <button
-      class="btn btn-accent"
+      class="btn btn-accent gap-1"
       type="button"
       onclick={() => {
         openRateCard = !openRateCard;
@@ -82,7 +83,7 @@
     >
       <i class="fa-solid fa-star mr-2"></i>
       Rate
-      <p class="hidden sm:block">this Cube</p>
+      <span class="hidden sm:block">this Cube</span>
     </button>
   </div>
 
@@ -144,7 +145,7 @@
         <UserRatingCard
           {user_rating}
           {cube}
-          isAuthor={user_rating.user_id === user.id}
+          isAuthor={user_rating.user_id === user?.id}
           showCubeDetails={false}
         />
       {:else}

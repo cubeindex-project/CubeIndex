@@ -92,83 +92,85 @@ Add any other context about the problem here.`;
   class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
   transition:blur
 >
-  {#if isConnected}
-    <form
-      class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
-      onsubmit={rateCube}
-    >
-      <div class="card-body min-w-full">
-        <h2 class="card-title">
-          You are reporting {reporLabel}
-        </h2>
+  <form
+    class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
+    onsubmit={rateCube}
+  >
+    <div class="card-body min-w-full">
+      <h2 class="card-title">
+        You are reporting {reporLabel}
+      </h2>
 
-        <div class="mt-4 space-y-4">
-          <label class="flex flex-col">
-            <span class="label-text"
-              >Title <span class="text-red-500">*</span></span
-            >
-            <input
-              bind:value={title}
-              class="input rounded-2xl w-full max-h-50"
-            />
-          </label>
-        </div>
-
-        <!-- Full-width fields -->
-        <div class="mt-4 space-y-4">
-          <label class="flex flex-col">
-            <span class="label-text"
-              >Comment <span class="text-red-500">*</span></span
-            >
-            <textarea
-              bind:value={comment}
-              class="textarea textarea-bordered rounded-2xl w-full max-h-50"
-            ></textarea>
-          </label>
-        </div>
-
-        <div class="mt-4 space-y-4">
-          <label class="flex flex-col">
-            <span class="label-text">Image URL</span>
-            <input
-              bind:value={imageUrl}
-              type="url"
-              class="input rounded-2xl w-full max-h-50"
-            />
-          </label>
-        </div>
-      </div>
-
-      <div class="flex justify-between">
-        <div class="card-actions p-4">
-          <button
-            class="btn btn-secondary"
-            type="button"
-            onclick={onCancel}
-            disabled={isSubmitting}>Cancel</button
+      <div class="mt-4 space-y-4">
+        <label class="flex flex-col">
+          <span class="label-text"
+            >Title <span class="text-red-500">*</span></span
           >
-        </div>
-
-        <div class="card-actions p-4">
-          <button class="btn btn-primary" type="submit" disabled={isSubmitting}>
-            {#if isSubmitting}
-              <span class="loading loading-spinner"></span>
-              Reporting...
-            {:else if showSuccess}
-              <i class="fa-solid fa-check"></i>
-              Reported!
-            {:else}
-              Send Report
-            {/if}
-          </button>
-        </div>
+          <input bind:value={title} class="input rounded-2xl w-full max-h-50" />
+        </label>
       </div>
 
-      {#if formMessage}
-        <div class="text-error p-2 flex justify-center">{formMessage}</div>
-      {/if}
-    </form>
-  {:else}
-    <div class="card-body w-full"></div>
-  {/if}
+      <!-- Full-width fields -->
+      <div class="mt-4 space-y-4">
+        <label class="flex flex-col">
+          <span class="label-text"
+            >Comment <span class="text-red-500">*</span></span
+          >
+          <textarea
+            bind:value={comment}
+            class="textarea textarea-bordered rounded-2xl w-full max-h-50"
+          ></textarea>
+        </label>
+      </div>
+
+      <div class="mt-4 space-y-4">
+        <label class="flex flex-col">
+          <span class="label-text">Image URL</span>
+          <input
+            bind:value={imageUrl}
+            type="url"
+            class="input rounded-2xl w-full max-h-50"
+          />
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-between w-full">
+      <div class="card-actions p-4">
+        <button
+          class="btn btn-secondary"
+          type="button"
+          onclick={onCancel}
+          disabled={isSubmitting}>Cancel</button
+        >
+      </div>
+
+      <div class="card-actions p-4">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          disabled={isSubmitting || !isConnected}
+        >
+          {#if isSubmitting}
+            <span class="loading loading-spinner"></span>
+            Reporting...
+          {:else if showSuccess}
+            <i class="fa-solid fa-check"></i>
+            Reported!
+          {:else}
+            Send Report
+          {/if}
+        </button>
+      </div>
+    </div>
+
+    {#if formMessage}
+      <div class="text-error pb-2 flex justify-center">{formMessage}</div>
+    {/if}
+    {#if !isConnected}
+      <p class="text-error pb-2 flex justify-center">
+        You must be logged in to perform this action
+      </p>
+    {/if}
+  </form>
 </div>

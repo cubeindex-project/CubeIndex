@@ -706,7 +706,7 @@
           {#if $form.versionType !== "Base"}
             <span class="text-secondary">{$form.versionName}</span>
           {/if}
-          <CubeVersionType version_type={$form.versionType} moreInfo={true} />
+          <CubeVersionType version_type={$form.versionType} />
         </span>
       </h1>
 

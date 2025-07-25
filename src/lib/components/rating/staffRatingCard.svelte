@@ -77,9 +77,10 @@
       data.find((p) => p.user_id === user_rating.user_id) ?? ({} as Profiles);
 
     const { data: helpful, error: helpErr } = await supabase
-      .from("helpful_cube_rating")
+      .from("helpful_rating")
       .select("*")
-      .eq("rating", user_rating.id);
+      .eq("rating", user_rating.id)
+      .eq("rating_category", "cube");
 
     if (helpErr) {
       console.error(500, `Failed to fetch profiles: ${helpErr.message}`);
@@ -108,8 +109,8 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(profiles, user_rating.username)} class="underline">
-        {user_rating.username}
+      <a href={idOfUser(profiles, profile.username)} class="underline">
+        {profile.username}
       </a>
     </span>
 

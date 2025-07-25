@@ -138,7 +138,7 @@
               {#if user?.id === profile.user_id}
                 <a
                   href="/user/settings"
-                  class="btn btn-ghost btn-info"
+                  class="flex justify-end items-center gap-2 p-2"
                   aria-label="User Settings"
                   title="User Settings"
                 >

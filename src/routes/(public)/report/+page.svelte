@@ -92,7 +92,7 @@
     formMessage = "";
     const payload = {
       title: feature.title,
-      reported: location.href,
+      reported: document.referrer,
       comment: `**Description:**\n${feature.description}\n\n**Use Case:**\n${feature.useCase}\n\n**Priority:** ${feature.priority}\n\n**Extra:**\n${feature.extra}`,
       report_type: "website",
       image_url: "",

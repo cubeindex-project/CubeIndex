@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
-  import Report from "$lib/components/report/report.svelte";
 
   // DVD‐logo bouncing cube state
   let cubeX = $state(50);
@@ -23,12 +22,6 @@
   onMount(() => {
     rafId = requestAnimationFrame(bounce);
   });
-
-  let openReport = $state(false);
-
-  function toggleOpenReport() {
-    openReport = !openReport;
-  }
 </script>
 
 <section
@@ -54,9 +47,7 @@
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
     <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
-    <button onclick={toggleOpenReport} class="btn btn-lg btn-error">
-      🐞 Report the Bug
-    </button>
+    <a class="btn btn-lg btn-error" href="/report"> 🐞 Report the Bug </a>
   </div>
 
   <!-- Bouncing Cube -->
@@ -67,15 +58,6 @@
     style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
   />
 </section>
-
-{#if openReport}
-  <Report
-    onCancel={() => (openReport = !openReport)}
-    reportType="website"
-    reported={document.referrer}
-    reporLabel="a bug on CubeIndex"
-  />
-{/if}
 
 <style>
   .grid-bg::before {

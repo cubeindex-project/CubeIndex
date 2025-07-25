@@ -35,8 +35,10 @@
 
     if (error) console.error("Error while loading announcement:", error);
 
-		notifications = (data || []).filter(notification => notification.archived === false);
-	}
+    notifications = (data || []).filter(
+      (notification) => notification.archived === false
+    );
+  }
 
   const navLinks = [
     { name: "Explore", href: "/explore" },
@@ -71,16 +73,16 @@
 </script>
 
 <header class="bg-base-100">
-	<div class="mx-auto flex max-w-7xl items-center justify-between px-2 py-4">
-		<!-- Logo -->
-		<a href="/" class="flex items-center gap-2">
-			<img
-				src="/images/CubeIndex - Pixel Art.png"
-				alt="CubeIndex logo"
-				class="h-12 w-12 rounded-full"
-			/>
-			<span class="font-clash text-3xl font-bold">CubeIndex</span>
-		</a>
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-2 py-4">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2">
+      <img
+        src="/images/CubeIndex - Pixel Art.png"
+        alt="CubeIndex logo"
+        class="h-12 w-12 rounded-full"
+      />
+      <span class="font-clash text-3xl font-bold">CubeIndex</span>
+    </a>
 
     <!-- Desktop Nav -->
     <nav class="hidden items-center gap-8 md:flex">
@@ -316,22 +318,35 @@
           <li class="relative">
             <button
               onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
-              class="w-full text-center rounded-xl bg-blue-600 px-4 py-2 text-sm transition hover:bg-blue-700 focus:outline-none"
+              class="btn btn-primary w-full"
             >
               {profile.username}
-              <i
-                class="fa-solid {mobileProfileDropdown
-                  ? 'fa-caret-up'
-                  : 'fa-caret-down'}"
-              ></i>
+              <label class="swap swap-rotate">
+                <input
+                  type="checkbox"
+                  bind:checked={mobileProfileDropdown}
+                  hidden
+                  disabled
+                />
+
+                <i class="fa-solid swap-on fa-caret-up"></i>
+
+                <i class="fa-solid swap-off fa-caret-down"></i>
+              </label>
             </button>
             {#if mobileProfileDropdown}
-              <ul class="mt-2 space-y-2" transition:blur={{ duration: 250 }}>
+              <ul
+                class="mt-2 flex flex-col gap-3"
+                transition:blur={{ duration: 250 }}
+              >
                 <li>
                   <a
                     href={`/user/${profile.id}`}
-                    onclick={() => (isOpen = false)}
-                    class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+                    onclick={() => {
+                      isOpen = false;
+                      mobileProfileDropdown = false;
+                    }}
+                    class="block py-2 text-sm border-b border-base-300"
                   >
                     Profile
                   </a>
@@ -339,8 +354,11 @@
                 <li>
                   <a
                     href={`/user/settings`}
-                    onclick={() => (isOpen = false)}
-                    class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+                    onclick={() => {
+                      isOpen = false;
+                      mobileProfileDropdown = false;
+                    }}
+                    class="block py-2 text-sm border-b border-base-300"
                   >
                     Settings
                   </a>
@@ -349,8 +367,11 @@
                   <li>
                     <a
                       href="/staff/dashboard"
-                      onclick={() => (isOpen = false)}
-                      class="block text-left px-4 py-2 hover:bg-neutral-800 rounded border-b border-gray-800"
+                      onclick={() => {
+                        isOpen = false;
+                        mobileProfileDropdown = false;
+                      }}
+                      class="block py-2 text-sm border-b border-base-300"
                     >
                       Staff Dashboard
                     </a>
@@ -363,7 +384,7 @@
                       mobileProfileDropdown = false;
                       isOpen = false;
                     }}
-                    class="w-full text-left cursor-pointer block px-4 py-2 hover:bg-neutral-800 rounded"
+                    class="py-2 text-sm border-b border-base-300 w-full justify-start flex"
                   >
                     Sign Out
                   </button>
@@ -375,7 +396,10 @@
           <li>
             <a
               href="/auth/login"
-              onclick={() => (isOpen = false)}
+              onclick={() => {
+                isOpen = false;
+                mobileProfileDropdown = false;
+              }}
               class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
             >
               Login

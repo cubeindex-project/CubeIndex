@@ -142,72 +142,82 @@
     class="flex items-center gap-3 flex-col sm:flex-row"
     class:mb-2={!!user_rating.comment}
   >
-    <StarRating readOnly={true} rating={user_rating.rating ?? 0} />
+    <div class="flex justify-start w-full sm:w-fit">
+      <StarRating readOnly={true} rating={user_rating.rating ?? 0} />
+    </div>
 
-    <span class="text-sm">
-      by
-      <a href={idOfUser(profiles, profile.username)} class="underline">
-        {profile.username}
-      </a>
-    </span>
+    <div class="flex flex-row justify-between items-center flex-1 w-full">
+      <span class="text-sm justify-start flex gap-1 flex-1">
+        by
+        <a href={idOfUser(profiles, profile.username)} class="underline">
+          {profile.username}
+        </a>
+      </span>
 
-    <span class="text-xs ml-auto">
-      {formatDate(user_rating.created_at)}
-    </span>
-    {#if isAuthor}
-      <div class="relative">
-        <button
-          class="btn"
-          popovertarget={popoverId}
-          style="anchor-name:--anchor-{popoverId}"
-          aria-label="User Menu"
-        >
-          <i class="fa-solid fa-ellipsis-vertical"></i>
-        </button>
-        <ul
-          class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2 overflow-visible"
-          popover
-          id={popoverId}
-          style="position-anchor:--anchor-{popoverId}"
-        >
-          <div class="relative flex-col flex gap-1">
-            <button class="btn-info btn" onclick={toggleEditRating}>
-              <i class="fa-solid fa-pencil"></i>
-              <span class="hidden sm:block">Edit</span>
+      <div class="flex flex-row items-center flex-1 justify-end">
+        <span class="text-xs ml-auto">
+          {formatDate(user_rating.created_at)}
+        </span>
+        {#if isAuthor}
+          <div class="relative">
+            <button
+              class="btn"
+              popovertarget={popoverId}
+              style="anchor-name:--anchor-{popoverId}"
+              aria-label="User Menu"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
-            <div>
-              {#if !confDeleteRating}
-                <button class="btn btn-error" onclick={toggleDelRating}>
-                  <i class="fa-solid fa-trash sm:mr-2"></i>
-                  <span class="hidden sm:block">Delete</span>
-                </button>
-              {:else}
+            <ul
+              class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2 overflow-visible"
+              popover
+              id={popoverId}
+              style="position-anchor:--anchor-{popoverId}"
+            >
+              <div class="relative flex-col flex gap-1">
                 <button
-                  class="btn btn-error"
-                  onclick={() => {
-                    deleteRating();
-                  }}
-                  disabled={loading || success}
+                  class="btn-info btn btn-ghost"
+                  onclick={toggleEditRating}
                 >
-                  <span class="hidden sm:block">
-                    {#if loading}
-                      <span class="loading loading-spinner"></span>
-                      Deleting...
-                    {:else if success}
-                      <i class="fa-solid fa-check"></i>
-                      Deleted!
-                    {:else}
-                      <i class="fa-solid fa-trash sm:mr-2"></i>
-                      Are you sure ?
-                    {/if}
-                  </span>
+                  <i class="fa-solid fa-pencil"></i>
+                  Edit
                 </button>
-              {/if}
-            </div>
+                <div>
+                  {#if !confDeleteRating}
+                    <button
+                      class="btn btn-error btn-ghost"
+                      onclick={toggleDelRating}
+                    >
+                      <i class="fa-solid fa-trash sm:mr-2"></i>
+                      Delete
+                    </button>
+                  {:else}
+                    <button
+                      class="btn btn-error"
+                      onclick={() => {
+                        deleteRating();
+                      }}
+                      disabled={loading || success}
+                    >
+                      {#if loading}
+                        <span class="loading loading-spinner"></span>
+                        Deleting...
+                      {:else if success}
+                        <i class="fa-solid fa-check"></i>
+                        Deleted!
+                      {:else}
+                        <i class="fa-solid fa-trash sm:mr-2"></i>
+                        Are you sure ?
+                      {/if}
+                    </button>
+                  {/if}
+                </div>
+              </div>
+            </ul>
           </div>
-        </ul>
+        {/if}
       </div>
-    {/if}
+    </div>
   </div>
   {#if user_rating.comment}
     <p class="mt-2 text-sm leading-relaxed">

@@ -229,28 +229,30 @@
             class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
           />
         </div>
-        <h1
-          class="text-4xl font-bold mb-4 flex sm:items-center flex-col sm:flex-row items-start"
-        >
-          <span
-            class="font-clash flex-col flex items-start gap-2"
-          >
-            <p>
+        <h1 class="flex flex-col mb-4">
+          <!-- top row: text + discontinued badge -->
+          <div class="flex items-center text-4xl font-bold ">
+            <div class="font-clash">
               {cube.series}
               {cube.model}
               {#if cube.version_type !== "Base"}
-                <span class="text-secondary">{cube.version_name}</span>
+                <span class="text-secondary"> {cube.version_name}</span>
               {/if}
-            </p>
-            <CubeVersionType version_type={cube.version_type} moreInfo={true} />
-          </span>
-          {#if cube.discontinued}
-            <span
-              class="sm:ml-3 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold flex items-center gap-1"
-            >
-              <i class="fa-solid fa-ban"></i> Discontinued
-            </span>
-          {/if}
+            </div>
+            {#if cube.discontinued}
+              <div
+                class="ml-3 flex items-center gap-1 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold"
+              >
+                <i class="fa-solid fa-ban"></i>
+                <span>Discontinued</span>
+              </div>
+            {/if}
+          </div>
+
+          <!-- bottom row: version type -->
+          <div class="mt-2">
+            <CubeVersionType version_type={cube.version_type} />
+          </div>
         </h1>
 
         <p class="mb-4">

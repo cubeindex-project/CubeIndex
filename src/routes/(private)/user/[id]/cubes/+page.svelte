@@ -65,6 +65,7 @@
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
   <div class="flex justify-between">
+    <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
     {#if user?.id === profile.user_id && userCubesFromAll.length > 0}
       <button
         class="btn {edit
@@ -84,7 +85,6 @@
       </button>
     {/if}
   </div>
-  <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
   {#if loading}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {#each Array(6) as i}

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
   import { onMount } from "svelte";
-  import UserCard from "$lib/components/userCard.svelte";
+  import UserCard from "$lib/components/user/userCard.svelte";
 
   const { data } = $props();
   const { profiles, user_achievements, user_cubes } = data;

@@ -1,19 +1,18 @@
 <script lang="ts">
-  import Badge from "$lib/components/badge.svelte";
+  import Badge from "$lib/components/user/badge.svelte";
+  import Report from "$lib/components/report/report.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   const { data, children } = $props();
   const { user, profile } = data;
 
-  function formatJoinDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
+  let openReport = $state(false);
+
+  function toggleOpenReport() {
+    openReport = !openReport;
   }
 
-  const formattedJoinDate = formatJoinDate(profile?.created_at);
+  const formattedJoinDate = formatDate(profile?.created_at);
   let activeTab = $state("Overview");
 
   const tabs = [
@@ -32,6 +31,10 @@
     {
       link: "/stats",
       title: "Stats",
+    },
+    {
+      link: "/ratings",
+      title: "Ratings",
     },
     {
       link: "/reviews",
@@ -101,7 +104,7 @@
             </h2>
             {#if user?.id === profile.user_id}
               <a
-                href="settings"
+                href="/user/settings"
                 class="btn btn-lg btn-primary ml-4 hidden md:flex"
                 aria-label="User Settings"
                 title="User Settings"
@@ -110,7 +113,10 @@
                 <span>Settings</span>
               </a>
             {:else}
-              <button class="btn btn-error hidden md:flex" disabled>
+              <button
+                class="btn btn-error hidden md:flex"
+                onclick={toggleOpenReport}
+              >
                 <i class="fa-solid fa-flag"></i>
                 <span>Report</span>
               </button>
@@ -131,7 +137,7 @@
             >
               {#if user?.id === profile.user_id}
                 <a
-                  href="settings"
+                  href="/user/settings"
                   class="flex justify-end items-center gap-2 p-2"
                   aria-label="User Settings"
                   title="User Settings"
@@ -140,7 +146,10 @@
                   <span>Settings</span>
                 </a>
               {:else}
-                <button class="flex justify-end items-center gap-2 p-2" disabled>
+                <button
+                  class="flex justify-end items-center gap-2 p-2"
+                  onclick={toggleOpenReport}
+                >
                   <i class="fa-solid fa-flag"></i>
                   <span>Report</span>
                 </button>
@@ -292,9 +301,7 @@
   {#if !profile.private || user?.id === profile.user_id}
     {@render children()}
   {:else}
-    <section
-      class="px-4 py-12 flex items-center justify-center"
-    >
+    <section class="px-4 py-12 flex items-center justify-center">
       <div class="text-center">
         <h1 class="text-3xl font-bold mb-4">This profile is private</h1>
         <p class="text-gray-400">
@@ -304,3 +311,12 @@
     </section>
   {/if}
 </section>
+
+{#if openReport}
+  <Report
+    onCancel={() => (openReport = !openReport)}
+    reportType="user"
+    reported={profile.user_id}
+    reporLabel="{profile.username}'s account"
+  />
+{/if}

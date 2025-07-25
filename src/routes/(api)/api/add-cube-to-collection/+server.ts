@@ -35,17 +35,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       { status: 500 }
     );
 
-  console.log({
-    username: profile.username,
-    cube,
-    quantity,
-    main,
-    condition,
-    status,
-    notes,
-    acquired_at: acquired_at ? acquired_at : null,
-  });
-
   const { error: userCubesErr } = await locals.supabase
     .from("user_cubes")
     .insert({

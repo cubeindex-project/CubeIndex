@@ -107,7 +107,13 @@
       href: "/staff/reports",
       icon: "🚩",
       label: "User Reports",
-      implemented: false,
+      implemented: true,
+    },
+    {
+      href: "/staff/ratings",
+      icon: "⭐",
+      label: "Manage Ratings",
+      implemented: true,
     },
     {
       href: "/staff/logs",

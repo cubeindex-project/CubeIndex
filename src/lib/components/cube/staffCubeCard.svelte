@@ -1,6 +1,6 @@
 <!-- staffCubeCard.svelte -->
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import UnapproveCube from "./unapproveCube.svelte";
@@ -44,13 +44,13 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type}/>
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
 
       <div class="py-4">
@@ -100,13 +100,13 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type}/>
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
       <div class="mt-4 flex gap-2">
         <button
@@ -153,13 +153,13 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+        <CubeVersionType version_type={cube.version_type} />
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
       </p>
       <div class="mt-3">
-        <StarRating rating={cube.rating} large={false} />
+        <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
 
       <div class="flex flex-col gap-4 mt-4">

@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { blur } from "svelte/transition";
 
   let { onCancel, cube } = $props();
+
+  let isConnected = getContext("user");
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
@@ -14,6 +17,11 @@
   let status = $state("");
   let notes = $state("");
   let acquired_at = $state("");
+
+  $effect(() => {
+    const _ = status;
+    if (status === "Wishlist") quantity = 1;
+  });
 
   async function addCubeToCollec() {
     isSubmitting = true;
@@ -63,12 +71,16 @@
       <h2 class="card-title">
         You are adding the {cube.series}
         {cube.model}
-        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection.
+        {cube.version_type !== "Base" ? cube.version_name : ""} to your collection
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Quantity -->
         <label class="flex flex-col">
-          <span class="label-text">Quantity</span>
+          <span class="label-text"
+            >Quantity {status === "Wishlist"
+              ? "(Qty can't be changed for wishlisted cubes.)"
+              : ""}</span
+          >
           <input
             name="quantity"
             type="number"
@@ -76,6 +88,7 @@
             max="999"
             bind:value={quantity}
             class="input w-full"
+            readonly={status === "Wishlist"}
             required
           />
         </label>
@@ -148,17 +161,22 @@
       </div>
     </div>
 
-    <div class="flex justify-between">
+    <div class="flex justify-between w-full">
       <div class="card-actions p-4">
         <button
           class="btn btn-secondary"
+          type="button"
           onclick={onCancel}
           disabled={isSubmitting}>Cancel</button
         >
       </div>
 
       <div class="card-actions p-4">
-        <button class="btn btn-primary" type="submit" disabled={isSubmitting}>
+        <button
+          class="btn btn-primary"
+          type="submit"
+          disabled={isSubmitting || !isConnected}
+        >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
             Adding...
@@ -174,6 +192,11 @@
 
     {#if formMessage}
       <div class="text-error p-2 flex justify-center">{formMessage}</div>
+    {/if}
+    {#if !isConnected}
+      <p class="text-error p-2 flex justify-center">
+        You must be logged in to perform this action
+      </p>
     {/if}
   </form>
 </div>

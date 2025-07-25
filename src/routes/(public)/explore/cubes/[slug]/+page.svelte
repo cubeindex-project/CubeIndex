@@ -1,19 +1,22 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import StarRating from "$lib/components/starRating.svelte";
-  import CubeVersionType from "$lib/components/cubeVersionType.svelte";
-  import AddCube from "$lib/components/addCube.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
+  import StarRating from "$lib/components/rating/starRating.svelte";
+  import AddCube from "$lib/components/cube/addCube.svelte";
+  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import type { Cube } from "$lib/components/types/cube.js";
-  import { formatDate } from "$lib/components/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
+  import type { Profiles } from "$lib/components/types/profile.js";
+  import UserRatings from "$lib/components/rating/userRatings.svelte";
+  import Report from "$lib/components/report/report.svelte";
 
   let { data } = $props();
   let {
     cubesAvailability = true,
     databaseAvailability = true,
     cube = {} as Cube,
-    profile,
-    user_ratings,
+    profile = {} as Profiles,
+    user_cube_ratings,
     profiles,
     cubeTrims,
     relatedCube,
@@ -63,6 +66,12 @@
     { label: "Stickered", key: "stickered" },
     { label: "Ball Core", key: "ball_core" },
   ];
+
+  let openReport = $state(false);
+
+  function toggleOpenReport() {
+    openReport = !openReport;
+  }
 </script>
 
 {#if databaseAvailability && cubesAvailability}
@@ -220,26 +229,30 @@
             class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
           />
         </div>
-        <h1
-          class="text-4xl font-bold mb-4 flex sm:items-center gap-3 flex-col sm:flex-row items-start"
-        >
-          <span
-            class="font-clash flex-col flex sm:flex-row sm:items-center items-start"
-          >
-            {cube.series}
-            {cube.model}
-            {#if cube.version_type !== "Base"}
-              <span class="text-secondary">{cube.version_name}</span>
+        <h1 class="flex flex-col mb-4">
+          <!-- top row: text + discontinued badge -->
+          <div class="flex items-center text-4xl font-bold ">
+            <div class="font-clash">
+              {cube.series}
+              {cube.model}
+              {#if cube.version_type !== "Base"}
+                <span class="text-secondary"> {cube.version_name}</span>
+              {/if}
+            </div>
+            {#if cube.discontinued}
+              <div
+                class="ml-3 flex items-center gap-1 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold"
+              >
+                <i class="fa-solid fa-ban"></i>
+                <span>Discontinued</span>
+              </div>
             {/if}
-            <CubeVersionType version_type={cube.version_type} moreInfo={true} />
-          </span>
-          {#if cube.discontinued}
-            <span
-              class="sm:ml-3 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold flex items-center gap-1"
-            >
-              <i class="fa-solid fa-ban"></i> Discontinued
-            </span>
-          {/if}
+          </div>
+
+          <!-- bottom row: version type -->
+          <div class="mt-2">
+            <CubeVersionType version_type={cube.version_type} />
+          </div>
         </h1>
 
         <p class="mb-4">
@@ -270,8 +283,8 @@
         {/if}
 
         <!-- Highlighted Rating -->
-        <div class="flex flex-col justify-center items-start mb-5 sm:mt-0">
-          <StarRating rating={cube.rating} large={true} />
+        <div class="flex flex-col items-start mb-5 sm:mt-0">
+          <StarRating readOnly={true} rating={cube.rating ?? 0} />
         </div>
 
         <div
@@ -361,7 +374,7 @@
               <div class="flex items-center justify-between">
                 <span class="font-medium text-sm">{status.label}</span>
                 <span class="text-xl">
-                    {feats.has(status.key) ? "✅" : "❌"}
+                  {feats.has(status.key) ? "✅" : "❌"}
                 </span>
               </div>
             {/each}
@@ -523,49 +536,11 @@
             </div>
           </div>
         {/if}
-        <div class="mb-8">
-          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-star"></i>
-            User Ratings
-          </h2>
-          {#if user_ratings && user_ratings.length > 0}
-            <div class="flex flex-col gap-4">
-              {#each user_ratings as rating}
-                <div
-                  class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm"
-                >
-                  <div class="flex items-center gap-3 mb-2">
-                    <StarRating rating={cube.rating} large={false} />
-                    <span class="text-sm">
-                      by <a href={idOfUser(rating.username)} class="underline"
-                        >{rating.username}</a
-                      >
-                    </span>
-                    <span class="text-xs ml-auto">
-                      <!-- {formatDate(rating.created_at)} -->
-                    </span>
-                  </div>
-                  {#if rating.comment}
-                    <div>
-                      {rating.comment}
-                    </div>
-                  {/if}
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <div>No user ratings yet. Be the first to rate this cube!</div>
-          {/if}
-        </div>
+        <UserRatings user_cube_ratings={user_cube_ratings ?? []} {cube} />
         <div class="mt-4">
-          <a
-            href="/discord"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-error"
-          >
+          <button onclick={toggleOpenReport} class="btn btn-error">
             🚩 Report incorrect/missing data
-          </a>
+          </button>
         </div>
 
         <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
@@ -578,6 +553,15 @@
   <FeatureDisabled featureName="The cubes explore page is" />
 {:else if !databaseAvailability}
   <FeatureDisabled featureName="The database is" />
+{/if}
+
+{#if openReport}
+  <Report
+    onCancel={() => (openReport = !openReport)}
+    reportType="cube"
+    reported={cube.slug}
+    reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+  />
 {/if}
 
 {#if openAddCard}

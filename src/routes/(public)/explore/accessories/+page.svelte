@@ -1,8 +1,8 @@
 <script lang="ts">
     import { configCatClient } from "$lib/configcatClient";
-    import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-    import StarRating from "$lib/components/starRating.svelte";
-    import { formatDate } from "$lib/components/formatDate.svelte";
+    import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
+    import StarRating from "$lib/components/rating/starRating.svelte";
+    import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 
     let { data } = $props();
     const { accessories } = data;
@@ -49,8 +49,8 @@
                   {acc.compatibility}
                 </p>
               {/if}
-              <div class="text-sm text-yellow-400">
-                <StarRating rating={acc.rating} large={false} />
+              <div class="text-sm">
+                <StarRating readOnly={true} rating={acc.rating ?? 0} />
               </div>
               <p class="text-sm">
                 Released: {formatDate(acc.release_date)}

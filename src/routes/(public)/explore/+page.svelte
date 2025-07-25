@@ -1,6 +1,6 @@
 <script lang="ts">
   import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
   import { onMount } from "svelte";
 
   let databaseAvailability: boolean = $state(true);

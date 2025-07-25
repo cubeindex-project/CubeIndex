@@ -1,10 +1,10 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { error, redirect } from "@sveltejs/kit";
-import { slugify } from "$lib/components/slugify.svelte";
-import { getSubTypes } from "$lib/components/subType.svelte";
+import { slugify } from "$lib/components/helper_functions/slugify.svelte";
+import { getSubTypes } from "$lib/components/helper_functions/subType.svelte";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { cleanLink } from "$lib/components/linkCleaner";
+import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/form_schemas/cubeForm";
 
 export const load = (async ({ locals }) => {

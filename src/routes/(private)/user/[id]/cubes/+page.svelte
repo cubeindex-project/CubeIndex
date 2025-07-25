@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import UserCubeCard from "$lib/components/userCubeCard.svelte";
-  import EditUserCubeCard from "$lib/components/editUserCubeCard.svelte";
+  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
+  import EditUserCubeCard from "$lib/components/cube/editUserCubeCard.svelte";
   import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
   import type { Cube } from "$lib/components/types/cube";
@@ -109,13 +109,11 @@
       {/each}
     </ul>
   {:else}
-    <div
-      class="bg-gradient-to-r from-base-200 via-blue-950 to-base-200 rounded-xl p-6 text-center text-gray-300 border border-base-300"
-    >
-      <span class="text-lg font-medium"
-        >{user?.id === profile.user_id ? "You have" : "This user has"} no cubes in
-        {user?.id === profile.user_id ? "your" : "their"} collection.</span
-      >
+    <div class="col-span-full flex flex-col items-center justify-center py-20">
+      <i class="fa-solid fa-cube fa-3x mb-4"></i>
+      <h2 class="text-2xl font-semibold mb-2">
+        This user doesn't have any cube in their collection.
+      </h2>
     </div>
   {/if}
 </div>

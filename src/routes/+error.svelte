@@ -47,14 +47,7 @@
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
     <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
-    <a
-      href="https://discord.gg/76ExrEAE7s"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn btn-lg btn-error"
-    >
-      🐞 Report the Bug on Discord
-    </a>
+    <a class="btn btn-lg btn-error" href="/report"> 🐞 Report the Bug </a>
   </div>
 
   <!-- Bouncing Cube -->

@@ -4,7 +4,7 @@
   let { data }: { data: PageData } = $props();
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-[200px]">
-  <h3 class="text-2xl font-bold mb-4">Reviews Coming Soon</h3>
-  <p class="text-gray-600">Check back later for user reviews and feedback!</p>
+<div class="col-span-full flex flex-col items-center justify-center py-20">
+  <i class="fa-solid fa-magnifying-glass fa-3x mb-4"></i>
+  <h2 class="text-2xl font-semibold mb-2">Reviews Coming Soon.</h2>
 </div>

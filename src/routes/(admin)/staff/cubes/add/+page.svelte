@@ -5,7 +5,7 @@
   import { error } from "@sveltejs/kit";
   import { supabase } from "$lib/supabaseClient.js";
   import type { Cube } from "$lib/components/types/cube.js";
-  import SearchCubes from "$lib/components/searchCubes.svelte";
+  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = data;

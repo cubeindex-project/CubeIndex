@@ -1,11 +1,13 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import CubeCard from "$lib/components/cubeCard.svelte";
+  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
+  import CubeCard from "$lib/components/cube/cubeCard.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
   import type { Cube } from "$lib/components/types/cube";
-  import Pagination from "$lib/components/pagination.svelte";
+  import Pagination from "$lib/components/misc/pagination.svelte";
+  import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
+  import SearchBar from "$lib/components/misc/searchBar.svelte";
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -79,6 +81,7 @@
   // 1) Filter state (year is string 'All' or a year text)
   let cubes: CubeWithMeta[] = $state([]);
   let selectedType: string = $state("All");
+  let selectedSubType: string = $state("All");
   let selectedBrand: string = $state("All");
   let WCALegal: boolean | undefined = $state(undefined);
   let magnetic: boolean | undefined = $state(undefined);
@@ -86,7 +89,9 @@
   let selectedYear: string = $state("All");
   let modded: boolean | undefined = $state(undefined);
   let stickered: boolean | undefined = $state(undefined);
-  let selectedCubeType: string = $state("All");
+  let base: boolean | undefined = $state(undefined);
+  let trim: boolean | undefined = $state(undefined);
+  let limited: boolean | undefined = $state(undefined);
 
   let searchTerm: string = $state("");
   let currentPage: number = $state(1);
@@ -97,7 +102,7 @@
   let allTypes: string[] = $state([]);
   let allBrands: string[] = $state([]);
   let allYears: number[] = $state([]);
-  let allSubType: string[] = $state([]);
+  let allSubTypes: string[] = $state([]);
   let allCubeTypes: string[] = $state([]);
 
   function calcAll() {
@@ -116,7 +121,7 @@
     allBrands = Brands;
     allTypes = Types;
     allYears = Years;
-    allSubType = SubType;
+    allSubTypes = SubType;
     allCubeTypes = CubeTypes;
   }
 
@@ -130,12 +135,28 @@
       (c) =>
         // Type
         (selectedType === "All" || c.type === selectedType) &&
+        // Sub Type
+        (selectedSubType === "All" || c.sub_type === selectedSubType) &&
         // Brand
         (selectedBrand === "All" || c.brand === selectedBrand) &&
         // Release Year
         (selectedYear === "All" || c._year === +selectedYear) &&
         // Cube Type
-        (selectedCubeType === "All" || c.version_type === selectedCubeType) &&
+        (base === undefined // show everything ➜ always true
+          ? true
+          : base === true // ✓ “Only Base”
+            ? c.version_type === "Base"
+            : c.version_type !== "Base") &&
+        (trim === undefined // show everything ➜ always true
+          ? true
+          : trim === true // ✓ “Only Base”
+            ? c.version_type === "Trim"
+            : c.version_type !== "Trim") &&
+        (limited === undefined // show everything ➜ always true
+          ? true
+          : limited === true // ✓ “Only Base”
+            ? c.version_type === "Limited"
+            : c.version_type !== "Limited") &&
         // Features
         (WCALegal === undefined || c._wcaLegal === WCALegal) &&
         (magnetic === undefined || c._magnetic === magnetic) &&
@@ -164,7 +185,9 @@
     selectedYear = "All";
     modded = undefined;
     stickered = undefined;
-    selectedCubeType = "All";
+    base = undefined;
+    trim = undefined;
+    limited = undefined;
   }
 
   $effect(() => {
@@ -191,40 +214,16 @@
       </p>
 
       <!-- Search Bar + Toggle -->
-      <div class="flex items-center mb-6">
-        <button
-          class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
-          aria-label="Toggle Filters"
-          onclick={() => (showFilters = !showFilters)}
-          type="button"
-          style="border-top-right-radius:0; border-bottom-right-radius:0;"
-        >
-          <i class="fa-solid fa-sliders"></i>
-        </button>
-        <div class="relative flex-1">
-          <input
-            type="text"
-            placeholder="Search Your Cube"
-            bind:value={searchTerm}
-            class="input w-full h-12.5 rounded-l-none border-base-300"
-          />
-          {#if searchTerm.length}
-            <button
-              type="button"
-              class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral cursor-pointer"
-              onclick={() => (searchTerm = "")}
-              aria-label="Clear"
-            >
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          {/if}
-        </div>
-      </div>
+      <SearchBar
+        showFilter={true}
+        bind:searchTerm
+        filterAction={() => (showFilters = !showFilters)}
+      />
 
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Filters Sidebar -->
         {#if showFilters}
-          <aside class="w-full lg:w-64">
+          <aside class="w-full lg:w-70">
             <div
               class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-7"
               transition:blur
@@ -248,6 +247,20 @@
                     </select>
                   </label>
                 </div>
+                <div>
+                  <label class="block text-sm mb-1"
+                    >Sub Type:
+                    <select
+                      bind:value={selectedSubType}
+                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+                    >
+                      <option>All</option>
+                      {#each allSubTypes as st}
+                        <option>{st}</option>
+                      {/each}
+                    </select>
+                  </label>
+                </div>
                 <!-- Brand -->
                 <div>
                   <label class="block text-sm mb-1"
@@ -262,62 +275,6 @@
                       {/each}
                     </select></label
                   >
-                </div>
-                <!-- WCA Legal -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >WCA Legal:
-                    <select
-                      bind:value={WCALegal}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Magnetic -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Magnetic:
-                    <select
-                      bind:value={magnetic}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Smart -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Smart:
-                    <select
-                      bind:value={smart}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Modded -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Modded:
-                    <select
-                      bind:value={modded}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
                 </div>
                 <!-- Release Year -->
                 <div>
@@ -334,20 +291,19 @@
                     </select>
                   </label>
                 </div>
-                <!-- Cube Type -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Cube Type:
-                    <select
-                      bind:value={selectedCubeType}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option>All</option>
-                      {#each allCubeTypes as cubeType}
-                        <option value={cubeType}>{cubeType}</option>
-                      {/each}
-                    </select>
-                  </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <!-- WCA Legal -->
+                  <TriStateCheckbox bind:value={WCALegal} label="WCA Legal" />
+                  <!-- Magnetic -->
+                  <TriStateCheckbox bind:value={magnetic} label="Magnetic" />
+                  <!-- Smart -->
+                  <TriStateCheckbox bind:value={smart} label="Smart" />
+                  <!-- Modded -->
+                  <TriStateCheckbox bind:value={modded} label="Modded" />
+                  <!-- Cube Type -->
+                  <TriStateCheckbox bind:value={base} label="Base" />
+                  <TriStateCheckbox bind:value={trim} label="Trim" />
+                  <TriStateCheckbox bind:value={limited} label="Limited" />
                 </div>
                 <!-- Reset -->
                 <div>

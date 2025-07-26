@@ -118,96 +118,6 @@
         {/if}
       </div>
 
-      <!-- Theme Switcher Dropdown -->
-      <div class="dropdown dropdown-end">
-        <button
-          class="inline-flex cursor-pointer text-sm rounded-xl mx-2 bg-base-300"
-        >
-          <span class="px-4 py-2">Theme</span>
-          <span class="pr-4 py-2">
-            <i class="fa-solid fa-caret-down"></i>
-          </span>
-        </button>
-        <ul
-          class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
-        >
-          <div class="divider mt-0">Light</div>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Light"
-              data-set-theme="light"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Lofi"
-              data-set-theme="lofi"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Winter"
-              data-set-theme="winter"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Lemonade"
-              data-set-theme="lemonade"
-            />
-          </li>
-          <div class="divider">Dark</div>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Dark"
-              data-set-theme="dark"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Black"
-              data-set-theme="black"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Synthwave"
-              data-set-theme="synthwave"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Forest"
-              data-set-theme="forest"
-            />
-          </li>
-        </ul>
-      </div>
-
       {#if loading}
         <i class="fa-solid fa-spinner animate-spin"></i>
       {:else if session && profile}
@@ -400,7 +310,7 @@
                 isOpen = false;
                 mobileProfileDropdown = false;
               }}
-              class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
+              class="block rounded-xl bg-primary py-2 text-center transition text-primary-content"
             >
               Login
             </a>

@@ -44,7 +44,7 @@
         </span>
       </div>
       <p class="text-xs truncate max-w-full mt-1">
-        {profile.bio || "No bio provided."}
+        {profile.bio || ""}
       </p>
     </div>
     <span

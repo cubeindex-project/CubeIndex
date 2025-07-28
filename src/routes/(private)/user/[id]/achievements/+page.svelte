@@ -29,17 +29,19 @@
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each achievementsToShow as achievement}
         <li
-          class="{achievement.rarity == 'Mythic'
-            ? 'bg-gradient-to-r from-red-600 to-rose-700'
-            : achievement.rarity == 'Legendary'
-              ? 'bg-gradient-to-r from-yellow-300 to-yellow-500'
-              : achievement.rarity == 'Exotic'
-                ? 'bg-teal-400'
-                : achievement.rarity == 'Epic'
-                  ? 'bg-purple-600'
-                  : achievement.rarity == 'Rare'
-                    ? 'bg-blue-600'
-                    : 'bg-neutral-700'} 
+          class="{achievement.rarity == 'Special'
+            ? 'bg-gradient-to-b from-yellow-400 via-pink-500 to-purple-600'
+            : achievement.rarity == 'Mythic'
+              ? 'bg-gradient-to-r from-red-600 to-rose-700'
+              : achievement.rarity == 'Legendary'
+                ? 'bg-gradient-to-r from-yellow-300 to-yellow-500'
+                : achievement.rarity == 'Exotic'
+                  ? 'bg-teal-400'
+                  : achievement.rarity == 'Epic'
+                    ? 'bg-purple-600'
+                    : achievement.rarity == 'Rare'
+                      ? 'bg-blue-600'
+                      : 'bg-neutral-700'} 
                                             {achievement.rarity ==
             'Legendary' || achievement.rarity == 'Exotic'
             ? 'text-black'
@@ -62,7 +64,9 @@
   {:else}
     <div class="col-span-full flex flex-col items-center justify-center py-20">
       <i class="fa-solid fa-trophy fa-3x mb-4"></i>
-      <h2 class="text-2xl font-semibold mb-2">This user didn't earn any achievements yet.</h2>
+      <h2 class="text-2xl font-semibold mb-2">
+        This user didn't earn any achievements yet.
+      </h2>
     </div>
   {/if}
 </div>

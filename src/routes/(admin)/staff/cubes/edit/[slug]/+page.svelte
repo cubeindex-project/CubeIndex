@@ -8,7 +8,7 @@
   import { supabase } from "$lib/supabaseClient";
   import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import ManageCubeStatus from "$lib/components/cube/manageCubeStatus.svelte";
+  import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   // Destructure props passed to the component

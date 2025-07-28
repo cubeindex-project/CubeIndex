@@ -28,8 +28,8 @@
   let formMessage: string = $state("");
   let username: string = $state("");
 
-  const getUser = getContext<() => { id: string }>("user");
-  const user = getUser();
+  const getUser = getContext<{ id: string }>("user");
+  const user = getUser;
 
   onMount(async () => {
     const { data: profile, error } = await supabase

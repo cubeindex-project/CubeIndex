@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StaffCubeCard from "$lib/components/cube/staffCubeCard.svelte";
+  import StaffCubeCard from "$lib/components/staff/staffCubeCard.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";

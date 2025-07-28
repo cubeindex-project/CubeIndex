@@ -1,10 +1,10 @@
 <!-- staffCubeCard.svelte -->
 <script lang="ts">
   import StarRating from "../rating/starRating.svelte";
-  import CubeVersionType from "./cubeVersionType.svelte";
+  import CubeVersionType from "../cube/cubeVersionType.svelte";
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import UnapproveCube from "./unapproveCube.svelte";
-
+  
   // single props destructure
   let { cube, profile } = $props();
 

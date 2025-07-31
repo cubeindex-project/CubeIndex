@@ -8,7 +8,7 @@
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
 
-  const { user_rating, cube, isAuthor, showCubeDetails } = $props();
+  const { user_rating, cube, isAuthor } = $props();
 
   let popoverId = $state(
     `popover-${user_rating.username}-${user_rating.cube_slug}`
@@ -119,24 +119,6 @@
 </script>
 
 <div class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm">
-  {#if showCubeDetails}
-    <div class="flex flex-row items-center gap-4">
-      <img
-        src={cube.image_url}
-        alt="{cube.series} {cube.model} {cube.version_name}"
-        class="size-24 object-cover rounded-2xl"
-      />
-      <a href="/explore/cubes/{cube.slug}">
-        <h2 class="text-xl font-bold mb-1">
-          {cube.series}
-          {cube.model}
-          {#if cube.version_type !== "Base"}
-            <span class="text-blue-400">{cube.version_name}</span>
-          {/if}
-        </h2>
-      </a>
-    </div>
-  {/if}
   <div
     class="flex items-center gap-3 flex-col sm:flex-row"
     class:mb-2={!!user_rating.comment}

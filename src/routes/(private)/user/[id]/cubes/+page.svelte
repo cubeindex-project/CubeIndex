@@ -11,6 +11,7 @@
 
   let user_cubes: any[] = $state([]);
   let cubes: Cube[] = $state([]);
+  let user_cube_ratings: any[] = $state([]);
 
   let userCubesFromAll: Cube[] = $state([]);
 
@@ -47,9 +48,24 @@
     cubes = data;
   }
 
+  async function fetchUserRatings() {
+    const { data, error: urErr } = await supabase
+      .from("user_cube_ratings")
+      .select("*")
+      .eq("user_id", profile.user_id);
+
+    if (urErr) {
+      console.error(`Failed to fetch user ratings: ${urErr.message}`);
+      return;
+    }
+
+    user_cube_ratings = data;
+  }
+
   onMount(() => {
     fetchUserCubes();
     fetchCubes();
+    fetchUserRatings();
   });
 
   let edit = $state(false);
@@ -98,13 +114,19 @@
         </div>
       {/each}
     </div>
-  {:else if user_cubes && user_cubes.length > 0}
+  {:else if user_cubes && user_cubes.length > 0 && user_cube_ratings && user_cube_ratings.length > 0}
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each userCubesFromAll as cube}
         {#if edit}
           <EditUserCubeCard {cube} user_details={user_cubes} image={true} />
         {:else}
-          <UserCubeCard {cube} user_details={user_cubes} image={true} />
+          <UserCubeCard
+            {cube}
+            user_details={user_cubes}
+            user_rating={user_cube_ratings.find(
+              (ucr) => ucr.cube_slug === cube.slug
+            )?.rating ?? 0}
+          />
         {/if}
       {/each}
     </ul>

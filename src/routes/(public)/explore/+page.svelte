@@ -2,6 +2,8 @@
   import { configCatClient } from "$lib/configcatClient";
   import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
   import { onMount } from "svelte";
+  import { SsgoiTransition } from "@ssgoi/svelte";
+  import { page } from "$app/state";
 
   let databaseAvailability: boolean = $state(true);
 
@@ -43,6 +45,7 @@
   );
 </script>
 
+<SsgoiTransition id={page.url.pathname}>
 {#if databaseAvailability}
   <section
     class="min-h-screen flex flex-col items-center justify-center px-6 py-16 space-y-12"
@@ -67,3 +70,4 @@
 {:else}
   <FeatureDisabled featureName="The database is" />
 {/if}
+</SsgoiTransition>

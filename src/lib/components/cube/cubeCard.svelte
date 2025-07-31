@@ -4,8 +4,6 @@
   import AddCube from "./addCube.svelte";
   import RateCube from "../rating/rateCube.svelte";
   import type { Cube } from "../types/cube";
-  import type { User } from "@supabase/supabase-js";
-  import { getContext } from "svelte";
 
   let {
     cube,
@@ -22,8 +20,6 @@
     badges: boolean;
     image: boolean;
   } = $props();
-
-  const user = getContext<User>("user");
 
   let openAddCard = $state(false);
   let openRateCard = $state(false);
@@ -56,13 +52,17 @@
     </div>
     {#if image}
       <img
+        data-hero-key={`cube-image-${cube.id}`}
         src={cube.image_url}
         alt="{cube.series} {cube.model} {cube.version_name}"
         class="w-full h-48 object-cover"
       />
     {/if}
     <div class="p-5 flex-1 flex flex-col">
-      <h2 class="text-xl font-bold mb-1">
+      <h2
+        class="text-xl font-bold mb-1"
+        data-hero-key={`cube-title-${cube.id}`}
+      >
         {cube.series}
         {cube.model}
         {#if cube.version_type !== "Base"}

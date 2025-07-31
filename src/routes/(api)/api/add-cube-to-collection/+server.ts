@@ -37,7 +37,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   const { error: userCubesErr } = await locals.supabase
     .from("user_cubes")
-    .insert({
+    .upsert({
       username: profile.username,
       cube,
       quantity,
@@ -49,17 +49,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     })
     .select();
 
-  if (
-    userCubesErr?.message ===
-    'duplicate key value violates unique constraint "user_cubes_pkey"'
-  )
-    return json(
-      {
-        success: false,
-        error: "You already added this cube to your collection!",
-      },
-      { status: 500 }
-    );
   if (userCubesErr)
     return json(
       { success: false, error: "An error occured: " + userCubesErr.message },

@@ -45,7 +45,7 @@ export const load = (async ({ parent, params, data }) => {
     (c) => c.related_to === cube.slug && c.status === "Approved"
   );
 
-  const { data: cubeUserCount, error: ucErr } = await supabase
+  const { data: user_cubes, error: ucErr } = await supabase
     .from("user_cubes")
     .select("*")
     .eq("cube", cube.slug);
@@ -93,7 +93,7 @@ export const load = (async ({ parent, params, data }) => {
     sameSeries,
     relatedCube,
     cubeTrims,
-    cubeUserCount,
+    user_cubes,
     user_cube_ratings,
     profiles,
     vendor_links,

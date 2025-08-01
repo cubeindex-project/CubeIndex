@@ -9,6 +9,7 @@
   import { Ssgoi } from "@ssgoi/svelte";
   import { blur } from "@ssgoi/svelte/transitions";
   import { hero } from "@ssgoi/svelte/view-transitions";
+  import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
 
   const config = {
     defaultTransition: blur(),
@@ -71,6 +72,7 @@
 <Navbar session={data.session} />
 
 <Toaster />
+<ClientErrorReporter />
 
 <Ssgoi {config}>
   <section class="bg-base-100 relative">

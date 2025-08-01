@@ -9,6 +9,7 @@
   import { Ssgoi } from "@ssgoi/svelte";
   import { blur } from "@ssgoi/svelte/transitions";
   import { hero } from "@ssgoi/svelte/view-transitions";
+  import { developerMode } from "$lib/stores/debug";
 
   const config = {
     defaultTransition: blur(),
@@ -79,3 +80,9 @@
 </Ssgoi>
 
 <Footer />
+
+{#if $developerMode}
+  <div class="fixed bottom-4 right-4 bg-red-600 text-white text-sm px-3 py-2 rounded z-50">
+    Debugging mode active
+  </div>
+{/if}

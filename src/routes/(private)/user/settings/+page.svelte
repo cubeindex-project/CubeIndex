@@ -5,6 +5,7 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import { developerMode } from "$lib/stores/debug";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -592,6 +593,18 @@
                 {/each}
               </div>
             </div>
+
+            <fieldset class="fieldset bg-base-200 border-base-100 rounded-box w-fit border p-4">
+              <legend class="fieldset-legend">Developer Mode</legend>
+              <label class="label">
+                <input
+                  type="checkbox"
+                  bind:checked={$developerMode}
+                  class="checkbox bg-base-100"
+                />
+                Enable debugging mode
+              </label>
+            </fieldset>
           </div>
         {/if}
       </div>

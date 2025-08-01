@@ -19,6 +19,7 @@
     _modded: boolean;
     _stickered: boolean;
     _smart: boolean;
+    _popularity: number;
   };
 
   const { data } = $props();
@@ -72,11 +73,29 @@
           _modded: feats.has("modded"),
           _stickered: feats.has("stickered"),
           _smart: feats.has("smart"),
+          _popularity: 0,
         };
       });
 
       cubes = cubes.concat(cubesWithMeta);
       start += BATCH;
+    }
+
+    const { data: userCubes, error: ucErr } = await supabase
+      .from("user_cubes")
+      .select("cube");
+
+    if (ucErr) {
+      console.error("Failed to fetch cube popularity:", ucErr.message);
+    } else {
+      const countMap = new Map<string, number>();
+      for (const { cube } of userCubes) {
+        countMap.set(cube, (countMap.get(cube) ?? 0) + 1);
+      }
+      cubes = cubes.map((c) => ({
+        ...c,
+        _popularity: countMap.get(c.slug) ?? 0,
+      }));
     }
   }
 
@@ -98,6 +117,8 @@
   let searchTerm: string = $state("");
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(12);
+  let sortField: string = $state("date");
+  let sortOrder: "asc" | "desc" = $state("desc");
 
   // 2) Options
 
@@ -170,13 +191,42 @@
     );
   });
 
+  const sortedCubes = $derived.by(() => {
+    const arr = filteredCubes.slice();
+    arr.sort((a, b) => {
+      let av: any;
+      let bv: any;
+      switch (sortField) {
+        case "rating":
+          av = a.rating ?? 0;
+          bv = b.rating ?? 0;
+          break;
+        case "popularity":
+          av = a._popularity ?? 0;
+          bv = b._popularity ?? 0;
+          break;
+        case "name":
+          av = a._name;
+          bv = b._name;
+          break;
+        default:
+          av = new Date(a.verified_at ?? a.created_at).getTime();
+          bv = new Date(b.verified_at ?? b.created_at).getTime();
+      }
+      if (av < bv) return sortOrder === "asc" ? -1 : 1;
+      if (av > bv) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+    return arr;
+  });
+
   const paginatedCubes = $derived.by(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredCubes.slice(start, end);
+    return sortedCubes.slice(start, end);
   });
 
-  const totalPages = $derived(Math.ceil(filteredCubes.length / itemsPerPage));
+  const totalPages = $derived(Math.ceil(sortedCubes.length / itemsPerPage));
 
   function resetFilters() {
     selectedType = "All";
@@ -193,7 +243,7 @@
   }
 
   $effect(() => {
-    const _ = filteredCubes;
+    const _ = sortedCubes;
     currentPage = 1;
   });
 
@@ -333,24 +383,49 @@
             <!-- Cube Cards Grid -->
             <div class="flex-1">
               <div
-                class="flex flex-row items-start sm:items-center justify-between mb-4 gap-4"
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
               >
-                <div class="flex items-center">
-                  <label class="text-sm mr-2" for="itemsPerPage"
-                    >Cubes per page:</label
-                  >
-                  <select
-                    id="itemsPerPage"
-                    bind:value={itemsPerPage}
-                    class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
-                    style="width:auto"
-                  >
-                    <option value={6}>6</option>
-                    <option value={12}>12</option>
-                    <option value={24}>24</option>
-                    <option value={48}>48</option>
-                    <option value={96}>96</option>
-                  </select>
+                <div class="flex flex-wrap items-center gap-4">
+                  <div class="flex items-center">
+                    <label class="text-sm mr-2" for="itemsPerPage"
+                      >Cubes per page:</label
+                    >
+                    <select
+                      id="itemsPerPage"
+                      bind:value={itemsPerPage}
+                      class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
+                      style="width:auto"
+                    >
+                      <option value={6}>6</option>
+                      <option value={12}>12</option>
+                      <option value={24}>24</option>
+                      <option value={48}>48</option>
+                      <option value={96}>96</option>
+                    </select>
+                  </div>
+
+                  <div class="flex items-center">
+                    <label class="text-sm mr-2" for="sortField">Sort by:</label>
+                    <select
+                      id="sortField"
+                      bind:value={sortField}
+                      class="px-4 py-2 rounded-lg bg-base-200 border border-base-300 mr-2"
+                      style="width:auto"
+                    >
+                      <option value="date">Date Added</option>
+                      <option value="rating">Rating</option>
+                      <option value="popularity">Popularity</option>
+                      <option value="name">Name</option>
+                    </select>
+                    <select
+                      bind:value={sortOrder}
+                      class="px-4 py-2 rounded-lg bg-base-200 border border-base-300"
+                      style="width:auto"
+                    >
+                      <option value="desc">Descending</option>
+                      <option value="asc">Ascending</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>

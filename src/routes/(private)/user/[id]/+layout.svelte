@@ -2,6 +2,8 @@
   import Badge from "$lib/components/user/badge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import ShareButton from "$lib/components/misc/shareButton.svelte";
+  import { page } from "$app/state";
 
   const { data, children } = $props();
   const { user, profile } = data;
@@ -121,6 +123,7 @@
                 <span>Report</span>
               </button>
             {/if}
+            <ShareButton url={page.url.href} btnClass="btn hidden md:flex" />
             <button
               class="btn block md:hidden"
               popovertarget="popover-1"
@@ -154,6 +157,9 @@
                   <span>Report</span>
                 </button>
               {/if}
+              <button class="flex justify-end items-center gap-2 p-2">
+                <ShareButton url={page.url.href} btnClass="btn w-full" />
+              </button>
             </ul>
           </div>
           <p class="mt-2">

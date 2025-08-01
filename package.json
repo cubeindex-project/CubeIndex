@@ -54,6 +54,7 @@
     "@number-flow/svelte": "^0.3.9",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
+    "@ssgoi/svelte": "^0.0.8",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/typography": "^0.5.16",

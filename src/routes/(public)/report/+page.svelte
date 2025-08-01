@@ -44,6 +44,15 @@
     extra: "",
   });
 
+  import { onMount } from "svelte";
+  onMount(() => {
+    const url = new URL(window.location.href);
+    const err = url.searchParams.get("error");
+    if (err) {
+      bug.extra = `Error message: ${err}`;
+    }
+  });
+
   // Feature suggestion state
   let feature: {
     title: string;

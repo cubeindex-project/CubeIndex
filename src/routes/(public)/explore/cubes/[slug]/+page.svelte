@@ -12,6 +12,7 @@
   import { page } from "$app/state";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
+  import ShareButton from "$lib/components/misc/shareButton.svelte";
 
   let { data } = $props();
   let {
@@ -275,20 +276,23 @@
             have this cube
           </p>
 
-          {#if cube.status === "Approved"}
-            <AddToCollectionButton
-              onClick={() => (openAddCard = !openAddCard)}
-              alreadyAdded={userCubeDetail !== undefined ? true : false}
-            />
-          {:else}
-            <button
-              class="btn btn-error flex-1 mb-4 cursor-not-allowed"
-              type="button"
-              aria-label="Add to Collection"
-            >
-              Only approved cubes can be added to your collection.
-            </button>
-          {/if}
+          <div class="flex flex-wrap gap-2 mb-4">
+            {#if cube.status === "Approved"}
+              <AddToCollectionButton
+                onClick={() => (openAddCard = !openAddCard)}
+                alreadyAdded={userCubeDetail !== undefined ? true : false}
+              />
+            {:else}
+              <button
+                class="btn btn-error flex-1 cursor-not-allowed"
+                type="button"
+                aria-label="Add to Collection"
+              >
+                Only approved cubes can be added to your collection.
+              </button>
+            {/if}
+            <ShareButton url={page.url.href} />
+          </div>
 
           <!-- Highlighted Rating -->
           <div class="flex flex-col items-start mb-5 sm:mt-0">

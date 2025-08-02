@@ -28,5 +28,17 @@ export const load = (async ({ locals, parent }) => {
     return user;
   });
 
-  return { following, followers };
+  const { data: currentFollowingUser, error: followErr } = await locals.supabase
+    .from("user_follows")
+    .select("*")
+    .eq("follower_id", locals.user?.id)
+    .eq("following_id", profile.user_id);
+
+  if (followErr) throw error(500, followErr.message);
+
+  return {
+    following,
+    followers,
+    isFollowing: currentFollowingUser.length !== 1,
+  };
 }) satisfies PageServerLoad;

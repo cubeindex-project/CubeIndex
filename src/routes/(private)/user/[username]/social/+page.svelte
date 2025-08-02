@@ -4,7 +4,7 @@
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
-  const { profile, user, followers, following } = data;
+  const { profile, user, followers, following, isFollowing } = data;
 
   let tab: string = $state("following");
 </script>
@@ -103,7 +103,7 @@
               {/if}
             </p>
             {#if profile.user_id !== user?.id}
-              <FollowButton user_id={profile.user_id} />
+              <FollowButton user_id={profile.user_id} {isFollowing} />
             {/if}
           </div>
         {/each}

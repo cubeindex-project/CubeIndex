@@ -5,6 +5,7 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import Avatar from "$lib/components/user/avatar.svelte";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -182,27 +183,45 @@
               class="space-y-6"
               use:enhance
             >
-              {#if $form.profile_picture}
-                <div
-                  class="flex flex-col items-center sm:items-start min-w-[120px]"
-                >
-                  <img
-                    src={$form.profile_picture}
-                    alt="Avatar"
-                    class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-primary shadow-xl bg-black object-cover transition-transform duration-200"
+              <!-- Username -->
+              <div class="w-full">
+                <label class="block text-sm font-semibold mb-2">
+                  Display Name
+                  <input
+                    type="text"
+                    name="username"
+                    bind:value={$form.display_name}
+                    class="input w-full"
                   />
-                </div>
-              {:else}
-                <div class="avatar avatar-placeholder">
-                  <div
-                    class="bg-base-300 w-32 h-32 rounded-full border-4 border-primary"
-                  >
-                    <span class="text-5xl uppercase font-clash"
-                      >{$form.username.charAt(0)}</span
-                    >
-                  </div>
-                </div>
-              {/if}
+                </label>
+                {#if $errors.display_name}
+                  <p class="text-error">{$errors.display_name}</p>
+                {/if}
+              </div>
+
+              <!-- Bio -->
+              <fieldset class="fieldset">
+                <legend class="block text-sm font-semibold">Bio</legend>
+                <textarea
+                  class="textarea h-24 w-full max-h-50"
+                  name="bio"
+                  bind:value={$form.bio}
+                  placeholder="Tell us something cool..."
+                ></textarea>
+                {#if $errors.bio}
+                  <p class="text-error">{$errors.bio}</p>
+                {/if}
+              </fieldset>
+
+              <Avatar
+                profile={{
+                  display_name: $form.display_name,
+                  profile_picture: $form.profile_picture
+                    ? $form.profile_picture
+                    : null,
+                }}
+                size="lg"
+              />
 
               <!-- Avatar URL -->
               <div class="w-full">
@@ -230,7 +249,7 @@
                 >
                   <img
                     src={$form.banner}
-                    alt="{$form.username}'s banner"
+                    alt="{$form.display_name}'s banner"
                     class="w-full h-full object-cover object-center transition-transform duration-300"
                     loading="lazy"
                   />
@@ -261,36 +280,6 @@
                   <p class="text-error">{$errors.banner}</p>
                 {/if}
               </div>
-
-              <!-- Username -->
-              <div class="w-full">
-                <label class="block text-sm font-semibold mb-2">
-                  Username
-                  <input
-                    type="text"
-                    name="username"
-                    bind:value={$form.username}
-                    class="input w-full"
-                  />
-                </label>
-                {#if $errors.username}
-                  <p class="text-error">{$errors.username}</p>
-                {/if}
-              </div>
-
-              <!-- Bio -->
-              <fieldset class="fieldset">
-                <legend class="fieldset-legend">Bio</legend>
-                <textarea
-                  class="textarea h-24 w-full max-h-50"
-                  name="bio"
-                  bind:value={$form.bio}
-                  placeholder="Tell us something cool..."
-                ></textarea>
-                {#if $errors.bio}
-                  <p class="text-error">{$errors.bio}</p>
-                {/if}
-              </fieldset>
 
               <fieldset
                 class="fieldset bg-base-200 border-base-100 rounded-box w-fit border p-4"

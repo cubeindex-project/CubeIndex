@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 const profileSchema = z.object({
   profile_picture: z.url().optional(),
   banner: z.url().optional(),
-  username: z.string().min(3),
+  display_name: z.string().min(3),
   bio: z.string(),
   private_profile: z.boolean(),
 });
@@ -24,8 +24,11 @@ const socialSchema = z.object({
 });
 
 const passwordSchema = z.object({
-  currentPassword: z.string().nonempty(),
-  newPassword: z.string().min(8).nonempty(),
+  currentPassword: z.string().nonempty("The current password is required"),
+  newPassword: z
+    .string()
+    .nonempty("The new password is required")
+    .min(8, "The new password must have more than 8 characters"),
 });
 
 export const load = (async ({ locals }) => {
@@ -43,7 +46,7 @@ export const load = (async ({ locals }) => {
     {
       profile_picture: profile.profile_picture,
       banner: profile.banner,
-      username: profile.username,
+      display_name: profile.display_name,
       bio: profile.bio,
       private_profile: profile.private,
     },
@@ -80,7 +83,7 @@ export const actions: Actions = {
       .update({
         profile_picture: data.profile_picture,
         banner: data.banner,
-        username: data.username,
+        display_name: data.display_name,
         bio: data.bio,
         private: data.private_profile,
       })

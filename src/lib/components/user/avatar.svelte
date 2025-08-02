@@ -1,7 +1,9 @@
 <script lang="ts">
   import type { Profiles } from "../types/profile";
 
-  const { profile, size }: { profile: Profiles; size: "sm" | "md" | "lg" } =
+  type ProfileAvatar = Pick<Profiles, 'display_name' | 'profile_picture'>;
+
+  const { profile, size }: { profile: ProfileAvatar; size: "sm" | "md" | "lg" } =
     $props();
 </script>
 
@@ -33,7 +35,7 @@
             ? 'text-6xl'
             : 'text-2xl'} uppercase font-clash"
       >
-        {profile.username.charAt(0)}
+        {profile.display_name.charAt(0)}
       </span>
     </div>
   </div>

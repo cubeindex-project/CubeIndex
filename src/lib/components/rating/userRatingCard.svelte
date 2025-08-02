@@ -1,7 +1,6 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
-  import { idOfUser } from "../helper_functions/idOfUser";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import type { Profiles } from "../types/profile";
@@ -58,7 +57,7 @@
         setTimeout(onCancel, 1000);
       } else {
         loading = false;
-        alert("Failed: " + data.error);
+        new Error("Failed: " + data.error);
       }
     }, 1000);
   }
@@ -77,7 +76,7 @@
     if (data.success) {
       onCancel();
     } else {
-      alert("Failed: " + data.error);
+      new Error("Failed: " + data.error);
     }
   }
 
@@ -96,7 +95,7 @@
     const { data, error: pErr } = await supabase.from("profiles").select("*");
 
     if (pErr) {
-      console.error(500, `Failed to fetch profiles: ${pErr.message}`);
+      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
       return;
     }
 
@@ -110,7 +109,7 @@
       .eq("rating", user_rating.id);
 
     if (helpErr) {
-      console.error(500, `Failed to fetch profiles: ${helpErr.message}`);
+      throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
       return;
     }
 
@@ -130,8 +129,8 @@
     <div class="flex flex-row justify-between items-center flex-1 w-full">
       <span class="text-sm justify-start flex gap-1 flex-1">
         by
-        <a href={idOfUser(profiles, profile.username)} class="underline">
-          {profile.username}
+        <a href="/user/{profile.username}" class="underline">
+          {profile.display_name}
         </a>
       </span>
 
@@ -264,6 +263,6 @@
     onCancel={() => (openReport = !openReport)}
     reportType="cube-rating"
     reported={user_rating.id}
-    reporLabel="{profile.username}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+    reporLabel="{profile.display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}

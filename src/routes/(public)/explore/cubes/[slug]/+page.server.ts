@@ -20,7 +20,7 @@ export const load = async ({ locals }) => {
     .single();
 
   if (pErr) {
-    console.error(500, `Failed to fetch profiles: ${pErr.message}`);
+    throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
     return;
   }
 

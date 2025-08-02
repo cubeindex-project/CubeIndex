@@ -32,9 +32,8 @@
                 (ua: { username: any }) => ua.username === profile.username
               ).length || 0}
               user_cubes_count={user_cubes.filter(
-                (uc: { username: string }) => uc.username === profile.username
+                (uc: { user_id: string }) => uc.user_id === profile.user_id
               ).length || 0}
-              staff={false}
             />
           {/each}
         </div>

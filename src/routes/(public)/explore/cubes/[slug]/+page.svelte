@@ -21,11 +21,12 @@
     cube = {} as Cube,
     profile = {} as Profiles,
     user_cube_ratings,
-    profiles,
     cubeTrims,
     relatedCube,
     sameSeries,
     features = [],
+    submittedBy,
+    verifiedBy,
   } = $derived(data);
 
   const featureMap = new Map<string, Set<string>>();
@@ -57,13 +58,6 @@
   });
 
   let openAddCard = $state(false);
-
-  function idOfUser(user: string) {
-    const profile = profiles?.find(
-      (p: { username: string }) => p.username === user
-    );
-    return profile ? `/user/${profile.id}` : "#";
-  }
 
   const statuses = [
     { label: "Smart", key: "smart" },
@@ -203,7 +197,7 @@
         </div>
       {:else}
         <div class="max-w-4xl mx-auto">
-          {#if profile && cube.submitted_by === profile.username && cube.status !== "Approved"}
+          {#if profile && cube.submitted_by === profile.user_id && cube.status !== "Approved"}
             <div
               class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
               'Pending'
@@ -276,7 +270,7 @@
             have this cube
           </p>
 
-          <div class="flex flex-wrap gap-2 mb-4">
+          <div class="flex flex-wrap gap-2 mb-4 justify-between">
             {#if cube.status === "Approved"}
               <AddToCollectionButton
                 onClick={() => (openAddCard = !openAddCard)}
@@ -284,7 +278,7 @@
               />
             {:else}
               <button
-                class="btn btn-error flex-1 cursor-not-allowed"
+                class="btn btn-error cursor-not-allowed"
                 type="button"
                 aria-label="Add to Collection"
               >
@@ -450,25 +444,29 @@
                   <span>Verified by:</span>
                   <a
                     class="font-medium underline"
-                    href={idOfUser(cube.verified_by)}
+                    href="/user/{// @ts-expect-error verifiedBy is not an array but an object
+                    verifiedBy?.username}"
                   >
-                    {cube.verified_by || "Unknown"}
+                    {// @ts-expect-error verifiedBy is not an array but an object
+                    verifiedBy?.display_name || "Unknown"}
                   </a>
                 </div>
                 <div class="flex items-center gap-2">
                   <span>Submitted by:</span>
                   <a
                     class="font-medium underline"
-                    href={idOfUser(cube.submitted_by)}
+                    href="/user/{// @ts-expect-error submittedBy is not an array but an object
+                    submittedBy?.username}"
                   >
-                    {cube.submitted_by || "Unknown"}
+                    {// @ts-expect-error submittedBy is not an array but an object
+                    submittedBy?.display_name || "Unknown"}
                   </a>
                 </div>
               </div>
             </div>
           </div>
 
-          {#if cube.notes && profile && profile.username === cube.submitted_by}
+          {#if cube.notes && profile && profile.user_id === cube.submitted_by}
             <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
               <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-note-sticky"></i>

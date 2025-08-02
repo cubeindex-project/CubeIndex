@@ -125,11 +125,6 @@
               {resetMessage}
             </p>
           {/if}
-          {#if form?.message}
-            <p class="text-sm text-success text-center mt-2">
-              {form.message}
-            </p>
-          {/if}
           {#if resetError}
             <p class="text-sm text-error text-center mt-2">
               {resetError}

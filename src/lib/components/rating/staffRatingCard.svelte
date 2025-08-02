@@ -1,7 +1,6 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
-  import { idOfUser } from "../helper_functions/idOfUser";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import type { Profiles } from "../types/profile";
@@ -48,7 +47,7 @@
         }, 1000);
       } else {
         loading = false;
-        alert("Failed: " + data.error);
+        new Error("Failed: " + data.error);
       }
     }, 1000);
   }
@@ -68,8 +67,7 @@
     const { data, error: pErr } = await supabase.from("profiles").select("*");
 
     if (pErr) {
-      console.error(500, `Failed to fetch profiles: ${pErr.message}`);
-      return;
+      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
     }
 
     profiles = data;
@@ -81,8 +79,7 @@
       .select("*");
 
     if (helpErr) {
-      console.error(500, `Failed to fetch profiles: ${helpErr.message}`);
-      return;
+      throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
     }
 
     helpful_ratings = helpful;
@@ -107,8 +104,8 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(profiles, profile.username)} class="underline">
-        {profile.username}
+      <a href="/user/{profile.username}" class="underline">
+        {profile.display_name}
       </a>
     </span>
 
@@ -175,7 +172,7 @@
       this helpful :
     </p>
     {#each helpful_ratings as hr}
-      <a href={idOfUser(profiles, hr.username)}>{hr.username}</a>
+      <a href="/user/{profile.username}">{hr.display_name}</a>
     {/each}
   {/if}
 </div>

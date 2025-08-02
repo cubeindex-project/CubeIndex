@@ -20,21 +20,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     acquired_at: string;
   } = await request.json();
 
-  const { data: profile, error: profileErr } = await locals.supabase
-    .from("profiles")
-    .select("username")
-    .eq("user_id", locals.user?.id)
-    .single();
-
-  if (profileErr)
-    return json(
-      {
-        success: false,
-        error: "Couldn't find connected user, check that you are logged in!",
-      },
-      { status: 500 }
-    );
-
   const { error: err } = await locals.supabase
     .from("user_cubes")
     .update({
@@ -46,7 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       notes,
       acquired_at,
     })
-    .eq("username", profile.username)
+    .eq("user_id", locals.user?.id)
     .eq("cube", slug);
 
   if (err)

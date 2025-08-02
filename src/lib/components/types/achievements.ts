@@ -33,7 +33,7 @@ export interface Achievements {
   /** How the achievement is unlocked, constrained to 'Automatic' or 'Manual' */
   unlock_method: UnlockMethod;
 
-  /** Username of who submitted it, references profiles.username */
+  /** Username of who submitted it, references profiles.user_id */
   submitted_by: string | null;
 
   /** Badge rarity enum, defaults to 'Common' */

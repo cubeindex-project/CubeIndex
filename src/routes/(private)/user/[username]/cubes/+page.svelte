@@ -33,11 +33,10 @@
     const { data, error } = await supabase
       .from("user_cubes")
       .select("*")
-      .eq("username", profile.username);
+      .eq("user_id", profile.user_id);
 
     if (error) {
-      console.error(500, `Failed to fetch the user cubes: ${error.message}`);
-      return;
+      throw new Error(`500, Failed to fetch the user cubes: ${error.message}`);
     }
 
     user_cubes = data;
@@ -53,7 +52,7 @@
       .order("series", { ascending: true });
 
     if (error) {
-      console.error(500, "Failed to fetch cubes", error.message);
+      throw new Error("500, Failed to fetch cubes" + error.message);
       return;
     }
 
@@ -67,8 +66,7 @@
       .eq("user_id", profile.user_id);
 
     if (urErr) {
-      console.error(`Failed to fetch user ratings: ${urErr.message}`);
-      return;
+      throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
     }
 
     user_cube_ratings = data;

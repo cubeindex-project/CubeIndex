@@ -3,7 +3,7 @@
   import Badge from "$lib/components/user/badge.svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";
   const { data } = $props();
-  const { profiles } = data;
+  const { logoDesigner, team } = data;
 
   const features = [
     {
@@ -27,12 +27,6 @@
       desc: "Contribute entries, rate cubes, and engage with fellow cubers.",
     },
   ];
-
-  const team = profiles.filter(
-    (p: any) => p.role !== "User" && p.username !== "CubeIndex"
-  );
-
-  const logoDesigner = profiles.filter((p: any) => p.username === "CubeLite");
 </script>
 
 <SsgoiTransition id={page.url.pathname}>
@@ -45,9 +39,9 @@
         class="mx-auto w-32 h-32 rounded-2xl"
       />
       <!-- Disclaimer -->
-      <p class="text-xs text-gray-500 italic">
-        Logo designed by <a href="/user/{logoDesigner[0].id}" class="link"
-          >{logoDesigner[0].username}</a
+      <p class="text-xs italic">
+        Logo designed by <a href="/user/{logoDesigner.username}" class="link"
+          >{logoDesigner.display_name}</a
         >.
       </p>
       <h1 class="text-5xl font-bold">Welcome to CubeIndex</h1>
@@ -98,18 +92,18 @@
                 </div>
               {/if}
             </div>
-            <h3 class="text-xl font-semibold mb-2">{member.username}</h3>
+            <h3 class="text-xl font-semibold mb-2">{member.display_name}</h3>
             <div class="mb-4">
               <Badge textSize="sm" profile={member} />
             </div>
-            <a href="/user/{member.id}" class="btn btn-neutral w-full">
+            <a href="/user/{member.username}" class="btn btn-neutral w-full">
               Visit Profile <i class="fa-solid fa-arrow-up-right-from-square"
               ></i>
             </a>
           </div>
         {/each}
         <div
-          class="card card-compact bg-base-200 shadow-md hover:shadow-xl transform transition-all rounded-md p-6 text-center"
+          class="card card-compact bg-base-200 transform transition-all rounded-md p-6 text-center"
         >
           <div class="flex justify-center mb-4">
             <img

@@ -1,18 +1,18 @@
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ request, locals }) => {
+export const POST: RequestHandler = async ({ locals, request }) => {
   const {
-    slug,
+    following_id,
   }: {
-    slug: string;
+    following_id: string;
   } = await request.json();
 
   const { error: err } = await locals.supabase
-    .from("user_cubes")
+    .from("user_follows")
     .delete()
-    .eq("user_id", locals.user?.id)
-    .eq("cube", slug);
+    .eq("following_id", following_id)
+    .eq("follower_id", locals.user?.id);
 
   if (err)
     return json(

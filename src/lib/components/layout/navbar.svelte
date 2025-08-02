@@ -8,21 +8,25 @@
 
   let loading = $state(true);
   let isOpen = $state(false);
-  let profile: { id: any; username: any; role: any } | null = $state(null);
+  let profile: {
+    id: number;
+    username: string;
+    display_name: string;
+    role: string;
+  } | null = $state(null);
   let { session } = $props();
   let signOutConfirmation = $state(false);
   let notificationOpen = $state(false);
-  let mobileThemeDropdown = $state(false);
 
   async function loadProfile() {
-    let { data, error } = await supabase
+    let { data, error: err } = await supabase
       .from("profiles")
-      .select("id, username, role")
+      .select("id, username, display_name, role")
       .eq("user_id", session.user.id)
       .maybeSingle();
 
-    if (error) {
-      console.error(error);
+    if (err) {
+      throw new Error(err.message);
     } else {
       profile = data;
     }
@@ -31,9 +35,9 @@
   let notifications: any[] = $state([]);
 
   async function getMessages() {
-    let { data, error } = await supabase.from("announcement").select("*");
+    let { data, error: err } = await supabase.from("announcement").select("*");
 
-    if (error) console.error("Error while loading announcement:", error);
+    if (err) throw new Error("Error while loading announcement:" + err.message);
 
     notifications = (data || []).filter(
       (notification) => notification.archived === false
@@ -45,15 +49,6 @@
     { name: "Achievements", href: "/achievements" },
     { name: "About", href: "/about" },
   ];
-
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
 
   let bellAnimate = $state(false);
   $effect(() => {
@@ -126,7 +121,7 @@
             class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary text-primary-content transition focus:outline-none"
           >
             <span class="px-4 py-2">
-              {profile.username}
+              {profile.display_name}
             </span>
             <span class="pr-4">
               <i class="fa-solid fa-caret-down"></i>
@@ -136,7 +131,7 @@
             class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
             <li>
-              <a href={`/user/${profile.id}`} class="block px-4 py-2 text-sm">
+              <a href={`/user/${profile.username}`} class="block px-4 py-2 text-sm">
                 Profile
               </a>
             </li>
@@ -230,7 +225,7 @@
               onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
               class="btn btn-primary w-full"
             >
-              {profile.username}
+              {profile.display_name}
               <label class="swap swap-rotate">
                 <input
                   type="checkbox"
@@ -251,7 +246,7 @@
               >
                 <li>
                   <a
-                    href={`/user/${profile.id}`}
+                    href={`/user/${profile.username}`}
                     onclick={() => {
                       isOpen = false;
                       mobileProfileDropdown = false;

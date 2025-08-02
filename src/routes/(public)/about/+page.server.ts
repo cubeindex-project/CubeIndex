@@ -1,3 +1,4 @@
+import type { Profiles } from "$lib/components/types/profile";
 import { supabase } from "$lib/supabaseClient";
 import { error } from "@sveltejs/kit";
 
@@ -8,5 +9,11 @@ export const load = async () => {
 
   if (err) throw error(500, err.message);
 
-  return { profiles };
+  const team = profiles.filter(
+    (p: Profiles) => p.role !== "User" && p.username !== "cubeIndex"
+  );
+
+  const logoDesigner = profiles.find((p: Profiles) => p.user_id === "b49da5bb-6d82-463e-b8ee-fd7c9feebde6");
+
+  return { profiles, logoDesigner, team };
 };

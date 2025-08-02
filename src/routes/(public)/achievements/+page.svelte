@@ -6,7 +6,7 @@
   import { page } from "$app/state";
 
   const { data } = $props();
-  const { achievements, profiles } = data;
+  const { achievements } = data;
   let achievementsAvailability: boolean = $state(true);
 
   function formatDate(dateString: string): string {
@@ -16,13 +16,6 @@
       month: "long",
       day: "numeric",
     }).format(date);
-  }
-
-  function idOfUser(user: string) {
-    const profile = profiles?.find(
-      (p: { username: string }) => p.username === user
-    );
-    return profile ? `/user/${profile.id}` : "#";
   }
 
   onMount(() =>
@@ -106,21 +99,6 @@
                   <p class="flex justify-between">
                     <span class="font-semibold">Unlock Method:</span>
                     <span>{achievement.unlock_method}</span>
-                  </p>
-
-                  <a
-                    href={idOfUser(achievement.submitted_by)}
-                    class="flex justify-between transition"
-                  >
-                    <span class="font-semibold">Submitted by:</span>
-                    <span class="link link-hover"
-                      >{achievement.submitted_by}</span
-                    >
-                  </a>
-
-                  <p class="flex justify-between">
-                    <span class="font-semibold">Created at:</span>
-                    <span>{formatDate(achievement.created_at)}</span>
                   </p>
 
                   {#if !achievement.unlockable}

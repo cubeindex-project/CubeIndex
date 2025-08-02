@@ -47,8 +47,6 @@
       acquired_at,
     };
 
-    console.log(payload);
-
     try {
       const res = await fetch("/api/add-cube-to-collection", {
         method: "POST",

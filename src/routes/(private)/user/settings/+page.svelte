@@ -5,6 +5,13 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import { Carta, MarkdownEditor } from "carta-md";
+  import "carta-md/default.css";
+  import "@cartamd/plugin-emoji/default.css";
+  import { slash } from "@cartamd/plugin-slash";
+  import "@cartamd/plugin-slash/default.css";
+  import { emoji } from "@cartamd/plugin-emoji";
+  import DOMPurify from "isomorphic-dompurify";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   // Props & initial state
@@ -50,6 +57,12 @@
   });
 
   const params = queryParameters();
+
+  const carta = new Carta({
+    sanitizer: DOMPurify.sanitize,
+    extensions: [emoji(), slash()],
+    disableIcons: [],
+  });
 
   // Tabs: 'profile' | 'social' | 'security'
   let tab: "profile" | "social" | "security" | "appearance" = $state(
@@ -212,7 +225,7 @@
                   Display Name
                   <input
                     type="text"
-                    name="username"
+                    name="display_name"
                     bind:value={$form.display_name}
                     class="input w-full"
                   />
@@ -225,12 +238,14 @@
               <!-- Bio -->
               <fieldset class="fieldset">
                 <legend class="block text-sm font-semibold">Bio</legend>
-                <textarea
-                  class="textarea h-24 w-full max-h-50"
-                  name="bio"
+                <MarkdownEditor
+                  {carta}
+                  mode="tabs"
                   bind:value={$form.bio}
+                  textarea={{ name: "bio" }}
                   placeholder="Tell us something cool..."
-                ></textarea>
+                  highlightDelay={0}
+                />
                 {#if $errors.bio}
                   <p class="text-error">{$errors.bio}</p>
                 {/if}
@@ -622,3 +637,12 @@
     </div>
   </section>
 </SsgoiTransition>
+
+<style>
+  :global(.carta-font-code) {
+    font-family: "...", monospace;
+    font-size: 1.1rem;
+    line-height: 1.1rem;
+    letter-spacing: normal;
+  }
+</style>

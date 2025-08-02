@@ -36,6 +36,7 @@
     "eslint-plugin-svelte": "^3.0.0",
     "globals": "^16.0.0",
     "jsdom": "^26.0.0",
+    "sass-embedded": "^1.89.2",
     "svelte": "^5.37.1",
     "svelte-check": "^4.0.0",
     "sveltekit-search-params": "^3.0.0",
@@ -50,6 +51,8 @@
     "zod": "^3.25.73"
   },
   "dependencies": {
+    "@cartamd/plugin-emoji": "^4.3.0",
+    "@cartamd/plugin-slash": "^4.2.0",
     "@inlang/paraglide-js": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
     "@number-flow/svelte": "^0.3.9",
@@ -60,16 +63,21 @@
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/typography": "^0.5.16",
     "@umami/api-client": "^0.79.0",
+    "carta-md": "^4.11.1",
     "chart.js": "^4.5.0",
     "configcat-js-ssr": "^8.4.5",
     "daisyui": "^5.0.43",
     "drizzle-orm": "^0.40.0",
     "glob": "^11.0.3",
+    "isomorphic-dompurify": "^2.26.0",
+    "katex": "^0.16.22",
+    "lowlight": "^3.3.0",
     "postgres": "^3.4.5",
-    "release-please": "^17.1.0",
     "svelte-sonner": "^1.0.1",
+    "svelte-tiptap": "^2.2.0",
     "sveltekit-top-loader": "^0.1.0",
-    "theme-change": "^2.5.0"
+    "theme-change": "^2.5.0",
+    "tippy.js": "^6.3.7"
   },
   "overrides": {
     "cookie": "^1.0.2",

@@ -11,6 +11,9 @@ export default defineConfig({
       {
         extends: "./vite.config.ts",
         plugins: [svelteTesting()],
+        define: {
+          __ENABLE_CARTA_SSR_HIGHLIGHTER__: false,
+        },
         test: {
           name: "client",
           environment: "jsdom",

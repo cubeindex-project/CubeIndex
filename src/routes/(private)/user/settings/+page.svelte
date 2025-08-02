@@ -10,15 +10,13 @@
   // Props & initial state
   let { data }: { data: PageData } = $props();
 
-  const { form, errors, enhance, message, delayed } = superForm(
-    data.profileForm,
-    {
+  const { form, errors, enhance, message, delayed, tainted, isTainted } =
+    superForm(data.profileForm, {
       invalidateAll: "pessimistic",
       delayMs: 500,
       timeoutMs: 8000,
       clearOnSubmit: "errors-and-message",
-    }
-  );
+    });
 
   const {
     form: socialForm,
@@ -26,6 +24,8 @@
     enhance: socialEnhance,
     message: socialMessage,
     delayed: socialDelayed,
+    tainted: socialTainted,
+    isTainted: socialIsTainted,
   } = superForm(data.socialForm, {
     invalidateAll: "pessimistic",
     delayMs: 500,
@@ -39,6 +39,8 @@
     enhance: passwordEnhance,
     message: passwordMessage,
     delayed: passwordDelayed,
+    tainted: passwordTainted,
+    isTainted: passwordIsTainted,
   } = superForm(data.passwordForm, {
     invalidateAll: "pessimistic",
     delayMs: 500,
@@ -107,6 +109,27 @@
       applyTheme(saved);
     }
   }
+
+  let dirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $tainted;
+    dirty = isTainted();
+  });
+
+  let socialDirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $socialTainted;
+    socialDirty = socialIsTainted();
+  });
+
+  let passwordDirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $passwordTainted;
+    passwordDirty = passwordIsTainted();
+  });
 </script>
 
 <SsgoiTransition id={page.url.pathname}>
@@ -300,7 +323,11 @@
               </fieldset>
 
               <div class="flex justify-end">
-                <button class="btn btn-primary btn-lg" type="submit">
+                <button
+                  class="btn btn-primary btn-lg"
+                  type="submit"
+                  disabled={!dirty}
+                >
                   {#if $delayed}
                     <span class="loading loading-spinner"></span>
                     Saving...
@@ -433,7 +460,11 @@
               </label>
 
               <div class="flex justify-end">
-                <button class="btn btn-primary btn-lg" type="submit">
+                <button
+                  class="btn btn-primary btn-lg"
+                  type="submit"
+                  disabled={!socialDirty}
+                >
                   {#if $socialDelayed}
                     <span class="loading loading-spinner"></span>
                     Saving...
@@ -487,7 +518,11 @@
               </div>
 
               <div class="flex justify-end">
-                <button class="btn btn-primary btn-lg" type="submit">
+                <button
+                  class="btn btn-primary btn-lg"
+                  type="submit"
+                  disabled={!passwordDirty}
+                >
                   {#if $passwordDelayed}
                     <span class="loading loading-spinner"></span>
                     Updating...

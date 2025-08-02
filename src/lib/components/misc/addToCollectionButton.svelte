@@ -6,7 +6,7 @@
 </script>
 
 <button
-  class="btn btn-secondary flex-1 mb-4"
+  class="btn btn-secondary"
   type="button"
   onclick={onClick}
   aria-label="Add to Collection"

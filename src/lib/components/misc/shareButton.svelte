@@ -1,8 +1,15 @@
 <script lang="ts">
-  export let url: string = '';
-  export let text: string = 'Check this out!';
-  export let label: string = 'Share';
-  export let btnClass: string = 'btn btn-accent';
+  let {
+    url,
+    text = "Check this out!",
+    label = "Share",
+    btnClass = "btn btn-accent",
+  }: {
+    url: string;
+    text?: string;
+    label?: string;
+    btnClass?: string;
+  } = $props();
 
   async function shareCurrent() {
     if (!url) url = window.location.href;
@@ -11,21 +18,31 @@
         await navigator.share({ title: document.title, text, url });
         return;
       } catch (err) {
-        console.error('Share failed', err);
+        new Error("Share failed" + err);
       }
     }
 
     try {
       await navigator.clipboard.writeText(url);
-      alert('Link copied to clipboard');
+      alert("Link copied to clipboard");
     } catch (err) {
-      console.error('Copy failed', err);
-      prompt('Copy this link:', url);
+      new Error("Copy failed" + err);
+      prompt("Copy this link:", url);
     }
   }
 </script>
 
-<button class={btnClass} type="button" onclick={shareCurrent} aria-label={label}>
+<div
+  class={btnClass}
+  role="button"
+  tabindex="0"
+  onclick={shareCurrent}
+  onkeydown={(e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      shareCurrent();
+    }
+  }}
+>
   <i class="fa-solid fa-share"></i>
   <span class="ml-2">{label}</span>
-</button>
+</div>

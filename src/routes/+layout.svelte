@@ -57,7 +57,7 @@
           localStorage.setItem("theme", "dark");
         }
       } catch (e) {
-        console.error("Error initializing theme from localStorage:", e);
+        throw new Error("Error initializing theme from localStorage:" + e);
       }
     })();
   </script>

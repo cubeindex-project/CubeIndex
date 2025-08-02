@@ -10,7 +10,7 @@
       .select("*")
       .order("id", { ascending: true });
 
-    if (err) return console.error(500, err.message);
+    if (err) throw new Error("A 500 error occured:" + err.message);
     staff_logs = data;
   });
 

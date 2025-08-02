@@ -23,7 +23,7 @@
       onCancel();
     } else {
       loading = false;
-      alert("Failed: " + data.error);
+      new Error("Failed: " + data.error);
     }
   }
 </script>

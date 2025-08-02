@@ -33,8 +33,7 @@
       .select("*");
 
     if (featErr) {
-      console.error("A 500 status code error occured:", featErr.message);
-      return;
+      throw new Error("A 500 status code error occured:" + featErr.message);
     }
 
     for (const { cube, feature } of features) {

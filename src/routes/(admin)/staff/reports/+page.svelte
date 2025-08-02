@@ -23,7 +23,7 @@
     const data = await res.json();
 
     if (!data.success) {
-      alert("Failed: " + data.error);
+      new Error("Failed: " + data.error);
     }
 
     location.reload();

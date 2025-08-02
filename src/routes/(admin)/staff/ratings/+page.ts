@@ -7,7 +7,7 @@ export const load = (async () => {
     .select("*");
 
   if (urErr) {
-    console.error(`Failed to fetch user ratings: ${urErr.message}`);
+    throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
     return;
   }
   
@@ -18,7 +18,7 @@ export const load = (async () => {
     .order("series", { ascending: true });
 
   if (cErr) {
-    console.error("A 500 status code error occured:", cErr.message);
+    throw new Error("A 500 status code error occured:" + cErr.message);
     return;
   }
   return { user_cube_ratings, cubes };

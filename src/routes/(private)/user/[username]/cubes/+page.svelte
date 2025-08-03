@@ -7,6 +7,8 @@
   import type { Cube } from "$lib/components/types/cube";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
+  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
+  import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
 
   let { data }: { data: PageData } = $props();
   const { profile, user } = data;
@@ -153,77 +155,57 @@
   />
 
   <div class="flex flex-col lg:flex-row gap-8">
-    {#if showFilters}
-      <aside class="w-full lg:w-70">
-        <div class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-7">
-          <div class="flex items-center justify-between mb-4">
-            <span class="font-semibold text-lg">Filters</span>
-          </div>
-          <div class="flex flex-col gap-4">
-            <div>
-              <label class="block text-sm mb-1"
-                >Type:
-                <select
-                  bind:value={selectedType}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allTypes as t}
-                    <option>{t}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <div>
-              <label class="block text-sm mb-1"
-                >Status:
-                <select
-                  bind:value={selectedStatus}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allStatuses as s}
-                    <option>{s}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <div>
-              <button
-                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-                onclick={() => {
-                  selectedType = 'All';
-                  selectedStatus = 'All';
-                }}
-                type="button"
-              >
-                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                Reset Filters
-              </button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    {/if}
+    <FilterSidebar {showFilters}>
+      <div>
+        <label class="block text-sm mb-1"
+          >Type:
+          <select
+            bind:value={selectedType}
+            class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+          >
+            <option>All</option>
+            {#each allTypes as t}
+              <option>{t}</option>
+            {/each}
+          </select>
+        </label>
+      </div>
+      <div>
+        <label class="block text-sm mb-1"
+          >Status:
+          <select
+            bind:value={selectedStatus}
+            class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+          >
+            <option>All</option>
+            {#each allStatuses as s}
+              <option>{s}</option>
+            {/each}
+          </select>
+        </label>
+      </div>
+      <div>
+        <button
+          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
+          onclick={() => {
+            selectedType = 'All';
+            selectedStatus = 'All';
+          }}
+          type="button"
+        >
+          <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+          Reset Filters
+        </button>
+      </div>
+    </FilterSidebar>
 
     <div class="flex-1">
       <div class="flex flex-row items-start sm:items-center justify-between mb-4 gap-4">
-        <div class="flex items-center">
-          <label class="text-sm mr-2" for="itemsPerPage">Cubes per page:</label>
-          <select
-            id="itemsPerPage"
-            bind:value={itemsPerPage}
-            class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
-            style="width:auto"
-          >
-            <option value={6}>6</option>
-            <option value={9}>9</option>
-            <option value={12}>12</option>
-            <option value={24}>24</option>
-            <option value={48}>48</option>
-            <option value={96}>96</option>
-          </select>
-        </div>
+        <ItemsPerPageSelector
+          bind:itemsPerPage
+          label="Cubes per page"
+          options={[6, 9, 12, 24, 48, 96]}
+        />
       </div>
 
       <div class="mb-10">

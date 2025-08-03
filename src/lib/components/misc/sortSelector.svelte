@@ -1,6 +1,9 @@
 <script lang="ts">
+  /** Option for sorting */
   export interface SortOption {
+    /** Value used for the sort field */
     value: string;
+    /** Human readable label */
     label: string;
   }
 
@@ -8,7 +11,14 @@
     sortField = $bindable(),
     sortOrder = $bindable("desc"),
     options
-  }: { sortField: string; sortOrder?: "asc" | "desc"; options: SortOption[] } = $props();
+  }: {
+    /** Currently selected field to sort by */
+    sortField: string;
+    /** Direction of the sort, descending by default */
+    sortOrder?: "asc" | "desc";
+    /** Available fields for sorting */
+    options: SortOption[];
+  } = $props();
 </script>
 
 <div class="flex items-center">

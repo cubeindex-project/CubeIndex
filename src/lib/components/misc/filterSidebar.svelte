@@ -1,15 +1,20 @@
 <script lang="ts">
   import { blur } from "svelte/transition";
   import type { Snippet } from "svelte";
+
   let {
     showFilters,
     asideClass = "",
     wrapperClass = "top-7",
     children,
   }: {
+    /** Whether the sidebar should be displayed */
     showFilters: boolean;
+    /** Additional classes for the <aside> wrapper */
     asideClass?: string;
+    /** Extra classes for the inner sticky container */
     wrapperClass?: string;
+    /** Slot rendering function for filter contents */
     children: Snippet;
   } = $props();
 </script>

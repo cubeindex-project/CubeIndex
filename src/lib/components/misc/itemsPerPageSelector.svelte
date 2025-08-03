@@ -3,7 +3,14 @@
     itemsPerPage = $bindable(),
     options = [6, 12, 24, 48, 96],
     label = "Items per page"
-  }: { itemsPerPage: number; options?: number[]; label?: string } = $props();
+  }: {
+    /** Currently selected number of items shown on each page */
+    itemsPerPage: number;
+    /** Available item counts to choose from */
+    options?: number[];
+    /** Label displayed next to the selector */
+    label?: string;
+  } = $props();
 </script>
 
 <div class="flex items-center">

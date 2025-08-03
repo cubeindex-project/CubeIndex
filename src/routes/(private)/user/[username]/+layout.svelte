@@ -9,7 +9,9 @@
   import FollowButton from "$lib/components/misc/followButton.svelte";
 
   const { data, children } = $props();
-  const { user, profile, following } = data;
+  let user = $derived(data.user);
+  let profile = $derived(data.profile);
+  let following = $derived(data.following);
 
   interface socialObject {
     label?: string;

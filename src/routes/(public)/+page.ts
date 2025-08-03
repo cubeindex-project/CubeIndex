@@ -1,8 +1,14 @@
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import { error } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 
 export const load = (async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session) {
+    throw redirect(303, "/home");
+  }
   const { error: err, count: totalCubesConst } = await supabase
     .from("cube_models")
     .select("*", { count: "exact", head: true })

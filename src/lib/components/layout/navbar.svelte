@@ -171,11 +171,12 @@
 
     <!-- Mobile Menu Button -->
     <button
+      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen ? 'swap-active' : ''}"
+      aria-label={isOpen ? "Close menu" : "Open menu"}
       onclick={() => (isOpen = !isOpen)}
-      class="focus:outline-none md:hidden cursor-pointer"
-      aria-label="Open menu"
     >
-      <i class="fa-solid fa-bars"></i>
+      <i class="fa-solid fa-bars swap-off"></i>
+      <i class="fa-solid fa-xmark swap-on"></i>
     </button>
   </div>
 

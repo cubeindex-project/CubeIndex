@@ -14,7 +14,7 @@
   <img
     src={profile.profile_picture}
     alt="Avatar"
-    class="rounded-2xl border-4 border-primary bg-primary {imgSize}"
+    class="rounded-2xl border-4 border-primary bg-primary {imgSize} object-cover"
   />
 {:else}
   <div class="avatar avatar-placeholder">

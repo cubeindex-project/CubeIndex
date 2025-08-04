@@ -244,7 +244,7 @@
         </div>
       {/each}
     </div>
-  {:else if user_cubes && user_cubes.length > 0 && user_cube_ratings && user_cube_ratings.length > 0}
+  {:else if user_cubes && user_cubes.length > 0}
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {#each paginatedCubes as cube}
         {#if edit}

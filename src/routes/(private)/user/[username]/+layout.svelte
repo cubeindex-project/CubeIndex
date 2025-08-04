@@ -132,7 +132,9 @@
       {/if}
 
       <div class="mx-5 lg:mx-24">
-        <div class="flex justify-center lg:justify-between items-center mx-auto">
+        <div
+          class="flex justify-center lg:justify-between items-center mx-auto"
+        >
           <div class="flex flex-col sm:flex-row">
             <div
               class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 z-50 relative"
@@ -147,7 +149,7 @@
             <div class="flex flex-row">
               <div class="mt-3 sm:ml-3">
                 <h2
-                  class="lg:flex-row flex flex-col gap-4 break-all lg:items-center items-start tracking-tight"
+                  class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight"
                 >
                   <div class="flex flex-col">
                     <span class="font-extrabold font-clash text-3xl sm:text-4xl"
@@ -161,10 +163,19 @@
                   </span>
                 </h2>
 
-                <p class="mt-2 gap-1">
+                <p class="gap-1">
                   <span class="font-semibold">Member since:</span>
                   <span class="font-mono">{formattedJoinDate}</span>
                 </p>
+
+                {#if user?.id !== profile.user_id}
+                  <div class="mt-2">
+                    <FollowButton
+                      user_id={profile.user_id}
+                      isFollowing={following.length !== 1}
+                    />
+                  </div>
+                {/if}
               </div>
 
               <div class="mt-6">
@@ -182,13 +193,16 @@
                   id="popover-1"
                   style="position-anchor:--anchor-1"
                 >
-                  <button class="flex justify-end items-center gap-2 p-2">
-                    <ShareButton url={page.url.href} btnClass="btn w-full" />
-                  </button>
+                  <div class="flex items-center">
+                    <ShareButton
+                      url={page.url.href}
+                      btnClass="btn btn-ghost w-full"
+                    />
+                  </div>
                   {#if user?.id === profile.user_id}
                     <a
                       href="/user/settings"
-                      class="flex justify-end items-center gap-2 p-2"
+                      class="flex items-center gap-2 p-2 btn btn-ghost"
                       aria-label="User Settings"
                       title="User Settings"
                     >
@@ -197,7 +211,7 @@
                     </a>
                   {:else}
                     <button
-                      class="flex justify-end items-center gap-2 p-2"
+                      class="flex items-center gap-2 p-2 btn btn-ghost w-full"
                       onclick={toggleOpenReport}
                     >
                       <i class="fa-solid fa-flag"></i>

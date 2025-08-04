@@ -32,17 +32,12 @@
   }
 </script>
 
-<div
+<button
   class={btnClass}
-  role="button"
-  tabindex="0"
+  type="button"
   onclick={shareCurrent}
-  onkeydown={(e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      shareCurrent();
-    }
-  }}
+  aria-label={label}
 >
   <i class="fa-solid fa-share"></i>
   <span class="ml-2">{label}</span>
-</div>
+</button>

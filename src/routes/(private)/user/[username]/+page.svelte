@@ -1,19 +1,18 @@
 <script lang="ts">
-  import { emoji } from "@cartamd/plugin-emoji";
   import type { PageData } from "./$types";
-  import { Carta, Markdown } from "carta-md";
   import DOMPurify from "isomorphic-dompurify";
   import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
   import UserCard from "$lib/components/user/userCard.svelte";
+  import Markdown from "svelte-exmarkdown";
+  import { gfmPlugin } from "svelte-exmarkdown/gfm";
+  import 'github-markdown-css/github-markdown.css';
 
-  const carta = new Carta({
-    sanitizer: DOMPurify.sanitize,
-    extensions: [emoji()],
-  });
+  const plugins = [gfmPlugin()];
 
   let { data }: { data: PageData } = $props();
 
   const profile = $derived(data.profile);
+  const bio = $derived(DOMPurify.sanitize(profile.bio));
   const main_cubes = $derived(data.main_cubes);
   const user_cubes = $derived(data.user_cubes);
   const user_achievements = $derived(data.user_achievements);
@@ -22,15 +21,17 @@
 </script>
 
 <div
-  class="min-h-screen mx-8 lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
+  class="min-h-screen lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
 >
   <div class="col-span-1 flex flex-col gap-6">
     <!-- Bio Card -->
     {#if profile.bio}
       <div>
         <h2 class="text-xl font-semibold mb-2">Bio</h2>
-        <div class="card bg-base-300 p-4 rounded-2xl max-h-96 overflow-auto">
-          <Markdown {carta} value={profile.bio} />
+        <div
+          class="card !bg-base-300 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
+        >
+          <Markdown md={bio} {plugins} />
         </div>
       </div>
     {/if}

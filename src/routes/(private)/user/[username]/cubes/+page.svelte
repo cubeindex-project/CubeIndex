@@ -99,7 +99,8 @@
     return userCubesFromAll.filter((cube) => {
       const details = user_cubes.find((uc) => uc.cube === cube.slug);
       const status = details ? details.status : "";
-      const name = `${cube.series ?? ""} ${cube.model ?? ""} ${cube.version_name ?? ""}`.toLowerCase();
+      const name =
+        `${cube.series ?? ""} ${cube.model ?? ""} ${cube.version_name ?? ""}`.toLowerCase();
       return (
         name.includes(searchTerm.toLowerCase()) &&
         (selectedType === "All" || cube.type === selectedType) &&
@@ -145,14 +146,14 @@
     {/if}
   </div>
 
-  <SearchBar
+  <!-- <SearchBar
     showFilter={true}
     bind:searchTerm
     placeholderLabel="Search cubes"
     filterAction={() => (showFilters = !showFilters)}
-  />
+  /> -->
 
-  <div class="flex flex-col lg:flex-row gap-8">
+  <!-- <div class="flex flex-col lg:flex-row gap-8">
     {#if showFilters}
       <aside class="w-full lg:w-70">
         <div class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-7">
@@ -228,49 +229,49 @@
 
       <div class="mb-10">
         <Pagination bind:currentPage {totalPages} />
-      </div>
+      </div> -->
 
-      {#if loading}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {#each Array(6) as i}
-            <div class="bg-neutral rounded-2xl overflow-hidden animate-pulse">
-              <div class="h-48 bg-neutral-content"></div>
-              <div class="p-5 space-y-4">
-                <div class="h-6 bg-neutral-content rounded w-3/4"></div>
-                <div class="h-4 bg-neutral-content rounded w-1/2"></div>
-                <div class="h-4 bg-neutral-content rounded w-1/4"></div>
-              </div>
-            </div>
-          {/each}
+  {#if loading}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {#each Array(6) as i}
+        <div class="bg-neutral rounded-2xl overflow-hidden animate-pulse">
+          <div class="h-48 bg-neutral-content"></div>
+          <div class="p-5 space-y-4">
+            <div class="h-6 bg-neutral-content rounded w-3/4"></div>
+            <div class="h-4 bg-neutral-content rounded w-1/2"></div>
+            <div class="h-4 bg-neutral-content rounded w-1/4"></div>
+          </div>
         </div>
-      {:else if user_cubes && user_cubes.length > 0 && user_cube_ratings && user_cube_ratings.length > 0}
-        <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {#each paginatedCubes as cube}
-            {#if edit}
-              <EditUserCubeCard {cube} user_details={user_cubes} image={true} />
-            {:else}
-              <UserCubeCard
-                {cube}
-                user_details={user_cubes}
-                user_rating={user_cube_ratings.find(
-                  (ucr) => ucr.cube_slug === cube.slug
-                )?.rating ?? 0}
-              />
-            {/if}
-          {/each}
-        </ul>
-      {:else}
-        <div class="col-span-full flex flex-col items-center justify-center py-20">
-          <i class="fa-solid fa-cube fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">
-            This user doesn't have any cube in their collection.
-          </h2>
-        </div>
-      {/if}
+      {/each}
+    </div>
+  {:else if user_cubes && user_cubes.length > 0 && user_cube_ratings && user_cube_ratings.length > 0}
+    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {#each paginatedCubes as cube}
+        {#if edit}
+          <EditUserCubeCard {cube} user_details={user_cubes} image={true} />
+        {:else}
+          <UserCubeCard
+            {cube}
+            user_details={user_cubes}
+            user_rating={user_cube_ratings.find(
+              (ucr) => ucr.cube_slug === cube.slug
+            )?.rating ?? 0}
+          />
+        {/if}
+      {/each}
+    </ul>
+  {:else}
+    <div class="col-span-full flex flex-col items-center justify-center py-20">
+      <i class="fa-solid fa-cube fa-3x mb-4"></i>
+      <h2 class="text-2xl font-semibold mb-2">
+        This user doesn't have any cube in their collection.
+      </h2>
+    </div>
+  {/if}
 
-      <div class="mt-10">
+  <!-- <div class="mt-10">
         <Pagination bind:currentPage {totalPages} />
       </div>
     </div>
-  </div>
+  </div> -->
 </div>

@@ -36,9 +36,11 @@
           </span>
         {/if}
       </div>
-      <p class="text-xs truncate max-w-full mt-1">
-        {profile.bio || ""}
-      </p>
+      {#if profile.bio}
+        <p class="text-xs truncate max-w-full mt-1">
+          {profile.bio}
+        </p>
+      {/if}
     </div>
     <span
       class="ml-2 text-primary group-hover:translate-x-1 transition-transform"

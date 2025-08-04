@@ -29,7 +29,7 @@
       <div>
         <h2 class="text-xl font-semibold mb-2">Bio</h2>
         <div
-          class="card !bg-base-300 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
+          class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
         >
           <Markdown md={bio} {plugins} />
         </div>
@@ -39,7 +39,7 @@
     <!-- Stats Card -->
     <div>
       <h2 class="text-xl font-semibold mb-4">Stats</h2>
-      <div class="card bg-base-300 p-6 rounded-2xl flex flex-col">
+      <div class="card bg-base-200 p-6 rounded-2xl flex flex-col">
         <div class="space-y-2">
           <div>
             <span class="font-medium">Total Cubes:</span>
@@ -49,25 +49,8 @@
             <span class="font-medium">Achievements:</span>
             {user_achievements.length}
           </div>
-          <div>
-            <span class="font-medium">Friends:</span>
-            {friends.length}
-          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Friends List -->
-  <div>
-    <h2 class="text-xl font-semibold mb-2">Friends</h2>
-    <div class="flex flex-col gap-2">
-      {#each friends as friend}
-        <UserCard profile={friend} showCount={false} />
-      {/each}
-      {#if friends.length === 0}
-        <p class="italic">No friends added.</p>
-      {/if}
     </div>
   </div>
 

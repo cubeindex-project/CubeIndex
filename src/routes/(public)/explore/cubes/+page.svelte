@@ -215,27 +215,27 @@
   const sortedCubes = $derived.by(() => {
     const arr = filteredCubes.slice();
     arr.sort((a, b) => {
-      let av: any;
-      let bv: any;
-      switch (sortField) {
-        case "rating":
-          av = a.rating ?? 0;
-          bv = b.rating ?? 0;
-          break;
-        case "popularity":
-          av = a._popularity ?? 0;
-          bv = b._popularity ?? 0;
-          break;
-        case "name":
-          av = a._name;
-          bv = b._name;
-          break;
-        default:
-          av = new Date(a.verified_at ?? a.created_at).getTime();
-          bv = new Date(b.verified_at ?? b.created_at).getTime();
-      }
-      if (av < bv) return sortOrder === "asc" ? -1 : 1;
-      if (av > bv) return sortOrder === "asc" ? 1 : -1;
+      // let av: any;
+      // let bv: any;
+      // switch (sortField) {
+      //   case "rating":
+      //     av = a.rating ?? 0;
+      //     bv = b.rating ?? 0;
+      //     break;
+      //   case "popularity":
+      //     av = a._popularity ?? 0;
+      //     bv = b._popularity ?? 0;
+      //     break;
+      //   case "name":
+      //     av = a._name;
+      //     bv = b._name;
+      //     break;
+      //   default:
+      //     av = new Date(a.verified_at ?? a.created_at).getTime();
+      //     bv = new Date(b.verified_at ?? b.created_at).getTime();
+      // }
+      // if (av < bv) return sortOrder === "asc" ? -1 : 1;
+      // if (av > bv) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
     return arr;
@@ -422,7 +422,7 @@
                     <option value={96}>96</option>
                   </select>
                 </div>
-                <div class="flex items-center">
+                <!-- <div class="flex items-center">
                   <label class="text-sm mr-2" for="sortField">Sort by:</label>
                   <select
                     id="sortField"
@@ -443,7 +443,7 @@
                     <option value="desc">Descending</option>
                     <option value="asc">Ascending</option>
                   </select>
-                </div>
+                </div> -->
               </div>
               <!-- Link to compare page -->
               <div>

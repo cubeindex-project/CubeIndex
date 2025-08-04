@@ -22,13 +22,13 @@
 </script>
 
 <div
-  class="min-h-screen mx-8 lg:mx-24 p-6 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-rows-fr"
+  class="min-h-screen mx-8 lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
 >
-  <div class="col-span-full lg:col-span-1 flex flex-col gap-6">
+  <div class="col-span-1 flex flex-col gap-6">
     <!-- Bio Card -->
     {#if profile.bio}
       <div>
-        <h2 class="text-2xl font-semibold mb-2">Bio</h2>
+        <h2 class="text-xl font-semibold mb-2">Bio</h2>
         <div class="card bg-base-300 p-4 rounded-2xl max-h-96 overflow-auto">
           <Markdown {carta} value={profile.bio} />
         </div>
@@ -73,7 +73,7 @@
   <!-- Main Cubes -->
   <div class="col-span-full lg:col-span-2">
     <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-4">
       {#each main_cubes as cube}
         <UserCubeCard
           {cube}

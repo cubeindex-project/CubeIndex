@@ -9,7 +9,7 @@ import { z } from "zod/v4";
 const profileSchema = z.object({
   profile_picture: z.url().optional(),
   banner: z.url().optional(),
-  display_name: z.string().min(3, "Username must have than 3 characters"),
+  display_name: z.string().min(3, "The display name must have more than 3 characters"),
   bio: z.string(),
   private_profile: z.boolean(),
 });

@@ -258,7 +258,8 @@
                     ? $form.profile_picture
                     : null,
                 }}
-                size="lg"
+                imgSize="size-55 sm:size-64"
+                textSize="text-9xl"
               />
 
               <!-- Avatar URL -->

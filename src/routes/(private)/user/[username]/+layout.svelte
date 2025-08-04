@@ -135,7 +135,7 @@
         <div
           class="flex justify-center lg:justify-between items-center mx-auto"
         >
-          <div class="flex flex-col sm:flex-row">
+          <div class="flex flex-col sm:flex-row w-full">
             <div
               class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 z-50 relative"
             >
@@ -146,7 +146,7 @@
               />
             </div>
 
-            <div class="flex flex-row">
+            <div class="flex flex-row justify-between">
               <div class="mt-3 sm:ml-3">
                 <h2
                   class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight"
@@ -169,7 +169,7 @@
                 </p>
 
                 {#if user?.id !== profile.user_id}
-                  <div class="mt-2">
+                  <div class="mt-2 sm:hidden block">
                     <FollowButton
                       user_id={profile.user_id}
                       isFollowing={following.length !== 1}

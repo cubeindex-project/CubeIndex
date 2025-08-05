@@ -18,7 +18,7 @@
         await navigator.share({ title: document.title, text, url });
         return;
       } catch (err) {
-        new Error("Share failed" + err);
+        new Error(`Sharing link failed: ${err instanceof Error ? err.message : err}`);
       }
     }
 
@@ -26,7 +26,7 @@
       await navigator.clipboard.writeText(url);
       alert("Link copied to clipboard");
     } catch (err) {
-      new Error("Copy failed" + err);
+      new Error(`Copy to clipboard failed: ${err instanceof Error ? err.message : err}`);
       prompt("Copy this link:", url);
     }
   }

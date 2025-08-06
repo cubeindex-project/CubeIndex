@@ -3,12 +3,9 @@
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
-  import type { Profiles } from "../types/profile";
 
   const { user_rating, cube } = $props();
 
-  let profile: Profiles = $state({} as Profiles);
-  let profiles: Profiles[] = $state([]);
   let helpful_ratings: any[] = $state([]);
 
   let confDeleteRating = $state(false);
@@ -64,19 +61,10 @@
   const maxCommentLength = 300;
 
   onMount(async () => {
-    const { data, error: pErr } = await supabase.from("profiles").select("*");
-
-    if (pErr) {
-      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
-    }
-
-    profiles = data;
-    profile =
-      data.find((p) => p.user_id === user_rating.user_id) ?? ({} as Profiles);
-
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_rating")
-      .select("*");
+      .select("*, user_id(*)")
+      .eq("rating", user_rating.id);
 
     if (helpErr) {
       throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
@@ -104,8 +92,8 @@
 
     <span class="text-sm">
       by
-      <a href="/user/{profile.username}" class="underline">
-        {profile.display_name}
+      <a href="/user/{user_rating.user_id.username}" class="underline">
+        {user_rating.user_id.display_name}
       </a>
     </span>
 
@@ -172,7 +160,7 @@
       this helpful :
     </p>
     {#each helpful_ratings as hr}
-      <a href="/user/{profile.username}">{hr.display_name}</a>
+      <a href="/user/{hr.user_id.username}">{hr.user_id.display_name}</a>
     {/each}
   {/if}
 </div>

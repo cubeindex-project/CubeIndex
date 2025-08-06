@@ -9,7 +9,7 @@
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import Avatar from "$lib/components/user/avatar.svelte";
   import Markdown from "svelte-exmarkdown";
-  import 'github-markdown-css/github-markdown.css';
+  import "github-markdown-css/github-markdown.css";
 
   const plugins = [gfmPlugin()];
 
@@ -58,7 +58,7 @@
   const params = queryParameters();
 
   // Tabs: 'profile' | 'social' | 'security'
-  let tab: "profile" | "social" | "security" | "appearance" = $state(
+  let tab: "profile" | "social" | "security" | "appearance" = $derived(
     $params.tab ?? "profile"
   );
 
@@ -238,7 +238,9 @@
                     placeholder="Tell us something cool..."
                     class="textarea w-full flex-1"
                   ></textarea>
-                  <div class="flex-1 rounded-2xl p-3 markdown-body !bg-base-300 !text-base-content">
+                  <div
+                    class="flex-1 rounded-2xl p-3 markdown-body !bg-base-300 !text-base-content"
+                  >
                     <Markdown md={DOMPurify.sanitize($form.bio)} {plugins} />
                   </div>
                 </div>

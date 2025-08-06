@@ -149,7 +149,7 @@
             <div class="flex flex-row justify-between">
               <div class="mt-3 sm:ml-3">
                 <h2
-                  class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight"
+                  class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight gap-2"
                 >
                   <div class="flex flex-col">
                     <span class="font-extrabold font-clash text-3xl sm:text-4xl"

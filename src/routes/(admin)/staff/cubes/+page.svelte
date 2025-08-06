@@ -45,7 +45,7 @@
     while (true) {
       const { data, error } = await supabase
         .from("cube_models")
-        .select("*")
+        .select("*, verified_by_id(user_id, display_name)")
         .range(start, start + BATCH - 1);
 
       if (error) throw error;
@@ -56,28 +56,6 @@
       start += BATCH;
     }
 
-    const verifierIds = [
-      ...new Set(allCubes.map((c) => c.verified_by).filter((id) => id)),
-    ].filter(Boolean) as string[];
-    const verifierMap = new Map<string, string>();
-
-    if (verifierIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("user_id, display_name")
-        .in("user_id", verifierIds);
-      if (profilesError) {
-        throw new Error(
-          "Error fetching verifier profiles:" + profilesError.message
-        );
-      } else if (profiles) {
-        for (const profile of profiles) {
-          if (profile.display_name) {
-            verifierMap.set(profile.user_id, profile.display_name);
-          }
-        }
-      }
-    }
     const cubesWithMeta = allCubes.map((c) => {
       const feats = featureMap.get(c.slug) ?? new Set<string>();
       return {
@@ -90,9 +68,6 @@
         _modded: feats.has("modded"),
         _stickered: feats.has("stickered"),
         _smart: feats.has("smart"),
-        verified_by_name: c.verified_by
-          ? verifierMap.get(c.verified_by)
-          : undefined,
       };
     });
 

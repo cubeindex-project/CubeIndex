@@ -14,8 +14,7 @@ export const load = (async ({ parent, params, data }) => {
     .order("series", { ascending: true });
 
   if (cErr) {
-    console.error("A 500 status code error occured:", cErr.message);
-    return;
+    throw new Error("A 500 status code error occured:" + cErr.message);
   }
 
   const cube: Cube = cubes.find((c) => c.slug === slug) ?? ({} as Cube);
@@ -26,8 +25,7 @@ export const load = (async ({ parent, params, data }) => {
     .eq("cube", cube.slug);
 
   if (featErr) {
-    console.error("A 500 status code error occured:", featErr.message);
-    return;
+    throw new Error("A 500 status code error occured:" + featErr.message);
   }
 
   const sameSeries: Cube[] = cubes.filter(
@@ -45,14 +43,13 @@ export const load = (async ({ parent, params, data }) => {
     (c) => c.related_to === cube.slug && c.status === "Approved"
   );
 
-  const { data: cubeUserCount, error: ucErr } = await supabase
+  const { data: user_cubes, error: ucErr } = await supabase
     .from("user_cubes")
     .select("*")
     .eq("cube", cube.slug);
 
   if (ucErr) {
-    console.error(`Failed to fetch cube user counts: ${ucErr.message}`);
-    return;
+    throw new Error(`Failed to fetch cube user counts: ${ucErr.message}`);
   }
 
   const { data: user_cube_ratings, error: urErr } = await supabase
@@ -61,17 +58,7 @@ export const load = (async ({ parent, params, data }) => {
     .eq("cube_slug", cube.slug);
 
   if (urErr) {
-    console.error(`Failed to fetch user ratings: ${urErr.message}`);
-    return;
-  }
-
-  const { data: profiles, error: psErr } = await supabase
-    .from("profiles")
-    .select("id, username");
-
-  if (psErr) {
-    console.error(500, `Failed to fetch profiles: ${psErr.message}`);
-    return;
+    throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
   }
 
   const { data: vendor_links, error: cvlErr } = await supabase
@@ -80,11 +67,33 @@ export const load = (async ({ parent, params, data }) => {
     .eq("cube_slug", cube.slug);
 
   if (cvlErr) {
-    console.error(
-      500,
-      `Failed to fetch vendor links for cube "${cube.slug}": ${cvlErr.message}`
+    throw new Error(
+      `500, Failed to fetch vendor links for cube "${cube.slug}": ${cvlErr.message}`
     );
-    return;
+  }
+
+  const { data: verifiedBy, error: verifiedErr } = await supabase
+    .from("cube_models")
+    .select("verified_by_id(display_name, username)")
+    .eq("slug", cube.slug)
+    .single();
+
+  if (verifiedErr) {
+    throw new Error(
+      `500, Failed to fetch verified_by": ${verifiedErr.message}`
+    );
+  }
+
+  const { data: submittedBy, error: submittedErr } = await supabase
+    .from("cube_models")
+    .select("submitted_by_id(display_name, username)")
+    .eq("slug", cube.slug)
+    .single();
+
+  if (submittedErr) {
+    throw new Error(
+      `500, Failed to fetch verified_by": ${submittedErr.message}`
+    );
   }
 
   return {
@@ -93,10 +102,11 @@ export const load = (async ({ parent, params, data }) => {
     sameSeries,
     relatedCube,
     cubeTrims,
-    cubeUserCount,
+    user_cubes,
     user_cube_ratings,
-    profiles,
     vendor_links,
     features,
+    verifiedBy: verifiedBy.verified_by_id,
+    submittedBy: submittedBy.submitted_by_id,
   };
 }) satisfies PageLoad;

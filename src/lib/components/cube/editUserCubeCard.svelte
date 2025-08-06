@@ -1,6 +1,5 @@
 <script lang="ts">
   import CubeVersionType from "./cubeVersionType.svelte";
-  import { supabase } from "$lib/supabaseClient";
 
   let { cube, user_details = [], image } = $props();
 
@@ -15,7 +14,6 @@
 
   const user_details_cube = user_details.find((ud) => ud.cube === cube.slug);
 
-  let username = $state(user_details_cube.username);
   let slug = $state(user_details_cube.cube);
   let quantity = $state(user_details_cube.quantity);
   let condition = $state(user_details_cube.condition);
@@ -108,7 +106,7 @@
       {#if cube.version_type !== "Base"}
         <span class="text-secondary">{cube.version_name}</span>
       {/if}
-      <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+      <CubeVersionType version_type={cube.version_type} />
     </h2>
     <p class="text-sm">
       {cube.type} ・ {cube.brand}

@@ -50,12 +50,10 @@
     const payload: {
       cube_id: number;
       status: string;
-      verified_by: string;
       notes?: string;
     } = {
       cube_id,
       status: reason === "Accept" ? "Approved" : "Rejected",
-      verified_by: username,
     };
     if (reason === "Reject")
       payload.notes = note === "___other" ? otherNote : note;

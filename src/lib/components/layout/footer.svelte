@@ -4,15 +4,13 @@
     <div>
       <div class="flex items-center gap-2 mb-4">
         <img
-          src="/images/CubeIndex removebg.png"
+          src="/images/CubeIndex - Pixel Art.png"
           alt="CubeIndex logo"
-          class="w-10 h-10"
+          class="h-10 w-10 rounded-full"
         />
         <span class="text-2xl font-clash font-bold">CubeIndex</span>
       </div>
-      <p class="text-sm text-gray-400">
-        Track, explore and share your speedcube collection.
-      </p>
+      <p class="text-sm">Track, explore and share your speedcube collection.</p>
     </div>
 
     <!-- Site Links -->

@@ -1,17 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { PageData } from "./$types";
   import { supabase } from "$lib/supabaseClient";
-
-  let { data }: { data: PageData } = $props();
 
   // Your notifications array should come from your load function or state
   let notifications: any[] = $state([]);
 
   async function getMessages() {
-    let { data, error } = await supabase.from("announcement").select("*");
+    let { data, error: err } = await supabase.from("announcement").select("*");
 
-    if (error) console.error("Error while loading announcement:", error);
+    if (err) throw new Error("Error while loading announcement:" + err.message);
 
     notifications = data || [];
   }

@@ -4,7 +4,7 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
 
   let { data }: { data: PageData } = $props();
-  let { user_cube_ratings, cubes = [] } = data;
+  let { user_cube_ratings } = data;
 
   let searchTerm: string = $state("");
   let filteredRatings: any[] = $state([]);
@@ -26,10 +26,6 @@
       );
     }
   });
-
-  function findCube(user_rating: { cube_slug: string }) {
-    return cubes.find((c) => user_rating.cube_slug === c.slug);
-  }
 </script>
 
 <div class="flex flex-col items-center mt-12">
@@ -46,7 +42,7 @@
 
     {#if filteredRatings}
       {#each filteredRatings as user_rating}
-        <StaffRatingCard {user_rating} cube={findCube(user_rating)} />
+        <StaffRatingCard {user_rating} cube={user_rating.cube_slug} />
       {/each}
     {:else}
       <div

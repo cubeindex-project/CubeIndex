@@ -4,7 +4,7 @@
   import CubeVersionType from "../cube/cubeVersionType.svelte";
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import UnapproveCube from "./unapproveCube.svelte";
-  
+
   // single props destructure
   let { cube, profile } = $props();
 
@@ -44,7 +44,7 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type}/>
+        <CubeVersionType version_type={cube.version_type} />
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
@@ -55,7 +55,7 @@
 
       <div class="py-4">
         <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-          Verified By: {cube.verified_by}
+          Verified By: {cube.verified_by_id.display_name}
         </h2>
       </div>
 
@@ -100,7 +100,7 @@
         {#if cube.version_type !== "Base"}
           <span class="text-blue-400">{cube.version_name}</span>
         {/if}
-        <CubeVersionType version_type={cube.version_type}/>
+        <CubeVersionType version_type={cube.version_type} />
       </h2>
       <p class="text-sm text-gray-400">
         {cube.type} ・ {cube.brand}
@@ -164,21 +164,18 @@
 
       <div class="flex flex-col gap-4 mt-4">
         <div class="flex flex-row items-center">
-          <h2 class="text-lg">
-            <span class="font-bold">Verified By:</span>
-            {cube.verified_by}
+          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+            Verified By: {cube.verified_by_id.display_name}
           </h2>
         </div>
 
         <div>
-          <h2 class="text-lg font-bold flex items-center gap-2">
-            Reason:
-          </h2>
+          <h2 class="text-lg font-bold flex items-center gap-2">Reason:</h2>
           <p>{cube.notes}</p>
         </div>
       </div>
 
-      {#if profile.username === cube.verified_by}
+      {#if profile.user_id === cube.verified_by_id.user_id}
         <button
           class="btn btn-warning mt-4"
           onclick={() => toggleModNotes("Edit")}

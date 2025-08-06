@@ -2,7 +2,18 @@
   import { getContext } from "svelte";
   import { blur } from "svelte/transition";
 
-  let { onCancel, cube } = $props();
+  let {
+    onCancel,
+    cube,
+    defaultData = {
+      quantity: 1,
+      condition: "",
+      main: false,
+      status: "",
+      notes: "",
+      acquired_at: "",
+    },
+  } = $props();
 
   let isConnected = getContext("user");
 
@@ -11,12 +22,12 @@
   let formMessage = $state("");
 
   let slug = $derived(cube.slug);
-  let quantity = $state(1);
-  let condition = $state("");
-  let main = $state(false);
-  let status = $state("");
-  let notes = $state("");
-  let acquired_at = $state("");
+  let quantity = $state(defaultData.quantity);
+  let condition = $state(defaultData.condition);
+  let main = $state(defaultData.main);
+  let status = $state(defaultData.status);
+  let notes = $state(defaultData.notes);
+  let acquired_at = $state(defaultData.acquired_at);
 
   $effect(() => {
     const _ = status;
@@ -35,8 +46,6 @@
       notes,
       acquired_at,
     };
-
-    console.log(payload);
 
     try {
       const res = await fetch("/api/add-cube-to-collection", {

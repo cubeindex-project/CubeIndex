@@ -20,25 +20,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     acquired_at: string;
   } = await request.json();
 
-  const { data: profile, error: profileErr } = await locals.supabase
-    .from("profiles")
-    .select("username")
-    .eq("user_id", locals.user?.id)
-    .single();
-
-  if (profileErr)
-    return json(
-      {
-        success: false,
-        error: "Couldn't find connected user, check that you are logged in!",
-      },
-      { status: 500 }
-    );
-
   const { error: userCubesErr } = await locals.supabase
     .from("user_cubes")
-    .insert({
-      username: profile.username,
+    .upsert({
+      user_id: locals.user?.id,
       cube,
       quantity,
       main,
@@ -46,20 +31,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       status,
       notes,
       acquired_at: acquired_at ? acquired_at : null,
-    })
-    .select();
+    });
 
-  if (
-    userCubesErr?.message ===
-    'duplicate key value violates unique constraint "user_cubes_pkey"'
-  )
-    return json(
-      {
-        success: false,
-        error: "You already added this cube to your collection!",
-      },
-      { status: 500 }
-    );
   if (userCubesErr)
     return json(
       { success: false, error: "An error occured: " + userCubesErr.message },

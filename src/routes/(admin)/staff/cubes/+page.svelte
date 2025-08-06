@@ -13,6 +13,7 @@
     _modded: boolean;
     _stickered: boolean;
     _smart: boolean;
+    verified_by_name?: string;
   };
 
   const { data } = $props();
@@ -31,8 +32,7 @@
       .select("*");
 
     if (featErr) {
-      console.error("A 500 status code error occured:", featErr.message);
-      return;
+      throw new Error("A 500 status code error occured:" + featErr.message);
     }
 
     for (const { cube, feature } of features) {
@@ -41,41 +41,42 @@
       }
       featureMap.get(cube)!.add(feature);
     }
+    let allCubes: Cube[] = [];
     while (true) {
       const { data, error } = await supabase
         .from("cube_models")
-        .select("*")
+        .select("*, verified_by_id(user_id, display_name)")
         .range(start, start + BATCH - 1);
 
       if (error) throw error;
-      loading = false;
       if (data.length === 0) {
         break;
       }
-
-      const cubesWithMeta = data.map((c) => {
-        const feats = featureMap.get(c.slug) ?? new Set<string>();
-        return {
-          ...c,
-          _year: new Date(c.release_date ?? "").getFullYear(),
-          _name:
-            `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
-          _wcaLegal: feats.has("wca_legal"),
-          _magnetic: feats.has("magnetic"),
-          _modded: feats.has("modded"),
-          _stickered: feats.has("stickered"),
-          _smart: feats.has("smart"),
-        };
-      });
-
-      cubes = cubes.concat(cubesWithMeta);
+      allCubes = allCubes.concat(data);
       start += BATCH;
     }
+
+    const cubesWithMeta = allCubes.map((c) => {
+      const feats = featureMap.get(c.slug) ?? new Set<string>();
+      return {
+        ...c,
+        _year: new Date(c.release_date ?? "").getFullYear(),
+        _name:
+          `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
+        _wcaLegal: feats.has("wca_legal"),
+        _magnetic: feats.has("magnetic"),
+        _modded: feats.has("modded"),
+        _stickered: feats.has("stickered"),
+        _smart: feats.has("smart"),
+      };
+    });
+
+    cubes = cubesWithMeta;
+    loading = false;
   }
 
   // 1) Filter state (year is string 'All' or a year text)
   let cubes: CubeWithMeta[] = $state([]);
-  let features: any[] = $state([]);
   let selectedType: string = $state("All");
   let selectedBrand: string = $state("All");
   let WCALegal: boolean | undefined = $state(undefined);

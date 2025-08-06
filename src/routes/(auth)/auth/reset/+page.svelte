@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import { supabase } from "$lib/supabaseClient.js";
+  import { SsgoiTransition } from "@ssgoi/svelte";
   import { onMount } from "svelte";
   let password = $state("");
   let showPassword = $state(false);
@@ -35,58 +37,61 @@
   }
 </script>
 
-<section class="min-h-screen flex flex-col items-center justify-center px-6">
-  <div
-    class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
-  >
-    <h1 class="text-3xl font-clash font-bold text-center mb-6">
-      Reset Password
-    </h1>
-    <form onsubmit={resetPassword} class="space-y-6">
-      <div>
-        <label class="block text-sm font-medium"
-          >New Password
-          <div class="flex flex-row items-center">
+<SsgoiTransition id={page.url.pathname}>
+  <section class="min-h-screen flex flex-col items-center justify-center px-6">
+    <div
+      class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
+    >
+      <h1 class="text-3xl font-clash font-bold text-center mb-6">
+        Reset Password
+      </h1>
+      <form onsubmit={resetPassword} class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium"
+            >New Password
+            <div class="flex flex-row items-center">
+              <input
+                bind:value={password}
+                type={showPassword ? "text" : "password"}
+                class="input w-full"
+                required
+              />
+              <label class="swap text-md">
+                <input
+                  type="checkbox"
+                  onclick={() => {
+                    showPassword = !showPassword;
+                  }}
+                  class="sr-only peer"
+                />
+                <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
+                <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"
+                ></i>
+              </label>
+            </div>
+          </label>
+        </div>
+        <div>
+          <label class="block text-sm font-medium"
+            >Confirm Password
             <input
-              bind:value={password}
-              type={showPassword ? "text" : "password"}
+              type="password"
+              bind:value={confirmPassword}
               class="input w-full"
               required
             />
-            <label class="swap text-md">
-              <input
-                type="checkbox"
-                onclick={() => {
-                  showPassword = !showPassword;
-                }}
-                class="sr-only peer"
-              />
-              <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
-              <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"></i>
-            </label>
-          </div>
-        </label>
-      </div>
-      <div>
-        <label class="block text-sm font-medium"
-          >Confirm Password
-          <input
-            type="password"
-            bind:value={confirmPassword}
-            class="input w-full"
-            required
-          />
-        </label>
-      </div>
-      <button type="submit" class="btn btn-primary w-full"
-        >Update Password</button
-      >
-      {#if error}
-        <p class="text-sm text-red-500 text-center mt-2">{error}</p>
-      {/if}
-      {#if message}
-        <p class="text-sm text-green-400 text-center mt-2">{message}</p>
-      {/if}
-    </form>
-  </div>
-</section>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary w-full"
+          >Update Password</button
+        >
+        {#if error}
+          <p class="text-sm text-red-500 text-center mt-2">{error}</p>
+        {/if}
+        {#if message}
+          <p class="text-sm text-green-400 text-center mt-2">{message}</p>
+        {/if}
+      </form>
+    </div>
+  </section>
+</SsgoiTransition>

@@ -6,6 +6,22 @@
   import Disclaimer from "$lib/components/layout/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
+  import { Ssgoi } from "@ssgoi/svelte";
+  import { blur } from "@ssgoi/svelte/transitions";
+  import { hero } from "@ssgoi/svelte/view-transitions";
+  import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
+
+  const config = {
+    defaultTransition: blur(),
+    transitions: [
+      {
+        from: "/explore/cubes",
+        to: "/explore/cubes/*",
+        transition: hero(),
+        symmetric: true,
+      },
+    ],
+  };
 
   let { data, children } = $props();
 
@@ -26,7 +42,6 @@
   });
 
   import { setContext } from "svelte";
-  import type { Profiles } from "$lib/components/types/profile";
   setContext("user", data.user);
   setContext("session", data.session);
 </script>
@@ -36,9 +51,13 @@
     (function () {
       try {
         const t = localStorage.getItem("theme");
-        if (t) document.documentElement.dataset.theme = t;
+        if (t) {
+          document.documentElement.dataset.theme = t;
+        } else {
+          localStorage.setItem("theme", "dark");
+        }
       } catch (e) {
-        console.error("Error initializing theme from localStorage:", e);
+        throw new Error("Error initializing theme from localStorage:" + e);
       }
     })();
   </script>
@@ -53,9 +72,12 @@
 <Navbar session={data.session} />
 
 <Toaster />
+<ClientErrorReporter />
 
-<section class="bg-base-100">
-  {@render children()}
-</section>
+<Ssgoi {config}>
+  <section class="bg-base-100 relative">
+    {@render children()}
+  </section>
+</Ssgoi>
 
 <Footer />

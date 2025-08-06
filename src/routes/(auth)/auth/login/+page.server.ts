@@ -20,14 +20,12 @@ export const actions: Actions = {
 
     const { data: profile, error: profileErr } = await supabase
       .from("profiles")
-      .select("id")
+      .select("username")
       .eq("user_id", user?.id)
       .single();
 
     if (profileErr) return fail(500, { error: profileErr.message });
 
-    redirect(303, `/user/${profile?.id}`);
-
-    return { message: "Logged in successfully!" };
+    redirect(303, `/user/${profile?.username}`);
   },
 };

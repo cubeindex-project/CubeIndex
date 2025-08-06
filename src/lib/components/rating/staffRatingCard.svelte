@@ -1,15 +1,11 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
-  import { idOfUser } from "../helper_functions/idOfUser";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
-  import type { Profiles } from "../types/profile";
 
   const { user_rating, cube } = $props();
 
-  let profile: Profiles = $state({} as Profiles);
-  let profiles: Profiles[] = $state([]);
   let helpful_ratings: any[] = $state([]);
 
   let confDeleteRating = $state(false);
@@ -48,7 +44,7 @@
         }, 1000);
       } else {
         loading = false;
-        alert("Failed: " + data.error);
+        new Error("Failed: " + data.error);
       }
     }, 1000);
   }
@@ -65,25 +61,13 @@
   const maxCommentLength = 300;
 
   onMount(async () => {
-    const { data, error: pErr } = await supabase.from("profiles").select("*");
-
-    if (pErr) {
-      console.error(500, `Failed to fetch profiles: ${pErr.message}`);
-      return;
-    }
-
-    profiles = data;
-    profile =
-      data.find((p) => p.user_id === user_rating.user_id) ?? ({} as Profiles);
-
     const { data: helpful, error: helpErr } = await supabase
-      .from("helpful_cube_rating")
-      .select("*")
+      .from("helpful_rating")
+      .select("*, user_id(*)")
       .eq("rating", user_rating.id);
 
     if (helpErr) {
-      console.error(500, `Failed to fetch profiles: ${helpErr.message}`);
-      return;
+      throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
     }
 
     helpful_ratings = helpful;
@@ -108,8 +92,8 @@
 
     <span class="text-sm">
       by
-      <a href={idOfUser(profiles, user_rating.username)} class="underline">
-        {user_rating.username}
+      <a href="/user/{user_rating.user_id.username}" class="underline">
+        {user_rating.user_id.display_name}
       </a>
     </span>
 
@@ -176,7 +160,7 @@
       this helpful :
     </p>
     {#each helpful_ratings as hr}
-      <a href={idOfUser(profiles, hr.username)}>{hr.username}</a>
+      <a href="/user/{hr.user_id.username}">{hr.user_id.display_name}</a>
     {/each}
   {/if}
 </div>

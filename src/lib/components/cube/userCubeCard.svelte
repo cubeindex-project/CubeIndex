@@ -1,7 +1,14 @@
 <script lang="ts">
+  import Star from "../rating/Star.svelte";
+  import StarRating from "../rating/starRating.svelte";
+  import type { Cube } from "../types/cube";
   import CubeVersionType from "./cubeVersionType.svelte";
 
-  let { cube, user_details = [], image } = $props();
+  let {
+    cube,
+    user_details,
+    user_rating,
+  }: { cube: Cube; user_details: any[]; user_rating: number } = $props();
 
   let showNotes = $state(false);
 
@@ -20,21 +27,19 @@
       </div>
     {/if}
   </div>
-  {#if image}
-    <img
-      src={cube.image_url}
-      alt={cube.name}
-      class="w-full h-48 object-cover"
-    />
-  {/if}
+  <img
+    src={cube.image_url}
+    alt="{cube.series} {cube.model} {cube.version_name}"
+    class="w-full h-48 object-cover"
+  />
   <div class="p-5 flex-1 flex flex-col">
-    <h2 class="text-xl font-bold mb-1 items-center">
+    <h2 class="text-xl font-bold mb-1 items-center flex gap-2">
       {cube.series}
       {cube.model}
       {#if cube.version_type !== "Base"}
         <span class="text-secondary">{cube.version_name}</span>
       {/if}
-      <CubeVersionType version_type={cube.version_type} moreInfo={false} />
+      <CubeVersionType version_type={cube.version_type} />
     </h2>
     <p class="text-sm">
       {cube.type} ・ {cube.brand}
@@ -42,6 +47,14 @@
     <div class="mt-4 flex gap-2">
       {#if user_details.length > 0}
         <div>
+          {#if user_rating > 0}
+            <p class="flex flex-row gap-1">
+              <span class="font-bold">Rated It:</span>
+              <span class="flex items-center">
+                {user_rating} <i class="fa-solid fa-star"></i>
+              </span>
+            </p>
+          {/if}
           {#if user_details_cube[0].condition}
             <p>
               <span class="font-bold">Condition:</span>
@@ -56,8 +69,17 @@
           {/if}
           {#if user_details_cube[0].notes}
             <span class="font-bold">Notes:</span>
-            <button class="cursor-pointer link link-primary" onclick={() => {showNotes = !showNotes}}>Show</button>
-            <div class="bg-base-300 border border-base-100 p-2 rounded-2xl {showNotes ? "flex" : "hidden"}">
+            <button
+              class="cursor-pointer link link-primary"
+              onclick={() => {
+                showNotes = !showNotes;
+              }}>Show</button
+            >
+            <div
+              class="bg-base-300 border border-base-100 p-2 rounded-2xl {showNotes
+                ? 'flex'
+                : 'hidden'}"
+            >
               <p>
                 {user_details_cube[0].notes}
               </p>

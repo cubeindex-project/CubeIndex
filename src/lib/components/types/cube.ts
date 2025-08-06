@@ -60,10 +60,10 @@ export interface Cube {
   /** Optional surface finish enum */
   surface_finish?: CubeSurfaceFinishes | undefined;
 
-  /** references profiles.username */
+  /** references profiles.user_id */
   submitted_by: string;
 
-  /** references profiles.username */
+  /** references profiles.user_id */
   verified_by: string;
 
   /** public.submission_status, defaults to 'Pending' */

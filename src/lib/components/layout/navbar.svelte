@@ -8,21 +8,25 @@
 
   let loading = $state(true);
   let isOpen = $state(false);
-  let profile: { id: any; username: any; role: any } | null = $state(null);
+  let profile: {
+    id: number;
+    username: string;
+    display_name: string;
+    role: string;
+  } | null = $state(null);
   let { session } = $props();
   let signOutConfirmation = $state(false);
   let notificationOpen = $state(false);
-  let mobileThemeDropdown = $state(false);
 
   async function loadProfile() {
-    let { data, error } = await supabase
+    let { data, error: err } = await supabase
       .from("profiles")
-      .select("id, username, role")
+      .select("id, username, display_name, role")
       .eq("user_id", session.user.id)
       .maybeSingle();
 
-    if (error) {
-      console.error(error);
+    if (err) {
+      throw new Error(err.message);
     } else {
       profile = data;
     }
@@ -31,9 +35,9 @@
   let notifications: any[] = $state([]);
 
   async function getMessages() {
-    let { data, error } = await supabase.from("announcement").select("*");
+    let { data, error: err } = await supabase.from("announcement").select("*");
 
-    if (error) console.error("Error while loading announcement:", error);
+    if (err) throw new Error("Error while loading announcement:" + err.message);
 
     notifications = (data || []).filter(
       (notification) => notification.archived === false
@@ -45,15 +49,6 @@
     { name: "Achievements", href: "/achievements" },
     { name: "About", href: "/about" },
   ];
-
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
 
   let bellAnimate = $state(false);
   $effect(() => {
@@ -118,96 +113,6 @@
         {/if}
       </div>
 
-      <!-- Theme Switcher Dropdown -->
-      <div class="dropdown dropdown-end">
-        <button
-          class="inline-flex cursor-pointer text-sm rounded-xl mx-2 bg-base-300"
-        >
-          <span class="px-4 py-2">Theme</span>
-          <span class="pr-4 py-2">
-            <i class="fa-solid fa-caret-down"></i>
-          </span>
-        </button>
-        <ul
-          class="dropdown-content menu bg-base-200 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
-        >
-          <div class="divider mt-0">Light</div>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Light"
-              data-set-theme="light"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Lofi"
-              data-set-theme="lofi"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Winter"
-              data-set-theme="winter"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Lemonade"
-              data-set-theme="lemonade"
-            />
-          </li>
-          <div class="divider">Dark</div>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Dark"
-              data-set-theme="dark"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Black"
-              data-set-theme="black"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Synthwave"
-              data-set-theme="synthwave"
-            />
-          </li>
-          <li>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label="Forest"
-              data-set-theme="forest"
-            />
-          </li>
-        </ul>
-      </div>
-
       {#if loading}
         <i class="fa-solid fa-spinner animate-spin"></i>
       {:else if session && profile}
@@ -216,7 +121,7 @@
             class="inline-flex items-center cursor-pointer text-sm rounded-xl bg-primary text-primary-content transition focus:outline-none"
           >
             <span class="px-4 py-2">
-              {profile.username}
+              {profile.display_name}
             </span>
             <span class="pr-4">
               <i class="fa-solid fa-caret-down"></i>
@@ -226,7 +131,7 @@
             class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
             <li>
-              <a href={`/user/${profile.id}`} class="block px-4 py-2 text-sm">
+              <a href={`/user/${profile.username}`} class="block px-4 py-2 text-sm">
                 Profile
               </a>
             </li>
@@ -266,11 +171,12 @@
 
     <!-- Mobile Menu Button -->
     <button
+      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen ? 'swap-active' : ''}"
+      aria-label={isOpen ? "Close menu" : "Open menu"}
       onclick={() => (isOpen = !isOpen)}
-      class="focus:outline-none md:hidden cursor-pointer"
-      aria-label="Open menu"
     >
-      <i class="fa-solid fa-bars"></i>
+      <i class="fa-solid fa-bars swap-off"></i>
+      <i class="fa-solid fa-xmark swap-on"></i>
     </button>
   </div>
 
@@ -320,7 +226,7 @@
               onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
               class="btn btn-primary w-full"
             >
-              {profile.username}
+              {profile.display_name}
               <label class="swap swap-rotate">
                 <input
                   type="checkbox"
@@ -341,7 +247,7 @@
               >
                 <li>
                   <a
-                    href={`/user/${profile.id}`}
+                    href={`/user/${profile.username}`}
                     onclick={() => {
                       isOpen = false;
                       mobileProfileDropdown = false;
@@ -400,7 +306,7 @@
                 isOpen = false;
                 mobileProfileDropdown = false;
               }}
-              class="block rounded-xl bg-blue-600 py-2 text-center text-white transition hover:bg-blue-700"
+              class="block rounded-xl bg-primary py-2 text-center transition text-primary-content"
             >
               Login
             </a>

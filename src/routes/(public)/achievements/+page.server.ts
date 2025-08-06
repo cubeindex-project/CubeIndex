@@ -10,14 +10,7 @@ export async function load() {
 
   if (err) throw error(500, err.message);
 
-  const { data: profiles, error: profilesError } = await supabase
-    .from("profiles")
-    .select("id, username");
-
-  if (profilesError) throw error(500, profilesError.message);
-
   return {
-    profiles,
     achievements,
   };
 }

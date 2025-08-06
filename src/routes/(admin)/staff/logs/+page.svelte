@@ -5,24 +5,34 @@
   let staff_logs: any[] = $state([]);
 
   onMount(async () => {
-    const { data, error: err } = await supabase
-      .from("staff_logs")
-      .select("*")
-      .order("id", { ascending: true });
+    const BATCH = 500;
+    let start = 0;
+    while (true) {
+      const { data, error: err } = await supabase
+        .from("staff_logs")
+        .select("*, staff_id(display_name)")
+        .order("id", { ascending: true })
+        .range(start, start + BATCH - 1);
 
-    if (err) return console.error(500, err.message);
-    staff_logs = data;
+      if (err)
+        throw new Error(`Failed to load staff logs (500): ${err.message}`);
+
+      if (data.length === 0) break;
+
+      staff_logs = staff_logs.concat(data);
+      start += BATCH;
+    }
   });
 
   interface LogEntry {
     id: number;
     target_table: string;
     created_at: string;
-    staff: string;
     action: string;
     details: string;
     old_data: JSON;
     new_data: JSON;
+    staff_id: { display_name: string };
   }
 
   let logs: LogEntry[] = $derived(staff_logs);
@@ -114,7 +124,7 @@
     const _ = debouncedSearch;
     filtered = logs.filter(
       (log) =>
-        log.staff.toLowerCase().includes(debouncedSearch) ||
+        log.staff_id.display_name.toLowerCase().includes(debouncedSearch) ||
         log.action.toLowerCase().includes(debouncedSearch) ||
         log.created_at.toLowerCase().includes(debouncedSearch) ||
         log.target_table.toLowerCase().includes(debouncedSearch)
@@ -191,7 +201,7 @@
           <tr>
             <td>{log.id}</td>
             <td>{formatDate(log.created_at)}</td>
-            <td>{log.staff}</td>
+            <td>{log.staff_id.display_name}</td>
             <td>{log.target_table}</td>
             <td>{log.action}</td>
             <td>

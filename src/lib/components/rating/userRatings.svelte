@@ -32,13 +32,13 @@
       (ur: {
         rating: number;
         comment: string;
-        username: string;
+        display_name: string;
         created_at: string;
       }) =>
         (filterRating === undefined ||
           (ur.rating >= filterRating && ur.rating < filterRating + 1)) &&
         (ur.comment.includes(searchTerm.toLowerCase()) ||
-          ur.username.includes(searchTerm.toLowerCase()) ||
+          ur.display_name.includes(searchTerm.toLowerCase()) ||
           ur.created_at.includes(searchTerm.toLowerCase()))
     );
 
@@ -146,7 +146,6 @@
           {user_rating}
           {cube}
           isAuthor={user_rating.user_id === user?.id}
-          showCubeDetails={false}
         />
       {:else}
         <div

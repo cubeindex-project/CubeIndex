@@ -50,7 +50,7 @@ Smartphone (please complete the following information):
 Additional context
 Add any other context about the problem here.`;
 
-  async function rateCube() {
+  async function sendReport() {
     isSubmitting = true;
     formMessage = "";
     const payload: {
@@ -94,7 +94,7 @@ Add any other context about the problem here.`;
 >
   <form
     class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
-    onsubmit={rateCube}
+    onsubmit={sendReport}
   >
     <div class="card-body min-w-full">
       <h2 class="card-title">

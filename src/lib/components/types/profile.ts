@@ -19,6 +19,9 @@ export interface Profiles {
   /** Auth system UUID */
   user_id: string;
 
+  /** User choosen username */
+  display_name: string;
+
   /** Unique username */
   username: string;
 

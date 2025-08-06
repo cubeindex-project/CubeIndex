@@ -139,7 +139,7 @@
         >
       </div>
       <h1
-        class="text-4xl font-black text-primary font-clash drop-shadow mb-2 tracking-tight"
+        class="text-4xl font-black text-primary font-clash mb-2 tracking-tight"
       >
         {profile.role} Control Panel
       </h1>

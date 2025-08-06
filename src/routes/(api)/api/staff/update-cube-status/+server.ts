@@ -6,13 +6,15 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     cube_id,
     status,
     notes,
-    verified_by,
   }: {
     cube_id: string;
     status: string;
     notes: string;
-    verified_by: string;
   } = await request.json();
+
+  const user_id = locals.user?.id
+
+  if (!user_id) return json({ success: false, error: "You are not logged in!" }, { status: 500 });
 
   const payload: {
     status: string;
@@ -22,11 +24,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   } = {
     status,
     notes,
-    verified_by,
+    verified_by: user_id,
     verified_at: null,
   };
   if (status === "Approved" || status === "Rejected") {
-    payload.verified_at = (new Date()).toISOString();
+    payload.verified_at = new Date().toISOString();
   }
 
   const { error } = await locals.supabase

@@ -12,7 +12,7 @@ export const actions: Actions = {
     const acceptTOS = formData.get("acceptTOS");
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const usernameRegex = /^[a-z0-9\_]{3,}$/
+    const usernameRegex = /^[a-z0-9._]{3,}$/
 
     if (password.length < 8)
       return fail(400, { error: "Password must be at least 8 characters" });
@@ -26,7 +26,7 @@ export const actions: Actions = {
       });
     if (!usernameRegex.test(username))
       return fail(400, {
-        error: "Please enter a username with at least 3 characters, using only lowercase a-z, digits 0-9, or underscore (_).",
+        error: "Please enter a username with at least 3 characters, using only lowercase a-z, digits 0-9, dot (.) or underscore (_).",
       });
     if (!acceptTOS)
       return fail(400, {

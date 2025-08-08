@@ -1,0 +1,19 @@
+# NOTICE: The collection of content and other data on this site
+# through automated means, including any device, tool, or process
+# designed to data mine or scrape content, is prohibited except
+# (1) as provided by the below Content Usage directives or (2)
+# with express written permission from CubeIndex.
+
+# The Content Usage directives in this file use syntax and
+# vocabulary from a proposed IETF standard drafted by the AI
+# Preferences (aipref) working group and have the meanings set
+# forth in that standard. To learn more, please see
+# https://contentsignals.org/.
+
+# To request permission to license our intellectual property
+# and/or other materials, please contact us at
+# thecubeindex@gmail.com.
+
+User-Agent: *
+Content-Usage: tdm=y
+Allow: /

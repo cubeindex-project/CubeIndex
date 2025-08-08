@@ -137,7 +137,7 @@
         >
           <div class="flex flex-col sm:flex-row w-full">
             <div
-              class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 z-50 relative"
+              class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 relative"
             >
               <Avatar
                 {profile}

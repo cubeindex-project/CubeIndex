@@ -19,12 +19,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const payload: {
     status: string;
     notes: string;
-    verified_by: string;
+    verified_by_id: string;
     verified_at: string | null;
   } = {
     status,
     notes,
-    verified_by: user_id,
+    verified_by_id: user_id,
     verified_at: null,
   };
   if (status === "Approved" || status === "Rejected") {

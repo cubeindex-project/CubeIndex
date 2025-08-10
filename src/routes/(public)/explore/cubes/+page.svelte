@@ -27,6 +27,7 @@
   import { page } from "$app/state";
   // Custom transition wrapper from Ssgoi library
   import { SsgoiTransition } from "@ssgoi/svelte";
+  import type { SortOption } from "$lib/components/misc/sortSelector.svelte";
 
   // Extend Cube type with metadata for filtering and sorting
   type CubeWithMeta = Cube & {
@@ -142,13 +143,24 @@
   let searchTerm: string = $state(""); // Text input for search bar
   let currentPage: number = $state(1); // Current pagination page
   let itemsPerPage: number = $state(12); // Items shown per page
-  let sortField: string = $state("date"); // Field to sort by
+  let sortField: string = $state("name"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("desc"); // Sort direction
-  const sortOptions = [
-    { value: "date", label: "Date Added" },
-    { value: "rating", label: "Rating" },
-    { value: "popularity", label: "Popularity" },
-    { value: "name", label: "Name" },
+  const sortOptions: SortOption[] = [
+    { id: "name-asc", field: "name", order: "asc", label: "Name - Ascending" },
+    {
+      id: "name-desc",
+      field: "name",
+      order: "desc",
+      label: "Name - Descending",
+    },
+    { id: "rating-desc", field: "rating", order: "desc", label: "Rating" },
+    {
+      id: "popularity-desc",
+      field: "popularity",
+      order: "desc",
+      label: "Popularity",
+    },
+    { id: "date-desc", field: "date", order: "desc", label: "Date Added" },
   ];
 
   // 2) Options for filter dropdowns
@@ -376,7 +388,7 @@
               </label>
             </div>
             <!-- Tri-state feature filters -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2">
               <TriStateCheckbox bind:value={WCALegal} label="WCA Legal" />
               <TriStateCheckbox bind:value={magnetic} label="Magnetic" />
               <TriStateCheckbox bind:value={smart} label="Smart" />
@@ -405,12 +417,11 @@
               class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
             >
               <div class="flex flex-wrap items-center gap-4">
-                <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
-                <SortSelector
-                  bind:sortField
-                  bind:sortOrder
-                  options={sortOptions}
+                <ItemsPerPageSelector
+                  bind:itemsPerPage
+                  label="Cubes per page"
                 />
+                <SortSelector bind:sortField bind:sortOrder {sortOptions} />
               </div>
               <!-- Link to compare page -->
               <div>

@@ -1,44 +1,49 @@
 <script lang="ts">
-  /** Option for sorting */
   export interface SortOption {
-    /** Value used for the sort field */
-    value: string;
-    /** Human readable label */
+    id: string;
+    field: string;
+    order: "asc" | "desc";
     label: string;
   }
 
   let {
-    sortField = $bindable(),
+    sortField = $bindable("name"),
     sortOrder = $bindable("desc"),
-    options
+    sortOptions
   }: {
-    /** Currently selected field to sort by */
     sortField: string;
-    /** Direction of the sort, descending by default */
-    sortOrder?: "asc" | "desc";
-    /** Available fields for sorting */
-    options: SortOption[];
+    sortOrder: "asc" | "desc";
+    sortOptions: SortOption[];
   } = $props();
+
+  // Which option should appear selected based on current field/order?
+  let selectedId = $derived(() =>
+    sortOptions.find(o => o.field === sortField && o.order === sortOrder)?.id
+      ?? sortOptions[0]?.id
+  );
+
+  function onChange(e: Event) {
+    const id = (e.target as HTMLSelectElement).value;
+    const opt = sortOptions.find(o => o.id === id);
+    if (opt) {
+      // safe: runs in an event handler, not during render
+      sortField = opt.field;
+      sortOrder = opt.order;
+    }
+  }
 </script>
 
 <div class="flex items-center">
   <label class="text-sm mr-2" for="sortField">Sort by:</label>
   <select
     id="sortField"
-    bind:value={sortField}
-    class="px-4 py-2 rounded-lg bg-base-200 border border-base-300 mr-2"
+    bind:value={selectedId}
+    onchange={onChange}
+    class="select"
     style="width:auto"
   >
-    {#each options as { value, label }}
-      <option value={value}>{label}</option>
+    {#each sortOptions as o}
+      <option value={o.id}>{o.label}</option>
     {/each}
-  </select>
-  <select
-    bind:value={sortOrder}
-    class="px-4 py-2 rounded-lg bg-base-200 border border-base-300"
-    style="width:auto"
-  >
-    <option value="desc">Descending</option>
-    <option value="asc">Ascending</option>
   </select>
 </div>

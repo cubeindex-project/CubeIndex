@@ -18,7 +18,7 @@
   <select
     id="itemsPerPage"
     bind:value={itemsPerPage}
-    class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
+    class="select"
     style="width:auto"
   >
     {#each options as option}

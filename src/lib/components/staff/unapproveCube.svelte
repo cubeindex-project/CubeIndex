@@ -16,14 +16,14 @@
     });
     const data = await res.json();
 
-    if (data.success) {
-      success = true;
-      loading = false;
-      onCancel
-    } else {
-      loading = false;
-      new Error("Failed: " + data.error);
-    }
+  if (data.success) {
+    success = true;
+    loading = false;
+    onCancel
+  } else {
+    loading = false;
+    new Error(`Failed to unapprove cube: ${data.error}`);
+  }
   }
 </script>
 

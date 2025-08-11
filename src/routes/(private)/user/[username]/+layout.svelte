@@ -113,36 +113,43 @@
 
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-0 py-12 pt-0">
-    {#key page.url.pathname}
-      <div class="bg-base-200">
-        <!-- Banner full width -->
-        {#if profile.banner}
-          <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
-            <img
-              src={profile.banner}
-              alt="{profile.username}'s banner"
-              class="w-full h-full object-cover object-center"
-              loading="lazy"
-            />
-            <div class="absolute inset-0 pointer-events-none"></div>
-          </div>
-        {:else}
-          <div
-            class="relative w-full h-44 sm:h-56 bg-gradient-to-tr from-primary via-secondary to-neutral"
-          ></div>
-        {/if}
+    <div class="bg-base-200">
+      <!-- Banner full width -->
+      {#if profile.banner}
+        <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
+          <img
+            src={profile.banner}
+            alt="{profile.username}'s banner"
+            class="w-full h-full object-cover object-center"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 pointer-events-none"></div>
+        </div>
+      {:else}
+        <div
+          class="relative w-full h-44 sm:h-56 bg-gradient-to-tr from-primary via-secondary to-neutral"
+        ></div>
+      {/if}
 
-        <div class="mx-24">
-          <div class="flex justify-between w-full gap-2 items-center">
-            <div class="flex flex-row">
-              <div
-                class="flex flex-col items-center sm:items-start min-w-[120px] -mt-32 z-50 relative"
-              >
-                <Avatar {profile} size="lg" />
-              </div>
-              <div class="m-6">
+      <div class="mx-5 lg:mx-24">
+        <div
+          class="flex justify-center lg:justify-between items-center mx-auto"
+        >
+          <div class="flex flex-col sm:flex-row w-full">
+            <div
+              class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 relative"
+            >
+              <Avatar
+                {profile}
+                imgSize="size-55 sm:size-64"
+                textSize="text-9xl"
+              />
+            </div>
+
+            <div class="flex flex-row justify-between">
+              <div class="mt-3 sm:ml-3">
                 <h2
-                  class="md:flex-row flex flex-col gap-4 break-all sm:items-center items-start tracking-tight"
+                  class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight gap-2"
                 >
                   <div class="flex flex-col">
                     <span class="font-extrabold font-clash text-3xl sm:text-4xl"
@@ -156,102 +163,119 @@
                   </span>
                 </h2>
 
-                <p class="mt-2 gap-1">
+                <p class="gap-1">
                   <span class="font-semibold">Member since:</span>
                   <span class="font-mono">{formattedJoinDate}</span>
                 </p>
+
+                {#if user?.id && user.id !== profile.user_id}
+                  <div class="mt-2 sm:hidden block">
+                    <FollowButton
+                      user_id={profile.user_id}
+                      isFollowing={following.length !== 1}
+                    />
+                  </div>
+                {/if}
+              </div>
+
+              <div class="mt-6">
+                <button
+                  class="btn block md:hidden"
+                  popovertarget="popover-1"
+                  style="anchor-name:--anchor-1"
+                  aria-label="User Menu"
+                >
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <ul
+                  class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
+                  popover
+                  id="popover-1"
+                  style="position-anchor:--anchor-1"
+                >
+                  <div class="flex items-center">
+                    <ShareButton
+                      url={page.url.href}
+                      btnClass="btn btn-ghost w-full"
+                    />
+                  </div>
+                  {#if user?.id === profile.user_id}
+                    <a
+                      href="/user/settings"
+                      class="flex items-center gap-2 p-2 btn btn-ghost"
+                      aria-label="User Settings"
+                      title="User Settings"
+                    >
+                      <i class="fa-solid fa-gear"></i>
+                      <span>Settings</span>
+                    </a>
+                  {:else}
+                    <button
+                      class="flex items-center gap-2 p-2 btn btn-ghost w-full"
+                      onclick={toggleOpenReport}
+                    >
+                      <i class="fa-solid fa-flag"></i>
+                      <span>Report</span>
+                    </button>
+                  {/if}
+                </ul>
               </div>
             </div>
-            <div class="items-center justify-between gap-4 hidden md:flex">
-              <ShareButton url={page.url.href} btnClass="btn btn-accent" />
-              {#if user?.id === profile.user_id}
-                <a
-                  href="/user/settings"
-                  class="btn btn-primary ml-4"
-                  aria-label="User Settings"
-                  title="User Settings"
-                >
-                  <i class="fa-solid fa-gear"></i>
-                  <span>Settings</span>
-                </a>
-              {:else}
+          </div>
+          <div class="items-center justify-between gap-4 hidden md:flex">
+            <ShareButton url={page.url.href} btnClass="btn btn-accent" />
+            {#if user?.id === profile.user_id}
+              <a
+                href="/user/settings"
+                class="btn btn-primary ml-4"
+                aria-label="User Settings"
+                title="User Settings"
+              >
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+              </a>
+            {:else}
+              {#if user?.id && user.id !== profile.user_id}
                 <FollowButton
                   user_id={profile.user_id}
                   isFollowing={following.length !== 1}
                 />
-                <button class="btn btn-error" onclick={toggleOpenReport}>
-                  <i class="fa-solid fa-flag"></i>
-                  <span>Report</span>
-                </button>
               {/if}
-            </div>
-            <button
-              class="btn block md:hidden"
-              popovertarget="popover-1"
-              style="anchor-name:--anchor-1"
-              aria-label="User Menu"
-            >
-              <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-            <ul
-              class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
-              popover
-              id="popover-1"
-              style="position-anchor:--anchor-1"
-            >
-              <button class="flex justify-end items-center gap-2 p-2">
-                <ShareButton url={page.url.href} btnClass="btn w-full" />
+              <button class="btn btn-error" onclick={toggleOpenReport}>
+                <i class="fa-solid fa-flag"></i>
+                <span>Report</span>
               </button>
-              {#if user?.id === profile.user_id}
-                <a
-                  href="/user/settings"
-                  class="flex justify-end items-center gap-2 p-2"
-                  aria-label="User Settings"
-                  title="User Settings"
-                >
-                  <i class="fa-solid fa-gear"></i>
-                  <span>Settings</span>
-                </a>
-              {:else}
-                <button
-                  class="flex justify-end items-center gap-2 p-2"
-                  onclick={toggleOpenReport}
-                >
-                  <i class="fa-solid fa-flag"></i>
-                  <span>Report</span>
-                </button>
-              {/if}
-            </ul>
-          </div>
-          <!-- Info & Socials right -->
-          <div class="flex-1 w-full">
-            <!-- Socials Section -->
-            {#if socialsList.length}
-              <div class="mt-4">
-                <h4 class="text-lg font-bold mb-2">Socials</h4>
-                <div class="flex flex-wrap gap-3">
-                  {#each socialsList as { href, icon, bg, isImg, label }}
-                    <a
-                      {href}
-                      target="_blank"
-                      rel="noopener"
-                      class={`flex items-center gap-2 px-4 py-2 rounded-full ${bg} hover:opacity-90 text-white font-medium shadow`}
-                    >
-                      {#if isImg}
-                        <img src={icon} alt="{label} logo" class="h-5 w-5" />
-                      {:else}
-                        <i class={icon}></i>
-                      {/if}
-                      <span class="hidden sm:inline">{label}</span>
-                    </a>
-                  {/each}
-                </div>
-              </div>
             {/if}
           </div>
         </div>
+        <!-- Info & Socials right -->
+        <div class="flex-1 w-full">
+          <!-- Socials Section -->
+          {#if socialsList.length}
+            <div class="mt-4">
+              <h4 class="text-lg font-bold mb-2">Socials</h4>
+              <div class="flex flex-wrap gap-3">
+                {#each socialsList as { href, icon, bg, isImg, label }}
+                  <a
+                    {href}
+                    target="_blank"
+                    rel="noopener"
+                    class={`flex items-center gap-2 px-4 py-2 rounded-full ${bg} hover:opacity-90 text-white font-medium shadow`}
+                  >
+                    {#if isImg}
+                      <img src={icon} alt="{label} logo" class="h-5 w-5" />
+                    {:else}
+                      <i class={icon}></i>
+                    {/if}
+                    <span class="hidden sm:inline">{label}</span>
+                  </a>
+                {/each}
+              </div>
+            </div>
+          {/if}
+        </div>
       </div>
-    {/key}
+    </div>
 
     <div
       class="flex sm:justify-center bg-base-200 w-full p-5 pt-10 gap-10 overflow-scroll md:overflow-hidden"

@@ -15,7 +15,7 @@
     href={`/user/${profile.username}`}
     class="flex items-center gap-4 px-4 py-4 transition group"
   >
-    <Avatar {profile} size="sm" />
+    <Avatar {profile} imgSize="size-14 sm:size-14" textSize="text-2xl" />
     <div class="flex-1 min-w-0">
       <div class="flex flex-col gap-0.5">
         <span class="font-semibold truncate">
@@ -36,9 +36,6 @@
           </span>
         {/if}
       </div>
-      <p class="text-xs truncate max-w-full mt-1">
-        {profile.bio || ""}
-      </p>
     </div>
     <span
       class="ml-2 text-primary group-hover:translate-x-1 transition-transform"

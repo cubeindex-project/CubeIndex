@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { toast } from 'svelte-sonner';
+  import { onMount } from "svelte";
+  import { toast } from "svelte-sonner";
 
   function showToast(message: string) {
-    toast.error('A client error occurred', {
-      description: 'Click to report the bug',
+    toast.error("A client error occurred:\n" + message, {
+      description: "If you think it is a bug, click to report the bug",
       action: {
-        label: 'Report',
+        label: "Report",
         onClick: () => {
           const url = `/report?error=${encodeURIComponent(message)}`;
           window.location.href = url;
-        }
-      }
+        },
+      },
     });
   }
 
@@ -26,12 +26,12 @@
       showToast(msg);
     };
 
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleRejection);
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleRejection);
 
     return () => {
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleRejection);
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleRejection);
     };
   });
 </script>

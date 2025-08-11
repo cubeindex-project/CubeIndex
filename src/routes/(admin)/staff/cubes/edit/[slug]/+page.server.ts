@@ -6,7 +6,7 @@ import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner.js";
-import type { Cube } from "$lib/components/types/cube.js";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
 import { cubeSchema } from "$lib/components/form_schemas/cubeForm.js";
 
 export const load: PageServerLoad = async ({ params }) => {

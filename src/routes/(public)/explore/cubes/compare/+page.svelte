@@ -1,7 +1,7 @@
 <script lang="ts">
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import { supabase } from "$lib/supabaseClient";
-  import type { Cube } from "$lib/components/types/cube";
+  import type { Cube } from "$lib/components/dbTableTypes";
   import { onMount } from "svelte";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";

@@ -1,4 +1,5 @@
 import { error } from "@sveltejs/kit";
+import type { UserFollowsRow } from "$lib/components/dbTableTypes.js";
 
 export const load = async ({ params, locals }) => {
   const { username } = params;
@@ -13,13 +14,19 @@ export const load = async ({ params, locals }) => {
 
   if (!profile) throw error(404, "User not found");
 
-  const { data: following, error: followErr } = await locals.supabase
-    .from("user_follows")
-    .select("*")
-    .eq("follower_id", locals.user?.id)
-    .eq("following_id", profile.user_id);
+  let following: UserFollowsRow[] = [];
 
-  if (followErr) throw error(500, followErr.message);
+  if (locals.user?.id) {
+    const { data, error: followErr } = await locals.supabase
+      .from("user_follows")
+      .select("*")
+      .eq("follower_id", locals.user.id)
+      .eq("following_id", profile.user_id);
+
+    if (followErr) throw error(500, followErr.message);
+
+    following = data;
+  }
 
   return { profile, following };
 };

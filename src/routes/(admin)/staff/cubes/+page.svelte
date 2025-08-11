@@ -3,7 +3,10 @@
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
-  import type { Cube } from "$lib/components/types/cube.js";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
+  import Pagination from "$lib/components/misc/pagination.svelte";
+  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
+  import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -45,7 +48,7 @@
     while (true) {
       const { data, error } = await supabase
         .from("cube_models")
-        .select("*")
+        .select("*, verified_by_id(user_id, display_name)")
         .range(start, start + BATCH - 1);
 
       if (error) throw error;
@@ -56,28 +59,6 @@
       start += BATCH;
     }
 
-    const verifierIds = [
-      ...new Set(allCubes.map((c) => c.verified_by).filter((id) => id)),
-    ].filter(Boolean) as string[];
-    const verifierMap = new Map<string, string>();
-
-    if (verifierIds.length > 0) {
-      const { data: profiles, error: profilesError } = await supabase
-        .from("profiles")
-        .select("user_id, display_name")
-        .in("user_id", verifierIds);
-      if (profilesError) {
-        throw new Error(
-          "Error fetching verifier profiles:" + profilesError.message
-        );
-      } else if (profiles) {
-        for (const profile of profiles) {
-          if (profile.display_name) {
-            verifierMap.set(profile.user_id, profile.display_name);
-          }
-        }
-      }
-    }
     const cubesWithMeta = allCubes.map((c) => {
       const feats = featureMap.get(c.slug) ?? new Set<string>();
       return {
@@ -90,9 +71,6 @@
         _modded: feats.has("modded"),
         _stickered: feats.has("stickered"),
         _smart: feats.has("smart"),
-        verified_by_name: c.verified_by
-          ? verifierMap.get(c.verified_by)
-          : undefined,
       };
     });
 
@@ -200,18 +178,6 @@
     selectedCubeStatus = "All";
   }
 
-  function goToPreviousPage() {
-    if (currentPage > 1) {
-      currentPage -= 1;
-    }
-  }
-
-  function goToNextPage() {
-    if (currentPage < totalPages) {
-      currentPage += 1;
-    }
-  }
-
   $effect(() => {
     const _ = filteredCubes;
     currentPage = 1;
@@ -265,185 +231,164 @@
 
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Filters Sidebar -->
-      {#if showFilters}
-        <aside class="w-full lg:w-64">
-          <div
-            class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-0 max-h-full overflow-x-scroll"
-            transition:blur
+      <FilterSidebar
+        {showFilters}
+        asideClass="lg:w-64"
+        wrapperClass="top-0 max-h-full overflow-x-scroll"
+      >
+        <!-- Type -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Type:
+            <select
+              bind:value={selectedType}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option>All</option>
+              {#each allTypes as t}
+                <option>{t}</option>
+              {/each}
+            </select>
+          </label>
+        </div>
+        <!-- Brand -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Brand:
+            <select
+              bind:value={selectedBrand}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option>All</option>
+              {#each allBrands as b}
+                <option>{b}</option>
+              {/each}
+            </select></label
           >
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-semibold text-lg">Filters</span>
-            </div>
-            <div class="flex flex-col gap-4">
-              <!-- Type -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Type:
-                  <select
-                    bind:value={selectedType}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option>All</option>
-                    {#each allTypes as t}
-                      <option>{t}</option>
-                    {/each}
-                  </select>
-                </label>
-              </div>
-              <!-- Brand -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Brand:
-                  <select
-                    bind:value={selectedBrand}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option>All</option>
-                    {#each allBrands as b}
-                      <option>{b}</option>
-                    {/each}
-                  </select></label
-                >
-              </div>
-              <!-- WCA Legal -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >WCA Legal:
-                  <select
-                    bind:value={WCALegal}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option value={undefined}>All</option>
-                    <option value={true}>True</option>
-                    <option value={false}>False</option>
-                  </select>
-                </label>
-              </div>
-              <!-- Magnetic -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Magnetic:
-                  <select
-                    bind:value={magnetic}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option value={undefined}>All</option>
-                    <option value={true}>True</option>
-                    <option value={false}>False</option>
-                  </select>
-                </label>
-              </div>
-              <!-- Smart -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Smart:
-                  <select
-                    bind:value={smart}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option value={undefined}>All</option>
-                    <option value={true}>True</option>
-                    <option value={false}>False</option>
-                  </select>
-                </label>
-              </div>
-              <!-- Modded -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Modded:
-                  <select
-                    bind:value={modded}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option value={undefined}>All</option>
-                    <option value={true}>True</option>
-                    <option value={false}>False</option>
-                  </select>
-                </label>
-              </div>
-              <!-- Release Year -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Release Year:
-                  <select
-                    bind:value={selectedYear}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option>All</option>
-                    {#each allYears as year}
-                      <option value={year}>{year}</option>
-                    {/each}
-                  </select>
-                </label>
-              </div>
-              <!-- Cube Type -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Cube Type:
-                  <select
-                    bind:value={selectedCubeType}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option>All</option>
-                    {#each allCubeTypes as cubeType}
-                      <option value={cubeType}>{cubeType}</option>
-                    {/each}
-                  </select>
-                </label>
-              </div>
-              <!-- Cube Status -->
-              <div>
-                <label class="block text-sm mb-1"
-                  >Cube Status:
-                  <select
-                    bind:value={selectedCubeStatus}
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                  >
-                    <option>All</option>
-                    {#each allCubeStatus as cubeStatus}
-                      <option value={cubeStatus}>{cubeStatus}</option>
-                    {/each}
-                  </select>
-                </label>
-              </div>
-              <!-- Reset -->
-              <div>
-                <button
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-                  onclick={resetFilters}
-                  type="button"
-                >
-                  <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                  Reset Filters
-                </button>
-              </div>
-            </div>
-          </div>
-        </aside>
-      {/if}
+        </div>
+        <!-- WCA Legal -->
+        <div>
+          <label class="block text-sm mb-1"
+            >WCA Legal:
+            <select
+              bind:value={WCALegal}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option value={undefined}>All</option>
+              <option value={true}>True</option>
+              <option value={false}>False</option>
+            </select>
+          </label>
+        </div>
+        <!-- Magnetic -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Magnetic:
+            <select
+              bind:value={magnetic}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option value={undefined}>All</option>
+              <option value={true}>True</option>
+              <option value={false}>False</option>
+            </select>
+          </label>
+        </div>
+        <!-- Smart -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Smart:
+            <select
+              bind:value={smart}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option value={undefined}>All</option>
+              <option value={true}>True</option>
+              <option value={false}>False</option>
+            </select>
+          </label>
+        </div>
+        <!-- Modded -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Modded:
+            <select
+              bind:value={modded}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option value={undefined}>All</option>
+              <option value={true}>True</option>
+              <option value={false}>False</option>
+            </select>
+          </label>
+        </div>
+        <!-- Release Year -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Release Year:
+            <select
+              bind:value={selectedYear}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option>All</option>
+              {#each allYears as year}
+                <option value={year}>{year}</option>
+              {/each}
+            </select>
+          </label>
+        </div>
+        <!-- Cube Type -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Cube Type:
+            <select
+              bind:value={selectedCubeType}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option>All</option>
+              {#each allCubeTypes as cubeType}
+                <option value={cubeType}>{cubeType}</option>
+              {/each}
+            </select>
+          </label>
+        </div>
+        <!-- Cube Status -->
+        <div>
+          <label class="block text-sm mb-1"
+            >Cube Status:
+            <select
+              bind:value={selectedCubeStatus}
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+            >
+              <option>All</option>
+              {#each allCubeStatus as cubeStatus}
+                <option value={cubeStatus}>{cubeStatus}</option>
+              {/each}
+            </select>
+          </label>
+        </div>
+        <!-- Reset -->
+        <div>
+          <button
+            class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
+            onclick={resetFilters}
+            type="button"
+          >
+            <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+            Reset Filters
+          </button>
+        </div>
+      </FilterSidebar>
 
       <!-- Cube Cards Grid -->
       <div class="flex-1">
         <div
           class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
         >
-          <div class="flex items-center">
-            <label class="text-sm mr-2" for="itemsPerPage"
-              >Cubes per page:</label
-            >
-            <select
-              id="itemsPerPage"
-              bind:value={itemsPerPage}
-              class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
-              style="width:auto"
-            >
-              <option value={6}>6</option>
-              <option value={12}>12</option>
-              <option value={24}>24</option>
-              <option value={48}>48</option>
-              <option value={96}>96</option>
-            </select>
-          </div>
+          <ItemsPerPageSelector
+            bind:itemsPerPage
+            label="Cubes per page"
+          />
 
           <div>
             <a href="cubes/add" class="btn bg-primary text-primary-content">
@@ -453,30 +398,8 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-center gap-4 mb-10">
-          <div class="join">
-            <button
-              class="join-item btn btn-lg"
-              onclick={goToPreviousPage}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              <i class="fa-solid fa-chevron-left mr-2"></i>
-              Previous
-            </button>
-            <button class="join-item btn btn-lg">
-              Page {currentPage} of {totalPages}
-            </button>
-            <button
-              onclick={goToNextPage}
-              class="join-item btn btn-lg"
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-            >
-              Next
-              <i class="fa-solid fa-chevron-right ml-2"></i>
-            </button>
-          </div>
+        <div class="mb-10">
+          <Pagination bind:currentPage {totalPages} />
         </div>
 
         {#if loading}
@@ -527,30 +450,8 @@
           </div>
         {/if}
 
-        <div class="flex items-center justify-center gap-4 mt-10">
-          <div class="join">
-            <button
-              class="join-item btn btn-lg"
-              onclick={goToPreviousPage}
-              disabled={currentPage === 1}
-              aria-label="Previous page"
-            >
-              <i class="fa-solid fa-chevron-left mr-2"></i>
-              Previous
-            </button>
-            <button class="join-item btn btn-lg">
-              Page {currentPage} of {totalPages}
-            </button>
-            <button
-              onclick={goToNextPage}
-              class="join-item btn btn-lg"
-              disabled={currentPage === totalPages}
-              aria-label="Next page"
-            >
-              Next
-              <i class="fa-solid fa-chevron-right ml-2"></i>
-            </button>
-          </div>
+        <div class="mt-10">
+          <Pagination bind:currentPage {totalPages} />
         </div>
       </div>
     </div>

@@ -5,14 +5,13 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
-  import { Carta, MarkdownEditor } from "carta-md";
-  import "carta-md/default.css";
-  import "@cartamd/plugin-emoji/default.css";
-  import { slash } from "@cartamd/plugin-slash";
-  import "@cartamd/plugin-slash/default.css";
-  import { emoji } from "@cartamd/plugin-emoji";
   import DOMPurify from "isomorphic-dompurify";
+  import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import Avatar from "$lib/components/user/avatar.svelte";
+  import Markdown from "svelte-exmarkdown";
+  import "github-markdown-css/github-markdown.css";
+
+  const plugins = [gfmPlugin()];
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -58,14 +57,8 @@
 
   const params = queryParameters();
 
-  const carta = new Carta({
-    sanitizer: DOMPurify.sanitize,
-    extensions: [emoji(), slash()],
-    disableIcons: [],
-  });
-
   // Tabs: 'profile' | 'social' | 'security'
-  let tab: "profile" | "social" | "security" | "appearance" = $state(
+  let tab: "profile" | "social" | "security" | "appearance" = $derived(
     $params.tab ?? "profile"
   );
 
@@ -146,12 +139,12 @@
 </script>
 
 <SsgoiTransition id={page.url.pathname}>
-  <section class="min-h-screen mx-64 my-8">
+  <section class="px-4 xl:px-64 py-8">
     <h1 class="text-4xl font-clash text-primary mb-6">User Settings</h1>
 
     <div class="flex flex-col lg:flex-row gap-6">
       <ul
-        class="menu menu-horizontal lg:menu-vertical bg-base-200 rounded-2xl lg:min-h-screen w-full lg:w-fit p-4 gap-5 flex-row flex overflow-scroll sm:overflow-hidden"
+        class="menu menu-horizontal lg:menu-vertical bg-base-200 rounded-2xl flex flex-row lg:flex-col overflow-x-auto lg:overflow-visible gap-2"
       >
         <li>
           <button
@@ -238,14 +231,19 @@
               <!-- Bio -->
               <fieldset class="fieldset">
                 <legend class="block text-sm font-semibold">Bio</legend>
-                <MarkdownEditor
-                  {carta}
-                  mode="tabs"
-                  bind:value={$form.bio}
-                  textarea={{ name: "bio" }}
-                  placeholder="Tell us something cool..."
-                  highlightDelay={0}
-                />
+                <div class="flex flex-col sm:flex-row gap-6">
+                  <textarea
+                    bind:value={$form.bio}
+                    name="bio"
+                    placeholder="Tell us something cool..."
+                    class="textarea w-full flex-1"
+                  ></textarea>
+                  <div
+                    class="flex-1 rounded-2xl p-3 markdown-body !bg-base-300 !text-base-content"
+                  >
+                    <Markdown md={DOMPurify.sanitize($form.bio)} {plugins} />
+                  </div>
+                </div>
                 {#if $errors.bio}
                   <p class="text-error">{$errors.bio}</p>
                 {/if}
@@ -258,7 +256,8 @@
                     ? $form.profile_picture
                     : null,
                 }}
-                size="lg"
+                imgSize="size-55 sm:size-64"
+                textSize="text-9xl"
               />
 
               <!-- Avatar URL -->

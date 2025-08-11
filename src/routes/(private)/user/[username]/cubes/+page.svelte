@@ -67,8 +67,6 @@
     }
   });
 
-  let edit = $state(false);
-
   $effect(() => {
     const _ = user_cubes;
     allTypes = Array.from(
@@ -120,23 +118,10 @@
   <div class="flex justify-between">
     <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
     {#if user?.id === profile.user_id && user_cubes.length > 0}
-      <button
-        class="btn {edit
-          ? 'btn-error text-error-content'
-          : 'btn-info text-info-content'}"
-        onclick={() => {
-          edit = !edit;
-        }}
-        type="button"
-      >
-        {#if edit}
-          <i class="fa-solid fa-xmark"></i>
-          Cancel
-        {:else}
-          <i class="fa-solid fa-pencil"></i>
-          Edit
-        {/if}
-      </button>
+      <a href="manage" class="btn btn-info text-info-content">
+        <i class="fa-solid fa-gear"></i>
+        Manage
+      </a>
     {/if}
   </div>
 
@@ -250,12 +235,14 @@
         <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {#each paginatedCubes as row}
             <UserCubeCard
-              mode={edit ? "edit" : "view"}
+              mode="view"
               cube={row.cube_model}
               user_details={row}
-              user_rating={user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug
-              )?.rating ?? 0}
+              user_rating={
+                user_cube_ratings.find(
+                  (ucr) => ucr.cube_slug === row.cube_model?.slug
+                )?.rating ?? 0
+              }
             />
           {/each}
         </ul>

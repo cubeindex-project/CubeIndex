@@ -1,6 +1,7 @@
 <script lang="ts">
   import CubeVersionType from "./cubeVersionType.svelte";
   import type { Cube, UserCubes } from "../dbTableTypes";
+  import { formatDate } from "../helper_functions/formatDate.svelte";
 
   let {
     mode = "view",
@@ -163,8 +164,8 @@
           {/if}
           {#if user_details.acquired_at}
             <p>
-              <span class="font-bold">Acquired Date:</span>
-              {user_details.acquired_at}
+              <span class="font-bold">Acquired At:</span>
+              {formatDate(user_details.acquired_at)}
             </p>
           {/if}
         </div>

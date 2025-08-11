@@ -1,7 +1,4 @@
 <script lang="ts">
-  import Star from "../rating/Star.svelte";
-  import StarRating from "../rating/starRating.svelte";
-  import type { Cube } from "../types/cube";
   import CubeVersionType from "./cubeVersionType.svelte";
   import type { Cube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";

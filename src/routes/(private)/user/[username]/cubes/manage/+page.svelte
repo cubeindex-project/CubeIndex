@@ -87,13 +87,17 @@
   <div class="flex justify-between">
     <h3 class="text-2xl font-bold mb-4">Manage Collection</h3>
     <button
-      class="btn btn-error text-error-content"
+      class="btn btn-error text-error-content disabled:text-accent-content"
       onclick={removeSelected}
       disabled={selected.size === 0}
       type="button"
     >
-      <i class="fa-solid fa-trash"></i>
-      Remove Selected ({selected.size})
+      {#if selected.size === 0}
+        Select Cubes To Remove Them
+      {:else}
+        <i class="fa-solid fa-trash"></i>
+        Remove Selected ({selected.size})
+      {/if}
     </button>
   </div>
 
@@ -116,7 +120,7 @@
         <li class="relative">
           <input
             type="checkbox"
-            class="checkbox absolute top-2 left-2 z-10"
+            class="checkbox absolute top-2 left-2 z-10 bg-base-100 checked:bg-base-200 checkbox-xl"
             checked={selected.has(row.cube_model?.slug)}
             onchange={() => toggleSelection(row.cube_model.slug)}
           />
@@ -124,19 +128,15 @@
             mode="edit"
             cube={row.cube_model}
             user_details={row}
-            user_rating={
-              user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug
-              )?.rating ?? 0
-            }
+            user_rating={user_cube_ratings.find(
+              (ucr) => ucr.cube_slug === row.cube_model?.slug
+            )?.rating ?? 0}
           />
         </li>
       {/each}
     </ul>
   {:else}
-    <div
-      class="col-span-full flex flex-col items-center justify-center py-20"
-    >
+    <div class="col-span-full flex flex-col items-center justify-center py-20">
       <i class="fa-solid fa-cube fa-3x mb-4"></i>
       <h2 class="text-2xl font-semibold mb-2">
         You don't have any cubes in your collection.
@@ -148,4 +148,3 @@
     <div class="mt-6 text-center">{message}</div>
   {/if}
 </section>
-

@@ -118,7 +118,7 @@
   <div class="flex justify-between">
     <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>
     {#if user?.id === profile.user_id && user_cubes.length > 0}
-      <a href="manage" class="btn btn-info text-info-content">
+      <a href="/user/{profile.username}/cubes/manage" class="btn btn-info text-info-content">
         <i class="fa-solid fa-gear"></i>
         Manage
       </a>

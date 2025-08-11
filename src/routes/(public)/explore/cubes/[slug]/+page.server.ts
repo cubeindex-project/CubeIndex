@@ -13,18 +13,21 @@ export const load = async ({ locals }) => {
     cubesAvailability = value;
   });
 
-  const { data, error: pErr } = await locals.supabase
-    .from("profiles")
-    .select("*")
-    .eq("user_id", locals.user?.id)
-    .single();
+  let profile: Profiles = {} as Profiles;
 
-  if (pErr) {
-    throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
-    return;
+  if (locals.user?.id) {
+    const { data, error: pErr } = await locals.supabase
+      .from("profiles")
+      .select("*")
+      .eq("user_id", locals.user?.id)
+      .single();
+
+    if (pErr) {
+      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
+    }
+
+    profile = data;
   }
-
-  const profile: Profiles = data;
 
   return { databaseAvailability, cubesAvailability, profile };
 };

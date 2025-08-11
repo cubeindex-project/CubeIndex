@@ -168,7 +168,7 @@
                   <span class="font-mono">{formattedJoinDate}</span>
                 </p>
 
-                {#if user?.id !== profile.user_id}
+                {#if user?.id && user.id !== profile.user_id}
                   <div class="mt-2 sm:hidden block">
                     <FollowButton
                       user_id={profile.user_id}
@@ -235,10 +235,12 @@
                 <span>Settings</span>
               </a>
             {:else}
-              <FollowButton
-                user_id={profile.user_id}
-                isFollowing={following.length !== 1}
-              />
+              {#if user?.id && user.id !== profile.user_id}
+                <FollowButton
+                  user_id={profile.user_id}
+                  isFollowing={following.length !== 1}
+                />
+              {/if}
               <button class="btn btn-error" onclick={toggleOpenReport}>
                 <i class="fa-solid fa-flag"></i>
                 <span>Report</span>

@@ -29,7 +29,7 @@
             <UserCard
               {profile}
               user_achievements_count={user_achievements.filter(
-                (ua: { username: any }) => ua.username === profile.username
+                (ua: { user_id: any }) => ua.user_id === profile.user_id
               ).length || 0}
               user_cubes_count={user_cubes.filter(
                 (uc: { user_id: string }) => uc.user_id === profile.user_id

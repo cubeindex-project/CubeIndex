@@ -3,6 +3,7 @@ import { error } from "@sveltejs/kit";
 
 export const load = (async ({ locals, parent }) => {
   const data = await parent();
+  
   const { data: user_achievements, error: userAchieveError } =
     await locals.supabase
       .from("user_achievements")

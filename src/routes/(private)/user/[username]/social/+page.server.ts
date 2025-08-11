@@ -1,5 +1,6 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import type { UserFollowsRow } from "$lib/components/dbTableTypes";
 
 export const load = (async ({ locals, parent }) => {
   const { profile } = await parent();
@@ -28,13 +29,18 @@ export const load = (async ({ locals, parent }) => {
     return user;
   });
 
-  const { data: currentFollowingUser, error: followErr } = await locals.supabase
-    .from("user_follows")
-    .select("*")
-    .eq("follower_id", locals.user?.id)
-    .eq("following_id", profile.user_id);
+  let currentFollowingUser: UserFollowsRow[] = [];
 
-  if (followErr) throw error(500, followErr.message);
+  if (locals.user?.id) {
+    const { data, error: followErr } = await locals.supabase
+      .from("user_follows")
+      .select("*")
+      .eq("follower_id", locals.user.id)
+      .eq("following_id", profile.user_id);
+
+    if (followErr) throw error(500, followErr.message);
+    currentFollowingUser = data;
+  }
 
   return {
     following,

@@ -1,5 +1,5 @@
 import { configCatClient } from "$lib/configcatClient";
-import type { Profiles } from "$lib/components/types/profile.js";
+import type { Profiles } from "$lib/components/dbTableTypes";
 
 export const load = async ({ locals }) => {
   let databaseAvailability: boolean = true;

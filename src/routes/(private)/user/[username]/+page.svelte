@@ -5,7 +5,7 @@
   import UserCard from "$lib/components/user/userCard.svelte";
   import Markdown from "svelte-exmarkdown";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
-  import 'github-markdown-css/github-markdown.css';
+  import "github-markdown-css/github-markdown.css";
 
   const plugins = [gfmPlugin()];
 
@@ -16,7 +16,6 @@
   const main_cubes = $derived(data.main_cubes);
   const user_cubes = $derived(data.user_cubes);
   const user_achievements = $derived(data.user_achievements);
-  const friends = $derived(data.friends);
   const user_cube_ratings = $derived(data.user_cube_ratings);
 </script>
 
@@ -58,12 +57,13 @@
   <div class="col-span-full lg:col-span-2">
     <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 gap-4">
-      {#each main_cubes as cube}
+      {#each main_cubes as mc}
         <UserCubeCard
-          {cube}
-          user_details={user_cubes}
+          mode="view"
+          cube={mc.cube_model}
+          user_details={mc}
           user_rating={user_cube_ratings.find(
-            (ucr) => ucr.cube_slug === cube.slug
+            (ucr) => ucr.cube_slug === mc.slug
           )?.rating ?? 0}
         />
       {:else}

@@ -51,6 +51,8 @@
     "zod": "^3.25.73"
   },
   "dependencies": {
+    "@cartamd/plugin-emoji": "^4.3.0",
+    "@cartamd/plugin-slash": "^4.2.0",
     "@inlang/paraglide-js": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
     "@number-flow/svelte": "^0.3.9",

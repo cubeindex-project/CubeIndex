@@ -1,4 +1,4 @@
-import type { Cube } from "$lib/components/types/cube";
+import type { Cube } from "$lib/components/dbTableTypes.js";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

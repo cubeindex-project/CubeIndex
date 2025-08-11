@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
-  import type { Cube } from "$lib/components/types/cube.js";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";

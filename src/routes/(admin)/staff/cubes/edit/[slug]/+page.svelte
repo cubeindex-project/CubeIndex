@@ -1,7 +1,7 @@
 <script lang="ts">
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
-  import type { Cube } from "$lib/components/types/cube.ts";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";

@@ -3,10 +3,10 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
   import AddCube from "$lib/components/cube/addCube.svelte";
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
-  import type { Cube } from "$lib/components/types/cube.js";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import type { CubeVendorLinks } from "$lib/components/types/cubevendorLinks.js";
-  import type { Profiles } from "$lib/components/types/profile.js";
+  import type { CubeVendorLinks } from "$lib/components/dbTableTypes.js";
+  import type { Profiles } from "$lib/components/dbTableTypes.js";
   import UserRatings from "$lib/components/rating/userRatings.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { page } from "$app/state";

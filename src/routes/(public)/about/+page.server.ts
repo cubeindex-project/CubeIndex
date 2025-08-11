@@ -1,4 +1,4 @@
-import type { Profiles } from "$lib/components/types/profile";
+import type { Profiles } from "$lib/components/dbTableTypes";
 import { supabase } from "$lib/supabaseClient";
 import { error } from "@sveltejs/kit";
 

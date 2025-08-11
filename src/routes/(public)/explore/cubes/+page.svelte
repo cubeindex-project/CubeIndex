@@ -10,7 +10,7 @@
   // Transition effect for blurring elements
   import { blur } from "svelte/transition";
   // Type definition for Cube data
-  import type { Cube } from "$lib/components/types/cube";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
   // Pagination component to navigate pages of cubes
   import Pagination from "$lib/components/misc/pagination.svelte";
   // Tri-state checkbox for filtering boolean attributes

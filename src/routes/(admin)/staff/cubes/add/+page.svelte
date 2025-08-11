@@ -4,7 +4,7 @@
   import { onMount } from "svelte";
   import { error } from "@sveltejs/kit";
   import { supabase } from "$lib/supabaseClient.js";
-  import type { Cube } from "$lib/components/types/cube.js";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   const { data } = $props();

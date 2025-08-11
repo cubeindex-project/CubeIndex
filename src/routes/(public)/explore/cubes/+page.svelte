@@ -144,7 +144,7 @@
   let currentPage: number = $state(1); // Current pagination page
   let itemsPerPage: number = $state(12); // Items shown per page
   let sortField: string = $state("name"); // Field to sort by
-  let sortOrder: "asc" | "desc" = $state("desc"); // Sort direction
+  let sortOrder: "asc" | "desc" = $state("asc"); // Sort direction
   const sortOptions: SortOption[] = [
     { id: "name-asc", field: "name", order: "asc", label: "Name - Ascending" },
     {

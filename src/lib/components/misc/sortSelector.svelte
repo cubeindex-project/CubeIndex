@@ -8,7 +8,7 @@
 
   let {
     sortField = $bindable("name"),
-    sortOrder = $bindable("desc"),
+    sortOrder = $bindable("asc"),
     sortOptions
   }: {
     sortField: string;

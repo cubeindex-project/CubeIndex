@@ -40,7 +40,7 @@
     <div class="flex-1 flex flex-col">
       <div class="py-4">
         <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-          Verified By: {cube.verified_by_id?.display_name}
+          Verified By: {cube.verified_by_id.display_name}
         </h2>
       </div>
 
@@ -90,7 +90,7 @@
       <div class="flex flex-col gap-4 mt-4">
         <div class="flex flex-row items-center">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-            Verified By: {cube.verified_by_id?.display_name}
+            Verified By: {cube.verified_by_id.display_name}
           </h2>
         </div>
 

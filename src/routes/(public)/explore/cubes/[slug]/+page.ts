@@ -54,7 +54,7 @@ export const load = (async ({ parent, params, data }) => {
 
   const { data: user_cube_ratings, error: urErr } = await supabase
     .from("user_cube_ratings")
-    .select("*")
+    .select("*, profile:user_id(username, display_name)")
     .eq("cube_slug", cube.slug);
 
   if (urErr) {

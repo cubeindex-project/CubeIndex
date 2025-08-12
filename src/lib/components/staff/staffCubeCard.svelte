@@ -1,9 +1,8 @@
 <!-- staffCubeCard.svelte -->
 <script lang="ts">
-  import StarRating from "../rating/starRating.svelte";
-  import CubeVersionType from "../cube/cubeVersionType.svelte";
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import UnapproveCube from "./unapproveCube.svelte";
+  import CubeCardSkeleton from "../cube/cubeCardSkeleton.svelte";
 
   // single props destructure
   let { cube, profile } = $props();
@@ -23,39 +22,25 @@
   }
 </script>
 
-{#if cube.status === "Approved"}
+{#snippet top()}
   <div
-    class="bg-base-200 border border-base-300 rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col"
+    class="h-10 flex items-center justify-center w-full rounded-t-2xl {cube.status ===
+    'Approved'
+      ? 'bg-success'
+      : cube.status === 'Pending'
+        ? 'bg-warning'
+        : 'bg-error'}"
   >
-    <div
-      class={`h-10 flex items-center justify-center w-full rounded-t-2xl bg-success`}
-    >
-      <p class="font-semibold tracking-wider">{cube.status}</p>
-    </div>
-    <img
-      src={cube.image_url}
-      alt={`${cube.series} ${cube.model} ${cube.version_name}`}
-      class="w-full h-48 object-cover"
-    />
-    <div class="p-5 flex-1 flex flex-col">
-      <h2 class="text-xl font-bold mb-1">
-        {cube.series}
-        {cube.model}
-        {#if cube.version_type !== "Base"}
-          <span class="text-blue-400">{cube.version_name}</span>
-        {/if}
-        <CubeVersionType version_type={cube.version_type} />
-      </h2>
-      <p class="text-sm text-gray-400">
-        {cube.type} ・ {cube.brand}
-      </p>
-      <div class="mt-3">
-        <StarRating readOnly={true} rating={cube.rating ?? 0} />
-      </div>
+    <p class="font-semibold tracking-wider">{cube.status}</p>
+  </div>
+{/snippet}
 
+{#snippet content()}
+  {#if cube.status === "Approved"}
+    <div class="flex-1 flex flex-col">
       <div class="py-4">
         <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-          Verified By: {cube.verified_by_id.display_name}
+          Verified By: {cube.verified_by_id?.display_name}
         </h2>
       </div>
 
@@ -72,42 +57,13 @@
           {/if}
         </div>
       </div>
+
       <a href={`/explore/cubes/${cube.slug}`} class="btn btn-primary mt-4">
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
-  </div>
-{/if}
-
-{#if cube.status === "Pending"}
-  <div
-    class="bg-base-200 border border-base-300 rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col"
-  >
-    <div
-      class={`h-10 flex items-center justify-center w-full rounded-t-2xl bg-warning`}
-    >
-      <p class="font-semibold tracking-wider">{cube.status}</p>
-    </div>
-    <img
-      src={cube.image_url}
-      alt={`${cube.series} ${cube.model} ${cube.version_name}`}
-      class="w-full h-48 object-cover"
-    />
-    <div class="p-5 flex-1 flex flex-col">
-      <h2 class="text-xl font-bold mb-1">
-        {cube.series}
-        {cube.model}
-        {#if cube.version_type !== "Base"}
-          <span class="text-blue-400">{cube.version_name}</span>
-        {/if}
-        <CubeVersionType version_type={cube.version_type} />
-      </h2>
-      <p class="text-sm text-gray-400">
-        {cube.type} ・ {cube.brand}
-      </p>
-      <div class="mt-3">
-        <StarRating readOnly={true} rating={cube.rating ?? 0} />
-      </div>
+  {:else if cube.status === "Pending"}
+    <div class="flex-1 flex flex-col">
       <div class="mt-4 flex gap-2">
         <button
           class="btn btn-success flex-1"
@@ -129,43 +85,12 @@
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
-  </div>
-{/if}
-
-{#if cube.status === "Rejected"}
-  <div
-    class="bg-base-200 border border-base-300 rounded-2xl shadow-lg hover:shadow-xl transition flex flex-col"
-  >
-    <div
-      class="h-10 flex items-center justify-center w-full rounded-t-2xl bg-error"
-    >
-      <p class="font-semibold tracking-wider">{cube.status}</p>
-    </div>
-    <img
-      src={cube.image_url}
-      alt={`${cube.series} ${cube.model} ${cube.version_name}`}
-      class="w-full h-48 object-cover"
-    />
-    <div class="p-5 flex-1 flex flex-col">
-      <h2 class="text-xl font-bold mb-1">
-        {cube.series}
-        {cube.model}
-        {#if cube.version_type !== "Base"}
-          <span class="text-blue-400">{cube.version_name}</span>
-        {/if}
-        <CubeVersionType version_type={cube.version_type} />
-      </h2>
-      <p class="text-sm text-gray-400">
-        {cube.type} ・ {cube.brand}
-      </p>
-      <div class="mt-3">
-        <StarRating readOnly={true} rating={cube.rating ?? 0} />
-      </div>
-
+  {:else}
+    <div class="flex-1 flex flex-col">
       <div class="flex flex-col gap-4 mt-4">
         <div class="flex flex-row items-center">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-            Verified By: {cube.verified_by_id.display_name}
+            Verified By: {cube.verified_by_id?.display_name}
           </h2>
         </div>
 
@@ -188,8 +113,19 @@
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
-  </div>
-{/if}
+  {/if}
+{/snippet}
+
+{#snippet bottom()}{/snippet}
+
+<CubeCardSkeleton
+  {cube}
+  newRibbon={false}
+  rating={false}
+  {top}
+  {content}
+  {bottom}
+/>
 
 {#if openModNotes}
   <ManageCubeStatus

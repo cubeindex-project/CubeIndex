@@ -13,6 +13,7 @@
   import { SsgoiTransition } from "@ssgoi/svelte";
   import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
+  import { buildProductJSONLD } from "$lib/components/buildProductJSONLD.js";
 
   let { data } = $props();
   let {
@@ -75,6 +76,12 @@
     openReport = !openReport;
   }
 </script>
+
+<svelte:head>
+  <script type="application/ld+json">
+    {JSON.stringify(buildProductJSONLD(data, page))}
+  </script>
+</svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
   {#if databaseAvailability && cubesAvailability}

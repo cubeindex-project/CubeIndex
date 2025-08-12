@@ -128,7 +128,8 @@
             <p class="flex flex-row gap-1">
               <span class="font-bold">Rated It:</span>
               <span class="flex items-center">
-                {user_rating} <i class="fa-solid fa-star"></i>
+                {user_rating}
+                <i class="fa-solid fa-star"></i>
               </span>
             </p>
           {/if}

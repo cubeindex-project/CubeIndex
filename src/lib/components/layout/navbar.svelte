@@ -72,7 +72,7 @@
     <!-- Logo -->
     <a href="/" class="flex items-center gap-2">
       <img
-        src="/images/CubeIndex - Pixel Art.png"
+        src="/images/CubeIndex_Logo.webp"
         alt="CubeIndex logo"
         class="h-12 w-12 rounded-full"
       />

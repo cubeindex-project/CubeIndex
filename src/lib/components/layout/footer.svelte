@@ -4,7 +4,7 @@
     <div>
       <div class="flex items-center gap-2 mb-4">
         <img
-          src="/images/CubeIndex - Pixel Art.png"
+          src="/images/CubeIndex_Logo.webp"
           alt="CubeIndex logo"
           class="h-10 w-10 rounded-full"
         />

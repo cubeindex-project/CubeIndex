@@ -34,7 +34,7 @@
     <!-- Hero -->
     <section class="text-center space-y-2">
       <img
-        src="/images/CubeIndex - Pixel Art.png"
+        src="/images/CubeIndex_Logo.webp"
         alt="CubeIndex Logo"
         class="mx-auto w-32 h-32 rounded-2xl"
       />
@@ -107,7 +107,7 @@
         >
           <div class="flex justify-center mb-4">
             <img
-              src="/images/we want you.webp"
+              src="/images/we-want-you.webp"
               alt="Avatar"
               class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-primary shadow-xl object-cover transition-transform duration-200"
             />

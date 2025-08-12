@@ -3,7 +3,7 @@
   import RateCube from "./rateCube.svelte";
   import Pagination from "../misc/pagination.svelte";
   import StarRating from "./starRating.svelte";
-  import type { Cube } from "../types/cube";
+  import type { Cube } from "../dbTableTypes";
   import SearchBar from "../misc/searchBar.svelte";
   import { getContext } from "svelte";
   import type { User } from "@supabase/supabase-js";
@@ -146,6 +146,7 @@
           {user_rating}
           {cube}
           isAuthor={user_rating.user_id === user?.id}
+          showCubeDetails={false}
         />
       {:else}
         <div

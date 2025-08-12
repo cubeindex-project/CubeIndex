@@ -17,6 +17,22 @@
   const user_cubes = $derived(data.user_cubes);
   const user_achievements = $derived(data.user_achievements);
   const user_cube_ratings = $derived(data.user_cube_ratings);
+
+  const totalCubes = $derived(user_cubes.length);
+  const totalAchievements = $derived(user_achievements.length);
+  const totalRatings = $derived(user_cube_ratings.length);
+
+  const averageRating = $derived(
+    totalRatings
+      ? user_cube_ratings.map((r) => r.rating ?? 0).reduce((a, b) => a + b, 0) /
+          totalRatings
+      : 0
+  );
+
+  const averageDisplay = $derived(
+    totalRatings ? averageRating.toFixed(1) : "—"
+  );
+  const avgRounded = $derived(Math.round(averageRating)); // for star fill
 </script>
 
 <div
@@ -39,14 +55,70 @@
     <div>
       <h2 class="text-xl font-semibold mb-4">Stats</h2>
       <div class="card bg-base-200 p-6 rounded-2xl flex flex-col">
-        <div class="space-y-2">
-          <div>
-            <span class="font-medium">Total Cubes:</span>
-            {user_cubes.length}
+        <div
+          class="stats stats-vertical bg-base-200 rounded-2xl shadow gap-2 w-full"
+        >
+          <!-- Total Cubes -->
+          <div class="stat">
+            <div class="stat-figure text-primary">
+              <i class="fa-solid fa-cube text-2xl"></i>
+            </div>
+            <div class="stat-title">Total Cubes</div>
+            <div class="stat-value">{totalCubes}</div>
           </div>
-          <div>
-            <span class="font-medium">Achievements:</span>
-            {user_achievements.length}
+
+          <!-- Total Achievements -->
+          <div class="stat">
+            <div class="stat-figure text-secondary">
+              <i class="fa-solid fa-trophy text-2xl"></i>
+            </div>
+            <div class="stat-title">Achievements</div>
+            <div class="stat-value">{totalAchievements}</div>
+          </div>
+
+          <!-- Total Ratings -->
+          <div class="stat">
+            <div class="stat-figure text-info">
+              <i class="fa-solid fa-clipboard-check text-2xl"></i>
+            </div>
+            <div class="stat-title">Ratings</div>
+            <div class="stat-value">{totalRatings}</div>
+            <div class="stat-desc">
+              {#if totalRatings === 0}
+                No ratings yet
+              {:else if totalRatings === 1}
+                1 rating given
+              {:else}
+                {totalRatings} ratings given
+              {/if}
+            </div>
+          </div>
+
+          <!-- Average Rating -->
+          <div class="stat">
+            <div class="stat-figure text-warning">
+              <i class="fa-solid fa-star text-2xl"></i>
+            </div>
+            <div class="stat-title">Average Rating</div>
+            <div class="stat-value flex items-center gap-2">
+              {averageDisplay}
+              <div
+                class="rating rating-sm"
+                title={`Average: ${averageDisplay}`}
+              >
+                {#each [1, 2, 3, 4, 5] as n}
+                  <input
+                    type="radio"
+                    class="mask mask-star-2 bg-warning"
+                    disabled
+                    checked={avgRounded >= n && totalRatings > 0}
+                  />
+                {/each}
+              </div>
+            </div>
+            <div class="stat-desc">
+              {totalRatings > 0 ? "Based on recent ratings" : "—"}
+            </div>
           </div>
         </div>
       </div>

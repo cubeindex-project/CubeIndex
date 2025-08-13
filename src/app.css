@@ -1,3 +1,4 @@
+@import url("/static/css/clash-display.css");
 @import "tailwindcss";
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
@@ -5,7 +6,7 @@
 @plugin "daisyui";
 
 @theme {
-  --font-clash: "Clash Display", sans-serif;
+  --font-clash: "ClashDisplay-Semibold", sans-serif;
 }
 
 @plugin "daisyui/theme" {

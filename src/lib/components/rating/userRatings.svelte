@@ -146,6 +146,7 @@
           {user_rating}
           {cube}
           isAuthor={user_rating.user_id === user?.id}
+          showCubeDetails={false}
         />
       {:else}
         <div

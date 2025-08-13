@@ -3,18 +3,16 @@
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
-  import type { Profiles } from "../types/profile";
+  import type { Profiles } from "../dbTableTypes";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
 
-  const { user_rating, cube, isAuthor } = $props();
+  const { user_rating, cube, isAuthor, showCubeDetails } = $props();
 
   let popoverId = $state(
     `popover-${user_rating.username}-${user_rating.cube_slug}`
   );
 
-  let profile: Profiles = $state({} as Profiles);
-  let profiles: Profiles[] = $state([]);
   let helpful_ratings: any[] = $state([]);
 
   let confDeleteRating = $state(false);
@@ -92,17 +90,6 @@
   const maxCommentLength = 300;
 
   onMount(async () => {
-    const { data, error: pErr } = await supabase.from("profiles").select("*");
-
-    if (pErr) {
-      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
-      return;
-    }
-
-    profiles = data;
-    profile =
-      data.find((p) => p.user_id === user_rating.user_id) ?? ({} as Profiles);
-
     const { data: helpful, error: helpErr } = await supabase
       .from("helpful_rating")
       .select("*")
@@ -110,7 +97,6 @@
 
     if (helpErr) {
       throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
-      return;
     }
 
     helpful_ratings = helpful;
@@ -118,6 +104,24 @@
 </script>
 
 <div class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm">
+  {#if showCubeDetails}
+    <div class="flex flex-row items-center gap-4 mb-4">
+      <img
+        src={cube.image_url}
+        alt="{cube.series} {cube.model} {cube.version_name}"
+        class="size-24 object-cover rounded-2xl"
+      />
+      <a href="/explore/cubes/{cube.slug}">
+        <h2 class="text-xl font-bold mb-1">
+          {cube.series}
+          {cube.model}
+          {#if cube.version_type !== "Base"}
+            <span class="text-blue-400">{cube.version_name}</span>
+          {/if}
+        </h2>
+      </a>
+    </div>
+  {/if}
   <div
     class="flex items-center gap-3 flex-col sm:flex-row"
     class:mb-2={!!user_rating.comment}
@@ -129,8 +133,8 @@
     <div class="flex flex-row justify-between items-center flex-1 w-full">
       <span class="text-sm justify-start flex gap-1 flex-1">
         by
-        <a href="/user/{profile.username}" class="underline">
-          {profile.display_name}
+        <a href="/user/{user_rating.profile.username}" class="underline">
+          {user_rating.profile.display_name}
         </a>
       </span>
 
@@ -263,6 +267,6 @@
     onCancel={() => (openReport = !openReport)}
     reportType="cube-rating"
     reported={user_rating.id}
-    reporLabel="{profile.display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+    reporLabel="{user_rating.profile.display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}

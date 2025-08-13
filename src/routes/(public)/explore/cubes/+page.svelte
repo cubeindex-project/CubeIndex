@@ -253,7 +253,17 @@
         case "name":
           av = a._name;
           bv = b._name;
-          break;
+          return sortOrder === "asc"
+            ? av.localeCompare(bv, undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              })
+            : bv.localeCompare(av, undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              });
         default:
           av = new Date(a.verified_at ?? a.created_at).getTime();
           bv = new Date(b.verified_at ?? b.created_at).getTime();

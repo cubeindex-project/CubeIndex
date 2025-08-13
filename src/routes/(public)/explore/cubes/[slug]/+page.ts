@@ -2,8 +2,6 @@ import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
 import type { Cube } from "$lib/components/dbTableTypes.js";
 
-export const prerender = true;
-
 export const load = (async ({ parent, params, data }) => {
   await parent();
 

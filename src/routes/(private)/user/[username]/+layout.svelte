@@ -121,7 +121,6 @@
             src={profile.banner}
             alt="{profile.username}'s banner"
             class="w-full h-full object-cover object-center"
-            loading="lazy"
           />
           <div class="absolute inset-0 pointer-events-none"></div>
         </div>

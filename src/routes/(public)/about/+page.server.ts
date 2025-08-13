@@ -13,7 +13,9 @@ export const load = async () => {
     (p: Profiles) => p.role !== "User" && p.username !== "cubeIndex"
   );
 
-  const logoDesigner = profiles.find((p: Profiles) => p.user_id === "b49da5bb-6d82-463e-b8ee-fd7c9feebde6");
+  const logoDesigner = profiles.find(
+    (p: Profiles) => p.user_id === "b49da5bb-6d82-463e-b8ee-fd7c9feebde6"
+  );
 
   return { profiles, logoDesigner, team };
 };

@@ -437,3 +437,40 @@ export interface Accessories {
   /** Optional compatibility info */
   compatibility: string | null;
 }
+
+export interface CubesModelFeatures {
+  /** Primary key ID */
+  id: number;
+
+  /** Slug of the cube model (FK to cube_models.slug) */
+  cube: string;
+
+  /** Code of the feature (FK to cube_features.code) */
+  feature: string;
+
+  /** Creation timestamp */
+  created_at: string; // ISO 8601 timestamp format
+}
+
+export interface UserCubeRatings {
+  /** Slug of the cube (FK to cube_models.slug) */
+  cube_slug: string;
+
+  /** User's rating for the cube (0.5 to 5) */
+  rating: number;
+
+  /** Optional comment from the user */
+  comment: string | null;
+
+  /** Last update timestamp */
+  updated_at: string; // ISO 8601
+
+  /** Creation timestamp */
+  created_at: string; // ISO 8601
+
+  /** Unique internal ID */
+  id: number;
+
+  /** ID of the user (FK to profiles.user_id) */
+  user_id: string; // UUID
+}

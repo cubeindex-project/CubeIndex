@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Profiles } from "../types/profile";
+  import type { Profiles } from "../dbTableTypes";
 
   type ProfileAvatar = Pick<Profiles, "display_name" | "profile_picture">;
 

@@ -44,9 +44,15 @@
   import { setContext } from "svelte";
   setContext("user", data.user);
   setContext("session", data.session);
+
+  import { pwaInfo } from "virtual:pwa-info";
+
+  const webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
 
 <svelte:head>
+  {@html webManifest}
+
   <script>
     (function () {
       try {
@@ -79,5 +85,9 @@
     {@render children()}
   </section>
 </Ssgoi>
+
+{#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
+  <ReloadPrompt />
+{/await}
 
 <Footer />

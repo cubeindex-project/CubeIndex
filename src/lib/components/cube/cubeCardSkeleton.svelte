@@ -23,9 +23,11 @@
   {@render top?.()}
   <img
     data-hero-key={`cube-image-${cube.id}`}
-    src={cube.image_url}
+    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
     alt="{cube.series} {cube.model} {cube.version_name}"
     class="w-full h-48 object-cover"
+    loading="eager"
+    fetchpriority="high"
   />
   <div class="p-5 flex-1 flex flex-col">
     <h2 class="text-xl font-bold mb-1" data-hero-key={`cube-title-${cube.id}`}>

@@ -240,7 +240,7 @@
           <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
             <img
               data-hero-key={`cube-image-${cube.id}`}
-              src={cube.image_url}
+              src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
               alt="{cube.series} {cube.model} {cube.version_name}"
               loading="lazy"
               class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"

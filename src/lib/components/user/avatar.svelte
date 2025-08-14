@@ -12,9 +12,10 @@
 
 {#if profile.profile_picture}
   <img
-    src={profile.profile_picture}
+    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_248,dpr_auto/{profile.profile_picture}"
     alt="Avatar"
     class="rounded-2xl border-4 border-primary bg-black {imgSize} object-cover"
+    loading="eager"
   />
 {:else}
   <div class="avatar avatar-placeholder">

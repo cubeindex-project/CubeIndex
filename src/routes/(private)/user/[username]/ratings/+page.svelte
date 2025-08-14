@@ -4,7 +4,7 @@
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
-  let { user_cube_ratings = [], user } = data;
+  let { user_cube_ratings = [], user, profile } = data;
 
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(4);
@@ -19,6 +19,10 @@
     Math.ceil(user_cube_ratings.length / itemsPerPage)
   );
 </script>
+
+<svelte:head>
+  <title>{profile.display_name}'s Ratings - CubeIndex</title>
+</svelte:head>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
   <div class="flex flex-col gap-4">

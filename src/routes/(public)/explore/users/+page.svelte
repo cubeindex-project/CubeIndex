@@ -17,6 +17,10 @@
   );
 </script>
 
+<svelte:head>
+  <title>Explore Users - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if databaseAvailability}
     <section class="min-h-screen px-4 py-12">

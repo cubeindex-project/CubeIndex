@@ -138,6 +138,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>{tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <section class="px-4 xl:px-64 py-8">
     <h1 class="text-4xl font-clash text-primary mb-6">User Settings</h1>

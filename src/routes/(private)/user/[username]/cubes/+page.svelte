@@ -116,6 +116,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>{profile.display_name}'s Cube Collection - CubeIndex</title>
+</svelte:head>
+
 <section class="relative max-w-6xl mx-auto mt-12 px-4">
   <div class="flex justify-between">
     <h3 class="text-2xl font-bold mb-4">Cube Collection</h3>

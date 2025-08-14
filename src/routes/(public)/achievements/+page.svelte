@@ -27,6 +27,10 @@
   );
 </script>
 
+<svelte:head>
+  <title>Achievements - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if achievementsAvailability}
     <section class="min-h-screen px-6 py-24">

@@ -2,7 +2,7 @@
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
-  const { user_achievements, achievements } = data;
+  const { user_achievements, achievements, profile } = data;
 
   let showAllAchievements = $state(false);
   let achievementsToShow: any[] = $state([]);
@@ -22,6 +22,10 @@
       : userAchievementsFromAll.slice(0, 2);
   });
 </script>
+
+<svelte:head>
+  <title>{profile.display_name}'s Achievements - CubeIndex</title>
+</svelte:head>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
   {#if user_achievements && user_achievements.length > 0}

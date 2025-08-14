@@ -135,6 +135,10 @@
   ];
 </script>
 
+<svelte:head>
+  <title>Compare Cubes - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-4 py-12">
     <div class="max-w-5xl mx-auto">

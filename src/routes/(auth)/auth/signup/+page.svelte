@@ -24,6 +24,10 @@
   );
 </script>
 
+<svelte:head>
+  <title>Signup - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if signup}
     <section

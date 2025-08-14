@@ -19,6 +19,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Explore Accessories - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if databaseAvailability && accessoriesAvailability}
     <section class="min-h-screen px-6 py-16 relative">

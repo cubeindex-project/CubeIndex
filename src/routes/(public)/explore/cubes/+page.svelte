@@ -316,6 +316,10 @@
   let showFilters = $state(false);
 </script>
 
+<svelte:head>
+  <title>Explore Cubes - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if databaseAvailability && cubesAvailability}
     <section class="min-h-screen px-6 py-16">

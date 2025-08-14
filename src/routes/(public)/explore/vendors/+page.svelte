@@ -28,6 +28,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Explore Vendors - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   {#if databaseAvailability}
     <section class="min-h-screen bg-base-100 px-6 py-16">

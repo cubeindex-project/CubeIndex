@@ -78,6 +78,8 @@
 </script>
 
 <svelte:head>
+  <title>{cube.series} {cube.model} {cube.version_name} - CubeIndex</title>
+  
   <link
     rel="preload"
     as="image"

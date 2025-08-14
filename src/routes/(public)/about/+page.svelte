@@ -29,6 +29,10 @@
   ];
 </script>
 
+<svelte:head>
+  <title>About - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <div class="space-y-16 px-5 py-12 max-w-5xl mx-auto">
     <!-- Hero -->

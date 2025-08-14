@@ -37,6 +37,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Reset Password - CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen flex flex-col items-center justify-center px-6">
     <div

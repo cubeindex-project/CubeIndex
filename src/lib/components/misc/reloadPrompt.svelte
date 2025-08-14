@@ -23,13 +23,13 @@
     class="fixed right-0 bottom-0 m-4 p-3 border border-base-300 rounded-2xl z-10 text-left shadow-md bg-base-200"
     role="alert"
   >
-    <!-- <div class="mb-2">
+    <div class="mb-2">
       {#if $offlineReady}
         <span> App ready to work offline </span>
       {:else}
         <span> New content available, click on reload button to update. </span>
       {/if}
-    </div> -->
+    </div>
     <div class="gap-2 flex">
       {#if $needRefresh}
         <button

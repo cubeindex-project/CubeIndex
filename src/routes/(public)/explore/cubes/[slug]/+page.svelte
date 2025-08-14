@@ -78,9 +78,14 @@
 </script>
 
 <svelte:head>
-  <script type="application/ld+json">
-    {JSON.stringify(buildProductJSONLD(data, page))}
-  </script>
+  <link
+    rel="preload"
+    as="image"
+    href="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
+    fetchpriority="high"
+  />
+
+  {@html `<script type="application/ld+json">${JSON.stringify(buildProductJSONLD(data, page))}</script>`}
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
@@ -242,7 +247,7 @@
               data-hero-key={`cube-image-${cube.id}`}
               src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
               alt="{cube.series} {cube.model} {cube.version_name}"
-              loading="lazy"
+              fetchpriority="high"
               class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
             />
           </div>

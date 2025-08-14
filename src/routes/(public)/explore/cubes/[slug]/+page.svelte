@@ -28,6 +28,7 @@
     features = [],
     submittedBy,
     verifiedBy,
+    meta,
   } = $derived(data);
 
   const featureMap = new Map<string, Set<string>>();
@@ -75,15 +76,42 @@
   function toggleOpenReport() {
     openReport = !openReport;
   }
+
+  // Prefer server-provided values; fall back to $page.url.origin for safety
+  const origin = data.meta?.canonical?.split("/explore")[0] ?? page.url.origin;
+  const canonical =
+    data.meta?.canonical ?? `${origin}/explore/cubes/${data.cube.slug}`;
+  const ogImage =
+    data.meta?.ogImage ?? `${origin}/api/og/cube/${data.cube.slug}`;
+
+  // Human + bot-friendly description (keep ~160 chars max)
+  const description = data.meta.description;
+
+  // Cloudinary fetch: source must be URL-encoded
+  const preloadSrc = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${encodeURIComponent(data.cube.image_url)}`;
 </script>
 
 <svelte:head>
-  <title>{cube.series} {cube.model} {cube.version_name} - CubeIndex</title>
-  
+  <title>{meta.title}</title>
+  <meta name="description" content={meta.description} />
+
+  <meta property="og:title" content={meta.title} />
+  <meta property="og:description" content={meta.description} />
+  <meta property="og:image" content={meta.ogImage} />
+  <meta property="og:url" content={meta.canonical} />
+  <meta property="og:type" content="website" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={meta.title} />
+  <meta name="twitter:description" content={meta.description} />
+  <meta name="twitter:image" content={meta.ogImage} />
+
+  <link rel="canonical" href={meta.canonical} />
+
   <link
     rel="preload"
     as="image"
-    href="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
+    href={meta.preloadImage}
     fetchpriority="high"
   />
 

@@ -2,10 +2,10 @@ import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
 import type { Cube } from "$lib/components/dbTableTypes.js";
 
-export const load = (async ({ parent, params, data }) => {
+export const load = (async ({ parent, data }) => {
   await parent();
 
-  const slug = params.slug;
+  const cube = data.cube;
 
   const { data: cubes, error: cErr } = await supabase
     .from("cube_models")
@@ -16,8 +16,6 @@ export const load = (async ({ parent, params, data }) => {
   if (cErr) {
     throw new Error("A 500 status code error occured:" + cErr.message);
   }
-
-  const cube: Cube = cubes.find((c) => c.slug === slug) ?? ({} as Cube);
 
   const { data: features, error: featErr } = await supabase
     .from("cubes_model_features")

@@ -2,7 +2,7 @@ import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load = (async () => {
+export const load = (async ({ setHeaders }) => {
   const { data: profiles, error: err } = await supabase
     .from("profiles")
     .select("*")
@@ -21,6 +21,10 @@ export const load = (async () => {
     .select("*");
 
   if (userCubesError) throw error(500, userCubesError.message);
+
+  setHeaders({
+    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
+  });
 
   return { profiles, user_achievements, user_cubes };
 }) satisfies PageServerLoad;

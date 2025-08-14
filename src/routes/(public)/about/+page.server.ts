@@ -2,7 +2,7 @@ import type { Profiles } from "$lib/components/dbTableTypes";
 import { supabase } from "$lib/supabaseClient";
 import { error } from "@sveltejs/kit";
 
-export const load = async () => {
+export const load = async ({ setHeaders }) => {
   const { data: profiles, error: err } = await supabase
     .from("profiles")
     .select("*");
@@ -16,6 +16,10 @@ export const load = async () => {
   const logoDesigner = profiles.find(
     (p: Profiles) => p.user_id === "b49da5bb-6d82-463e-b8ee-fd7c9feebde6"
   );
+
+  setHeaders({
+    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
+  });
 
   return { profiles, logoDesigner, team };
 };

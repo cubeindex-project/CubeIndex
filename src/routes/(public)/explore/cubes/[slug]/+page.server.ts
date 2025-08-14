@@ -1,7 +1,7 @@
 import { configCatClient } from "$lib/configcatClient";
 import type { Profiles } from "$lib/components/dbTableTypes";
 
-export const load = async ({ locals }) => {
+export const load = async ({ locals, setHeaders }) => {
   let databaseAvailability: boolean = true;
   let cubesAvailability: boolean = true;
 
@@ -28,6 +28,10 @@ export const load = async ({ locals }) => {
 
     profile = data;
   }
+
+  setHeaders({
+    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
+  });
 
   return { databaseAvailability, cubesAvailability, profile };
 };

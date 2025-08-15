@@ -2,6 +2,7 @@ import { configCatClient } from "$lib/configcatClient";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+import { buildProductJSONLD } from "$lib/components/buildProductJSONLD.js";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -57,21 +58,46 @@ function buildCubeDescription(
   return desc;
 }
 
-export const load = async ({ locals, setHeaders, params, request }) => {
+export const load = async ({ locals, setHeaders, params, request, url }) => {
   const slug = params.slug;
 
-  let databaseAvailability: boolean = true;
-  let cubesAvailability: boolean = true;
+  const profilePromise = locals.user?.id
+    ? locals.supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", locals.user.id)
+        .single()
+    : Promise.resolve({ data: null, error: null });
 
-  configCatClient.getValueAsync("database", false).then((value) => {
-    databaseAvailability = value;
-  });
+  const cubePromise = locals.supabase
+    .from("cube_models")
+    .select(
+      `
+    slug, series, model, version_name, type, release_date, image_url,
+    rating, related_to, status, updated_at, created_at, id, version_type,
+    sub_type, size, weight, surface_finish, brand,
+    verified_by_id(display_name, username),
+    submitted_by_id(display_name, username)
+  `
+    )
+    .eq("slug", slug)
+    .single();
 
-  configCatClient.getValueAsync("cubes", false).then((value) => {
-    cubesAvailability = value;
-  });
+  const flagsPromise = Promise.all([
+    configCatClient.getValueAsync("database", false),
+    configCatClient.getValueAsync("cubes", false),
+  ]);
 
-  let profile: Profiles = {} as Profiles;
+  const [profileRes, cubeRes, flags] = await Promise.all([
+    profilePromise,
+    cubePromise,
+    flagsPromise,
+  ]);
+
+  const [databaseAvailability, cubesAvailability] = flags;
+  let profile = (profileRes.data ?? {}) as Profiles;
+  const cube = cubeRes.data;
+  if (!cube) throw error(404, "Cube not found");
 
   if (locals.user?.id) {
     const { data, error: pErr } = await locals.supabase
@@ -85,17 +111,6 @@ export const load = async ({ locals, setHeaders, params, request }) => {
     }
 
     profile = data;
-  }
-
-  // 1) Cube
-  const { data: cube, error: cErr } = await locals.supabase
-    .from("cube_models")
-    .select("*")
-    .eq("slug", slug)
-    .single();
-
-  if (cErr || !cube) {
-    throw error(404, "Cube not found");
   }
 
   // 2) Stats (counts via HEAD + exact)
@@ -127,7 +142,11 @@ export const load = async ({ locals, setHeaders, params, request }) => {
     : 0;
 
   // 3) Meta
-  const origin = "http://" + request.headers.get("host"); // SSR-safe
+  const host =
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
+  const href = `${origin}${url.pathname}${url.search}`;
   const canonical = `${origin}/explore/cubes/${slug}`;
   const ogImage = `${origin}/api/og/cube/${slug}`;
 
@@ -143,6 +162,70 @@ export const load = async ({ locals, setHeaders, params, request }) => {
     cube.image_url
   )}`;
 
+  const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
+    locals.supabase
+      .from("cube_models")
+      .select("slug, series, model, version_name, image_url")
+      .eq("series", cube.series)
+      .eq("version_type", "Base")
+      .neq("model", cube.model)
+      .eq("status", "Approved")
+      .order("model", { ascending: true })
+      .limit(12),
+    locals.supabase
+      .from("cube_models")
+      .select("slug, series, model, version_name, image_url")
+      .eq("slug", cube.related_to)
+      .eq("status", "Approved")
+      .maybeSingle(),
+    locals.supabase
+      .from("cube_models")
+      .select("slug, series, model, version_name, image_url")
+      .eq("related_to", cube.slug)
+      .eq("status", "Approved")
+      .order("model", { ascending: true })
+      .limit(24),
+  ]);
+
+  const [
+    { data: features, error: featErr },
+    { data: user_cube_ratings, error: urErr },
+    { data: vendor_links, error: cvlErr },
+    { data: user_cubes, error: ucErr },
+  ] = await Promise.all([
+    locals.supabase
+      .from("cubes_model_features")
+      .select("*")
+      .eq("cube", cube.slug),
+    locals.supabase
+      .from("user_cube_ratings")
+      .select("*, profile:user_id(username, display_name)")
+      .eq("cube_slug", cube.slug),
+    locals.supabase
+      .from("cube_vendor_links")
+      .select("*")
+      .eq("cube_slug", cube.slug),
+    locals.supabase.from("user_cubes").select("*").eq("cube", cube.slug),
+  ]);
+
+  if (featErr) {
+    throw new Error("A 500 status code error occured:" + featErr.message);
+  }
+
+  if (urErr) {
+    throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
+  }
+
+  if (cvlErr) {
+    throw new Error(
+      `500, Failed to fetch vendor links for cube "${cube.slug}": ${cvlErr.message}`
+    );
+  }
+
+  if (ucErr) {
+    throw new Error(`Failed to fetch cube user counts: ${ucErr.message}`);
+  }
+
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
@@ -153,6 +236,15 @@ export const load = async ({ locals, setHeaders, params, request }) => {
     cubesAvailability,
     profile,
     cube,
+    features,
+    vendor_links,
+    user_cube_ratings,
+    user_cubes,
+    sameSeries: sameSeriesRes.data ?? [],
+    relatedCube: relatedRes.data ?? null,
+    cubeTrims: trimsRes.data ?? [],
+    verifiedBy: cube.verified_by_id,
+    submittedBy: cube.submitted_by_id,
     stats: { ratingAvg, ratingCount, shopsCount, ownersCount },
     meta: {
       title: `${cube.series} ${cube.model}${
@@ -162,6 +254,20 @@ export const load = async ({ locals, setHeaders, params, request }) => {
       canonical,
       ogImage,
       preloadImage,
+      ldJSON: JSON.stringify(
+        buildProductJSONLD(
+          {
+            cube,
+            features,
+            relatedCube: relatedRes.data ?? null,
+            sameSeries: sameSeriesRes.data ?? [],
+            user_cube_ratings,
+            vendor_links,
+          },
+          origin,
+          href
+        )
+      ),
     },
   };
 };

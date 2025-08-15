@@ -16,6 +16,8 @@ export default defineConfig({
     tailwindcss(),
     sveltekit(),
     SvelteKitPWA({
+      registerType: "prompt",
+      injectRegister: "auto",
       devOptions: {
         enabled: true,
       },

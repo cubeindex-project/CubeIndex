@@ -48,6 +48,9 @@
   import { pwaInfo } from "virtual:pwa-info";
 
   const webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : "";
+
+  import { registerSW } from "virtual:pwa-register";
+  registerSW({ immediate: true });
 </script>
 
 <svelte:head>

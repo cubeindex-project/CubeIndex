@@ -1,6 +1,7 @@
 import { configCatClient } from "$lib/configcatClient";
+import type { PageLoad } from "./$types";
 
-export const load = async ({ setHeaders }) => {
+export const load = (async ({ setHeaders }) => {
   let databaseAvailability: boolean = true;
   let cubesAvailability: boolean = true;
 
@@ -17,4 +18,4 @@ export const load = async ({ setHeaders }) => {
   });
 
   return { databaseAvailability, cubesAvailability };
-};
+}) satisfies PageLoad;

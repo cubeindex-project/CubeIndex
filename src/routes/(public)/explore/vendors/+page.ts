@@ -1,6 +1,6 @@
 import { supabase } from "$lib/supabaseClient";
-import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
+import type { PageLoad } from "./$types";
 
 export const load = (async ({ setHeaders }) => {
   const { data: vendors, error: err } = await supabase
@@ -15,4 +15,4 @@ export const load = (async ({ setHeaders }) => {
   });
 
   return { vendors };
-}) satisfies PageServerLoad;
+}) satisfies PageLoad;

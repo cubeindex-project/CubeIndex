@@ -1,25 +1,20 @@
+import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
 export const load = (async ({ setHeaders }) => {
-  const { data: profiles, error: err } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("id", { ascending: true });
+  const [
+    { data: profiles, error: err },
+    { data: user_achievements, error: userAchieveError },
+    { data: user_cubes, error: userCubesError },
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").order("id", { ascending: true }),
+    supabase.from("user_achievements").select("*"),
+    supabase.from("user_cubes").select("*"),
+  ]);
 
   if (err) throw error(500, err.message);
-
-  const { data: user_achievements, error: userAchieveError } = await supabase
-    .from("user_achievements")
-    .select("*");
-
   if (userAchieveError) throw error(500, userAchieveError.message);
-
-  const { data: user_cubes, error: userCubesError } = await supabase
-    .from("user_cubes")
-    .select("*");
-
   if (userCubesError) throw error(500, userCubesError.message);
 
   setHeaders({
@@ -27,4 +22,4 @@ export const load = (async ({ setHeaders }) => {
   });
 
   return { profiles, user_achievements, user_cubes };
-}) satisfies PageServerLoad;
+}) satisfies PageLoad;

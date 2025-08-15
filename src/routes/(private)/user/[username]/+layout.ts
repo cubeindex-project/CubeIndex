@@ -1,5 +1,8 @@
+import type { LayoutLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import type { UserFollowsRow } from "$lib/components/dbTableTypes.js";
+import { supabase } from "$lib/supabaseClient";
+import { page } from "$app/state";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -51,11 +54,12 @@ function buildProfileDescription(
   return desc;
 }
 
-export const load = async ({ params, locals, request }) => {
+export const load = (async ({params, parent}) => {
   const { username } = params;
+  const { user } = await parent();
 
   // 1) Profile
-  const { data: profile, error: err } = await locals.supabase
+  const { data: profile, error: err } = await supabase
     .from("profiles")
     .select("*")
     .eq("username", username)
@@ -67,11 +71,11 @@ export const load = async ({ params, locals, request }) => {
 
   let following: UserFollowsRow[] = [];
 
-  if (locals.user?.id) {
-    const { data, error: followErr } = await locals.supabase
+  if (user?.id) {
+    const { data, error: followErr } = await supabase
       .from("user_follows")
       .select("*")
-      .eq("follower_id", locals.user.id)
+      .eq("follower_id", user.id)
       .eq("following_id", profile.user_id);
 
     if (followErr) throw error(500, followErr.message);
@@ -86,19 +90,19 @@ export const load = async ({ params, locals, request }) => {
     { count: cubesCount = 0, error: cErr },
     { count: achievementsCount = 0, error: aErr },
   ] = await Promise.all([
-    locals.supabase
+    supabase
       .from("user_follows")
       .select("*", { head: true, count: "exact" })
       .eq("following_id", profile.user_id), // who follows THIS user
-    locals.supabase
+    supabase
       .from("user_follows")
       .select("*", { head: true, count: "exact" })
       .eq("follower_id", profile.user_id), // who THIS user follows
-    locals.supabase
+    supabase
       .from("user_cubes")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", profile.user_id),
-    locals.supabase
+    supabase
       .from("user_achievements")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", profile.user_id),
@@ -109,7 +113,7 @@ export const load = async ({ params, locals, request }) => {
   }
 
   // 3) Meta
-  const origin = "http://" + request.headers.get("host"); // SSR-safe
+  const origin = page.url.origin; // SSR-safe
   const canonical = `${origin}/user/${username}`;
   const ogImage = `${origin}/api/og/profile/${username}`;
 
@@ -142,4 +146,4 @@ export const load = async ({ params, locals, request }) => {
       preloadImage,
     },
   };
-};
+}) satisfies LayoutLoad;

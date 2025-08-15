@@ -1,8 +1,8 @@
 import { supabase } from "$lib/supabaseClient";
 import { error } from "@sveltejs/kit";
+import type { PageLoad } from "./$types";
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ setHeaders }) {
+export const load = (async ({ setHeaders }) => {
   const { data: achievements, error: err } = await supabase
     .from("achievements")
     .select("*")
@@ -17,4 +17,4 @@ export async function load({ setHeaders }) {
   return {
     achievements,
   };
-}
+}) satisfies PageLoad;

@@ -1,8 +1,9 @@
+import { error } from "@sveltejs/kit";
+import type { PageLoad } from "./$types";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { supabase } from "$lib/supabaseClient";
-import { error } from "@sveltejs/kit";
 
-export const load = async ({ setHeaders }) => {
+export const load = (async ({ setHeaders }) => {
   const { data: profiles, error: err } = await supabase
     .from("profiles")
     .select("*");
@@ -22,4 +23,4 @@ export const load = async ({ setHeaders }) => {
   });
 
   return { profiles, logoDesigner, team };
-};
+}) satisfies PageLoad;

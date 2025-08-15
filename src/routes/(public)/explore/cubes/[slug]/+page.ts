@@ -1,4 +1,5 @@
-import type { Profiles } from "$lib/components/dbTableTypes";
+import type { PageLoad } from "./$types";
+import type { Cube, Profiles } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 import { buildProductJSONLD } from "$lib/components/buildProductJSONLD.js";
@@ -43,13 +44,13 @@ function buildCubeDescription(
       `Rated ${stats.ratingAvg}/5 by ${plural(stats.ratingCount, "user")}.`
     );
   } else {
-    parts.push(`No ratings yet — be the first to review it.`);
+    parts.push(`It has no ratings yet — be the first to review it.`);
   }
 
   if (stats.shopsCount > 0)
-    parts.push(`Available at ${plural(stats.shopsCount, "shop")}.`);
+    parts.push(`It is available at ${plural(stats.shopsCount, "shop")}.`);
   if (stats.ownersCount > 0)
-    parts.push(`Owned by ${plural(stats.ownersCount, "user")}.`);
+    parts.push(`And is owned by ${plural(stats.ownersCount, "user")}.`);
 
   // Keep it snippet-length (~160 chars)
   let desc = parts.join(" ");
@@ -57,25 +58,19 @@ function buildCubeDescription(
   return desc;
 }
 
-export const load = async ({ locals, setHeaders, params, request, url }) => {
+export const load = (async ({ setHeaders, params, url, parent }) => {
   const slug = params.slug;
+  const { supabase, user } = await parent();
 
-  const profilePromise = locals.user?.id
-    ? locals.supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", locals.user.id)
-        .single()
+  const profilePromise = user?.id
+    ? supabase.from("profiles").select("*").eq("user_id", user.id).single()
     : Promise.resolve({ data: null, error: null });
 
-  const cubePromise = locals.supabase
+  const cubePromise = supabase
     .from("cube_models")
     .select(
       `
-    slug, series, model, version_name, type, release_date, image_url,
-    rating, related_to, status, updated_at, created_at, id, version_type,
-    sub_type, size, weight, surface_finish, brand,
-    verified_by_id(display_name, username),
+    *, verified_by_id(display_name, username),
     submitted_by_id(display_name, username)
   `
     )
@@ -91,11 +86,11 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
   const cube = cubeRes.data;
   if (!cube) throw error(404, "Cube not found");
 
-  if (locals.user?.id) {
-    const { data, error: pErr } = await locals.supabase
+  if (user?.id) {
+    const { data, error: pErr } = await supabase
       .from("profiles")
       .select("*")
-      .eq("user_id", locals.user?.id)
+      .eq("user_id", user?.id)
       .single();
 
     if (pErr) {
@@ -111,15 +106,15 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
     { count: shopsCount = 0, error: sErr },
     { count: ownersCount = 0, error: oErr },
   ] = await Promise.all([
-    locals.supabase
+    supabase
       .from("user_cube_ratings")
       .select("*", { head: true, count: "exact" })
       .eq("cube_slug", slug),
-    locals.supabase
+    supabase
       .from("cube_vendor_links")
       .select("*", { head: true, count: "exact" })
       .eq("cube_slug", slug),
-    locals.supabase
+    supabase
       .from("user_cubes")
       .select("*", { head: true, count: "exact" })
       .eq("cube", slug),
@@ -134,11 +129,8 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
     : 0;
 
   // 3) Meta
-  const host =
-    request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-  const proto = request.headers.get("x-forwarded-proto") ?? "https";
-  const origin = `${proto}://${host}`;
-  const href = `${origin}${url.pathname}${url.search}`;
+  const origin = url.origin;
+  const href = url.href;
   const canonical = `${origin}/explore/cubes/${slug}`;
   const ogImage = `${origin}/api/og/cube/${slug}`;
 
@@ -155,7 +147,7 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
   )}`;
 
   const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
-    locals.supabase
+    supabase
       .from("cube_models")
       .select("slug, series, model, version_name, image_url")
       .eq("series", cube.series)
@@ -164,13 +156,13 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
       .eq("status", "Approved")
       .order("model", { ascending: true })
       .limit(12),
-    locals.supabase
+    supabase
       .from("cube_models")
       .select("slug, series, model, version_name, image_url")
       .eq("slug", cube.related_to)
       .eq("status", "Approved")
       .maybeSingle(),
-    locals.supabase
+    supabase
       .from("cube_models")
       .select("slug, series, model, version_name, image_url")
       .eq("related_to", cube.slug)
@@ -185,19 +177,13 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
     { data: vendor_links, error: cvlErr },
     { data: user_cubes, error: ucErr },
   ] = await Promise.all([
-    locals.supabase
-      .from("cubes_model_features")
-      .select("*")
-      .eq("cube", cube.slug),
-    locals.supabase
+    supabase.from("cubes_model_features").select("*").eq("cube", cube.slug),
+    supabase
       .from("user_cube_ratings")
       .select("*, profile:user_id(username, display_name)")
       .eq("cube_slug", cube.slug),
-    locals.supabase
-      .from("cube_vendor_links")
-      .select("*")
-      .eq("cube_slug", cube.slug),
-    locals.supabase.from("user_cubes").select("*").eq("cube", cube.slug),
+    supabase.from("cube_vendor_links").select("*").eq("cube_slug", cube.slug),
+    supabase.from("user_cubes").select("*").eq("cube", cube.slug),
   ]);
 
   if (featErr) {
@@ -247,10 +233,10 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
       ldJSON: JSON.stringify(
         buildProductJSONLD(
           {
-            cube,
+            cube: cube,
             features,
-            relatedCube: relatedRes.data ?? null,
-            sameSeries: sameSeriesRes.data ?? [],
+            relatedCube: (relatedRes.data as Cube) ?? null,
+            sameSeries: (sameSeriesRes.data as Cube[]) ?? [],
             user_cube_ratings,
             vendor_links,
           },
@@ -260,4 +246,4 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
       ),
     },
   };
-};
+}) satisfies PageLoad;

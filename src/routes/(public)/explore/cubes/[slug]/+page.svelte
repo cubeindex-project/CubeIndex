@@ -76,19 +76,6 @@
   function toggleOpenReport() {
     openReport = !openReport;
   }
-
-  // Prefer server-provided values; fall back to $page.url.origin for safety
-  const origin = data.meta?.canonical?.split("/explore")[0] ?? page.url.origin;
-  const canonical =
-    data.meta?.canonical ?? `${origin}/explore/cubes/${data.cube.slug}`;
-  const ogImage =
-    data.meta?.ogImage ?? `${origin}/api/og/cube/${data.cube.slug}`;
-
-  // Human + bot-friendly description (keep ~160 chars max)
-  const description = data.meta.description;
-
-  // Cloudinary fetch: source must be URL-encoded
-  const preloadSrc = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${encodeURIComponent(data.cube.image_url)}`;
 </script>
 
 <svelte:head>
@@ -275,7 +262,7 @@
           <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
             <img
               data-hero-key={`cube-image-${cube.id}`}
-              src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
+              src={meta.preloadImage}
               alt="{cube.series} {cube.model} {cube.version_name}"
               fetchpriority="high"
               class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"

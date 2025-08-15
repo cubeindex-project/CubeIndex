@@ -9,15 +9,6 @@
   const { achievements } = data;
   let achievementsAvailability: boolean = $state(true);
 
-  function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
-  }
-
   onMount(() =>
     configCatClient
       .getValueAsync("achievementsAvailability", false)

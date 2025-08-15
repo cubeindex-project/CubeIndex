@@ -1,6 +1,4 @@
 <script lang="ts">
-  // Import feature toggle component for disabled states
-  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
   // Import the card component to display individual cubes
   import CubeCard from "$lib/components/cube/cubeCard.svelte";
   // Lifecycle hook to run code when component mounts
@@ -40,10 +38,6 @@
     _smart: boolean; // Smart feature flag
     _popularity: number; // Popularity count from user data
   };
-
-  // Props passed from load function
-  const { data } = $props();
-  const { databaseAvailability, cubesAvailability } = data;
 
   // Loading indicator state
   let loading = $state(true);
@@ -321,215 +315,203 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  {#if databaseAvailability && cubesAvailability}
-    <section class="min-h-screen px-6 py-16">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-clash font-bold mb-6 text-center">
-          Explore Cubes
-        </h1>
-        <p class="mb-12 text-center">
-          Browse all your favorite cubes by type, brand, or rating.
-        </p>
+  <section class="min-h-screen px-6 py-16">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-4xl font-clash font-bold mb-6 text-center">
+        Explore Cubes
+      </h1>
+      <p class="mb-12 text-center">
+        Browse all your favorite cubes by type, brand, or rating.
+      </p>
 
-        <!-- Search bar with filter toggle button -->
-        <SearchBar
-          showFilter={true}
-          bind:searchTerm
-          filterAction={() => (showFilters = !showFilters)}
-        />
+      <!-- Search bar with filter toggle button -->
+      <SearchBar
+        showFilter={true}
+        bind:searchTerm
+        filterAction={() => (showFilters = !showFilters)}
+      />
 
-        <div class="flex flex-col lg:flex-row gap-8">
-          <!-- Filters sidebar -->
-          <FilterSidebar {showFilters}>
-            <!-- Type dropdown -->
-            <div>
-              <label class="block text-sm mb-1">
-                Type:
-                <select
-                  bind:value={selectedType}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allTypes as t}
-                    <option>{t}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <!-- Sub-type dropdown -->
-            <div>
-              <label class="block text-sm mb-1">
-                Sub Type:
-                <select
-                  bind:value={selectedSubType}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allSubTypes as st}
-                    <option>{st}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <!-- Brand dropdown -->
-            <div>
-              <label class="block text-sm mb-1">
-                Brand:
-                <select
-                  bind:value={selectedBrand}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allBrands as b}
-                    <option>{b}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <!-- Year dropdown -->
-            <div>
-              <label class="block text-sm mb-1">
-                Release Year:
-                <select
-                  bind:value={selectedYear}
-                  class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                >
-                  <option>All</option>
-                  {#each allYears as year}
-                    <option value={year}>{year}</option>
-                  {/each}
-                </select>
-              </label>
-            </div>
-            <!-- Tri-state feature filters -->
-            <div class="grid grid-cols-2 gap-2">
-              <TriStateCheckbox bind:value={WCALegal} label="WCA Legal" />
-              <TriStateCheckbox bind:value={magnetic} label="Magnetic" />
-              <TriStateCheckbox bind:value={smart} label="Smart" />
-              <TriStateCheckbox bind:value={modded} label="Modded" />
-              <TriStateCheckbox bind:value={base} label="Base" />
-              <TriStateCheckbox bind:value={trim} label="Trim" />
-              <TriStateCheckbox bind:value={limited} label="Limited" />
-            </div>
-            <!-- Reset filters button -->
-            <div>
-              <button
-                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-                onclick={resetFilters}
-                type="button"
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Filters sidebar -->
+        <FilterSidebar {showFilters}>
+          <!-- Type dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Type:
+              <select
+                bind:value={selectedType}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                Reset Filters
-              </button>
-            </div>
-          </FilterSidebar>
-
-          <!-- Main content: cube cards -->
-          <div class="flex-1">
-            <!-- Controls: items per page & sorting -->
-            <div
-              class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
-            >
-              <div class="flex flex-wrap items-center gap-4">
-                <ItemsPerPageSelector
-                  bind:itemsPerPage
-                  label="Cubes per page"
-                />
-                <SortSelector bind:sortField bind:sortOrder {sortOptions} />
-              </div>
-              <!-- Link to compare page -->
-              <div>
-                <a
-                  href="/explore/cubes/compare"
-                  class="btn bg-primary text-primary-content"
-                >
-                  <i class="fa-solid fa-code-compare sm:mr-2"></i>
-                  Compare <span class="hidden sm:block">Cubes</span>
-                </a>
-              </div>
-            </div>
-
-            <!-- Pagination at top -->
-            <div class="mb-10">
-              <Pagination bind:currentPage {totalPages} />
-            </div>
-
-            <!-- Loading state: skeleton cards -->
-            {#if loading}
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {#each Array(6) as i}
-                  <div
-                    class="bg-neutral rounded-2xl overflow-hidden animate-pulse"
-                  >
-                    <div class="h-48 bg-neutral-content"></div>
-                    <div class="p-5 space-y-4">
-                      <div class="h-6 bg-neutral-content rounded w-3/4"></div>
-                      <div class="h-4 bg-neutral-content rounded w-1/2"></div>
-                      <div class="h-4 bg-neutral-content rounded w-1/4"></div>
-                    </div>
-                  </div>
+                <option>All</option>
+                {#each allTypes as t}
+                  <option>{t}</option>
                 {/each}
-              </div>
-            {:else}
-              <!-- Display paginated cubes -->
-              <div
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-                transition:blur
+              </select>
+            </label>
+          </div>
+          <!-- Sub-type dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Sub Type:
+              <select
+                bind:value={selectedSubType}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                {#if paginatedCubes.length > 0}
-                  {#each paginatedCubes as cube}
-                    {#key paginatedCubes}
-                      <CubeCard
-                        {cube}
-                        add={true}
-                        rate={true}
-                        details={true}
-                        badges={true}
-                        image={true}
-                      />
-                    {/key}
-                  {/each}
-                {:else}
-                  <!-- No results state -->
-                  <div
-                    class="col-span-full flex flex-col items-center justify-center py-20"
-                  >
-                    <i class="fa-solid fa-cube fa-3x mb-4"></i>
-                    <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
-                    <p class="mb-6 text-center max-w-xs">
-                      We couldn't find any cubes matching your search or
-                      filters. Try adjusting them or resetting to see
-                      everything.
-                    </p>
-                    <button
-                      onclick={() => {
-                        resetFilters();
-                        searchTerm = "";
-                      }}
-                      class="btn btn-outline flex items-center"
-                      aria-label="Reset filters"
-                    >
-                      <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                      Reset
-                    </button>
-                  </div>
-                {/if}
-              </div>
-            {/if}
+                <option>All</option>
+                {#each allSubTypes as st}
+                  <option>{st}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Brand dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Brand:
+              <select
+                bind:value={selectedBrand}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+              >
+                <option>All</option>
+                {#each allBrands as b}
+                  <option>{b}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Year dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Release Year:
+              <select
+                bind:value={selectedYear}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+              >
+                <option>All</option>
+                {#each allYears as year}
+                  <option value={year}>{year}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Tri-state feature filters -->
+          <div class="grid grid-cols-2 gap-2">
+            <TriStateCheckbox bind:value={WCALegal} label="WCA Legal" />
+            <TriStateCheckbox bind:value={magnetic} label="Magnetic" />
+            <TriStateCheckbox bind:value={smart} label="Smart" />
+            <TriStateCheckbox bind:value={modded} label="Modded" />
+            <TriStateCheckbox bind:value={base} label="Base" />
+            <TriStateCheckbox bind:value={trim} label="Trim" />
+            <TriStateCheckbox bind:value={limited} label="Limited" />
+          </div>
+          <!-- Reset filters button -->
+          <div>
+            <button
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
+              onclick={resetFilters}
+              type="button"
+            >
+              <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+              Reset Filters
+            </button>
+          </div>
+        </FilterSidebar>
 
-            <!-- Pagination at bottom -->
-            <div class="mt-10">
-              <Pagination bind:currentPage {totalPages} />
+        <!-- Main content: cube cards -->
+        <div class="flex-1">
+          <!-- Controls: items per page & sorting -->
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
+          >
+            <div class="flex flex-wrap items-center gap-4">
+              <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
+              <SortSelector bind:sortField bind:sortOrder {sortOptions} />
             </div>
+            <!-- Link to compare page -->
+            <div>
+              <a
+                href="/explore/cubes/compare"
+                class="btn bg-primary text-primary-content"
+              >
+                <i class="fa-solid fa-code-compare sm:mr-2"></i>
+                Compare <span class="hidden sm:block">Cubes</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Pagination at top -->
+          <div class="mb-10">
+            <Pagination bind:currentPage {totalPages} />
+          </div>
+
+          <!-- Loading state: skeleton cards -->
+          {#if loading}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {#each Array(6) as i}
+                <div
+                  class="bg-neutral rounded-2xl overflow-hidden animate-pulse"
+                >
+                  <div class="h-48 bg-neutral-content"></div>
+                  <div class="p-5 space-y-4">
+                    <div class="h-6 bg-neutral-content rounded w-3/4"></div>
+                    <div class="h-4 bg-neutral-content rounded w-1/2"></div>
+                    <div class="h-4 bg-neutral-content rounded w-1/4"></div>
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <!-- Display paginated cubes -->
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+              transition:blur
+            >
+              {#if paginatedCubes.length > 0}
+                {#each paginatedCubes as cube}
+                  {#key paginatedCubes}
+                    <CubeCard
+                      {cube}
+                      add={true}
+                      rate={true}
+                      details={true}
+                      badges={true}
+                      image={true}
+                    />
+                  {/key}
+                {/each}
+              {:else}
+                <!-- No results state -->
+                <div
+                  class="col-span-full flex flex-col items-center justify-center py-20"
+                >
+                  <i class="fa-solid fa-cube fa-3x mb-4"></i>
+                  <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+                  <p class="mb-6 text-center max-w-xs">
+                    We couldn't find any cubes matching your search or filters.
+                    Try adjusting them or resetting to see everything.
+                  </p>
+                  <button
+                    onclick={() => {
+                      resetFilters();
+                      searchTerm = "";
+                    }}
+                    class="btn btn-outline flex items-center"
+                    aria-label="Reset filters"
+                  >
+                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                    Reset
+                  </button>
+                </div>
+              {/if}
+            </div>
+          {/if}
+
+          <!-- Pagination at bottom -->
+          <div class="mt-10">
+            <Pagination bind:currentPage {totalPages} />
           </div>
         </div>
       </div>
-    </section>
-  {:else if !cubesAvailability}
-    <!-- Feature disabled when cubes data is unavailable -->
-    <FeatureDisabled featureName="The cubes explore page is" />
-  {:else if !databaseAvailability}
-    <!-- Feature disabled when database is down -->
-    <FeatureDisabled featureName="The database is" />
-  {/if}
+    </div>
+  </section>
 </SsgoiTransition>

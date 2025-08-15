@@ -1,4 +1,3 @@
-import { configCatClient } from "$lib/configcatClient";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
@@ -83,18 +82,11 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
     .eq("slug", slug)
     .single();
 
-  const flagsPromise = Promise.all([
-    configCatClient.getValueAsync("database", false),
-    configCatClient.getValueAsync("cubes", false),
-  ]);
-
-  const [profileRes, cubeRes, flags] = await Promise.all([
+  const [profileRes, cubeRes] = await Promise.all([
     profilePromise,
     cubePromise,
-    flagsPromise,
   ]);
 
-  const [databaseAvailability, cubesAvailability] = flags;
   let profile = (profileRes.data ?? {}) as Profiles;
   const cube = cubeRes.data;
   if (!cube) throw error(404, "Cube not found");
@@ -232,8 +224,6 @@ export const load = async ({ locals, setHeaders, params, request, url }) => {
 
   // Return only what your head/JSON-LD needs; keep/add your own fields as required.
   return {
-    databaseAvailability,
-    cubesAvailability,
     profile,
     cube,
     features,

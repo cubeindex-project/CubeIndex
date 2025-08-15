@@ -4,7 +4,6 @@ import type {
   CubeVendorLinks,
   UserCubeRatings,
 } from "./dbTableTypes";
-import type { Page } from "@sveltejs/kit";
 
 /**
  * Build a Schema.org Product JSON-LD object from Cube data.
@@ -21,7 +20,8 @@ export function buildProductJSONLD(
     relatedCube: Cube | null;
     sameSeries: Cube[];
   },
-  page: Page
+  origin: string,
+  href: string
 ): Record<string, unknown> {
   // 1. Construct the product's name
   const name =
@@ -89,7 +89,7 @@ export function buildProductJSONLD(
   const obj: Record<string, string | object> = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "@id": page.url.href, // canonical reference
+    "@id": href, // canonical reference
     name,
     image: data.cube.image_url,
     description,
@@ -132,7 +132,7 @@ export function buildProductJSONLD(
     obj.isSimilarTo = [
       {
         "@type": "Product",
-        "@id": `${page.url.origin}/explore/cubes/${data.relatedCube.slug}`,
+        "@id": `${origin}/explore/cubes/${data.relatedCube.slug}`,
       },
     ];
   }
@@ -140,7 +140,7 @@ export function buildProductJSONLD(
   if (data.sameSeries && data.sameSeries.length) {
     obj.isRelatedTo = data.sameSeries.slice(0, 10).map((s) => ({
       "@type": "Product",
-      "@id": `${page.url.origin}/explore/cubes/${s.slug}`,
+      "@id": `${origin}/explore/cubes/${s.slug}`,
     }));
   }
 

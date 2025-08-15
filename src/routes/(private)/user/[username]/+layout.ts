@@ -2,7 +2,6 @@ import type { LayoutLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import type { UserFollowsRow } from "$lib/components/dbTableTypes.js";
 import { supabase } from "$lib/supabaseClient";
-import { page } from "$app/state";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -54,7 +53,7 @@ function buildProfileDescription(
   return desc;
 }
 
-export const load = (async ({params, parent}) => {
+export const load = (async ({ params, parent, url }) => {
   const { username } = params;
   const { user } = await parent();
 
@@ -113,7 +112,7 @@ export const load = (async ({params, parent}) => {
   }
 
   // 3) Meta
-  const origin = page.url.origin; // SSR-safe
+  const origin = url.origin; // SSR-safe
   const canonical = `${origin}/user/${username}`;
   const ogImage = `${origin}/api/og/profile/${username}`;
 

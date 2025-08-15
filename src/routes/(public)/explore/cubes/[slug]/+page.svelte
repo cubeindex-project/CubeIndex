@@ -95,11 +95,6 @@
     href={meta.preloadImage}
     fetchpriority="high"
   />
-  <link
-    rel="preconnect"
-    href="https://res.cloudinary.com"
-    crossorigin="anonymous"
-  />
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
 

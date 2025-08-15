@@ -15,7 +15,14 @@
   }
 
   let { cube, top, rating, content, bottom }: Props = $props();
+
+  const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`;
 </script>
+
+<svelte:head>
+  <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+  <link rel="dns-prefetch" href="//res.cloudinary.com" />
+</svelte:head>
 
 <div
   class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col z-50"
@@ -23,7 +30,7 @@
   {@render top?.()}
   <img
     data-hero-key={`cube-image-${cube.id}`}
-    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{cube.image_url}"
+    src={preloadImage}
     alt="{cube.series} {cube.model} {cube.version_name}"
     class="w-full h-48 object-cover"
     loading="eager"

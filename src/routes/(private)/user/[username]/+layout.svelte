@@ -157,7 +157,7 @@
       {#if profile.banner}
         <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
           <img
-            src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_auto,fl_lossy,q_auto,w_616/{profile.banner}"
+            src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_616/{profile.banner}"
             alt="{profile.username}'s banner"
             fetchpriority=high
             class="w-full h-full object-cover object-center"

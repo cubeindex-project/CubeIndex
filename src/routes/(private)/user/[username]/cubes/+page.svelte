@@ -15,10 +15,8 @@
     cube_model: Cube;
   }
 
-  let user_cubes: CubeAndDetails[] = $state([]);
-  let user_cube_ratings: any[] = $state([]);
-
-  let loading = $state(true);
+  const user_cubes: CubeAndDetails[] = $derived(data.user_cubes ?? []);
+  const user_cube_ratings: any[] = $derived(data.user_cube_ratings ?? []);
 
   // Filtering and pagination
   let searchTerm: string = $state("");
@@ -31,41 +29,6 @@
   let allStatuses: string[] = $state([]);
   let allConditions: string[] = $state([]);
   let showFilters = $state(false);
-
-  async function fetchUserCubes() {
-    const { data, error } = await supabase
-      .from("user_cubes")
-      .select("*, cube_model:cube(*)")
-      .eq("user_id", profile.user_id);
-
-    if (error) {
-      throw new Error(`500, Failed to fetch the user cubes: ${error.message}`);
-    }
-
-    user_cubes = data;
-  }
-
-  async function fetchUserRatings() {
-    const { data, error: urErr } = await supabase
-      .from("user_cube_ratings")
-      .select("*")
-      .eq("user_id", profile.user_id);
-
-    if (urErr) {
-      throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
-    }
-    user_cube_ratings = data ?? [];
-  }
-
-  onMount(async () => {
-    try {
-      await Promise.all([fetchUserCubes(), fetchUserRatings()]);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      loading = false;
-    }
-  });
 
   let edit = $state(false);
 
@@ -237,20 +200,7 @@
         <Pagination bind:currentPage {totalPages} />
       </div>
 
-      {#if loading}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {#each Array(6) as i}
-            <div class="bg-neutral rounded-2xl overflow-hidden animate-pulse">
-              <div class="h-48 bg-neutral-content"></div>
-              <div class="p-5 space-y-4">
-                <div class="h-6 bg-neutral-content rounded w-3/4"></div>
-                <div class="h-4 bg-neutral-content rounded w-1/2"></div>
-                <div class="h-4 bg-neutral-content rounded w-1/4"></div>
-              </div>
-            </div>
-          {/each}
-        </div>
-      {:else if user_cubes && user_cubes.length > 0}
+      {#if user_cubes && user_cubes.length > 0}
         <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {#each paginatedCubes as row}
             <UserCubeCard

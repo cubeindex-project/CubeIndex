@@ -2,24 +2,16 @@
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
-  const { user_achievements, achievements, profile } = data;
+  const { user_achievements, profile } = data;
 
   let showAllAchievements = $state(false);
   let achievementsToShow: any[] = $state([]);
 
-  const userAchievementNames = new Set(
-    user_achievements.map((ua) => ua.achievement)
-  );
-
-  const userAchievementsFromAll = achievements.filter((achievement) =>
-    userAchievementNames.has(achievement.name)
-  );
-
   // Show either all achievements or just the first 3, based on toggle state
   $effect(() => {
     achievementsToShow = showAllAchievements
-      ? userAchievementsFromAll
-      : userAchievementsFromAll.slice(0, 2);
+      ? user_achievements
+      : user_achievements.slice(0, 2);
   });
 </script>
 
@@ -56,7 +48,7 @@
         </li>
       {/each}
 
-      {#if userAchievementsFromAll.length > 2}
+      {#if user_achievements.length > 2}
         <button
           onclick={() => (showAllAchievements = !showAllAchievements)}
           class="btn btn-base-200 h-15"

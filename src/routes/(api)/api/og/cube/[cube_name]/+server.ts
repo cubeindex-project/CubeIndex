@@ -20,34 +20,36 @@ export const GET = async ({ params, locals }) => {
       { status: 404 }
     );
 
-  const { error: urErr, count: ratingCount } = await locals.supabase
-    .from("user_cube_ratings")
-    .select("*", { count: "exact", head: true })
-    .eq("cube_slug", cubeName);
+  const [
+    { error: urErr, count: ratingCount },
+    { error: cvlErr, count: shopsCount },
+    { error: ucErr, count: ownersCount },
+  ] = await Promise.all([
+    locals.supabase
+      .from("user_cube_ratings")
+      .select("*", { count: "exact", head: true })
+      .eq("cube_slug", cubeName),
+    locals.supabase
+      .from("cube_vendor_links")
+      .select("*", { count: "exact", head: true })
+      .eq("cube_slug", cubeName),
+    locals.supabase
+      .from("user_cubes")
+      .select("*", { count: "exact", head: true })
+      .eq("cube", cubeName),
+  ]);
 
   if (urErr)
     return new Response(
       "An error occured while fetching user ratings count: " + urErr.message,
       { status: 404 }
     );
-
-  const { error: cvlErr, count: shopsCount } = await locals.supabase
-    .from("cube_vendor_links")
-    .select("*", { count: "exact", head: true })
-    .eq("cube_slug", cubeName);
-
   if (cvlErr)
     return new Response(
       "An error occured while fetching the cube vendors count: " +
         cvlErr.message,
       { status: 404 }
     );
-
-  const { error: ucErr, count: ownersCount } = await locals.supabase
-    .from("user_cubes")
-    .select("*", { count: "exact", head: true })
-    .eq("cube", cubeName);
-
   if (ucErr)
     return new Response(
       "An error occured while fetching the user cubes count: " + ucErr.message,

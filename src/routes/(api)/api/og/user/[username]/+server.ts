@@ -20,59 +20,58 @@ export const GET = async ({ params, locals }) => {
       { status: 404 }
     );
 
-  const { error: ecErr, count: userCubesCount } = await locals.supabase
-    .from("user_cubes")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", profile.user_id);
+  const [
+    { error: ecErr, count: userCubesCount },
+    { error: userAchieveError, count: userAchievementsCount },
+    { error: urErr, count: userRatingsCount },
+    { error: followingErr, count: followingCount },
+    { error: followedErr, count: followersCount },
+  ] = await Promise.all([
+    locals.supabase
+      .from("user_cubes")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.user_id),
+    locals.supabase
+      .from("user_achievements")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.user_id),
+    locals.supabase
+      .from("user_cube_ratings")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", profile.user_id),
+    locals.supabase
+      .from("user_follows")
+      .select("*", { count: "exact", head: true })
+      .eq("follower_id", profile.user_id),
+    locals.supabase
+      .from("user_follows")
+      .select("*", { count: "exact", head: true })
+      .eq("following_id", profile.user_id),
+  ]);
 
   if (ecErr)
     return new Response(
       "An error occured while fetching the user cubes count: " + ecErr.message,
       { status: 404 }
     );
-
-  const { error: userAchieveError, count: userAchievementsCount } =
-    await locals.supabase
-      .from("user_achievements")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", profile.user_id);
-
   if (userAchieveError)
     return new Response(
       "An error occured while fetching the user achievements count: " +
         userAchieveError.message,
       { status: 404 }
     );
-
-  const { error: urErr, count: userRatingsCount } = await locals.supabase
-    .from("user_cube_ratings")
-    .select("*", { count: "exact", head: true })
-    .eq("user_id", profile.user_id);
-
   if (urErr)
     return new Response(
       "An error occured while fetching the user ratings count: " +
         urErr.message,
       { status: 404 }
     );
-
-  const { error: followingErr, count: followingCount } = await locals.supabase
-    .from("user_follows")
-    .select("*", { count: "exact", head: true })
-    .eq("follower_id", profile.user_id);
-
   if (followingErr)
     return new Response(
       "An error occured while fetching the user following count: " +
         followingErr.message,
       { status: 404 }
     );
-
-  const { error: followedErr, count: followersCount } = await locals.supabase
-    .from("user_follows")
-    .select("*", { count: "exact", head: true })
-    .eq("following_id", profile.user_id);
-
   if (followedErr)
     return new Response(
       "An error occured while fetching the user followers count: " +

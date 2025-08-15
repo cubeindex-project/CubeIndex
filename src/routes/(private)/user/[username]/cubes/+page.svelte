@@ -203,14 +203,16 @@
       {#if user_cubes && user_cubes.length > 0}
         <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {#each paginatedCubes as row}
-            <UserCubeCard
-              mode={edit ? "edit" : "view"}
-              cube={row.cube_model}
-              user_details={row}
-              user_rating={user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug
-              )?.rating ?? 0}
-            />
+            {#key paginatedCubes}
+              <UserCubeCard
+                mode={edit ? "edit" : "view"}
+                cube={row.cube_model}
+                user_details={row}
+                user_rating={user_cube_ratings.find(
+                  (ucr) => ucr.cube_slug === row.cube_model?.slug
+                )?.rating ?? 0}
+              />
+            {/key}
           {/each}
         </ul>
       {:else}

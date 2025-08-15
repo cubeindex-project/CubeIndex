@@ -29,12 +29,14 @@
     {#if paginatedRatings.length > 0}
       <h3 class="text-2xl font-bold mb-4">User Ratings</h3>
       {#each paginatedRatings as user_rating}
-        <UserRatingCard
-          {user_rating}
-          cube={user_rating.cube_model}
-          isAuthor={user_rating.user_id === user?.id}
-          showCubeDetails={true}
-        />
+        {#key paginatedRatings}
+          <UserRatingCard
+            {user_rating}
+            cube={user_rating.cube_model}
+            isAuthor={user_rating.user_id === user?.id}
+            showCubeDetails={true}
+          />
+        {/key}
       {/each}
       <Pagination bind:currentPage {totalPages} />
     {:else}

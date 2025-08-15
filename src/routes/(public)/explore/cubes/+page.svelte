@@ -478,14 +478,16 @@
               >
                 {#if paginatedCubes.length > 0}
                   {#each paginatedCubes as cube}
-                    <CubeCard
-                      {cube}
-                      add={true}
-                      rate={true}
-                      details={true}
-                      badges={true}
-                      image={true}
-                    />
+                    {#key paginatedCubes}
+                      <CubeCard
+                        {cube}
+                        add={true}
+                        rate={true}
+                        details={true}
+                        badges={true}
+                        image={true}
+                      />
+                    {/key}
                   {/each}
                 {:else}
                   <!-- No results state -->

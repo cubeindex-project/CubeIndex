@@ -3,6 +3,11 @@
   command = "pnpm run build"
 
 [[_redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/server"
+  status = 200
+
+[[_redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

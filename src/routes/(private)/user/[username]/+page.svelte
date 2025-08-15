@@ -2,7 +2,6 @@
   import type { PageData } from "./$types";
   import DOMPurify from "isomorphic-dompurify";
   import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
-  import UserCard from "$lib/components/user/userCard.svelte";
   import Markdown from "svelte-exmarkdown";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import "github-markdown-css/github-markdown.css";
@@ -34,6 +33,10 @@
   );
   const avgRounded = $derived(Math.round(averageRating)); // for star fill
 </script>
+
+<svelte:head>
+  <title>{profile.display_name}'s Profile - CubeIndex</title>
+</svelte:head>
 
 <div
   class="min-h-screen lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"

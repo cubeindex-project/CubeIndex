@@ -15,5 +15,9 @@
 # thecubeindex@gmail.com.
 
 User-Agent: *
-Content-Usage: tdm=y
 Allow: /
+Disallow: /staff/
+Disallow: /api/
+Disallow: /user/settings/
+
+sitemap: http://localhost:5173/sitemap.xml

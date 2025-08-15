@@ -57,7 +57,7 @@
 
   <!-- Bouncing Cube -->
   <img
-    src="/images/legendary-cube.png"
+    src="/images/legendary-cube.webp"
     alt="Legendary Cube"
     class="w-20 sm:w-24 fixed z-30 pointer-events-none"
     style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"

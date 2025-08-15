@@ -385,10 +385,7 @@
         <div
           class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
         >
-          <ItemsPerPageSelector
-            bind:itemsPerPage
-            label="Cubes per page"
-          />
+          <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
 
           <div>
             <a href="cubes/add" class="btn bg-primary text-primary-content">
@@ -422,7 +419,9 @@
           >
             {#if paginatedCubes.length > 0}
               {#each paginatedCubes as cube}
-                <StaffCubeCard {cube} {profile} />
+                {#key paginatedCubes}
+                  <StaffCubeCard {cube} {profile} />
+                {/key}
               {/each}
             {:else}
               <div

@@ -43,7 +43,7 @@
    cp .env.example .env
    ```
 
-   Update `.env` with your `DATABASE_URL` (e.g. from Supabase).
+   Update `.env` with your `DATABASE_URL` (e.g. from Supabase) and `PUBLIC_SITE_URL` (your production domain).
 
 4. **Set Up Database**
 

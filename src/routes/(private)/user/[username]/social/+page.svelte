@@ -9,6 +9,10 @@
   let tab: string = $state("following");
 </script>
 
+<svelte:head>
+  <title>{profile.display_name}'s Socials - CubeIndex</title>
+</svelte:head>
+
 <div class="max-w-6xl mx-auto mt-12 px-4 flex">
   <div class="flex flex-col lg:flex-row gap-6">
     <ul

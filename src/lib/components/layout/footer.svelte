@@ -4,9 +4,12 @@
     <div>
       <div class="flex items-center gap-2 mb-4">
         <img
-          src="/images/CubeIndex - Pixel Art.png"
+          src="/images/CubeIndex_Logo.webp"
           alt="CubeIndex logo"
           class="h-10 w-10 rounded-full"
+          width="12"
+          height="12"
+          fetchpriority="high"
         />
         <span class="text-2xl font-clash font-bold">CubeIndex</span>
       </div>

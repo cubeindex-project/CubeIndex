@@ -107,7 +107,7 @@
   {#if showCubeDetails}
     <div class="flex flex-row items-center gap-4 mb-4">
       <img
-        src={cube.image_url}
+        src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,fl_lossy,q_auto,h_96/{cube.image_url}"
         alt="{cube.series} {cube.model} {cube.version_name}"
         class="size-24 object-cover rounded-2xl"
       />

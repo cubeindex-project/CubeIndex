@@ -67,6 +67,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <section
     class="px-5 relative flex min-h-screen flex-col items-center justify-center overflow-hidden"

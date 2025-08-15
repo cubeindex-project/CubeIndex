@@ -72,9 +72,12 @@
     <!-- Logo -->
     <a href="/" class="flex items-center gap-2">
       <img
-        src="/images/CubeIndex - Pixel Art.png"
+        src="/images/CubeIndex_Logo.webp"
         alt="CubeIndex logo"
         class="h-12 w-12 rounded-full"
+        width="12"
+        height="12"
+        fetchpriority="high"
       />
       <span class="font-clash text-3xl font-bold">CubeIndex</span>
     </a>
@@ -131,7 +134,10 @@
             class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
             <li>
-              <a href={`/user/${profile.username}`} class="block px-4 py-2 text-sm">
+              <a
+                href={`/user/${profile.username}`}
+                class="block px-4 py-2 text-sm"
+              >
                 Profile
               </a>
             </li>
@@ -171,7 +177,9 @@
 
     <!-- Mobile Menu Button -->
     <button
-      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen ? 'swap-active' : ''}"
+      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen
+        ? 'swap-active'
+        : ''}"
       aria-label={isOpen ? "Close menu" : "Open menu"}
       onclick={() => (isOpen = !isOpen)}
     >

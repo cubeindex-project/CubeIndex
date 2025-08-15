@@ -1,11 +1,6 @@
 <script lang="ts">
-  import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/misc/featureDisabled.svelte";
-  import { onMount } from "svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
-
-  let databaseAvailability: boolean = $state(true);
 
   const cards = [
     {
@@ -37,16 +32,13 @@
         "Explore user profiles, discover top solvers, and see community activity.",
     },
   ];
-
-  onMount(() =>
-    configCatClient.getValueAsync("database", false).then((value) => {
-      databaseAvailability = value;
-    })
-  );
 </script>
 
+<svelte:head>
+  <title>CubeIndex</title>
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
-{#if databaseAvailability}
   <section
     class="min-h-screen flex flex-col items-center justify-center px-6 py-16 space-y-12"
   >
@@ -67,7 +59,4 @@
       {/each}
     </div>
   </section>
-{:else}
-  <FeatureDisabled featureName="The database is" />
-{/if}
 </SsgoiTransition>

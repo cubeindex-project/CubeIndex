@@ -12,6 +12,7 @@
   let user = $derived(data.user);
   let profile = $derived(data.profile);
   let following = $derived(data.following);
+  let meta = $derived(data.meta);
 
   interface socialObject {
     label?: string;
@@ -115,6 +116,40 @@
   ];
 </script>
 
+<svelte:head>
+  <title>{meta.title}</title>
+  <meta name="description" content={meta.description} />
+
+  <meta property="og:title" content={meta.title} />
+  <meta property="og:description" content={meta.description} />
+  <meta property="og:image" content={meta.ogImage} />
+  <meta property="og:url" content={meta.canonical} />
+  <meta property="og:type" content="profile" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={meta.title} />
+  <meta name="twitter:description" content={meta.description} />
+  <meta name="twitter:image" content={meta.ogImage} />
+
+  <link rel="canonical" href={meta.canonical} />
+  <link
+    rel="preload"
+    as="image"
+    href={meta.preloadImage}
+    fetchpriority="high"
+  />
+
+  {@html `<script type="application/ld+json">${JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.display_name || profile.username,
+    alternateName: `@${profile.username}`,
+    url: meta.canonical,
+    image: meta.preloadImage,
+    description: meta.description,
+  })}</script>`}
+</svelte:head>
+
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-0 py-12 pt-0">
     <div class="bg-base-200">
@@ -122,10 +157,10 @@
       {#if profile.banner}
         <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
           <img
-            src={profile.banner}
+            src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_616/{profile.banner}"
             alt="{profile.username}'s banner"
+            fetchpriority=high
             class="w-full h-full object-cover object-center"
-            loading="lazy"
           />
           <div class="absolute inset-0 pointer-events-none"></div>
         </div>

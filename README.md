@@ -7,18 +7,14 @@ CubeIndex is set to release in August 2025. We are currently in the beta stage o
 ## 🧠 Tech Stack
 
 - **Frontend:** SvelteKit, Tailwind CSS
-- **Backend:** Supabase (PostgreSQL), Drizzle ORM
+- **Backend:** Supabase (PostgreSQL)
 - **Auth:** Custom session-based authentication
-- **i18n:** Inlang for multi-language support
 - **Tooling:** TypeScript, ESLint, Vitest, Vite
 
 ## 🗂 Project Structure
 
 - `src/routes/` – Pages and endpoints
 - `src/lib/components/` – UI components
-- `src/lib/server/db/` – Drizzle schema and DB access
-- `src/lib/server/auth.ts` – Custom auth logic
-- `messages/` – Translations (i18n)
 
 ## 🚀 Deployment
 
@@ -31,7 +27,7 @@ CubeIndex is set to release in August 2025. We are currently in the beta stage o
 
 1. **Clone the Repo**
    ```bash
-   git clone https://github.com/Saterz/CubeIndex.git
+   git clone https://github.com/cubeindex-project/CubeIndex.git
    cd CubeIndex
    ```
 
@@ -47,15 +43,16 @@ CubeIndex is set to release in August 2025. We are currently in the beta stage o
    cp .env.example .env
    ```
 
-   Update `.env` with your `DATABASE_URL` (e.g. from Supabase).
-
-4. **Set Up Database**
+4. **Set Up Database with Supabse CLI**
+*Only do this if you plan on working on stuff related to the database. It is quite heavy and needs Docker to be installed and running.
+[More Info](https://supabase.com/docs/guides/local-development)*
 
    ```bash
-   npm run db:push
+   npx supabase run
+   npx supabase db reset
    ```
 
-5. **Start the Dev Server**
+6. **Start the Dev Server**
 
    ```bash
    npm run dev
@@ -68,7 +65,7 @@ Visit [http://localhost:5173](http://localhost:5173)
 We welcome contributions! Here's how to get started:
 
 * **Fork & branch off `developer`**
-* Use clear names like `feature/add-cube-model`
+* Use clear names like `feat/add-cube-model`
 * Follow code style (TypeScript, ESLint)
 * Commit clearly (e.g. `fix: login bug`)
 * Open a PR with description and context
@@ -78,10 +75,10 @@ We welcome contributions! Here's how to get started:
 ### 🧩 Contribution Example
 
 ```bash
-git checkout -b feature/my-feature
+git checkout -b feat/my-feature
 # Make your changes
 git commit -m "feat: add new feature"
-git push origin feature/my-feature
+git push origin feat/my-feature
 ```
 
 Then open a Pull Request to `developer` on GitHub.
@@ -90,7 +87,6 @@ Then open a Pull Request to `developer` on GitHub.
 
 * Join us on **[Discord](https://discord.gg/76ExrEAE7s)**
 * Create issues for bugs or feature ideas
-* Check the docs/comments for guidance
 
 ## 📦 Miscellaneous
 

@@ -20,7 +20,6 @@
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
-    "@lukulent/svelte-umami": "^0.0.4",
     "@sveltejs/adapter-netlify": "^5.0.2",
     "@sveltejs/adapter-vercel": "^0.0.3",
     "@sveltejs/kit": "^2.22.0",
@@ -32,7 +31,6 @@
     "@testing-library/svelte": "^5.2.4",
     "@types/culori": "^4.0.0",
     "@vite-pwa/sveltekit": "^1.0.0",
-    "drizzle-kit": "^0.31.1",
     "esbuild": "^0.25.2",
     "eslint": "^9.18.0",
     "eslint-plugin-svelte": "^3.0.0",
@@ -55,8 +53,6 @@
     "zod": "^3.25.73"
   },
   "dependencies": {
-    "@cartamd/plugin-emoji": "^4.3.0",
-    "@cartamd/plugin-slash": "^4.2.0",
     "@inlang/paraglide-js": "^2.0.0",
     "@node-rs/argon2": "^2.0.2",
     "@number-flow/svelte": "^0.3.9",
@@ -72,7 +68,6 @@
     "configcat-js-ssr": "^8.4.5",
     "culori": "^4.0.2",
     "daisyui": "^5.0.43",
-    "drizzle-orm": "^0.40.0",
     "github-markdown-css": "^5.8.1",
     "glob": "^11.0.3",
     "isomorphic-dompurify": "^2.26.0",

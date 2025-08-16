@@ -25,8 +25,6 @@
 
   let { data, children } = $props();
 
-  import { UmamiAnalyticsEnv } from "@lukulent/svelte-umami";
-
   // Keeping user fresh in the browser
   import { invalidate } from "$app/navigation";
   import { onMount } from "svelte";
@@ -48,9 +46,6 @@
   import { pwaInfo } from "virtual:pwa-info";
 
   const webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : "";
-
-  import { registerSW } from "virtual:pwa-register";
-  registerSW({ immediate: true });
 </script>
 
 <svelte:head>
@@ -71,8 +66,6 @@
     })();
   </script>
 </svelte:head>
-
-<UmamiAnalyticsEnv />
 
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 

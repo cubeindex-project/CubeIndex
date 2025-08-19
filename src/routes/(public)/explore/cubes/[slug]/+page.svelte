@@ -4,9 +4,7 @@
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import type { CubeVendorLinks } from "$lib/components/dbTableTypes.js";
   import type { Profiles } from "$lib/components/dbTableTypes.js";
-  import UserRatings from "$lib/components/rating/userRatings.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { page } from "$app/state";
   import { SsgoiTransition } from "@ssgoi/svelte";
@@ -17,7 +15,6 @@
   let {
     cube = {} as Cube,
     profile = {} as Profiles,
-    user_cube_ratings,
     cubeTrims,
     relatedCube,
     sameSeries,
@@ -39,7 +36,6 @@
   const isDiscontinued = $derived.by(() => cube.discontinued);
   const isModded = $derived.by(() => feats.has("modded"));
 
-  let vendor_links: CubeVendorLinks[] | undefined = $derived(data.vendor_links);
   let cubeUserCount: number | undefined = $derived(
     data.user_cubes?.length ?? 0
   );
@@ -192,6 +188,24 @@
         <ShareButton url={page.url.href} />
       </div>
 
+      <nav class="mb-6 flex flex-wrap gap-2">
+        <a
+          href="/explore/cubes/{cube.slug}"
+          class="btn btn-sm btn-primary"
+          >Details</a
+        >
+        <a
+          href="/explore/cubes/{cube.slug}/price"
+          class="btn btn-sm"
+          >Price Tracking</a
+        >
+        <a
+          href="/explore/cubes/{cube.slug}/ratings"
+          class="btn btn-sm"
+          >Ratings</a
+        >
+      </nav>
+
       <!-- Highlighted Rating -->
       <div class="flex flex-col items-start mb-5 sm:mt-0">
         <StarRating readOnly={true} rating={cube.rating ?? 0} />
@@ -275,34 +289,6 @@
           {/each}
         </div>
       </div>
-      {#if vendor_links && vendor_links.length > 0}
-        <div class="my-8">
-          <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-cart-shopping"></i>
-            Available at:
-          </h2>
-          <div class="flex flex-wrap gap-3">
-            {#each vendor_links as shop}
-              <a
-                href={shop.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn btn-outline {shop.available
-                  ? 'btn-primary'
-                  : 'btn-error'}"
-              >
-                {#if shop.available}
-                  <i class="fa-solid fa-check"></i>
-                {:else}
-                  <i class="fa-solid fa-xmark"></i>
-                {/if}
-                {shop.vendor_name} ・ ≃ {shop.price} $
-              </a>
-            {/each}
-          </div>
-        </div>
-      {/if}
-
       <div class="my-8">
         <div class="bg-base-200 rounded-xl p-4 border border-base-300">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -443,7 +429,6 @@
           </div>
         </div>
       {/if}
-      <UserRatings user_cube_ratings={user_cube_ratings ?? []} {cube} />
       <div class="mt-4">
         <button onclick={toggleOpenReport} class="btn btn-error">
           🚩 Report incorrect/missing data

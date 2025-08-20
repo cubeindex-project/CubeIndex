@@ -33,7 +33,7 @@
 
   const tabs = [
     { label: "Details", key: "" },
-    { label: "Price Tracking", key: "price" },
+    { label: "Shops - Price History", key: "price" },
     { label: "Ratings", key: "ratings" },
   ];
 </script>

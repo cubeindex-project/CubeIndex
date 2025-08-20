@@ -1,4 +1,4 @@
-import type { PageLoad } from "./$types";
+import type { LayoutLoad } from "./$types";
 import type { Cube, Profiles } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
@@ -227,4 +227,4 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
       ),
     },
   };
-}) satisfies PageLoad;
+}) satisfies LayoutLoad;

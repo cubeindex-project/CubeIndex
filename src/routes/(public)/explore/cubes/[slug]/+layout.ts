@@ -1,4 +1,4 @@
-import type { PageLoad } from "./$types";
+import type { LayoutLoad } from "./$types";
 import type { Cube, Profiles } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
@@ -173,31 +173,14 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
 
   const [
     { data: features, error: featErr },
-    { data: user_cube_ratings, error: urErr },
-    { data: vendor_links, error: cvlErr },
     { data: user_cubes, error: ucErr },
   ] = await Promise.all([
     supabase.from("cubes_model_features").select("*").eq("cube", cube.slug),
-    supabase
-      .from("user_cube_ratings")
-      .select("*, profile:user_id(username, display_name)")
-      .eq("cube_slug", cube.slug),
-    supabase.from("cube_vendor_links").select("*").eq("cube_slug", cube.slug),
     supabase.from("user_cubes").select("*").eq("cube", cube.slug),
   ]);
 
   if (featErr) {
     throw new Error("A 500 status code error occured:" + featErr.message);
-  }
-
-  if (urErr) {
-    throw new Error(`Failed to fetch user ratings: ${urErr.message}`);
-  }
-
-  if (cvlErr) {
-    throw new Error(
-      `500, Failed to fetch vendor links for cube "${cube.slug}": ${cvlErr.message}`
-    );
   }
 
   if (ucErr) {
@@ -213,8 +196,6 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
     profile,
     cube,
     features,
-    vendor_links,
-    user_cube_ratings,
     user_cubes,
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,
@@ -235,10 +216,10 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
           {
             cube: cube,
             features,
+            vendor_links: [],
+            user_cube_ratings: [],
             relatedCube: (relatedRes.data as Cube) ?? null,
             sameSeries: (sameSeriesRes.data as Cube[]) ?? [],
-            user_cube_ratings,
-            vendor_links,
           },
           origin,
           href
@@ -246,4 +227,4 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
       ),
     },
   };
-}) satisfies PageLoad;
+}) satisfies LayoutLoad;

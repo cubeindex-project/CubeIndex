@@ -159,7 +159,7 @@
           <img
             src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_616/{profile.banner}"
             alt="{profile.username}'s banner"
-            fetchpriority=high
+            fetchpriority="high"
             class="w-full h-full object-cover object-center"
           />
           <div class="absolute inset-0 pointer-events-none"></div>
@@ -327,8 +327,11 @@
             : ''} border-primary"
           onclick={() => {
             activeTab = tab.title;
-          }}>{tab.title}</a
+          }}
+          data-sveltekit-noscroll
         >
+          {tab.title}
+        </a>
       {/each}
       {#if user?.id === profile.user_id}
         <a
@@ -339,6 +342,7 @@
           onclick={() => {
             activeTab = "Submissions";
           }}
+          data-sveltekit-noscroll
         >
           Submissions
         </a>

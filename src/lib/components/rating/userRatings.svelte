@@ -1,6 +1,5 @@
 <script lang="ts">
   import UserRatingCard from "./userRatingCard.svelte";
-  import RateCube from "./rateCube.svelte";
   import Pagination from "../misc/pagination.svelte";
   import StarRating from "./starRating.svelte";
   import type { Cube } from "../dbTableTypes";
@@ -12,7 +11,6 @@
     $props();
 
   let user = getContext<User>("user");
-  let openRateCard = $state(false);
 
   let searchTerm: string = $state("");
 
@@ -73,25 +71,10 @@
       <i class="fa-solid fa-star"></i>
       User Ratings
     </h2>
-    <button
-      class="btn btn-accent gap-1"
-      type="button"
-      onclick={() => {
-        openRateCard = !openRateCard;
-      }}
-      aria-label="Rate this Cube"
-    >
-      <i class="fa-solid fa-star mr-2"></i>
-      Rate
-      <span class="hidden sm:block">this Cube</span>
-    </button>
   </div>
 
   {#if user_cube_ratings.length}
     <div class="mb-5">
-      <div class="flex items-center mb-2">
-        <StarRating readOnly={true} rating={cube.rating ?? 0} />
-      </div>
       <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
         {user_cube_ratings.length} total ratings
       </p>
@@ -180,12 +163,3 @@
     </div>
   {/if}
 </div>
-
-{#if openRateCard}
-  <RateCube
-    onCancel={() => {
-      openRateCard = !openRateCard;
-    }}
-    {cube}
-  />
-{/if}

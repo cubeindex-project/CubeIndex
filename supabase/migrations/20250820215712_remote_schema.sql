@@ -12,6 +12,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 
+CREATE EXTENSION IF NOT EXISTS "pg_cron" WITH SCHEMA "pg_catalog";
+
+
+
+
+
+
 CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
 
 
@@ -266,6 +273,61 @@ CREATE TYPE "public"."users_roles" AS ENUM (
 ALTER TYPE "public"."users_roles" OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."due_vendor_links_capped"("p_limit" integer DEFAULT 100, "p_per_vendor" integer DEFAULT 40, "p_backoff_cap" integer DEFAULT 4, "p_base" interval DEFAULT '12:00:00'::interval) RETURNS TABLE("id" bigint, "url" "text", "vendor_name" "text", "cube_slug" "text", "price" numeric, "available" boolean, "updated_at" timestamp with time zone, "streak_unchanged" integer)
+    LANGUAGE "sql" STABLE
+    AS $$with base as (
+    select *,
+      (p_base * power(2, least(streak_unchanged, p_backoff_cap))) as effective_cooldown
+    from cube_vendor_links
+  ),
+  ranked as (
+    select
+      id, url, vendor_name, cube_slug, price, available, updated_at,
+      streak_unchanged,
+      row_number() over (partition by vendor_name order by updated_at asc) as rn
+    from base
+    where (now() at time zone 'utc') - updated_at >= effective_cooldown
+  )
+  select id,url,vendor_name,cube_slug,price,available,updated_at,streak_unchanged
+  from ranked
+  where rn <= p_per_vendor
+  order by updated_at asc
+  limit p_limit;$$;
+
+
+ALTER FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_per_vendor" integer, "p_backoff_cap" integer, "p_base" interval) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."first_impressions_achi_check"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$declare rating_count int;
+
+begin
+select
+  count(*) into rating_count
+from
+  public.user_cube_ratings
+where
+  user_id = new.user_id;
+
+if rating_count < 5 then return new;
+
+end if;
+
+insert into
+  public.user_achievements (user_id, achievement)
+values
+  (new.user_id, 'First Impressions')
+on conflict do nothing;
+
+return new;
+
+end$$;
+
+
+ALTER FUNCTION "public"."first_impressions_achi_check"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."get_types"("enum_type" "text") RETURNS "json"
     LANGUAGE "plpgsql"
     AS $$
@@ -302,19 +364,23 @@ ALTER FUNCTION "public"."insert_user_achievement"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."log_data_changes"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    AS $$begin if (tg_op = 'INSERT') then
+    AS $$declare
+  jwt_sub text;
+  actor uuid;
+begin
+  jwt_sub := current_setting('request.jwt.claim.sub', true);
+  if jwt_sub is not null and jwt_sub <> '' then
+    actor := jwt_sub::uuid;
+  else
+    actor := '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::uuid; -- system user
+  end if;
+
+if (tg_op = 'INSERT') then
 insert into
-  public.staff_logs (staff, action, target_table, old_data, new_data)
+  public.staff_logs (staff_id, action, target_table, old_data, new_data)
 values
   (
-    (
-      select
-        profiles.username
-      from
-        profiles
-      where
-        (profiles.user_id = auth.uid ())
-    ),
+    actor,
     TG_OP::public.staff_actions,
     TG_TABLE_NAME,
     null,
@@ -325,17 +391,10 @@ return new;
 
 elsif (tg_op = 'UPDATE') then if to_jsonb(OLD) <> to_jsonb(NEW) then
 insert into
-  public.staff_logs (staff, action, target_table, old_data, new_data)
+  public.staff_logs (staff_id, action, target_table, old_data, new_data)
 values
   (
-    (
-      select
-        profiles.username
-      from
-        profiles
-      where
-        (profiles.user_id = auth.uid ())
-    ),
+    actor,
     TG_OP::public.staff_actions,
     TG_TABLE_NAME,
     to_jsonb(OLD),
@@ -348,17 +407,10 @@ return new;
 
 elsif (tg_op = 'DELETE') then
 insert into
-  public.staff_logs (staff, action, target_table, old_data, new_data)
+  public.staff_logs (staff_id, action, target_table, old_data, new_data)
 values
   (
-    (
-      select
-        profiles.username
-      from
-        profiles
-      where
-        (profiles.user_id = auth.uid ())
-    ),
+    actor,
     TG_OP::public.staff_actions,
     TG_TABLE_NAME,
     to_jsonb(OLD),
@@ -397,7 +449,9 @@ begin payload := jsonb_build_object(
   'slug',
   new.slug,
   'submitted_by',
-  new.submitted_by,
+  (select display_name
+  from profiles
+  where new.submitted_by_id = user_id),
   'type',
   new."type",
   'weight',
@@ -465,7 +519,9 @@ begin payload := json_build_object(
   'id',
   new.id,
   'username',
-  new.username
+  new.username,
+  'display_name',
+  new.display_name
 );
 
 perform net.http_post(
@@ -480,6 +536,86 @@ end;$$;
 
 
 ALTER FUNCTION "public"."notify_discord_new_user"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."notify_discord_new_user_report"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$declare payload jsonb;
+
+begin payload := jsonb_build_object(
+  'report_type',
+  new.report_type,
+  'id',
+  new.id,
+  'title',
+  new.title,
+  'created_at',
+  new.created_at,
+  'reported',
+  new.reported,
+  'image_url',
+  new.image_url,
+  'reporter',
+  (select p.username
+  from profiles as p
+  where p.user_id = new.reporter),
+  'comment',
+  new.comment
+);
+
+perform net.http_post (
+  url := 'https://spsqaktodgqnqbkgilxp.supabase.co/functions/v1/user-report-discord-notification'::text,
+  headers := json_build_object('Content-Type', 'application/json')::jsonb,
+  body := payload::jsonb
+);
+
+return new;
+
+end;$$;
+
+
+ALTER FUNCTION "public"."notify_discord_new_user_report"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."save_cube_vendor_links_snapshots"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$begin IF TG_OP in ('INSERT', 'UPDATE') then
+insert into
+  public.cube_vendor_links_snapshot (
+    cube_slug,
+    vendor_name,
+    url,
+    available,
+    price
+  )
+values
+  (
+    NEW.cube_slug,
+    NEW.vendor_name,
+    NEW.url,
+    NEW.available,
+    NEW.price
+  );
+
+RETURN NEW;
+
+ELSIF TG_OP = 'DELETE' then
+delete from public.cube_vendor_links_snapshot
+where
+  cube_slug = OLD.cube_slug
+  and vendor_name = OLD.vendor_name
+  and url = OLD.url;
+
+RETURN OLD;
+
+end IF;
+
+RETURN null;
+
+end;$$;
+
+
+ALTER FUNCTION "public"."save_cube_vendor_links_snapshots"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."update_average_cube_rating"() RETURNS "trigger"
@@ -525,6 +661,33 @@ END;$$;
 
 ALTER FUNCTION "public"."update_cube_average_rating"() OWNER TO "postgres";
 
+
+CREATE OR REPLACE FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") RETURNS "text"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+DECLARE encpass auth.users.encrypted_password %TYPE;
+BEGIN
+SELECT encrypted_password
+FROM auth.users INTO encpass
+WHERE id = current_id
+  AND encrypted_password = crypt(
+    current_plain_password,
+    auth.users.encrypted_password
+  );
+
+IF encpass IS NULL THEN RETURN 'incorrect';
+ELSE
+UPDATE auth.users
+SET encrypted_password = crypt(new_plain_password, gen_salt('bf'))
+WHERE id = current_id;
+RETURN 'success';
+END IF;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") OWNER TO "postgres";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -540,10 +703,12 @@ CREATE TABLE IF NOT EXISTS "public"."achievements" (
     "unlockable" boolean DEFAULT false NOT NULL,
     "slug" "text" DEFAULT ''::"text" NOT NULL,
     "unlock_method" "text" DEFAULT '''Manual''::text'::"text" NOT NULL,
-    "submitted_by" "text",
     "rarity" "public"."badge-rarity" DEFAULT 'Common'::"public"."badge-rarity" NOT NULL,
     "category" "public"."achievements_categories",
     "title" "text",
+    "evolutive" boolean DEFAULT false NOT NULL,
+    "evolves_from" "text",
+    "submitted_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL,
     CONSTRAINT "achievements_unlock_method_check" CHECK (("unlock_method" = ANY (ARRAY['Automatic'::"text", 'Manual'::"text"])))
 );
 
@@ -607,7 +772,7 @@ CREATE TABLE IF NOT EXISTS "public"."announcement" (
     "linkText" "text" DEFAULT ''::"text",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "archived" boolean DEFAULT false NOT NULL,
-    "published_by" "text"
+    "published_by_id" "uuid" DEFAULT "auth"."uid"()
 );
 
 
@@ -617,8 +782,8 @@ ALTER TABLE "public"."announcement" OWNER TO "postgres";
 CREATE TABLE IF NOT EXISTS "public"."brands" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "added_by" "text" DEFAULT 'CubeIndex'::"text" NOT NULL,
-    "name" "text" DEFAULT ''::"text" NOT NULL
+    "name" "text" DEFAULT ''::"text" NOT NULL,
+    "added_by_id" "uuid"
 );
 
 
@@ -669,7 +834,6 @@ CREATE TABLE IF NOT EXISTS "public"."cube_models" (
     "type" "text" NOT NULL,
     "discontinued" boolean DEFAULT false NOT NULL,
     "release_date" "date",
-    "submitted_by" "text" DEFAULT 'CubeIndex'::"text" NOT NULL,
     "series" "text" DEFAULT ''::"text",
     "id" bigint NOT NULL,
     "sub_type" "public"."cubes_subtypes",
@@ -677,12 +841,13 @@ CREATE TABLE IF NOT EXISTS "public"."cube_models" (
     "related_to" "text",
     "version_type" "public"."cube_version_type" DEFAULT 'Base'::"public"."cube_version_type" NOT NULL,
     "version_name" "text" DEFAULT ''::"text",
-    "verified_by" "text",
     "status" "public"."submission_status" DEFAULT 'Pending'::"public"."submission_status" NOT NULL,
     "notes" "text",
     "surface_finish" "public"."cube_surface_finishes",
     "verified_at" timestamp with time zone,
     "size" "text",
+    "submitted_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL,
+    "verified_by_id" "uuid",
     CONSTRAINT "cube_models_size_new_check" CHECK (("size" ~ '^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$'::"text"))
 );
 
@@ -705,39 +870,13 @@ ALTER TABLE "public"."cube_models" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS
 
 
 
-CREATE TABLE IF NOT EXISTS "public"."cube_reports" (
-    "id" bigint NOT NULL,
-    "reported" "text" NOT NULL,
-    "report_type" "text" NOT NULL,
-    "comment" "text" DEFAULT ''::"text",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "reporter" "uuid" NOT NULL,
-    "title" "text" DEFAULT ''::"text" NOT NULL,
-    "metadata" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL
-);
-
-
-ALTER TABLE "public"."cube_reports" OWNER TO "postgres";
-
-
-ALTER TABLE "public"."cube_reports" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."cube_reports_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
-
 CREATE TABLE IF NOT EXISTS "public"."cube_types" (
     "id" bigint NOT NULL,
     "name" "text" NOT NULL,
     "popularity" bigint DEFAULT '0'::bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "shape_family" "text" DEFAULT ''::"text" NOT NULL,
-    "added_by" "text" DEFAULT 'CubeIndex'::"text" NOT NULL
+    "added_by_id" "uuid"
 );
 
 
@@ -763,15 +902,47 @@ CREATE TABLE IF NOT EXISTS "public"."cube_vendor_links" (
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "available" boolean DEFAULT true NOT NULL,
     "cube_slug" "text" NOT NULL,
-    "price" double precision DEFAULT '0'::double precision NOT NULL
+    "price" double precision DEFAULT '0'::double precision NOT NULL,
+    "etag" "text",
+    "last_modified" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "streak_unchanged" bigint DEFAULT '0'::bigint NOT NULL
 );
 
 
 ALTER TABLE "public"."cube_vendor_links" OWNER TO "postgres";
 
 
+COMMENT ON TABLE "public"."cube_vendor_links" IS 'This is a duplicate of cube_vendor_links';
+
+
+
 ALTER TABLE "public"."cube_vendor_links" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."cubes_availability_id_seq"
+    SEQUENCE NAME "public"."cube_vendor_links_duplicate_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+
+CREATE TABLE IF NOT EXISTS "public"."cube_vendor_links_snapshot" (
+    "vendor_name" "text" NOT NULL,
+    "url" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "id" bigint NOT NULL,
+    "available" boolean DEFAULT true NOT NULL,
+    "cube_slug" "text" NOT NULL,
+    "price" double precision DEFAULT '0'::double precision NOT NULL
+);
+
+
+ALTER TABLE "public"."cube_vendor_links_snapshot" OWNER TO "postgres";
+
+
+ALTER TABLE "public"."cube_vendor_links_snapshot" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."cube_vendor_links_snapshot_id_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -849,7 +1020,9 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "banner" "text",
     "verified" boolean DEFAULT false NOT NULL,
     "certified" boolean DEFAULT false NOT NULL,
-    "role" "public"."users_roles" DEFAULT 'User'::"public"."users_roles" NOT NULL
+    "role" "public"."users_roles" DEFAULT 'User'::"public"."users_roles" NOT NULL,
+    "display_name" "text",
+    CONSTRAINT "profiles_username_check" CHECK (("username" ~ '^[a-z0-9._]{3,}$'::"text"))
 );
 
 
@@ -877,7 +1050,7 @@ CREATE TABLE IF NOT EXISTS "public"."reports" (
     "title" "text" DEFAULT ''::"text" NOT NULL,
     "image_url" "text",
     "resolved" boolean DEFAULT false NOT NULL,
-    "resolved_by" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL
+    "resolved_by" "uuid"
 );
 
 
@@ -897,12 +1070,12 @@ ALTER TABLE "public"."reports" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDE
 
 CREATE TABLE IF NOT EXISTS "public"."staff_logs" (
     "id" bigint NOT NULL,
-    "staff" "text" NOT NULL,
     "action" "public"."staff_actions" NOT NULL,
     "target_table" "text" NOT NULL,
     "old_data" "jsonb",
     "new_data" "jsonb",
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "staff_id" "uuid" NOT NULL
 );
 
 
@@ -921,10 +1094,10 @@ ALTER TABLE "public"."staff_logs" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS 
 
 
 CREATE TABLE IF NOT EXISTS "public"."user_achievements" (
-    "username" "text" NOT NULL,
     "achievement" "text" NOT NULL,
-    "awarded_by" "text" DEFAULT 'CubeIndex'::"text" NOT NULL,
-    "awarded_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "awarded_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "awarded_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL
 );
 
 
@@ -959,7 +1132,6 @@ ALTER TABLE "public"."user_cube_ratings" ALTER COLUMN "id" ADD GENERATED BY DEFA
 
 CREATE TABLE IF NOT EXISTS "public"."user_cubes" (
     "cube" "text" NOT NULL,
-    "username" "text" NOT NULL,
     "main" boolean DEFAULT false NOT NULL,
     "quantity" bigint DEFAULT '1'::bigint NOT NULL,
     "condition" "public"."user_cube_condition" NOT NULL,
@@ -967,24 +1139,34 @@ CREATE TABLE IF NOT EXISTS "public"."user_cubes" (
     "notes" "text" DEFAULT ''::"text",
     "modified_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "acquired_at" "date"
+    "acquired_at" "date",
+    "user_id" "uuid" NOT NULL
 );
 
 
 ALTER TABLE "public"."user_cubes" OWNER TO "postgres";
 
 
-CREATE TABLE IF NOT EXISTS "public"."user_ratings" (
-    "username" "text" NOT NULL,
-    "cube_slug" "text" NOT NULL,
-    "rating" smallint NOT NULL,
-    "comment" "text",
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+CREATE TABLE IF NOT EXISTS "public"."user_follows" (
+    "id" bigint NOT NULL,
+    "follower_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "following_id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "followed_at" timestamp with time zone DEFAULT "now"() NOT NULL
 );
 
 
-ALTER TABLE "public"."user_ratings" OWNER TO "postgres";
+ALTER TABLE "public"."user_follows" OWNER TO "postgres";
+
+
+ALTER TABLE "public"."user_follows" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME "public"."user_follows_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
 
 
 CREATE TABLE IF NOT EXISTS "public"."vendors" (
@@ -998,8 +1180,13 @@ CREATE TABLE IF NOT EXISTS "public"."vendors" (
     "is_active" boolean DEFAULT true NOT NULL,
     "rating" real DEFAULT '0'::real NOT NULL,
     "logo_url" "text",
+    "currency" "text" DEFAULT 'USD'::"text" NOT NULL,
+    "sponsored" boolean DEFAULT false NOT NULL,
+    "supports_price_tracking" boolean DEFAULT false NOT NULL,
+    "verified" boolean DEFAULT true NOT NULL,
     CONSTRAINT "vendors_base_url_check" CHECK (("base_url" ~ '^https?://'::"text")),
-    CONSTRAINT "vendors_country_iso_check" CHECK (("length"("country_iso") <= 2))
+    CONSTRAINT "vendors_country_iso_check" CHECK (("length"("country_iso") <= 2)),
+    CONSTRAINT "vendors_currency_check" CHECK (("length"("currency") <= 3))
 );
 
 
@@ -1034,6 +1221,11 @@ ALTER TABLE ONLY "public"."accessories"
 
 ALTER TABLE ONLY "public"."accessories"
     ADD CONSTRAINT "accessories_slug_key" UNIQUE ("slug");
+
+
+
+ALTER TABLE ONLY "public"."achievements"
+    ADD CONSTRAINT "achievements_evolves_from_key" UNIQUE ("evolves_from");
 
 
 
@@ -1082,11 +1274,6 @@ ALTER TABLE ONLY "public"."cube_models"
 
 
 
-ALTER TABLE ONLY "public"."cube_reports"
-    ADD CONSTRAINT "cube_reports_pkey" PRIMARY KEY ("id");
-
-
-
 ALTER TABLE ONLY "public"."cube_types"
     ADD CONSTRAINT "cube_types_pkey" PRIMARY KEY ("id");
 
@@ -1098,12 +1285,22 @@ ALTER TABLE ONLY "public"."cube_types"
 
 
 ALTER TABLE ONLY "public"."cube_vendor_links"
-    ADD CONSTRAINT "cube_vendor_links_pkey" PRIMARY KEY ("cube_slug", "vendor_name");
+    ADD CONSTRAINT "cube_vendor_links_duplicate_id_key" UNIQUE ("id");
 
 
 
 ALTER TABLE ONLY "public"."cube_vendor_links"
-    ADD CONSTRAINT "cubes_availability_id_key" UNIQUE ("id");
+    ADD CONSTRAINT "cube_vendor_links_duplicate_pkey" PRIMARY KEY ("cube_slug", "vendor_name");
+
+
+
+ALTER TABLE ONLY "public"."cube_vendor_links_snapshot"
+    ADD CONSTRAINT "cube_vendor_links_snapshot_id_key" UNIQUE ("id");
+
+
+
+ALTER TABLE ONLY "public"."cube_vendor_links_snapshot"
+    ADD CONSTRAINT "cube_vendor_links_snapshot_pkey" PRIMARY KEY ("id");
 
 
 
@@ -1163,7 +1360,7 @@ ALTER TABLE ONLY "public"."staff_logs"
 
 
 ALTER TABLE ONLY "public"."user_achievements"
-    ADD CONSTRAINT "user_achievements_pkey" PRIMARY KEY ("username", "achievement");
+    ADD CONSTRAINT "user_achievements_pkey" PRIMARY KEY ("achievement", "user_id");
 
 
 
@@ -1173,17 +1370,17 @@ ALTER TABLE ONLY "public"."user_cube_ratings"
 
 
 ALTER TABLE ONLY "public"."user_cubes"
-    ADD CONSTRAINT "user_cubes_pkey" PRIMARY KEY ("username", "cube");
+    ADD CONSTRAINT "user_cubes_pkey" PRIMARY KEY ("cube", "user_id");
+
+
+
+ALTER TABLE ONLY "public"."user_follows"
+    ADD CONSTRAINT "user_follows_pkey" PRIMARY KEY ("follower_id", "following_id");
 
 
 
 ALTER TABLE ONLY "public"."user_cube_ratings"
     ADD CONSTRAINT "user_ratings_id_key" UNIQUE ("id");
-
-
-
-ALTER TABLE ONLY "public"."user_ratings"
-    ADD CONSTRAINT "user_ratings_pkey" PRIMARY KEY ("username", "cube_slug");
 
 
 
@@ -1215,35 +1412,7 @@ CREATE OR REPLACE TRIGGER "log_cube_models" AFTER INSERT OR DELETE OR UPDATE ON 
 
 
 
-CREATE OR REPLACE TRIGGER "log_cube_models_delete" AFTER DELETE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_cube_models_insert" AFTER INSERT ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_cube_models_update" AFTER UPDATE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
 CREATE OR REPLACE TRIGGER "log_cube_types_insert" AFTER INSERT ON "public"."cube_types" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_vendor_links" AFTER INSERT OR DELETE OR UPDATE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_vendor_links_delete" AFTER DELETE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_vendor_links_insert" AFTER INSERT ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "log_vendor_links_update" AFTER UPDATE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
 
 
 
@@ -1251,31 +1420,25 @@ CREATE OR REPLACE TRIGGER "log_vendors" AFTER INSERT OR UPDATE ON "public"."vend
 
 
 
-CREATE OR REPLACE TRIGGER "log_vendors_insert" AFTER INSERT ON "public"."vendors" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
+CREATE OR REPLACE TRIGGER "notify_discord_new_cube" AFTER INSERT OR UPDATE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_cube_model"();
 
 
 
-CREATE OR REPLACE TRIGGER "log_vendors_update" AFTER UPDATE ON "public"."vendors" FOR EACH ROW EXECUTE FUNCTION "public"."log_data_changes"();
-
-
-
-CREATE OR REPLACE TRIGGER "notify_discord_new_cube_" AFTER INSERT OR UPDATE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_cube_model"();
-
-
-
-CREATE OR REPLACE TRIGGER "on_cube_model_insert" AFTER INSERT ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_cube_model"();
-
-
-
-CREATE OR REPLACE TRIGGER "on_cube_model_update" AFTER UPDATE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_cube_model"();
-
-
-
-CREATE OR REPLACE TRIGGER "trg_early_collector_achievement" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "public"."insert_user_achievement"();
+CREATE OR REPLACE TRIGGER "notify_discord_new_user_report" AFTER INSERT ON "public"."reports" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_user_report"();
 
 
 
 CREATE OR REPLACE TRIGGER "trg_early_collector_achievement_insert" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "public"."insert_user_achievement"();
+
+ALTER TABLE "public"."profiles" DISABLE TRIGGER "trg_early_collector_achievement_insert";
+
+
+
+CREATE OR REPLACE TRIGGER "trg_first_impressions_check" AFTER INSERT OR UPDATE ON "public"."user_cube_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."first_impressions_achi_check"();
+
+
+
+CREATE OR REPLACE TRIGGER "trg_save_cube_vendor_links_snapshots" AFTER INSERT OR DELETE OR UPDATE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."save_cube_vendor_links_snapshots"();
 
 
 
@@ -1283,34 +1446,22 @@ CREATE OR REPLACE TRIGGER "trg_update_rating" AFTER INSERT OR DELETE OR UPDATE O
 
 
 
-CREATE OR REPLACE TRIGGER "trg_update_rating_after_delete" AFTER DELETE ON "public"."user_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."update_cube_average_rating"();
-
-
-
-CREATE OR REPLACE TRIGGER "trg_update_rating_after_insert" AFTER INSERT ON "public"."user_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."update_cube_average_rating"();
-
-
-
-CREATE OR REPLACE TRIGGER "trg_update_rating_after_update" AFTER UPDATE ON "public"."user_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."update_cube_average_rating"();
-
-
-
 CREATE OR REPLACE TRIGGER "when_new_user_joins" AFTER INSERT ON "public"."profiles" FOR EACH ROW EXECUTE FUNCTION "public"."notify_discord_new_user"();
 
 
 
-ALTER TABLE ONLY "public"."announcement"
-    ADD CONSTRAINT "announcement_published_by_fkey" FOREIGN KEY ("published_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE SET NULL;
-
-
-
 ALTER TABLE ONLY "public"."achievements"
-    ADD CONSTRAINT "badges_submitted_by_fkey" FOREIGN KEY ("submitted_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT "achievements_submitted_by_id_fkey" FOREIGN KEY ("submitted_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+
+ALTER TABLE ONLY "public"."announcement"
+    ADD CONSTRAINT "announcement_published_by_id_fkey" FOREIGN KEY ("published_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT NOT VALID;
 
 
 
 ALTER TABLE ONLY "public"."brands"
-    ADD CONSTRAINT "brands_added_by_fkey" FOREIGN KEY ("added_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT "brands_added_by_id_fkey" FOREIGN KEY ("added_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT NOT VALID;
 
 
 
@@ -1320,27 +1471,37 @@ ALTER TABLE ONLY "public"."cube_models"
 
 
 ALTER TABLE ONLY "public"."cube_models"
-    ADD CONSTRAINT "cube_models_submitted_by_fkey" FOREIGN KEY ("submitted_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT "cube_models_submitted_by_id_fkey" FOREIGN KEY ("submitted_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
 ALTER TABLE ONLY "public"."cube_models"
-    ADD CONSTRAINT "cube_models_verified_by_fkey" FOREIGN KEY ("verified_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT "cube_models_verified_by_id_fkey" FOREIGN KEY ("verified_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 
 ALTER TABLE ONLY "public"."cube_types"
-    ADD CONSTRAINT "cube_types_added_by_fkey" FOREIGN KEY ("added_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT "cube_types_added_by_id_fkey" FOREIGN KEY ("added_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
 ALTER TABLE ONLY "public"."cube_vendor_links"
-    ADD CONSTRAINT "cube_vendor_links_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "cube_vendor_links_duplicate_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
 ALTER TABLE ONLY "public"."cube_vendor_links"
-    ADD CONSTRAINT "cubes_availability_vendor_name_fkey" FOREIGN KEY ("vendor_name") REFERENCES "public"."vendors"("name") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "cube_vendor_links_duplicate_vendor_name_fkey" FOREIGN KEY ("vendor_name") REFERENCES "public"."vendors"("name") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."cube_vendor_links_snapshot"
+    ADD CONSTRAINT "cube_vendor_links_snapshot_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."cube_vendor_links_snapshot"
+    ADD CONSTRAINT "cube_vendor_links_snapshot_vendor_name_fkey" FOREIGN KEY ("vendor_name") REFERENCES "public"."vendors"("name") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -1380,7 +1541,7 @@ ALTER TABLE ONLY "public"."reports"
 
 
 ALTER TABLE ONLY "public"."staff_logs"
-    ADD CONSTRAINT "staff_logs_staff_fkey" FOREIGN KEY ("staff") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT "staff_logs_staff_id_fkey" FOREIGN KEY ("staff_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 
@@ -1390,12 +1551,12 @@ ALTER TABLE ONLY "public"."user_achievements"
 
 
 ALTER TABLE ONLY "public"."user_achievements"
-    ADD CONSTRAINT "user_achievement_awarded_by_fkey" FOREIGN KEY ("awarded_by") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE SET DEFAULT;
+    ADD CONSTRAINT "user_achievements_awarded_by_id_fkey" FOREIGN KEY ("awarded_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
 ALTER TABLE ONLY "public"."user_achievements"
-    ADD CONSTRAINT "user_achievement_username_fkey" FOREIGN KEY ("username") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "user_achievements_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -1405,12 +1566,17 @@ ALTER TABLE ONLY "public"."user_cubes"
 
 
 ALTER TABLE ONLY "public"."user_cubes"
-    ADD CONSTRAINT "user_cubes_username_fkey" FOREIGN KEY ("username") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "user_cubes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
-ALTER TABLE ONLY "public"."user_ratings"
-    ADD CONSTRAINT "user_ratings_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY "public"."user_follows"
+    ADD CONSTRAINT "user_follows_follower_id_fkey" FOREIGN KEY ("follower_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."user_follows"
+    ADD CONSTRAINT "user_follows_following_id_fkey" FOREIGN KEY ("following_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -1421,11 +1587,6 @@ ALTER TABLE ONLY "public"."user_cube_ratings"
 
 ALTER TABLE ONLY "public"."user_cube_ratings"
     ADD CONSTRAINT "user_ratings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."user_ratings"
-    ADD CONSTRAINT "user_ratings_username_fkey" FOREIGN KEY ("username") REFERENCES "public"."profiles"("username") ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
@@ -1442,6 +1603,10 @@ CREATE POLICY "Enable delete for Admins and Community Managers" ON "public"."cub
 CREATE POLICY "Enable delete for Database Managers and Admins" ON "public"."cubes_model_features" FOR DELETE TO "authenticated" USING ((( SELECT "profiles"."role"
    FROM "public"."profiles"
   WHERE ("profiles"."user_id" = "auth"."uid"())) = ANY (ARRAY['Database Manager'::"public"."users_roles", 'Admin'::"public"."users_roles"])));
+
+
+
+CREATE POLICY "Enable delete for users based on user_id" ON "public"."user_follows" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = ANY (ARRAY["follower_id", "following_id"])));
 
 
 
@@ -1487,6 +1652,10 @@ CREATE POLICY "Enable insert for authenticated users only" ON "public"."user_cub
 
 
 
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."user_follows" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
 CREATE POLICY "Enable read access for all users" ON "public"."accessories" FOR SELECT USING (true);
 
 
@@ -1508,10 +1677,6 @@ CREATE POLICY "Enable read access for all users" ON "public"."cube_models" FOR S
 
 
 CREATE POLICY "Enable read access for all users" ON "public"."cube_types" FOR SELECT USING (true);
-
-
-
-CREATE POLICY "Enable read access for all users" ON "public"."cube_vendor_links" FOR SELECT USING (true);
 
 
 
@@ -1543,11 +1708,15 @@ CREATE POLICY "Enable read access for all users" ON "public"."user_cubes" FOR SE
 
 
 
-CREATE POLICY "Enable read access for all users" ON "public"."user_ratings" FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all users" ON "public"."user_follows" FOR SELECT USING (true);
 
 
 
 CREATE POLICY "Enable read access for all users" ON "public"."vendors" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Enable update for users based on email" ON "public"."cube_types" FOR UPDATE USING (true);
 
 
 
@@ -1560,6 +1729,10 @@ CREATE POLICY "Everyone can insert into user_achievements" ON "public"."user_ach
 
 
 CREATE POLICY "Everyone can update" ON "public"."announcement" FOR UPDATE USING (true) WITH CHECK (true);
+
+
+
+CREATE POLICY "Insert for everyone" ON "public"."cube_vendor_links_snapshot" FOR INSERT WITH CHECK (true);
 
 
 
@@ -1617,9 +1790,15 @@ CREATE POLICY "Only staff can update" ON "public"."reports" FOR UPDATE TO "authe
 
 
 
-CREATE POLICY "Users can delete their own cubes" ON "public"."user_cubes" FOR DELETE TO "authenticated" USING (("username" = ( SELECT "profiles"."username"
-   FROM "public"."profiles"
-  WHERE ("profiles"."user_id" = "auth"."uid"()))));
+CREATE POLICY "Read access for all users" ON "public"."cube_vendor_links" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Select for everyone" ON "public"."cube_vendor_links_snapshot" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Users can delete their own cubes" ON "public"."user_cubes" FOR DELETE TO "authenticated" USING (("user_id" = "auth"."uid"()));
 
 
 
@@ -1633,9 +1812,7 @@ CREATE POLICY "Users can delete their own ratings" ON "public"."user_cube_rating
 
 
 
-CREATE POLICY "Users can modify their own cubes" ON "public"."user_cubes" FOR UPDATE TO "authenticated" USING (("username" = ( SELECT "profiles"."username"
-   FROM "public"."profiles"
-  WHERE ("profiles"."user_id" = "auth"."uid"()))));
+CREATE POLICY "Users can modify their own cubes" ON "public"."user_cubes" FOR UPDATE TO "authenticated" USING (("user_id" = "auth"."uid"()));
 
 
 
@@ -1665,13 +1842,13 @@ ALTER TABLE "public"."cube_features" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."cube_models" ENABLE ROW LEVEL SECURITY;
 
 
-ALTER TABLE "public"."cube_reports" ENABLE ROW LEVEL SECURITY;
-
-
 ALTER TABLE "public"."cube_types" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."cube_vendor_links" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."cube_vendor_links_snapshot" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."cubes_model_features" ENABLE ROW LEVEL SECURITY;
@@ -1698,7 +1875,7 @@ ALTER TABLE "public"."user_cube_ratings" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."user_cubes" ENABLE ROW LEVEL SECURITY;
 
 
-ALTER TABLE "public"."user_ratings" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "public"."user_follows" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."vendors" ENABLE ROW LEVEL SECURITY;
@@ -1707,6 +1884,13 @@ ALTER TABLE "public"."vendors" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+
+
+
+
+
+
+
 
 
 
@@ -1896,6 +2080,39 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GRANT ALL ON FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_per_vendor" integer, "p_backoff_cap" integer, "p_base" interval) TO "anon";
+GRANT ALL ON FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_per_vendor" integer, "p_backoff_cap" integer, "p_base" interval) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_per_vendor" integer, "p_backoff_cap" integer, "p_base" interval) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "anon";
+GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "service_role";
@@ -1926,6 +2143,18 @@ GRANT ALL ON FUNCTION "public"."notify_discord_new_user"() TO "service_role";
 
 
 
+GRANT ALL ON FUNCTION "public"."notify_discord_new_user_report"() TO "anon";
+GRANT ALL ON FUNCTION "public"."notify_discord_new_user_report"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."notify_discord_new_user_report"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."save_cube_vendor_links_snapshots"() TO "anon";
+GRANT ALL ON FUNCTION "public"."save_cube_vendor_links_snapshots"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."save_cube_vendor_links_snapshots"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "anon";
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "service_role";
@@ -1935,6 +2164,18 @@ GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."update_cube_average_rating"() TO "anon";
 GRANT ALL ON FUNCTION "public"."update_cube_average_rating"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."update_cube_average_rating"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "service_role";
+
+
+
+
+
+
 
 
 
@@ -2028,18 +2269,6 @@ GRANT ALL ON SEQUENCE "public"."cube_models_id_seq" TO "service_role";
 
 
 
-GRANT ALL ON TABLE "public"."cube_reports" TO "anon";
-GRANT ALL ON TABLE "public"."cube_reports" TO "authenticated";
-GRANT ALL ON TABLE "public"."cube_reports" TO "service_role";
-
-
-
-GRANT ALL ON SEQUENCE "public"."cube_reports_id_seq" TO "anon";
-GRANT ALL ON SEQUENCE "public"."cube_reports_id_seq" TO "authenticated";
-GRANT ALL ON SEQUENCE "public"."cube_reports_id_seq" TO "service_role";
-
-
-
 GRANT ALL ON TABLE "public"."cube_types" TO "anon";
 GRANT ALL ON TABLE "public"."cube_types" TO "authenticated";
 GRANT ALL ON TABLE "public"."cube_types" TO "service_role";
@@ -2058,9 +2287,21 @@ GRANT ALL ON TABLE "public"."cube_vendor_links" TO "service_role";
 
 
 
-GRANT ALL ON SEQUENCE "public"."cubes_availability_id_seq" TO "anon";
-GRANT ALL ON SEQUENCE "public"."cubes_availability_id_seq" TO "authenticated";
-GRANT ALL ON SEQUENCE "public"."cubes_availability_id_seq" TO "service_role";
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_duplicate_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_duplicate_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_duplicate_id_seq" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."cube_vendor_links_snapshot" TO "anon";
+GRANT ALL ON TABLE "public"."cube_vendor_links_snapshot" TO "authenticated";
+GRANT ALL ON TABLE "public"."cube_vendor_links_snapshot" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_snapshot_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_snapshot_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."cube_vendor_links_snapshot_id_seq" TO "service_role";
 
 
 
@@ -2151,6 +2392,18 @@ GRANT ALL ON SEQUENCE "public"."user_cube_ratings_id_seq" TO "service_role";
 GRANT ALL ON TABLE "public"."user_cubes" TO "anon";
 GRANT ALL ON TABLE "public"."user_cubes" TO "authenticated";
 GRANT ALL ON TABLE "public"."user_cubes" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."user_follows" TO "anon";
+GRANT ALL ON TABLE "public"."user_follows" TO "authenticated";
+GRANT ALL ON TABLE "public"."user_follows" TO "service_role";
+
+
+
+GRANT ALL ON SEQUENCE "public"."user_follows_id_seq" TO "anon";
+GRANT ALL ON SEQUENCE "public"."user_follows_id_seq" TO "authenticated";
+GRANT ALL ON SEQUENCE "public"."user_follows_id_seq" TO "service_role";
 
 
 

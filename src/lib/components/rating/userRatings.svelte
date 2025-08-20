@@ -75,9 +75,6 @@
 
   {#if user_cube_ratings.length}
     <div class="mb-5">
-      <div class="flex items-center mb-2">
-        <StarRating readOnly={true} rating={cube.rating ?? 0} />
-      </div>
       <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
         {user_cube_ratings.length} total ratings
       </p>

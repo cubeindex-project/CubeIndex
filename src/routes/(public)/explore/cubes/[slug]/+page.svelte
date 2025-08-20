@@ -1,5 +1,4 @@
 <script lang="ts">
-  import StarRating from "$lib/components/rating/starRating.svelte";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import type { Profiles } from "$lib/components/dbTableTypes.js";
@@ -67,11 +66,6 @@
   />
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
-
-<!-- Highlighted Rating -->
-<div class="flex flex-col items-start mb-5 sm:mt-0">
-  <StarRating readOnly={true} rating={cube.rating ?? 0} />
-</div>
 
 <div class="mb-4 p-4 bg-base-200 rounded-xl border border-base-300 shadow-sm">
   <p class="leading-relaxed">

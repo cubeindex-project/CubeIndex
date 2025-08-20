@@ -8,6 +8,7 @@
   import AddCube from "$lib/components/cube/addCube.svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
+  import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
   let { cube, profile, meta } = $derived(data);
@@ -116,41 +117,48 @@
     </p>
 
     <div class="flex flex-wrap gap-2 mb-4 justify-between">
-      {#if cube.status === "Approved"}
-        <AddToCollectionButton
-          onClick={() => (openAddCard = !openAddCard)}
-          alreadyAdded={userCubeDetail !== undefined ? true : false}
-        />
-      {:else}
+      <div>
+        {#if cube.status === "Approved"}
+          <AddToCollectionButton
+            onClick={() => (openAddCard = !openAddCard)}
+            alreadyAdded={userCubeDetail !== undefined}
+          />
+        {:else}
+          <button
+            class="btn btn-error cursor-not-allowed"
+            type="button"
+            aria-label="Add to Collection"
+          >
+            Only approved cubes can be added to your collection.
+          </button>
+        {/if}
         <button
-          class="btn btn-error cursor-not-allowed"
+          class="btn btn-accent gap-1"
           type="button"
-          aria-label="Add to Collection"
+          onclick={() => {
+            openRateCard = !openRateCard;
+          }}
+          aria-label="Rate this Cube"
         >
-          Only approved cubes can be added to your collection.
+          <i class="fa-solid fa-star mr-2"></i>
+          Rate
+          <span class="hidden sm:block">this Cube</span>
         </button>
-      {/if}
-      <button
-        class="btn btn-accent gap-1"
-        type="button"
-        onclick={() => {
-          openRateCard = !openRateCard;
-        }}
-        aria-label="Rate this Cube"
-      >
-        <i class="fa-solid fa-star mr-2"></i>
-        Rate
-        <span class="hidden sm:block">this Cube</span>
-      </button>
+      </div>
       <ShareButton url={page.url.href} />
     </div>
 
-    <nav class="mb-6 flex flex-wrap gap-2">
+    <!-- Highlighted Rating -->
+    <div class="flex flex-col items-start mb-5 sm:mt-0">
+      <StarRating readOnly={true} rating={cube.rating ?? 0} />
+    </div>
+
+    <nav class="my-6 flex flex-wrap gap-2 tabs tabs-border justify-center">
       {#each tabs as tab}
         <a
           href="/explore/cubes/{cube.slug}/{tab.key}"
-          class="btn btn-sm"
-          class:btn-primary={tab.key === currentTab}
+          class="tab"
+          class:tab-active={tab.key === currentTab}
           onclick={() => (currentTab = tab.key)}
           data-sveltekit-noscroll
         >

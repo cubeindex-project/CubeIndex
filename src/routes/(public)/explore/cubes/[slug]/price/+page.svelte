@@ -7,7 +7,6 @@
   let {
     cube = {} as Cube,
     vendor_links = [] as CubeVendorLinks[],
-    price_history,
     dates,
     historyByVendor,
   } = $derived(data);
@@ -94,6 +93,17 @@
       };
     }
   }
+
+  function getCurrencySymbol(currencyCode: string) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currencyCode,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+      .formatToParts(0)
+      .find((part) => part.type === "currency")?.value;
+  }
 </script>
 
 <svelte:head>
@@ -126,7 +136,7 @@
           </div>
           <div class="mt-2 text-xl font-bold">
             <span class="text-primary">
-              ${shop.price.toFixed(2)}
+              {getCurrencySymbol(shop.vendor.currency)}{shop.price.toFixed(2)}
             </span>
           </div>
         </a>

@@ -16,7 +16,7 @@ export const load = (async ({ parent, params }) => {
 
   const vendorLinksPromise = supabase
     .from("cube_vendor_links")
-    .select("*")
+    .select("*, vendor:vendor_name(*)")
     .eq("cube_slug", slug);
 
   const priceHistoryPromise = supabase
@@ -66,7 +66,6 @@ export const load = (async ({ parent, params }) => {
   return {
     cube,
     vendor_links: vendorRes.data ?? [],
-	price_history: priceHistoryRes.data ?? [],
     dates: Array.from(dateSet).sort(),
     historyByVendor,
   };

@@ -298,36 +298,6 @@ CREATE OR REPLACE FUNCTION "public"."due_vendor_links_capped"("p_limit" integer 
 ALTER FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_per_vendor" integer, "p_backoff_cap" integer, "p_base" interval) OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."first_impressions_achi_check"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$declare rating_count int;
-
-begin
-select
-  count(*) into rating_count
-from
-  public.user_cube_ratings
-where
-  user_id = new.user_id;
-
-if rating_count < 5 then return new;
-
-end if;
-
-insert into
-  public.user_achievements (user_id, achievement)
-values
-  (new.user_id, 'First Impressions')
-on conflict do nothing;
-
-return new;
-
-end$$;
-
-
-ALTER FUNCTION "public"."first_impressions_achi_check"() OWNER TO "postgres";
-
-
 CREATE OR REPLACE FUNCTION "public"."get_types"("enum_type" "text") RETURNS "json"
     LANGUAGE "plpgsql"
     AS $$
@@ -618,6 +588,36 @@ end;$$;
 ALTER FUNCTION "public"."save_cube_vendor_links_snapshots"() OWNER TO "postgres";
 
 
+CREATE OR REPLACE FUNCTION "public"."ucer_cube_ratings_achi_check"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$declare rating_count int;
+
+begin
+select
+  count(*) into rating_count
+from
+  public.user_cube_ratings
+where
+  user_id = new.user_id;
+
+if rating_count < 5 then return new;
+
+end if;
+
+insert into
+  public.user_achievements (user_id, achievement)
+values
+  (new.user_id, 'First Impressions')
+on conflict do nothing;
+
+return new;
+
+end$$;
+
+
+ALTER FUNCTION "public"."ucer_cube_ratings_achi_check"() OWNER TO "postgres";
+
+
 CREATE OR REPLACE FUNCTION "public"."update_average_cube_rating"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$DECLARE
@@ -687,6 +687,99 @@ $$;
 
 
 ALTER FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."user_cubes_achi_check"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $_$begin
+if (
+  (
+    select
+      version_type
+    from
+      cube_models
+    where
+      slug = new.cube
+  ) = 'Limited'
+) then
+insert into
+  user_achievements (user_id, achievement)
+values
+  (new.user_id, 'Collector’s Edition');
+
+end if;
+
+if (
+  (
+    select
+      count(*)
+    from
+      user_cubes uc
+      join cube_models cm on uc.cube = cm.slug
+    where
+      cm.type = '3x3x3'
+      and uc.user_id = new.user_id
+  ) >= 3
+) then
+insert into
+  user_achievements (user_id, achievement)
+values
+  (new.user_id, 'Never Two Without Three')
+on conflict do nothing;
+
+end if;
+
+if (
+  exists (
+    select
+      1
+    from
+      user_cubes uc
+      join cube_models cm on cm.slug = uc.cube
+    where
+      uc.user_id = new.user_id
+      -- ensure it's NxNxN
+      and cm.type ~ '^\d+x\d+x\d+$'
+      -- ensure all three dimensions are equal
+      and split_part(cm.type, 'x', 1) = split_part(cm.type, 'x', 2)
+      and split_part(cm.type, 'x', 2) = split_part(cm.type, 'x', 3)
+      -- check size range
+      and split_part(cm.type, 'x', 1)::int between 6 and 21
+  )
+) then
+insert into
+  user_achievements (user_id, achievement)
+values
+  (new.user_id, 'Big Cube Master')
+on conflict do nothing;
+
+end if;
+
+if (
+  exists (
+    select
+      1
+    from
+      cubes_model_features cmf
+    where
+      cmf.cube = new.cube
+      and cmf.feature = 'smart'
+  )
+) then
+insert into
+  user_achievements (user_id, achievement)
+values
+  (new.user_id, 'Smarty')
+on conflict do nothing;
+
+end if;
+
+return new;
+
+end;$_$;
+
+
+ALTER FUNCTION "public"."user_cubes_achi_check"() OWNER TO "postgres";
 
 SET default_tablespace = '';
 
@@ -1434,15 +1527,19 @@ ALTER TABLE "public"."profiles" DISABLE TRIGGER "trg_early_collector_achievement
 
 
 
-CREATE OR REPLACE TRIGGER "trg_first_impressions_check" AFTER INSERT OR UPDATE ON "public"."user_cube_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."first_impressions_achi_check"();
-
-
-
 CREATE OR REPLACE TRIGGER "trg_save_cube_vendor_links_snapshots" AFTER INSERT OR DELETE OR UPDATE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."save_cube_vendor_links_snapshots"();
 
 
 
 CREATE OR REPLACE TRIGGER "trg_update_rating" AFTER INSERT OR DELETE OR UPDATE ON "public"."user_cube_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."update_average_cube_rating"();
+
+
+
+CREATE OR REPLACE TRIGGER "trg_user_cube_ratings_achi_check" AFTER INSERT OR UPDATE ON "public"."user_cube_ratings" FOR EACH ROW EXECUTE FUNCTION "public"."ucer_cube_ratings_achi_check"();
+
+
+
+CREATE OR REPLACE TRIGGER "trg_user_cubes_achi_check" AFTER INSERT OR UPDATE ON "public"."user_cubes" FOR EACH ROW EXECUTE FUNCTION "public"."user_cubes_achi_check"();
 
 
 
@@ -2107,12 +2204,6 @@ GRANT ALL ON FUNCTION "public"."due_vendor_links_capped"("p_limit" integer, "p_p
 
 
 
-GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "anon";
-GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."first_impressions_achi_check"() TO "service_role";
-
-
-
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "anon";
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "service_role";
@@ -2155,6 +2246,12 @@ GRANT ALL ON FUNCTION "public"."save_cube_vendor_links_snapshots"() TO "service_
 
 
 
+GRANT ALL ON FUNCTION "public"."ucer_cube_ratings_achi_check"() TO "anon";
+GRANT ALL ON FUNCTION "public"."ucer_cube_ratings_achi_check"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."ucer_cube_ratings_achi_check"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "anon";
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."update_average_cube_rating"() TO "service_role";
@@ -2170,6 +2267,12 @@ GRANT ALL ON FUNCTION "public"."update_cube_average_rating"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "anon";
 GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."update_password"("current_plain_password" "text", "new_plain_password" "text", "current_id" "uuid") TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."user_cubes_achi_check"() TO "anon";
+GRANT ALL ON FUNCTION "public"."user_cubes_achi_check"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."user_cubes_achi_check"() TO "service_role";
 
 
 

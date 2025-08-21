@@ -246,11 +246,11 @@
 {/if}
 
 <!-- Dev trigger -->
-<div class="fixed bottom-5 left-5 z-50">
+<!-- <div class="fixed bottom-5 left-5 z-50">
   <button class="btn btn-primary" onclick={triggerTest}
     >Show Test Achievement</button
   >
-</div>
+</div> -->
 
 <style>
   /* Title shimmer */

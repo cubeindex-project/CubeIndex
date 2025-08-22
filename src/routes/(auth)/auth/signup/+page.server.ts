@@ -31,7 +31,11 @@ export const actions: Actions = {
 
     const { email, password } = form.data;
 
-    const { error: err } = await supabase.auth.signUp({ email, password });
+    const { error: err } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${url.origin}/auth/confirm` },
+    });
     if (err)
       return fail(500, { accountForm: { ...form, message: err.message } });
 
@@ -166,7 +170,7 @@ export const actions: Actions = {
 
     // Persist preferences (create a table like user_onboarding)
     const { discovered_via, other_text } = form.data;
-    const interested_features = JSON.stringify(form.data.interested_features)
+    const interested_features = JSON.stringify(form.data.interested_features);
     const { error: insErr } = await supabase.from("user_onboarding").insert({
       user_id: user.id,
       discovered_via,

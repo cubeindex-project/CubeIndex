@@ -113,6 +113,9 @@ export interface UserCubes {
   /** User-specific status of the cube */
   status: UserCubeStatus;
 
+  /** Shop the user bought the cube from */
+  bought_from: string | null;
+
   /** Optional notes, defaults to empty string */
   notes: string | null;
 

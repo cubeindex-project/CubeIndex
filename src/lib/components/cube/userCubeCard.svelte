@@ -1,7 +1,13 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import type { Cube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
+  import { supabase } from "$lib/supabaseClient";
+
+  interface LocalUserCubesType extends UserCubes {
+    vendor: { name: string };
+  }
 
   let {
     mode = "view",
@@ -11,7 +17,7 @@
   }: {
     mode?: "view" | "edit";
     cube: Cube;
-    user_details: UserCubes;
+    user_details: LocalUserCubesType;
     user_rating: number;
   } = $props();
 
@@ -28,24 +34,45 @@
   let condition = $state(user_details.condition);
   let main = $state(user_details.main);
   let status = $state(user_details.status);
+  let bought_from = $state(user_details.bought_from);
   let notes = $state(user_details.notes);
   let acquired_at = $state(user_details.acquired_at);
+
+  let vendors: { slug: string; name: string }[] = $state([]);
+
+  async function getVendors() {
+    try {
+      const { data, error } = await supabase
+        .from("vendors")
+        .select("slug, name")
+        .order("name", { ascending: true });
+
+      if (error) throw new Error(error.message);
+
+      vendors = data;
+    } catch (err: any) {
+      throw Error(err.message);
+    }
+  }
+
+  onMount(getVendors);
 
   async function update() {
     isSubmitting = true;
     formMessage = "";
     const payload = {
-      slug,
+      cube: slug,
       quantity,
       main,
       condition,
       status,
+      bought_from,
       notes,
       acquired_at,
     };
 
     try {
-      const res = await fetch("/api/update-cube-collection", {
+      const res = await fetch("/api/add-cube-to-collection", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -103,7 +130,7 @@
   {:else}
     <div class="flex justify-end">
       <button
-        class="absolute bg-error rounded-bl-2xl flex items-center justify-center text-primary-content p-2 gap-2 cursor-pointer"
+        class="absolute bg-error rounded-bl-2xl flex items-center justify-center text-error-content p-2 gap-2 cursor-pointer"
         onclick={remove}
       >
         <i class="fa-solid fa-trash"></i>
@@ -127,6 +154,13 @@
           <div class="badge badge-lg gap-1 bg-base-300">
             <i class="fa-solid fa-cube"></i>
             Condition: {user_details.condition}
+          </div>
+        {/if}
+
+        {#if user_details.bought_from}
+          <div class="badge badge-lg gap-1 bg-base-300">
+            <i class="fa-solid fa-clipboard-check"></i>
+            Bought From: {user_details.vendor.name}
           </div>
         {/if}
 
@@ -202,6 +236,19 @@
             </select>
           </label>
         </p>
+        <label class="form-control">
+          <span class="font-bold">Bought From:</span>
+          <select
+            name="bought_from"
+            bind:value={bought_from}
+            class="select select-bordered w-full"
+          >
+            <option value={null}>None</option>
+            {#each vendors as vendor}
+              <option value={vendor.slug}>{vendor.name}</option>
+            {/each}
+          </select>
+        </label>
         <label class="flex flex-col">
           <span class="font-bold">Notes:</span>
           <textarea

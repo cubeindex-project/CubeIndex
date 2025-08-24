@@ -11,7 +11,7 @@ export const load = (async ({ parent }) => {
   ] = await Promise.all([
     supabase
       .from("user_cubes")
-      .select("*, cube_model:cube(*)")
+      .select("*, cube_model:cube(*), bought_from, vendor:bought_from(name)")
       .eq("user_id", profile.user_id),
     supabase
       .from("user_cube_ratings")

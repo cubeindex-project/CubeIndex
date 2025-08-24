@@ -39,8 +39,13 @@
     _popularity: number; // Popularity count from user data
   };
 
+  const { data } = $props();
+  const { user } = data;
+
   // Loading indicator state
   let loading = $state(true);
+
+  let userCubes: any[] = $state([]);
 
   // Fetch cubes and feature data from Supabase
   async function fetch() {
@@ -100,13 +105,14 @@
     }
 
     // Fetch user-cube relationships to calculate popularity
-    const { data: userCubes, error: ucErr } = await supabase
+    const { data, error: ucErr } = await supabase
       .from("user_cubes")
-      .select("cube");
+      .select("*");
 
     if (ucErr) {
       throw new Error("Failed to fetch cube popularity:" + ucErr.message);
     } else {
+      userCubes = data;
       const countMap = new Map<string, number>();
       // Count occurrences of each cube slug
       for (const { cube } of userCubes) {
@@ -303,6 +309,7 @@
   // Recalculate filter options when loading state changes (i.e., new data arrives)
   $effect(() => {
     const _ = loading;
+    const __ = paginatedCubes;
     calcAll();
   });
 
@@ -469,6 +476,9 @@
               {#if paginatedCubes.length > 0}
                 {#each paginatedCubes as cube}
                   {#key paginatedCubes}
+                    {@const userCubeDetail = userCubes.find(
+                      (uc) => uc.user_id === user?.id && uc.cube === cube.slug
+                    )}
                     <CubeCard
                       {cube}
                       add={true}
@@ -476,6 +486,7 @@
                       details={true}
                       badges={true}
                       image={true}
+                      {userCubeDetail}
                     />
                   {/key}
                 {/each}

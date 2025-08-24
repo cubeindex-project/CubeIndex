@@ -1,5 +1,5 @@
 import type { LayoutLoad } from "./$types";
-import type { Cube, Profiles } from "$lib/components/dbTableTypes";
+import type { Cube } from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 import { buildProductJSONLD } from "$lib/components/buildProductJSONLD.js";
@@ -60,11 +60,7 @@ function buildCubeDescription(
 
 export const load = (async ({ setHeaders, params, url, parent }) => {
   const slug = params.slug;
-  const { supabase, user } = await parent();
-
-  const profilePromise = user?.id
-    ? supabase.from("profiles").select("*").eq("user_id", user.id).single()
-    : Promise.resolve({ data: null, error: null });
+  const { supabase } = await parent();
 
   const cubePromise = supabase
     .from("cube_models")
@@ -77,28 +73,12 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
     .eq("slug", slug)
     .single();
 
-  const [profileRes, cubeRes] = await Promise.all([
-    profilePromise,
+  const [cubeRes] = await Promise.all([
     cubePromise,
   ]);
 
-  let profile = (profileRes.data ?? {}) as Profiles;
   const cube = cubeRes.data;
   if (!cube) throw error(404, "Cube not found");
-
-  if (user?.id) {
-    const { data, error: pErr } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user?.id)
-      .single();
-
-    if (pErr) {
-      throw new Error(`500, Failed to fetch profiles: ${pErr.message}`);
-    }
-
-    profile = data;
-  }
 
   // 2) Stats (counts via HEAD + exact)
   const [
@@ -193,7 +173,6 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
 
   // Return only what your head/JSON-LD needs; keep/add your own fields as required.
   return {
-    profile,
     cube,
     features,
     user_cubes,

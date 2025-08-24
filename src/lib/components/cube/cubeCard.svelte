@@ -3,12 +3,15 @@
   import RateCube from "../rating/rateCube.svelte";
   import type { Cube } from "../dbTableTypes";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
+  import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
+  import RateCubeButton from "../misc/rateCubeButton.svelte";
 
   let {
     cube,
     rate,
     add,
     details,
+    userCubeDetail,
   }: {
     cube: Cube;
     rate: boolean;
@@ -16,6 +19,7 @@
     details: boolean;
     badges: boolean;
     image: boolean;
+    userCubeDetail: any;
   } = $props();
 
   let openAddCard = $state(false);
@@ -32,35 +36,26 @@
 
     return diffDays < 7;
   }
+
+  console.log(userCubeDetail)
 </script>
 
 {#snippet content()}
   <div class="mt-4 flex gap-2">
     {#if add}
-      <button
-        class="btn btn-secondary flex-1 gap-1"
-        type="button"
-        onclick={() => (openAddCard = !openAddCard)}
-        aria-label="Add to Collection"
-      >
-        <i class="fa-solid fa-plus mr-2"></i>
-        Add
-        <span class="hidden sm:block">to Collection</span>
-      </button>
+      <AddToCollectionButton
+        onClick={() => {
+          openAddCard = !openAddCard;
+        }}
+        alreadyAdded={userCubeDetail !== undefined}
+      />
     {/if}
     {#if rate}
-      <button
-        class="btn btn-accent flex-1 gap-1"
-        type="button"
-        onclick={() => {
+      <RateCubeButton
+        onClick={() => {
           openRateCard = !openRateCard;
         }}
-        aria-label="Rate this Cube"
-      >
-        <i class="fa-solid fa-star mr-2"></i>
-        Rate
-        <span class="hidden sm:block">this Cube</span>
-      </button>
+      />
     {/if}
   </div>
 {/snippet}
@@ -92,6 +87,14 @@
       openAddCard = !openAddCard;
     }}
     {cube}
+    defaultData={{
+      quantity: userCubeDetail?.quantity,
+      condition: userCubeDetail?.condition,
+      main: userCubeDetail?.main,
+      status: userCubeDetail?.status,
+      notes: userCubeDetail?.notes,
+      acquired_at: userCubeDetail?.acquired_at,
+    }}
   />
 {/if}
 {#if openRateCard}

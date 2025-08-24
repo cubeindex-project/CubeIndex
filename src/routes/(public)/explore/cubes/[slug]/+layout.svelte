@@ -2,6 +2,7 @@
   import type { LayoutProps } from "./$types";
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
+  import RateCubeButton from "$lib/components/misc/rateCubeButton.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import { page } from "$app/state";
   import Report from "$lib/components/report/report.svelte";
@@ -11,14 +12,14 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
-  let { cube, profile, meta } = $derived(data);
+  let { cube, user, meta } = $derived(data);
 
   let cubeUserCount: number | undefined = $derived(
     data.user_cubes?.length ?? 0
   );
 
   const userCubeDetail = data.user_cubes?.find(
-    (uc) => uc.username === profile.username
+    (uc) => uc.user_id === user?.id
   );
 
   let openAddCard = $state(false);
@@ -40,7 +41,7 @@
 
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
-    {#if profile && cube.submitted_by === profile.user_id && cube.status !== "Approved"}
+    {#if user && cube.submitted_by_id === user.id && cube.status !== "Approved"}
       <div
         class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
         'Pending'
@@ -116,34 +117,43 @@
       have this cube
     </p>
 
-    <div class="flex flex-wrap gap-2 mb-4 justify-between">
-      <div>
+    <div class="flex flex-wrap mb-4 justify-between">
+      <div class="flex justify-start join">
         {#if cube.status === "Approved"}
           <AddToCollectionButton
-            onClick={() => (openAddCard = !openAddCard)}
             alreadyAdded={userCubeDetail !== undefined}
+            onClick={() => {
+              openAddCard = !openAddCard;
+            }}
+            addClass="join-item"
           />
         {:else}
           <button
-            class="btn btn-error cursor-not-allowed"
+            class="btn btn-error cursor-not-allowed join-item tooltip"
             type="button"
-            aria-label="Add to Collection"
+            aria-label="Only approved cubes can be added to your collection"
+            data-tip="Only approved cubes can be added to your collection"
           >
-            Only approved cubes can be added to your collection.
+            <i class="fa-solid fa-ban mr-2"></i>
+            Not Available
           </button>
         {/if}
-        <button
-          class="btn btn-accent gap-1"
-          type="button"
-          onclick={() => {
-            openRateCard = !openRateCard;
-          }}
-          aria-label="Rate this Cube"
-        >
-          <i class="fa-solid fa-star mr-2"></i>
-          Rate
-          <span class="hidden sm:block">this Cube</span>
-        </button>
+        {#if cube.status === "Approved"}
+          <RateCubeButton
+            onClick={() => (openRateCard = !openRateCard)}
+            addClass="join-item"
+          />
+        {:else}
+          <button
+            class="btn btn-error cursor-not-allowed join-item tooltip"
+            type="button"
+            aria-label="Only approved cubes can be rated"
+            data-tip="Only approved cubes can be rated"
+          >
+            <i class="fa-solid fa-ban mr-2"></i>
+            Not Available
+          </button>
+        {/if}
       </div>
       <ShareButton url={page.url.href} />
     </div>

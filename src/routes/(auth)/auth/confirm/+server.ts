@@ -1,4 +1,3 @@
-import type { EmailOtpType } from "@supabase/supabase-js";
 import type { RequestHandler } from "./$types";
 import { redirect, error } from "@sveltejs/kit";
 
@@ -7,8 +6,7 @@ export const GET: RequestHandler = async ({
   locals: { supabase },
   fetch,
 }) => {
-  const token_hash = url.searchParams.get("token_hash");
-  const type = url.searchParams.get("type") as EmailOtpType | null;
+  const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") ?? "/";
 
   /**
@@ -21,14 +19,11 @@ export const GET: RequestHandler = async ({
   redirectTo.searchParams.delete("token_hash");
   redirectTo.searchParams.delete("type");
 
-  if (!token_hash || !type) {
-    throw error(400, "Missing token_hash or type");
+  if (!code) {
+    throw error(400, "Missing code");
   }
 
-  const { data, error: err } = await supabase.auth.verifyOtp({
-    type,
-    token_hash,
-  });
+  const { data, error: err } = await supabase.auth.exchangeCodeForSession(code);
   if (err) {
     throw error(500, "Verification failed: " + err.message);
   }

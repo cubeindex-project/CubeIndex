@@ -34,16 +34,6 @@
 
   let notifications: any[] = $state([]);
 
-  async function getMessages() {
-    let { data, error: err } = await supabase.from("announcement").select("*");
-
-    if (err) throw new Error("Error while loading announcement:" + err.message);
-
-    notifications = (data || []).filter(
-      (notification) => notification.archived === false
-    );
-  }
-
   const navLinks = [
     { name: "Explore", href: "/explore" },
     { name: "Achievements", href: "/achievements" },
@@ -58,7 +48,6 @@
   });
 
   onMount(() => {
-    getMessages();
     if (session) loadProfile();
     loading = false;
   });

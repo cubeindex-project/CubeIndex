@@ -45,21 +45,47 @@ export const load = (async ({ parent, params }) => {
     );
   }
 
+  // Collect all dates we see (useful if you align series later)
   const dateSet = new Set<string>();
-  const agg = new Map<string, Map<string, { sum: number; n: number }>>();
+
+  // Aggregator: vendor -> day -> { ts: epochMillis, price: number }
+  const latestByVendorDay = new Map<
+    string,
+    Map<string, { ts: number; price: number }>
+  >();
+
   for (const r of priceHistoryRes.data ?? []) {
-    const day = new Date(r.created_at).toISOString().slice(0, 10);
+    // Normalize to UTC date (YYYY-MM-DD). If you need local-day grouping,
+    // replace toISOString() with a local-date formatter.
+    const created = new Date(r.created_at);
+    const day = created.toISOString().slice(0, 10);
     dateSet.add(day);
-    if (!agg.has(r.vendor_name)) agg.set(r.vendor_name, new Map());
-    const m = agg.get(r.vendor_name)!;
-    const prev = m.get(day) ?? { sum: 0, n: 0 };
-    m.set(day, { sum: prev.sum + (r.price ?? 0), n: prev.n + 1 });
+
+    // Guard: need a vendor and a numeric price
+    if (!r.vendor_name) continue;
+    const price = Number(r.price);
+    if (!Number.isFinite(price)) continue;
+
+    // Ensure vendor map exists
+    if (!latestByVendorDay.has(r.vendor_name)) {
+      latestByVendorDay.set(r.vendor_name, new Map());
+    }
+    const vendorMap = latestByVendorDay.get(r.vendor_name)!;
+
+    // Keep the record with the greatest timestamp for that day
+    const ts = created.getTime();
+    const prev = vendorMap.get(day);
+    if (!prev || ts > prev.ts) {
+      vendorMap.set(day, { ts, price });
+    }
   }
 
+  // Build the final structure: for each vendor, a date-sorted series
+  // with the *latest* price of that day (rounded to 2 decimals).
   const historyByVendor: Record<string, { date: string; price: number }[]> = {};
-  for (const [vendor, m] of agg) {
+  for (const [vendor, m] of latestByVendorDay) {
     historyByVendor[vendor] = Array.from(m.entries())
-      .map(([date, { sum, n }]) => ({ date, price: +(sum / n).toFixed(2) }))
+      .map(([date, { price }]) => ({ date, price: +price.toFixed(2) }))
       .sort((a, b) => a.date.localeCompare(b.date));
   }
 

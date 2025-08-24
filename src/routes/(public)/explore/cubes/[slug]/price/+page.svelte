@@ -90,11 +90,7 @@
             beginAtZero: false,
             title: { display: true, text: "Price" },
             ticks: {
-              callback(value) {
-                // Show compact currency-like ticks. Chart.js passes a number/string.
-                const n = Number(value);
-                return isFinite(n) ? `$${n.toFixed(0)}` : value;
-              },
+              display: false,
             },
           },
           x: {
@@ -179,10 +175,10 @@
                   {/if}
                 </div>
               </div>
-              <span class={status.badgeClass}
-                ><i class={status.icon} aria-hidden="true"
-                ></i>{status.text}</span
-              >
+              <span class={status.badgeClass}>
+                <i class={status.icon} aria-hidden="true"></i>
+                {status.text}
+              </span>
             </div>
 
             <div

@@ -161,15 +161,6 @@ export const actions: Actions = {
           "There are errors in your submission. Please review the highlighted fields and try again.",
       });
 
-    const { data: currentUser, error: profileErr } = await locals.supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", locals.user?.id)
-      .single();
-
-    if (profileErr)
-      throw error(500, `Failed to fetch user profile: ${profileErr.message}`);
-
     const slug = slugify(
       `${data.series ? data.series.trim() : ""} ${data.model.trim()} ${
         data.versionType !== "Base"
@@ -183,7 +174,7 @@ export const actions: Actions = {
     if (data.type === "___other") {
       const { error: err } = await locals.supabase
         .from("cube_types")
-        .insert([{ name: data.otherType, added_by: currentUser.username }]);
+        .insert([{ name: data.otherType, added_by_id: locals.user?.id }]);
 
       if (err)
         throw error(
@@ -194,7 +185,7 @@ export const actions: Actions = {
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
-        .insert([{ name: data.otherBrand, added_by: currentUser.username }]);
+        .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
 
       if (brandErr)
         throw error(

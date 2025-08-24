@@ -42,15 +42,6 @@ export const actions: Actions = {
 
     const data = form.data;
 
-    // Figure out who’s submitting
-    const { data: me, error: meErr } = await locals.supabase
-      .from("profiles")
-      .select("username")
-      .eq("user_id", locals.user?.id)
-      .single();
-
-    if (meErr) throw error(500, meErr.message);
-
     const slug = slugify(
       `${data.series ? data.series : ""} ${data.model} ${
         data.versionName ? data.versionName : ""
@@ -60,7 +51,7 @@ export const actions: Actions = {
     if (data.type === "___other") {
       const { error: err } = await locals.supabase
         .from("cube_types")
-        .insert([{ name: data.otherType, added_by: me.username }]);
+        .insert([{ name: data.otherType, added_by_id: locals.user?.id }]);
 
       if (err)
         throw error(
@@ -71,7 +62,7 @@ export const actions: Actions = {
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
-        .insert([{ name: data.otherBrand, added_by: me.username }]);
+        .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
 
       if (brandErr)
         throw error(
@@ -101,10 +92,10 @@ export const actions: Actions = {
       size: data.size,
       version_type: data.versionType,
       related_to: data.relatedTo,
-      submitted_by: me.username,
+      submitted_by_id: locals.user?.id,
       discontinued: data.discontinued,
       status: "Pending",
-      verified_by: null,
+      verified_by_id: null,
       notes: "",
       updated_at: new Date().toISOString(),
       created_at: new Date().toISOString(),

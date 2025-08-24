@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({
   redirectTo.searchParams.delete("type");
 
   if (!token_hash || !type) {
-    throw error(303, "Missing token_hash or type");
+    throw error(400, "Missing token_hash or type");
   }
 
   const { data, error: err } = await supabase.auth.verifyOtp({

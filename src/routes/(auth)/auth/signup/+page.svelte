@@ -206,9 +206,9 @@
             </p>
           {/if}
 
-          <button type="submit" class="btn btn-xl w-full btn-primary"
-            >Continue</button
-          >
+          <button type="submit" class="btn btn-xl w-full btn-primary">
+            Continue
+          </button>
 
           <div class="divider">or</div>
           <a
@@ -395,7 +395,7 @@
             start tracking your collection, compare shops, and get price-drop
             alerts on Discord.
           </p>
-          <a href="/" class="btn btn-primary mt-2">Go to Home</a>
+          <a href="/explore" class="btn btn-primary mt-2">Start Collecting!</a>
         </div>
       {/if}
 

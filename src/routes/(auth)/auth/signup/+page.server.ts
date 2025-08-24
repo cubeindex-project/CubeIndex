@@ -38,8 +38,12 @@ export const actions: Actions = {
     });
     if (err)
       return fail(500, { accountForm: { ...form, message: err.message } });
-
-    throw redirect(303, `${url.pathname}?step=profile`);
+    return {
+      accountForm: {
+        ...form,
+        message: "Please verify your email to continue with your signup.",
+      },
+    };
   },
 
   createProfile: async ({ request, locals: { supabase }, url, fetch }) => {
@@ -54,7 +58,12 @@ export const actions: Actions = {
     if (userErr || !user) {
       return withFiles(
         fail(401, {
-          profileForm: { ...form, message: "Failed to retrieve user data: " + userErr ? userErr : "No user found" },
+          profileForm: {
+            ...form,
+            message: `Failed to retrieve user data: ${
+              userErr?.message ?? "No user found."
+            }`,
+          },
         })
       );
     }
@@ -106,12 +115,14 @@ export const actions: Actions = {
     // Create incremental profile id (kept from your existing approach)
     const { display_name, username } = form.data;
 
-    const { error: upsertError } = await supabase.from("profiles").insert({
-      user_id: user.id,
-      username,
-      display_name,
-      profile_picture: avatarUrl,
-    });
+    const { error: upsertError } = await supabase
+      .from("profiles")
+      .update({
+        username,
+        display_name,
+        profile_picture: avatarUrl,
+      })
+      .eq("user_id", user.id);
 
     if (
       upsertError?.message ===
@@ -149,6 +160,25 @@ export const actions: Actions = {
         })
       );
     }
+
+    const payload = {
+      email: user.email || "",
+      display_name:
+        display_name ??
+        username ??
+        user.user_metadata.full_name.trim() ??
+        user.email?.split("@")[0] ??
+        "User",
+    };
+
+    await fetch(
+      "https://spsqaktodgqnqbkgilxp.supabase.co/functions/v1/brevo-sync-contact",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
 
     // Next: survey step
     throw redirect(303, `${url.pathname}?step=survey`);

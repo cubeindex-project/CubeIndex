@@ -1,23 +1,8 @@
 import type { RequestHandler } from "./$types";
 import { redirect, error } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({
-  url,
-  locals: { supabase },
-  fetch,
-}) => {
+export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/";
-
-  /**
-   * Clean up the redirect URL by deleting the Auth flow parameters.
-   *
-   * `next` is preserved for now, because it's needed in the error case.
-   */
-  const redirectTo = new URL(url);
-  redirectTo.pathname = next;
-  redirectTo.searchParams.delete("token_hash");
-  redirectTo.searchParams.delete("type");
 
   if (!code) {
     throw error(400, "Missing code");
@@ -32,43 +17,14 @@ export const GET: RequestHandler = async ({
 
   if (!user) throw error(500, "Failed to retrieve user");
 
-  // Mark profile as verified (idempotent)
-  const { data: profileRow, error: profileErr } = await supabase
-    .from("profiles")
-    .update({ verified: true })
-    .eq("id", user.id)
-    .select("display_name")
-    .single();
+  const { error: createErr } = await supabase.from("profiles").insert({
+    user_id: user.id,
+    verified: true,
+  });
 
-  if (profileErr) {
-    throw error(500, "Failed to update profile verification:" + profileErr);
+  if (createErr) {
+    throw error(500, "Failed to create profile: " + createErr.message);
   }
 
-  // Compute display name fallback
-  const display_name =
-    profileRow?.display_name ??
-    typeof user.user_metadata?.full_name === "string"
-      ? user.user_metadata.full_name.trim()
-      : user.email?.split("@")[0] || "User";
-
-  // Sync to Brevo via Edge Function
-  const res = await fetch(
-    // tip: store this in an env var instead of hardcoding
-    "https://spsqaktodgqnqbkgilxp.supabase.co/functions/v1/brevo-sync-contact",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: user.email, display_name }),
-    }
-  );
-
-  if (!res.ok) {
-    throw error(500, "Brevo sync failed:" + (await res.text()));
-  }
-
-  // Prevent open redirects: only allow same-site relative paths
-  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
-  throw redirect(303, safeNext);
+  throw redirect(303, `${url.origin}/auth/signup?step=profile`);
 };

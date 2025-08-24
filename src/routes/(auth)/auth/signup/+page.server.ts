@@ -54,7 +54,7 @@ export const actions: Actions = {
     if (userErr || !user) {
       return withFiles(
         fail(401, {
-          profileForm: { ...form, message: "Failed to retrieve user data: ", userErr },
+          profileForm: { ...form, message: "Failed to retrieve user data: " + userErr ? userErr : "No user found" },
         })
       );
     }

@@ -15,8 +15,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 
   const { user } = data;
 
-  if (!user) throw error(500, "Failed to retrieve user");
-
   const { error: createErr } = await supabase.from("profiles").insert({
     user_id: user.id,
     verified: true,

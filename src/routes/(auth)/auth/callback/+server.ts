@@ -26,28 +26,16 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
     throw redirect(303, redirectTo);
   }
 
-  // If no profile exists, create one
-  const { data: maxData, error: maxError } = await supabase
-    .from("profiles")
-    .select("id")
-    .order("id", { ascending: false })
-    .limit(1);
-
-  if (maxError) return error(500, { message: maxError.message });
-
-  const newId = maxData?.length ? maxData[0].id + 1 : 1;
-
   const userId = data.user?.id;
-  const display_name = data.user.user_metadata.full_name;
-  const username = data.user.user_metadata.full_name;
 
   const { error: profileError } = await supabase
     .from("profiles")
-    .insert({ id: newId, user_id: userId, username, display_name, verified: true });
+    .insert({
+      user_id: userId,
+      verified: true,
+    });
 
   if (profileError) throw error(500, profileError.message);
 
-  // Ensure next always starts with a slash
-  const redirectTo = next.startsWith("/") ? next : `/${next}`;
-  throw redirect(303, redirectTo);
+  throw redirect(303, `${url.origin}/auth/signup?step=profile`);
 };

@@ -64,7 +64,7 @@
         class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
       >
         <div class="flex flex-wrap items-center gap-4">
-          <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
+          <ItemsPerPageSelector bind:itemsPerPage label="Vendors per page" />
           <!-- <SortSelector bind:sortField bind:sortOrder {sortOptions} /> -->
         </div>
       </div>

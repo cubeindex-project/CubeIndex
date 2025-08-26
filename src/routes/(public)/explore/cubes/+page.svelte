@@ -168,27 +168,22 @@
   let allBrands: string[] = $state([]);
   let allYears: number[] = $state([]);
   let allSubTypes: string[] = $state([]);
-  let allCubeTypes: string[] = $state([]);
 
   /** Calculate unique sets for dropdown filters whenever cubes change */
   function calcAll() {
-    const Types = Array.from(new Set(cubes.map((c: Cube) => c.type))).sort();
-    const Brands = Array.from(new Set(cubes.map((c: Cube) => c.brand))).sort();
+    const Types = Array.from(new Set(cubes.map((c) => c.type))).sort();
+    const Brands = Array.from(new Set(cubes.map((c) => c.brand))).sort();
     const Years = Array.from(
-      new Set(cubes.map((c: Cube) => new Date(c.release_date!).getFullYear()))
+      new Set(cubes.map((c) => new Date(c.release_date!).getFullYear()))
     ).sort((a, b) => b - a); // Descending order
     const SubType = Array.from(
-      new Set(cubes.map((c: Cube) => c.sub_type ?? ""))
-    ).sort();
-    const CubeTypes = Array.from(
-      new Set(cubes.map((c: Cube) => c.version_type))
+      new Set(cubes.map((c) => c.sub_type ?? ""))
     ).sort();
 
     allBrands = Brands;
     allTypes = Types;
     allYears = Years;
     allSubTypes = SubType;
-    allCubeTypes = CubeTypes;
   }
 
   // Load data on component mount

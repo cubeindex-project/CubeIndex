@@ -146,12 +146,12 @@
   let sortField: string = $state("name"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("asc"); // Sort direction
   const sortOptions: SortOption[] = [
-    { id: "name-asc", field: "name", order: "asc", label: "Name - Ascending" },
+    { id: "name-asc", field: "name", order: "asc", label: "Name - A to Z" },
     {
       id: "name-desc",
       field: "name",
       order: "desc",
-      label: "Name - Descending",
+      label: "Name - Z to A",
     },
     { id: "rating-desc", field: "rating", order: "desc", label: "Rating" },
     {
@@ -309,7 +309,7 @@
   // Recalculate filter options when loading state changes (i.e., new data arrives)
   $effect(() => {
     const _ = loading;
-    const __ = paginatedCubes;
+    const __ = sortedCubes;
     calcAll();
   });
 

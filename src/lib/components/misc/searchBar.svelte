@@ -4,11 +4,13 @@
     showFilter,
     filterAction = () => {},
     searchTerm = $bindable(),
+    oninput = () => {},
   }: {
     placeholderLabel?: string;
     showFilter: boolean;
     filterAction?: () => void;
     searchTerm: string;
+    oninput?: () => void;
   } = $props();
 </script>
 
@@ -20,6 +22,7 @@
       onclick={filterAction}
       type="button"
       style="border-top-right-radius:0; border-bottom-right-radius:0;"
+      {oninput}
     >
       <i class="fa-solid fa-sliders"></i>
     </button>

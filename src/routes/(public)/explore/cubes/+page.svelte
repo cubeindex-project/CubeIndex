@@ -26,6 +26,7 @@
   // Custom transition wrapper from Ssgoi library
   import { SsgoiTransition } from "@ssgoi/svelte";
   import type { SortOption } from "$lib/components/misc/sortSelector.svelte";
+  import { queryParameters, ssp } from "sveltekit-search-params";
 
   // Extend Cube type with metadata for filtering and sorting
   type CubeWithMeta = Cube & {
@@ -126,25 +127,115 @@
     }
   }
 
-  // 1) State for filters and controls
-  let cubes: CubeWithMeta[] = $state([]);
-  let selectedType: string = $state("All");
-  let selectedSubType: string = $state("All");
-  let selectedBrand: string = $state("All");
-  let WCALegal: boolean | undefined = $state(undefined);
-  let magnetic: boolean | undefined = $state(undefined);
-  let smart: boolean | undefined = $state(undefined);
-  let selectedYear: string = $state("All");
-  let modded: boolean | undefined = $state(undefined);
-  let stickered: boolean | undefined = $state(undefined);
-  let base: boolean | undefined = $state(undefined);
-  let trim: boolean | undefined = $state(undefined);
-  let limited: boolean | undefined = $state(undefined);
+  // Helper: tri-state codec (boolean | undefined)
+  const tri = {
+    encode: (v: boolean | undefined) =>
+      v === true ? "1" : v === false ? "0" : undefined,
+    decode: (s: string | null): boolean | undefined =>
+      s === "1" ? true : s === "0" ? false : undefined,
+  };
+
+  // narrow types
+  const SORT_FIELDS = ["name", "rating", "popularity", "date"] as const;
+  type SortField = (typeof SORT_FIELDS)[number];
+  type SortDir = "asc" | "desc";
+
+  // codecs
+  const dirCodec = {
+    encode: (v: SortDir | null | undefined) => v ?? "asc",
+    decode: (s: string | null): SortDir => (s === "desc" ? "desc" : "asc"),
+    defaultValue: "asc" as const,
+  };
+
+  const sortCodec = {
+    encode: (v: SortField | null | undefined) => v ?? "name",
+    decode: (s: string | null): SortField =>
+      (SORT_FIELDS as readonly string[]).includes(s ?? "")
+        ? (s as SortField)
+        : "name",
+    defaultValue: "name" as const,
+  };
+
+  // Build the params object (with types & sensible defaults)
+  const params = queryParameters(
+    {
+      q: ssp.string(""), // string | null
+      page: ssp.number(1), // number (default 1)
+      size: ssp.number(12), // number (default 12)
+      sort: sortCodec, // "name" | "rating" | "popularity" | "date"
+      dir: dirCodec, // "asc" | "desc"
+
+      type: ssp.string("All"),
+      sub: ssp.string("All"),
+      brand: ssp.string("All"),
+      year: {
+        // allow empty, otherwise number
+        encode: (n: number | null) => (n == null ? undefined : String(n)),
+        decode: (s: string | null) => (s ? s : null),
+        defaultValue: null,
+      },
+
+      // tri-state feature flags
+      wca: tri,
+      mag: tri,
+      smart: tri,
+      mod: tri,
+      stick: tri,
+
+      // tri-state version flags
+      base: tri,
+      trim: tri,
+      limit: tri,
+    },
+    {
+      // Tuning:
+      pushHistory: false, // replaceState instead of pushState
+      showDefaults: false, // don’t pollute URL with default values
+    }
+  );
+
   let searchTerm: string = $state(""); // Text input for search bar
   let currentPage: number = $state(1); // Current pagination page
   let itemsPerPage: number = $state(12); // Items shown per page
   let sortField: string = $state("name"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("asc"); // Sort direction
+  let selectedType: string = $state("All");
+  let selectedSubType: string = $state("All");
+  let selectedBrand: string = $state("All");
+  let selectedYear: string = $state("All");
+  let WCALegal: boolean | undefined = $state(undefined);
+  let magnetic: boolean | undefined = $state(undefined);
+  let smart: boolean | undefined = $state(undefined);
+  let modded: boolean | undefined = $state(undefined);
+  let stickered: boolean | undefined = $state(undefined);
+  let base: boolean | undefined = $state(undefined);
+  let trim: boolean | undefined = $state(undefined);
+  let limited: boolean | undefined = $state(undefined);
+
+  $effect(() => {
+    searchTerm = $params.q ?? "";
+    currentPage = $params.page;
+    itemsPerPage = $params.size;
+    sortField = $params.sort;
+    sortOrder = $params.dir;
+    selectedType = $params.type;
+    selectedSubType = $params.sub;
+    selectedBrand = $params.brand;
+    selectedYear = $params.year === null ? "All" : $params.year;
+
+    // tri-states
+    WCALegal = $params.wca ?? undefined;
+    magnetic = $params.mag ?? undefined;
+    smart = $params.smart ?? undefined;
+    modded = $params.mod ?? undefined;
+    stickered = $params.stick ?? undefined;
+    base = $params.base ?? undefined;
+    trim = $params.trim ?? undefined;
+    limited = $params.limit ?? undefined;
+  });
+
+  // 1) State for filters and controls
+  let cubes: CubeWithMeta[] = $state([]);
   const sortOptions: SortOption[] = [
     { id: "name-asc", field: "name", order: "asc", label: "Name - A to Z" },
     {
@@ -282,23 +373,59 @@
 
   // Reset all filters to default state
   function resetFilters() {
-    selectedType = "All";
-    selectedBrand = "All";
-    WCALegal = undefined;
-    magnetic = undefined;
-    smart = undefined;
-    selectedYear = "All";
-    modded = undefined;
-    stickered = undefined;
-    base = undefined;
-    trim = undefined;
-    limited = undefined;
+    $params.type = "All";
+    $params.sub = "All";
+    $params.brand = "All";
+    $params.year = "All";
+
+    $params.wca = undefined;
+    $params.mag = undefined;
+    $params.smart = undefined;
+    $params.mod = undefined;
+    $params.stick = undefined;
+    $params.base = undefined;
+    $params.trim = undefined;
+    $params.limit = undefined;
+
+    $params.q = "";
+    $params.page = 1;
   }
 
-  // Reset page to 1 whenever sorting or filtering changes
+  let _hydrated = $state(false);
+  let _userChangedFilters = $state(false);
+
+  // --- track only filters/sort/search (exclude page/size)
+  const filterKey = $derived.by(() =>
+    JSON.stringify({
+      q: searchTerm,
+      type: selectedType,
+      sub: selectedSubType,
+      brand: selectedBrand,
+      year: selectedYear,
+      wca: WCALegal,
+      mag: magnetic,
+      smart,
+      modded,
+      stick: stickered,
+      base,
+      trim,
+      limit: limited,
+      sort: sortField,
+      dir: sortOrder,
+    })
+  );
+
+  // --- reset page ONLY on user-driven changes (and never on first run)
   $effect(() => {
-    const _ = sortedCubes;
-    currentPage = 1;
+    const _ = filterKey;
+    if (!_hydrated) {
+      _hydrated = true; // first run after load/reload/back ⇒ do nothing
+      return;
+    }
+    if (_userChangedFilters) {
+      $params.page = 1; // jump back to first page
+      _userChangedFilters = false;
+    }
   });
 
   // Recalculate filter options when loading state changes (i.e., new data arrives)
@@ -329,7 +456,8 @@
       <!-- Search bar with filter toggle button -->
       <SearchBar
         showFilter={true}
-        bind:searchTerm
+        oninput={() => (_userChangedFilters = true)}
+        bind:searchTerm={$params.q}
         filterAction={() => (showFilters = !showFilters)}
       />
 
@@ -341,7 +469,8 @@
             <label class="block text-sm mb-1">
               Type:
               <select
-                bind:value={selectedType}
+                bind:value={$params.type}
+                onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
                 <option>All</option>
@@ -356,7 +485,8 @@
             <label class="block text-sm mb-1">
               Sub Type:
               <select
-                bind:value={selectedSubType}
+                bind:value={$params.sub}
+                onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
                 <option>All</option>
@@ -371,7 +501,8 @@
             <label class="block text-sm mb-1">
               Brand:
               <select
-                bind:value={selectedBrand}
+                bind:value={$params.brand}
+                onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
                 <option>All</option>
@@ -387,6 +518,10 @@
               Release Year:
               <select
                 bind:value={selectedYear}
+                onchange={() => {
+                  _userChangedFilters = true;
+                  $params.year = selectedYear === "All" ? "All" : selectedYear;
+                }}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
                 <option>All</option>
@@ -398,13 +533,46 @@
           </div>
           <!-- Tri-state feature filters -->
           <div class="grid grid-cols-2 gap-2">
-            <TriStateCheckbox bind:value={WCALegal} label="WCA Legal" />
-            <TriStateCheckbox bind:value={magnetic} label="Magnetic" />
-            <TriStateCheckbox bind:value={smart} label="Smart" />
-            <TriStateCheckbox bind:value={modded} label="Modded" />
-            <TriStateCheckbox bind:value={base} label="Base" />
-            <TriStateCheckbox bind:value={trim} label="Trim" />
-            <TriStateCheckbox bind:value={limited} label="Limited" />
+            <TriStateCheckbox
+              bind:value={$params.wca}
+              onchange={() => (_userChangedFilters = true)}
+              label="WCA Legal"
+            />
+            <TriStateCheckbox
+              bind:value={$params.mag}
+              onchange={() => (_userChangedFilters = true)}
+              label="Magnetic"
+            />
+            <TriStateCheckbox
+              bind:value={$params.smart}
+              onchange={() => (_userChangedFilters = true)}
+              label="Smart"
+            />
+            <TriStateCheckbox
+              bind:value={$params.stick}
+              onchange={() => (_userChangedFilters = true)}
+              label="Stickered"
+            />
+            <TriStateCheckbox
+              bind:value={$params.mod}
+              onchange={() => (_userChangedFilters = true)}
+              label="Modded"
+            />
+            <TriStateCheckbox
+              bind:value={$params.base}
+              onchange={() => (_userChangedFilters = true)}
+              label="Base"
+            />
+            <TriStateCheckbox
+              bind:value={$params.trim}
+              onchange={() => (_userChangedFilters = true)}
+              label="Trim"
+            />
+            <TriStateCheckbox
+              bind:value={$params.limit}
+              onchange={() => (_userChangedFilters = true)}
+              label="Limited"
+            />
           </div>
           <!-- Reset filters button -->
           <div>
@@ -426,8 +594,17 @@
             class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
-              <SortSelector bind:sortField bind:sortOrder {sortOptions} />
+              <ItemsPerPageSelector
+                bind:itemsPerPage={$params.size}
+                label="Cubes per page"
+                onchange={() => (_userChangedFilters = true)}
+              />
+              <SortSelector
+                bind:sortField={$params.sort}
+                bind:sortOrder={$params.dir}
+                {sortOptions}
+                useronchange={() => (_userChangedFilters = true)}
+              />
             </div>
             <!-- Link to compare page -->
             <div>
@@ -443,7 +620,7 @@
 
           <!-- Pagination at top -->
           <div class="mb-10">
-            <Pagination bind:currentPage {totalPages} />
+            <Pagination bind:currentPage={$params.page} {totalPages} />
           </div>
 
           <!-- Loading state: skeleton cards -->
@@ -514,7 +691,7 @@
 
           <!-- Pagination at bottom -->
           <div class="mt-10">
-            <Pagination bind:currentPage {totalPages} />
+            <Pagination bind:currentPage={$params.page} {totalPages} />
           </div>
         </div>
       </div>

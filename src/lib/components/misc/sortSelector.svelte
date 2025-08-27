@@ -9,22 +9,25 @@
   let {
     sortField = $bindable("name"),
     sortOrder = $bindable("asc"),
-    sortOptions
+    sortOptions,
+    useronchange = () => {},
   }: {
     sortField: string;
     sortOrder: "asc" | "desc";
     sortOptions: SortOption[];
+    useronchange: () => void;
   } = $props();
 
   // Which option should appear selected based on current field/order?
-  let selectedId = $derived(() =>
-    sortOptions.find(o => o.field === sortField && o.order === sortOrder)?.id
-      ?? sortOptions[0]?.id
+  let selectedId = $derived(
+    () =>
+      sortOptions.find((o) => o.field === sortField && o.order === sortOrder)
+        ?.id ?? sortOptions[0]?.id
   );
 
   function onChange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    const opt = sortOptions.find(o => o.id === id);
+    const opt = sortOptions.find((o) => o.id === id);
     if (opt) {
       // safe: runs in an event handler, not during render
       sortField = opt.field;
@@ -38,7 +41,10 @@
   <select
     id="sortField"
     bind:value={selectedId}
-    onchange={onChange}
+    onchange={(e) => {
+      onChange(e);
+      useronchange();
+    }}
     class="select"
     style="width:auto"
   >

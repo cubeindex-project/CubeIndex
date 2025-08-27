@@ -5,6 +5,7 @@
   import NotificationCenter from "../user/notificationCenter.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
+  import Tag from "../misc/tag.svelte";
 
   let loading = $state(true);
   let isOpen = $state(false);
@@ -135,6 +136,12 @@
                 Settings
               </a>
             </li>
+            <li>
+              <a href="/userbar" class="flex px-4 py-2 text-sm justify-between">
+                Userbar
+                <Tag label="New" gradient="from-green-500 to-emerald-600" />
+              </a>
+            </li>
             {#if profile.role !== "User"}
               <li>
                 <a href="/staff/dashboard" class="block px-4 py-2 text-sm">
@@ -256,7 +263,7 @@
                 </li>
                 <li>
                   <a
-                    href={`/user/settings`}
+                    href="/user/settings"
                     onclick={() => {
                       isOpen = false;
                       mobileProfileDropdown = false;
@@ -264,6 +271,19 @@
                     class="block py-2 text-sm border-b border-base-300"
                   >
                     Settings
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/userbar"
+                    onclick={() => {
+                      isOpen = false;
+                      mobileProfileDropdown = false;
+                    }}
+                    class="flex py-2 text-sm border-b border-base-300 justify-between"
+                  >
+                    Userbar
+                    <Tag label="New" gradient="from-green-500 to-emerald-600" />
                   </a>
                 </li>
                 {#if profile.role !== "User"}

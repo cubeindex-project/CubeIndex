@@ -112,7 +112,6 @@ export const actions: Actions = {
       avatarUrl = data.publicUrl;
     }
 
-    // Create incremental profile id (kept from your existing approach)
     const { display_name, username } = form.data;
 
     const { error: upsertError } = await supabase

@@ -6,7 +6,6 @@
 
   interface Props {
     cube: Cube;
-    newRibbon: boolean;
     quantity?: number;
     rating: boolean;
     top?: Snippet<[]>;

@@ -36,9 +36,19 @@
 
     return diffDays < 7;
   }
-
-  console.log(userCubeDetail)
 </script>
+
+{#snippet top()}
+  <div class="flex justify-end">
+    {#if isNewCube(cube.verified_at)}
+      <div
+        class="absolute top-4 right-[-32px] transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
+      >
+        NEW
+      </div>
+    {/if}
+  </div>
+{/snippet}
 
 {#snippet content()}
   <div class="mt-4 flex gap-2">
@@ -73,13 +83,7 @@
   {/if}
 {/snippet}
 
-<CubeCardSkeleton
-  {cube}
-  newRibbon={isNewCube(cube.verified_at)}
-  rating={true}
-  {content}
-  {bottom}
-/>
+<CubeCardSkeleton {cube} rating={true} {top} {content} {bottom} />
 
 {#if openAddCard}
   <AddCube

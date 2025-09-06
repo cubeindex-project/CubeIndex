@@ -6,6 +6,7 @@
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
+  import ExplorePopover from "./ExplorePopover.svelte";
 
   let loading = $state(true);
   let isOpen = $state(false);
@@ -36,7 +37,6 @@
   let notifications: any[] = $state([]);
 
   const navLinks = [
-    { name: "Explore", href: "/explore" },
     { name: "Achievements", href: "/achievements" },
     { name: "About", href: "/about" },
   ];
@@ -55,6 +55,27 @@
   onMount(() => themeChange(false));
 
   let mobileProfileDropdown = $state(false);
+  // Desktop Explore open/close management with small delay for usability
+  let exploreOpen = $state(false);
+  let exploreCloseTimer: ReturnType<typeof setTimeout> | null = null;
+  let exploreWrapper: HTMLDivElement | null = $state(null);
+
+  function openExplore() {
+    if (exploreCloseTimer) {
+      clearTimeout(exploreCloseTimer);
+      exploreCloseTimer = null;
+    }
+    exploreOpen = true;
+  }
+  function scheduleCloseExplore(delay = 150) {
+    if (exploreCloseTimer) clearTimeout(exploreCloseTimer);
+    exploreCloseTimer = setTimeout(() => (exploreOpen = false), delay);
+  }
+  function handleFocusOut(e: FocusEvent) {
+    const next = e.relatedTarget as Node | null;
+    if (exploreWrapper && next && exploreWrapper.contains(next)) return;
+    scheduleCloseExplore(100);
+  }
 </script>
 
 <header class="bg-base-100">
@@ -74,37 +95,71 @@
 
     <!-- Desktop Nav -->
     <nav class="hidden items-center gap-8 md:flex">
+      <!-- Explore Dropdown (hover) -->
+      {#key "explore-desktop"}
+        <div
+          class="dropdown dropdown-center link link-hover"
+          class:dropdown-open={exploreOpen}
+          bind:this={exploreWrapper}
+          onmouseenter={openExplore}
+          onmouseleave={() => scheduleCloseExplore(120)}
+          role="dialog"
+          tabindex="0"
+        >
+          <a
+            href="#explore"
+            class="text-sm transition"
+            id="explore-menu-button"
+            aria-haspopup="menu"
+            aria-expanded={exploreOpen}
+            tabindex="0"
+          >
+            Explore
+          </a>
+          <div
+            class="dropdown-content z-10 mt-4"
+            role="menu"
+            aria-labelledby="explore-menu-button"
+            tabindex="-1"
+          >
+            <ExplorePopover />
+          </div>
+        </div>
+      {/key}
+
       {#each navLinks as { name, href }}
-        <a {href} class="link link-hover text-sm transition">
-          {name}
-        </a>
+        <a {href} class="link link-hover text-sm transition">{name}</a>
       {/each}
 
-      <div class="relative inline-block">
-        <!-- Notification Bell -->
-        <button
-          class="relative focus:outline-none cursor-pointer transition"
-          aria-label="Notifications"
-          style="margin-right: 0.5rem;"
-          onclick={() => {
-            notificationOpen = !notificationOpen;
-            bellAnimate = true;
-          }}
-        >
-          <i class="fa-solid fa-bell fa-xl {bellAnimate ? 'animate-ring' : ''}"
-          ></i>
-          {#if notifications.length !== 0}
-            <div
-              class="status status-info animate-ping absolute top-0 right-0"
-            ></div>
-            <div class="absolute top-0 right-0 status status-info"></div>
-          {/if}
-        </button>
+      {#if session && profile}
+        <div class="relative inline-block">
+          <!-- Notification Bell -->
+          <button
+            class="relative focus:outline-none cursor-pointer transition"
+            aria-label="Notifications"
+            style="margin-right: 0.5rem;"
+            onclick={() => {
+              notificationOpen = !notificationOpen;
+              bellAnimate = true;
+            }}
+          >
+            <i
+              class="fa-solid fa-bell fa-xl {bellAnimate ? 'animate-ring' : ''}"
+            >
+            </i>
+            {#if notifications.length !== 0}
+              <div
+                class="status status-info animate-ping absolute top-0 right-0"
+              ></div>
+              <div class="absolute top-0 right-0 status status-info"></div>
+            {/if}
+          </button>
 
-        {#if notificationOpen}
-          <NotificationCenter {notificationOpen} {notifications} />
-        {/if}
-      </div>
+          {#if notificationOpen}
+            <NotificationCenter {notificationOpen} {notifications} />
+          {/if}
+        </div>
+      {/if}
 
       {#if loading}
         <i class="fa-solid fa-spinner animate-spin"></i>
@@ -191,15 +246,47 @@
       transition:blur={{ duration: 250 }}
     >
       <ul class="flex flex-col gap-3">
+        <!-- Explore Disclosure (mobile/touch) -->
+        <li>
+          <details class="group">
+            <summary
+              class="flex items-center justify-between cursor-pointer py-2 text-sm border-b border-base-300"
+            >
+              <span>Explore</span>
+              <i
+                class="fa-solid fa-caret-down group-open:rotate-180 transition-transform"
+              ></i>
+            </summary>
+            <div class="mt-2 pl-2 flex flex-col gap-2">
+              <a
+                href="/explore/cubes"
+                class="block py-1 text-sm"
+                onclick={() => (isOpen = false)}>Cubes</a
+              >
+              <span class="block py-1 text-sm opacity-60" aria-disabled="true"
+                >Accessories (Soon)</span
+              >
+              <a
+                href="/explore/vendors"
+                class="block py-1 text-sm"
+                onclick={() => (isOpen = false)}>Vendors</a
+              >
+              <a
+                href="/explore/users"
+                class="block py-1 text-sm"
+                onclick={() => (isOpen = false)}>Users</a
+              >
+            </div>
+          </details>
+        </li>
+
         {#each navLinks as { name, href }}
           <li>
             <a
               {href}
               class="block py-2 text-sm border-b border-base-300"
-              onclick={() => (isOpen = false)}
+              onclick={() => (isOpen = false)}>{name}</a
             >
-              {name}
-            </a>
           </li>
         {/each}
 

@@ -10,6 +10,8 @@
   import { blur } from "@ssgoi/svelte/transitions";
   import { hero } from "@ssgoi/svelte/view-transitions";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
+  import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
+  import BackButton from "$lib/components/misc/backButton.svelte";
 
   const config = {
     defaultTransition: blur(),
@@ -59,7 +61,7 @@
         if (t) {
           document.documentElement.dataset.theme = t;
         } else {
-          localStorage.setItem("theme", "dark");
+          localStorage.setItem("theme", "black");
         }
       } catch (e) {
         throw new Error("Error initializing theme from localStorage:" + e);
@@ -90,3 +92,6 @@
 {/await}
 
 <Footer />
+
+<BackButton />
+<ScrollToTop />

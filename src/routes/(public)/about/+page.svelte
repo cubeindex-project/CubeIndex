@@ -6,7 +6,7 @@
   const { logoDesigner, team, features, futureFeatures } = data;
 
   // How many cards to show before "Show more"
-  const FEATURE_CAP = 8;
+  const FEATURE_CAP = 4;
   const FUTURE_FEATURE_CAP = 8;
 
   // UI state
@@ -30,7 +30,7 @@
   <!-- Subtle background gradient -->
   <div
     aria-hidden="true"
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-base-200/60 via-base-200/20 to-base-100"
+    class="pointer-events-none absolute inset-0 -z-10"
   ></div>
   <div class="relative mx-auto max-w-6xl px-5 py-12 sm:py-16 space-y-16">
     <!-- Hero -->

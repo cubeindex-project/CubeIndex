@@ -9,29 +9,12 @@ export const GET = async ({ params, locals }) => {
 
   // Profile
   const { data: profile, error: pErr } = await locals.supabase
-    .from("profiles")
+    .from("v_detailed_profiles")
     .select("*")
     .eq("username", username)
     .single();
 
   if (pErr) return new Response("Profile not found", { status: 404 });
-
-  // Counts (cubes + achievements)
-  const [
-    { error: ecErr, count: userCubesCount },
-    { error: uaErr, count: userAchievementsCount },
-  ] = await Promise.all([
-    locals.supabase
-      .from("user_cubes")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", profile.user_id),
-    locals.supabase
-      .from("user_achievements")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", profile.user_id),
-  ]);
-  if (ecErr || uaErr)
-    return new Response("Error loading counters", { status: 500 });
 
   // Fonts
   const clashFontPath = join(
@@ -77,8 +60,8 @@ export const GET = async ({ params, locals }) => {
   };
 
   const name = profile?.display_name || profile?.username || "User";
-  const metricsText = `${userCubesCount ?? 0} cubes • ${
-    userAchievementsCount ?? 0
+  const metricsText = `${profile.user_cubes_count ?? 0} cubes • ${
+    profile.user_achievements_count ?? 0
   } achievements`;
 
   const width = 350;

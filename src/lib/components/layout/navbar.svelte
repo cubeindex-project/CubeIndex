@@ -131,36 +131,6 @@
         <a {href} class="link link-hover text-sm transition">{name}</a>
       {/each}
 
-      {#if session && profile}
-        <div class="relative inline-block">
-          <!-- Notification Bell -->
-          <button
-            class="relative focus:outline-none cursor-pointer transition"
-            aria-label="Notifications"
-            style="margin-right: 0.5rem;"
-            onclick={() => {
-              notificationOpen = !notificationOpen;
-              bellAnimate = true;
-            }}
-          >
-            <i
-              class="fa-solid fa-bell fa-xl {bellAnimate ? 'animate-ring' : ''}"
-            >
-            </i>
-            {#if notifications.length !== 0}
-              <div
-                class="status status-info animate-ping absolute top-0 right-0"
-              ></div>
-              <div class="absolute top-0 right-0 status status-info"></div>
-            {/if}
-          </button>
-
-          {#if notificationOpen}
-            <NotificationCenter {notificationOpen} {notifications} />
-          {/if}
-        </div>
-      {/if}
-
       {#if loading}
         <i class="fa-solid fa-spinner animate-spin"></i>
       {:else if session && profile}
@@ -215,6 +185,34 @@
               </button>
             </li>
           </ul>
+        </div>
+
+        <div class="relative inline-block">
+          <!-- Notification Bell -->
+          <button
+            class="relative focus:outline-none cursor-pointer transition"
+            aria-label="Notifications"
+            style="margin-right: 0.5rem;"
+            onclick={() => {
+              notificationOpen = !notificationOpen;
+              bellAnimate = true;
+            }}
+          >
+            <i
+              class="fa-solid fa-bell fa-xl {bellAnimate ? 'animate-ring' : ''}"
+            >
+            </i>
+            {#if notifications.length !== 0}
+              <div
+                class="status status-info animate-ping absolute top-0 right-0"
+              ></div>
+              <div class="absolute top-0 right-0 status status-info"></div>
+            {/if}
+          </button>
+
+          {#if notificationOpen}
+            <NotificationCenter {notificationOpen} {notifications} />
+          {/if}
         </div>
       {:else}
         <a

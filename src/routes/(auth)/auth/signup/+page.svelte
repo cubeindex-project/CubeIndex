@@ -63,10 +63,10 @@
 
 <SsgoiTransition id={page.url.pathname}>
   <section
-    class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
+    class="min-h-[90dvh] md:min-h-screen flex flex-col items-center justify-start md:justify-center px-4 sm:px-6 py-6 sm:py-10 relative overflow-hidden"
   >
     <div
-      class="w-full max-w-xl bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
+      class="w-full max-w-md sm:max-w-xl bg-base-200 border border-base-300 rounded-2xl shadow-lg p-6 sm:p-8 z-10"
     >
       <h1 class="text-3xl font-clash font-bold text-center mb-2">
         Join CubeIndex
@@ -76,7 +76,7 @@
       </p>
 
       <!-- Stepper -->
-      <ol class="steps w-full mb-8">
+      <ol class="steps steps-vertical sm:steps-horizontal w-full mb-6 sm:mb-8 text-xs sm:text-sm">
         {#each steps as s}
           <li
             class="step"
@@ -90,7 +90,7 @@
       {#if step === "account"}
         <!-- ACCOUNT FORM -->
         <form
-          class="space-y-6"
+          class="space-y-5 sm:space-y-6"
           method="POST"
           action="?/createAccount"
           use:enhanceAccount
@@ -182,12 +182,12 @@
           </div>
 
           <!-- ToS -->
-          <div class="flex items-center gap-2">
+          <div class="flex items-start gap-3">
             <input
               type="checkbox"
               name="acceptTOS"
               bind:checked={$account.acceptTOS}
-              class="checkbox bg-base-300"
+              class="checkbox bg-base-300 mt-0.5"
             />
             <div class="text-sm select-none">
               I accept the
@@ -206,14 +206,14 @@
             </p>
           {/if}
 
-          <button type="submit" class="btn btn-xl w-full btn-primary">
+          <button type="submit" class="btn btn-lg sm:btn-xl w-full btn-primary">
             Continue
           </button>
 
           <div class="divider">or</div>
           <a
             href="/auth/discord"
-            class="btn btn-lg bg-[#5865F2] text-white w-full"
+            class="btn btn-lg sm:btn-xl bg-[#5865F2] text-white w-full"
           >
             <i class="fa-brands fa-discord text-2xl"></i>
             Sign Up with Discord
@@ -228,7 +228,7 @@
           action="?/createProfile"
           use:enhanceProfile
           enctype="multipart/form-data"
-          class="space-y-6"
+          class="space-y-5 sm:space-y-6"
         >
           <div>
             <label class="block text-sm font-medium">
@@ -290,7 +290,7 @@
             </p>
           {/if}
 
-          <button type="submit" class="btn btn-xl w-full btn-primary"
+          <button type="submit" class="btn btn-lg sm:btn-xl w-full btn-primary"
             >Continue</button
           >
         </form>
@@ -302,7 +302,7 @@
           method="POST"
           action="?/submitSurvey"
           use:enhanceSurvey
-          class="space-y-6"
+          class="space-y-5 sm:space-y-6"
         >
           <div>
             <label class="block text-sm font-medium">
@@ -381,7 +381,7 @@
             </p>
           {/if}
 
-          <button type="submit" class="btn btn-xl w-full btn-primary">
+          <button type="submit" class="btn btn-lg sm:btn-xl w-full btn-primary">
             Finish
           </button>
         </form>

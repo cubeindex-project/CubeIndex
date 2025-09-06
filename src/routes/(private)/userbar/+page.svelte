@@ -11,12 +11,13 @@
   const displayName = data.display_name;
 
   // Use a relative URL so SSR doesn't need window.origin
-  const directUrl = `${page.url.origin}/api/og/userbar/${encodeURIComponent(username)}`;
+  const origin = page.url.origin;
+  const directUrl = `${origin}/api/og/userbar/${encodeURIComponent(username)}`;
 
   // Embedding snippets
-  const markdown = `![${displayName}'s CubeIndex profile](${directUrl})`;
-  const html = `<img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" />`;
-  const bbcode = `[img]${directUrl}[/img]`;
+  const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${username}&apos;s CubeIndex profile")`;
+  const html = `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" /></a>`;
+  const bbcode = `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`;
 
   let copied = $state<null | string>(null);
 
@@ -70,15 +71,17 @@
         background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
       "
     >
-      <img
-        src={directUrl}
-        alt={`${displayName} — CubeIndex userbar`}
-        width={350}
-        height={19}
-        class="block rounded"
-        loading="eager"
-        decoding="sync"
-      />
+      <a href="/user/{username}">
+        <img
+          src={directUrl}
+          alt={`${displayName} — CubeIndex userbar`}
+          width={350}
+          height={19}
+          class="block rounded"
+          loading="eager"
+          decoding="sync"
+        />
+      </a>
     </div>
 
     <div class="mt-3 flex items-center gap-3 text-sm">

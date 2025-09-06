@@ -15,7 +15,7 @@
     sortField: string;
     sortOrder: "asc" | "desc";
     sortOptions: SortOption[];
-    useronchange: () => void;
+    useronchange?: () => void;
   } = $props();
 
   // Which option should appear selected based on current field/order?

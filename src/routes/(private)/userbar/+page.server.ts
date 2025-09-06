@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     data: { user },
   } = await locals.supabase.auth.getUser();
 
-  if (!user) throw redirect(302, "/login");
+  if (!user) throw redirect(302, "/auth/login");
 
   // Fetch the profile to get the username
   const { data: profile, error: pErr } = await locals.supabase

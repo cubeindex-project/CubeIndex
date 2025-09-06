@@ -122,7 +122,7 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  <section class="min-h-screen px-4 py-12">
+  <section class="min-h-screen px-6 py-16">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-10 text-center">
         Explore Users

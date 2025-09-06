@@ -1,12 +1,11 @@
 <script lang="ts">
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import type { Profiles } from "$lib/components/dbTableTypes.js";
 
   let { data } = $props();
   let {
+    user,
     cube = {} as Cube,
-    profile = {} as Profiles,
     cubeTrims,
     relatedCube,
     sameSeries,
@@ -178,100 +177,3 @@
     </div>
   </div>
 </div>
-
-{#if cube.notes && profile && profile.user_id === cube.submitted_by}
-  <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-note-sticky"></i>
-      Moderator Note
-      <span class="text-xs">(Only you can see this)</span>
-    </h2>
-    <p class="whitespace-pre-line">{cube.notes}</p>
-  </div>
-{/if}
-
-{#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-palette"></i>
-      Select Trim:
-    </h2>
-    <div class="flex gap-4">
-      {#each cubeTrims ?? [] as trim}
-        <a
-          class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-          href="/explore/cubes/{trim.slug}"
-        >
-          <img
-            src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(trim.image_url)}`}
-            alt={trim.version_name}
-            loading="lazy"
-            decoding="async"
-            width="192"
-            height="192"
-            class="h-16 object-contain mb-2 rounded"
-          />
-          <span class="font-medium">{trim.version_name}</span>
-        </a>
-      {/each}
-    </div>
-  </div>
-{/if}
-{#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-palette"></i>
-      Related To:
-    </h2>
-    <div class="flex gap-4">
-      <a
-        class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-        href="/explore/cubes/{relatedCube.slug}"
-      >
-        <img
-          src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
-          alt={relatedCube.version_name}
-          loading="lazy"
-          decoding="async"
-          width="192"
-          height="192"
-          class="h-16 object-contain mb-2 rounded"
-        />
-        <span class="font-medium"
-          >{relatedCube.series}
-          {relatedCube.model}</span
-        >
-      </a>
-    </div>
-  </div>
-{/if}
-{#if sameSeries && sameSeries.length > 0 && sameSeries[0].series !== ""}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-layer-group"></i>
-      In the Same Series:
-    </h2>
-    <div class="flex flex-wrap gap-4">
-      {#each sameSeries as seriesCube}
-        <a
-          class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300 w-36"
-          href="/explore/cubes/{seriesCube.slug}"
-        >
-          <img
-            src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(seriesCube.image_url)}`}
-            alt={seriesCube.version_name}
-            loading="lazy"
-            decoding="async"
-            width="192"
-            height="192"
-            class="h-24 object-contain mb-2 rounded"
-          />
-          <span class="font-medium text-center">
-            {seriesCube.series}
-            {seriesCube.model}
-          </span>
-        </a>
-      {/each}
-    </div>
-  </div>
-{/if}

@@ -12,15 +12,14 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
-  let { cube, user, meta } = $derived(data);
+  let { cube, user, meta, sameSeries, relatedCube, cubeTrims, features } =
+    $derived(data);
 
   let cubeUserCount: number | undefined = $derived(
     data.user_cubes?.length ?? 0
   );
 
-  const userCubeDetail = data.user_cubes?.find(
-    (uc) => uc.user_id === user?.id
-  );
+  const userCubeDetail = data.user_cubes?.find((uc) => uc.user_id === user?.id);
 
   let openAddCard = $state(false);
   let openReport = $state(false);
@@ -155,7 +154,7 @@
           </button>
         {/if}
       </div>
-      <ShareButton url={page.url.href} />
+      <ShareButton url={page.url.href} label="" />
     </div>
 
     <!-- Highlighted Rating -->
@@ -178,6 +177,177 @@
     </nav>
 
     {@render children()}
+
+    {#if cube.notes && user && user.id === cube.submitted_by_id}
+      <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-note-sticky"></i>
+          Moderator Note
+          <span class="text-xs">(Only you can see this)</span>
+        </h2>
+        <p class="whitespace-pre-line">{cube.notes}</p>
+      </div>
+    {/if}
+
+    <!-- Trim selector -->
+    {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
+      <section class="my-10">
+        <header class="mb-4 flex items-center gap-2">
+          <h2
+            class="text-xl font-semibold tracking-tight flex items-center gap-2"
+          >
+            <i class="fa-solid fa-palette text-primary"></i>
+            Select Trim
+          </h2>
+          <span class="badge badge-neutral badge-sm ml-2"
+            >{cubeTrims.length}</span
+          >
+        </header>
+
+        <!-- Mobile: smooth horizontal scroll; ≥md: grid -->
+        <ul
+          class="flex gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory pr-1 md:grid md:grid-cols-2 md:sm:grid-cols-3 md:lg:grid-cols-4 md:xl:grid-cols-6 md:gap-4 md:overflow-visible md:snap-none"
+          aria-label="Available trims"
+        >
+          {#each cubeTrims ?? [] as trim}
+            <li class="min-w-[9.5rem] snap-start md:min-w-0">
+              <a
+                href="/explore/cubes/{trim.slug}"
+                class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                aria-label={"Open " + trim.version_name}
+              >
+                <div class="p-3">
+                  <div
+                    class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
+                  >
+                    <img
+                      src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(trim.image_url)}`}
+                      alt={trim.version_name}
+                      loading="lazy"
+                      decoding="async"
+                      width="256"
+                      height="256"
+                      class="size-full object-contain p-2 transition-transform duration-200"
+                    />
+                  </div>
+                  <div class="mt-2 text-center">
+                    <span class="text-sm font-medium line-clamp-2"
+                      >{trim.version_name}</span
+                    >
+                  </div>
+                </div>
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
+
+    <!-- Related-to (for modded / non-base) -->
+    {#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
+      <section class="my-10">
+        <header class="mb-4 flex items-center gap-2">
+          <h2
+            class="text-xl font-semibold tracking-tight flex items-center gap-2"
+          >
+            <i class="fa-solid fa-link text-primary"></i>
+            Related To
+          </h2>
+        </header>
+
+        <div class="max-w-sm">
+          <a
+            href="/explore/cubes/{relatedCube.slug}"
+            class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+            aria-label={"Open " +
+              (relatedCube.series + " " + relatedCube.model)}
+          >
+            <div class="p-4 flex items-center gap-4">
+              <div
+                class="size-20 shrink-0 rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
+              >
+                <img
+                  src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
+                  alt={relatedCube.version_name}
+                  loading="lazy"
+                  decoding="async"
+                  width="192"
+                  height="192"
+                  class="size-full object-contain p-1 transition-transform duration-200"
+                />
+              </div>
+              <div class="min-w-0">
+                <p class="text-base font-semibold truncate">
+                  {relatedCube.series}
+                  {relatedCube.model}
+                </p>
+                <p class="text-xs opacity-70 truncate">
+                  {relatedCube.version_name}
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    {/if}
+
+    <!-- Same series -->
+    {#if sameSeries && sameSeries.length > 0 && sameSeries[0].series !== ""}
+      <section class="my-10">
+        <header class="mb-4 flex items-center gap-2">
+          <h2
+            class="text-xl font-semibold tracking-tight flex items-center gap-2"
+          >
+            <i class="fa-solid fa-layer-group text-primary"></i>
+            In the Same Series
+          </h2>
+          <span class="badge badge-neutral badge-sm ml-2"
+            >{sameSeries.length}</span
+          >
+        </header>
+
+        <ul
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          aria-label={"Cubes in the " + sameSeries[0].series + " series"}
+        >
+          {#each sameSeries as seriesCube}
+            <li>
+              <a
+                href="/explore/cubes/{seriesCube.slug}"
+                class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                aria-label={"Open " +
+                  (seriesCube.series + " " + seriesCube.model)}
+              >
+                <div class="p-3">
+                  <div
+                    class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
+                  >
+                    <img
+                      src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
+                      alt={seriesCube.version_name}
+                      loading="lazy"
+                      decoding="async"
+                      width="256"
+                      height="256"
+                      class="size-full object-contain p-2 transition-transform duration-200"
+                    />
+                  </div>
+                  <div class="mt-2 text-center">
+                    <p class="text-sm font-semibold line-clamp-2">
+                      {seriesCube.series}
+                      {seriesCube.model}
+                    </p>
+                    <p class="text-xs opacity-70 line-clamp-1">
+                      {seriesCube.version_name}
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
 
     <div class="mt-4">
       <button onclick={toggleOpenReport} class="btn btn-error">

@@ -15,11 +15,12 @@
   const directUrl = `${origin}/api/og/userbar/${encodeURIComponent(username)}`;
 
   // Embedding snippets
-  const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${username}&apos;s CubeIndex profile")`;
+  const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${displayName}&apos;s CubeIndex profile")`;
   const html = `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" /></a>`;
   const bbcode = `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`;
 
   let copied = $state<null | string>(null);
+  let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">("Markdown");
 
   async function copy(text: string, label: string) {
     try {
@@ -42,10 +43,10 @@
   }
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-8">
+<div class="mx-auto max-w-5xl px-4 py-8 h-screen">
   <header class="mb-6">
     <div class="flex items-center gap-3">
-      <h1 class="text-2xl font-semibold">Your Userbar</h1>
+      <h1 class="text-3xl font-clash tracking-tight">Userbar</h1>
       <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
     </div>
     <p class="text-sm opacity-80 mt-1">
@@ -71,10 +72,10 @@
         background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
       "
     >
-      <a href="/user/{username}">
+      <a href={'/user/' + username}>
         <img
           src={directUrl}
-          alt={`${displayName} — CubeIndex userbar`}
+          alt={`${displayName} - CubeIndex userbar`}
           width={350}
           height={19}
           class="block rounded"
@@ -93,82 +94,68 @@
       >
         Open image
       </a>
-      <button class="btn btn-xs btn-primary" onclick={download}>
+      <button class="btn btn-sm btn-primary" onclick={download}>
         Download PNG
       </button>
-      <span class="opacity-70">Size: <code>350×19</code></span>
+      <span class="opacity-70">Size: <code>350 x 19 px</code></span>
     </div>
   </section>
 
   <!-- Snippets -->
-  <section class="space-y-6">
-    <div>
-      <h2 class="text-sm font-medium mb-2">Markdown</h2>
+  <section>
+    <h2 class="text-sm font-medium mb-2">Embed Snippets</h2>
+    <div class="tabs tabs-boxed mb-3">
+      <button class={`tab ${active === 'Markdown' ? 'tab-active' : ''}`} onclick={() => (active = 'Markdown')}>Markdown</button>
+      <button class={`tab ${active === 'HTML' ? 'tab-active' : ''}`} onclick={() => (active = 'HTML')}>HTML</button>
+      <button class={`tab ${active === 'BBCode' ? 'tab-active' : ''}`} onclick={() => (active = 'BBCode')}>BBCode</button>
+      <button class={`tab ${active === 'Direct URL' ? 'tab-active' : ''}`} onclick={() => (active = 'Direct URL')}>Direct URL</button>
+    </div>
+
+    {#if active === 'Markdown'}
       <div class="relative">
-        <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code
-            >{markdown}</code
-          ></pre>
+        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{markdown}</code></pre>
         <button
-          class="btn btn-xs absolute top-2 right-2"
-          onclick={() => copy(markdown, "Markdown")}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === 'Markdown' ? 'btn-success' : ''}`}
+          onclick={() => copy(markdown, 'Markdown')}
           aria-label="Copy Markdown"
         >
-          Copy
+          {copied === 'Markdown' ? 'Copied' : 'Copy'}
         </button>
       </div>
-    </div>
-
-    <div>
-      <h2 class="text-sm font-medium mb-2">HTML</h2>
+    {:else if active === 'HTML'}
       <div class="relative">
-        <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code
-            >{html}</code
-          ></pre>
+        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{html}</code></pre>
         <button
-          class="btn btn-xs absolute top-2 right-2"
-          onclick={() => copy(html, "HTML")}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === 'HTML' ? 'btn-success' : ''}`}
+          onclick={() => copy(html, 'HTML')}
           aria-label="Copy HTML"
         >
-          Copy
+          {copied === 'HTML' ? 'Copied' : 'Copy'}
         </button>
       </div>
-    </div>
-
-    <div>
-      <h2 class="text-sm font-medium mb-2">BBCode</h2>
+    {:else if active === 'BBCode'}
       <div class="relative">
-        <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code
-            >{bbcode}</code
-          ></pre>
+        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{bbcode}</code></pre>
         <button
-          class="btn btn-xs absolute top-2 right-2"
-          onclick={() => copy(bbcode, "BBCode")}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === 'BBCode' ? 'btn-success' : ''}`}
+          onclick={() => copy(bbcode, 'BBCode')}
           aria-label="Copy BBCode"
         >
-          Copy
+          {copied === 'BBCode' ? 'Copied' : 'Copy'}
         </button>
       </div>
-    </div>
-
-    <div>
-      <h2 class="text-sm font-medium mb-2">Direct URL</h2>
+    {:else}
       <div class="relative">
-        <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code
-            >{directUrl}</code
-          ></pre>
+        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{directUrl}</code></pre>
         <button
-          class="btn btn-xs absolute top-2 right-2"
-          onclick={() => copy(directUrl, "Direct URL")}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === 'Direct URL' ? 'btn-success' : ''}`}
+          onclick={() => copy(directUrl, 'Direct URL')}
           aria-label="Copy Direct URL"
         >
-          Copy
+          {copied === 'Direct URL' ? 'Copied' : 'Copy'}
         </button>
       </div>
-    </div>
+    {/if}
   </section>
 
   {#if copied}

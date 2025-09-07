@@ -43,7 +43,7 @@
   }
 </script>
 
-<div class="mx-auto max-w-5xl px-4 py-8 h-screen">
+<div class="mx-auto max-w-5xl px-4 py-8 min-h-screen">
   <header class="mb-6">
     <div class="flex items-center gap-3">
       <h1 class="text-3xl font-clash tracking-tight">Userbar</h1>

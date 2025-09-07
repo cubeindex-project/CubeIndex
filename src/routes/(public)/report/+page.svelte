@@ -103,7 +103,7 @@
     formMessage = "";
     const payload = {
       title: feature.title,
-      reported: document.referrer,
+      reported: location.href,
       comment: `**Description:**\n${feature.description}\n\n**Use Case:**\n${feature.useCase}\n\n**Priority:** ${feature.priority}\n\n**Extra:**\n${feature.extra}`,
       report_type: "website",
       image_url: "",
@@ -131,17 +131,24 @@
 
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen w-full flex flex-col">
+    <div class="mx-auto w-full max-w-3xl px-4 py-8">
+      <div class="card bg-base-100 border shadow-xl">
+        <div class="card-body gap-6">
+          <header class="text-center">
+            <h1 class="text-3xl font-clash">Feedback & Reports</h1>
+            <p class="text-base-content/70 mt-2">Help us improve CubeIndex by reporting bugs or suggesting features.</p>
+          </header>
     <!-- Tabs -->
-    <div class="tabs tabs-border justify-center w-full">
+    <div class="tabs tabs-boxed w-full">
       <button
-        class="tab flex-1"
+        class="tab grow"
         class:tab-active={currentTab === "bug"}
         onclick={() => (currentTab = "bug")}
       >
         Report a Bug
       </button>
       <button
-        class="tab flex-1"
+        class="tab grow"
         class:tab-active={currentTab === "feature"}
         onclick={() => (currentTab = "feature")}
       >
@@ -149,10 +156,16 @@
       </button>
     </div>
 
+    {#if !isConnected}
+      <div class="alert alert-warning mt-2">
+        <span>You must be signed in to submit. Please log in to continue.</span>
+      </div>
+    {/if}
+
     <!-- Tab Content -->
     {#if currentTab === "bug"}
       <form
-        class="flex-1 overflow-auto p-8 grid gap-6 max-w-2xl w-full mx-auto"
+        class="grid gap-6"
         onsubmit={sendReport}
         autocomplete="off"
       >
@@ -253,14 +266,15 @@
             placeholder="Anything else? (optional)"
           ></textarea>
         </label>
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost" onclick={onCancel} disabled={isSubmitting}>Cancel</button>
           <button
             type="submit"
             class="btn btn-primary"
             disabled={isSubmitting || !isConnected}
           >
             {#if isSubmitting}
-              <span class="loading loading-spinner"></span> Reporting...
+              <span class="loading loading-spinner"></span> Reporting…
             {:else if showSuccess}
               <i class="fa-solid fa-check"></i> Reported!
             {:else}
@@ -271,15 +285,11 @@
         {#if formMessage}
           <p class="text-error text-center">{formMessage}</p>
         {/if}
-        {#if !isConnected}
-          <p class="text-error text-center">
-            You must be connected to report a bug
-          </p>
-        {/if}
+        
       </form>
     {:else}
       <form
-        class="flex-1 overflow-auto p-8 grid gap-6 max-w-2xl w-full mx-auto"
+        class="grid gap-6"
         onsubmit={sendFeature}
         autocomplete="off"
       >
@@ -339,14 +349,15 @@
           ></textarea>
         </label>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost" onclick={onCancel} disabled={isSubmitting}>Cancel</button>
           <button
             type="submit"
             class="btn btn-primary"
             disabled={isSubmitting || !isConnected}
           >
             {#if isSubmitting}
-              <span class="loading loading-spinner"></span> Sending...
+              <span class="loading loading-spinner"></span> Sending…
             {:else if showSuccess}
               <i class="fa-solid fa-check"></i> Sent!
             {:else}
@@ -357,12 +368,11 @@
         {#if formMessage}
           <p class="text-error text-center">{formMessage}</p>
         {/if}
-        {#if !isConnected}
-          <p class="text-error text-center">
-            You must be connected to suggest a feature
-          </p>
-        {/if}
+        
       </form>
     {/if}
+        </div>
+      </div>
+    </div>
   </section>
 </SsgoiTransition>

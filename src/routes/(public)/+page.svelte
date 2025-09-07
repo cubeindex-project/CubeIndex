@@ -118,45 +118,45 @@
 
   const tiles: Tile[] = [
     {
-      title: "Always Up To Date",
+      title: "Track Your Collection",
       description:
-        "CubeIndex stays fresh with new puzzles and database updates from the community.",
-      iconClass: "fa-rotate",
-      accent: "info",
-    },
-    {
-      title: "Easy Organization",
-      description:
-        "Group by brand, size, or tags. Filter quickly to find anything in your stash.",
-      iconClass: "fa-layer-group",
-      accent: "secondary",
-    },
-    {
-      title: "Compatible",
-      description:
-        "From 2×2 to big cubes and shape mods—track virtually every puzzle.",
-      iconClass: "fa-cubes",
+        "Log every cube with notes and versions. Keep your stash organized and easy to browse.",
+      iconClass: "fa-boxes-stacked",
       accent: "primary",
     },
     {
-      title: "Personalized",
+      title: "Explore Every Puzzle",
       description:
-        "Tune themes and views to match how you collect and compare.",
-      iconClass: "fa-sliders",
+        "Search the largest cube database. From 2×2 to big cubes and rare mods, it’s all here.",
+      iconClass: "fa-cubes",
+      accent: "secondary",
+    },
+    {
+      title: "Follow Price Trends",
+      description:
+        "Compare vendors, view price history, and get instant alerts on drops and restocks.",
+      iconClass: "fa-tag",
+      accent: "info",
+    },
+    {
+      title: "Unlock Achievements",
+      description:
+        "Earn badges for milestones and rare finds. Show them off on your profile.",
+      iconClass: "fa-trophy",
       accent: "accent",
     },
     {
-      title: "Insightful",
+      title: "Discover the Community",
       description:
-        "Smart stats and highlights surface the right info at the right time.",
-      iconClass: "fa-chart-line",
+        "Follow collectors, share finds, and see how your shelf stacks up worldwide.",
+      iconClass: "fa-users",
       accent: "success",
     },
     {
-      title: "Secure",
+      title: "Stay Notified",
       description:
-        "Your credentials never leave your device. Privacy-first by design.",
-      iconClass: "fa-shield-halved",
+        "Get updates on releases, alerts, and community news—always right on time.",
+      iconClass: "fa-bell",
       accent: "neutral",
     },
   ];
@@ -231,8 +231,19 @@
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.08" />
+          <pattern
+            id="hero-grid"
+            width="32"
+            height="32"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M 32 0 L 0 0 0 32"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1"
+              stroke-opacity="0.08"
+            />
           </pattern>
           <radialGradient id="hero-fade" cx="50%" cy="30%" r="80%">
             <stop offset="0%" stop-color="white" stop-opacity="1" />
@@ -242,7 +253,12 @@
             <rect width="100%" height="100%" fill="url(#hero-fade)" />
           </mask>
         </defs>
-        <rect width="100%" height="100%" fill="url(#hero-grid)" mask="url(#hero-grid-mask)" />
+        <rect
+          width="100%"
+          height="100%"
+          fill="url(#hero-grid)"
+          mask="url(#hero-grid-mask)"
+        />
       </svg>
 
       <!-- Accent blobs -->
@@ -261,7 +277,8 @@
       <div class="relative z-10 max-w-3xl space-y-6">
         <h1 class={ui.h1}>Build Your Ultimate Cube Collection</h1>
         <p class={ui.lead}>
-          Track your cubes, unlock achievements, and explore the world's largest cube database.
+          Track your cubes, unlock achievements, and explore the world's largest
+          cube database.
         </p>
         <div class={ui.ctas}>
           <a href="/auth/signup" class="btn btn-primary btn-lg sm:btn-xl"

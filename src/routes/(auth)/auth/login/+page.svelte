@@ -37,16 +37,10 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  <section
-    class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
-  >
-    <div
-      class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
-    >
-      <h1 class="text-3xl font-clash font-bold text-center mb-6">
-        Welcome Back
-      </h1>
-      <p class="text-center text-sm mb-8">Login to your CubeIndex profile</p>
+  <section class="min-h-screen flex items-center justify-center px-6 py-10">
+    <div class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8">
+      <h1 class="text-3xl font-clash font-bold mb-2">Welcome Back</h1>
+      <p class="text-sm mb-8">Log in to your CubeIndex profile</p>
       <form
         method="POST"
         class="space-y-6"

@@ -1,125 +1,212 @@
 <script lang="ts">
   import FollowButton from "$lib/components/misc/followButton.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
+  import SearchBar from "$lib/components/misc/searchBar.svelte";
+  import Pagination from "$lib/components/misc/pagination.svelte";
   import type { PageData } from "./$types";
+  import type { Profiles } from "$lib/components/dbTableTypes";
 
   let { data }: { data: PageData } = $props();
   const { profile, user, followers, following, isFollowing } = data;
 
-  let tab: string = $state("following");
+  // Tabs
+  let tab: "following" | "followers" = $state("following");
+
+  // Search & Filters
+  let searchTerm: string = $state("");
+  let showFilters = $state(false);
+  let verifiedOnly: boolean = $state(false);
+  let certifiedOnly: boolean = $state(false);
+
+  // Sorting
+  type SortKey = "name" | "username";
+  let sortBy: SortKey = $state("name");
+  let sortDir: "asc" | "desc" = $state("asc");
+
+  // Pagination
+  let currentPage: number = $state(1);
+  let itemsPerPage: number = $state(18);
+
+  // Derived
+  const followingCount = $derived(following.length);
+  const followersCount = $derived(followers.length);
+
+  // @ts-expect-error
+  const sourceList: Profiles[] = $derived(
+    tab === "following" ? following : followers
+  );
+
+  const filtered = $derived.by(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return sourceList.filter((p) => {
+      const name = (p.display_name ?? "").toLowerCase();
+      const uname = (p.username ?? "").toLowerCase();
+      const verifiedOk = !verifiedOnly || !!p.verified;
+      const certifiedOk = !certifiedOnly || !!p.certified;
+      return (
+        (name.includes(term) || uname.includes(term)) &&
+        verifiedOk &&
+        certifiedOk
+      );
+    });
+  });
+
+  const totalPages = $derived.by(() =>
+    Math.max(1, Math.ceil(filtered.length / itemsPerPage))
+  );
+
+  const paginated = $derived.by(() => {
+    const page = Math.min(Math.max(1, currentPage), totalPages);
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filtered.slice(start, end);
+  });
+
+  $effect(() => {
+    const _ = [filtered, tab];
+    currentPage = 1;
+  });
 </script>
 
 <svelte:head>
   <title>{profile.display_name}'s Socials - CubeIndex</title>
 </svelte:head>
 
-<div class="max-w-6xl mx-auto mt-12 px-4 flex">
-  <div class="flex flex-col lg:flex-row gap-6">
-    <ul
-      class="menu menu-vertical w-fit p-4 gap-5 flex-col flex overflow-hidden"
-    >
-      <li>
+<div class="max-w-6xl mx-auto mt-12 px-4">
+  <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-extrabold tracking-tight">
+        {profile.display_name}'s Social
+      </h1>
+      <p class="text-sm text-base-content/70">
+        {followingCount} following ・ {followersCount} followers
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div class="join">
         <button
-          class="tab tab-lg justify-start flex gap-2"
-          class:menu-active={tab === "following"}
+          type="button"
+          class="btn btn-sm join-item {tab === 'following'
+            ? 'btn-active'
+            : 'btn-ghost'}"
           onclick={() => (tab = "following")}
         >
           Following
         </button>
-      </li>
-      <li>
         <button
-          class="tab tab-lg justify-start flex gap-2"
-          class:menu-active={tab === "followers"}
+          type="button"
+          class="btn btn-sm join-item {tab === 'followers'
+            ? 'btn-active'
+            : 'btn-ghost'}"
           onclick={() => (tab = "followers")}
         >
           Followers
         </button>
-      </li>
-    </ul>
-  </div>
+      </div>
 
-  <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto px-8">
-    {#if tab === "following"}
-      <div class="flex flex-wrap gap-6">
-        {#each following as f}
-          <a class="flex flex-col items-center" href="/user/{f.username}">
-            <Avatar
-              profile={f}
-              imgSize="size-24 sm:size-24"
-              textSize="text-6xl"
-            />
-            <span class="text-sm">{f.display_name}</span>
-          </a>
-        {:else}
-          <div
-            class="w-full flex flex-col items-center justify-center py-16 text-center"
-          >
-            <div class="text-5xl mb-4">
+      <div class="divider divider-horizontal m-0"></div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-sm" for="itemsPerPage">Per page</label>
+        <select
+          id="itemsPerPage"
+          bind:value={itemsPerPage}
+          class="select select-bordered"
+          onchange={() => (itemsPerPage = +itemsPerPage)}
+        >
+          <option value={12}>12</option>
+          <option value={18}>18</option>
+          <option value={24}>24</option>
+          <option value={36}>36</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <SearchBar
+    showFilter={false}
+    bind:searchTerm
+    placeholderLabel="Search people"
+  />
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <main class="flex-1">
+      {#if paginated.length > 0}
+        <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          {#each paginated as f (f.user_id)}
+            <li>
+              <a class="group block" href="/user/{f.username}">
+                <article
+                  class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-4 shadow-sm transition hover:shadow-md"
+                >
+                  <div class="flex items-center gap-4">
+                    <Avatar profile={f} imgSize="size-16" textSize="text-2xl" />
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-2">
+                        <h3 class="font-semibold truncate">{f.display_name}</h3>
+                      </div>
+                      <p class="text-sm text-base-content/70 truncate">
+                        @{f.username}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              </a>
+            </li>
+          {/each}
+        </ul>
+
+        <div class="mt-8">
+          <Pagination bind:currentPage {totalPages} />
+        </div>
+      {:else}
+        <div
+          class="w-full flex flex-col items-center justify-center py-20 text-center"
+        >
+          <div class="text-5xl mb-4">
+            {#if tab === "following"}
               <i class="fa-solid fa-user"></i>
-            </div>
-            <h2 class="text-xl font-semibold mb-2">
+            {:else}
+              <i class="fa-solid fa-users"></i>
+            {/if}
+          </div>
+          <h2 class="text-2xl font-semibold mb-2">
+            {#if tab === "following"}
               {#if profile.user_id === user?.id}
                 Not following anyone yet
               {:else}
                 {profile.display_name} isn’t following anyone yet
               {/if}
-            </h2>
-            <p class="text-base mb-4">
+            {:else if profile.user_id === user?.id}
+              No followers yet
+            {:else}
+              {profile.display_name} has no followers yet
+            {/if}
+          </h2>
+          <p class="text-base opacity-80 mb-4">
+            {#if tab === "following"}
               {#if profile.user_id === user?.id}
                 When you follow someone, you'll see them here.
               {:else}
                 When they follow someone, their connections will appear here.
               {/if}
-            </p>
-            {#if profile.user_id === user?.id}
-              <a href="/explore/users" class="btn btn-primary">
-                Find users to follow
-              </a>
+            {:else if profile.user_id === user?.id}
+              Once someone follows you, they’ll show up here.
+            {:else}
+              When someone follows {profile.display_name}, they’ll be listed
+              here.
             {/if}
-          </div>
-        {/each}
-      </div>
-    {:else if tab === "followers"}
-      <div class="flex flex-wrap gap-6">
-        {#each followers as f}
-          <a class="flex flex-col items-center" href="/user/{f.username}">
-            <Avatar
-              profile={f}
-              imgSize="size-24 sm:size-24"
-              textSize="text-6xl"
-            />
-            <span class="text-sm">{f.display_name}</span>
-          </a>
-        {:else}
-          <div
-            class="w-full flex flex-col items-center justify-center py-16 text-center"
-          >
-            <div class="text-5xl mb-4">
-              <i class="fa-solid fa-users"></i>
-            </div>
-            <h2 class="text-xl font-semibold mb-2">
-              {#if profile.user_id === user?.id}
-                No followers yet
-              {:else}
-                {profile.display_name} has no followers yet
-              {/if}
-            </h2>
-            <p class="text-base opacity-70 mb-4">
-              {#if profile.user_id === user?.id}
-                Once someone follows you, they’ll show up here.
-              {:else}
-                When someone follows {profile.display_name}, they’ll be listed
-                here.
-              {/if}
-            </p>
-            {#if profile.user_id !== user?.id}
-              <FollowButton user_id={profile.user_id} {isFollowing} />
-            {/if}
-          </div>
-        {/each}
-      </div>
-    {/if}
-  </main>
+          </p>
+          {#if tab === "following" && profile.user_id === user?.id}
+            <a href="/explore/users" class="btn btn-primary">
+              Find users to follow
+            </a>
+          {:else if tab === "followers" && profile.user_id !== user?.id}
+            <FollowButton user_id={profile.user_id} {isFollowing} />
+          {/if}
+        </div>
+      {/if}
+    </main>
+  </div>
 </div>

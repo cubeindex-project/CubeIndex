@@ -16,11 +16,11 @@ export const load = (async ({ parent }) => {
       .eq("user_id", profile.user_id),
     supabase
       .from("user_achievements")
-      .select("*")
+      .select("*, achievement:achievements(*)")
       .eq("user_id", profile.user_id),
     supabase
       .from("user_cube_ratings")
-      .select("*")
+      .select("*, cube_model:cube_models(*)")
       .eq("user_id", profile.user_id),
   ]);
 

@@ -13,6 +13,7 @@
   let profile = $derived(data.profile);
   let following = $derived(data.following);
   let meta = $derived(data.meta);
+  let stats = $derived(data.stats);
 
   interface socialObject {
     label?: string;
@@ -114,6 +115,19 @@
       title: "Social",
     },
   ];
+
+  // Keep tab highlight in sync with URL
+  $effect(() => {
+    const path = page.url.pathname;
+    const base = `/user/${profile.username}`;
+    if (path === base) activeTab = "Overview";
+    else if (path.startsWith(`${base}/cubes`)) activeTab = "Cubes";
+    else if (path.startsWith(`${base}/achievements`)) activeTab = "Achievements";
+    else if (path.startsWith(`${base}/stats`)) activeTab = "Stats";
+    else if (path.startsWith(`${base}/ratings`)) activeTab = "Ratings";
+    else if (path.startsWith(`${base}/reviews`)) activeTab = "Reviews";
+    else if (path.startsWith(`${base}/social`)) activeTab = "Social";
+  });
 </script>
 
 <svelte:head>
@@ -202,7 +216,7 @@
                   </span>
                 </h2>
 
-                <p class="gap-1">
+                <p class="gap-1 mt-2">
                   <span class="font-semibold">Member since:</span>
                   <span class="font-mono">{formattedJoinDate}</span>
                 </p>
@@ -287,6 +301,28 @@
             {/if}
           </div>
         </div>
+        <!-- Follow stats row -->
+        <div class="mt-4">
+          <div class="flex flex-wrap gap-3 items-center">
+            <a
+              href="/user/{profile.username}/social"
+              class="btn btn-ghost btn-sm"
+              title="View following"
+            >
+              <i class="fa-solid fa-user-plus"></i>
+              <span class="ml-1">{stats.followingCount ?? 0} Following</span>
+            </a>
+            <a
+              href="/user/{profile.username}/social"
+              class="btn btn-ghost btn-sm"
+              title="View followers"
+            >
+              <i class="fa-solid fa-users"></i>
+              <span class="ml-1">{stats.followersCount ?? 0} Followers</span>
+            </a>
+          </div>
+        </div>
+
         <!-- Info & Socials right -->
         <div class="flex-1 w-full">
           <!-- Socials Section -->

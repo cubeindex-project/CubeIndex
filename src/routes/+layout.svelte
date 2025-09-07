@@ -3,7 +3,6 @@
   import "../app.css";
   import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
-  import Disclaimer from "$lib/components/layout/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import { Ssgoi } from "@ssgoi/svelte";
@@ -71,8 +70,6 @@
 </svelte:head>
 
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
-
-<Disclaimer />
 
 <Navbar session={data.session} />
 

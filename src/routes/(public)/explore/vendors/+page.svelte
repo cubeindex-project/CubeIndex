@@ -8,7 +8,7 @@
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol";
 
   let { data }: { data: PageData } = $props();
-  const { vendors, cubesSold } = $derived(data);
+  const { vendors, cubesSold, user_cubes } = $derived(data);
 
   let searchTerm: string = $state("");
   let currentPage: number = $state(1);
@@ -79,6 +79,9 @@
             {@const stock_count =
               cubesSold.filter((cs) => cs.vendor_name === vendor.name).length ??
               0}
+            {@const cube_bought =
+              user_cubes.filter((uc) => uc.bought_from === vendor.slug)
+                .length ?? 0}
 
             <!-- Card -->
             <section
@@ -193,15 +196,24 @@
 
               <!-- Meta -->
               <div
-                class="flex items-center gap-2 p-6 pt-4 text-xs text-base-content/70"
+                class="flex justify-between items-center gap-6 p-6 pt-4 text-xs text-base-content/70"
               >
-                {#if stock_count === 1}
-                  <i class="fa-solid fa-cube"></i>
-                  <span>{stock_count} cube listed</span>
-                {:else}
-                  <i class="fa-solid fa-cubes"></i>
-                  <span>{stock_count} cubes listed</span>
-                {/if}
+                <!-- Stock Count -->
+                <div class="flex items-center gap-2">
+                  {#if stock_count === 1}
+                    <i class="fa-solid fa-cube" aria-hidden="true"></i>
+                    <span>{stock_count} cube listed</span>
+                  {:else}
+                    <i class="fa-solid fa-cubes" aria-hidden="true"></i>
+                    <span>{stock_count} cubes listed</span>
+                  {/if}
+                </div>
+
+                <!-- Buyers -->
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-user-check" aria-hidden="true"></i>
+                  <span>{cube_bought} user{cube_bought !== 1 ? "s" : ""} purchased here</span>
+                </div>
               </div>
 
               <hr class="mx-6 border-base-300/60" />

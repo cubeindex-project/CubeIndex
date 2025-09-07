@@ -58,6 +58,7 @@
           openAddCard = !openAddCard;
         }}
         alreadyAdded={userCubeDetail !== undefined}
+        addClass="flex-1"
       />
     {/if}
     {#if rate}
@@ -65,6 +66,7 @@
         onClick={() => {
           openRateCard = !openRateCard;
         }}
+        addClass="flex-1"
       />
     {/if}
   </div>

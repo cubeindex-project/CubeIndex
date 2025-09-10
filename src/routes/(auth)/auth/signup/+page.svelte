@@ -222,7 +222,17 @@
                 Continue
               </button>
 
-              <Turnstile siteKey={PUBLIC_TURNSTILE_SITE_KEY} />
+              <div>
+                <Turnstile
+                  siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+                  size="flexible"
+                />
+                {#if $accountErrors["cf-turnstile-response"]}
+                  <span class="text-error">
+                    {$accountErrors["cf-turnstile-response"]}
+                  </span>
+                {/if}
+              </div>
 
               <div class="divider">or</div>
 

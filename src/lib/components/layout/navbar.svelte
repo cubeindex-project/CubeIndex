@@ -8,36 +8,16 @@
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
 
-  let loading = $state(true);
+  let { profile } = $props();
+
   let isOpen = $state(false);
-  let profile: {
-    id: number;
-    username: string;
-    display_name: string;
-    role: string;
-  } | null = $state(null);
-  let { session } = $props();
   let signOutConfirmation = $state(false);
   let notificationOpen = $state(false);
-  
+
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {
     isOpen = false;
     mobileProfileDropdown = false;
-  }
-
-  async function loadProfile() {
-    let { data, error: err } = await supabase
-      .from("profiles")
-      .select("id, username, display_name, role")
-      .eq("user_id", session.user.id)
-      .maybeSingle();
-
-    if (err || !data) {
-      throw new Error(err?.message ?? "Error loading profile");
-    } else {
-      profile = data;
-    }
   }
 
   let notifications: any[] = $state([]);
@@ -53,7 +33,7 @@
       setTimeout(() => (bellAnimate = false), 600);
     }
   });
-  
+
   // Lock body scroll while the mobile menu is open
   $effect(() => {
     if (!isOpen) return;
@@ -106,10 +86,6 @@
   const desktopLinkBase = "block px-4 py-2 text-sm";
   const mobileLinkBase = "block py-2 text-sm border-b border-base-300";
 
-  onMount(() => {
-    if (session) loadProfile();
-    loading = false;
-  });
   onMount(() => themeChange(false));
 
   let mobileProfileDropdown = $state(false);
@@ -271,9 +247,7 @@
         </a>
       {/each}
 
-      {#if loading}
-        <i class="fa-solid fa-spinner animate-spin"></i>
-      {:else if session && profile}
+      {#if profile}
         <div class="dropdown dropdown-end">
           <button
             class="btn btn-primary btn-sm normal-case rounded-xl inline-flex items-center gap-2"
@@ -423,7 +397,11 @@
               class="flex items-center gap-2 py-3 text-base border-b border-base-300 text-base-content/80 hover:text-base-content"
               onclick={closeMobileMenus}
             >
-              <i class="fa-solid {name === 'Achievements' ? 'fa-trophy' : 'fa-circle-info'} text-xs opacity-80"></i>
+              <i
+                class="fa-solid {name === 'Achievements'
+                  ? 'fa-trophy'
+                  : 'fa-circle-info'} text-xs opacity-80"
+              ></i>
               <span>{name}</span>
             </a>
           </li>
@@ -450,7 +428,7 @@
           {/if}
         </li>
 
-        {#if session && profile}
+        {#if profile}
           <li class="relative">
             <button
               onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}

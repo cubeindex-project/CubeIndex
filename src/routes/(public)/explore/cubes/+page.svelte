@@ -1,29 +1,17 @@
 <script lang="ts">
-  // Import the card component to display individual cubes
+  // Import the necessary components
   import CubeCard from "$lib/components/cube/cubeCard.svelte";
-  // Lifecycle hook to run code when component mounts
   import { onMount } from "svelte";
-  // Supabase client for database interactions
   import { supabase } from "$lib/supabaseClient";
-  // Transition effect for blurring elements
   import { blur } from "svelte/transition";
-  // Type definition for Cube data
   import type { Cube } from "$lib/components/dbTableTypes.js";
-  // Pagination component to navigate pages of cubes
   import Pagination from "$lib/components/misc/pagination.svelte";
-  // Tri-state checkbox for filtering boolean attributes
   import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
-  // Search bar component with filter toggle
   import SearchBar from "$lib/components/misc/searchBar.svelte";
-  // Reusable sidebar wrapper for filters
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
-  // Reusable selector for items per page
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
-  // Reusable selector for sort field and order
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  // Access to the current page URL for transition keys
   import { page } from "$app/state";
-  // Custom transition wrapper from Ssgoi library
   import { SsgoiTransition } from "@ssgoi/svelte";
   import type { SortOption } from "$lib/components/misc/sortSelector.svelte";
   import { queryParameters, ssp } from "sveltekit-search-params";
@@ -651,6 +639,7 @@
                     {@const userCubeDetail = userCubes.find(
                       (uc) => uc.user_id === user?.id && uc.cube === cube.slug
                     )}
+                    {@const alreadyAdded = userCubeDetail !== undefined}
                     <CubeCard
                       {cube}
                       add={true}
@@ -658,6 +647,7 @@
                       details={true}
                       badges={true}
                       image={true}
+                      {alreadyAdded}
                       {userCubeDetail}
                     />
                   {/key}

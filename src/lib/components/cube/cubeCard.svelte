@@ -11,6 +11,7 @@
     rate,
     add,
     details,
+    alreadyAdded,
     userCubeDetail,
   }: {
     cube: Cube;
@@ -19,6 +20,7 @@
     details: boolean;
     badges: boolean;
     image: boolean;
+    alreadyAdded: boolean;
     userCubeDetail: any;
   } = $props();
 
@@ -57,7 +59,7 @@
         onClick={() => {
           openAddCard = !openAddCard;
         }}
-        alreadyAdded={userCubeDetail !== undefined}
+        {alreadyAdded}
         addClass="flex-1"
       />
     {/if}
@@ -93,6 +95,7 @@
       openAddCard = !openAddCard;
     }}
     {cube}
+    {alreadyAdded}
     defaultData={{
       quantity: userCubeDetail?.quantity,
       condition: userCubeDetail?.condition,

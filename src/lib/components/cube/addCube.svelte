@@ -18,6 +18,7 @@
   let {
     onCancel,
     cube,
+    alreadyAdded,
     defaultData = {
       quantity: 1,
       condition: "" as Condition | "",
@@ -43,7 +44,7 @@
   let condition = $state<Condition | "">(defaultData.condition || "");
   let main = $state(defaultData.main);
   let status = $state<Status | "">(defaultData.status || "");
-  let bought_from = $state(defaultData.bought_from || "");
+  let bought_from = $state(defaultData.bought_from || null);
   let notes = $state(defaultData.notes);
   let acquired_at = $state(defaultData.acquired_at);
 
@@ -216,7 +217,7 @@
         <div class="flex items-start gap-3">
           <div class="flex-1">
             <h2 id="add-cube-title" class="card-title leading-tight">
-              Add to Collection
+              {alreadyAdded ? "Edit Cube" : "Add to Collection"}
             </h2>
             <p id="add-cube-desc" class="text-sm opacity-80">
               {cube.series}
@@ -410,12 +411,12 @@
             >
               {#if isSubmitting}
                 <span class="loading loading-spinner"></span>
-                <span class="ml-2">Adding…</span>
+                <span class="ml-2">{alreadyAdded ? "Editing…" : "Adding…"}</span>
               {:else if showSuccess}
                 <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
-                Added!
+                {alreadyAdded ? "Edited!" : "Added!"}
               {:else}
-                Add Cube
+                {alreadyAdded ? "Edit Cube" : "Add Cube"}
               {/if}
             </button>
           </div>

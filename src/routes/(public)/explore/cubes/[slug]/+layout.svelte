@@ -19,7 +19,8 @@
     data.user_cubes?.length ?? 0
   );
 
-  const userCubeDetail = data.user_cubes?.find((uc) => uc.user_id === user?.id);
+  const userCubeDetail = data.user_cubes.find((uc) => uc.user_id === user?.id);
+  const alreadyAdded = userCubeDetail !== undefined;
 
   let openAddCard = $state(false);
   let openReport = $state(false);
@@ -376,11 +377,13 @@
       openAddCard = !openAddCard;
     }}
     {cube}
+    {alreadyAdded}
     defaultData={{
       quantity: userCubeDetail?.quantity,
       condition: userCubeDetail?.condition,
       main: userCubeDetail?.main,
       status: userCubeDetail?.status,
+      bought_from: userCubeDetail?.bought_from,
       notes: userCubeDetail?.notes,
       acquired_at: userCubeDetail?.acquired_at,
     }}

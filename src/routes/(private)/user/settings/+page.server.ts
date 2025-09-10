@@ -1,4 +1,9 @@
-import { message, setError, superValidate } from "sveltekit-superforms";
+import {
+  message,
+  setError,
+  superValidate,
+  withFiles,
+} from "sveltekit-superforms";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
@@ -7,9 +12,13 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 
 const profileSchema = z.object({
-  profile_picture: z.url().optional(),
-  banner: z.url().optional(),
-  display_name: z.string().min(3, "The display name must have more than 3 characters"),
+  // Accept a file upload for the avatar; optional
+  // Note: validated/normalized in the /api/user/avatar endpoint
+  profile_picture: z.any().optional(),
+  banner: z.any().optional(),
+  display_name: z
+    .string()
+    .min(3, "The display name must have more than 3 characters"),
   bio: z.string(),
   private_profile: z.boolean(),
 });
@@ -69,7 +78,7 @@ export const load = (async ({ locals, setHeaders }) => {
 
 /** @satisfies {Actions} */
 export const actions: Actions = {
-  profile: async ({ request, locals }) => {
+  profile: async ({ request, locals, fetch }) => {
     // 1) Parse form data
     const form = await superValidate(request, zod4(profileSchema));
     const data = form.data;
@@ -81,16 +90,127 @@ export const actions: Actions = {
           "There are errors in your submission. Please review the highlighted fields and try again.",
       });
 
-    // 3) Update the profile row
+    const isFileLike = (v: unknown): v is File =>
+      typeof v === "object" &&
+      v !== null &&
+      "arrayBuffer" in (v as File) &&
+      "size" in (v as File);
+
+    const avatarFile = isFileLike(data.profile_picture)
+      ? (data.profile_picture as File)
+      : null;
+    let avatarUrl: string | null = null;
+
+    if (avatarFile && avatarFile.size > 0) {
+      // 1) Send to your hardened processor (validates magic bytes, size, pixels, re-encodes to WebP)
+      const imgFd = new FormData();
+      imgFd.set("file", avatarFile);
+      imgFd.set("type", "avatar");
+      const resp = await fetch(`/api/user/avatar`, {
+        method: "POST",
+        body: imgFd,
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        form.message =
+          "Avatar processing failed: " + errText || resp.statusText;
+        return withFiles(fail(400, { profileForm: form }));
+      }
+      const processed = new Uint8Array(await resp.arrayBuffer());
+
+      if (!locals.user)
+        return fail(400, { profileForm: form, message: "Must be logged in!" });
+
+      // 2) Upload normalized bytes to Storage with a fixed path & content type
+      const path = `${locals.user.id}/avatar.webp`;
+      const { error: upErr } = await locals.supabase.storage
+        .from("avatars")
+        .upload(path, processed, {
+          contentType: "image/webp", // fixed, known good
+          upsert: true,
+        });
+      if (upErr)
+        return withFiles(
+          fail(400, {
+            profileForm: {
+              ...form,
+              message: "Avatar upload failed: " + upErr.message,
+            },
+          })
+        );
+
+      // 3) Get a URL: public bucket -> getPublicUrl; private -> createSignedUrl
+      const { data } = locals.supabase.storage
+        .from("avatars")
+        .getPublicUrl(path);
+      avatarUrl = `${data.publicUrl}`;
+    }
+
+    const bannerFile = isFileLike(data.banner) ? (data.banner as File) : null;
+    let bannerUrl: string | null = null;
+
+    if (bannerFile && bannerFile.size > 0) {
+      const imgFd = new FormData();
+      imgFd.set("file", bannerFile);
+      imgFd.set("type", "banner");
+      const resp = await fetch(`/api/user/avatar`, {
+        method: "POST",
+        body: imgFd,
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        form.message =
+          "Banner processing failed: " + (errText || resp.statusText);
+        return withFiles(fail(400, { profileForm: form }));
+      }
+      const processed = new Uint8Array(await resp.arrayBuffer());
+
+      if (!locals.user)
+        return fail(400, { profileForm: form, message: "Must be logged in!" });
+
+      const path = `${locals.user.id}/banner.webp`;
+      const { error: upErr } = await locals.supabase.storage
+        .from("banners")
+        .upload(path, processed, {
+          contentType: "image/webp",
+          upsert: true,
+        });
+      if (upErr)
+        return withFiles(
+          fail(400, {
+            profileForm: {
+              ...form,
+              message: "Banner upload failed: " + upErr.message,
+            },
+          })
+        );
+
+      const { data: pub } = locals.supabase.storage
+        .from("banners")
+        .getPublicUrl(path);
+      bannerUrl = `${pub.publicUrl}`;
+    }
+
+    // 3) Update the profile row (do not overwrite avatar if not changed)
+    const updatePayload: Record<string, unknown> = {
+      display_name: data.display_name,
+      bio: data.bio,
+      private: data.private_profile,
+    };
+
+    if (avatarUrl) {
+      updatePayload.profile_picture = avatarUrl;
+    }
+
+    if (bannerUrl) {
+      updatePayload.banner = bannerUrl;
+    } else if (typeof data.banner === "string") {
+      updatePayload.banner = data.banner;
+    }
+
     const { error: err } = await locals.supabase
       .from("profiles")
-      .update({
-        profile_picture: data.profile_picture,
-        banner: data.banner,
-        display_name: data.display_name,
-        bio: data.bio,
-        private: data.private_profile,
-      })
+      .update(updatePayload)
       .eq("user_id", locals.user?.id);
 
     if (err) {

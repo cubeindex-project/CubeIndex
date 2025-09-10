@@ -94,8 +94,8 @@
           ts: a.awarded_at
             ? new Date(a.awarded_at).getTime()
             : a.created_at
-            ? new Date(a.created_at).getTime()
-            : 0,
+              ? new Date(a.created_at).getTime()
+              : 0,
           key: `achievement:${a.achievement_id}:${a.awarded_at ?? a.created_at}`,
         })),
       ] satisfies ActivityItem[]
@@ -213,68 +213,45 @@
         </div>
       </div>
     </div>
-
-    <!-- Quick Links -->
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Quick Links</h2>
-      <div class="grid grid-cols-2 gap-2">
-        <a class="btn btn-outline" href="/user/{profile.username}/cubes">
-          <i class="fa-solid fa-cubes"></i>
-          Cubes
-        </a>
-        <a class="btn btn-outline" href="/user/{profile.username}/ratings">
-          <i class="fa-solid fa-star"></i>
-          Ratings
-        </a>
-        <a class="btn btn-outline" href="/user/{profile.username}/achievements">
-          <i class="fa-solid fa-trophy"></i>
-          Achievements
-        </a>
-        <a class="btn btn-outline" href="/user/{profile.username}/social">
-          <i class="fa-solid fa-users"></i>
-          Social
-        </a>
-      </div>
-    </div>
-
-    
   </div>
 
   <!-- Main Cubes -->
   <div class="col-span-full lg:col-span-2 flex flex-col gap-6">
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {#each main_cubes as mc}
-          <a class="group block" href="/explore/cubes/{mc.cube}">
-            <article
-              class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm transition hover:shadow-md"
-            >
-              <img
-                src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_400/{mc
-                  .cube_model.image_url}"
-                alt={cubeTitle(mc)}
-                class="w-full h-40 object-cover"
-                loading="lazy"
-              />
-              <div class="p-4">
-                <h3 class="font-semibold truncate">{cubeTitle(mc)}</h3>
-                <p class="text-sm text-base-content/70 truncate">
-                  {mc.cube_model.type} ・ {mc.cube_model.brand}
-                </p>
-                {#if mc.acquired_at}
-                  <div class="mt-1 text-xs text-base-content/60">
-                    Acquired {formatDate(mc.acquired_at)}
-                  </div>
-                {/if}
-              </div>
-            </article>
-          </a>
-        {:else}
-          This user hasn't set any cubes as their main
-        {/each}
+    {#if main_cubes.length > 0}
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {#each main_cubes as mc}
+            <a class="group block" href="/explore/cubes/{mc.cube}">
+              <article
+                class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm transition hover:shadow-md"
+              >
+                <img
+                  src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_400/{mc
+                    .cube_model.image_url}"
+                  alt={cubeTitle(mc)}
+                  class="w-full h-40 object-cover"
+                  loading="lazy"
+                />
+                <div class="p-4">
+                  <h3 class="font-semibold truncate">{cubeTitle(mc)}</h3>
+                  <p class="text-sm text-base-content/70 truncate">
+                    {mc.cube_model.type} ・ {mc.cube_model.brand}
+                  </p>
+                  {#if mc.acquired_at}
+                    <div class="mt-1 text-xs text-base-content/60">
+                      Acquired {formatDate(mc.acquired_at)}
+                    </div>
+                  {/if}
+                </div>
+              </article>
+            </a>
+          {:else}
+            This user hasn't set any cubes as their main
+          {/each}
+        </div>
       </div>
-    </div>
+    {/if}
 
     <!-- Activity -->
     <div class="col-span-full lg:col-span-2">
@@ -297,7 +274,10 @@
                   />
                 </a>
                 <div class="min-w-0 flex-1">
-                  <a class="font-medium block truncate" href="/explore/cubes/{r.cube_slug}">
+                  <a
+                    class="font-medium block truncate"
+                    href="/explore/cubes/{r.cube_slug}"
+                  >
                     Rated {cubeTitle(r.cube_model)}
                   </a>
                   <div class="mt-1">
@@ -332,7 +312,10 @@
                   />
                 </a>
                 <div class="min-w-0 flex-1">
-                  <a class="font-medium block truncate" href="/explore/cubes/{c.cube}">
+                  <a
+                    class="font-medium block truncate"
+                    href="/explore/cubes/{c.cube}"
+                  >
                     Added {cubeTitle(c)} to collection
                   </a>
                   <div class="text-xs text-base-content/70 mt-1">
@@ -347,11 +330,18 @@
                   {ach.achievement.icon}
                 </div>
                 <div class="min-w-0 flex-1">
-                  <a class="font-medium block truncate" href="/user/{profile.username}/achievements">
+                  <a
+                    class="font-medium block truncate"
+                    href="/user/{profile.username}/achievements"
+                  >
                     Unlocked achievement {ach.achievement.name}
                   </a>
                   <div class="text-xs text-base-content/70 mt-1">
-                    {ach.awarded_at ? formatDate(ach.awarded_at) : ach.created_at ? formatDate(ach.created_at) : "—"}
+                    {ach.awarded_at
+                      ? formatDate(ach.awarded_at)
+                      : ach.created_at
+                        ? formatDate(ach.created_at)
+                        : "—"}
                   </div>
                 </div>
               </li>
@@ -404,7 +394,5 @@
         </div>
       </div>
     </div>
-
-    
   </div>
 </div>

@@ -1,13 +1,23 @@
 <script lang="ts">
   import { inView, type InViewOptions } from "$lib/actions/inView";
+  import type { Snippet } from "svelte";
 
   /** Whether to keep content visible after first entry */
-  export let once: boolean = true;
-  export let root: Element | null = null;
-  export let rootMargin: string = "0px";
-  export let threshold: number | number[] = 0;
+  const {
+    once = true,
+    root = null,
+    rootMargin = "0px",
+    threshold = 0,
+    children,
+  }: {
+    once?: boolean;
+    root?: Element | null;
+    rootMargin?: string;
+    threshold?: number | number[];
+    children: Snippet;
+  } = $props();
 
-  let show = false;
+  let show = $state(false);
 
   const options: InViewOptions = {
     root,
@@ -25,10 +35,6 @@
 
 <div use:inView={options}>
   {#if show}
-    <slot />
+    {@render children()}
   {/if}
 </div>
-
-<style>
-  /* no-op: wrapper is minimal and inherits layout from slot */
-</style>

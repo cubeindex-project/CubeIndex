@@ -40,6 +40,7 @@
     "sass-embedded": "^1.89.2",
     "svelte": "^5.37.1",
     "svelte-check": "^4.0.0",
+    "svelte-turnstile": "^0.11.0",
     "sveltekit-search-params": "^3.0.0",
     "sveltekit-superforms": "^2.27.1",
     "tailwindcss": "^4.1.8",

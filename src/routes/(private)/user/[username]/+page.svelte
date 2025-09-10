@@ -43,34 +43,65 @@
   }
 
   // Derived previews/overviews
-  const recentCubes = $derived(
-    [...user_cubes]
-      .sort((a, b) => {
-        const ad = a.acquired_at ? new Date(a.acquired_at).getTime() : 0;
-        const bd = b.acquired_at ? new Date(b.acquired_at).getTime() : 0;
-        return bd - ad;
-      })
-      .slice(0, 6)
-  );
+  /**
+   * Unified activity feed items.
+   */
+  interface ActivityItemBase {
+    /** Milliseconds since epoch for sorting and display. */
+    ts: number;
+    /** Unique key for keyed each blocks. */
+    key: string;
+  }
 
-  const recentRatings = $derived(
-    [...user_cube_ratings]
-      .sort((a, b) => {
-        const ad = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const bd = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return bd - ad;
-      })
-      .slice(0, 5)
-  );
+  interface RatingActivity extends ActivityItemBase {
+    type: "rating";
+    item: (typeof user_cube_ratings)[number];
+  }
 
-  const recentAchievements = $derived(
-    [...user_achievements]
-      .sort((a, b) => {
-        const ad = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const bd = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return bd - ad;
-      })
-      .slice(0, 6)
+  interface CubeActivity extends ActivityItemBase {
+    type: "cube";
+    item: (typeof user_cubes)[number];
+  }
+
+  interface AchievementActivity extends ActivityItemBase {
+    type: "achievement";
+    item: (typeof user_achievements)[number];
+  }
+
+  type ActivityItem = RatingActivity | CubeActivity | AchievementActivity;
+
+  const activityItems = $derived(
+    (
+      [
+        // Ratings
+        ...user_cube_ratings.map((r) => ({
+          type: "rating" as const,
+          item: r,
+          ts: r.created_at ? new Date(r.created_at).getTime() : 0,
+          key: `rating:${r.cube_slug}:${r.created_at}`,
+        })),
+        // Cubes added/acquired
+        ...user_cubes.map((c) => ({
+          type: "cube" as const,
+          item: c,
+          ts: c.acquired_at ? new Date(c.acquired_at).getTime() : 0,
+          key: `cube:${c.cube}:${c.acquired_at}`,
+        })),
+        // Achievements
+        ...user_achievements.map((a) => ({
+          type: "achievement" as const,
+          item: a,
+          ts: a.awarded_at
+            ? new Date(a.awarded_at).getTime()
+            : a.created_at
+            ? new Date(a.created_at).getTime()
+            : 0,
+          key: `achievement:${a.achievement_id}:${a.awarded_at ?? a.created_at}`,
+        })),
+      ] satisfies ActivityItem[]
+    )
+      .sort((a, b) => b.ts - a.ts)
+      .slice(0, 12)
   );
 
   const typeCounts = $derived(
@@ -206,51 +237,7 @@
       </div>
     </div>
 
-    <!-- Recent Ratings -->
-    <div class="xl:col-span-1">
-      <h2 class="text-xl font-semibold mb-2">Recent Ratings</h2>
-      <div class="bg-base-200 rounded-2xl border border-base-300 p-4">
-        <ul class="space-y-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1">
-          {#each recentRatings as r}
-            <li class="flex items-center gap-3">
-              <img
-                src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_72,h_72,c_fill/{r
-                  .cube_model.image_url}"
-                alt={cubeTitle(r.cube_model)}
-                class="rounded-xl border border-base-300"
-                width="72"
-                height="72"
-                loading="lazy"
-              />
-              <div class="min-w-0">
-                <a
-                  class="font-medium block truncate"
-                  href="/explore/cubes/{r.cube_slug}"
-                  >{cubeTitle(r.cube_model)}</a
-                >
-                <div class="text-sm text-base-content/70">
-                  {formatDate(r.created_at)}
-                </div>
-                <div class="mt-1">
-                  <div class="rating rating-xs" title={`Rated ${r.rating}`}>
-                    {#each [1, 2, 3, 4, 5] as n}
-                      <input
-                        type="radio"
-                        class="mask mask-star-2 bg-warning"
-                        disabled
-                        checked={r.rating >= n}
-                      />
-                    {/each}
-                  </div>
-                </div>
-              </div>
-            </li>
-          {:else}
-            <li class="text-sm opacity-70">No ratings yet.</li>
-          {/each}
-        </ul>
-      </div>
-    </div>
+    
   </div>
 
   <!-- Main Cubes -->
@@ -289,40 +276,90 @@
       </div>
     </div>
 
-    <!-- Recently Added Cubes -->
-    <div class="col-span-2">
-      <h2 class="text-xl font-semibold mb-2">Recently Added Cubes</h2>
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-      >
-        {#each recentCubes as rc (rc.cube)}
-          <a class="group block" href="/explore/cubes/{rc.cube}">
-            <article
-              class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm transition hover:shadow-md"
-            >
-              <img
-                src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_400/{rc
-                  .cube_model.image_url}"
-                alt={cubeTitle(rc)}
-                class="w-full h-40 object-cover"
-                loading="lazy"
-              />
-              <div class="p-4">
-                <h3 class="font-semibold truncate">{cubeTitle(rc)}</h3>
-                <p class="text-sm text-base-content/70 truncate">
-                  {rc.cube_model.type} ・ {rc.cube_model.brand}
-                </p>
-                {#if rc.acquired_at}
-                  <div class="mt-1 text-xs text-base-content/60">
-                    Acquired {formatDate(rc.acquired_at)}
+    <!-- Activity -->
+    <div class="col-span-full lg:col-span-2">
+      <h2 class="text-xl font-semibold mb-2">Activity</h2>
+      <div class="bg-base-200 rounded-2xl border border-base-300 p-4">
+        <ul class="space-y-3">
+          {#each activityItems as a (a.key)}
+            {#if a.type === "rating"}
+              {@const r = a.item}
+              <li class="flex items-center gap-3">
+                <a href="/explore/cubes/{r.cube_slug}" class="shrink-0">
+                  <img
+                    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_72,h_72,c_fill/{r
+                      .cube_model.image_url}"
+                    alt={cubeTitle(r.cube_model)}
+                    class="rounded-xl border border-base-300"
+                    width="72"
+                    height="72"
+                    loading="lazy"
+                  />
+                </a>
+                <div class="min-w-0 flex-1">
+                  <a class="font-medium block truncate" href="/explore/cubes/{r.cube_slug}">
+                    Rated {cubeTitle(r.cube_model)}
+                  </a>
+                  <div class="mt-1">
+                    <div class="rating rating-xs" title={`Rated ${r.rating}`}>
+                      {#each [1, 2, 3, 4, 5] as n}
+                        <input
+                          type="radio"
+                          class="mask mask-star-2 bg-warning"
+                          disabled
+                          checked={r.rating >= n}
+                        />
+                      {/each}
+                    </div>
                   </div>
-                {/if}
-              </div>
-            </article>
-          </a>
-        {:else}
-          <div class="text-sm opacity-70">No cubes yet.</div>
-        {/each}
+                  <div class="text-xs text-base-content/70 mt-1">
+                    {formatDate(r.created_at)}
+                  </div>
+                </div>
+              </li>
+            {:else if a.type === "cube"}
+              {@const c = a.item}
+              <li class="flex items-center gap-3">
+                <a href="/explore/cubes/{c.cube}" class="shrink-0">
+                  <img
+                    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_72,h_72,c_fill/{c
+                      .cube_model.image_url}"
+                    alt={cubeTitle(c)}
+                    class="rounded-xl border border-base-300"
+                    width="72"
+                    height="72"
+                    loading="lazy"
+                  />
+                </a>
+                <div class="min-w-0 flex-1">
+                  <a class="font-medium block truncate" href="/explore/cubes/{c.cube}">
+                    Added {cubeTitle(c)} to collection
+                  </a>
+                  <div class="text-xs text-base-content/70 mt-1">
+                    {c.acquired_at ? formatDate(c.acquired_at) : "—"}
+                  </div>
+                </div>
+              </li>
+            {:else}
+              {@const ach = a.item}
+              <li class="flex items-center gap-3">
+                <div class="shrink-0 text-2xl select-none" aria-hidden="true">
+                  {ach.achievement.icon}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <a class="font-medium block truncate" href="/user/{profile.username}/achievements">
+                    Unlocked achievement {ach.achievement.name}
+                  </a>
+                  <div class="text-xs text-base-content/70 mt-1">
+                    {ach.awarded_at ? formatDate(ach.awarded_at) : ach.created_at ? formatDate(ach.created_at) : "—"}
+                  </div>
+                </div>
+              </li>
+            {/if}
+          {:else}
+            <li class="text-sm opacity-70">No recent activity.</li>
+          {/each}
+        </ul>
       </div>
     </div>
   </div>
@@ -368,28 +405,6 @@
       </div>
     </div>
 
-    <!-- Recent Achievements -->
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Recent Achievements</h2>
-      <div class="grid grid-cols-1 gap-4">
-        {#each recentAchievements as a}
-          <article
-            class="bg-base-200 rounded-2xl border border-base-300 p-4 flex items-center gap-3"
-          >
-            <div class="text-2xl select-none" aria-hidden="true">
-              <p>{a.achievement.icon}</p>
-            </div>
-            <div class="min-w-0">
-              <div class="font-semibold truncate">{a.achievement.name}</div>
-              <div class="text-sm text-base-content/70">
-                {formatDate(a.awarded_at)}
-              </div>
-            </div>
-          </article>
-        {:else}
-          <div class="text-sm opacity-70">No achievements yet.</div>
-        {/each}
-      </div>
-    </div>
+    
   </div>
 </div>

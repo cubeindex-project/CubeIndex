@@ -11,6 +11,7 @@ export const accountSchema = z
     acceptTOS: z.boolean().refine((v) => v === true, {
       message: "You must accept the Terms of Service",
     }),
+    "cf-turnstile-response": z.string().nonempty("Please complete the Captcha"),
   })
   .check((data) => {
     if (data.value.password !== data.value.confirmPassword) {

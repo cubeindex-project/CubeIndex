@@ -95,7 +95,7 @@
   </div>
 
   <!-- Key Stats -->
-  <div class="stats stats-vertical sm:stats-horizontal shadow bg-base-200 border border-base-300 rounded-2xl">
+  <div class="stats stats-vertical sm:stats-horizontal shadow bg-base-200 border border-base-300 rounded-2xl w-full">
     <div class="stat">
       <div class="stat-figure text-secondary"><i class="fa-solid fa-star"></i></div>
       <div class="stat-title">Rating</div>

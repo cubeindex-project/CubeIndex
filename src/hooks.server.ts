@@ -82,6 +82,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
     if (event.url.pathname === "/auth") {
       redirect(303, `/user/${profile?.id}`);
     }
+    // Logged-in users landing on the marketing homepage should see their dashboard instead
+    if (event.url.pathname === "/") {
+      redirect(303, "/dashboard");
+    }
     if (event.url.pathname.startsWith("/staff") && profile.role === "User") {
       redirect(303, "/");
     }

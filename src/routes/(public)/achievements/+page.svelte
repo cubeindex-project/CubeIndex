@@ -6,7 +6,7 @@
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
-  import type { SortOption } from "$lib/components/misc/sortSelector.svelte";
+  import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   const { data } = $props();
@@ -97,27 +97,10 @@
 
   let sortField: string = $state("name"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("asc"); // Sort direction
-  const sortOptions: SortOption[] = [
-    { id: "name-asc", field: "name", order: "asc", label: "Name - A to Z" },
-    {
-      id: "name-desc",
-      field: "name",
-      order: "desc",
-      label: "Name - Z to A",
-    },
-    {
-      id: "unlock-rate-asc",
-      field: "unlock-rate",
-      order: "asc",
-      label: "Unlock Rate - Asc",
-    },
-    {
-      id: "unlock-rate-desc",
-      field: "unlock-rate",
-      order: "desc",
-      label: "Unlock Rate - Desc",
-    },
-    { id: "date-desc", field: "date", order: "desc", label: "Date Added" },
+  const sortFields: SortFieldOption[] = [
+    { value: "date", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "unlock-rate", label: "Unlock Rate" },
   ];
 
   const sortedAchi = $derived.by(() => {
@@ -253,7 +236,7 @@
           >
             <div class="flex flex-wrap items-center gap-4">
               <ItemsPerPageSelector bind:itemsPerPage label="Achievements per page" />
-              <SortSelector bind:sortField bind:sortOrder {sortOptions} />
+              <SortSelector bind:sortField bind:sortOrder fields={sortFields} />
             </div>
           </div>
 

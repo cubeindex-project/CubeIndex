@@ -3,6 +3,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
+  import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
@@ -23,6 +24,11 @@
   type SortKey = "recent" | "rating" | "name";
   let sortBy: SortKey = $state("recent");
   let sortDir: "asc" | "desc" = $state("desc");
+  const sortFields = [
+    { value: "recent", label: "Recent" },
+    { value: "rating", label: "Rating" },
+    { value: "name", label: "Name" },
+  ];
 
   // Derived
   const total = $derived(user_cube_ratings.length);
@@ -115,31 +121,7 @@
 
     {#if total > 0}
       <div class="flex items-center gap-2">
-        <div class="flex items-center gap-2">
-          <label class="text-sm" for="sortBy">Sort</label>
-          <select
-            id="sortBy"
-            class="select select-bordered"
-            bind:value={sortBy}
-          >
-            <option value="recent">Recent</option>
-            <option value="rating">Rating</option>
-            <option value="name">Name</option>
-          </select>
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm"
-            title={sortDir === "desc" ? "Descending" : "Ascending"}
-            aria-label="Toggle sort direction"
-            onclick={() => (sortDir = sortDir === "desc" ? "asc" : "desc")}
-          >
-            {#if sortDir === "desc"}
-              <i class="fa-solid fa-arrow-down-wide-short"></i>
-            {:else}
-              <i class="fa-solid fa-arrow-up-short-wide"></i>
-            {/if}
-          </button>
-        </div>
+        <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
 
         <div class="divider divider-horizontal m-0"></div>
 

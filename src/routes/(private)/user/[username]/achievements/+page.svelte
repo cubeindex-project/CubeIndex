@@ -4,6 +4,7 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
+  import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   let { data }: { data: PageData } = $props();
   const { user_achievements = [], profile } = data;
@@ -17,6 +18,11 @@
   type SortKey = "recent" | "name" | "rarity";
   let sortBy: SortKey = $state("recent");
   let sortDir: "asc" | "desc" = $state("desc");
+  const sortFields = [
+    { value: "recent", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "rarity", label: "Rarity" },
+  ];
 
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(6);
@@ -144,29 +150,7 @@
     {#if total > 0}
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-2">
-          <label class="text-sm" for="sortBy">Sort</label>
-          <select
-            id="sortBy"
-            class="select select-bordered"
-            bind:value={sortBy}
-          >
-            <option value="recent">Recent</option>
-            <option value="name">Name</option>
-            <option value="rarity">Rarity</option>
-          </select>
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm"
-            title={sortDir === "desc" ? "Descending" : "Ascending"}
-            aria-label="Toggle sort direction"
-            onclick={() => (sortDir = sortDir === "desc" ? "asc" : "desc")}
-          >
-            {#if sortDir === "desc"}
-              <i class="fa-solid fa-arrow-down-wide-short"></i>
-            {:else}
-              <i class="fa-solid fa-arrow-up-short-wide"></i>
-            {/if}
-          </button>
+          <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
         </div>
 
         <div class="divider divider-horizontal m-0"></div>

@@ -2,7 +2,7 @@
   import UserCard from "$lib/components/user/userCard.svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
-  import type { SortOption } from "$lib/components/misc/sortSelector.svelte";
+  import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
@@ -26,34 +26,12 @@
 
   let sortField: string = $state("cubes"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("desc"); // Sort direction
-  const sortOptions: SortOption[] = [
-    { id: "name-asc", field: "name", order: "asc", label: "Name - A to Z" },
-    {
-      id: "name-desc",
-      field: "name",
-      order: "desc",
-      label: "Name - Z to A",
-    },
-    {
-      id: "cubes-desc",
-      field: "cubes",
-      order: "desc",
-      label: "Cubes",
-    },
-    {
-      id: "achi-desc",
-      field: "achi",
-      order: "desc",
-      label: "Achievements",
-    },
-    
-    {
-      id: "followers-desc",
-      field: "followers",
-      order: "desc",
-      label: "Followers",
-    },
-    { id: "date-desc", field: "date", order: "desc", label: "Joined Date" },
+  const sortFields: SortFieldOption[] = [
+    { value: "date", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "cubes", label: "Cubes" },
+    { value: "achi", label: "Achievements" },
+    { value: "followers", label: "Followers" },
   ];
 
   const sortedUsers = $derived.by(() => {
@@ -140,7 +118,7 @@
       >
         <div class="flex flex-wrap items-center gap-4">
           <ItemsPerPageSelector bind:itemsPerPage label="Users per page" />
-          <SortSelector bind:sortField bind:sortOrder {sortOptions} />
+          <SortSelector bind:sortField bind:sortOrder fields={sortFields} />
         </div>
       </div>
 

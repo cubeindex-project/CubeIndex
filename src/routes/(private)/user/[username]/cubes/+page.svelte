@@ -3,6 +3,7 @@
   import type { PageData } from "./$types";
   import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
+  import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import type { Cube, UserCubes, Vendors } from "$lib/components/dbTableTypes";
 
@@ -46,6 +47,13 @@
   type SortKey = "recent" | "name" | "rating" | "type";
   let sortBy: SortKey = $state("recent");
   let sortDir: "asc" | "desc" = $state("desc");
+
+  const sortFields = [
+    { value: "recent", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "rating", label: "Rating" },
+    { value: "type", label: "Type" },
+  ];
 
   $effect(() => {
     const _ = user_cubes;
@@ -138,32 +146,7 @@
     {#if user?.id === profile.user_id && user_cubes.length > 0}
       <div class="flex items-center gap-2">
         <!-- Sort controls -->
-        <div class="flex items-center gap-2">
-          <label class="text-sm" for="sortBy">Sort</label>
-          <select
-            id="sortBy"
-            class="select select-bordered"
-            bind:value={sortBy}
-          >
-            <option value="recent">Recent</option>
-            <option value="name">Name</option>
-            <option value="rating">Rating</option>
-            <option value="type">Type</option>
-          </select>
-          <button
-            type="button"
-            class="btn btn-ghost btn-sm"
-            title={sortDir === "desc" ? "Descending" : "Ascending"}
-            aria-label="Toggle sort direction"
-            onclick={() => (sortDir = sortDir === "desc" ? "asc" : "desc")}
-          >
-            {#if sortDir === "desc"}
-              <i class="fa-solid fa-arrow-down-wide-short"></i>
-            {:else}
-              <i class="fa-solid fa-arrow-up-short-wide"></i>
-            {/if}
-          </button>
-        </div>
+        <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
 
         <div class="divider divider-horizontal m-0"></div>
 

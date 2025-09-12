@@ -8,13 +8,14 @@
 
   const { data } = $props();
 
-  const { form, errors, delayed, enhance, message, isTainted, tainted } = superForm(data.form, {
-    onError({ result }) {
-      $message = result.error.message || "Unknown error";
-    },
-    delayMs: 500,
-    timeoutMs: 8000,
-  });
+  const { form, errors, delayed, enhance, message, isTainted, tainted } =
+    superForm(data.form, {
+      onError({ result }) {
+        $message = result.error.message || "Unknown error";
+      },
+      delayMs: 500,
+      timeoutMs: 8000,
+    });
 
   let showPassword = $state(false);
   let resetError: string = $state("");
@@ -29,9 +30,12 @@
       resetError = "Please enter an email";
       return;
     }
-    const { error: err } = await supabase.auth.resetPasswordForEmail($form.email, {
-      redirectTo: `${window.location.origin}/auth/reset`,
-    });
+    const { error: err } = await supabase.auth.resetPasswordForEmail(
+      $form.email,
+      {
+        redirectTo: `${window.location.origin}/auth/reset`,
+      }
+    );
 
     if (err) {
       resetError = err.message;

@@ -4,15 +4,12 @@
 
   let { data } = $props();
   let {
-    user,
     cube = {} as Cube,
-    cubeTrims,
-    relatedCube,
-    sameSeries,
     features = [],
     submittedBy,
     verifiedBy,
     meta,
+    stats,
   } = $derived(data);
 
   const feats = $derived.by(() => {
@@ -27,15 +24,19 @@
   const isDiscontinued = $derived.by(() => cube.discontinued);
   const isModded = $derived.by(() => feats.has("modded"));
 
-  const statuses = [
-    { label: "Smart", key: "smart" },
-    { label: "Magnetic", key: "magnetic" },
-    { label: "Modded", key: "modded" },
-    { label: "WCA Legal", key: "wca_legal" },
-    { label: "Maglev", key: "maglev" },
-    { label: "Stickered", key: "stickered" },
-    { label: "Ball Core", key: "ball_core" },
-  ];
+  const allFeatureBadges = [
+    { label: "Smart", key: "smart", icon: "fa-microchip" },
+    { label: "Magnetic", key: "magnetic", icon: "fa-magnet" },
+    { label: "Modded", key: "modded", icon: "fa-screwdriver-wrench" },
+    { label: "WCA Legal", key: "wca_legal", icon: "fa-scale-balanced" },
+    { label: "Maglev", key: "maglev", icon: "fa-bolt" },
+    { label: "Stickered", key: "stickered", icon: "fa-tags" },
+    { label: "Ball Core", key: "ball_core", icon: "fa-circle-dot" },
+  ] as const;
+
+  const presentFeatures = $derived.by(() =>
+    allFeatureBadges.filter((b) => feats.has(b.key))
+  );
 </script>
 
 <svelte:head>
@@ -66,114 +67,159 @@
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
 
-<div class="mb-4 p-4 bg-base-200 rounded-xl border border-base-300 shadow-sm">
-  <p class="leading-relaxed">
-    Description:
-    <span class="block mt-2">
-      The <span class="font-bold text-primary"
-        >{`${cube.series} ${cube.model} ${cube.version_type !== "Base" ? cube.version_name : ""}`}</span
-      >
-      is a
-      <span class="font-bold text-primary">{cube.type}</span>
-      twisty puzzle released on
-      <span class="font-bold text-primary">
-        {cube.release_date ? formatDate(cube.release_date) : "Loading..."}
-      </span>. It is
-      <span class="font-bold text-primary"
-        >{isMagnetic ? "magnetic" : "non-magnetic"}</span
-      >,
-      <span class="font-bold text-primary"
-        >{isSmart ? "smart" : "non-smart"}</span
-      >, and
-      <span class="font-bold text-primary"
-        >{isWcaLegal ? "WCA-legal" : "not WCA-legal"}</span
-      >. Currently, it is
-      <span class="font-bold text-primary"
-        >{isDiscontinued ? "discontinued" : "available"}</span
-      >, has a community rating of
-      <span class="font-bold text-primary">{cube.rating}/5</span>, and is
-      <span class="font-bold text-primary"
-        >{isModded ? "modded" : "original"}</span
-      >.
-    </span>
-  </p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 mb-4">
-  <div
-    class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
-  >
-    <div class="flex items-center justify-between">
-      <span>Brand:</span>
-      <span class="font-medium">{cube.brand}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Type:</span>
-      <span class="font-medium">{cube.type}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Weight:</span>
-      <span class="font-medium">{cube.weight} g</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Size:</span>
-      <span class="font-medium">{cube.size} mm</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Surface Finish:</span>
-      <span class="font-medium">{cube.surface_finish}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Release Date:</span>
-      <span class="font-medium">
-        {cube.release_date ? formatDate(cube.release_date) : "Loading..."}
+<section class="space-y-6">
+  <!-- Overview / Description -->
+  <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
+    <h2 class="text-base font-semibold opacity-70 mb-2">About</h2>
+    <p class="leading-relaxed">
+      The
+      <span class="font-semibold text-primary">
+        {`${cube.series} ${cube.model}${cube.version_type !== "Base" && cube.version_name ? ` ${cube.version_name}` : ""}`}
       </span>
+      is a <span class="font-medium">{cube.type}</span> twisty puzzle
+      {#if cube.release_date}
+        released on
+        <span class="font-medium">{formatDate(cube.release_date)}</span>
+      {/if}.
+      It is
+      <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span>,
+      <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>,
+      and <span class="font-medium">{isWcaLegal ? "WCA‑legal" : "not WCA‑legal"}</span>.
+      Currently
+      <span class="font-medium">{isDiscontinued ? "discontinued" : "available"}</span>
+      with a community rating of
+      <span class="font-medium">{(cube.rating ?? 0).toFixed(1)}/5</span>
+      and
+      <span class="font-medium">{isModded ? "modded" : "original"}</span> design.
+    </p>
+  </div>
+
+  <!-- Key Stats -->
+  <div class="stats stats-vertical sm:stats-horizontal shadow bg-base-200 border border-base-300 rounded-2xl">
+    <div class="stat">
+      <div class="stat-figure text-secondary"><i class="fa-solid fa-star"></i></div>
+      <div class="stat-title">Rating</div>
+      <div class="stat-value text-secondary">{(stats?.ratingAvg ?? cube.rating ?? 0).toFixed(1)}</div>
+      <div class="stat-desc">{stats?.ratingCount ?? 0} ratings</div>
+    </div>
+    <div class="stat">
+      <div class="stat-figure text-primary"><i class="fa-solid fa-user-group"></i></div>
+      <div class="stat-title">Owners</div>
+      <div class="stat-value text-primary">{stats?.ownersCount ?? 0}</div>
+      <div class="stat-desc">Users with this cube</div>
+    </div>
+    <div class="stat">
+      <div class="stat-figure text-accent"><i class="fa-solid fa-store"></i></div>
+      <div class="stat-title">Shops</div>
+      <div class="stat-value text-accent">{stats?.shopsCount ?? 0}</div>
+      <div class="stat-desc">Available retailers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-figure text-info"><i class="fa-regular fa-calendar"></i></div>
+      <div class="stat-title">Released</div>
+      <div class="stat-value text-info">
+        {cube.release_date ? formatDate(cube.release_date) : "—"}
+      </div>
+      <div class="stat-desc">Status: {isDiscontinued ? "Discontinued" : "Active"}</div>
     </div>
   </div>
-  <div class="bg-base-200 rounded-xl p-4 space-y-2 border border-base-300">
-    {#each statuses as status}
-      <div class="flex items-center justify-between">
-        <span class="font-medium text-sm">{status.label}</span>
-        <span class="text-xl">
-          {feats.has(status.key) ? "✅" : "❌"}
-        </span>
-      </div>
-    {/each}
+
+  <!-- Specs + Features -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Specs -->
+    <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+      <h3 class="text-base font-semibold opacity-70 mb-3">Specifications</h3>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Brand</dt>
+          <dd class="font-medium">{cube.brand}</dd>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Type</dt>
+          <dd class="font-medium">{cube.type}</dd>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Weight</dt>
+          <dd class="font-medium">{cube.weight} g</dd>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Size</dt>
+          <dd class="font-medium">{cube.size} mm</dd>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Surface</dt>
+          <dd class="font-medium">{cube.surface_finish || "—"}</dd>
+        </div>
+        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+          <dt class="opacity-70">Version</dt>
+          <dd class="font-medium">{cube.version_type}{cube.version_type !== "Base" && cube.version_name ? ` · ${cube.version_name}` : ""}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Features -->
+    <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+      <h3 class="text-base font-semibold opacity-70 mb-3">Features</h3>
+      {#if presentFeatures.length > 0}
+        <div class="flex flex-wrap gap-2">
+          {#each presentFeatures as f}
+            <span class="badge badge-success badge-outline gap-1">
+              <i class={`fa-solid ${f.icon}`}></i>
+              {f.label}
+            </span>
+          {/each}
+          {#if isDiscontinued}
+            <span class="badge badge-error gap-1">
+              <i class="fa-solid fa-ban"></i>
+              Discontinued
+            </span>
+          {/if}
+        </div>
+      {:else}
+        <p class="opacity-70">No special features listed.</p>
+      {/if}
+    </div>
   </div>
-</div>
-<div class="my-8">
-  <div class="bg-base-200 rounded-xl p-4 border border-base-300">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-regular fa-clock"></i>
-      Database Info:
-    </h2>
-    <div class="flex flex-col sm:flex-row gap-6">
-      <div class="flex items-center gap-2">
-        <span>ID:</span>{cube.id}
+
+  <!-- Database meta -->
+  <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+    <h3 class="text-base font-semibold opacity-70 mb-3">Database</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-id-badge opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">ID</div>
+          <div class="font-medium">{cube.id}</div>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span>Added:</span>
-        <span class="font-medium">
-          {cube.created_at ? formatDate(cube.created_at) : "Loading..."}
-        </span>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-circle-check opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Verified By</div>
+          <a class="font-medium link" href="/user/{verifiedBy?.username}">{verifiedBy?.display_name || "Unknown"}</a>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span>Last Updated:</span>
-        <span class="font-medium">
-          {cube.updated_at ? formatDate(cube.updated_at) : "Loading..."}
-        </span>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-user opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Submitted By</div>
+          <a class="font-medium link" href="/user/{submittedBy?.username}">{submittedBy?.display_name || "Unknown"}</a>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span>Verified by:</span>
-        <a class="font-medium underline" href="/user/{verifiedBy?.username}">
-          {verifiedBy?.display_name || "Unknown"}
-        </a>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-calendar-plus opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Added</div>
+          <div class="font-medium">{cube.created_at ? formatDate(cube.created_at) : "—"}</div>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span>Submitted by:</span>
-        <a class="font-medium underline" href="/user/{submittedBy?.username}">
-          {submittedBy?.display_name || "Unknown"}
-        </a>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-clock opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Last Updated</div>
+          <div class="font-medium">{cube.updated_at ? formatDate(cube.updated_at) : "—"}</div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>

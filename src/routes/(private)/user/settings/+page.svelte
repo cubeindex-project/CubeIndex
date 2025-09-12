@@ -361,7 +361,8 @@
               <div class="card-body">
                 <h2 class="card-title">Profile Information</h2>
                 <p class="text-sm opacity-70">
-                  Update your public profile details. Bio supports Markdown.
+                  Update your public profile details. Your bio supports Markdown formatting
+                  (bold, italics, links, lists, and code). See quick tips below.
                 </p>
                 <form
                   action="?/profile"
@@ -395,7 +396,7 @@
                       <textarea
                         bind:value={$form.bio}
                         name="bio"
-                        placeholder="Tell us something cool..."
+                        placeholder="Tell us something cool... Markdown is supported"
                         class="textarea textarea-bordered w-full flex-1"
                         rows="6"
                       ></textarea>
@@ -414,6 +415,31 @@
                     {#if $errors.bio}
                       <p class="text-error">{$errors.bio}</p>
                     {/if}
+                    <div class="mt-3">
+                      <div class="text-xs opacity-70 font-semibold mb-1">
+                        Markdown basics
+                      </div>
+                      <ul class="list-disc list-inside text-xs opacity-70 space-y-1">
+                        <li>
+                          Headings: <code># Title</code>, <code>## Section</code>
+                        </li>
+                        <li>
+                          Bold/Italic: <code>**bold**</code>, <code>*italic*</code>
+                        </li>
+                        <li>
+                          Links: <code>[text](https://example.com)</code>
+                        </li>
+                        <li>
+                          Lists: <code>- item</code> (use one line per item)
+                        </li>
+                        <li>
+                          Code: <code>`inline`</code> or fenced blocks with three backticks
+                        </li>
+                        <li>
+                          Paragraphs: leave a blank line between them
+                        </li>
+                      </ul>
+                    </div>
                   </fieldset>
 
                   <!-- Avatar -->

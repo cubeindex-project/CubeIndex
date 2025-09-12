@@ -6,6 +6,21 @@
   import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
   import RateCubeButton from "../misc/rateCubeButton.svelte";
 
+  /**
+   * Cube data for the card. Supports additional optional metadata fields
+   * (e.g., popularity, avg_price, feature flags) that may come from DB views.
+   */
+  type CubeWithMeta = Cube &
+    Partial<{
+      avg_price: number;
+      popularity: number;
+      wca_legal: boolean;
+      magnetic: boolean;
+      smart: boolean;
+      modded: boolean;
+      stickered: boolean;
+    }>;
+
   let {
     cube,
     rate,
@@ -14,7 +29,7 @@
     alreadyAdded,
     userCubeDetail,
   }: {
-    cube: Cube;
+    cube: CubeWithMeta;
     rate: boolean;
     add: boolean;
     details: boolean;

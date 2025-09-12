@@ -240,11 +240,11 @@
                   {/if}
 
                   <dl class="mt-4 grid grid-cols-1 gap-2 text-sm">
-                    {#if achievement.created_at}
+                    {#if achievement.awarded_at}
                       <div class="flex items-start justify-between gap-3">
                         <dt class="text-base-content/60">Earned</dt>
                         <dd class="font-medium text-right">
-                          {formatDate(achievement.created_at)}
+                          {formatDate(achievement.awarded_at)}
                         </dd>
                       </div>
                     {/if}

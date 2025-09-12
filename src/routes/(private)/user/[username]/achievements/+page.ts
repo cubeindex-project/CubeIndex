@@ -16,6 +16,7 @@ export const load = (async ({ parent }) => {
 
   const user_achievements = data.map((ua) => ({
     ...ua.achievement,
+    awarded_at: ua.awarded_at,
     rarity: ua.rarity?.rarity,
   }));
 

@@ -1,4 +1,3 @@
-import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import type { Profiles } from "$lib/components/dbTableTypes";
 
@@ -14,10 +13,13 @@ export const load: LayoutServerLoad = async ({
     const { data, error: err } = await supabase
       .from("profiles")
       .select("*")
-      .eq("user_id", user?.id)
+      .eq("user_id", user.id)
       .single();
 
-    if (err) throw error(500, err.message);
+    if (err) {
+      console.error(500, "Error while retrieving profile in layout: " + err.message);
+      profile = null;
+    }
 
     profile = data;
   }

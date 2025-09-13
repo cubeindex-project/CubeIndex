@@ -11,6 +11,7 @@
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BackButton from "$lib/components/misc/backButton.svelte";
+  import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
 
   const config = {
     defaultTransition: blur(),
@@ -92,19 +93,23 @@
 <Toaster />
 <ClientErrorReporter />
 
-<Ssgoi {config}>
-  <section class="bg-base-100 relative">
+<div class="pb-16 md:pb-0">
+  <Ssgoi {config}>
     {@render children()}
-  </section>
-</Ssgoi>
+  </Ssgoi>
 
-<AchievementUnlocked user={data.user} />
+  <AchievementUnlocked user={data.user} />
 
-{#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
-  <ReloadPrompt />
-{/await}
+  {#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
+    <ReloadPrompt />
+  {/await}
 
-<Footer />
+  <Footer />
 
-<BackButton />
-<ScrollToTop />
+  <BackButton />
+  <ScrollToTop />
+</div>
+
+{#if profile}
+  <MobileBottomNav {profile} />
+{/if}

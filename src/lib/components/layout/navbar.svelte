@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
-  import NotificationCenter from "../user/notificationCenter.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
@@ -12,7 +10,6 @@
 
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
-  let notificationOpen = $state(false);
 
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {
@@ -92,8 +89,39 @@
   // Desktop Explore open/close management with small delay for usability
   let exploreOpen = $state(false);
   let exploreCloseTimer: ReturnType<typeof setTimeout> | null = null;
-  let exploreWrapper: HTMLDivElement | null = $state(null);
-  let exploreButton: HTMLAnchorElement | null = $state(null);
+
+  /**
+   * Controls auto-hiding the navbar on downward scroll.
+   */
+  let hideNav = $state(false);
+  let lastScrollY = $state(0);
+
+  function handleScroll() {
+    const y = window.scrollY || 0;
+    const goingDown = y > lastScrollY;
+    const threshold = 72; // px before auto-hide can kick in
+
+    // Only auto-hide when not interacting with menus/popovers
+    if (!isOpen && !exploreOpen && y > threshold && goingDown) {
+      hideNav = true;
+    } else {
+      hideNav = false;
+    }
+    lastScrollY = y;
+  }
+
+  // Attach scroll listener
+  $effect(() => {
+    lastScrollY = window.scrollY || 0;
+    const onScroll = () => handleScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  });
+
+  // Ensure navbar shows when menus open/close
+  $effect(() => {
+    if (isOpen || exploreOpen) hideNav = false;
+  });
 
   function openExplore() {
     if (exploreCloseTimer) {
@@ -106,68 +134,11 @@
     if (exploreCloseTimer) clearTimeout(exploreCloseTimer);
     exploreCloseTimer = setTimeout(() => (exploreOpen = false), delay);
   }
-  function handleFocusOut(e: FocusEvent) {
-    const next = e.relatedTarget as Node | null;
-    if (exploreWrapper && next && exploreWrapper.contains(next)) return;
-    scheduleCloseExplore(100);
-  }
-
-  function focusFirstExploreItem() {
-    if (!exploreWrapper) return;
-    const first = exploreWrapper.querySelector<HTMLAnchorElement>(
-      '.dropdown-content a[href], .dropdown-content [role="menuitem"][href]'
-    );
-    first?.focus();
-  }
-
-  function focusLastExploreItem() {
-    if (!exploreWrapper) return;
-    const items = exploreWrapper.querySelectorAll<HTMLAnchorElement>(
-      '.dropdown-content a[href], .dropdown-content [role="menuitem"][href]'
-    );
-    const last = items[items.length - 1];
-    last?.focus();
-  }
-
-  function handleExploreTriggerKeydown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      if (exploreOpen) {
-        e.preventDefault();
-        exploreOpen = false;
-      }
-      (exploreButton as HTMLAnchorElement | null)?.focus();
-      return;
-    }
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      openExplore();
-      // Wait a tick for layout
-      setTimeout(focusFirstExploreItem, 0);
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      openExplore();
-      setTimeout(focusFirstExploreItem, 0);
-    }
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      openExplore();
-      setTimeout(focusLastExploreItem, 0);
-    }
-  }
-
-  function handleExploreWrapperKeydown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      exploreOpen = false;
-      (exploreButton as HTMLAnchorElement | null)?.focus();
-    }
-  }
 </script>
 
 <header
-  class="bg-base-100/80 backdrop-blur sticky top-0 border-b border-base-300 z-20"
+  class="bg-base-100/80 backdrop-blur sticky top-0 border-b border-base-300 z-50 scroll-nav"
+  style:transform={hideNav ? "translateY(-100%)" : "translateY(0)"}
 >
   <div
     class="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-6 py-3"
@@ -196,12 +167,9 @@
         <div
           class="dropdown dropdown-center"
           class:dropdown-open={exploreOpen}
-          bind:this={exploreWrapper}
           onmouseenter={openExplore}
           onmouseleave={() => scheduleCloseExplore(120)}
           onfocusin={openExplore}
-          onfocusout={handleFocusOut}
-          onkeydown={handleExploreWrapperKeydown}
           role="dialog"
           tabindex="0"
         >
@@ -213,8 +181,6 @@
             aria-expanded={exploreOpen}
             aria-controls="explore-popover"
             tabindex="0"
-            bind:this={exploreButton}
-            onkeydown={handleExploreTriggerKeydown}
           >
             Explore
             <i
@@ -287,26 +253,25 @@
         </div>
 
         <div class="relative inline-block">
-          <!-- Notification Bell -->
           <div class="indicator" style="margin-right: 0.25rem;">
             {#if notifications.length !== 0}
-              <span class="indicator-item badge badge-info badge-xs"></span>
+              <span
+                class="indicator-item badge badge-info badge-xs"
+                aria-label="You have notifications"
+              ></span>
             {/if}
-            <button
+            <a
+              href="/notifications"
               class="btn btn-ghost btn-circle btn-lg focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
               aria-label="Notifications"
               onclick={() => {
-                notificationOpen = !notificationOpen;
                 bellAnimate = true;
               }}
             >
               <i class="fa-solid fa-bell {bellAnimate ? 'animate-ring' : ''}"
               ></i>
-            </button>
+            </a>
           </div>
-          {#if notificationOpen}
-            <NotificationCenter {notificationOpen} {notifications} />
-          {/if}
         </div>
       {:else}
         <a
@@ -332,11 +297,21 @@
     </button>
   </div>
 
+  <!-- Mobile overlay (click to close) -->
+  {#if isOpen}
+    <div
+      class="md:hidden absolute inset-x-0 top-full bottom-0 bg-base-content/40 backdrop-blur-[2px]"
+      aria-hidden="true"
+      onclick={closeMobileMenus}
+      transition:blur={{ duration: 150 }}
+    ></div>
+  {/if}
+
   <!-- Mobile Nav -->
   {#if isOpen}
     <nav
-      class="bg-base-100/95 backdrop-blur px-6 pb-4 md:hidden absolute w-full rounded-b-4xl border-b-base-300 border-b"
-      transition:blur={{ duration: 250 }}
+      class="bg-base-100/95 backdrop-blur px-6 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 md:hidden absolute inset-x-0 top-full rounded-b-4xl border-b-base-300 border-b shadow-lg will-change-transform transition-transform duration-200 ease-out translate-y-0"
+      transition:blur={{ duration: 180 }}
       aria-label="Mobile navigation"
     >
       <ul class="flex flex-col gap-3">
@@ -410,13 +385,13 @@
         <!-- Notification Bell (Mobile) -->
         <li class="relative">
           <a
-            class="flex items-center w-full text-left py-3 rounded-lg hover:bg-base-200/60 transition"
+            class="flex items-center w-full text-left py-3 text-base-content/80 rounded-lg hover:bg-base-200/60 transition"
             aria-label="Notifications"
             href="/notifications"
             onclick={closeMobileMenus}
           >
             <i class="fa-solid fa-bell"></i>
-            <span class="ml-2 text-sm">Notifications</span>
+            <span class="ml-2">Notifications</span>
           </a>
           {#if notifications.length !== 0}
             <div
@@ -517,6 +492,10 @@
 {/if}
 
 <style>
+  .scroll-nav {
+    transition: transform 200ms ease;
+    will-change: transform;
+  }
   @keyframes ring {
     0% {
       transform: rotate(0);

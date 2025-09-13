@@ -49,6 +49,14 @@ npm run dev
 👉 Visit localhost:5173
 (Optional: set up Supabase CLI + Docker if working with the database)
 
+#### Environment
+
+- `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY`: Frontend Supabase access
+- `DATABASE_URL`: Postgres connection (server-side)
+- `PUBLIC_SITE_URL`: Absolute base URL
+- `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_WEBSITE_ID`: Analytics (optional)
+- `PUBLIC_KOFI_URL`: Ko‑fi support link displayed at `/pricing` (Support)
+
 ---
 
 🤝 Contribute

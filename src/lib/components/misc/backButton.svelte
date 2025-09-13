@@ -67,7 +67,7 @@
 </script>
 
 <button
-  class="fixed bottom-6 left-6 z-50 btn btn-secondary btn-circle shadow-md transition-opacity duration-200 md:hidden"
+  class="fixed bottom-20 left-6 z-50 btn btn-secondary btn-circle shadow-md transition-opacity duration-200 md:hidden"
   class:opacity-0={!canGoBack || !isIdle}
   class:pointer-events-none={!canGoBack || !isIdle}
   aria-label="Go back"

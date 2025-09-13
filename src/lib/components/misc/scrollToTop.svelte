@@ -31,7 +31,7 @@
 </script>
 
 <button
-  class="fixed bottom-6 right-6 z-50 btn btn-primary btn-circle shadow-lg transition-opacity duration-200"
+  class="fixed bottom-20 right-6 z-50 btn btn-primary btn-circle shadow-lg transition-opacity duration-200"
   class:opacity-0={!show}
   class:pointer-events-none={!show}
   aria-label="Scroll to top"

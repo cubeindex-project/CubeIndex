@@ -14,7 +14,7 @@
     errors: accountErrors,
     enhance: enhanceAccount,
     message: accountMessage,
-  } = superForm(data.accountForm, { dataType: "json", resetForm: false });
+  } = superForm(data.accountForm, { resetForm: false });
 
   const {
     form: profile,

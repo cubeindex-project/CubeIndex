@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { getContext, onMount } from "svelte";
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
@@ -17,10 +17,49 @@
     mobileProfileDropdown = false;
   }
 
-  let notifications: any[] = $state([]);
+  let hasUnread = $state(false);
+  const user = $derived(getContext<any>("user"));
+  const isEmailVerified = $derived(profile.verified);
+  async function refreshNotifications() {
+    try {
+      if (!profile) {
+        hasUnread = false;
+        return;
+      }
+      const res = await fetch("/api/notifications/fetch-notifications", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!res.ok) {
+        hasUnread = false;
+        return;
+      }
+      const body = (await res.json()) as
+        | { success: true; data: Array<{ read: boolean }> }
+        | { success: false; error?: string };
+      if ("success" in body && body.success) {
+        hasUnread = body.data.some((n) => !n.read);
+      } else {
+        hasUnread = false;
+      }
+    } catch {
+      hasUnread = false;
+    }
+  }
+  onMount(() => {
+    refreshNotifications();
+    const onFocus = () => refreshNotifications();
+    window.addEventListener("focus", onFocus);
+    const t = setInterval(refreshNotifications, 60_000);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      clearInterval(t);
+    };
+  });
 
   const navLinks = [
     { name: "Achievements", href: "/achievements" },
+    { name: "Support", href: "/pricing" },
     { name: "About", href: "/about" },
   ];
 
@@ -253,25 +292,34 @@
         </div>
 
         <div class="relative inline-block">
-          <div class="indicator" style="margin-right: 0.25rem;">
-            {#if notifications.length !== 0}
-              <span
-                class="indicator-item badge badge-info badge-xs"
-                aria-label="You have notifications"
-              ></span>
-            {/if}
-            <a
-              href="/notifications"
-              class="btn btn-ghost btn-circle btn-lg focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
-              aria-label="Notifications"
-              onclick={() => {
-                bellAnimate = true;
-              }}
-            >
+          <a
+            href="/notifications"
+            class="btn btn-ghost btn-circle btn-lg focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
+            aria-label="Notifications"
+            onclick={() => {
+              bellAnimate = true;
+            }}
+          >
+            <div class="indicator">
+              {#if profile && !isEmailVerified}
+                <span
+                  class="indicator-item size-2 rounded-full bg-error animate-ping"
+                  aria-label="Verify your email"
+                ></span>
+                <span
+                  class="indicator-item size-2 rounded-full bg-error"
+                  aria-label="Verify your email"
+                ></span>
+              {:else if hasUnread}
+                <span
+                  class="indicator-item size-2 rounded-full bg-info"
+                  aria-label="Unread notifications"
+                ></span>
+              {/if}
               <i class="fa-solid fa-bell {bellAnimate ? 'animate-ring' : ''}"
               ></i>
-            </a>
-          </div>
+            </div>
+          </a>
         </div>
       {:else}
         <a
@@ -393,13 +441,20 @@
             <i class="fa-solid fa-bell"></i>
             <span class="ml-2">Notifications</span>
           </a>
-          {#if notifications.length !== 0}
-            <div
-              class="status status-info animate-ping absolute top-1/2 right-2 -translate-y-1/2"
-            ></div>
-            <div
-              class="absolute top-1/2 right-2 -translate-y-1/2 status status-info"
-            ></div>
+          {#if profile && !isEmailVerified}
+            <span
+              class="size-2 rounded-full bg-error animate-ping absolute top-1/2 right-2 -translate-y-1/2"
+              aria-label="Verify your email"
+            ></span>
+            <span
+              class="size-2 rounded-full bg-error absolute top-1/2 right-2 -translate-y-1/2"
+              aria-label="Verify your email"
+            ></span>
+          {:else if hasUnread}
+            <span
+              class="size-2 rounded-full bg-info absolute top-1/2 right-2 -translate-y-1/2"
+              aria-label="Unread notifications"
+            ></span>
           {/if}
         </li>
 

@@ -80,48 +80,21 @@
       {#if cube.release_date}
         released on
         <span class="font-medium">{formatDate(cube.release_date)}</span>
-      {/if}.
-      It is
-      <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span>,
-      <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>,
-      and <span class="font-medium">{isWcaLegal ? "WCA‑legal" : "not WCA‑legal"}</span>.
-      Currently
-      <span class="font-medium">{isDiscontinued ? "discontinued" : "available"}</span>
+      {/if}. It is
+      <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span
+      >,
+      <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>, and
+      <span class="font-medium"
+        >{isWcaLegal ? "WCA‑legal" : "not WCA‑legal"}</span
+      >. Currently
+      <span class="font-medium"
+        >{isDiscontinued ? "discontinued" : "available"}</span
+      >
       with a community rating of
       <span class="font-medium">{(cube.rating ?? 0).toFixed(1)}/5</span>
       and
       <span class="font-medium">{isModded ? "modded" : "original"}</span> design.
     </p>
-  </div>
-
-  <!-- Key Stats -->
-  <div class="stats stats-vertical sm:stats-horizontal shadow bg-base-200 border border-base-300 rounded-2xl w-full">
-    <div class="stat">
-      <div class="stat-figure text-secondary"><i class="fa-solid fa-star"></i></div>
-      <div class="stat-title">Rating</div>
-      <div class="stat-value text-secondary">{(stats?.ratingAvg ?? cube.rating ?? 0).toFixed(1)}</div>
-      <div class="stat-desc">{stats?.ratingCount ?? 0} ratings</div>
-    </div>
-    <div class="stat">
-      <div class="stat-figure text-primary"><i class="fa-solid fa-user-group"></i></div>
-      <div class="stat-title">Owners</div>
-      <div class="stat-value text-primary">{stats?.ownersCount ?? 0}</div>
-      <div class="stat-desc">Users with this cube</div>
-    </div>
-    <div class="stat">
-      <div class="stat-figure text-accent"><i class="fa-solid fa-store"></i></div>
-      <div class="stat-title">Shops</div>
-      <div class="stat-value text-accent">{stats?.shopsCount ?? 0}</div>
-      <div class="stat-desc">Available retailers</div>
-    </div>
-    <div class="stat">
-      <div class="stat-figure text-info"><i class="fa-regular fa-calendar"></i></div>
-      <div class="stat-title">Released</div>
-      <div class="stat-value text-info">
-        {cube.release_date ? formatDate(cube.release_date) : "—"}
-      </div>
-      <div class="stat-desc">Status: {isDiscontinued ? "Discontinued" : "Active"}</div>
-    </div>
   </div>
 
   <!-- Specs + Features -->
@@ -130,29 +103,46 @@
     <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
       <h3 class="text-base font-semibold opacity-70 mb-3">Specifications</h3>
       <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Brand</dt>
           <dd class="font-medium">{cube.brand}</dd>
         </div>
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Type</dt>
           <dd class="font-medium">{cube.type}</dd>
         </div>
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Weight</dt>
           <dd class="font-medium">{cube.weight} g</dd>
         </div>
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Size</dt>
           <dd class="font-medium">{cube.size} mm</dd>
         </div>
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Surface</dt>
           <dd class="font-medium">{cube.surface_finish || "—"}</dd>
         </div>
-        <div class="flex items-center justify-between sm:justify-start sm:gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
           <dt class="opacity-70">Version</dt>
-          <dd class="font-medium">{cube.version_type}{cube.version_type !== "Base" && cube.version_name ? ` · ${cube.version_name}` : ""}</dd>
+          <dd class="font-medium">
+            {cube.version_type}{cube.version_type !== "Base" &&
+            cube.version_name
+              ? ` · ${cube.version_name}`
+              : ""}
+          </dd>
         </div>
       </dl>
     </div>
@@ -196,28 +186,36 @@
         <i class="fa-regular fa-circle-check opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Verified By</div>
-          <a class="font-medium link" href="/user/{verifiedBy?.username}">{verifiedBy?.display_name || "Unknown"}</a>
+          <a class="font-medium link" href="/user/{verifiedBy?.username}"
+            >{verifiedBy?.display_name || "Unknown"}</a
+          >
         </div>
       </div>
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-user opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Submitted By</div>
-          <a class="font-medium link" href="/user/{submittedBy?.username}">{submittedBy?.display_name || "Unknown"}</a>
+          <a class="font-medium link" href="/user/{submittedBy?.username}"
+            >{submittedBy?.display_name || "Unknown"}</a
+          >
         </div>
       </div>
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-calendar-plus opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Added</div>
-          <div class="font-medium">{cube.created_at ? formatDate(cube.created_at) : "—"}</div>
+          <div class="font-medium">
+            {cube.created_at ? formatDate(cube.created_at) : "—"}
+          </div>
         </div>
       </div>
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-clock opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Last Updated</div>
-          <div class="font-medium">{cube.updated_at ? formatDate(cube.updated_at) : "—"}</div>
+          <div class="font-medium">
+            {cube.updated_at ? formatDate(cube.updated_at) : "—"}
+          </div>
         </div>
       </div>
     </div>

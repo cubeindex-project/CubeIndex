@@ -30,13 +30,20 @@
     openReport = !openReport;
   }
 
-  let currentTab = $state("");
+  // Derive the active tab from the URL so it stays in sync on navigation
+  const currentTab = $derived.by(() => {
+    const segments = page.url.pathname.split("/").filter(Boolean);
+    // Expect .../explore/cubes/:slug[/tab]
+    const last = segments[segments.length - 1] ?? "";
+    return last === cube.slug ? "" : last;
+  });
 
+  // Tab definitions (keys map to child routes)
   const tabs = [
-    { label: "Details", key: "" },
-    { label: "Shops - Price History", key: "price" },
-    { label: "Ratings", key: "ratings" },
-  ];
+    { label: "Details", key: "", icon: "fa-circle-info" },
+    { label: "Shops & Prices", key: "price", icon: "fa-store" },
+    { label: "Ratings", key: "ratings", icon: "fa-star" },
+  ] as const;
 </script>
 
 <SsgoiTransition id={page.url.pathname}>
@@ -163,18 +170,29 @@
       <StarRating readOnly={true} rating={cube.rating ?? 0} />
     </div>
 
-    <nav class="my-6 flex flex-wrap gap-2 tabs tabs-border justify-center">
-      {#each tabs as tab}
-        <a
-          href="/explore/cubes/{cube.slug}/{tab.key}"
-          class="tab"
-          class:tab-active={tab.key === currentTab}
-          onclick={() => (currentTab = tab.key)}
-          data-sveltekit-noscroll
-        >
-          {tab.label}
-        </a>
-      {/each}
+    <!-- Tabs: URL-aware, scrollable on mobile, accessible roles -->
+    <nav
+      class="my-6 -mx-6 px-6 overflow-x-auto">
+      <div
+        class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
+        role="tablist"
+        aria-label="Cube sections"
+      >
+        {#each tabs as tab}
+          <a
+            href={tab.key ? `/explore/cubes/${cube.slug}/${tab.key}` : `/explore/cubes/${cube.slug}`}
+            class="tab tab-sm sm:tab-md whitespace-nowrap"
+            class:tab-active={tab.key === currentTab}
+            role="tab"
+            aria-selected={tab.key === currentTab}
+            aria-current={tab.key === currentTab ? "page" : undefined}
+            data-sveltekit-noscroll
+          >
+            <i class={`fa-solid ${tab.icon} mr-2`}></i>
+            {tab.label}
+          </a>
+        {/each}
+      </div>
     </nav>
 
     {@render children()}

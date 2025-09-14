@@ -6,15 +6,11 @@ import { redirect, error } from "@sveltejs/kit";
  * - Requires a valid session; otherwise redirects to `/auth/login`.
  * - Returns lightweight profile info and key counts for quick overview.
  */
-export const load: PageServerLoad = async ({ locals }) => {
-  const {
-    data: { user },
-  } = await locals.supabase.auth.getUser();
-
+export const load = (async ({ locals: { supabase, user } }) => {
   if (!user) throw redirect(302, "/auth/login");
 
   // Fetch profile (username, display name, role) for greetings and links
-  const { data: profile, error: pErr } = await locals.supabase
+  const { data: profile, error: pErr } = await supabase
     .from("profiles")
     .select("username, display_name, user_id, profile_picture")
     .eq("user_id", user.id)
@@ -30,23 +26,23 @@ export const load: PageServerLoad = async ({ locals }) => {
     { count: followersCount = 0, error: f1Err },
     { count: followingCount = 0, error: f2Err },
   ] = await Promise.all([
-    locals.supabase
+    supabase
       .from("user_cubes")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", user.id),
-    locals.supabase
+    supabase
       .from("user_cube_ratings")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", user.id),
-    locals.supabase
+    supabase
       .from("user_achievements")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", user.id),
-    locals.supabase
+    supabase
       .from("user_follows")
       .select("*", { head: true, count: "exact" })
       .eq("following_id", user.id),
-    locals.supabase
+    supabase
       .from("user_follows")
       .select("*", { head: true, count: "exact" })
       .eq("follower_id", user.id),
@@ -62,7 +58,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     { data: recentRatingsRaw = [], error: rrErr },
     { data: recentAchievementsRaw = [], error: raErr },
   ] = await Promise.all([
-    locals.supabase
+    supabase
       .from("user_cubes")
       .select(
         "cube, created_at, main, status, condition, cube_models(slug, series, model, version_name, brand, image_url)"
@@ -70,7 +66,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(5),
-    locals.supabase
+    supabase
       .from("user_cube_ratings")
       .select(
         "cube_slug, rating, updated_at, cube_models(slug, series, model, version_name, brand, image_url)"
@@ -78,7 +74,7 @@ export const load: PageServerLoad = async ({ locals }) => {
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
       .limit(5),
-    locals.supabase
+    supabase
       .from("user_achievements")
       .select(
         "achievement_slug, awarded_at, achievements(name, title, icon), rarity:v_achievement_rarity(rarity)"
@@ -134,4 +130,4 @@ export const load: PageServerLoad = async ({ locals }) => {
       achievements: recentAchievements,
     },
   };
-};
+}) satisfies PageServerLoad;

@@ -418,7 +418,7 @@
 
           {#if step === "done"}
             <div class="text-center space-y-3">
-              <h2 class="text-2xl font-bold">You're all set 🎉</h2>
+              <h2 class="text-2xl font-bold">You're all set!</h2>
               <p class="opacity-80">
                 Check your email to verify your account. Once verified, you can
                 start tracking your collection, compare shops, and get

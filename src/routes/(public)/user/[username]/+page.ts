@@ -16,7 +16,7 @@ export const load = (async ({ parent }) => {
       .eq("user_id", profile.user_id),
     supabase
       .from("user_achievements")
-      .select("*, achievement:achievements(*)")
+      .select("*, achievement:achievement_slug(*)")
       .eq("user_id", profile.user_id),
     supabase
       .from("user_cube_ratings")

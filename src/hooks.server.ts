@@ -69,30 +69,44 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
-  if (user) {
-    const { data: profiles, error: err } = await event.locals.supabase
-      .from("profiles")
-      .select("id, username, role")
-      .eq("user_id", user?.id);
-
-    if (err) throw error(500, err.message);
-
-    const profile = profiles?.[0];
-
-    if (event.url.pathname === "/auth") {
-      redirect(303, `/user/${profile?.id}`);
+  if (!user) {
+    if (event.url.pathname.startsWith("/staff")) {
+      redirect(303, "/auth/login");
     }
-    // Logged-in users landing on the marketing homepage should see their dashboard instead
-    if (event.url.pathname === "/") {
-      redirect(303, "/dashboard");
+
+    if (event.url.pathname.includes("/notifications")) {
+      redirect(303, "/auth/login");
     }
-    if (event.url.pathname.startsWith("/staff") && profile.role === "User") {
-      redirect(303, "/");
+
+    if (event.url.pathname.startsWith("/userbar")) {
+      redirect(303, "/auth/login");
     }
+
+    if (event.url.pathname.includes("/settings")) {
+      redirect(303, "/auth/login");
+    }
+
+    return resolve(event);
   }
 
-  if (!event.locals.session && event.url.pathname.startsWith("/staff")) {
-    redirect(303, "/auth/login");
+  const { data: profiles, error: err } = await event.locals.supabase
+    .from("profiles")
+    .select("id, username, role")
+    .eq("user_id", user?.id);
+
+  if (err) throw error(500, err.message);
+
+  const profile = profiles?.[0];
+
+  if (event.url.pathname === "/auth") {
+    redirect(303, `/user/${profile?.id}`);
+  }
+  // Logged-in users landing on the marketing homepage should see their dashboard instead
+  if (event.url.pathname === "/") {
+    redirect(303, "/dashboard");
+  }
+  if (event.url.pathname.startsWith("/staff") && profile.role === "User") {
+    redirect(303, "/");
   }
 
   return resolve(event);

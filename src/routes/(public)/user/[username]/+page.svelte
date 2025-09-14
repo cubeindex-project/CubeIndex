@@ -1,17 +1,12 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import DOMPurify from "isomorphic-dompurify";
-  import Markdown from "svelte-exmarkdown";
-  import { gfmPlugin } from "svelte-exmarkdown/gfm";
-  import "github-markdown-css/github-markdown.css";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
-
-  const plugins = [gfmPlugin()];
+  import Markdown from "$lib/components/misc/markdown.svelte";
 
   let { data }: { data: PageData } = $props();
 
   const profile = $derived(data.profile);
-  const bio = $derived(DOMPurify.sanitize(profile.bio));
+  const bio = $derived(profile.bio);
   const main_cubes = $derived(data.main_cubes);
   const user_cubes = $derived(data.user_cubes);
   const user_achievements = $derived(data.user_achievements);
@@ -139,10 +134,11 @@
     {#if profile.bio}
       <div>
         <h2 class="text-xl font-semibold mb-2">Bio</h2>
+
         <div
           class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
         >
-          <Markdown md={bio} {plugins} />
+          <Markdown text={bio} />
         </div>
       </div>
     {/if}

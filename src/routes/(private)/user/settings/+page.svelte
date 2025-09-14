@@ -5,13 +5,8 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
-  import DOMPurify from "isomorphic-dompurify";
-  import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import Avatar from "$lib/components/user/avatar.svelte";
-  import Markdown from "svelte-exmarkdown";
-  import "github-markdown-css/github-markdown.css";
-
-  const plugins = [gfmPlugin()];
+  import Markdown from "$lib/components/misc/markdown.svelte";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -361,8 +356,9 @@
               <div class="card-body">
                 <h2 class="card-title">Profile Information</h2>
                 <p class="text-sm opacity-70">
-                  Update your public profile details. Your bio supports Markdown formatting
-                  (bold, italics, links, lists, and code). See quick tips below.
+                  Update your public profile details. Your bio supports Markdown
+                  formatting (bold, italics, links, lists, and code). See quick
+                  tips below.
                 </p>
                 <form
                   action="?/profile"
@@ -403,12 +399,9 @@
                       <div class="flex-1">
                         <div class="text-xs opacity-60 mb-1">Live Preview</div>
                         <div
-                          class="rounded-2xl p-3 markdown-body !bg-base-300 !text-base-content"
+                          class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
                         >
-                          <Markdown
-                            md={DOMPurify.sanitize($form.bio)}
-                            {plugins}
-                          />
+                          <Markdown text={$form.bio} />
                         </div>
                       </div>
                     </div>
@@ -419,12 +412,16 @@
                       <div class="text-xs opacity-70 font-semibold mb-1">
                         Markdown basics
                       </div>
-                      <ul class="list-disc list-inside text-xs opacity-70 space-y-1">
+                      <ul
+                        class="list-disc list-inside text-xs opacity-70 space-y-1"
+                      >
                         <li>
-                          Headings: <code># Title</code>, <code>## Section</code>
+                          Headings: <code># Title</code>,
+                          <code>## Section</code>
                         </li>
                         <li>
-                          Bold/Italic: <code>**bold**</code>, <code>*italic*</code>
+                          Bold/Italic: <code>**bold**</code>,
+                          <code>*italic*</code>
                         </li>
                         <li>
                           Links: <code>[text](https://example.com)</code>
@@ -433,11 +430,10 @@
                           Lists: <code>- item</code> (use one line per item)
                         </li>
                         <li>
-                          Code: <code>`inline`</code> or fenced blocks with three backticks
+                          Code: <code>`inline`</code> or fenced blocks with three
+                          backticks
                         </li>
-                        <li>
-                          Paragraphs: leave a blank line between them
-                        </li>
+                        <li>Paragraphs: leave a blank line between them</li>
                       </ul>
                     </div>
                   </fieldset>
@@ -925,12 +921,3 @@
     </div>
   </section>
 </SsgoiTransition>
-
-<style>
-  :global(.carta-font-code) {
-    font-family: "...", monospace;
-    font-size: 1.1rem;
-    line-height: 1.1rem;
-    letter-spacing: normal;
-  }
-</style>

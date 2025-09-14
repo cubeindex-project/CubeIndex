@@ -38,6 +38,10 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           navigateFallback: "/offline",
+          // Do not serve the offline shell for auth routes. Prevents
+          // the SW from hijacking `/auth/*` navigations (e.g. Supabase
+          // email confirmation) which must hit the network/server.
+          navigateFallbackDenylist: [/^\/auth\//, /^\/api\//],
           cleanupOutdatedCaches: true,
           runtimeCaching: [
             // Cache GET queries to Supabase REST API (public data only)

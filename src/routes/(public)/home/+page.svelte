@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MarketingHome from "../(public)/+page.svelte";
+  import MarketingHome from "../+page.svelte";
   const { data } = $props();
 </script>
 

@@ -9,7 +9,7 @@
         }, 3600000);
     },
     onRegisterError(error) {
-      new Error("SW registration error", error);
+      console.error("SW registration error", error);
     },
   });
   const close = () => {

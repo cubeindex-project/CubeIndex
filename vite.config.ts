@@ -30,12 +30,15 @@ export default defineConfig(({ mode }) => {
       sveltekit(),
       SvelteKitPWA({
         registerType: "prompt",
-        injectRegister: "auto",
+        // We manually register the SW via `virtual:pwa-register/svelte`
+        // to show a reload prompt. Avoid double registration.
+        injectRegister: false,
         devOptions: {
           enabled: true,
         },
         workbox: {
           navigateFallback: "/offline",
+          cleanupOutdatedCaches: true,
           runtimeCaching: [
             // Cache GET queries to Supabase REST API (public data only)
             {

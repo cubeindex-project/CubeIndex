@@ -136,6 +136,7 @@ export const actions: Actions = {
         username,
         display_name,
         profile_picture: avatarUrl,
+        onboarded: true,
       })
       .eq("user_id", user.id);
 

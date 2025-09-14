@@ -212,7 +212,7 @@
           tabindex="0"
         >
           <a
-            href="#explore"
+            href="/explore"
             class="inline-flex items-center gap-1.5 text-sm text-base-content/80 hover:text-base-content transition focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 rounded-lg px-3 py-1.5 hover:bg-base-200/60"
             id="explore-menu-button"
             aria-haspopup="menu"

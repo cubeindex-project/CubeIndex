@@ -18,8 +18,7 @@
   }
 
   let hasUnread = $state(false);
-  const user = $derived(getContext<any>("user"));
-  const isEmailVerified = $derived(profile.verified);
+  const isEmailVerified = $derived(profile?.verified ?? false);
   async function refreshNotifications() {
     try {
       if (!profile) {

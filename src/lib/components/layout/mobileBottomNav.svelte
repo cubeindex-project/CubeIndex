@@ -1,13 +1,12 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { getContext, onMount } from "svelte";
+  import { onMount } from "svelte";
   import type { Profiles } from "../dbTableTypes";
 
   let { profile }: { profile: Profiles } = $props();
 
   const pathname = $derived(page.url.pathname);
-  const user = $derived(getContext<any>("user"));
-  const isEmailVerified = $derived(profile.verified);
+  const isEmailVerified = $derived(profile?.verified ?? false);
   let hasUnread = $state(false);
   async function refreshUnread() {
     try {

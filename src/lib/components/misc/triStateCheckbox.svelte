@@ -2,7 +2,12 @@
   let {
     value = $bindable(),
     label,
-  }: { value: boolean | undefined; label: string } = $props();
+    onchange = () => {},
+  }: {
+    value: boolean | null | undefined;
+    label: string;
+    onchange?: () => void;
+  } = $props();
   let box: HTMLInputElement;
 
   function cycle() {
@@ -28,6 +33,7 @@
     type="checkbox"
     bind:this={box}
     onclick={cycle}
+    {onchange}
   />
   <span>{label}</span>
 </label>

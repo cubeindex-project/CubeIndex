@@ -6,7 +6,7 @@ export const load = (async ({ setHeaders, parent }) => {
   const { user } = await parent();
 
   const { data: achievements, error: err } = await supabase
-    .from("achievements")
+    .from("v_achievement_rarity")
     .select("*")
     .order("name", { ascending: true });
 

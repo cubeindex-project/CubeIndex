@@ -3,13 +3,15 @@
   import "../app.css";
   import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
-  import Disclaimer from "$lib/components/layout/disclaimer.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import { Ssgoi } from "@ssgoi/svelte";
   import { blur } from "@ssgoi/svelte/transitions";
   import { hero } from "@ssgoi/svelte/view-transitions";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
+  import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
+  import BackButton from "$lib/components/misc/backButton.svelte";
+  import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
 
   const config = {
     defaultTransition: blur(),
@@ -29,7 +31,7 @@
   import { invalidate } from "$app/navigation";
   import { onMount } from "svelte";
 
-  let { session, supabase } = $derived(data);
+  let { session, supabase, profile } = $derived(data);
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) {
@@ -55,14 +57,30 @@
   <script>
     (function () {
       try {
-        const t = localStorage.getItem("theme");
-        if (t) {
-          document.documentElement.dataset.theme = t;
+        function apply(theme) {
+          document.documentElement.dataset.theme = theme;
+        }
+
+        const mode = localStorage.getItem("themeMode");
+
+        if (mode === "system") {
+          const mql = window.matchMedia("(prefers-color-scheme: dark)");
+          const setFromSystem = () => apply(mql.matches ? "dark" : "light");
+          setFromSystem();
+          // Keep in sync with OS changes
+          mql.addEventListener("change", setFromSystem());
+        } else if (mode === "manual") {
+          const t = localStorage.getItem("theme") || "light";
+          apply(t);
         } else {
-          localStorage.setItem("theme", "dark");
+          // Default to system if nothing set yet
+          localStorage.setItem("themeMode", "system");
+          const mql = window.matchMedia("(prefers-color-scheme: dark)");
+          apply(mql.matches ? "dark" : "light");
         }
       } catch (e) {
-        throw new Error("Error initializing theme from localStorage:" + e);
+        // Silently fail to avoid breaking rendering
+        console.error("Error initializing theme from localStorage:", e);
       }
     })();
   </script>
@@ -70,23 +88,28 @@
 
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
-<Disclaimer />
-
-<Navbar session={data.session} />
+<Navbar {profile} />
 
 <Toaster />
 <ClientErrorReporter />
 
-<Ssgoi {config}>
-  <section class="bg-base-100 relative">
+<div class="pb-16 md:pb-0">
+  <Ssgoi {config}>
     {@render children()}
-  </section>
-</Ssgoi>
+  </Ssgoi>
 
-<AchievementUnlocked user={data.user} />
+  <AchievementUnlocked user={data.user} />
 
-{#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
-  <ReloadPrompt />
-{/await}
+  {#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
+    <ReloadPrompt />
+  {/await}
 
-<Footer />
+  <Footer />
+
+  <BackButton />
+  <ScrollToTop />
+</div>
+
+{#if profile}
+  <MobileBottomNav {profile} />
+{/if}

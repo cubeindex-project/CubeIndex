@@ -1,19 +1,15 @@
 <script lang="ts">
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import type { Profiles } from "$lib/components/dbTableTypes.js";
 
   let { data } = $props();
   let {
     cube = {} as Cube,
-    profile = {} as Profiles,
-    cubeTrims,
-    relatedCube,
-    sameSeries,
     features = [],
     submittedBy,
     verifiedBy,
     meta,
+    stats,
   } = $derived(data);
 
   const feats = $derived.by(() => {
@@ -28,15 +24,19 @@
   const isDiscontinued = $derived.by(() => cube.discontinued);
   const isModded = $derived.by(() => feats.has("modded"));
 
-  const statuses = [
-    { label: "Smart", key: "smart" },
-    { label: "Magnetic", key: "magnetic" },
-    { label: "Modded", key: "modded" },
-    { label: "WCA Legal", key: "wca_legal" },
-    { label: "Maglev", key: "maglev" },
-    { label: "Stickered", key: "stickered" },
-    { label: "Ball Core", key: "ball_core" },
-  ];
+  const allFeatureBadges = [
+    { label: "Smart", key: "smart", icon: "fa-microchip" },
+    { label: "Magnetic", key: "magnetic", icon: "fa-magnet" },
+    { label: "Modded", key: "modded", icon: "fa-screwdriver-wrench" },
+    { label: "WCA Legal", key: "wca_legal", icon: "fa-scale-balanced" },
+    { label: "Maglev", key: "maglev", icon: "fa-bolt" },
+    { label: "Stickered", key: "stickered", icon: "fa-tags" },
+    { label: "Ball Core", key: "ball_core", icon: "fa-circle-dot" },
+  ] as const;
+
+  const presentFeatures = $derived.by(() =>
+    allFeatureBadges.filter((b) => feats.has(b.key))
+  );
 </script>
 
 <svelte:head>
@@ -67,211 +67,157 @@
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
 
-<div class="mb-4 p-4 bg-base-200 rounded-xl border border-base-300 shadow-sm">
-  <p class="leading-relaxed">
-    Description:
-    <span class="block mt-2">
-      The <span class="font-bold text-primary"
-        >{`${cube.series} ${cube.model} ${cube.version_type !== "Base" ? cube.version_name : ""}`}</span
-      >
-      is a
-      <span class="font-bold text-primary">{cube.type}</span>
-      twisty puzzle released on
-      <span class="font-bold text-primary">
-        {cube.release_date ? formatDate(cube.release_date) : "Loading..."}
-      </span>. It is
-      <span class="font-bold text-primary"
-        >{isMagnetic ? "magnetic" : "non-magnetic"}</span
-      >,
-      <span class="font-bold text-primary"
-        >{isSmart ? "smart" : "non-smart"}</span
-      >, and
-      <span class="font-bold text-primary"
-        >{isWcaLegal ? "WCA-legal" : "not WCA-legal"}</span
-      >. Currently, it is
-      <span class="font-bold text-primary"
-        >{isDiscontinued ? "discontinued" : "available"}</span
-      >, has a community rating of
-      <span class="font-bold text-primary">{cube.rating}/5</span>, and is
-      <span class="font-bold text-primary"
-        >{isModded ? "modded" : "original"}</span
-      >.
-    </span>
-  </p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6 mb-4">
-  <div
-    class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
-  >
-    <div class="flex items-center justify-between">
-      <span>Brand:</span>
-      <span class="font-medium">{cube.brand}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Type:</span>
-      <span class="font-medium">{cube.type}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Weight:</span>
-      <span class="font-medium">{cube.weight} g</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Size:</span>
-      <span class="font-medium">{cube.size} mm</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Surface Finish:</span>
-      <span class="font-medium">{cube.surface_finish}</span>
-    </div>
-    <div class="flex items-center justify-between">
-      <span>Release Date:</span>
-      <span class="font-medium">
-        {cube.release_date ? formatDate(cube.release_date) : "Loading..."}
+<section class="space-y-6">
+  <!-- Overview / Description -->
+  <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
+    <h2 class="text-base font-semibold opacity-70 mb-2">About</h2>
+    <p class="leading-relaxed">
+      The
+      <span class="font-semibold text-primary">
+        {`${cube.series} ${cube.model}${cube.version_type !== "Base" && cube.version_name ? ` ${cube.version_name}` : ""}`}
       </span>
-    </div>
-  </div>
-  <div class="bg-base-200 rounded-xl p-4 space-y-2 border border-base-300">
-    {#each statuses as status}
-      <div class="flex items-center justify-between">
-        <span class="font-medium text-sm">{status.label}</span>
-        <span class="text-xl">
-          {feats.has(status.key) ? "✅" : "❌"}
-        </span>
-      </div>
-    {/each}
-  </div>
-</div>
-<div class="my-8">
-  <div class="bg-base-200 rounded-xl p-4 border border-base-300">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-regular fa-clock"></i>
-      Database Info:
-    </h2>
-    <div class="flex flex-col sm:flex-row gap-6">
-      <div class="flex items-center gap-2">
-        <span>ID:</span>{cube.id}
-      </div>
-      <div class="flex items-center gap-2">
-        <span>Added:</span>
-        <span class="font-medium">
-          {cube.created_at ? formatDate(cube.created_at) : "Loading..."}
-        </span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span>Last Updated:</span>
-        <span class="font-medium">
-          {cube.updated_at ? formatDate(cube.updated_at) : "Loading..."}
-        </span>
-      </div>
-      <div class="flex items-center gap-2">
-        <span>Verified by:</span>
-        <a class="font-medium underline" href="/user/{verifiedBy?.username}">
-          {verifiedBy?.display_name || "Unknown"}
-        </a>
-      </div>
-      <div class="flex items-center gap-2">
-        <span>Submitted by:</span>
-        <a class="font-medium underline" href="/user/{submittedBy?.username}">
-          {submittedBy?.display_name || "Unknown"}
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-{#if cube.notes && profile && profile.user_id === cube.submitted_by}
-  <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-note-sticky"></i>
-      Moderator Note
-      <span class="text-xs">(Only you can see this)</span>
-    </h2>
-    <p class="whitespace-pre-line">{cube.notes}</p>
-  </div>
-{/if}
-
-{#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-palette"></i>
-      Select Trim:
-    </h2>
-    <div class="flex gap-4">
-      {#each cubeTrims ?? [] as trim}
-        <a
-          class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-          href="/explore/cubes/{trim.slug}"
-        >
-          <img
-            src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(trim.image_url)}`}
-            alt={trim.version_name}
-            loading="lazy"
-            decoding="async"
-            width="192"
-            height="192"
-            class="h-16 object-contain mb-2 rounded"
-          />
-          <span class="font-medium">{trim.version_name}</span>
-        </a>
-      {/each}
-    </div>
-  </div>
-{/if}
-{#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-palette"></i>
-      Related To:
-    </h2>
-    <div class="flex gap-4">
-      <a
-        class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-        href="/explore/cubes/{relatedCube.slug}"
+      is a <span class="font-medium">{cube.type}</span> twisty puzzle
+      {#if cube.release_date}
+        released on
+        <span class="font-medium">{formatDate(cube.release_date)}</span>
+      {/if}. It is
+      <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span
+      >,
+      <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>, and
+      <span class="font-medium"
+        >{isWcaLegal ? "WCA‑legal" : "not WCA‑legal"}</span
+      >. Currently
+      <span class="font-medium"
+        >{isDiscontinued ? "discontinued" : "available"}</span
       >
-        <img
-          src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
-          alt={relatedCube.version_name}
-          loading="lazy"
-          decoding="async"
-          width="192"
-          height="192"
-          class="h-16 object-contain mb-2 rounded"
-        />
-        <span class="font-medium"
-          >{relatedCube.series}
-          {relatedCube.model}</span
+      with a community rating of
+      <span class="font-medium">{(cube.rating ?? 0).toFixed(1)}/5</span>
+      and
+      <span class="font-medium">{isModded ? "modded" : "original"}</span> design.
+    </p>
+  </div>
+
+  <!-- Specs + Features -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Specs -->
+    <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+      <h3 class="text-base font-semibold opacity-70 mb-3">Specifications</h3>
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
-      </a>
+          <dt class="opacity-70">Brand</dt>
+          <dd class="font-medium">{cube.brand}</dd>
+        </div>
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
+          <dt class="opacity-70">Type</dt>
+          <dd class="font-medium">{cube.type}</dd>
+        </div>
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
+          <dt class="opacity-70">Weight</dt>
+          <dd class="font-medium">{cube.weight} g</dd>
+        </div>
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
+          <dt class="opacity-70">Size</dt>
+          <dd class="font-medium">{cube.size} mm</dd>
+        </div>
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
+          <dt class="opacity-70">Surface</dt>
+          <dd class="font-medium">{cube.surface_finish || "—"}</dd>
+        </div>
+        <div
+          class="flex items-center justify-between sm:justify-start sm:gap-3"
+        >
+          <dt class="opacity-70">Version</dt>
+          <dd class="font-medium">
+            {cube.version_type}{cube.version_type !== "Base" &&
+            cube.version_name
+              ? ` · ${cube.version_name}`
+              : ""}
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Features -->
+    <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+      <h3 class="text-base font-semibold opacity-70 mb-3">Features</h3>
+      {#if presentFeatures.length > 0}
+        <div class="flex flex-wrap gap-2">
+          {#each presentFeatures as f}
+            <span class="badge badge-success badge-outline gap-1">
+              <i class={`fa-solid ${f.icon}`}></i>
+              {f.label}
+            </span>
+          {/each}
+          {#if isDiscontinued}
+            <span class="badge badge-error gap-1">
+              <i class="fa-solid fa-ban"></i>
+              Discontinued
+            </span>
+          {/if}
+        </div>
+      {:else}
+        <p class="opacity-70">No special features listed.</p>
+      {/if}
     </div>
   </div>
-{/if}
-{#if sameSeries && sameSeries.length > 0 && sameSeries[0].series !== ""}
-  <div class="mb-8">
-    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-      <i class="fa-solid fa-layer-group"></i>
-      In the Same Series:
-    </h2>
-    <div class="flex flex-wrap gap-4">
-      {#each sameSeries as seriesCube}
-        <a
-          class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300 w-36"
-          href="/explore/cubes/{seriesCube.slug}"
-        >
-          <img
-            src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(seriesCube.image_url)}`}
-            alt={seriesCube.version_name}
-            loading="lazy"
-            decoding="async"
-            width="192"
-            height="192"
-            class="h-24 object-contain mb-2 rounded"
-          />
-          <span class="font-medium text-center">
-            {seriesCube.series}
-            {seriesCube.model}
-          </span>
-        </a>
-      {/each}
+
+  <!-- Database meta -->
+  <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
+    <h3 class="text-base font-semibold opacity-70 mb-3">Database</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-id-badge opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">ID</div>
+          <div class="font-medium">{cube.id}</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-circle-check opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Verified By</div>
+          <a class="font-medium link" href="/user/{verifiedBy?.username}"
+            >{verifiedBy?.display_name || "Unknown"}</a
+          >
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-user opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Submitted By</div>
+          <a class="font-medium link" href="/user/{submittedBy?.username}"
+            >{submittedBy?.display_name || "Unknown"}</a
+          >
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-calendar-plus opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Added</div>
+          <div class="font-medium">
+            {cube.created_at ? formatDate(cube.created_at) : "—"}
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <i class="fa-regular fa-clock opacity-70"></i>
+        <div>
+          <div class="text-xs opacity-70">Last Updated</div>
+          <div class="font-medium">
+            {cube.updated_at ? formatDate(cube.updated_at) : "—"}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-{/if}
+</section>

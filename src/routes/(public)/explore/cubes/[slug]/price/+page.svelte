@@ -3,6 +3,7 @@
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
+  import Tag from "$lib/components/misc/tag.svelte";
 
   // Props / derived (Svelte 5)
   let { data } = $props();
@@ -213,12 +214,7 @@
     >
       <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
       Price history
-      <span
-        class="px-2.5 py-1 text-xs font-semibold rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white select-none"
-        aria-label="Feature status: Beta"
-      >
-        Beta
-      </span>
+      <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
     </h2>
 
     {#if dates.length > 0 && Object.keys(historyByVendor).length > 0}

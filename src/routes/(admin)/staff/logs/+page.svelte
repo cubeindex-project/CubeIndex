@@ -11,7 +11,7 @@
       const { data, error: err } = await supabase
         .from("staff_logs")
         .select("*, staff_id(display_name)")
-        .order("id", { ascending: true })
+        .order("id", { ascending: false })
         .range(start, start + BATCH - 1);
 
       if (err)

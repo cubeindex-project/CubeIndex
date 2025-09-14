@@ -19,9 +19,6 @@
     verified_by_name?: string;
   };
 
-  const { data } = $props();
-  const { profile } = data;
-
   let loading = $state(true);
 
   async function fetch() {
@@ -89,7 +86,7 @@
   let modded: boolean | undefined = $state(undefined);
   let stickered: boolean | undefined = $state(undefined);
   let selectedCubeType: string = $state("All");
-  let selectedCubeStatus: string = $state("All");
+  let selectedCubeStatus: string = $state("Pending");
 
   let searchTerm: string = $state("");
   let currentPage: number = $state(1);
@@ -420,7 +417,7 @@
             {#if paginatedCubes.length > 0}
               {#each paginatedCubes as cube}
                 {#key paginatedCubes}
-                  <StaffCubeCard {cube} {profile} />
+                  <StaffCubeCard {cube} />
                 {/key}
               {/each}
             {:else}

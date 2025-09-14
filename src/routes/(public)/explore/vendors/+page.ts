@@ -16,6 +16,12 @@ export const load = (async ({ setHeaders }) => {
 
   if (csErr) throw error(500, csErr.message);
 
+  const { data: user_cubes, error: ucErr } = await supabase
+    .from("user_cubes")
+    .select("*");
+
+  if (ucErr) throw error(500, ucErr.message);
+
   const sortedVendors = vendors.sort((a, b) => {
     if (a.sponsored && !b.sponsored) return -1;
     if (!a.sponsored && b.sponsored) return 1;
@@ -28,5 +34,5 @@ export const load = (async ({ setHeaders }) => {
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { vendors: sortedVendors, cubesSold };
+  return { vendors: sortedVendors, cubesSold, user_cubes };
 }) satisfies PageLoad;

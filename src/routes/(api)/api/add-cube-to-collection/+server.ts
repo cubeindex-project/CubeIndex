@@ -8,6 +8,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     main,
     condition,
     status,
+    bought_from,
     notes,
     acquired_at,
   }: {
@@ -16,6 +17,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     main: boolean;
     condition: string;
     status: string;
+    bought_from: string;
     notes: string;
     acquired_at: string;
   } = await request.json();
@@ -29,6 +31,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       main,
       condition,
       status,
+      bought_from,
       notes,
       acquired_at: acquired_at ? acquired_at : null,
     });

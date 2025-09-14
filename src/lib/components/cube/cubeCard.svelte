@@ -3,19 +3,40 @@
   import RateCube from "../rating/rateCube.svelte";
   import type { Cube } from "../dbTableTypes";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
+  import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
+  import RateCubeButton from "../misc/rateCubeButton.svelte";
+
+  /**
+   * Cube data for the card. Supports additional optional metadata fields
+   * (e.g., popularity, avg_price, feature flags) that may come from DB views.
+   */
+  type CubeWithMeta = Cube &
+    Partial<{
+      avg_price: number;
+      popularity: number;
+      wca_legal: boolean;
+      magnetic: boolean;
+      smart: boolean;
+      modded: boolean;
+      stickered: boolean;
+    }>;
 
   let {
     cube,
     rate,
     add,
     details,
+    alreadyAdded,
+    userCubeDetail,
   }: {
-    cube: Cube;
+    cube: CubeWithMeta;
     rate: boolean;
     add: boolean;
     details: boolean;
     badges: boolean;
     image: boolean;
+    alreadyAdded: boolean;
+    userCubeDetail: any;
   } = $props();
 
   let openAddCard = $state(false);
@@ -34,33 +55,36 @@
   }
 </script>
 
+{#snippet top()}
+  <div class="flex justify-end">
+    {#if isNewCube(cube.verified_at)}
+      <div
+        class="absolute top-4 right-[-32px] transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
+      >
+        NEW
+      </div>
+    {/if}
+  </div>
+{/snippet}
+
 {#snippet content()}
   <div class="mt-4 flex gap-2">
     {#if add}
-      <button
-        class="btn btn-secondary flex-1 gap-1"
-        type="button"
-        onclick={() => (openAddCard = !openAddCard)}
-        aria-label="Add to Collection"
-      >
-        <i class="fa-solid fa-plus mr-2"></i>
-        Add
-        <span class="hidden sm:block">to Collection</span>
-      </button>
+      <AddToCollectionButton
+        onClick={() => {
+          openAddCard = !openAddCard;
+        }}
+        {alreadyAdded}
+        addClass="flex-1"
+      />
     {/if}
     {#if rate}
-      <button
-        class="btn btn-accent flex-1 gap-1"
-        type="button"
-        onclick={() => {
+      <RateCubeButton
+        onClick={() => {
           openRateCard = !openRateCard;
         }}
-        aria-label="Rate this Cube"
-      >
-        <i class="fa-solid fa-star mr-2"></i>
-        Rate
-        <span class="hidden sm:block">this Cube</span>
-      </button>
+        addClass="flex-1"
+      />
     {/if}
   </div>
 {/snippet}
@@ -78,13 +102,7 @@
   {/if}
 {/snippet}
 
-<CubeCardSkeleton
-  {cube}
-  newRibbon={isNewCube(cube.verified_at)}
-  rating={true}
-  {content}
-  {bottom}
-/>
+<CubeCardSkeleton {cube} rating={true} {top} {content} {bottom} />
 
 {#if openAddCard}
   <AddCube
@@ -92,6 +110,15 @@
       openAddCard = !openAddCard;
     }}
     {cube}
+    {alreadyAdded}
+    defaultData={{
+      quantity: userCubeDetail?.quantity,
+      condition: userCubeDetail?.condition,
+      main: userCubeDetail?.main,
+      status: userCubeDetail?.status,
+      notes: userCubeDetail?.notes,
+      acquired_at: userCubeDetail?.acquired_at,
+    }}
   />
 {/if}
 {#if openRateCard}

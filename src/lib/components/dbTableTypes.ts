@@ -113,6 +113,9 @@ export interface UserCubes {
   /** User-specific status of the cube */
   status: UserCubeStatus;
 
+  /** Shop the user bought the cube from */
+  bought_from: string | null;
+
   /** Optional notes, defaults to empty string */
   notes: string | null;
 
@@ -324,36 +327,33 @@ export interface Cube {
   verified_at: string | null;
 }
 
-export interface Announcement {
-  /** Auto-generated ID */
-  id: number;
+export interface Notifications {
+  /** Auto-generated ID — bigint in DB, kept as string to avoid precision issues */
+  id: string;
 
-  /** Announcement message (unique) */
+  /** Notification message (non-null) */
   message: string;
 
-  /** Optional icon identifier, defaults to empty string */
+  /** Optional icon identifier; from DB: text, null allowed, default '' if not provided */
   icon: string | null;
 
-  /** Purpose of the announcement, defaults to 'info' */
-  purpose: DisclaimerPurpose;
-
-  /** Optional link URL */
+  /** Optional URL link target for the notification */
   link: string | null;
 
-  /** Announcement title */
-  title: string;
+  /** Text to display for the link; from DB: link_text, default '' or null */
+  link_text: string | null;
 
-  /** Text for the link, defaults to empty string */
-  linkText: string | null;
-
-  /** Creation timestamp ISO string, defaults to now() */
+  /** Creation timestamp ISO string; corresponds to timestamptz in DB */
   created_at: string;
 
-  /** Whether the announcement is archived, defaults to false */
-  archived: boolean;
+  /** UUID of the user who published the notification; can be null (if system or anonymous) */
+  published_by_id: string | null;
 
-  /** Username of the publisher, references profiles.username */
-  published_by: string | null;
+  /** UUID of the user for whom this notification is intended; null if broadcast */
+  user_id: string | null;
+
+  /** Whether the notification has been read by the user (non-null, default false) */
+  read: boolean;
 }
 
 export interface Achievements {

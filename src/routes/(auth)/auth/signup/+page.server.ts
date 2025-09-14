@@ -8,6 +8,9 @@ import {
   surveySchema,
 } from "$lib/components/validation/signup";
 import { withFiles } from "sveltekit-superforms";
+import { setError } from "sveltekit-superforms";
+import { TURNSTILE_SECRET_KEY } from "$env/static/private";
+import { validateTurnstileToken } from "$lib/components/helper_functions/validateTurnstileToken";
 
 export const load: PageServerLoad = async ({ url }) => {
   const step = (url.searchParams.get("step") ?? "account") as
@@ -28,6 +31,19 @@ export const actions: Actions = {
   createAccount: async ({ request, locals: { supabase }, url }) => {
     const form = await superValidate(request, zod4(accountSchema));
     if (!form.valid) return fail(400, { accountForm: form });
+
+    const { success } = await validateTurnstileToken(
+      form.data["cf-turnstile-response"],
+      TURNSTILE_SECRET_KEY
+    );
+
+    if (!success) {
+      return setError(
+        form,
+        "cf-turnstile-response",
+        "Invalid turnstile, please try again"
+      );
+    }
 
     const { email, password } = form.data;
 
@@ -112,7 +128,6 @@ export const actions: Actions = {
       avatarUrl = data.publicUrl;
     }
 
-    // Create incremental profile id (kept from your existing approach)
     const { display_name, username } = form.data;
 
     const { error: upsertError } = await supabase
@@ -121,6 +136,7 @@ export const actions: Actions = {
         username,
         display_name,
         profile_picture: avatarUrl,
+        onboarded: true,
       })
       .eq("user_id", user.id);
 

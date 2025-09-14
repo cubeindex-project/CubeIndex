@@ -2,7 +2,8 @@
   let {
     itemsPerPage = $bindable(),
     options = [6, 12, 24, 48, 96],
-    label = "Items per page"
+    label = "Items per page",
+    onchange = () => {},
   }: {
     /** Currently selected number of items shown on each page */
     itemsPerPage: number;
@@ -10,6 +11,7 @@
     options?: number[];
     /** Label displayed next to the selector */
     label?: string;
+    onchange?: () => void;
   } = $props();
 </script>
 
@@ -20,6 +22,7 @@
     bind:value={itemsPerPage}
     class="select"
     style="width:auto"
+    {onchange}
   >
     {#each options as option}
       <option value={option}>{option}</option>

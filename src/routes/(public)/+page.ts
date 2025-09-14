@@ -1,8 +1,11 @@
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import { error } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 
-export const load = (async () => {
+export const load = (async ({ parent }) => {
+  // If already authenticated, send users to their dashboard instead of marketing homepage
+  const { session } = await parent();
+  if (session) throw redirect(302, "/dashboard");
   const [
     { error: err, count: totalCubesConst },
     { error: profilesErr, count: totalUsersConst },

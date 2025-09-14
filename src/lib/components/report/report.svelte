@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getContext } from "svelte";
-  import { blur } from "svelte/transition";
+  import { fade, scale } from "svelte/transition";
 
   let {
     onCancel,
@@ -14,7 +14,8 @@
     reporLabel: string;
   } = $props();
 
-  let isConnected = getContext("user");
+  const userCtx = getContext<any>("user");
+  let isConnected = $derived(Boolean(userCtx?.id ?? userCtx));
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
@@ -50,9 +51,51 @@ Smartphone (please complete the following information):
 Additional context
 Add any other context about the problem here.`;
 
-  async function sendReport() {
+  // a11y: focus handling + esc/Tab
+  let dialogEl: HTMLFormElement | null = null;
+  function onKeydown(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      onCancel?.();
+    }
+    if (e.key === "Tab" && dialogEl) {
+      const focusables = dialogEl.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+      );
+      const list = Array.from(focusables);
+      if (!list.length) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
+  function validate(): string | null {
+    if (!isConnected) return "You must be logged in to perform this action.";
+    if (!title.trim()) return "Please provide a title.";
+    if (!comment.trim()) return "Please provide a comment.";
+    return null;
+  }
+
+  async function sendReport(e: SubmitEvent) {
+    e.preventDefault();
     isSubmitting = true;
     formMessage = "";
+
+    const err = validate();
+    if (err) {
+      formMessage = err;
+      isSubmitting = false;
+      return;
+    }
+
     const payload: {
       title: string;
       reported: string;
@@ -76,12 +119,12 @@ Add any other context about the problem here.`;
       const data = await res.json();
       if (data.success) {
         showSuccess = true;
-        setTimeout(onCancel, 1000);
+        setTimeout(onCancel, 900);
       } else {
-        throw new Error(data.error);
+        throw new Error(data.error || "Unable to send report.");
       }
     } catch (err: any) {
-      formMessage = err.message;
+      formMessage = err.message ?? "Unexpected error. Please try again.";
     } finally {
       isSubmitting = false;
     }
@@ -89,73 +132,107 @@ Add any other context about the problem here.`;
 </script>
 
 <div
-  class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
-  transition:blur
+  class="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm"
+  transition:fade={{ duration: 120 }}
+  onkeydown={onKeydown}
+  role="none"
 >
   <form
-    class="card max-w-lg transform absolute z-50 backdrop-blur-3xl bg-base-100/80 backdrop-opacity-100 flex items-center mx-1"
+    aria-labelledby="report-title"
+    aria-describedby="report-desc"
+    class="card w-full max-w-xl mx-3 shadow-2xl rounded-3xl ring-1 ring-base-300/60 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80"
     onsubmit={sendReport}
+    transition:scale={{ duration: 150, start: 0.95 }}
+    bind:this={dialogEl}
   >
-    <div class="card-body min-w-full">
-      <h2 class="card-title">
-        You are reporting {reporLabel}
-      </h2>
-
-      <div class="mt-4 space-y-4">
-        <label class="flex flex-col">
-          <span class="label-text"
-            >Title <span class="text-red-500">*</span></span
-          >
-          <input bind:value={title} class="input rounded-2xl w-full max-h-50" />
-        </label>
+    <div class="card-body gap-6">
+      <!-- Header -->
+      <div class="flex items-start gap-3">
+        <div class="flex-1">
+          <h2 id="report-title" class="card-title leading-tight">Report</h2>
+          <p id="report-desc" class="text-sm opacity-80">
+            You are reporting {reporLabel}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm rounded-xl"
+          onclick={onCancel}
+          aria-label="Close"
+        >
+          ✕
+        </button>
       </div>
 
-      <!-- Full-width fields -->
-      <div class="mt-4 space-y-4">
-        <label class="flex flex-col">
-          <span class="label-text"
-            >Comment <span class="text-red-500">*</span></span
-          >
+      <!-- Fields -->
+      <div class="space-y-4">
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Title</span>
+            <span class="label-text-alt opacity-70">Required</span>
+          </div>
+          <input
+            bind:value={title}
+            class="input input-bordered rounded-xl w-full"
+            required
+          />
+        </label>
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Comment</span>
+            <span class="label-text-alt opacity-70">Required</span>
+          </div>
           <textarea
             bind:value={comment}
-            class="textarea textarea-bordered rounded-2xl w-full max-h-50"
+            class="textarea textarea-bordered rounded-2xl w-full min-h-28"
+            maxlength="2000"
+            required
           ></textarea>
         </label>
-      </div>
 
-      <div class="mt-4 space-y-4">
-        <label class="flex flex-col">
-          <span class="label-text">Image URL</span>
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Image URL</span>
+            <span class="label-text-alt opacity-70">Optional</span>
+          </div>
           <input
             bind:value={imageUrl}
             type="url"
-            class="input rounded-2xl w-full max-h-50"
+            class="input input-bordered rounded-xl w-full"
+            placeholder="https://example.com/screenshot.png"
           />
         </label>
       </div>
-    </div>
 
-    <div class="flex justify-between w-full">
-      <div class="card-actions p-4">
-        <button
-          class="btn btn-secondary"
-          type="button"
-          onclick={onCancel}
-          disabled={isSubmitting}>Cancel</button
-        >
+      <!-- Status / errors -->
+      <div class="min-h-5 text-sm text-error" aria-live="polite" aria-atomic="true">
+        {formMessage}
+        {#if !isConnected}
+          You must be logged in to perform this action.
+        {/if}
       </div>
 
-      <div class="card-actions p-4">
+      <!-- Footer -->
+      <div class="flex flex-col sm:flex-row gap-2 justify-end">
         <button
-          class="btn btn-primary"
+          class="btn btn-ghost rounded-xl"
+          type="button"
+          onclick={onCancel}
+          disabled={isSubmitting}
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary rounded-xl"
           type="submit"
           disabled={isSubmitting || !isConnected}
         >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
-            Reporting...
+            <span class="ml-2">Reporting...</span>
           {:else if showSuccess}
-            <i class="fa-solid fa-check"></i>
+            <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
             Reported!
           {:else}
             Send Report
@@ -163,14 +240,5 @@ Add any other context about the problem here.`;
         </button>
       </div>
     </div>
-
-    {#if formMessage}
-      <div class="text-error pb-2 flex justify-center">{formMessage}</div>
-    {/if}
-    {#if !isConnected}
-      <p class="text-error pb-2 flex justify-center">
-        You must be logged in to perform this action
-      </p>
-    {/if}
   </form>
 </div>

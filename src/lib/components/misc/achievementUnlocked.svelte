@@ -74,7 +74,7 @@
             const { data, error } = await supabase
               .from("achievements")
               .select()
-              .eq("name", payload.new.achievement)
+              .eq("slug", payload.new.achievement_slug)
               .single();
             if (!error && data) showAchievementOverlay(data as Achievements);
             else console.error("Failed to fetch achievement:", error?.message);

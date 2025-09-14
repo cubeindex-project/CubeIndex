@@ -55,10 +55,7 @@
           <li>
             <a href="/achievements" class="link link-hover">Achievements</a>
           </li>
-          <li>
-            <a href="/notifications" class="link link-hover">Notifications</a>
-          </li>
-          <li><a href="/userbar" class="link link-hover">Userbar</a></li>
+          <li><a href="/report" class="link link-hover">Report</a></li>
           <li><a href="/about" class="link link-hover">About</a></li>
         </ul>
       </div>
@@ -81,7 +78,7 @@
           </li>
           <li>
             <a
-              href="https://github.com/Saterz/cubeindex"
+              href="https://github.com/cubeindex-project/CubeIndex"
               target="_blank"
               rel="noopener noreferrer"
               class="link link-hover">GitHub</a
@@ -93,6 +90,14 @@
               target="_blank"
               rel="noopener noreferrer"
               class="link link-hover">Twitter</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.youtube.com/@cubeindex"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link link-hover">Youtube</a
             >
           </li>
           <li>
@@ -111,22 +116,15 @@
           Legal
         </h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/privacy" class="link link-hover">Privacy Policy</a></li>
-          <li><a href="/report" class="link link-hover">Report</a></li>
           <li><a href="/tos" class="link link-hover">Terms of Service</a></li>
+          <li><a href="/privacy" class="link link-hover">Privacy Policy</a></li>
           <li><a href="/sitemap.xml" class="link link-hover">Sitemap</a></li>
         </ul>
       </div>
     </div>
 
     <div class="my-10 text-center text-xs text-base-content/70">
-      &copy; 2025 - {new Date().getFullYear()} CubeIndex by
-      <a
-        href="https://saterz.dev"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="link">Saterz</a
-      >. All rights reserved.
+      &copy; 2025 - {new Date().getFullYear()} CubeIndex. All rights reserved.
     </div>
   </div>
 

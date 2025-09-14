@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import DOMPurify from "isomorphic-dompurify";
-  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
   import Markdown from "svelte-exmarkdown";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
   import "github-markdown-css/github-markdown.css";

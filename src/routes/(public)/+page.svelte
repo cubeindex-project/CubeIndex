@@ -373,7 +373,7 @@
     eyebrow="Collection"
     title="Add and Manage Your Rubik's Cube Collection"
     description="Catalog your entire puzzle collection. Track conditions and personal notes, then share with friends to showcase and brag!"
-    imageSrc="/images/illus-collection.svg"
+    imageSrc="images/home/personal_collection.webp"
     imageAlt="Illustration of a personal collection dashboard with categorized cubes"
   />
 
@@ -382,7 +382,7 @@
     eyebrow="Pricing"
     title="Compare Prices Between Shops"
     description="Know where to buy. View vendor pricing side-by-side, check availability, and jump straight to the best deal."
-    imageSrc="/images/illus-pricing.svg"
+    imageSrc="images/home/compare_price.webp"
     imageAlt="Illustration showing price comparison cards across multiple stores"
   />
 
@@ -390,7 +390,7 @@
     eyebrow="Ratings"
     title="Rate Cubes"
     description="Share your experience. Leave ratings and feedback so others can find their perfect main — your opinion makes the database better for everybody."
-    imageSrc="/images/illus-rating.svg"
+    imageSrc="images/home/rating.webp"
     imageAlt="Illustration of rating stars and feedback cards"
   />
 
@@ -399,7 +399,7 @@
     eyebrow="Community"
     title="See Other People's Cube Collection"
     description="Discover inspiring collections from across the community."
-    imageSrc="/images/illus-community.svg"
+    imageSrc="images/home/community.webp"
     imageAlt="Illustration of community profiles and shared collections"
   />
 
@@ -407,7 +407,7 @@
     eyebrow="Achievements"
     title="Earn Achievements"
     description="Celebrate milestones as you collect, rate, and explore. Unlock achievements for completing challenges and growing your collection."
-    imageSrc="/images/illus-achievements.svg"
+    imageSrc="images/home/achievements.webp"
     imageAlt="Illustration of achievement badges and progress"
   />
 

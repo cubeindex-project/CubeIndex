@@ -171,43 +171,38 @@
   <title>Achievements - CubeIndex</title>
 </svelte:head>
 
-{#snippet filterSidebar()}
-  <FilterSidebar {showFilters}>
-    <div>
-      <label class="block text-sm mb-1">
-        Rarity:
-        <select
-          bind:value={selectedRarity}
-          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-        >
-          <option>All</option>
-          {#each allRarities as r}
-            <option>{r}</option>
-          {/each}
-        </select>
-      </label>
-    </div>
-    <TriStateCheckbox bind:value={obtainable} label="Obtainable" />
-    <TriStateCheckbox bind:value={hidden} label="Hidden" />
-    <!-- Reset filters button -->
-    <div>
-      <button
-        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-        onclick={resetFilters}
-        type="button"
+{#snippet filterContents()}
+  <div>
+    <label class="block text-sm mb-1">
+      Rarity:
+      <select
+        bind:value={selectedRarity}
+        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
       >
-        <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-        Reset Filters
-      </button>
-    </div>
-  </FilterSidebar>
+        <option>All</option>
+        {#each allRarities as r}
+          <option>{r}</option>
+        {/each}
+      </select>
+    </label>
+  </div>
+  <TriStateCheckbox bind:value={obtainable} label="Obtainable" />
+  <TriStateCheckbox bind:value={hidden} label="Hidden" />
+  <div>
+    <button
+      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
+      onclick={resetFilters}
+      type="button"
+    >
+      <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+      Reset Filters
+    </button>
+  </div>
 {/snippet}
 
 <SsgoiTransition id={page.url.pathname}>
-  <section class="min-h-screen px-6 py-20 md:py-24 flex">
-    <!-- Filters sidebar -->
-    <div class="hidden xl:block">{@render filterSidebar()}</div>
-    <div class="{showFilters ? "xl:ml-24" : "mx-auto"} w-6xl">
+  <section class="min-h-screen px-6 py-20 md:py-24">
+    <div class="max-w-7xl mx-auto">
       <header class="mb-10 text-center">
         <h1
           class="text-3xl md:text-4xl font-clash font-extrabold tracking-tight"
@@ -227,7 +222,9 @@
         placeholderLabel="Search Achievements"
       />
       <div class="flex flex-col lg:flex-row gap-8">
-        <div class="block xl:hidden">{@render filterSidebar()}</div>
+        <FilterSidebar {showFilters}>
+          {@render filterContents()}
+        </FilterSidebar>
 
         <div class="flex-1">
           <!-- Controls: items per page & sorting -->

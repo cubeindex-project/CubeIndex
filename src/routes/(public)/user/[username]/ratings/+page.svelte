@@ -32,16 +32,6 @@
 
   // Derived
   const total = $derived(user_cube_ratings.length);
-  const averageRating = $derived(
-    total > 0
-      ? Math.round(
-          (user_cube_ratings.reduce((s, r) => s + (r.rating ?? 0), 0) / total) * 10
-        ) / 10
-      : 0
-  );
-  const withCommentsCount = $derived(
-    user_cube_ratings.filter((r) => (r.comment ?? "").trim().length > 0).length
-  );
   const allTypes: string[] = $derived(
     Array.from(
       new Set(
@@ -142,30 +132,6 @@
       </div>
     {/if}
   </header>
-
-  <!-- Quick stats -->
-  {#if total > 0}
-    <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div class="stats shadow bg-base-200 border border-base-300">
-        <div class="stat">
-          <div class="stat-title">Total Ratings</div>
-          <div class="stat-value">{total}</div>
-        </div>
-      </div>
-      <div class="stats shadow bg-base-200 border border-base-300">
-        <div class="stat">
-          <div class="stat-title">Average</div>
-          <div class="stat-value text-warning">{averageRating}</div>
-        </div>
-      </div>
-      <div class="stats shadow bg-base-200 border border-base-300">
-        <div class="stat">
-          <div class="stat-title">With Comments</div>
-          <div class="stat-value text-secondary">{withCommentsCount}</div>
-        </div>
-      </div>
-    </div>
-  {/if}
 
   <SearchBar
     showFilter={true}

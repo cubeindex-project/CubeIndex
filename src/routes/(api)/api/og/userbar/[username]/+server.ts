@@ -1,83 +1,99 @@
-import satori from "satori";
+import satori, { type Font } from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { oklch as parseOklch, formatHex } from "culori";
+import { queryDetailedProfiles } from "$lib/queries/detailedProfiles";
+
+const CLASH_FONT_PATH = join(
+  process.cwd(),
+  "static",
+  "fonts",
+  "ClashDisplay-Semibold.ttf",
+);
+const NOTO_SYMBOLS_FONT_PATH = join(
+  process.cwd(),
+  "static",
+  "fonts",
+  "NotoSansSymbols2-Regular.ttf",
+);
+const CLASH_FONT_DATA = readFileSync(CLASH_FONT_PATH);
+const NOTO_SYMBOLS_FONT_DATA = readFileSync(NOTO_SYMBOLS_FONT_PATH);
+
+const USERBAR_WIDTH = 350;
+const USERBAR_HEIGHT = 19;
+
+const toHex = (ok: string) => formatHex(parseOklch(ok));
+const hexToRgb = (hex: string) => {
+  const h = hex.replace("#", "");
+  return {
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16),
+  };
+};
+const rgba = (hex: string, a: number) => {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, a))})`;
+};
+
+const CX = {
+  base100: toHex("oklch(100% 0 0)"),
+  base200: toHex("oklch(98% 0 0)"),
+  base300: toHex("oklch(94% 0 0)"),
+  baseContent: toHex("oklch(21% 0.006 285.885)"),
+  primary: toHex("oklch(48% 0.243 264.376)"),
+  accent: toHex("oklch(77% 0.152 181.912)"),
+  primaryContent: toHex("oklch(93% 0.034 272.788)"),
+  neutral: toHex("oklch(14% 0.005 285.823)"),
+};
+
+const USERBAR_FONTS: Font[] = [
+  {
+    name: "ClashDisplay-Semibold",
+    data: CLASH_FONT_DATA,
+    weight: 600,
+    style: "normal",
+  },
+  {
+    name: "NotoSansSymbols-Regular",
+    data: NOTO_SYMBOLS_FONT_DATA,
+    weight: 400,
+    style: "normal",
+  },
+];
 
 export const GET = async ({ params, locals }) => {
   const username = params.username;
 
-  // Profile
-  const { data: profile, error: pErr } = await locals.supabase
-    .from("v_detailed_profiles")
-    .select("*")
+  const { data: profile, error } = await queryDetailedProfiles(locals.supabase)
     .eq("username", username)
-    .single();
+    .maybeSingle();
 
-  if (pErr) return new Response("Profile not found", { status: 404 });
+  if (error)
+    return new Response(
+      `Unable to load profile: ${error.message}`,
+      { status: 500 },
+    );
 
-  // Fonts
-  const clashFontPath = join(
-    process.cwd(),
-    "static",
-    "fonts",
-    "ClashDisplay-Semibold.ttf"
-  );
-  const notoSymbFontPath = join(
-    process.cwd(),
-    "static",
-    "fonts",
-    "NotoSansSymbols2-Regular.ttf"
-  );
-  const clashFontData = readFileSync(clashFontPath);
-  const notoSymbFontData = readFileSync(notoSymbFontPath);
+  if (!profile) return new Response("Profile not found", { status: 404 });
 
-  // Helpers
-  const toHex = (ok: string) => formatHex(parseOklch(ok));
-  const hexToRgb = (hex: string) => {
-    const h = hex.replace("#", "");
-    return {
-      r: parseInt(h.slice(0, 2), 16),
-      g: parseInt(h.slice(2, 4), 16),
-      b: parseInt(h.slice(4, 6), 16),
-    };
-  };
-  const rgba = (hex: string, a: number) => {
-    const { r, g, b } = hexToRgb(hex);
-    return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, a))})`;
-  };
-
-  // CubeIndex palette
-  const CX = {
-    base100: toHex("oklch(100% 0 0)"),
-    base200: toHex("oklch(98% 0 0)"),
-    base300: toHex("oklch(94% 0 0)"),
-    baseContent: toHex("oklch(21% 0.006 285.885)"),
-    primary: toHex("oklch(48% 0.243 264.376)"), // purple
-    accent: toHex("oklch(77% 0.152 181.912)"), // teal/blue (not used in gradients anymore)
-    primaryContent: toHex("oklch(93% 0.034 272.788)"),
-    neutral: toHex("oklch(14% 0.005 285.823)"),
-  };
-
-  const name = profile?.display_name || profile?.username || "User";
+  const name = profile.display_name || profile.username || "User";
   const metricsText = `${profile.user_cubes_count ?? 0} cubes • ${
     profile.user_achievements_count ?? 0
   } achievements`;
-
-  const width = 350;
-  const height = 19;
 
   const svg = await satori(
     {
       type: "div",
       props: {
         style: {
-          width: `${width}px`,
-          height: `${height}px`,
+          width: `${USERBAR_WIDTH}px`,
+          height: `${USERBAR_HEIGHT}px`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          backgroundColor: CX.base100, // solid background (no gradients)
+          backgroundColor: CX.base100,
           color: CX.baseContent,
           fontFamily:
             "ClashDisplay-Semibold, NotoSansSymbols-Regular, sans-serif",
@@ -87,7 +103,6 @@ export const GET = async ({ params, locals }) => {
           overflow: "hidden",
         },
         children: [
-          // Faint CubeIndex watermark (solid color, no gradients)
           {
             type: "div",
             props: {
@@ -107,8 +122,6 @@ export const GET = async ({ params, locals }) => {
               children: "CubeIndex",
             },
           },
-
-          // LEFT: name
           {
             type: "div",
             props: {
@@ -124,8 +137,6 @@ export const GET = async ({ params, locals }) => {
               children: name,
             },
           },
-
-          // CENTER: metrics
           {
             type: "div",
             props: {
@@ -145,8 +156,6 @@ export const GET = async ({ params, locals }) => {
               children: metricsText,
             },
           },
-
-          // RIGHT: brand pill (solid, no gradient)
           {
             type: "div",
             props: {
@@ -172,27 +181,14 @@ export const GET = async ({ params, locals }) => {
       },
     },
     {
-      width,
-      height,
-      fonts: [
-        {
-          name: "ClashDisplay-Semibold",
-          data: clashFontData,
-          weight: 600,
-          style: "normal",
-        },
-        {
-          name: "NotoSansSymbols-Regular",
-          data: notoSymbFontData,
-          weight: 400,
-          style: "normal",
-        },
-      ],
-    }
+      width: USERBAR_WIDTH,
+      height: USERBAR_HEIGHT,
+      fonts: USERBAR_FONTS,
+    },
   );
 
   const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: width },
+    fitTo: { mode: "width", value: USERBAR_WIDTH },
     background: CX.base100,
   });
   const pngBuffer = resvg.render().asPng();

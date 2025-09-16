@@ -45,15 +45,10 @@
   setContext("user", data.user);
   setContext("session", data.session);
 
-  import { pwaInfo } from "virtual:pwa-info";
   import AchievementUnlocked from "$lib/components/misc/achievementUnlocked.svelte";
-
-  const webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : "";
 </script>
 
 <svelte:head>
-  {@html webManifest}
-
   <script>
     (function () {
       try {
@@ -99,11 +94,6 @@
   </Ssgoi>
 
   <AchievementUnlocked user={data.user} />
-
-  {#await import("$lib/components/misc/reloadPrompt.svelte") then { default: ReloadPrompt }}
-    <ReloadPrompt />
-  {/await}
-
   <Footer />
 
   <BackButton />

@@ -7,9 +7,10 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
+  import type { DetailedProfile } from "$lib/queries/detailedProfiles";
 
-  const { data } = $props();
-  const { profiles } = data;
+  const { data } = $props<{ data: { profiles: DetailedProfile[] } }>();
+  const profiles: DetailedProfile[] = data.profiles;
 
   let searchTerm: string = $state(""); // Text input for search bar
 

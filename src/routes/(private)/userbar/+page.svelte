@@ -13,6 +13,13 @@
   // Use a relative URL so SSR doesn't need window.origin
   const origin = page.url.origin;
   const directUrl = `${origin}/api/og/userbar/${encodeURIComponent(username)}`;
+  let cacheBust = $state(0);
+  let bustSeed = 0;
+  const previewUrl = $derived(
+    cacheBust ? `${directUrl}?v=${cacheBust}` : directUrl,
+  );
+  let previewLoaded = $state(false);
+  let previewError = $state(false);
 
   // Embedding snippets
   const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${displayName}&apos;s CubeIndex profile")`;
@@ -21,6 +28,23 @@
 
   let copied = $state<null | string>(null);
   let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">("Markdown");
+
+  function handleLoad() {
+    previewLoaded = true;
+    previewError = false;
+  }
+
+  function handleError() {
+    previewLoaded = false;
+    previewError = true;
+  }
+
+  function refreshPreview() {
+    previewLoaded = false;
+    previewError = false;
+    bustSeed += 1;
+    cacheBust = Date.now() + bustSeed;
+  }
 
   async function copy(text: string, label: string) {
     try {
@@ -35,13 +59,17 @@
 
   function download() {
     const a = document.createElement("a");
-    a.href = directUrl;
+    a.href = previewUrl;
     a.download = `cubeindex-userbar-${username}.png`;
     document.body.appendChild(a);
     a.click();
     a.remove();
   }
 </script>
+
+<svelte:head>
+  <link rel="preload" as="image" href={previewUrl} />
+</svelte:head>
 
 <div class="mx-auto max-w-5xl px-4 py-8 min-h-screen">
   <header class="mb-6">
@@ -72,28 +100,76 @@
         background-position: 0 0, 0 6px, 6px -6px, -6px 0px;
       "
     >
-      <a href={'/user/' + username}>
-        <img
-          src={directUrl}
-          alt={`${displayName} - CubeIndex userbar`}
-          width={350}
-          height={19}
-          class="block rounded"
-          loading="eager"
-          decoding="sync"
-        />
-      </a>
+      <div class="relative inline-flex overflow-hidden rounded">
+        <div
+          class={`absolute inset-0 rounded transition-opacity duration-200 ${
+            previewLoaded
+              ? "opacity-0 pointer-events-none"
+              : "opacity-100"
+          }`}
+          role="status"
+          aria-live={previewError ? "assertive" : "polite"}
+        >
+          {#if previewError}
+            <div
+              class="pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-2 rounded border border-error/40 bg-error/10 px-3 text-center text-xs text-error"
+            >
+              <span class="font-semibold">Preview failed</span>
+              <button
+                type="button"
+                class="btn btn-xs btn-outline btn-error"
+                onclick={refreshPreview}
+              >
+                Try again
+              </button>
+            </div>
+          {:else}
+            <div
+              class="pointer-events-none flex h-full w-full items-center justify-center gap-2 rounded border border-base-300/70 bg-base-200/70 px-3 text-xs text-base-content/70 motion-safe:animate-pulse"
+            >
+              <span
+                class="loading loading-dots loading-xs text-primary"
+                aria-hidden="true"
+              ></span>
+              <span>Generating preview…</span>
+            </div>
+          {/if}
+        </div>
+        <a href={'/user/' + username} class="block" aria-busy={!previewLoaded}>
+          <img
+            src={previewUrl}
+            alt={`${displayName} - CubeIndex userbar`}
+            width={350}
+            height={19}
+            class={`block rounded transition-opacity duration-200 ${
+              previewLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            onload={handleLoad}
+            onerror={handleError}
+          />
+        </a>
+      </div>
     </div>
 
     <div class="mt-3 flex items-center gap-3 text-sm">
       <a
-        href={directUrl}
+        href={previewUrl}
         target="_blank"
         rel="noopener"
         class="link link-primary break-all"
       >
         Open image
       </a>
+      <button
+        class="btn btn-sm btn-outline"
+        onclick={refreshPreview}
+        type="button"
+      >
+        Refresh preview
+      </button>
       <button class="btn btn-sm btn-primary" onclick={download}>
         Download PNG
       </button>

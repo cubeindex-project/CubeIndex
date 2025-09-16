@@ -32,6 +32,38 @@
 **Live:** [cubeindex.netlify.app](https://cubeindex.netlify.app)  
 **Beta:** [cubeindexbeta.netlify.app](https://cubeindexbeta.netlify.app)
 
+<p align="center">
+  <img src="static\images\CubeIndex-Pixel-Art.png" alt="CubeIndex Logo" width="160" />
+</p>
+
+<p align="center">
+  <strong>Track your cubes, unlock achievements, and explore the world's largest cube database.</strong><br/>
+</p>
+
+<p align="center">
+   <a href="https://thecubeindex.com/discord"><img src="https://img.shields.io/discord/1360562604535447732?logo=discord&label=Discord" /></a>
+  <a href="https://github.com/cubeindex-project/CubeIndex/stargazers"><img src="https://img.shields.io/github/stars/cubeindex-project/CubeIndex" /></a>
+  <a href="https://github.com/cubeindex-project/CubeIndex/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green" /></a>
+</p>
+
+<details>
+<summary>📸 See Screenshots</summary>
+<br/>
+<div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+  <img src="static/images/readme/cubeindex_home.png" alt="Home" style="max-width:48%;height:auto;border-radius:8px;" />
+  <img src="static/images/readme/cubeindex_collection.png" alt="Collection" style="max-width:48%;height:auto;border-radius:8px;" />
+  <img src="static/images/readme/cubeindex_price_tracking.png" alt="Price Tracking" style="max-width:48%;height:auto;border-radius:8px;" />
+</div>
+</details>
+
+---
+
+### 🚀 Tech & Deploy
+
+**Built with:** SvelteKit · Tailwind · Supabase · TypeScript  
+**Live:** [cubeindex.netlify.app](https://cubeindex.netlify.app)  
+**Beta:** [cubeindexbeta.netlify.app](https://cubeindexbeta.netlify.app)
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
 
 ---

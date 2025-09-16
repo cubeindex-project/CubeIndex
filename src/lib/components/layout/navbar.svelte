@@ -1,15 +1,10 @@
 <script lang="ts">
-<<<<<<< HEAD
   import { onMount } from "svelte";
-=======
-  import { getContext, onMount } from "svelte";
->>>>>>> main
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
-<<<<<<< HEAD
   import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   let { profile } = $props();
@@ -17,11 +12,6 @@
   const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
   const isBetaDeployment = deploymentChannel === "beta";
 
-=======
-
-  let { profile } = $props();
-
->>>>>>> main
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
 
@@ -209,16 +199,12 @@
         height="12"
         fetchpriority="high"
       />
-<<<<<<< HEAD
       <span class="font-clash text-3xl font-bold inline-flex items-center gap-2">
         CubeIndex
         {#if isBetaDeployment}
           <span class="badge badge-sm badge-error uppercase tracking-wide">Beta</span>
         {/if}
       </span>
-=======
-      <span class="font-clash text-3xl font-bold">CubeIndex</span>
->>>>>>> main
     </a>
 
     <!-- Desktop Nav -->

@@ -54,8 +54,8 @@ npm run dev
 - `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY`: Frontend Supabase access
 - `DATABASE_URL`: Postgres connection (server-side)
 - `PUBLIC_SITE_URL`: Absolute base URL
+- `PUBLIC_DEPLOYMENT_CHANNEL`: Build-time deployment channel (`production` or `beta`) toggles the Beta UI label
 - `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_WEBSITE_ID`: Analytics (optional)
-- `PUBLIC_KOFI_URL`: Ko‑fi support link displayed at `/pricing` (Support)
 
 ---
 

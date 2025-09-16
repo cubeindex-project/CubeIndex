@@ -12,6 +12,7 @@
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
+  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   const config = {
     defaultTransition: blur(),
@@ -24,6 +25,10 @@
       },
     ],
   };
+
+  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
+  const isBetaDeployment = deploymentChannel === "beta";
+  const siteTitle = isBetaDeployment ? "CubeIndex Beta" : "CubeIndex";
 
   let { data, children } = $props();
 
@@ -49,6 +54,7 @@
 </script>
 
 <svelte:head>
+  <title>{siteTitle}</title>
   <script>
     (function () {
       try {

@@ -1,6 +1,5 @@
 <script lang="ts">
-import { PUBLIC_KOFI_URL } from "$env/static/public";
-  const kofiUrl = PUBLIC_KOFI_URL || "https://ko-fi.com/";
+  const kofiUrl = "https://ko-fi.com/thecubeindex";
   const displayUrl = (u: string) => u.replace(/^https?:\/\//, "");
 </script>
 
@@ -12,7 +11,7 @@ import { PUBLIC_KOFI_URL } from "$env/static/public";
   />
 </svelte:head>
 
-<section class="relative">
+<section class="relative min-h-screen flex items-center justify-center">
   <div
     class="absolute inset-0 -z-10 bg-gradient-to-b from-primary/5 to-transparent"
   ></div>

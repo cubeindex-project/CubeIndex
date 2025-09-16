@@ -19,15 +19,6 @@
   const user_cube_ratings: any[] = $derived(data.user_cube_ratings ?? []);
 
   const total = $derived(user_cubes.length);
-  const ownedCount = $derived(
-    user_cubes.filter((uc) => (uc.status ?? "").toLowerCase() === "owned").length
-  );
-  const wishlistCount = $derived(
-    user_cubes.filter((uc) => (uc.status ?? "").toLowerCase() === "wishlist").length
-  );
-  const uniqueTypesCount = $derived(
-    new Set(user_cubes.map((c) => c.cube_model?.type).filter(Boolean)).size
-  );
 
   // Filtering and pagination
   let searchTerm: string = $state("");
@@ -168,28 +159,6 @@
       </div>
     {/if}
   </header>
-
-  <!-- Quick stats -->
-  <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-    <div class="stats shadow bg-base-200 border border-base-300">
-      <div class="stat">
-        <div class="stat-title">Owned</div>
-        <div class="stat-value text-primary">{ownedCount}</div>
-      </div>
-    </div>
-    <div class="stats shadow bg-base-200 border border-base-300">
-      <div class="stat">
-        <div class="stat-title">Wishlist</div>
-        <div class="stat-value text-secondary">{wishlistCount}</div>
-      </div>
-    </div>
-    <div class="stats shadow bg-base-200 border border-base-300">
-      <div class="stat">
-        <div class="stat-title">Unique Types</div>
-        <div class="stat-value">{uniqueTypesCount}</div>
-      </div>
-    </div>
-  </div>
 
   <SearchBar
     showFilter={true}

@@ -2,7 +2,6 @@
   import type { PageData } from "./$types";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
-  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
@@ -11,7 +10,6 @@
 
   // Search, filters, sort, pagination
   let searchTerm: string = $state("");
-  let showFilters = $state(false);
   let selectedRarity: string = $state("All");
   let onlyWithDescription: boolean = $state(false);
 
@@ -29,16 +27,6 @@
 
   // Derived
   const total = $derived(user_achievements.length);
-  const rarities: string[] = $derived(
-    Array.from(new Set(user_achievements.map((a) => a.rarity).filter(Boolean))).sort()
-  );
-  const uniqueRaritiesCount = $derived(rarities.length);
-  const lastEarned = $derived(
-    user_achievements
-      .map((a) => a.created_at)
-      .filter(Boolean)
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0]
-  );
 
   // Centralized rarity styles → maintainable & consistent
   type RarityKey =
@@ -172,26 +160,6 @@
       </div>
     {/if}
   </header>
-
-  <!-- Quick stats -->
-  {#if total > 0}
-    <div class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div class="stats shadow bg-base-200 border border-base-300">
-        <div class="stat">
-          <div class="stat-title">Total</div>
-          <div class="stat-value">{total}</div>
-        </div>
-      </div>
-      <div class="stats shadow bg-base-200 border border-base-300">
-        <div class="stat">
-          <div class="stat-title">Last Earned</div>
-          <div class="stat-value text-warning text-lg">
-            {lastEarned ? formatDate(lastEarned) : '—'}
-          </div>
-        </div>
-      </div>
-    </div>
-  {/if}
 
   <SearchBar
     showFilter={false}

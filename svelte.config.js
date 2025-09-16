@@ -7,7 +7,7 @@ const config = {
 		adapter: adapter(),
 		// Use absolute paths for build artifacts to avoid resolving under
 		// the current route (e.g. "/auth/_app") when a non-root page is served
-		// by the service worker or a static host
+		// by a static host
 		paths: { relative: false }
 	}
 };

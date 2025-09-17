@@ -1,0 +1,32 @@
+name: Merge main into developer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure bot identity
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Update local refs
+        run: git fetch origin main developer
+
+      - name: Create merge commit and push
+        run: |
+          git checkout -B developer origin/developer
+          git merge --no-edit origin/main || true
+          # If there are conflicts, the step will fail; remove "|| true" to enforce failure
+          git push origin HEAD:developer

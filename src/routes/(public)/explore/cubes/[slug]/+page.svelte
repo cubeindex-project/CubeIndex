@@ -1,6 +1,8 @@
 <script lang="ts">
-  import type { Cube } from "$lib/components/dbTableTypes.js";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+	import { getContext } from "svelte";
+	import type { Cube } from "$lib/components/dbTableTypes.js";
+	import { CUBE_REPORT_CONTEXT_KEY } from "$lib/contextKeys";
+	import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   let { data } = $props();
   let {
@@ -37,6 +39,106 @@
   const presentFeatures = $derived.by(() =>
     allFeatureBadges.filter((b) => feats.has(b.key))
   );
+
+	const openReportModal = getContext<(() => void) | undefined>(
+		CUBE_REPORT_CONTEXT_KEY
+	);
+
+	/**
+	 * Determine whether the provided cube value should be treated as missing data.
+	 */
+	function isMissing(value: unknown): boolean {
+		if (value === null || value === undefined) return true;
+		if (typeof value === "number") return Number.isNaN(value) || value <= 0;
+		if (typeof value === "string") return value.trim().length === 0;
+		return false;
+	}
+
+	interface SpecificationRow {
+		readonly label: string;
+		readonly missing: boolean;
+		readonly displayValue: string;
+	}
+
+	interface BuildRowOptions {
+		readonly suffix?: string;
+		readonly fallback?: string;
+		readonly formatter?: (value: string | number) => string;
+	}
+
+	function toSpecificationRow(
+		label: string,
+		value: string | number | null | undefined,
+		options: BuildRowOptions = {}
+	): SpecificationRow {
+		const fallback = options.fallback ?? "Missing data";
+		const missing = isMissing(value);
+		if (missing)
+			return {
+				label,
+				missing: true,
+				displayValue: fallback,
+			};
+
+		const formatted =
+			options.formatter?.(value as string | number) ??
+			(typeof value === "number"
+				? `${value}${options.suffix ? ` ${options.suffix}` : ""}`
+				: String(value));
+
+		return {
+			label,
+			missing: false,
+			displayValue: formatted,
+		};
+	}
+
+	const specificationItems = $derived.by<SpecificationRow[]>(() => {
+		const rows: SpecificationRow[] = [
+			toSpecificationRow("Brand", cube.brand),
+			toSpecificationRow("Type", cube.type),
+			toSpecificationRow("Weight", cube.weight, { suffix: "g" }),
+			toSpecificationRow("Size", cube.size, { suffix: "mm" }),
+			toSpecificationRow("Surface", cube.surface_finish, {
+				fallback: "Not provided",
+			}),
+		];
+
+		rows.push(
+			toSpecificationRow("Version", cube.version_type, {
+				formatter: () =>
+					cube.version_type !== "Base" && cube.version_name
+						? `${cube.version_type} · ${cube.version_name}`
+						: cube.version_type,
+			})
+		);
+
+		return rows;
+	});
+
+	const missingSpecificationLabels = $derived.by(() =>
+		specificationItems.filter((item) => item.missing).map((item) => item.label)
+	);
+
+	const missingDataLabels = $derived.by(() => {
+		const labels = new Set<string>(missingSpecificationLabels);
+		if (isMissing(cube.release_date)) labels.add("Release Date");
+		return [...labels];
+	});
+
+	function requestMissingDataContribution(): void {
+		if (openReportModal) {
+			openReportModal();
+			return;
+		}
+
+		if (typeof window !== "undefined") {
+			const url = new URL("/report", window.location.origin);
+			url.searchParams.set("reported", cube.slug);
+			url.searchParams.set("type", "cube");
+			window.location.href = url.toString();
+		}
+	}
 </script>
 
 <svelte:head>
@@ -80,7 +182,13 @@
       {#if cube.release_date}
         released on
         <span class="font-medium">{formatDate(cube.release_date)}</span>
-      {/if}. It is
+      {:else}
+			released on
+			<span class="badge badge-warning badge-outline gap-2 align-middle text-xs">
+				<i class="fa-regular fa-circle-question"></i>
+				Date unknown
+			</span>
+		{/if}. It is
       <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span
       >,
       <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>, and
@@ -102,49 +210,23 @@
     <!-- Specs -->
     <div class="bg-base-200 rounded-2xl p-5 border border-base-300">
       <h3 class="text-base font-semibold opacity-70 mb-3">Specifications</h3>
-      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Brand</dt>
-          <dd class="font-medium">{cube.brand}</dd>
-        </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Type</dt>
-          <dd class="font-medium">{cube.type}</dd>
-        </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Weight</dt>
-          <dd class="font-medium">{cube.weight} g</dd>
-        </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Size</dt>
-          <dd class="font-medium">{cube.size} mm</dd>
-        </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Surface</dt>
-          <dd class="font-medium">{cube.surface_finish || "—"}</dd>
-        </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Version</dt>
-          <dd class="font-medium">
-            {cube.version_type}{cube.version_type !== "Base" &&
-            cube.version_name
-              ? ` · ${cube.version_name}`
-              : ""}
-          </dd>
-        </div>
-      </dl>
+		<dl class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+			{#each specificationItems as spec}
+				<div class="flex items-center justify-between sm:justify-start sm:gap-3">
+					<dt class="opacity-70">{spec.label}</dt>
+					<dd class="font-medium">
+						{#if spec.missing}
+							<span class="badge badge-warning badge-outline gap-2 text-xs">
+								<i class="fa-regular fa-circle-question"></i>
+								Missing data
+							</span>
+						{:else}
+							{spec.displayValue}
+						{/if}
+					</dd>
+				</div>
+			{/each}
+		</dl>
     </div>
 
     <!-- Features -->
@@ -170,6 +252,39 @@
       {/if}
     </div>
   </div>
+
+  {#if missingDataLabels.length > 0}
+		<div
+			class="bg-warning/10 border border-warning/30 rounded-2xl p-5 flex flex-col gap-4"
+			aria-live="polite"
+		>
+			<div class="flex items-start gap-4">
+				<span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-warning/20 text-warning">
+					<i class="fa-regular fa-circle-question text-lg"></i>
+				</span>
+				<div class="space-y-1">
+					<h3 class="text-lg font-semibold text-warning">Help complete this cube</h3>
+					<p class="text-sm opacity-80">
+						We&rsquo;re missing a few details for this cube. If you know the accurate values,
+						please report them so everyone can benefit.
+					</p>
+				</div>
+			</div>
+			<div class="flex flex-wrap gap-2">
+				{#each missingDataLabels as label}
+					<span class="badge badge-warning badge-outline">{label}</span>
+				{/each}
+			</div>
+			<button
+				type="button"
+				class="btn btn-warning btn-sm w-fit"
+				onclick={requestMissingDataContribution}
+			>
+				<i class="fa-regular fa-paper-plane mr-2"></i>
+				Report missing data
+			</button>
+		</div>
+	{/if}
 
   <!-- Database meta -->
   <div class="bg-base-200 rounded-2xl p-5 border border-base-300">

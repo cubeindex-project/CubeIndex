@@ -1,32 +1,58 @@
-name: Merge main into developer
+name: PR sync main → developer
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  merge:
+  pr-sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
 
-      - name: Configure bot identity
+      - name: Fetch refs & detect drift
+        shell: bash
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          set -euo pipefail
+          git fetch origin main developer --prune
+          # Count how far developer is behind main (left number)
+          read BEHIND AHEAD <<<"$(git rev-list --left-right --count origin/developer...origin/main)"
+          echo "developer is behind main by $BEHIND and ahead by $AHEAD"
+          if [ "$BEHIND" -eq 0 ]; then
+            echo "NO_SYNC=1" >> $GITHUB_ENV
+          fi
 
-      - name: Update local refs
-        run: git fetch origin main developer
-
-      - name: Create merge commit and push
+      - name: Open PR main → developer and enable auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          git checkout -B developer origin/developer
-          git merge --no-edit origin/main || true
-          # If there are conflicts, the step will fail; remove "|| true" to enforce failure
-          git push origin HEAD:developer
+          set -euo pipefail
+
+          # Reuse existing open PR if present
+          PR_NUMBER="$(gh pr list --base developer --head main --state open --json number -q '.[0].number' || true)"
+          if [ -z "${PR_NUMBER:-}" ]; then
+            PR_NUMBER="$(gh pr create \
+              --base developer \
+              --head main \
+              --title "chore(sync): main → developer" \
+              --body "Automated PR to keep \`developer\` up to date with \`main\`." \
+              --json number -q .number)"
+            echo "Opened PR #$PR_NUMBER"
+          else
+            echo "PR #$PR_NUMBER already open"
+          fi
+
+          # Try to enable auto-merge using whatever method your rules allow.
+          # If merge commits are blocked, it falls back to rebase, then squash.
+          gh pr merge "$PR_NUMBER" --auto --merge  || \
+          gh pr merge "$PR_NUMBER" --auto --rebase || \
+          gh pr merge "$PR_NUMBER" --auto --squash || true
+
+          echo "Auto-merge enabled (or queued) for PR #$PR_NUMBER if repository allows it."

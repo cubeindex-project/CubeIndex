@@ -28,6 +28,14 @@ jobs:
             echo "NO_SYNC=1" >> $GITHUB_ENV
           fi
 
+      - name: Install latest GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl
+          curl -sSL https://github.com/cli/cli/releases/latest/download/gh_${{ runner.os == 'Linux' && 'linux' || 'darwin' }}_amd64.tar.gz | tar xz
+          sudo cp gh_*_amd64/bin/gh /usr/local/bin/gh
+          gh --version
+
       - name: Open PR main → developer and enable auto-merge
         env:
           GH_TOKEN: ${{ github.token }}

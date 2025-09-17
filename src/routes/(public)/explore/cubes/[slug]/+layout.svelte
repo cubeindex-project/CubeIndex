@@ -1,15 +1,17 @@
 <script lang="ts">
   import type { LayoutProps } from "./$types";
-  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
-  import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
-  import RateCubeButton from "$lib/components/misc/rateCubeButton.svelte";
-  import ShareButton from "$lib/components/misc/shareButton.svelte";
-  import { page } from "$app/state";
-  import Report from "$lib/components/report/report.svelte";
-  import AddCube from "$lib/components/cube/addCube.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import RateCube from "$lib/components/rating/rateCube.svelte";
-  import StarRating from "$lib/components/rating/starRating.svelte";
+  import { setContext } from "svelte";
+	import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
+	import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
+	import RateCubeButton from "$lib/components/misc/rateCubeButton.svelte";
+	import ShareButton from "$lib/components/misc/shareButton.svelte";
+	import { CUBE_REPORT_CONTEXT_KEY } from "$lib/contextKeys";
+	import { page } from "$app/state";
+	import Report from "$lib/components/report/report.svelte";
+	import AddCube from "$lib/components/cube/addCube.svelte";
+	import { SsgoiTransition } from "@ssgoi/svelte";
+	import RateCube from "$lib/components/rating/rateCube.svelte";
+	import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
   let { cube, user, meta, sameSeries, relatedCube, cubeTrims, features } =
@@ -29,6 +31,12 @@
   function toggleOpenReport() {
     openReport = !openReport;
   }
+
+	function openReportModal() {
+		openReport = true;
+	}
+
+	setContext(CUBE_REPORT_CONTEXT_KEY, openReportModal);
 
   // Derive the active tab from the URL so it stays in sync on navigation
   const currentTab = $derived.by(() => {
@@ -382,7 +390,7 @@
 
 {#if openReport}
   <Report
-    onCancel={() => (openReport = !openReport)}
+    onCancel={() => (openReport = false)}
     reportType="cube"
     reported={cube.slug}
     reporLabel="the {cube.series} {cube.model} {cube.version_name}"

@@ -5,6 +5,7 @@ import { error } from "@sveltejs/kit";
 
 export const load = (async ({ setHeaders }) => {
   const { data, error: err } = await queryDetailedProfiles(supabase)
+    .eq("onboarded", true)
     .order("id", { ascending: true });
 
   if (err) throw error(500, err.message);

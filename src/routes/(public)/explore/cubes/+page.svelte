@@ -167,7 +167,7 @@
         ($params.stick === undefined || c.stickered === $params.stick) &&
         ($params.smart === undefined || c.smart === $params.smart) &&
         // Text search on combined name
-        c.name.includes($params.q.toLowerCase())
+        c.name.toLowerCase().trim().includes($params.q.toLowerCase())
     );
   });
 

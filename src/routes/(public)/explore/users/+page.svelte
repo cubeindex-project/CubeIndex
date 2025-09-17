@@ -9,7 +9,7 @@
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import type { DetailedProfile } from "$lib/queries/detailedProfiles";
 
-  const { data } = $props<{ data: { profiles: DetailedProfile[] } }>();
+  const { data } = $props();
   const profiles: DetailedProfile[] = data.profiles;
 
   let searchTerm: string = $state(""); // Text input for search bar

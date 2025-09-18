@@ -50,6 +50,7 @@ export type AccessoriesCategories =
   | "Charging pod"
   | "Bag"
   | "Stand";
+export type PriceAlertChannel = "in_app" | "email";
 
 export interface UserFollowsRow {
   /** BIGINT identity (not the primary key). Represented as string for 64‑bit safety. */
@@ -354,6 +355,67 @@ export interface Notifications {
 
   /** Whether the notification has been read by the user (non-null, default false) */
   read: boolean;
+}
+
+export interface CubePriceAlertSubscriptions {
+  /** UUID primary key */
+  id: string;
+
+  /** Timestamp when the subscription was created */
+  created_at: string;
+
+  /** Timestamp when the subscription was last updated */
+  updated_at: string;
+
+  /** UUID of the user who owns the subscription */
+  user_id: string;
+
+  /** Slug of the cube the alert monitors */
+  cube_slug: string;
+
+  /** Desired trigger price (numeric(10,2) in DB) */
+  desired_price: number;
+
+  /** Delivery channel for the alert */
+  channel: PriceAlertChannel;
+
+  /** Whether the subscription is active */
+  active: boolean;
+
+  /** Timestamp when the alert last fired, if ever */
+  last_notified_at: string | null;
+}
+
+export interface CubePriceAlertEmailQueue {
+  /** UUID primary key */
+  id: string;
+
+  /** When the email job was enqueued */
+  created_at: string;
+
+  /** When the email job was processed */
+  processed_at: string | null;
+
+  /** Related alert subscription */
+  subscription_id: string;
+
+  /** Target user for the email */
+  user_id: string;
+
+  /** Cube slug the alert references */
+  cube_slug: string;
+
+  /** Vendor where the price condition was met */
+  vendor_name: string | null;
+
+  /** Price used when scheduling the email */
+  price: number | null;
+
+  /** Timestamp of the snapshot that triggered the alert */
+  snapshot_at: string;
+
+  /** Structured payload for downstream email workers */
+  payload: Record<string, unknown>;
 }
 
 export interface Achievements {

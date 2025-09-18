@@ -1,5 +1,5 @@
 import { json } from "@sveltejs/kit";
-import type { RequestHandler } from "../$types";
+import type { RequestHandler } from "./$types";
 
 interface BodySingle {
   id: string;
@@ -31,9 +31,7 @@ export const POST: RequestHandler = async ({
   const raw = Array.isArray(body.ids) ? body.ids : body.id ? [body.id] : [];
 
   // Validate: keep only non-empty strings
-  const ids = raw.filter(
-    (v) => typeof v === "number"
-  );
+  const ids = raw.filter((v) => typeof v === "string" && v.trim().length > 0);
 
   if (ids.length === 0) {
     return json(

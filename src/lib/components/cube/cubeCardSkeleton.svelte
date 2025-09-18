@@ -25,6 +25,7 @@
     top?: Snippet<[]>;
     content: Snippet<[]>;
     bottom?: Snippet<[]>;
+    newRibbon?: boolean;
   }
 
   let { cube, top, rating, content, bottom }: Props = $props();

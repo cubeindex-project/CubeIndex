@@ -1,4 +1,4 @@
-import type PostgrestFilterBuilder from "@supabase/postgrest-js";
+import type { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { UsersRoles } from "$lib/components/dbTableTypes";
 
@@ -31,11 +31,11 @@ export const DETAILED_PROFILE_COLUMNS = [
 /**
  * Shape returned by the `v_detailed_profiles` view.
  */
-export interface DetailedProfile {
-	id: number;
-	created_at: string;
-	user_id: string;
-	username: string;
+export type DetailedProfile = Record<string, unknown> & {
+        id: number;
+        created_at: string;
+        user_id: string;
+        username: string;
 	private: boolean;
 	profile_picture: string | null;
 	bio: string | null;
@@ -50,9 +50,9 @@ export interface DetailedProfile {
 	user_achievements_count: number;
 	user_following_count: number;
 	user_follower_count: number;
-	user_cube_ratings_count: number;
-	user_avg_rating_count: number;
-}
+        user_cube_ratings_count: number;
+        user_avg_rating_count: number;
+};
 
 /**
  * Builds a reusable `v_detailed_profiles` query with a consistent column list.

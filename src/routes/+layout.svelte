@@ -100,7 +100,9 @@
   </Ssgoi>
 
   <AchievementUnlocked user={data.user} />
-  <Footer />
+  <div class="hidden md:block">
+    <Footer />
+  </div>
 
   <BackButton />
   <ScrollToTop />

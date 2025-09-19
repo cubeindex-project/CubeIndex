@@ -10,14 +10,22 @@
     onCancel,
     cube_id,
     cube_name,
+    existingNote = "",
   }: {
-    reason: "Accept" | "Reject";
+    reason: "Accept" | "Reject" | "Edit";
     onCancel: () => void;
     cube_id: number;
     cube_name: string;
+    existingNote?: string;
   } = $props();
 
-  let note: string = $state("");
+  const presetReasons = new Set([
+    "Not a twisty puzzle",
+    "Already in the database",
+    "Not a valid trim",
+  ]);
+
+  let note: string = $state("Not a twisty puzzle");
   let otherNote: string = $state("");
   let isSubmitting: boolean = $state(false);
   let showSuccess: boolean = $state(false);
@@ -28,6 +36,15 @@
   const user = getUser;
 
   onMount(async () => {
+    if (existingNote) {
+      if (presetReasons.has(existingNote)) {
+        note = existingNote;
+      } else {
+        note = "___other";
+        otherNote = existingNote;
+      }
+    }
+
     const { data: profile, error } = await supabase
       .from("profiles")
       .select("username")

@@ -1,9 +1,12 @@
 import type { PageLoad } from "./$types";
-import type { Cube } from "$lib/components/dbTableTypes";
+import type {
+  Cube,
+  CubePriceAlertSubscriptions,
+} from "$lib/components/dbTableTypes";
 import { error } from "@sveltejs/kit";
 
 export const load = (async ({ parent, params }) => {
-  const { supabase } = await parent();
+  const { supabase, user } = await parent();
   const { slug } = params;
 
   const cubePromise = supabase
@@ -89,10 +92,80 @@ export const load = (async ({ parent, params }) => {
       .sort((a, b) => a.date.localeCompare(b.date));
   }
 
+  let subscriptions: CubePriceAlertSubscriptions[] = [];
+  let wishlistCubes: { slug: string; label: string }[] = [];
+  let cubeNameMap: Record<string, string> = {};
+  let isWishlisted = false;
+
+  if (user) {
+    const [subsRes, wishlistRes] = await Promise.all([
+      supabase
+        .from("cube_price_alert_subscriptions")
+        .select("*")
+        .eq("user_id", user.id),
+      supabase
+        .from("user_cubes")
+        .select("cube")
+        .eq("user_id", user.id)
+        .eq("status", "Wishlist"),
+    ]);
+
+    if (subsRes.error) {
+      console.error(
+        `Failed to load price alert subscriptions: ${subsRes.error.message}`,
+      );
+    } else {
+      subscriptions = (subsRes.data ?? []).map((row) => ({
+        ...row,
+        desired_price: Number(row.desired_price),
+      }));
+    }
+
+    const wishlistSlugs = (wishlistRes.data ?? []).map((row) => row.cube);
+    isWishlisted = wishlistSlugs.includes(slug);
+
+    const metaSlugs = Array.from(
+      new Set([
+        slug,
+        ...wishlistSlugs,
+        ...subscriptions.map((sub) => sub.cube_slug),
+      ]),
+    );
+
+    if (metaSlugs.length > 0) {
+      const { data: cubeMeta, error: cubeMetaError } = await supabase
+        .from("cube_models")
+        .select("slug, series, model, version_name")
+        .in("slug", metaSlugs);
+
+      if (cubeMetaError) {
+        console.error(
+          `Failed to load cube names for price alerts: ${cubeMetaError.message}`,
+        );
+      } else {
+        cubeNameMap = Object.fromEntries(
+          (cubeMeta ?? []).map((c) => [
+            c.slug,
+            `${c.series} ${c.model}${c.version_name ? ` ${c.version_name}` : ""}`,
+          ]),
+        );
+      }
+    }
+
+    wishlistCubes = wishlistSlugs.map((slug) => ({
+      slug,
+      label: cubeNameMap[slug] ?? slug,
+    }));
+  }
+
   return {
     cube,
     vendor_links: vendorRes.data ?? [],
     dates: Array.from(dateSet).sort(),
     historyByVendor,
+    subscriptions,
+    wishlistCubes,
+    cubeNameMap,
+    isWishlisted,
   };
 }) satisfies PageLoad;

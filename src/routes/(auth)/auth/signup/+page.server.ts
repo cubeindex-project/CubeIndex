@@ -110,6 +110,7 @@ export const actions: Actions = {
       const { error: upErr } = await supabase.storage
         .from("avatars")
         .upload(path, processed, {
+          upsert: true,
           contentType: "image/webp", // fixed, known good
           cacheControl: "public, max-age=31536000, immutable",
         });

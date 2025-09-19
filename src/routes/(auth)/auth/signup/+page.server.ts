@@ -177,12 +177,15 @@ export const actions: Actions = {
       );
     }
 
+    const metadataDisplayName =
+      user.user_metadata?.full_name?.trim() || undefined;
+
     const payload = {
       email: user.email || "",
       display_name:
         display_name ??
         username ??
-        user.user_metadata.full_name.trim() ??
+        metadataDisplayName ??
         user.email?.split("@")[0] ??
         "User",
     };

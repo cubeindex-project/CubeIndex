@@ -79,11 +79,48 @@
   ];
 
   const tools = [
-    { href: "/staff/cubes", icon: "🧊", label: "Manage Cubes" },
-    { href: "/staff/users", icon: "👤", label: "Manage Users" },
-    { href: "/staff/badges", icon: "🏅", label: "Assign Achievements" },
-    { href: "/staff/reports", icon: "🛠️", label: "View Reports" },
-    { href: "/staff/announcements", icon: "📣", label: "Create Announcement" },
+    {
+      href: "/staff/cubes",
+      icon: "🧊",
+      label: "Manage Cubes",
+      implemented: true,
+    },
+    {
+      href: "/staff/users",
+      icon: "👤",
+      label: "Manage Users",
+      implemented: false,
+    },
+    {
+      href: "/staff/badges",
+      icon: "🏅",
+      label: "Assign Achievements",
+      implemented: false,
+    },
+    {
+      href: "/staff/announcements",
+      icon: "📣",
+      label: "Manage Announcement",
+      implemented: false,
+    },
+    {
+      href: "/staff/reports",
+      icon: "🚩",
+      label: "User Reports",
+      implemented: true,
+    },
+    {
+      href: "/staff/ratings",
+      icon: "⭐",
+      label: "Manage Ratings",
+      implemented: true,
+    },
+    {
+      href: "/staff/logs",
+      icon: "🗃️",
+      label: "Staff Logs",
+      implemented: true,
+    },
   ];
 
   const currentRole = roleData.find((r) => r.role === profile.role);
@@ -102,7 +139,7 @@
         >
       </div>
       <h1
-        class="text-4xl font-black text-primary font-clash drop-shadow mb-2 tracking-tight"
+        class="text-4xl font-black text-primary font-clash mb-2 tracking-tight"
       >
         {profile.role} Control Panel
       </h1>
@@ -150,14 +187,30 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
         {#each tools as tool}
-          <a href={tool.href} class="card bg-base-300">
-            <div class="card-body">
-              <span class="card-title text-2xl mb-2 justify-center"
-                >{tool.icon}</span
-              >
-              <p class="font-bold text-center">{tool.label}</p>
+          {#if tool.implemented}
+            <a href={tool.href} class="card bg-base-300">
+              <div class="card-body">
+                <div class="flex justify-center items-center relative">
+                  <span class="card-title text-2xl mb-2">{tool.icon}</span>
+                </div>
+                <p class="font-bold text-center">{tool.label}</p>
+              </div>
+            </a>
+          {:else}
+            <div class="card bg-base-300">
+              <div class="card-body">
+                <div class="flex justify-center items-center relative">
+                  <span class="card-title text-2xl mb-2">{tool.icon}</span>
+                  <span
+                    class="absolute top-0 right-0 text-xs bg-red-500 text-white px-1 rounded"
+                  >
+                    Soon
+                  </span>
+                </div>
+                <p class="font-bold text-center">{tool.label}</p>
+              </div>
             </div>
-          </a>
+          {/if}
         {/each}
       </div>
     </section>

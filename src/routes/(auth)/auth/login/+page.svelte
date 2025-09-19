@@ -1,14 +1,23 @@
 <script lang="ts">
-  import { configCatClient } from "$lib/configcatClient";
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient.js";
+  import { SsgoiTransition } from "@ssgoi/svelte";
+  import { page } from "$app/state";
+  import { Turnstile } from "svelte-turnstile";
+  import { superForm } from "sveltekit-superforms";
+  import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
 
-  let { form } = $props();
+  const { data } = $props();
+
+  const { form, errors, delayed, enhance, message, isTainted, tainted } =
+    superForm(data.form, {
+      onError({ result }) {
+        $message = result.error.message || "Unknown error";
+      },
+      delayMs: 500,
+      timeoutMs: 8000,
+    });
+
   let showPassword = $state(false);
-  let email = $state("");
-  let password = $state("");
-  let login = $state(true);
   let resetError: string = $state("");
   let resetMessage: string = $state("");
   let isSubmitting = $state(false);
@@ -17,13 +26,16 @@
     e.preventDefault();
     resetError = "";
     resetMessage = "";
-    if (!email) {
+    if (!$form.email) {
       resetError = "Please enter an email";
       return;
     }
-    const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset`,
-    });
+    const { error: err } = await supabase.auth.resetPasswordForEmail(
+      $form.email,
+      {
+        redirectTo: `${window.location.origin}/auth/reset`,
+      }
+    );
 
     if (err) {
       resetError = err.message;
@@ -32,41 +44,34 @@
 
     resetMessage = "Check your email to reset your password";
   }
-
-  onMount(() =>
-    configCatClient.getValueAsync("login", false).then((value) => {
-      login = value;
-    })
-  );
 </script>
 
-{#if login}
-  <section
-    class="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
-  >
+<svelte:head>
+  <title>Login - CubeIndex</title>
+</svelte:head>
+
+<SsgoiTransition id={page.url.pathname}>
+  <section class="min-h-screen flex items-center justify-center px-6 py-10">
     <div
-      class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8 z-10"
+      class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
     >
-      <h1 class="text-3xl font-clash font-bold text-center mb-6">
-        Welcome Back
-      </h1>
-      <p class="text-center text-sm mb-8">Login to your CubeIndex profile</p>
-      <form
-        method="POST"
-        class="space-y-6"
-        onsubmit={() => {
-          isSubmitting = true;
-        }}
-      >
+      <h1 class="text-3xl font-clash font-bold mb-2">Welcome Back</h1>
+      <p class="text-sm mb-8">Log in to your CubeIndex profile</p>
+      <form method="POST" class="space-y-6" use:enhance>
         <div>
           <label for="email" class="block text-sm font-medium">Email</label>
           <input
             name="email"
             type="email"
-            bind:value={email}
+            bind:value={$form.email}
             class="input w-full"
             required
           />
+          {#if $errors.email}
+            <span class="text-error">
+              {$errors.email}
+            </span>
+          {/if}
         </div>
 
         <div>
@@ -76,7 +81,6 @@
           <div class="flex flex-row items-center">
             <input
               name="password"
-              bind:value={password}
               type={showPassword ? "text" : "password"}
               class="input w-full"
             />
@@ -92,6 +96,11 @@
               <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"></i>
             </label>
           </div>
+          {#if $errors.password}
+            <span class="text-error">
+              {$errors.password}
+            </span>
+          {/if}
         </div>
 
         <p class="text-sm text-gray-500 -mt-5">
@@ -99,16 +108,18 @@
           <button
             type="button"
             class="link link-primary link-hover"
-            onclick={resetPassword}>Reset</button
+            onclick={resetPassword}
           >
+            Reset
+          </button>
         </p>
 
         <button
           type="submit"
           class="btn w-full btn-primary btn-lg"
-          disabled={isSubmitting || !email || !password}
+          disabled={isSubmitting || !isTainted($tainted)}
         >
-          {#if isSubmitting}
+          {#if $delayed}
             <span class="loading loading-spinner"></span>
             Logging In...
           {:else}
@@ -121,19 +132,24 @@
             {resetMessage}
           </p>
         {/if}
-        {#if form?.message}
-          <p class="text-sm text-success text-center mt-2">
-            {form.message}
-          </p>
-        {/if}
         {#if resetError}
           <p class="text-sm text-error text-center mt-2">
             {resetError}
           </p>
         {/if}
-        {#if form?.error}
-          <p class="text-sm text-error text-center mt-2">
-            {form.error}
+
+        <div>
+          <Turnstile siteKey={PUBLIC_TURNSTILE_SITE_KEY} size="flexible" />
+          {#if $errors["cf-turnstile-response"]}
+            <span class="text-error">
+              {$errors["cf-turnstile-response"]}
+            </span>
+          {/if}
+        </div>
+
+        {#if $message}
+          <p class="text-error text-sm">
+            {$message}
           </p>
         {/if}
 
@@ -159,6 +175,4 @@
       </p>
     </div>
   </section>
-{:else}
-  <FeatureDisabled featureName="Login is" />
-{/if}
+</SsgoiTransition>

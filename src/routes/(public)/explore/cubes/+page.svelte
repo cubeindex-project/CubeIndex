@@ -1,194 +1,303 @@
 <script lang="ts">
-  import FeatureDisabled from "$lib/components/featureDisabled.svelte";
-  import CubeCard from "$lib/components/cubeCard.svelte";
-  import { writable, derived } from "svelte/store";
-  import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient";
-  import { blur } from "svelte/transition";
-  import type { CubeType } from "$lib/components/cube.svelte";
+  // Import the necessary components
+  import CubeCard from "$lib/components/cube/cubeCard.svelte";
+  import type { Cube } from "$lib/components/dbTableTypes.js";
+  import Pagination from "$lib/components/misc/pagination.svelte";
+  import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
+  import SearchBar from "$lib/components/misc/searchBar.svelte";
+  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
+  import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
+  import SortSelector from "$lib/components/misc/sortSelector.svelte";
+  import { page } from "$app/state";
+  import { SsgoiTransition } from "@ssgoi/svelte";
+  import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
+  import { queryParameters, ssp } from "sveltekit-search-params";
 
-  // Props and loading
-  let { data } = $props();
-  let { cubesAvailability, databaseAvailability } = data;
+  // Extend Cube type with metadata for filtering and sorting
+  type CubeWithMeta = Cube & {
+    year: number; // Release year extracted from date
+    name: string; // Combined name for search
+    wca_legal: boolean; // WCA legal feature flag
+    magnetic: boolean; // Magnetic feature flag
+    modded: boolean; // Modded feature flag
+    stickered: boolean; // Stickered feature flag
+    smart: boolean; // Smart feature flag
+    popularity: number; // Popularity count from user data
+    avg_price: number; // Average price
+  };
 
-  let loading = $state(true);
+  const { data } = $props();
+  const { user } = data;
 
-  async function fetchCubes() {
-    const { data, error: err } = await supabase
-      .from("cube_models")
-      .select("*")
-      .eq("status", "Approved")
-      .order("model", { ascending: true })
-      .order("series", { ascending: true });
+  const cubes: CubeWithMeta[] = $state(data.cubes);
 
-    if (err) {
-      console.error("A 500 status code error occured:", err.message);
-      return;
+  let userCubes: any[] = $state([]);
+
+  // Helper: tri-state codec (boolean | undefined)
+  const tri = {
+    encode: (v: boolean | undefined) =>
+      v === true ? "1" : v === false ? "0" : undefined,
+    decode: (s: string | null): boolean | undefined =>
+      s === "1" ? true : s === "0" ? false : undefined,
+  };
+
+  // narrow types
+  const SORT_FIELDS = ["name", "rating", "popularity", "date", "price"] as const;
+  type SortField = (typeof SORT_FIELDS)[number];
+  type SortDir = "asc" | "desc";
+
+  // codecs
+  const dirCodec = {
+    encode: (v: SortDir | null | undefined) => v ?? "asc",
+    decode: (s: string | null): SortDir => (s === "desc" ? "desc" : "asc"),
+    defaultValue: "asc" as const,
+  };
+
+  const sortCodec = {
+    encode: (v: SortField | null | undefined) => v ?? "name",
+    decode: (s: string | null): SortField =>
+      (SORT_FIELDS as readonly string[]).includes(s ?? "")
+        ? (s as SortField)
+        : "name",
+    defaultValue: "name" as const,
+  };
+
+  // Build the params object (with types & sensible defaults)
+  const params = queryParameters(
+    {
+      q: ssp.string(""), // string | null
+      page: ssp.number(1), // number (default 1)
+      size: ssp.number(12), // number (default 12)
+      sort: sortCodec, // "name" | "rating" | "popularity" | "date"
+      dir: dirCodec, // "asc" | "desc"
+
+      type: ssp.string("All"),
+      sub: ssp.string("All"),
+      brand: ssp.string("All"),
+      year: {
+        // allow empty, otherwise number
+        encode: (n: number | null) => (n == null ? undefined : String(n)),
+        decode: (s: string | null) => (s ? s : null),
+        defaultValue: "All",
+      },
+
+      // tri-state feature flags
+      wca: tri,
+      mag: tri,
+      smart: tri,
+      mod: tri,
+      stick: tri,
+
+      // tri-state version flags
+      base: tri,
+      trim: tri,
+      limit: tri,
+    },
+    {
+      // Tuning:
+      pushHistory: false, // replaceState instead of pushState
+      showDefaults: true, // don’t pollute URL with default values
     }
+  );
 
-    cubes.set(data);
-    loading = false;
-  }
+  // 1) Sort fields (dropdown) — direction handled by SortSelector toggle
+  const sortFields: SortFieldOption[] = [
+    { value: "date", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "rating", label: "Rating" },
+    { value: "popularity", label: "Popularity" },
+    { value: "price", label: "Price" },
+  ];
 
-  // 1) Filter state (year is string 'All' or a year text)
-  const cubes = writable<CubeType[]>([]);
-  const selectedType = writable<string>("All");
-  const selectedBrand = writable<string>("All");
-  const WCALegal = writable<boolean | undefined>(undefined);
-  const magnetic = writable<boolean | undefined>(undefined);
-  const smart = writable<boolean | undefined>(undefined);
-  const selectedYear = writable<string>("All");
-  const modded = writable<boolean | undefined>(undefined);
-  const stickered = writable<boolean | undefined>(undefined);
-  const selectedCubeType = writable<string>("All");
-
-  const searchTerm = writable("");
-  const currentPage = writable(1);
-  const itemsPerPage = writable(12);
-
-  // 2) Options
-
+  // 2) Options for filter dropdowns
   let allTypes: string[] = $state([]);
   let allBrands: string[] = $state([]);
   let allYears: number[] = $state([]);
-  let allSubType: string[] = $state([]);
-  let allCubeTypes: string[] = $state([]);
+  let allSubTypes: string[] = $state([]);
 
-  function fetchAll() {
-    const Types = Array.from(
-      new Set($cubes.map((c: CubeType) => c.type))
-    ).sort();
-    const Brands = Array.from(
-      new Set($cubes.map((c: CubeType) => c.brand))
-    ).sort();
+  /** Calculate unique sets for dropdown filters whenever cubes change */
+  function calcAll() {
+    const Types = Array.from(new Set(cubes.map((c) => c.type))).sort();
+    const Brands = Array.from(new Set(cubes.map((c) => c.brand))).sort();
     const Years = Array.from(
-      new Set(
-        $cubes.map((c: CubeType) => new Date(c.release_date).getFullYear())
-      )
-    ).sort((a, b) => b - a);
+      new Set(cubes.map((c) => new Date(c.release_date!).getFullYear()))
+    ).sort((a, b) => b - a); // Descending order
     const SubType = Array.from(
-      new Set($cubes.map((c: CubeType) => c.sub_type))
-    ).sort();
-    const CubeTypes = Array.from(
-      new Set($cubes.map((c: CubeType) => c.version_type))
+      new Set(cubes.map((c) => c.sub_type ?? ""))
     ).sort();
 
     allBrands = Brands;
     allTypes = Types;
     allYears = Years;
-    allSubType = SubType;
-    allCubeTypes = CubeTypes;
+    allSubTypes = SubType;
   }
 
-  onMount(() => {
-    fetchCubes();
+  // 3) Reactive filtered list based on selected criteria
+  const filteredCubes = $derived.by(() => {
+    return cubes.filter(
+      (c) =>
+        // Type filter
+        ($params.type === "All" || c.type === $params.type) &&
+        // Sub-type filter
+        ($params.sub === "All" || c.sub_type === $params.sub) &&
+        // Brand filter
+        ($params.brand === "All" || c.brand === $params.brand) &&
+        // Year filter
+        ($params.year === "All" || c.year === +$params.year) &&
+        // Version type tri-state filters (base, trim, limited)
+        ($params.base === undefined
+          ? true
+          : $params.base
+            ? c.version_type === "Base"
+            : c.version_type !== "Base") &&
+        ($params.trim === undefined
+          ? true
+          : $params.trim
+            ? c.version_type === "Trim"
+            : c.version_type !== "Trim") &&
+        ($params.limit === undefined
+          ? true
+          : $params.limit
+            ? c.version_type === "Limited"
+            : c.version_type !== "Limited") &&
+        // Feature tri-state filters
+        ($params.wca === undefined || c.wca_legal === $params.wca) &&
+        ($params.mag === undefined || c.magnetic === $params.mag) &&
+        ($params.mod === undefined || c.modded === $params.mod) &&
+        ($params.stick === undefined || c.stickered === $params.stick) &&
+        ($params.smart === undefined || c.smart === $params.smart) &&
+        // Text search on combined name
+        c.name.toLowerCase().trim().includes($params.q.toLowerCase())
+    );
   });
 
-  // 3) Reactive filtered list
-  const filteredCubes = derived(
-    [
-      cubes,
-      selectedType,
-      selectedBrand,
-      WCALegal,
-      magnetic,
-      smart,
-      selectedYear,
-      modded,
-      stickered,
-      searchTerm,
-      selectedCubeType,
-    ],
-    ([
-      $cubes,
-      $type,
-      $brand,
-      $wca,
-      $mag,
-      $smart,
-      $year,
-      $modded,
-      $stickered,
-      $searchTerm,
-      $cubeType,
-    ]) => {
-      return $cubes
-        .filter((c) => {
-          const cubeYear = new Date(c.release_date).getFullYear();
-          return (
-            ($type === "All" || c.type === $type) &&
-            ($brand === "All" || c.brand === $brand) &&
-            ($wca === undefined || c.wca_legal === $wca) &&
-            ($mag === undefined || c.magnetic === $mag) &&
-            ($modded === undefined || c.modded === $modded) &&
-            ($stickered === undefined || c.stickered === $stickered) &&
-            ($smart === undefined || c.smart === $smart) &&
-            ($year === "All" || cubeYear === +$year) &&
-            ($cubeType === "All" || c.version_type === $cubeType)
-          );
-        })
-        .filter((c) => {
-          const name =
-            `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase();
-          return name.includes($searchTerm.toLowerCase());
-        });
-    }
-  );
+  // Sort the filtered cubes based on selected field and order
+  const sortedCubes = $derived.by(() => {
+    const arr = filteredCubes.slice();
+    arr.sort((a, b) => {
+      let av: any;
+      let bv: any;
+      switch ($params.sort) {
+        case "rating":
+          av = a.rating ?? 0;
+          bv = b.rating ?? 0;
+          break;
+        case "popularity":
+          av = a.popularity ?? 0;
+          bv = b.popularity ?? 0;
+          break;
+        case "price":
+          av = a.avg_price ?? 0;
+          bv = b.avg_price ?? 0;
+          break;
+        case "name":
+          av = a.name;
+          bv = b.name;
+          return $params.dir === "asc"
+            ? av.localeCompare(bv, undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              })
+            : bv.localeCompare(av, undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              });
+        default:
+          av = new Date(a.verified_at ?? a.created_at).getTime();
+          bv = new Date(b.verified_at ?? b.created_at).getTime();
+      }
+      if (av < bv) return $params.dir === "asc" ? -1 : 1;
+      if (av > bv) return $params.dir === "asc" ? 1 : -1;
+      return 0;
+    });
+    return arr;
+  });
 
-  const paginatedCubes = derived(
-    [filteredCubes, currentPage, itemsPerPage],
-    ([$filteredCubes, $currentPage, $itemsPerPage]) => {
-      const start = ($currentPage - 1) * $itemsPerPage;
-      const end = start + $itemsPerPage;
-      return $filteredCubes.slice(start, end);
-    }
-  );
+  // Paginate the sorted list
+  const paginatedCubes = $derived.by(() => {
+    const start = ($params.page - 1) * $params.size;
+    const end = start + $params.size;
+    return sortedCubes.slice(start, end);
+  });
 
-  const totalPages = derived(
-    [filteredCubes, itemsPerPage],
-    ([$filteredCubes, $itemsPerPage]) =>
-      Math.ceil($filteredCubes.length / $itemsPerPage)
-  );
+  // Calculate total pages for pagination
+  const totalPages = $derived(Math.ceil(sortedCubes.length / $params.size));
 
+  // Reset all filters to default state
   function resetFilters() {
-    selectedType.set("All");
-    selectedBrand.set("All");
-    WCALegal.set(undefined);
-    magnetic.set(undefined);
-    smart.set(undefined);
-    selectedYear.set("All");
-    modded.set(undefined);
-    stickered.set(undefined);
-    selectedCubeType.set("All");
+    $params.type = "All";
+    $params.sub = "All";
+    $params.brand = "All";
+    $params.year = "All";
+
+    $params.wca = undefined;
+    $params.mag = undefined;
+    $params.smart = undefined;
+    $params.mod = undefined;
+    $params.stick = undefined;
+    $params.base = undefined;
+    $params.trim = undefined;
+    $params.limit = undefined;
+
+    $params.q = "";
+    $params.page = 1;
   }
 
-  function goToPreviousPage() {
-    if ($currentPage > 1) {
-      currentPage.update((n) => n - 1);
-    }
-  }
+  let _hydrated = $state(false);
+  let _userChangedFilters = $state(false);
 
-  function goToNextPage() {
-    if ($currentPage < $totalPages) {
-      currentPage.update((n) => n + 1);
-    }
-  }
+  // --- track only filters/sort/search (exclude page/size)
+  const filterKey = $derived.by(() =>
+    JSON.stringify({
+      q: $params.q,
+      type: $params.type,
+      sub: $params.sub,
+      brand: $params.brand,
+      year: $params.year,
+      wca: $params.wca,
+      mag: $params.mag,
+      smart: $params.smart,
+      modded: $params.mod,
+      stick: $params.stick,
+      base: $params.base,
+      trim: $params.trim,
+      limit: $params.limit,
+      sort: $params.sort,
+      dir: $params.dir,
+    })
+  );
 
+  // --- reset page ONLY on user-driven changes (and never on first run)
   $effect(() => {
-    const _ = $filteredCubes;
-    currentPage.set(1);
+    const _ = filterKey;
+    if (!_hydrated) {
+      _hydrated = true; // first run after load/reload/back ⇒ do nothing
+      return;
+    }
+    if (_userChangedFilters) {
+      $params.page = 1; // jump back to first page
+      _userChangedFilters = false;
+    }
   });
 
+  // Recalculate filter options when loading state changes (i.e., new data arrives)
   $effect(() => {
-    const _ = loading;
-    fetchAll();
+    const _ = sortedCubes;
+    calcAll();
   });
 
+  // State for toggling filter sidebar
   let showFilters = $state(false);
 </script>
 
-{#if databaseAvailability && cubesAvailability}
-  <section class="min-h-screenpx-6 py-16">
+<svelte:head>
+  <title>Explore Cubes - CubeIndex</title>
+</svelte:head>
+
+<SsgoiTransition id={page.url.pathname}>
+  <section class="min-h-screen px-6 py-16">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-6 text-center">
         Explore Cubes
@@ -197,263 +306,187 @@
         Browse all your favorite cubes by type, brand, or rating.
       </p>
 
-      <!-- Search Bar + Toggle -->
-      <div class="flex items-center mb-6">
-        <button
-          class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
-          aria-label="Toggle Filters"
-          onclick={() => (showFilters = !showFilters)}
-          type="button"
-          style="border-top-right-radius:0; border-bottom-right-radius:0;"
-        >
-          <i class="fa-solid fa-sliders"></i>
-        </button>
-        <div class="relative flex-1">
-          <input
-            type="text"
-            placeholder="Search Your Cube"
-            bind:value={$searchTerm}
-            class="input w-full h-12.5 rounded-l-none border-base-300"
-          />
-          {#if $searchTerm.length}
-            <button
-              type="button"
-              class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral cursor-pointer"
-              onclick={() => ($searchTerm = "")}
-              aria-label="Clear"
-            >
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          {/if}
-        </div>
-      </div>
+      <!-- Search bar with filter toggle button -->
+      <SearchBar
+        showFilter={true}
+        oninput={() => (_userChangedFilters = true)}
+        bind:searchTerm={$params.q}
+        filterAction={() => (showFilters = !showFilters)}
+      />
 
       <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Filters Sidebar -->
-        {#if showFilters}
-          <aside class="w-full lg:w-64">
-            <div
-              class="bg-base-200 border border-base-300 rounded-2xl p-6 sticky top-7"
-              transition:blur
-            >
-              <div class="flex items-center justify-between mb-4">
-                <span class="font-semibold text-lg">Filters</span>
-              </div>
-              <div class="flex flex-col gap-4">
-                <!-- Type -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Type:
-                    <select
-                      bind:value={$selectedType}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option>All</option>
-                      {#each allTypes as t}
-                        <option>{t}</option>
-                      {/each}
-                    </select>
-                  </label>
-                </div>
-                <!-- Brand -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Brand:
-                    <select
-                      bind:value={$selectedBrand}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option>All</option>
-                      {#each allBrands as b}
-                        <option>{b}</option>
-                      {/each}
-                    </select></label
-                  >
-                </div>
-                <!-- WCA Legal -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >WCA Legal:
-                    <select
-                      bind:value={$WCALegal}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Magnetic -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Magnetic:
-                    <select
-                      bind:value={$magnetic}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Smart -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Smart:
-                    <select
-                      bind:value={$smart}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Modded -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Modded:
-                    <select
-                      bind:value={$modded}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option value={undefined}>All</option>
-                      <option value={true}>True</option>
-                      <option value={false}>False</option>
-                    </select>
-                  </label>
-                </div>
-                <!-- Release Year -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Release Year:
-                    <select
-                      bind:value={$selectedYear}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option>All</option>
-                      {#each allYears as year}
-                        <option value={year}>{year}</option>
-                      {/each}
-                    </select>
-                  </label>
-                </div>
-                <!-- Cube Type -->
-                <div>
-                  <label class="block text-sm mb-1"
-                    >Cube Type:
-                    <select
-                      bind:value={$selectedCubeType}
-                      class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-                    >
-                      <option>All</option>
-                      {#each allCubeTypes as cubeType}
-                        <option value={cubeType}>{cubeType}</option>
-                      {/each}
-                    </select>
-                  </label>
-                </div>
-                <!-- Reset -->
-                <div>
-                  <button
-                    class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-                    onclick={resetFilters}
-                    type="button"
-                  >
-                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                    Reset Filters
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
-        {/if}
-
-        <!-- Cube Cards Grid -->
-        <div class="flex-1">
-          <div
-            class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
-          >
-            <div class="flex items-center">
-              <label class="text-sm mr-2" for="itemsPerPage"
-                >Cubes per page:</label
-              >
+        <!-- Filters sidebar -->
+        <FilterSidebar {showFilters}>
+          <!-- Type dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Type:
               <select
-                id="itemsPerPage"
-                bind:value={$itemsPerPage}
-                class="px-7 py-2 rounded-lg bg-base-200 border border-base-300"
-                style="width:auto"
+                bind:value={$params.type}
+                onchange={() => (_userChangedFilters = true)}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <option value={6}>6</option>
-                <option value={12}>12</option>
-                <option value={24}>24</option>
-                <option value={48}>48</option>
-                <option value={96}>96</option>
+                <option>All</option>
+                {#each allTypes as t}
+                  <option>{t}</option>
+                {/each}
               </select>
-            </div>
+            </label>
+          </div>
+          <!-- Sub-type dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Sub Type:
+              <select
+                bind:value={$params.sub}
+                onchange={() => (_userChangedFilters = true)}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+              >
+                <option>All</option>
+                {#each allSubTypes as st}
+                  <option>{st}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Brand dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Brand:
+              <select
+                bind:value={$params.brand}
+                onchange={() => (_userChangedFilters = true)}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+              >
+                <option>All</option>
+                {#each allBrands as b}
+                  <option>{b}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Year dropdown -->
+          <div>
+            <label class="block text-sm mb-1">
+              Release Year:
+              <select
+                bind:value={$params.year}
+                onchange={() => {
+                  _userChangedFilters = true;
+                  $params.year = $params.year === "All" ? "All" : $params.year;
+                }}
+                class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+              >
+                <option>All</option>
+                {#each allYears as year}
+                  <option value={year}>{year}</option>
+                {/each}
+              </select>
+            </label>
+          </div>
+          <!-- Tri-state feature filters -->
+          <div class="grid grid-cols-2 gap-2">
+            <TriStateCheckbox
+              bind:value={$params.wca}
+              onchange={() => (_userChangedFilters = true)}
+              label="WCA Legal"
+            />
+            <TriStateCheckbox
+              bind:value={$params.mag}
+              onchange={() => (_userChangedFilters = true)}
+              label="Magnetic"
+            />
+            <TriStateCheckbox
+              bind:value={$params.smart}
+              onchange={() => (_userChangedFilters = true)}
+              label="Smart"
+            />
+            <TriStateCheckbox
+              bind:value={$params.stick}
+              onchange={() => (_userChangedFilters = true)}
+              label="Stickered"
+            />
+            <TriStateCheckbox
+              bind:value={$params.mod}
+              onchange={() => (_userChangedFilters = true)}
+              label="Modded"
+            />
+            <TriStateCheckbox
+              bind:value={$params.base}
+              onchange={() => (_userChangedFilters = true)}
+              label="Base"
+            />
+            <TriStateCheckbox
+              bind:value={$params.trim}
+              onchange={() => (_userChangedFilters = true)}
+              label="Trim"
+            />
+            <TriStateCheckbox
+              bind:value={$params.limit}
+              onchange={() => (_userChangedFilters = true)}
+              label="Limited"
+            />
+          </div>
+          <!-- Reset filters button -->
+          <div>
+            <button
+              class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
+              onclick={resetFilters}
+              type="button"
+            >
+              <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+              Reset Filters
+            </button>
+          </div>
+        </FilterSidebar>
 
+        <!-- Main content: cube cards -->
+        <div class="flex-1">
+          <!-- Controls: items per page & sorting -->
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
+          >
+            <div class="flex flex-wrap items-center gap-4">
+              <ItemsPerPageSelector
+                bind:itemsPerPage={$params.size}
+                label="Cubes per page"
+                onchange={() => (_userChangedFilters = true)}
+              />
+              <SortSelector
+                bind:sortField={$params.sort}
+                bind:sortOrder={$params.dir}
+                fields={sortFields}
+                useronchange={() => (_userChangedFilters = true)}
+              />
+            </div>
+            <!-- Link to compare page -->
             <div>
               <a
                 href="/explore/cubes/compare"
                 class="btn bg-primary text-primary-content"
               >
-                <i class="fa-solid fa-code-compare mr-2"></i>
-                Compare Cubes
+                <i class="fa-solid fa-code-compare sm:mr-2"></i>
+                Compare <span class="hidden sm:block">Cubes</span>
               </a>
             </div>
           </div>
 
-          <div class="flex items-center justify-center gap-4 mb-10">
-            <div class="join">
-              <button
-                class="join-item btn btn-lg"
-                onclick={goToPreviousPage}
-                disabled={$currentPage === 1}
-                aria-label="Previous page"
-              >
-                <i class="fa-solid fa-chevron-left mr-2"></i>
-                Previous
-              </button>
-              <button class="join-item btn btn-lg">
-                Page {$currentPage} of {$totalPages}
-              </button>
-              <button
-                onclick={goToNextPage}
-                class="join-item btn btn-lg"
-                disabled={$currentPage === $totalPages}
-                aria-label="Next page"
-              >
-                Next
-                <i class="fa-solid fa-chevron-right ml-2"></i>
-              </button>
-            </div>
+          <!-- Pagination at top -->
+          <div class="mb-10">
+            <Pagination bind:currentPage={$params.page} {totalPages} />
           </div>
 
-          {#if loading}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {#each Array(6) as i}
-                <div
-                  class="bg-neutral rounded-2xl overflow-hidden animate-pulse"
-                >
-                  <div class="h-48 bg-neutral-content"></div>
-                  <div class="p-5 space-y-4">
-                    <div class="h-6 bg-neutral-content rounded w-3/4"></div>
-                    <div class="h-4 bg-neutral-content rounded w-1/2"></div>
-                    <div class="h-4 bg-neutral-content rounded w-1/4"></div>
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-              transition:blur
-            >
-              {#if $paginatedCubes.length > 0}
-                {#each $paginatedCubes as cube}
+          <!-- Display paginated cubes -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {#if paginatedCubes.length > 0}
+              {#each paginatedCubes as cube}
+                {#key paginatedCubes}
+                  {@const userCubeDetail = userCubes.find(
+                    (uc) => uc.user_id === user?.id && uc.cube === cube.slug
+                  )}
+                  {@const alreadyAdded = userCubeDetail !== undefined}
                   <CubeCard
                     {cube}
                     add={true}
@@ -461,65 +494,43 @@
                     details={true}
                     badges={true}
                     image={true}
+                    {alreadyAdded}
+                    {userCubeDetail}
                   />
-                {/each}
-              {:else}
-                <div
-                  class="col-span-full flex flex-col items-center justify-center py-20"
+                {/key}
+              {/each}
+            {:else}
+              <!-- No results state -->
+              <div
+                class="col-span-full flex flex-col items-center justify-center py-20"
+              >
+                <i class="fa-solid fa-cube fa-3x mb-4"></i>
+                <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+                <p class="mb-6 text-center max-w-xs">
+                  We couldn't find any cubes matching your search or filters.
+                  Try adjusting them or resetting to see everything.
+                </p>
+                <button
+                  onclick={() => {
+                    resetFilters();
+                    $params.q = "";
+                  }}
+                  class="btn btn-outline flex items-center"
+                  aria-label="Reset filters"
                 >
-                  <i class="fa-solid fa-cube fa-3x mb-4"></i>
-                  <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
-                  <p class="mb-6 text-center max-w-xs">
-                    We couldn't find any cubes matching your search or filters.
-                    Try adjusting them or resetting to see everything.
-                  </p>
-                  <button
-                    onclick={() => {
-                      resetFilters();
-                      $searchTerm = "";
-                    }}
-                    class="btn btn-outline flex items-center"
-                    aria-label="Reset filters"
-                  >
-                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                    Reset
-                  </button>
-                </div>
-              {/if}
-            </div>
-          {/if}
+                  <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                  Reset
+                </button>
+              </div>
+            {/if}
+          </div>
 
-          <div class="flex items-center justify-center gap-4 mt-10">
-            <div class="join">
-              <button
-                class="join-item btn btn-lg"
-                onclick={goToPreviousPage}
-                disabled={$currentPage === 1}
-                aria-label="Previous page"
-              >
-                <i class="fa-solid fa-chevron-left mr-2"></i>
-                Previous
-              </button>
-              <button class="join-item btn btn-lg">
-                Page {$currentPage} of {$totalPages}
-              </button>
-              <button
-                onclick={goToNextPage}
-                class="join-item btn btn-lg"
-                disabled={$currentPage === $totalPages}
-                aria-label="Next page"
-              >
-                Next
-                <i class="fa-solid fa-chevron-right ml-2"></i>
-              </button>
-            </div>
+          <!-- Pagination at bottom -->
+          <div class="mt-10">
+            <Pagination bind:currentPage={$params.page} {totalPages} />
           </div>
         </div>
       </div>
     </div>
   </section>
-{:else if !cubesAvailability}
-  <FeatureDisabled featureName="The cubes explore page is" />
-{:else if !databaseAvailability}
-  <FeatureDisabled featureName="The database is" />
-{/if}
+</SsgoiTransition>

@@ -43,23 +43,21 @@
     If you think this is a bug, please let us know!
   </p>
 
-  <div
-    class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
-  >
-    <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
-    <a
-      href="https://discord.gg/76ExrEAE7s"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn btn-lg btn-error"
+    <div
+      class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
     >
-      🐞 Report the Bug on Discord
-    </a>
-  </div>
+      <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
+      <a
+        class="btn btn-lg btn-error"
+        href={`/report?error=${encodeURIComponent(page.error?.message || '')}`}
+      >
+        🐞 Report the Bug
+      </a>
+    </div>
 
   <!-- Bouncing Cube -->
   <img
-    src="/images/legendary-cube.png"
+    src="/images/legendary-cube.webp"
     alt="Legendary Cube"
     class="w-20 sm:w-24 fixed z-30 pointer-events-none"
     style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"

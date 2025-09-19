@@ -1,69 +1,49 @@
-import { type Actions, fail } from "@sveltejs/kit";
-import { configCatClient } from "$lib/configcatClient";
+import type { PageServerLoad } from "./$types";
+import { error } from "@sveltejs/kit";
 
-export const load = async () => {
-  let databaseAvailability: boolean = true;
-  let cubesAvailability: boolean = true;
+// Server-side load to improve SSR performance:
+// - Uses server Supabase client (cookies-aware, no client bundle cost)
+// - Selects only the fields needed by the explore page
+// - Sets cache headers to enable CDN/browser caching
+export const load: PageServerLoad = async ({ locals: { supabase }, setHeaders }) => {
+  // Keep this list tight — it maps to what the explore list renders
+  const selectFields = [
+    "id",
+    "slug",
+    "brand",
+    "series",
+    "model",
+    "image_url",
+    "rating",
+    "type",
+    "sub_type",
+    "version_type",
+    "version_name",
+    "created_at",
+    "verified_at",
+    // Filters/sort/search metadata coming from the view
+    "year",
+    "name",
+    "wca_legal",
+    "magnetic",
+    "modded",
+    "stickered",
+    "smart",
+    "popularity",
+    "avg_price",
+  ].join(",");
 
-  configCatClient.getValueAsync("database", false).then((value) => {
-    databaseAvailability = value;
+  const { data: cubes, error: err } = await supabase
+    .from("v_detailed_cube_models")
+    .select(selectFields)
+    .eq("status", "Approved");
+
+  if (err) throw error(500, err.message);
+
+  // Cache aggressively on the edge, allow stale while revalidating
+  setHeaders({
+    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  configCatClient.getValueAsync("cubes", false).then((value) => {
-    cubesAvailability = value;
-  });
-
-  return { databaseAvailability, cubesAvailability };
-};
-
-export const actions: Actions = {
-  default: async ({ request, locals }) => {
-    const form = await request.formData();
-    const username = form.get("username") as string;
-    const slug = form.get("slug") as string;
-    const quantity = form.get("quantity");
-    const main = form.get("main") || false;
-    const condition = form.get("condition") as string;
-    const status = form.get("status") as string;
-    const notes = form.get("notes") as string;
-    const acquired_at = form.get("acquiredAt") || null;
-    const formattedAcquiredAt = acquired_at
-      ? (() => {
-          const date = new Date(acquired_at.toString());
-          const mm = (date.getMonth() + 1).toString().padStart(2, "0");
-          const dd = date.getDate().toString().padStart(2, "0");
-          const yyyy = date.getFullYear();
-          return `${mm}-${dd}-${yyyy}`;
-        })()
-      : acquired_at;
-
-    const payload = [
-      {
-        username,
-        cube: slug,
-        quantity,
-        main,
-        condition,
-        status,
-        notes,
-        acquired_at: formattedAcquiredAt,
-      },
-    ];
-
-    const { error: userCubesErr } = await locals.supabase
-      .from("user_cubes")
-      .insert(payload)
-      .select();
-
-    if (
-      userCubesErr?.message ===
-      'duplicate key value violates unique constraint "user_cubes_pkey"'
-    )
-      return fail(400, {
-        message: "You have already added this cube to your profile!",
-      });
-    if (userCubesErr) return fail(500, { message: userCubesErr.message });
-
-    return { message: "Cube added successfully!" };
-  },
+  return { cubes };
 };

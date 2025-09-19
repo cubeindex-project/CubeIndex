@@ -1,73 +1,234 @@
-import { fail } from "@sveltejs/kit";
-import type { Actions } from "./$types";
+import { fail, redirect } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
+import { zod4 } from "sveltekit-superforms/adapters";
+import { superValidate } from "sveltekit-superforms";
+import {
+  accountSchema,
+  profileSchema,
+  surveySchema,
+} from "$lib/components/validation/signup";
+import { withFiles } from "sveltekit-superforms";
+import { setError } from "sveltekit-superforms";
+import { TURNSTILE_SECRET_KEY } from "$env/static/private";
+import { validateTurnstileToken } from "$lib/components/helper_functions/validateTurnstileToken";
+
+export const load: PageServerLoad = async ({ url }) => {
+  const step = (url.searchParams.get("step") ?? "account") as
+    | "account"
+    | "profile"
+    | "survey"
+    | "done";
+
+  return {
+    step,
+    accountForm: await superValidate(zod4(accountSchema)),
+    profileForm: await superValidate(zod4(profileSchema)),
+    surveyForm: await superValidate(zod4(surveySchema)),
+  };
+};
 
 export const actions: Actions = {
-  signup: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData();
-    const username = formData.get("username") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-    const acceptTOS = formData.get("acceptTOS");
+  createAccount: async ({ request, locals: { supabase }, url }) => {
+    const form = await superValidate(request, zod4(accountSchema));
+    if (!form.valid) return fail(400, { accountForm: form });
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const { success } = await validateTurnstileToken(
+      form.data["cf-turnstile-response"],
+      TURNSTILE_SECRET_KEY
+    );
 
-    if (password.length < 8)
-      return fail(400, { error: "Password must be at least 8 characters" });
-    if (password !== confirmPassword)
-      return fail(400, { error: "Passwords do not match" });
-    if (!emailRegex.test(email))
-      return fail(400, { error: "Please enter a valid email address" });
-    if (username.length <= 2 || username.length >= 12)
-      return fail(400, {
-        error: "Username must be between 2 and 12 characters",
-      });
-    if (!acceptTOS)
-      return fail(400, {
-        error: "You must accept the TOS and Privacy Policy to continue",
-      });
+    if (!success) {
+      return setError(
+        form,
+        "cf-turnstile-response",
+        "Invalid turnstile, please try again"
+      );
+    }
 
-    const { data, error: err } = await supabase.auth.signUp({
+    const { email, password } = form.data;
+
+    const { error: err } = await supabase.auth.signUp({
       email,
       password,
+      options: { emailRedirectTo: `${url.origin}/auth/confirm` },
     });
-    if (err) return fail(500, { error: err.message });
+    if (err)
+      return fail(500, { accountForm: { ...form, message: err.message } });
+    return {
+      accountForm: {
+        ...form,
+        message: "Please verify your email to continue with your signup.",
+      },
+    };
+  },
 
-    const userId = data.user?.id;
+  createProfile: async ({ request, locals: { supabase }, url, fetch }) => {
+    const form = await superValidate(request, zod4(profileSchema));
+    if (!form.valid) return withFiles(fail(400, { profileForm: form }));
 
-    const { data: maxData, error: maxError } = await supabase
-      .from("profiles")
-      .select("id")
-      .order("id", { ascending: false })
-      .limit(1);
+    // Supabase user
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr || !user) {
+      return withFiles(
+        fail(401, {
+          profileForm: {
+            ...form,
+            message: `Failed to retrieve user data: ${
+              userErr?.message ?? "No user found."
+            }`,
+          },
+        })
+      );
+    }
 
-    if (maxError) return fail(500, { error: maxError.message });
+    const file = form.data.avatar ?? null;
 
-    const newId = maxData?.length ? maxData[0].id + 1 : 1;
+    let avatarUrl: string = "";
+
+    if (file && file.size > 0) {
+      // 1) Send to your hardened processor (validates magic bytes, size, pixels, re-encodes to WebP)
+      const imgFd = new FormData();
+      imgFd.set("file", file);
+      imgFd.set("type", "avatar");
+      const resp = await fetch(`/api/user/avatar`, {
+        method: "POST",
+        body: imgFd,
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        form.message =
+          "Avatar processing failed: " + errText || resp.statusText;
+        return withFiles(fail(400, { profileForm: form }));
+      }
+      const processed = new Uint8Array(await resp.arrayBuffer());
+
+      // 2) Upload normalized bytes to Storage with a fixed path & content type
+      const path = `${user.id}/avatar.webp`;
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, processed, {
+          contentType: "image/webp", // fixed, known good
+          cacheControl: "public, max-age=31536000, immutable",
+        });
+      if (upErr)
+        return withFiles(
+          fail(400, {
+            profileForm: {
+              ...form,
+              message: "Avatar upload failed: " + upErr.message,
+            },
+          })
+        );
+
+      // 3) Get a URL: public bucket -> getPublicUrl; private -> createSignedUrl
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      avatarUrl = data.publicUrl;
+    }
+
+    const { display_name, username } = form.data;
 
     const { error: upsertError } = await supabase
       .from("profiles")
-      .insert({ id: newId, user_id: userId, username });
+      .update({
+        username,
+        display_name,
+        profile_picture: avatarUrl,
+        onboarded: true,
+      })
+      .eq("user_id", user.id);
 
     if (
       upsertError?.message ===
       'insert or update on table "profiles" violates foreign key constraint "profiles_user_id_fkey"'
-    )
-      return fail(400, {
-        error:
-          "An account with this email already exists. Please log in or use a different email address.",
-      });
+    ) {
+      return withFiles(
+        fail(400, {
+          profileForm: {
+            ...form,
+            message:
+              "An account with this email already exists. Please log in or use a different email address.",
+          },
+        })
+      );
+    }
 
     if (
       upsertError?.message ===
       'duplicate key value violates unique constraint "profiles_username_key"'
-    )
-      return fail(400, {
-        error: "This username is already taken. Please choose a different one.",
+    ) {
+      return withFiles(
+        fail(400, {
+          profileForm: {
+            ...form,
+            errors: { username: ["This username is already taken."] },
+          },
+        })
+      );
+    }
+
+    if (upsertError) {
+      return withFiles(
+        fail(400, {
+          profileForm: { ...form, message: upsertError.message },
+        })
+      );
+    }
+
+    const payload = {
+      email: user.email || "",
+      display_name:
+        display_name ??
+        username ??
+        user.user_metadata.full_name.trim() ??
+        user.email?.split("@")[0] ??
+        "User",
+    };
+
+    await fetch(
+      "https://spsqaktodgqnqbkgilxp.supabase.co/functions/v1/brevo-sync-contact",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    // Next: survey step
+    throw redirect(303, `${url.pathname}?step=survey`);
+  },
+
+  submitSurvey: async ({ request, locals: { supabase }, url }) => {
+    const form = await superValidate(request, zod4(surveySchema));
+    if (!form.valid) return fail(400, { surveyForm: form });
+
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser();
+    if (userErr || !user) {
+      return fail(401, {
+        surveyForm: { ...form, message: "You must be signed in to continue." },
       });
+    }
 
-    if (upsertError) return fail(400, { error: upsertError.message });
+    // Persist preferences (create a table like user_onboarding)
+    const { discovered_via, other_text } = form.data;
+    const interested_features = JSON.stringify(form.data.interested_features);
+    const { error: insErr } = await supabase.from("user_onboarding").insert({
+      user_id: user.id,
+      discovered_via,
+      interested_features,
+      other_text,
+    });
 
-    return { message: "Check your email to verify your account" };
+    if (insErr) {
+      return fail(400, { surveyForm: { ...form, message: insErr.message } });
+    }
+
+    // Done
+    throw redirect(303, `${url.pathname}?step=done`);
   },
 };

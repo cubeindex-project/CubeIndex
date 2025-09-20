@@ -1591,6 +1591,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "role" "public"."users_roles" DEFAULT 'User'::"public"."users_roles" NOT NULL,
     "display_name" "text",
     "onboarded" boolean DEFAULT false NOT NULL,
+    "beta_access" boolean DEFAULT false NOT NULL,
     CONSTRAINT "profiles_username_check" CHECK (("username" ~ '^[a-z0-9._]{3,}$'::"text")),
     CONSTRAINT "profiles_username_required_when_onboarded" CHECK ((("onboarded" = false) OR ("username" IS NOT NULL) OR ("display_name" IS NOT NULL)))
 );

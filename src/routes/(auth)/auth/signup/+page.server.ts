@@ -110,6 +110,7 @@ export const actions: Actions = {
       const { error: upErr } = await supabase.storage
         .from("avatars")
         .upload(path, processed, {
+          upsert: true,
           contentType: "image/webp", // fixed, known good
           cacheControl: "public, max-age=31536000, immutable",
         });
@@ -177,12 +178,15 @@ export const actions: Actions = {
       );
     }
 
+    const metadataDisplayName =
+      user.user_metadata?.full_name?.trim() || undefined;
+
     const payload = {
       email: user.email || "",
       display_name:
         display_name ??
         username ??
-        user.user_metadata.full_name.trim() ??
+        metadataDisplayName ??
         user.email?.split("@")[0] ??
         "User",
     };

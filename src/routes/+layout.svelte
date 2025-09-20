@@ -3,6 +3,7 @@
   import "../app.css";
   import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
+  import BetaBanner from "$lib/components/layout/betaBanner.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import { Ssgoi } from "@ssgoi/svelte";
@@ -29,6 +30,7 @@
   const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
   const isBetaDeployment = deploymentChannel === "beta";
   const siteTitle = isBetaDeployment ? "CubeIndex Beta" : "CubeIndex";
+  const shouldShowBetaBanner = deploymentChannel === "production";
 
   let { data, children } = $props();
 
@@ -91,6 +93,10 @@
 
 <Navbar {profile} />
 
+{#if shouldShowBetaBanner && data.user}
+  <BetaBanner />
+{/if}
+
 <Toaster />
 <ClientErrorReporter />
 
@@ -111,3 +117,4 @@
 {#if profile}
   <MobileBottomNav {profile} />
 {/if}
+

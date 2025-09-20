@@ -97,7 +97,6 @@
 
 <CubeCardSkeleton
   {cube}
-  newRibbon={false}
   rating={false}
   {top}
   {content}

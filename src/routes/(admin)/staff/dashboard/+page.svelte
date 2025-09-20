@@ -121,6 +121,12 @@
       label: "Staff Logs",
       implemented: true,
     },
+    {
+      href: "/staff/onboarding",
+      icon: "🧭",
+      label: "Onboarding Insights",
+      implemented: true,
+    },
   ];
 
   const currentRole = roleData.find((r) => r.role === profile.role);

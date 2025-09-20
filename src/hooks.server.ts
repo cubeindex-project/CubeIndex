@@ -1,10 +1,30 @@
 import { sequence } from "@sveltejs/kit/hooks";
-import { type Handle, redirect, error } from "@sveltejs/kit";
+import {
+  type Handle,
+  redirect,
+  error,
+  type HandleServerError,
+} from "@sveltejs/kit";
 import { createServerClient } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
+import { randomUUID } from "node:crypto";
+import { createLogger } from "$lib/server/logger";
+
+const context: Handle = async ({ event, resolve }) => {
+  event.locals.reqId = randomUUID();
+  const log = createLogger({
+    reqId: event.locals.reqId,
+    route: event.route?.id,
+    method: event.request.method,
+    path: new URL(event.request.url).pathname,
+  });
+  event.locals.log = log;
+  const response = await resolve(event);
+  return response;
+};
 
 const supabase: Handle = async ({ event, resolve }) => {
   /**
@@ -112,4 +132,16 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+export const handle: Handle = sequence(context, supabase, authGuard);
+
+export const handleError: HandleServerError = ({ error: err, event }) => {
+  const fallbackLogger = createLogger({
+    route: event?.route?.id,
+    reqId: event?.locals?.reqId,
+    scope: "handleError",
+  });
+  const log = event?.locals?.log ?? fallbackLogger;
+  const errorToLog = err instanceof Error ? err : new Error(String(err));
+  log.error({ err: errorToLog }, "Unhandled error");
+  return { message: "Something went wrong", reqId: event?.locals?.reqId };
+};

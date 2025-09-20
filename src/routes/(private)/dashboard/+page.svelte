@@ -88,15 +88,25 @@
         imgSize="w-16 h-16"
         textSize="text-xl"
       />
-      <div>
-        <div class="flex items-center gap-3">
-          <h1 class="text-3xl font-clash tracking-tight">
-            Welcome back, {profile.display_name || profile.username}
-          </h1>
+      <div class="w-full">
+        <div class="flex flex-col md:flex-row md:items-center justify-between w-full gap-3">
+          <div class="flex flex-col">
+            <h1 class="text-3xl font-clash tracking-tight">
+              Welcome back, {profile.display_name || profile.username}
+            </h1>
+            <p class="text-base-content/70 mt-1">
+              Here’s your personal overview and recent activity.
+            </p>
+          </div>
+          <a
+            class="btn btn-secondary gap-2"
+            href="/user/settings"
+            aria-label="Open account settings"
+          >
+            <i class="fa-solid fa-gear"></i>
+            Settings
+          </a>
         </div>
-        <p class="text-base-content/70 mt-1">
-          Here’s your personal overview and recent activity.
-        </p>
       </div>
     </div>
   </header>
@@ -285,7 +295,9 @@
         <a class="btn" href={`/user/${profile.username}/cubes`}>
           Manage Collection
         </a>
-        <a class="btn" href={`/user/${profile.username}/ratings`}>My Ratings</a>
+        <a class="btn" href={`/user/${profile.username}/ratings`}>
+          My Ratings
+        </a>
         <a class="btn" href="/achievements">Browse Achievements</a>
         <a class="btn" href="/explore/users">Discover Users</a>
         <a class="btn" href="/userbar">Userbar</a>

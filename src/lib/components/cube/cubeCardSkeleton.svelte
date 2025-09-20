@@ -1,13 +1,9 @@
-<script lang="ts">
+﻿<script lang="ts">
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import type { Cube } from "../dbTableTypes";
   import type { Snippet } from "svelte";
 
-  /**
-   * Cube data as shown on list cards.
-   * Accepts the core Cube plus optional metadata fields coming from views.
-   */
   type CubeWithMeta = Cube &
     Partial<{
       avg_price: number;
@@ -25,13 +21,13 @@
     top?: Snippet<[]>;
     content: Snippet<[]>;
     bottom?: Snippet<[]>;
+    showMeta?: boolean;
   }
 
-  let { cube, top, rating, content, bottom }: Props = $props();
+  let { cube, top, rating, content, bottom, showMeta = true }: Props = $props();
 
   const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`;
 
-  // Number formatters
   const compactNF = new Intl.NumberFormat(undefined, {
     notation: "compact",
     maximumFractionDigits: 1,
@@ -72,29 +68,33 @@
       {/if}
       <CubeVersionType version_type={cube.version_type} />
     </h2>
-    <p class="text-sm text-gray-400">
-      {cube.type} ・ {cube.brand}
-    </p>
-    <!-- Meta: popularity • avg price -->
-    {#if (cube.popularity ?? 0) > 0 || (cube.avg_price ?? 0) > 0}
-      <div class="mt-3 flex items-center gap-4 text-xs text-base-content/70">
-        {#if (cube.popularity ?? 0) > 0}
-          <span title="Popularity">
-            <i class="fa-solid fa-users mr-1" aria-hidden="true"
-            ></i>{fmtCompact(cube.popularity!)}
-          </span>
+    {#if showMeta}
+      <p class="text-sm text-gray-400">
+        {cube.type}
+        {#if cube.brand}
+          <span> - {cube.brand}</span>
         {/if}
-        {#if (cube.avg_price ?? 0) > 0}
-          <span title="Average price">
-            <i class="fa-solid fa-tag mr-1" aria-hidden="true"
-            ></i>{formatCurrency(cube.avg_price!)}
-          </span>
-        {/if}
-      </div>
+      </p>
     {/if}
     {#if rating}
       <div class="mt-3 flex justify-start">
         <StarRating readOnly={true} rating={cube.rating ?? 0} />
+      </div>
+    {/if}
+    {#if showMeta && ((cube.popularity ?? 0) > 0 || (cube.avg_price ?? 0) > 0)}
+      <div class="mt-3 flex items-center gap-4 text-xs text-base-content/70">
+        {#if (cube.popularity ?? 0) > 0}
+          <span title="Popularity">
+            <i class="fa-solid fa-users mr-1" aria-hidden="true"></i>
+            {fmtCompact(cube.popularity!)}
+          </span>
+        {/if}
+        {#if (cube.avg_price ?? 0) > 0}
+          <span title="Average price">
+            <i class="fa-solid fa-tag mr-1" aria-hidden="true"></i>
+            {formatCurrency(cube.avg_price!)}
+          </span>
+        {/if}
       </div>
     {/if}
     {@render content()}

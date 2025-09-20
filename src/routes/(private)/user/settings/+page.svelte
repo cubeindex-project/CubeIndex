@@ -10,6 +10,7 @@
   import ConfirmSignOut from "$lib/components/user/confirmSignOut.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
   import pkgJson from "../../../../../package.json" assert { type: "json" };
+  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -121,8 +122,7 @@
 
   const appVersion = (pkgJson as { version: string }).version;
   const deploymentLabel = (() => {
-    const env = import.meta.env as Record<string, string | undefined>;
-    const channel = env?.PUBLIC_DEPLOYMENT_CHANNEL ?? "production";
+    const channel = PUBLIC_DEPLOYMENT_CHANNEL ?? "production";
     const normalized = channel.toLowerCase();
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
   })();
@@ -1137,7 +1137,7 @@
                       <span class="text-2xl font-clash font-semibold"
                         >{appVersion}</span
                       >
-                      <span class="badge badge-outline capitalize"
+                      <span class="badge badge-dash badge-primary capitalize"
                         >{deploymentLabel}</span
                       >
                     </div>

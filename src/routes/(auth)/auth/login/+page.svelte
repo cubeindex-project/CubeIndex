@@ -5,6 +5,7 @@
   import { Turnstile } from "svelte-turnstile";
   import { superForm } from "sveltekit-superforms";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
+  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   const { data } = $props();
 
@@ -51,7 +52,28 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  <section class="min-h-screen flex items-center justify-center px-6 py-10">
+  <section
+    class="min-h-screen flex flex-col items-center justify-center gap-6 px-6 py-10"
+  >
+    {#if PUBLIC_DEPLOYMENT_CHANNEL === "beta"}
+      <div class="w-full max-w-md">
+        <div class="alert alert-info">
+          <i class="fa-solid fa-circle-info text-xl"></i>
+          <div>
+            <h2 class="font-semibold">Beta Access</h2>
+            <p class="text-sm text-base-content/80">
+              Access to the CubeIndex beta is limited to whitelisted users. Join
+              our
+              <a
+                href="https://thecubeindex.com/discord"
+                class="link link-primary link-hover">Discord</a
+              >
+              to request access.
+            </p>
+          </div>
+        </div>
+      </div>
+    {/if}
     <div
       class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
     >

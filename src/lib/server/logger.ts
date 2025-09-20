@@ -49,4 +49,4 @@ export const logger = pino(options);
 export type AppLogger = typeof logger;
 
 export const createLogger = (bindings?: Record<string, unknown>) =>
-	bindings ? logger.child(bindings) : logger;
+  bindings ? logger.child(bindings) : logger;

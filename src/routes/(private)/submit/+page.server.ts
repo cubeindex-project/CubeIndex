@@ -1,8 +1,8 @@
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import { slugify } from "$lib/components/helper_functions/slugify.svelte";
 import { getSubTypes } from "$lib/components/helper_functions/subType.svelte";
-import { message, superValidate } from "sveltekit-superforms";
+import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
@@ -10,58 +10,62 @@ import { cubeSchema } from "$lib/components/validation/cubeForm";
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
 
-  const { data: cubes, error: cubesErr } = await locals.supabase
-    .from("cube_models")
-    .select("*")
-    .neq("status", "Rejected");
-  if (cubesErr) throw error(500, cubesErr.message);
+  const [
+    { data: cubes, error: cubeErr },
+    { data: brands, error: brandErr },
+    { data: types, error: typeErr },
+  ] = await Promise.all([
+    locals.supabase.from("cube_models").select("*").neq("status", "Rejected"),
+    locals.supabase
+      .from("brands")
+      .select("name")
+      .order("name", { ascending: true }),
+    locals.supabase
+      .from("cube_types")
+      .select("name")
+      .order("name", { ascending: true }),
+  ]);
 
-  const { data: brands, error: brandsErr } = await locals.supabase
-    .from("brands")
-    .select("name")
-    .order("name", { ascending: true });
-
-  if (brandsErr) throw error(500, brandsErr.message);
-
-  const { data: types, error: typesError } = await locals.supabase
-    .from("cube_types")
-    .select("name")
-    .order("name", { ascending: true });
-
-  if (typesError) {
-    throw error(500, `Failed to fetch types: ${typesError.message}`);
+  if (cubeErr) {
+    locals.log.error({ err: cubeErr.message }, "Failed to fetch cubes");
+    throw error(500, "Failed to fetch cubes");
+  }
+  if (brandErr) {
+    locals.log.error({ err: brandErr.message }, "Failed to fetch brands");
+    throw error(500, "Failed to fetch brands");
+  }
+  if (typeErr) {
+    locals.log.error({ err: typeErr.message }, "Failed to fetch types");
+    throw error(500, "Failed to fetch types");
   }
 
-  const { data: surfaces, error: surfacesErr } = await locals.supabase.rpc(
-    "get_types",
-    {
+  const [
+    { data: surfaces, error: surfaceErr },
+    { data: subTypes, error: subTypeErr },
+  ] = await Promise.all([
+    locals.supabase.rpc("get_types", {
       enum_type: "cube_surface_finishes",
-    }
-  );
-
-  if (surfacesErr) {
-    throw error(
-      500,
-      `Failed to fetch surface finishes: ${surfacesErr.message}`
-    );
-  }
-
-  const { data: subTypes, error: subTypesErr } = await locals.supabase.rpc(
-    "get_types",
-    {
+    }),
+    locals.supabase.rpc("get_types", {
       enum_type: "cubes_subtypes",
-    }
-  );
+    }),
+  ]);
 
-  if (subTypesErr) {
-    throw error(500, `Failed to fetch sub types: ${subTypesErr.message}`);
+  if (surfaceErr) {
+    locals.log.error({ err: surfaceErr.message }, "Failed to fetch surfaces");
+    error(500, "Failed to fetch surfaces");
+  }
+  if (subTypeErr) {
+    locals.log.error({ err: subTypeErr.message }, "Failed to fetch sub types");
+    error(500, "Failed to fetch sub types");
   }
 
   return { form, cubes, brands, types, surfaces, subTypes };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase, user, log } }) => {
+  default: async ({ request, locals }) => {
+    const { supabase, user } = locals;
     if (!user) throw error(401, "Unauthorized");
 
     const form = await superValidate(request, zod4(cubeSchema));
@@ -123,22 +127,21 @@ export const actions: Actions = {
     } satisfies Record<string, unknown>;
 
     const { error: insertErr } = await supabase
-      .from("cube_odels")
+      .from("cube_models")
       .insert(payload);
 
     if (
       insertErr?.message ===
       'duplicate key value violates unique constraint "cubes_name_id_key"'
     ) {
-      return message(form, `This cube already exists in our database.`, {
-        status: 500,
+      return setError(form, "This cube already exists in our database.", {
+        status: 400,
       });
     }
 
     if (insertErr) {
-      log.debug({ code: insertErr.code, details: insertErr.details, hint: insertErr.hint })
-      log.error(insertErr.message);
-      return message(form, `An error occured while submitting the cube`, {
+      locals.log.error({ err: insertErr.message }, "Failed to insert cube");
+      return setError(form, "An error occured while submitting the cube", {
         status: 500,
       });
     }
@@ -155,10 +158,10 @@ export const actions: Actions = {
       .eq("cube", slug);
 
     if (rowsErr) {
-      throw error(
-        500,
-        `Failed to fetch existing cube features: ${rowsErr.message}`
-      );
+      locals.log.error({ err: rowsErr.message }, "Failed to fetch features");
+      setError(form, "An error occured while submitting the cube", {
+        status: 500,
+      });
     }
 
     const rows = existingRows ?? [];
@@ -184,10 +187,13 @@ export const actions: Actions = {
         .upsert(insertPayload);
 
       if (featUpErr) {
-        throw error(
-          500,
-          `Failed to add new features to cube: ${featUpErr.message}`
+        locals.log.error(
+          { err: featUpErr.message },
+          "Failed to insert features"
         );
+        setError(form, "An error occured while submitting the cube", {
+          status: 500,
+        });
       }
     }
 
@@ -199,10 +205,13 @@ export const actions: Actions = {
         .in("feature", toRemove);
 
       if (featUpErr) {
-        throw error(
-          500,
-          `Failed to remove features from cube: ${featUpErr.message}`
+        locals.log.error(
+          { err: featUpErr.message },
+          "Failed to delete features"
         );
+        setError(form, "An error occured while submitting the cube", {
+          status: 500,
+        });
       }
     }
 

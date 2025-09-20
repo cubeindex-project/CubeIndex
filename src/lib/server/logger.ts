@@ -1,18 +1,17 @@
-import { env as privateEnv } from "$env/dynamic/private";
-import { env as publicEnv } from "$env/dynamic/public";
+import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
+import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
 
 const isProduction =
-  (privateEnv.NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() ===
-  "production";
+	(NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() === "production";
 const level =
-  privateEnv.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
+	LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
 
 const baseBindings: Record<string, string> = { app: "cubeindex" };
-const currentEnv = privateEnv.NODE_ENV ?? process.env.NODE_ENV;
+const currentEnv = NODE_ENV ?? process.env.NODE_ENV;
 if (currentEnv) baseBindings.env = currentEnv;
-if (publicEnv.PUBLIC_DEPLOYMENT_CHANNEL)
-  baseBindings.deploymentChannel = publicEnv.PUBLIC_DEPLOYMENT_CHANNEL;
+if (PUBLIC_DEPLOYMENT_CHANNEL)
+	baseBindings.deploymentChannel = PUBLIC_DEPLOYMENT_CHANNEL;
 
 const options: LoggerOptions = {
   level,

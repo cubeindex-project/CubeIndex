@@ -1,13 +1,11 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
-  import { onMount } from "svelte";
-  import { error } from "@sveltejs/kit";
-  import { supabase } from "$lib/supabaseClient.js";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
+  let cubes: Cube[] = $derived(data.cubes);
 
   let search = $state("");
   let searchCubes: {
@@ -33,7 +31,6 @@
     }
   );
 
-  let cubes: Cube[] = $state([]);
   let allCubes: {
     label: string;
     value: string;
@@ -53,14 +50,49 @@
     ).sort();
   });
 
-  onMount(async () => {
-    const { data, error: cubesErr } = await supabase
-      .from("cube_models")
-      .select("*")
-      .neq("status", "Rejected");
-    if (cubesErr) throw error(500, cubesErr.message);
-    cubes = data;
-  });
+  const fillWithDemoData = () => {
+    const brandName = brands[0]?.name;
+    const typeName = types[0]?.name;
+    const finishName = surfaces[0];
+    const fallbackSubType = subTypes[0] ?? "auto";
+    if (!brandName || !typeName || !finishName) {
+      $message =
+        "Add at least one brand, type, and surface finish before using the autofill.";
+      return;
+    }
+
+    const baseCube = allCubes[0];
+
+    $form = {
+      ...$form,
+      series: "Aurora",
+      model: "Velocity",
+      versionType: "Trim",
+      versionName: "Galaxy UV",
+      brand: brandName,
+      type: typeName,
+      sub_type: fallbackSubType,
+      relatedTo: baseCube?.value ?? "",
+      releaseDate: "2024-06-01",
+      imageUrl: "https://cdn.cubeindex.dev/demo/aurora-velocity.jpg",
+      surfaceFinish: finishName,
+      weight: 63.5,
+      size: "56 x 56 x 56",
+      discontinued: false,
+      features: {
+        ...$form.features,
+        wcaLegal: true,
+        magnetic: true,
+        smart: false,
+        modded: false,
+        maglev: true,
+        stickered: true,
+        ballCore: true,
+      },
+    };
+
+    $message = "Loaded demo cube details - adjust as needed before submitting.";
+  };
 </script>
 
 <section class="relative min-h-screen overflow-hidden bg-base-200/80 py-16">
@@ -87,31 +119,15 @@
         class="card border border-base-200 bg-base-100 shadow-xl"
       >
         <div class="card-body space-y-10">
-          {#if $message}
-            <div class="alert alert-success" role="status" aria-live="polite">
-              <span>{@html $message}</span>
-            </div>
-          {/if}
-
-          {#if $allErrors.length}
-            <div class="alert alert-error" role="alert" aria-live="assertive">
-              <div>
-                <h2 class="text-sm font-semibold uppercase tracking-wide">
-                  Please fix the highlighted fields
-                </h2>
-                <ul class="mt-2 list-disc space-y-1 pl-4 text-sm">
-                  {#each $allErrors as error}
-                    <li>
-                      <span class="font-semibold text-base-content"
-                        >{error.path}:</span
-                      >
-                      {error.messages.join(". ")}
-                    </li>
-                  {/each}
-                </ul>
-              </div>
-            </div>
-          {/if}
+          <div class="flex justify-end">
+            <button
+              type="button"
+              class="btn btn-ghost btn-sm"
+              onclick={fillWithDemoData}
+            >
+              Fill with demo data
+            </button>
+          </div>
 
           <section class="space-y-6" aria-labelledby="cube-identity">
             <div class="space-y-2">
@@ -137,6 +153,9 @@
                   bind:value={$form.series}
                   class="input input-lg w-full"
                 />
+                {#if $errors.series}
+                  <span class="text-xs text-error">{$errors.series}</span>
+                {/if}
               </label>
               <label
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
@@ -150,6 +169,9 @@
                   class="input input-lg w-full"
                   required
                 />
+                {#if $errors.model}
+                  <span class="text-xs text-error">{$errors.model}</span>
+                {/if}
               </label>
             </div>
 
@@ -168,6 +190,9 @@
                   <option value="Trim">Trim</option>
                   <option value="Limited">Limited Edition</option>
                 </select>
+                {#if $errors.versionType}
+                  <span class="text-xs text-error">{$errors.versionType}</span>
+                {/if}
               </label>
               <label
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
@@ -182,6 +207,9 @@
                   required
                   disabled={$form.versionType === "Base"}
                 />
+                {#if $errors.versionName}
+                  <span class="text-xs text-error">{$errors.versionName}</span>
+                {/if}
               </label>
             </div>
 
@@ -200,8 +228,12 @@
                     <option>{b.name}</option>
                   {/each}
                 </select>
+                {#if $errors.brand}
+                  <span class="text-xs text-error">{$errors.brand}</span>
+                {/if}
                 <span class="text-xs text-base-content/60">
-                  Missing a manufacturer? Please report the brand from any cube page or get in touch via our Discord server so the staff can add it for you.
+                  Missing a manufacturer? Let the team know through the cube
+                  report button or Discord and we will add it for you.
                 </span>
               </label>
               <label
@@ -218,8 +250,12 @@
                     <option>{t.name}</option>
                   {/each}
                 </select>
+                {#if $errors.type}
+                  <span class="text-xs text-error">{$errors.type}</span>
+                {/if}
                 <span class="text-xs text-base-content/60">
-                  Need another cube type? Let the team know through the cube report button or Discord and we will update the catalog.
+                  Need another cube type? Let the team know through the cube
+                  report button or Discord and we will add it for you.
                 </span>
               </label>
             </div>
@@ -297,6 +333,9 @@
                   class="input input-lg w-full"
                   required
                 />
+                {#if $errors.releaseDate}
+                  <span class="text-xs text-error">{$errors.releaseDate}</span>
+                {/if}
               </label>
               <label
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
@@ -310,6 +349,9 @@
                   placeholder="https://..."
                   required
                 />
+                {#if $errors.imageUrl}
+                  <span class="text-xs text-error">{$errors.imageUrl}</span>
+                {/if}
                 <span class="text-xs text-base-content/60"
                   >Use an official product or press image.</span
                 >
@@ -331,6 +373,9 @@
                     <option>{surface}</option>
                   {/each}
                 </select>
+                {#if $errors.surfaceFinish}
+                  <span class="text-xs text-error">{$errors.surfaceFinish}</span>
+                {/if}
               </label>
               <label
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
@@ -345,6 +390,9 @@
                   class="input input-lg w-full"
                   required
                 />
+                {#if $errors.weight}
+                  <span class="text-xs text-error">{$errors.weight}</span>
+                {/if}
               </label>
               <label
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
@@ -358,6 +406,9 @@
                   class="input input-lg w-full"
                   required
                 />
+                {#if $errors.size}
+                  <span class="text-xs text-error">{$errors.size}</span>
+                {/if}
               </label>
             </div>
           </section>
@@ -392,6 +443,11 @@
                     >Approved for use in official competitions.</span
                   >
                 </span>
+                {#if $errors.features?.wcaLegal}
+                  <span class="text-xs text-error">
+                    {$errors.features.wcaLegal}
+                  </span>
+                {/if}
               </label>
               <label
                 class="flex items-start gap-3 rounded-xl border border-base-200 bg-base-200/40 px-4 py-3 text-sm text-base-content/80"
@@ -524,10 +580,35 @@
               >Submit cube</button
             >
             <p class="text-center text-xs text-base-content/60">
-              You will be redirected to the cube page once the submission is
-              approved.
+              It make take up to a week for your submission to be approved.
             </p>
           </div>
+
+          {#if $message}
+            <div class="alert alert-success" role="status" aria-live="polite">
+              <span>{@html $message}</span>
+            </div>
+          {/if}
+
+          {#if $allErrors.length}
+            <div class="alert alert-error" role="alert" aria-live="assertive">
+              <div>
+                <h2 class="text-sm font-semibold uppercase tracking-wide">
+                  Please fix the highlighted fields
+                </h2>
+                <ul class="mt-2 list-disc space-y-1 pl-4 text-sm">
+                  {#each $allErrors as error}
+                    <li>
+                      <span class="font-semibold text-base-content"
+                        >{error.path}:</span
+                      >
+                      {error.messages.join(". ")}
+                    </li>
+                  {/each}
+                </ul>
+              </div>
+            </div>
+          {/if}
         </div>
       </form>
 
@@ -589,7 +670,9 @@
             <div
               class="rounded-xl bg-base-200/60 px-4 py-3 text-sm text-base-content/70"
             >
-              Need direct help? Contact us on <a href="/discord" class="link">Discord</a>.
+              Need direct help? Contact us on <a href="/discord" class="link"
+                >Discord</a
+              >.
             </div>
           </div>
         </div>

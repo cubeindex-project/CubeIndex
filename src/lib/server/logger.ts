@@ -14,24 +14,30 @@ if (PUBLIC_DEPLOYMENT_CHANNEL)
 	baseBindings.deploymentChannel = PUBLIC_DEPLOYMENT_CHANNEL;
 
 const options: LoggerOptions = {
-	level,
-	base: baseBindings,
-	timestamp: stdTimeFunctions.isoTime,
-	formatters: {
-		level(label) {
-			return { level: label };
-		},
-	},
-	errorKey: "error",
-	messageKey: "message",
-	redact: {
-		paths: ["*.token", "*.password", "req.headers.authorization"],
-		remove: true,
-	},
+  level,
+  base: baseBindings,
+  timestamp: stdTimeFunctions.isoTime,
+  formatters: {
+    level(label) {
+      return { level: label };
+    },
+  },
+  errorKey: "error",
+  messageKey: "message",
+  redact: {
+    paths: ["*.token", "*.password", "req.headers.authorization"],
+    remove: true,
+  },
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+    },
+  },
 };
 
 export const logger = pino(options);
 export type AppLogger = typeof logger;
 
 export const createLogger = (bindings?: Record<string, unknown>) =>
-	bindings ? logger.child(bindings) : logger;
+  bindings ? logger.child(bindings) : logger;

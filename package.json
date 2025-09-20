@@ -61,7 +61,6 @@
     "github-markdown-css": "^5.8.1",
     "isomorphic-dompurify": "^2.26.0",
     "pino": "^9.10.0",
-    "pino-pretty": "^13.1.1",
     "satori": "^0.16.2",
     "sharp": "^0.34.3",
     "svelte-exmarkdown": "^5.0.1",

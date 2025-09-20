@@ -34,7 +34,7 @@
       {page.status}
     </h1>
     <p class="mb-6 text-xl font-medium sm:text-2xl">
-      <strong>{page.error?.message}</strong>
+      <strong>{page.error?.message ?? "Something went wrong!"}</strong>
     </p>
   </div>
 

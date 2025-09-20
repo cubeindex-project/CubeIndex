@@ -5,7 +5,9 @@
   import { queryParameters } from "sveltekit-search-params";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import { onMount } from "svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
+  import ConfirmSignOut from "$lib/components/user/confirmSignOut.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
   import pkgJson from "../../../../../package.json" assert { type: "json" };
 
@@ -64,6 +66,12 @@
     { id: "about", label: "About", icon: "fa-solid fa-circle-info" },
   ];
 
+  type MobileViewMode = "list" | "content";
+
+  let mobileViewMode: MobileViewMode = $state("content");
+  let isDesktopViewport: boolean = $state(false);
+  let signOutConfirmation = $state(false);
+
   const defaultTab: TabId = "profile";
 
   const isTabId = (value: string | null | undefined): value is TabId =>
@@ -73,6 +81,8 @@
     isTabId($params.tab ?? undefined) ? ($params.tab as TabId) : defaultTab
   );
 
+  const activeTab = $derived(tabs.find((it) => it.id === tab) ?? tabs[0]);
+
   if (!isTabId($params.tab ?? undefined)) {
     $params.tab = defaultTab;
   }
@@ -80,6 +90,33 @@
   function selectTab(id: TabId) {
     tab = id;
     $params.tab = id;
+    if (!isDesktopViewport) {
+      mobileViewMode = "content";
+    }
+  }
+
+  function showTabList() {
+    if (!isDesktopViewport) {
+      mobileViewMode = "list";
+    }
+  }
+
+  if (browser) {
+    onMount(() => {
+      const mediaQuery = window.matchMedia("(min-width: 1024px)");
+      const applyMatches = (matches: boolean) => {
+        isDesktopViewport = matches;
+        mobileViewMode = matches ? "content" : "list";
+      };
+      applyMatches(mediaQuery.matches);
+      const handler = (event: MediaQueryListEvent) => {
+        applyMatches(event.matches);
+      };
+      mediaQuery.addEventListener("change", handler);
+      return () => {
+        mediaQuery.removeEventListener("change", handler);
+      };
+    });
   }
 
   const appVersion = (pkgJson as { version: string }).version;
@@ -416,6 +453,22 @@
                     </button>
                   </li>
                 {/each}
+
+                <li class="pt-2 mt-2 border-t border-base-300/60">
+                  <button
+                    type="button"
+                    class="group relative w-full justify-start flex gap-3 px-3 py-2 rounded-lg text-sm font-medium text-error hover:bg-error/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 transition-colors duration-150"
+                    onclick={() => {
+                      signOutConfirmation = true;
+                    }}
+                  >
+                    <i
+                      class="fa-solid fa-right-from-bracket text-base opacity-90"
+                      aria-hidden="true"
+                    ></i>
+                    <span class="truncate">Sign Out</span>
+                  </button>
+                </li>
               </ul>
             </nav>
           </div>
@@ -426,6 +479,7 @@
           <nav
             aria-label="Settings sections"
             class="lg:hidden"
+            class:hidden={browser && mobileViewMode === "content"}
           >
             <div
               class="card bg-base-200/70 backdrop-blur border border-base-300 shadow-sm rounded-2xl"
@@ -461,11 +515,51 @@
                       </button>
                     </li>
                   {/each}
+
+                  <li class="bg-base-200/30">
+                    <button
+                      type="button"
+                      class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-error font-medium hover:bg-error/10 transition-colors duration-150"
+                      onclick={() => {
+                        signOutConfirmation = true;
+                      }}
+                    >
+                      <span class="flex items-center gap-3">
+                        <span
+                          class="flex h-9 w-9 items-center justify-center rounded-full bg-error/10 text-error"
+                        >
+                          <i
+                            class="fa-solid fa-right-from-bracket text-base"
+                            aria-hidden="true"
+                          ></i>
+                        </span>
+                        <span class="text-sm font-medium">Sign Out</span>
+                      </span>
+                      <i
+                        class="fa-solid fa-angle-right text-sm opacity-60"
+                        aria-hidden="true"
+                      ></i>
+                    </button>
+                  </li>
                 </ul>
               </div>
             </div>
           </nav>
-          <div class="card bg-base-100 shadow-sm">
+          <div class="card bg-base-100 shadow-sm" class:hidden={browser && !isDesktopViewport && mobileViewMode === "list"}>
+            <div class="flex items-center gap-3 px-6 pt-6 pb-3 border-b border-base-300/60 lg:hidden">
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm gap-2 px-3"
+                onclick={showTabList}
+                aria-label="Back to sections"
+              >
+                <i class="fa-solid fa-arrow-left text-base" aria-hidden="true"></i>
+                Sections
+              </button>
+              <span class="flex-1 text-right text-sm font-semibold text-base-content/70">
+                {activeTab.label}
+              </span>
+            </div>
             {#if tab === "profile"}
               <!-- Profile Information -->
               <div class="card-body">
@@ -556,7 +650,7 @@
                   <!-- Avatar -->
                   <fieldset class="fieldset">
                     <legend class="block text-sm font-semibold">Avatar</legend>
-                    <div class="flex items-start gap-6">
+                    <div class="flex flex-col items-start gap-6">
                       <Avatar
                         profile={{
                           display_name: $form.display_name,
@@ -595,7 +689,7 @@
                   <!-- Banner -->
                   <fieldset class="fieldset mt-4">
                     <legend class="block text-sm font-semibold">Banner</legend>
-                    <div class="flex items-start gap-6">
+                    <div class="flex flex-col items-start gap-6">
                       <div class="w-full max-w-xl">
                         <div
                           class="rounded-xl border border-base-300 overflow-hidden w-full h-24 bg-base-200"
@@ -912,7 +1006,7 @@
               </div>
             {:else if tab === "appearance"}
               <div class="card-body space-y-6">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col md:flex-row gap-3 md:items-center justify-between">
                   <div>
                     <h2 class="card-title">Appearance</h2>
                     <p class="text-sm opacity-70">
@@ -1126,3 +1220,12 @@
     </div>
   </section>
 </SsgoiTransition>
+
+{#if signOutConfirmation}
+  <ConfirmSignOut
+    onCancel={() => {
+      signOutConfirmation = false;
+    }}
+  />
+{/if}
+

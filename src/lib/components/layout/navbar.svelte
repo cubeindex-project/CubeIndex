@@ -9,17 +9,12 @@
 
   let { profile } = $props();
 
-  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
+  const deploymentChannel = (
+    PUBLIC_DEPLOYMENT_CHANNEL || "production"
+  ).toLowerCase();
   const isBetaDeployment = deploymentChannel === "beta";
 
-  let isOpen = $state(false);
   let signOutConfirmation = $state(false);
-
-  // Utility: close all mobile-only UI bits
-  function closeMobileMenus() {
-    isOpen = false;
-    mobileProfileDropdown = false;
-  }
 
   let hasUnread = $state(false);
   const isEmailVerified = $derived(profile?.verified ?? false);
@@ -73,16 +68,6 @@
     }
   });
 
-  // Lock body scroll while the mobile menu is open
-  $effect(() => {
-    if (!isOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  });
-
   /**
    * Tag metadata for a profile menu item badge.
    */
@@ -127,7 +112,6 @@
 
   onMount(() => themeChange(false));
 
-  let mobileProfileDropdown = $state(false);
   // Desktop Explore open/close management with small delay for usability
   let exploreOpen = $state(false);
   let exploreCloseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -144,7 +128,7 @@
     const threshold = 72; // px before auto-hide can kick in
 
     // Only auto-hide when not interacting with menus/popovers
-    if (!isOpen && !exploreOpen && y > threshold && goingDown) {
+    if (!exploreOpen && y > threshold && goingDown) {
       hideNav = true;
     } else {
       hideNav = false;
@@ -162,7 +146,7 @@
 
   // Ensure navbar shows when menus open/close
   $effect(() => {
-    if (isOpen || exploreOpen) hideNav = false;
+    if (exploreOpen) hideNav = false;
   });
 
   function openExplore() {
@@ -199,10 +183,14 @@
         height="12"
         fetchpriority="high"
       />
-      <span class="font-clash text-3xl font-bold inline-flex items-center gap-2">
+      <span
+        class="font-clash text-3xl font-bold inline-flex items-center gap-2"
+      >
         CubeIndex
         {#if isBetaDeployment}
-          <span class="badge badge-sm badge-error uppercase tracking-wide">Beta</span>
+          <span class="badge badge-sm badge-error uppercase tracking-wide"
+            >Beta</span
+          >
         {/if}
       </span>
     </a>
@@ -338,212 +326,7 @@
         </a>
       {/if}
     </nav>
-
-    <!-- Mobile Menu Button -->
-    <button
-      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen
-        ? 'swap-active'
-        : ''}"
-      aria-label={isOpen ? "Close menu" : "Open menu"}
-      aria-expanded={isOpen}
-      onclick={() => (isOpen = !isOpen)}
-    >
-      <i class="fa-solid fa-bars swap-off"></i>
-      <i class="fa-solid fa-xmark swap-on"></i>
-    </button>
   </div>
-
-  <!-- Mobile overlay (click to close) -->
-  {#if isOpen}
-    <div
-      class="md:hidden absolute inset-x-0 top-full bottom-0 bg-base-content/40 backdrop-blur-[2px]"
-      aria-hidden="true"
-      onclick={closeMobileMenus}
-      transition:blur={{ duration: 150 }}
-    ></div>
-  {/if}
-
-  <!-- Mobile Nav -->
-  {#if isOpen}
-    <nav
-      class="bg-base-100/95 backdrop-blur px-6 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 md:hidden absolute inset-x-0 top-full rounded-b-4xl border-b-base-300 border-b shadow-lg will-change-transform transition-transform duration-200 ease-out translate-y-0"
-      transition:blur={{ duration: 180 }}
-      aria-label="Mobile navigation"
-    >
-      <ul class="flex flex-col gap-3">
-        <!-- Explore Disclosure (mobile/touch) -->
-        <li>
-          <details class="group">
-            <summary
-              class="flex items-center justify-between cursor-pointer py-3 text-base border-b border-base-300"
-            >
-              <span class="inline-flex items-center gap-2 text-base-content/90">
-                <i class="fa-solid fa-compass text-sm opacity-80"></i>
-                Explore
-              </span>
-              <i
-                class="fa-solid fa-caret-down group-open:rotate-180 transition-transform"
-              ></i>
-            </summary>
-            <div class="mt-2 pl-2 flex flex-col gap-1.5">
-              <a
-                href="/explore/cubes"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-cube text-xs opacity-80"></i>
-                <span>Cubes</span>
-              </a>
-              <span
-                class="flex items-center gap-2 py-2 text-sm opacity-60 rounded-lg px-2"
-                aria-disabled="true"
-              >
-                <i class="fa-solid fa-toolbox text-xs opacity-60"></i>
-                <span>Accessories (Soon)</span>
-              </span>
-              <a
-                href="/explore/vendors"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-store text-xs opacity-80"></i>
-                <span>Vendors</span>
-              </a>
-              <a
-                href="/explore/users"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-users text-xs opacity-80"></i>
-                <span>Users</span>
-              </a>
-            </div>
-          </details>
-        </li>
-
-        {#each navLinks as { name, href }}
-          <li>
-            <a
-              {href}
-              class="flex items-center gap-2 py-3 text-base border-b border-base-300 text-base-content/80 hover:text-base-content"
-              onclick={closeMobileMenus}
-            >
-              <i
-                class="fa-solid {name === 'Achievements'
-                  ? 'fa-trophy'
-                  : 'fa-circle-info'} text-xs opacity-80"
-              ></i>
-              <span>{name}</span>
-            </a>
-          </li>
-        {/each}
-
-        <!-- Notification Bell (Mobile) -->
-        <li class="relative">
-          <a
-            class="flex items-center w-full text-left py-3 text-base-content/80 rounded-lg hover:bg-base-200/60 transition"
-            aria-label="Notifications"
-            href="/notifications"
-            onclick={closeMobileMenus}
-          >
-            <i class="fa-solid fa-bell"></i>
-            <span class="ml-2">Notifications</span>
-          </a>
-          {#if profile && !isEmailVerified}
-            <span
-              class="size-2 rounded-full bg-error animate-ping absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Verify your email"
-            ></span>
-            <span
-              class="size-2 rounded-full bg-error absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Verify your email"
-            ></span>
-          {:else if hasUnread}
-            <span
-              class="size-2 rounded-full bg-info absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Unread notifications"
-            ></span>
-          {/if}
-        </li>
-
-        {#if profile}
-          <li class="relative">
-            <button
-              onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
-              class="btn btn-primary btn-sm w-full inline-flex items-center justify-between"
-            >
-              <span class="inline-flex items-center gap-2">
-                {profile.display_name}
-              </span>
-              <label class="swap swap-rotate">
-                <input
-                  type="checkbox"
-                  bind:checked={mobileProfileDropdown}
-                  hidden
-                  disabled
-                />
-
-                <i class="fa-solid swap-on fa-caret-up"></i>
-
-                <i class="fa-solid swap-off fa-caret-down"></i>
-              </label>
-            </button>
-            {#if mobileProfileDropdown}
-              <ul
-                class="mt-2 flex flex-col gap-3"
-                transition:blur={{ duration: 250 }}
-              >
-                {#each getProfileMenuItems(profile) as item}
-                  <li>
-                    <a
-                      href={item.href}
-                      onclick={() => {
-                        isOpen = false;
-                        mobileProfileDropdown = false;
-                      }}
-                      class={`${mobileLinkBase} ${item.tag ? "flex justify-between" : ""}`}
-                    >
-                      {item.label}
-                      {#if item.tag}
-                        <Tag
-                          label={item.tag.label}
-                          gradient={item.tag.gradient}
-                        />
-                      {/if}
-                    </a>
-                  </li>
-                {/each}
-                <li>
-                  <button
-                    onclick={() => {
-                      signOutConfirmation = true;
-                      closeMobileMenus();
-                    }}
-                    class="py-2 text-sm border-b border-base-300 w-full justify-start flex"
-                  >
-                    Sign Out
-                  </button>
-                </li>
-              </ul>
-            {/if}
-          </li>
-        {:else}
-          <li>
-            <a
-              href="/auth/login"
-              onclick={() => {
-                isOpen = false;
-                mobileProfileDropdown = false;
-              }}
-              class="btn btn-primary btn-sm w-full"
-            >
-              Login
-            </a>
-          </li>
-        {/if}
-      </ul>
-    </nav>
-  {/if}
 </header>
 
 {#if signOutConfirmation}

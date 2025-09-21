@@ -3,7 +3,8 @@ name: CI
 on:
   push:
     branches: [main] # Run on pushes to main
-  pull_request: # Run checks on PRs
+  pull_request:
+    branches: [main] # Run on PRs to main
 
 permissions:
   contents: write # Needed for tagging + creating releases
@@ -54,10 +55,6 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
           # Environment variable so SvelteKit/Vite can read PUBLIC_BUILD_VERSION
           echo "PUBLIC_BUILD_VERSION=$VERSION" >> "$GITHUB_ENV"
-
-      # Run the build
-      - name: Build
-        run: npm run build
 
       # Create a Git tag (same as version string) and push it
       - name: Create tag

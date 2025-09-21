@@ -50,7 +50,10 @@ export const load = (async ({ locals, setHeaders }) => {
     .eq("user_id", user?.id)
     .single();
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    locals.log.error({ err }, "Error loading profile");
+    throw error(500, "An error occured while loading your profile");
+  }
 
   const profileForm = await superValidate(
     {
@@ -221,7 +224,8 @@ export const actions: Actions = {
       .eq("user_id", locals.user?.id);
 
     if (err) {
-      throw error(500, err.message);
+      locals.log.error({ err }, "Error updating profile");
+      throw error(500, "An error occured while updating your profile");
     }
 
     // 4) Success: redirect back or return success data
@@ -254,7 +258,8 @@ export const actions: Actions = {
       .eq("user_id", locals.user?.id);
 
     if (err) {
-      throw error(500, err.message);
+      locals.log.error({ err }, "Error updating social links");
+      throw error(500, "An error occured while updating your social links");
     }
 
     // 4) Success: redirect back or return success data
@@ -282,7 +287,8 @@ export const actions: Actions = {
     );
 
     if (err) {
-      throw error(500, err.message);
+      locals.log.error({ err }, "Error updating password");
+      throw error(500, "An error occured while updating your password");
     }
 
     if (passUpdateData === "incorrect")
@@ -318,7 +324,8 @@ export const actions: Actions = {
       .eq("user_id", locals.user.id);
 
     if (err) {
-      throw error(500, err.message);
+      locals.log.error({ err }, "Error updating beta preference");
+      throw error(500, "An error occured while updating your beta preferences");
     }
 
     const successMessage = form.data.beta_access

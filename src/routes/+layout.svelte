@@ -27,7 +27,9 @@
     ],
   };
 
-  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
+  const deploymentChannel = (
+    PUBLIC_DEPLOYMENT_CHANNEL || "production"
+  ).toLowerCase();
   const isBetaDeployment = deploymentChannel === "beta";
   const siteTitle = isBetaDeployment ? "CubeIndex Beta" : "CubeIndex";
 
@@ -99,21 +101,20 @@
 <Toaster />
 <ClientErrorReporter />
 
-<div class="pb-16 md:pb-0">
+<div class={profile ? "pb-16 md:pb-0" : ""}>
   <Ssgoi {config}>
     {@render children()}
   </Ssgoi>
-
-  <AchievementUnlocked user={data.user} />
-  <div class="hidden md:block">
-    <Footer />
-  </div>
-
-  <BackButton />
-  <ScrollToTop />
 </div>
+
+<AchievementUnlocked user={data.user} />
+<div class="hidden md:block">
+  <Footer />
+</div>
+
+<BackButton />
+<ScrollToTop />
 
 {#if profile}
   <MobileBottomNav {profile} />
 {/if}
-

@@ -10,7 +10,10 @@
   import ConfirmSignOut from "$lib/components/user/confirmSignOut.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
   import pkgJson from "../../../../../package.json" assert { type: "json" };
-  import { PUBLIC_BETA_APP_URL, PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
+  import {
+    PUBLIC_BETA_APP_URL,
+    PUBLIC_DEPLOYMENT_CHANNEL,
+  } from "$env/static/public";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -452,7 +455,7 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  <section class="px-4 py-8 min-h-screen">
+  <section class="px-4 py-8">
     <div class="max-w-6xl mx-auto">
       <div class="mb-6">
         <h1 class="text-3xl sm:text-4xl font-clash text-primary">
@@ -516,7 +519,7 @@
         </aside>
 
         <!-- Right Content -->
-        <div class="flex-1 space-y-8 min-h-screen">
+        <div class="flex-1 space-y-8">
           <nav
             aria-label="Settings sections"
             class="lg:hidden"
@@ -545,7 +548,8 @@
                           <span
                             class="flex h-9 w-9 items-center justify-center rounded-full bg-base-100 shadow-sm"
                           >
-                            <i class={`${it.icon} text-base`} aria-hidden="true"></i>
+                            <i class={`${it.icon} text-base`} aria-hidden="true"
+                            ></i>
                           </span>
                           <span class="text-sm font-medium">{it.label}</span>
                         </span>
@@ -586,18 +590,28 @@
               </div>
             </div>
           </nav>
-          <div class="card bg-base-100 shadow-sm" class:hidden={browser && !isDesktopViewport && mobileViewMode === "list"}>
-            <div class="flex items-center gap-3 px-6 pt-6 pb-3 border-b border-base-300/60 lg:hidden">
+          <div
+            class="card bg-base-100 shadow-sm"
+            class:hidden={browser &&
+              !isDesktopViewport &&
+              mobileViewMode === "list"}
+          >
+            <div
+              class="flex items-center gap-3 px-6 pt-6 pb-3 border-b border-base-300/60 lg:hidden"
+            >
               <button
                 type="button"
                 class="btn btn-ghost btn-sm gap-2 px-3"
                 onclick={showTabList}
                 aria-label="Back to sections"
               >
-                <i class="fa-solid fa-arrow-left text-base" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-left text-base" aria-hidden="true"
+                ></i>
                 Sections
               </button>
-              <span class="flex-1 text-right text-sm font-semibold text-base-content/70">
+              <span
+                class="flex-1 text-right text-sm font-semibold text-base-content/70"
+              >
                 {activeTab.label}
               </span>
             </div>
@@ -1050,8 +1064,8 @@
                 <div class="space-y-2">
                   <h2 class="card-title">Beta Program</h2>
                   <p class="text-sm opacity-70">
-                    Toggle access to the CubeIndex beta experience. You can opt in or leave at
-                    any time.
+                    Toggle access to the CubeIndex beta experience. You can opt
+                    in or leave at any time.
                   </p>
                 </div>
 
@@ -1067,15 +1081,18 @@
                     <p>
                       Current status:
                       <span class="font-semibold text-base-content">
-                        {$betaForm.beta_access ? "Opted into beta" : "Using production only"}
+                        {$betaForm.beta_access
+                          ? "Opted into beta"
+                          : "Using production only"}
                       </span>
                     </p>
                     <p class="text-xs opacity-60">
                       {#if betaExperienceLabel}
-                        We'll redirect you to {betaExperienceLabel} when you visit the production
-                        site.
+                        We'll redirect you to {betaExperienceLabel} when you visit
+                        the production site.
                       {:else}
-                        We'll redirect you to the beta experience automatically from production.
+                        We'll redirect you to the beta experience automatically
+                        from production.
                       {/if}
                     </p>
                     {#if betaExperienceUrl}
@@ -1086,7 +1103,9 @@
                         rel="noopener noreferrer"
                       >
                         Open the beta site
-                        <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[0.6rem]"></i>
+                        <i
+                          class="fa-solid fa-arrow-up-right-from-square ml-1 text-[0.6rem]"
+                        ></i>
                       </a>
                     {/if}
                   </div>
@@ -1099,20 +1118,24 @@
                   use:betaEnhance
                   aria-live="polite"
                 >
-                  <fieldset class="fieldset bg-base-200 border-base-100 rounded-box border p-4">
+                  <fieldset
+                    class="fieldset bg-base-200 border-base-100 rounded-box border p-4"
+                  >
                     <legend class="fieldset-legend">Manage beta access</legend>
                     <label
-                      class="label cursor-pointer justify-between gap-4 flex-col sm:flex-row sm:items-center"
+                      class="label cursor-pointer justify-between gap-4 flex-col sm:flex-row items-end sm:items-center"
                     >
                       <div class="text-left space-y-1">
-                        <span class="label-text font-semibold">Opt into the CubeIndex beta</span>
-                        <span class="text-xs opacity-70">
+                        <span class="label-text font-semibold">
+                          Opt into the CubeIndex beta
+                        </span>
+                        <span class="text-xs opacity-70 text-wrap">
                           {#if $betaForm.beta_access}
-                            Leave the toggle on to keep using new features before they reach
-                            production.
+                            Leave the toggle on to keep using new features
+                            before they reach production.
                           {:else}
-                            Turn this on to preview upcoming features before they launch to
-                            everyone.
+                            Turn this on to preview upcoming features before
+                            they launch to everyone.
                           {/if}
                         </span>
                       </div>
@@ -1139,8 +1162,8 @@
                     class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <p class="text-xs opacity-60">
-                      Changes apply to your next visit. You can come back here anytime to switch
-                      versions.
+                      Changes apply to your next visit. You can come back here
+                      anytime to switch versions.
                     </p>
                     <button
                       class="btn btn-primary btn-lg sm:w-fit"
@@ -1161,12 +1184,13 @@
               </div>
             {:else if tab === "appearance"}
               <div class="card-body space-y-6">
-                <div class="flex flex-col md:flex-row gap-3 md:items-center justify-between">
+                <div
+                  class="flex flex-col md:flex-row gap-3 md:items-center justify-between"
+                >
                   <div>
                     <h2 class="card-title">Appearance</h2>
                     <p class="text-sm opacity-70">
-                      Choose a theme you like. You can also follow your
-                      system.
+                      Choose a theme you like. You can also follow your system.
                     </p>
                   </div>
                   <label class="label cursor-pointer gap-3">
@@ -1297,8 +1321,7 @@
                       >
                     </div>
                     <p class="mt-2 text-sm opacity-70">
-                      Updated automatically whenever a new release is
-                      published.
+                      Updated automatically whenever a new release is published.
                     </p>
                   </div>
 
@@ -1337,13 +1360,18 @@
                           class="flex items-center justify-between gap-3 rounded-2xl border border-base-300 bg-base-200/50 px-4 py-3 transition hover:border-primary/60 hover:bg-base-100"
                           href={link.href}
                           target={link.external ? "_blank" : undefined}
-                          rel={link.external ? "noopener noreferrer" : undefined}
+                          rel={link.external
+                            ? "noopener noreferrer"
+                            : undefined}
                         >
                           <span class="flex items-center gap-3">
                             <span
                               class="flex h-10 w-10 items-center justify-center rounded-full bg-base-100 shadow-sm"
                             >
-                              <i class={`${link.icon} text-base`} aria-hidden="true"></i>
+                              <i
+                                class={`${link.icon} text-base`}
+                                aria-hidden="true"
+                              ></i>
                             </span>
                             <span class="text-left">
                               <span class="block text-sm font-semibold"
@@ -1383,4 +1411,3 @@
     }}
   />
 {/if}
-

@@ -55,6 +55,7 @@ npm run dev
 - `DATABASE_URL`: Postgres connection (server-side)
 - `PUBLIC_SITE_URL`: Absolute base URL
 - `PUBLIC_DEPLOYMENT_CHANNEL`: Build-time deployment channel (`production` or `beta`) toggles the Beta UI label
+- `LOG_LEVEL`: Server-side Pino log level (`debug`, `info`, `warn`, etc.)
 - `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_WEBSITE_ID`: Analytics (optional)
 
 ---

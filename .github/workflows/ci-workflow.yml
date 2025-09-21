@@ -2,14 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [main] # Run on pushes to main
+    branches:
+      - main
   pull_request:
-    branches: [main] # Run on PRs to main
+    branches:
+      - main
 
 permissions:
-  contents: write # Needed for tagging + creating releases
+  contents: write
 
-# Cancel older runs on the same branch if new commits arrive
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -18,59 +19,110 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      TZ: Europe/Paris # Timezone for version date
-
+      TZ: Europe/Paris
     steps:
-      # Fetch repo (full history so tags can be pushed cleanly)
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Install Node.js and cache npm packages
       - name: Use Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      # Install dependencies from package-lock.json
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
 
-      # Compute version string and inject into package.json
-      - name: Set version
-        id: version
+      - name: Prepare dummy environment
+        if: ${{ github.event_name == 'pull_request' }}
+        id: dummy_env
         shell: bash
         run: |
-          DATE="$(date +'%Y.%m.%d')"
-          SHORT_SHA="${GITHUB_SHA::7}"
-          VERSION="$DATE-$SHORT_SHA"
+          set -euo pipefail
+          tmp_env="$RUNNER_TEMP/ci-env"
+          : >"$tmp_env"
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            if [[ -z "$line" || "$line" == \#* ]]; then
+              continue
+            fi
+            key="${line%%=*}"
+            value="${line#*=}"
+            if [[ "$key" == "$line" ]]; then
+              continue
+            fi
+            if [[ -z "$value" ]]; then
+              sanitized=$(echo "$key" | tr '[:upper:]' '[:lower:]' | tr -c '[:alnum:]' '-')
+              value="dummy-$sanitized"
+            fi
+            printf '%s=%s\n' "$key" "$value" >>"$tmp_env"
+          done < .env.example
+          echo "file=$tmp_env" >> "$GITHUB_OUTPUT"
 
-          # Update package.json without creating a git tag/commit
-          npm version "$VERSION" --no-git-tag-version
+      - name: Build
+        shell: bash
+        env:
+          DUMMY_ENV_FILE: ${{ steps.dummy_env.outputs.file }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" && -n "$DUMMY_ENV_FILE" ]]; then
+            set -a
+            source "$DUMMY_ENV_FILE"
+            set +a
+          fi
+          npm run build
 
-          # Outputs for later steps
-          echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-          # Environment variable so SvelteKit/Vite can read PUBLIC_BUILD_VERSION
-          echo "PUBLIC_BUILD_VERSION=$VERSION" >> "$GITHUB_ENV"
+  release:
+    needs: build
+    if: >-
+      ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'release:') }}
+    runs-on: ubuntu-latest
+    env:
+      COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      COMMIT_SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # Create a Git tag (same as version string) and push it
+      - name: Extract release metadata
+        id: release_meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          message="$COMMIT_MESSAGE"
+          if [[ -z "$message" ]]; then
+            echo "Commit message is required" >&2
+            exit 1
+          fi
+          first_line=$(printf '%s\n' "$message" | head -n1)
+          tag_name=${first_line#release:}
+          tag_name=$(printf '%s' "$tag_name" | sed -e 's/^ *//' -e 's/ *$//')
+          if [[ -z "$tag_name" ]]; then
+            echo "Unable to determine tag from commit message" >&2
+            exit 1
+          fi
+          release_body=$(printf '%s\n' "$message" | sed '1d')
+          release_body=$(printf '%s\n' "$release_body" | sed '/./,$!d')
+          if [[ -z "$release_body" ]]; then
+            release_body="Release triggered by commit $COMMIT_SHA."
+          fi
+          echo "tag=$tag_name" >> "$GITHUB_OUTPUT"
+          printf 'body<<EOF\n%s\nEOF\n' "$release_body" >> "$GITHUB_OUTPUT"
+
       - name: Create tag
         run: |
-          git tag "${{ steps.version.outputs.VERSION }}"
-          git push origin "${{ steps.version.outputs.VERSION }}"
+          git tag "${{ steps.release_meta.outputs.tag }}"
+          git push origin "${{ steps.release_meta.outputs.tag }}"
 
-      # Create a GitHub Release for this tag
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.VERSION }}
-          name: ${{ steps.version.outputs.VERSION }}
-          body: |
-            Automated build for ${{ steps.version.outputs.VERSION }}.
-            - Commit: ${{ github.sha }}
-            - Date (Europe/Paris): ${{ steps.version.outputs.DATE }}
+          tag_name: ${{ steps.release_meta.outputs.tag }}
+          name: ${{ steps.release_meta.outputs.tag }}
+          body: ${{ steps.release_meta.outputs.body }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

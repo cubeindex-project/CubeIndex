@@ -10,7 +10,7 @@
   import ConfirmSignOut from "$lib/components/user/confirmSignOut.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
   import pkgJson from "../../../../../package.json" assert { type: "json" };
-  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
+  import { PUBLIC_BETA_APP_URL, PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -54,15 +54,37 @@
     resetForm: true,
   });
 
+  const {
+    form: betaForm,
+    errors: betaErrors,
+    enhance: betaEnhance,
+    message: betaMessage,
+    delayed: betaDelayed,
+    tainted: betaTainted,
+    isTainted: betaIsTainted,
+  } = superForm(data.betaForm, {
+    invalidateAll: "pessimistic",
+    delayMs: 500,
+    timeoutMs: 8000,
+    clearOnSubmit: "errors-and-message",
+  });
+
   const params = queryParameters();
 
-  type TabId = "profile" | "social" | "security" | "appearance" | "about";
+  type TabId =
+    | "profile"
+    | "social"
+    | "security"
+    | "beta"
+    | "appearance"
+    | "about";
   type TabItem = { id: TabId; label: string; icon: string };
 
   const tabs: TabItem[] = [
     { id: "profile", label: "Profile", icon: "fa-solid fa-user" },
     { id: "social", label: "Social Links", icon: "fa-solid fa-globe" },
     { id: "security", label: "Security", icon: "fa-solid fa-lock" },
+    { id: "beta", label: "Beta Program", icon: "fa-solid fa-flask" },
     { id: "appearance", label: "Appearance", icon: "fa-solid fa-palette" },
     { id: "about", label: "About", icon: "fa-solid fa-circle-info" },
   ];
@@ -125,6 +147,18 @@
     const channel = PUBLIC_DEPLOYMENT_CHANNEL ?? "production";
     const normalized = channel.toLowerCase();
     return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  })();
+
+  const betaExperienceUrl = PUBLIC_BETA_APP_URL || null;
+  const betaExperienceLabel = (() => {
+    if (!betaExperienceUrl) return null;
+    try {
+      const parsed = new URL(betaExperienceUrl);
+      return parsed.origin;
+    } catch (error) {
+      console.warn("Invalid beta experience URL provided:", error);
+      return betaExperienceUrl;
+    }
   })();
 
   type AboutLink = {
@@ -401,6 +435,13 @@
   $effect(() => {
     const _ = $passwordTainted;
     passwordDirty = passwordIsTainted();
+  });
+
+  let betaDirty: boolean = $state(false);
+
+  $effect(() => {
+    const _ = $betaTainted;
+    betaDirty = betaIsTainted();
   });
 </script>
 
@@ -999,6 +1040,120 @@
                         Updating...
                       {:else}
                         Update Password
+                      {/if}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            {:else if tab === "beta"}
+              <div class="card-body space-y-6">
+                <div class="space-y-2">
+                  <h2 class="card-title">Beta Program</h2>
+                  <p class="text-sm opacity-70">
+                    Toggle access to the CubeIndex beta experience. You can opt in or leave at
+                    any time.
+                  </p>
+                </div>
+
+                <div
+                  class="rounded-2xl border border-base-300 bg-base-100/70 p-4 shadow-sm flex flex-col gap-3 sm:flex-row sm:items-center"
+                >
+                  <span
+                    class="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary"
+                  >
+                    <i class="fa-solid fa-flask text-lg"></i>
+                  </span>
+                  <div class="space-y-2 text-sm opacity-80">
+                    <p>
+                      Current status:
+                      <span class="font-semibold text-base-content">
+                        {$betaForm.beta_access ? "Opted into beta" : "Using production only"}
+                      </span>
+                    </p>
+                    <p class="text-xs opacity-60">
+                      {#if betaExperienceLabel}
+                        We'll redirect you to {betaExperienceLabel} when you visit the production
+                        site.
+                      {:else}
+                        We'll redirect you to the beta experience automatically from production.
+                      {/if}
+                    </p>
+                    {#if betaExperienceUrl}
+                      <a
+                        class="link link-primary text-xs"
+                        href={betaExperienceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open the beta site
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[0.6rem]"></i>
+                      </a>
+                    {/if}
+                  </div>
+                </div>
+
+                <form
+                  class="space-y-4"
+                  method="POST"
+                  action="?/beta"
+                  use:betaEnhance
+                  aria-live="polite"
+                >
+                  <fieldset class="fieldset bg-base-200 border-base-100 rounded-box border p-4">
+                    <legend class="fieldset-legend">Manage beta access</legend>
+                    <label
+                      class="label cursor-pointer justify-between gap-4 flex-col sm:flex-row sm:items-center"
+                    >
+                      <div class="text-left space-y-1">
+                        <span class="label-text font-semibold">Opt into the CubeIndex beta</span>
+                        <span class="text-xs opacity-70">
+                          {#if $betaForm.beta_access}
+                            Leave the toggle on to keep using new features before they reach
+                            production.
+                          {:else}
+                            Turn this on to preview upcoming features before they launch to
+                            everyone.
+                          {/if}
+                        </span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        name="beta_access"
+                        class="toggle bg-base-100"
+                        bind:checked={$betaForm.beta_access}
+                      />
+                    </label>
+                    {#if $betaErrors.beta_access}
+                      <p class="text-error">{$betaErrors.beta_access}</p>
+                    {/if}
+                  </fieldset>
+
+                  {#if $betaMessage}
+                    <div class="alert alert-success">
+                      <i class="fa-solid fa-circle-check"></i>
+                      <span>{$betaMessage}</span>
+                    </div>
+                  {/if}
+
+                  <div
+                    class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <p class="text-xs opacity-60">
+                      Changes apply to your next visit. You can come back here anytime to switch
+                      versions.
+                    </p>
+                    <button
+                      class="btn btn-primary btn-lg sm:w-fit"
+                      type="submit"
+                      disabled={!betaDirty}
+                    >
+                      {#if $betaDelayed}
+                        <span class="loading loading-spinner"></span>
+                        Saving...
+                      {:else if $betaForm.beta_access}
+                        Save and stay in beta
+                      {:else}
+                        Save and leave beta
                       {/if}
                     </button>
                   </div>

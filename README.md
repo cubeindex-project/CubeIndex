@@ -52,11 +52,10 @@ npm run dev
 #### Environment
 
 - `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY`: Frontend Supabase access
-- `DATABASE_URL`: Postgres connection (server-side)
-- `PUBLIC_SITE_URL`: Absolute base URL
 - `PUBLIC_DEPLOYMENT_CHANNEL`: Build-time deployment channel (`production` or `beta`) toggles the Beta UI label
+- `PUBLIC_BETA_APP_URL`: Base URL for the beta deployment (enables automatic opt-in redirects)
+- `PUBLIC_PRODUCTION_APP_URL`: Base URL for the production deployment (used when linking from the beta app)
 - `LOG_LEVEL`: Server-side Pino log level (`debug`, `info`, `warn`, etc.)
-- `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_WEBSITE_ID`: Analytics (optional)
 
 ---
 

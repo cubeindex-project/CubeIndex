@@ -60,15 +60,11 @@
         <div class="alert alert-info">
           <i class="fa-solid fa-circle-info text-xl"></i>
           <div>
-            <h2 class="font-semibold">Beta Access</h2>
-            <p class="text-sm text-base-content/80">
-              Access to the CubeIndex beta is limited to whitelisted users. Join
-              our
-              <a
-                href="https://thecubeindex.com/discord"
-                class="link link-primary link-hover">Discord</a
-              >
-              to request access.
+            <h2 class="font-semibold">Beta opt-in</h2>
+            <p class="text-sm">
+              Beta access is self-serve. Sign in on the production site and open
+              Settings → Beta Program to join or leave the beta whenever you like.
+              <a href="/beta" class="link">Learn more</a>
             </p>
           </div>
         </div>

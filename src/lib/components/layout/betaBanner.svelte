@@ -49,29 +49,29 @@
 
         <div class="space-y-2 text-sm text-base-content/80 sm:text-base">
           <p class="font-semibold text-base-content sm:text-lg">
-            Ready to help shape the beta?
+            Ready to help shape CubeIndex?
           </p>
           <p>
-            We're inviting active CubeIndex members to test new features. Want
-            to join the private beta crew?
+            Opt into the beta to preview new features, share feedback early, and influence what ships
+            next.
           </p>
 
           <div class="flex flex-wrap gap-2">
             <a
-              href="/beta"
+              href="/user/settings?tab=beta"
               class="btn btn-primary btn-xs sm:btn-sm rounded-xl"
               onclick={() => dismiss({ persist: false })}
             >
-              <i class="fa-solid fa-circle-question text-xs"></i>
-              <span>See how it works</span>
+              <i class="fa-solid fa-sliders text-xs"></i>
+              <span>Manage beta settings</span>
             </a>
             <a
-              href="/discord"
+              href="/beta"
               class="btn btn-ghost btn-xs sm:btn-sm rounded-xl border border-base-300 hover:border-primary"
               onclick={() => dismiss({ persist: false })}
             >
-              <i class="fa-solid fa-comments text-xs"></i>
-              <span>Ask for access</span>
+              <i class="fa-solid fa-circle-question text-xs"></i>
+              <span>Learn about the beta</span>
             </a>
           </div>
         </div>

@@ -30,7 +30,6 @@
   const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
   const isBetaDeployment = deploymentChannel === "beta";
   const siteTitle = isBetaDeployment ? "CubeIndex Beta" : "CubeIndex";
-  const shouldShowBetaBanner = deploymentChannel === "production";
 
   let { data, children } = $props();
 
@@ -93,7 +92,7 @@
 
 <Navbar {profile} />
 
-{#if shouldShowBetaBanner && data.user}
+{#if !isBetaDeployment && profile?.beta_access === false}
   <BetaBanner />
 {/if}
 

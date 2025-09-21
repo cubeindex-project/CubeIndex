@@ -4,6 +4,7 @@ import {
   superValidate,
   withFiles,
 } from "sveltekit-superforms";
+import { betaPreferenceSchema } from "$lib/schemas/beta";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
@@ -69,11 +70,17 @@ export const load = (async ({ locals, setHeaders }) => {
 
   const passwordForm = await superValidate(zod4(passwordSchema));
 
+  const betaForm = await superValidate(
+    { beta_access: profile.beta_access },
+    zod4(betaPreferenceSchema),
+    { errors: false }
+  );
+
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { profile, profileForm, socialForm, passwordForm };
+  return { profile, profileForm, socialForm, passwordForm, betaForm };
 }) satisfies PageServerLoad;
 
 /** @satisfies {Actions} */
@@ -286,5 +293,38 @@ export const actions: Actions = {
       );
 
     return message(form, "Password edited successfully!");
+  },
+
+  beta: async ({ request, locals }) => {
+    const form = await superValidate(request, zod4(betaPreferenceSchema));
+
+    if (!locals.user) {
+      return fail(401, {
+        form,
+        message: "You must be signed in to manage beta access.",
+      });
+    }
+
+    if (!form.valid)
+      return fail(400, {
+        form,
+        message:
+          "There are errors in your submission. Please review the highlighted fields and try again.",
+      });
+
+    const { error: err } = await locals.supabase
+      .from("profiles")
+      .update({ beta_access: form.data.beta_access })
+      .eq("user_id", locals.user.id);
+
+    if (err) {
+      throw error(500, err.message);
+    }
+
+    const successMessage = form.data.beta_access
+      ? "You have joined the CubeIndex beta. We'll send you to the beta experience automatically."
+      : "You left the CubeIndex beta. Visit the stable site to use the standard experience.";
+
+    return message(form, successMessage);
   },
 };

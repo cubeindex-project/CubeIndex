@@ -1,5 +1,4 @@
 import { statSync } from "node:fs";
-import { PUBLIC_SITE_URL } from "$env/static/public";
 import type { RequestHandler } from "./$types";
 
 /**
@@ -13,7 +12,7 @@ interface SitemapEntry {
 /**
  * Build the list of sitemap entries by scanning public routes.
  */
-function buildEntries(): SitemapEntry[] {
+function buildEntries(url: URL): SitemapEntry[] {
   const files = import.meta.glob("../**/**/+page.{svelte,ts}");
   const pages = new Map<string, Date>();
 
@@ -39,10 +38,8 @@ function buildEntries(): SitemapEntry[] {
     if (!existing || mtime > existing) pages.set(path, mtime);
   }
 
-  const base = PUBLIC_SITE_URL || "http://localhost:5173";
-
   return Array.from(pages.entries()).map(([path, time]) => ({
-    loc: new URL(path === "/" ? "" : path.slice(1), base).toString(),
+    loc: new URL(path === "/" ? "" : path.slice(1), url.origin).toString(),
     lastmod: time.toISOString(),
   }));
 }
@@ -57,8 +54,8 @@ function renderXML(entries: SitemapEntry[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
 }
 
-export const GET: RequestHandler = async () => {
-  const body = renderXML(buildEntries());
+export const GET: RequestHandler = async ({url}) => {
+  const body = renderXML(buildEntries(url));
   return new Response(body, {
     headers: { "Content-Type": "application/xml" },
   });

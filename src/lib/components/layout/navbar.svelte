@@ -57,9 +57,12 @@
 
   const navLinks = [
     { name: "Achievements", href: "/achievements" },
-    { name: "Support", href: "/pricing" },
     { name: "About", href: "/about" },
   ];
+
+  if (PUBLIC_DEPLOYMENT_CHANNEL !== "beta") {
+    navLinks.splice(1, 0, { name: "Join the Beta", href: "/beta" });
+  }
 
   let bellAnimate = $state(false);
   $effect(() => {

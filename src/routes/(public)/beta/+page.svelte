@@ -1,4 +1,11 @@
 <script lang="ts">
+  import type { PageData } from "./$types";
+  import {
+    PUBLIC_BETA_APP_URL,
+    PUBLIC_DEPLOYMENT_CHANNEL,
+    PUBLIC_PRODUCTION_APP_URL,
+  } from "$env/static/public";
+
   interface BetaHighlight {
     title: string;
     description: string;
@@ -10,47 +17,86 @@
     summary: string;
   }
 
-  const { data } = $props();
+  const { data }: { data: PageData } = $props();
 
-  let isLoggedIn = Boolean(data.session);
-  let lacksBetaAccess = isLoggedIn && data.profile?.beta_access !== true;
+  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL ?? "production").toLowerCase();
+  const isLoggedIn = Boolean(data.session);
+  const hasBetaAccess = data.profile?.beta_access === true;
+
+  const toProduction = (path: string) => {
+    if (deploymentChannel === "beta" && PUBLIC_PRODUCTION_APP_URL) {
+      try {
+        return new URL(path, PUBLIC_PRODUCTION_APP_URL).href;
+      } catch (error) {
+        console.warn("Invalid production app URL provided:", error);
+        return path;
+      }
+    }
+    return path;
+  };
+
+  const manageSettingsHref = toProduction("/user/settings?tab=beta");
+  const loginHref = toProduction("/auth/login");
+  const signupHref = toProduction("/auth/signup");
+  const productionDashboardHref = toProduction("/dashboard");
+
+  const betaAppHref = (() => {
+    if (PUBLIC_BETA_APP_URL) {
+      try {
+        return new URL("/", PUBLIC_BETA_APP_URL).href;
+      } catch (error) {
+        console.warn("Invalid beta app URL provided:", error);
+        return PUBLIC_BETA_APP_URL;
+      }
+    }
+    return deploymentChannel === "beta" ? "/" : null;
+  })();
+
+  const betaAppLabel = (() => {
+    if (!betaAppHref) return null;
+    try {
+      return new URL(betaAppHref).origin;
+    } catch {
+      return betaAppHref;
+    }
+  })();
 
   const highlights: BetaHighlight[] = [
     {
-      title: "Shape CubeIndex",
+      title: "Self-serve access",
       description:
-        "Preview upcoming features, validate workflows, and help us prioritize what matters for cubers everywhere.",
-      icon: "fa-wand-magic-sparkles",
+        "Opt in from your settings—no invites or approvals required. Leave whenever you want.",
+      icon: "fa-toggle-on",
     },
     {
-      title: "Early Feature Access",
+      title: "Automatic beta routing",
       description:
-        "Try experimental tooling before it ships to production and share feedback directly with the team.",
-      icon: "fa-compass-drafting",
+        "Once you opt in, visiting the production site sends you straight to the beta experience.",
+      icon: "fa-arrows-rotate",
     },
     {
-      title: "Community First",
+      title: "Shape every release",
       description:
-        "Join a focused group of solvers, collectors, and analysts building the future of CubeIndex together.",
-      icon: "fa-hands-holding-circle",
+        "Test upcoming tooling and share feedback that directly informs what ships next.",
+      icon: "fa-comments",
     },
   ];
 
   const steps: BetaStep[] = [
     {
-      title: "Request an invite",
+      title: "Sign in to CubeIndex",
       summary:
-        "Hop into our Discord server and introduce yourself in the beta access channel. We onboard new testers in waves.",
+        "Use your CubeIndex account or create one so we can remember your beta preference.",
     },
     {
-      title: "Watch your inbox",
+      title: "Open Settings → Beta Program",
       summary:
-        "Once approved, you will receive an email confirming beta access. Add CubeIndex to your safe senders list so you do not miss it.",
+        "The new tab lets you manage beta access alongside your profile, social links, and theme.",
     },
     {
-      title: "Log in and explore",
+      title: "Flip the switch",
       summary:
-        "Use the same email to sign in. Your dashboard will unlock beta-only features and feedback prompts when available.",
+        "Enable the toggle to join the beta. We'll redirect you automatically and you can return any time.",
     },
   ];
 </script>
@@ -59,7 +105,7 @@
   <title>Join the CubeIndex Beta</title>
   <meta
     name="description"
-    content="Request early access to CubeIndex, explore upcoming features, and help guide the roadmap for the community."
+    content="Opt in to the CubeIndex beta, explore upcoming features, and help guide the roadmap for the community."
   />
 </svelte:head>
 
@@ -69,44 +115,80 @@
   ></div>
   <div class="mx-auto max-w-5xl px-6 md:px-10 py-16 md:py-24 text-center">
     <h1 class="font-clash text-4xl md:text-6xl font-extrabold tracking-tight">
-      Help Shape CubeIndex
+      Join the CubeIndex Beta
     </h1>
     <p class="mt-5 text-lg md:text-xl text-base-content/70">
-      CubeIndex made available a private beta to cubers passionate about the
-      platform. We are them to try features early, stress-test new ideas, and
-      collaborate with the team before full launch.
+      Preview upcoming features, validate improvements, and help prioritize what the CubeIndex
+      community ships next.
     </p>
-    {#if lacksBetaAccess}
+    {#if isLoggedIn && !hasBetaAccess}
       <div
-        class="mt-6 alert alert-warning shadow-sm flex flex-col md:flex-row gap-3 items-center"
+        class="mt-6 alert alert-info shadow-sm flex flex-col md:flex-row gap-3 items-center"
       >
         <i class="fa-solid fa-circle-info text-xl"></i>
         <span class="text-left text-sm md:text-base">
-          You are signed in, but your account has not been granted beta access
-          yet. Request an invite through Discord and we will email you once you
-          are in.
+          You're signed in. Visit
+          <a href={manageSettingsHref} class="link link-primary link-hover"
+            >Settings → Beta Program</a
+          >
+          to opt in instantly and start testing new features.
+        </span>
+      </div>
+    {:else if isLoggedIn && hasBetaAccess}
+      <div
+        class="mt-6 alert alert-success shadow-sm flex flex-col md:flex-row gap-3 items-center"
+      >
+        <i class="fa-solid fa-check text-xl"></i>
+        <span class="text-left text-sm md:text-base">
+          You're in the beta! We'll redirect you to {betaAppLabel ?? "the beta experience"} whenever
+          you visit CubeIndex.
         </span>
       </div>
     {/if}
 
-    <div
-      class="mt-10 flex flex-col md:flex-row items-center justify-center gap-4"
-    >
-      <a href="/discord" class="btn btn-primary btn-lg rounded-2xl px-8">
-        <i class="fa-solid fa-comments text-xl"></i>
-        <span>Request Beta Access</span>
-      </a>
-      <a
-        href="https://beta.thecubeindex.com/auth/login"
-        class="btn btn-lg rounded-2xl px-8 bg-base-100 border-base-300 hover:border-primary"
-      >
-        <i class="fa-solid fa-right-to-bracket text-xl"></i>
-        <span>I Already Have Access</span>
-      </a>
+    <div class="mt-10 flex flex-col md:flex-row items-center justify-center gap-4">
+      {#if isLoggedIn}
+        <a href={manageSettingsHref} class="btn btn-primary btn-lg rounded-2xl px-8">
+          <i class="fa-solid fa-sliders text-xl"></i>
+          <span>Manage Beta Settings</span>
+        </a>
+        {#if hasBetaAccess && betaAppHref}
+          <a
+            href={betaAppHref}
+            class="btn btn-lg rounded-2xl px-8 bg-base-100 border-base-300 hover:border-primary"
+          >
+            <i class="fa-solid fa-arrow-up-right-from-square text-xl"></i>
+            <span>Open the Beta App</span>
+          </a>
+        {:else}
+          <a
+            href={productionDashboardHref}
+            class="btn btn-lg rounded-2xl px-8 bg-base-100 border-base-300 hover:border-primary"
+          >
+            <i class="fa-solid fa-house text-xl"></i>
+            <span>
+              {deploymentChannel === "beta"
+                ? "Open the Production App"
+                : "Explore the Dashboard"}
+            </span>
+          </a>
+        {/if}
+      {:else}
+        <a href={loginHref} class="btn btn-primary btn-lg rounded-2xl px-8">
+          <i class="fa-solid fa-right-to-bracket text-xl"></i>
+          <span>Sign in to join</span>
+        </a>
+        <a
+          href={signupHref}
+          class="btn btn-lg rounded-2xl px-8 bg-base-100 border-base-300 hover:border-primary"
+        >
+          <i class="fa-solid fa-user-plus text-xl"></i>
+          <span>Create an account</span>
+        </a>
+      {/if}
     </div>
     <p class="mt-4 text-sm text-base-content/60">
-      Invites are limited. We review requests weekly and expand the cohort as
-      soon as we can.
+      You can join or leave the beta whenever you like. We sync your preference across every device.
     </p>
   </div>
 </section>
@@ -134,11 +216,11 @@
 <section class="bg-base-200">
   <div class="mx-auto max-w-5xl px-6 md:px-10 py-16 md:py-24">
     <h2 class="text-3xl md:text-4xl font-clash font-semibold text-center">
-      How beta access works
+      How beta opt-in works
     </h2>
     <p class="mt-4 text-base-content/70 text-center max-w-2xl mx-auto">
-      Joining the beta is simple and meant to be collaborative. Follow the steps
-      below and we will email you as soon as your invite is ready.
+      Switching to the beta takes only a minute. Follow these steps to manage your access whenever you
+      need.
     </p>
     <div class="mt-12 space-y-6">
       {#each steps as { title, summary }, index}
@@ -163,8 +245,8 @@
     </div>
     <div class="mt-12 text-center">
       <p class="text-sm text-base-content/60">
-        Already invited but seeing this page? Double-check that you are logging
-        in with the email we approved for the beta.
+        Want to return to production? Toggle the beta setting off in Settings → Beta Program and revisit
+        CubeIndex to switch back.
       </p>
     </div>
   </div>

@@ -61,6 +61,7 @@ jobs:
           echo "file=$tmp_env" >> "$GITHUB_OUTPUT"
 
       - name: Build
+        if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         env:
           DUMMY_ENV_FILE: ${{ steps.dummy_env.outputs.file }}

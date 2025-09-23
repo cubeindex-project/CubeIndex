@@ -1,7 +1,6 @@
 <script lang="ts">
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
-  import RoleBadge from "$lib/components/user/badge.svelte";
 
   const { data } = $props<{
     data: {

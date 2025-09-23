@@ -29,11 +29,8 @@
     Rare: "bg-blue-400",
     Common: "bg-neutral-400",
   };
-  const bgFor = (r?: string) => rarityBg[r ?? "Common"] ?? rarityBg.Common;
   const dotFor = (r?: string) => rarityDot[r ?? "Common"] ?? rarityDot.Common;
 
-  // Refs for focus management
-  let dialogEl: HTMLDivElement | null = $state(null);
   let closeBtnEl: HTMLButtonElement | null = null;
 
   function showAchievementOverlay(a: Achievements) {
@@ -96,11 +93,6 @@
       rarity: "Mythic",
       icon: "⭐",
     } as Achievements);
-  }
-
-  // Click outside only: close when backdrop is clicked, not the card
-  function onBackdropClick(e: MouseEvent) {
-    if (e.target === e.currentTarget) close();
   }
 
   // assumes: achievement, open, bgFor()/dotFor() exist in your file

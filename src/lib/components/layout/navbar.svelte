@@ -5,12 +5,8 @@
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
-  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   let { profile } = $props();
-
-  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
-  const isBetaDeployment = deploymentChannel === "beta";
 
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
@@ -62,7 +58,6 @@
 
   const navLinks = [
     { name: "Achievements", href: "/achievements" },
-    { name: "Support", href: "/pricing" },
     { name: "About", href: "/about" },
   ];
 
@@ -201,9 +196,6 @@
       />
       <span class="font-clash text-3xl font-bold inline-flex items-center gap-2">
         CubeIndex
-        {#if isBetaDeployment}
-          <span class="badge badge-sm badge-error uppercase tracking-wide">Beta</span>
-        {/if}
       </span>
     </a>
 

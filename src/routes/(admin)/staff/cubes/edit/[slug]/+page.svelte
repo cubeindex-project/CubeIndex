@@ -5,7 +5,7 @@
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient";
+  import { supabase } from "$lib/supabaseClient.js";
   import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
@@ -41,7 +41,7 @@
   let expanded: boolean = $state(false);
 
   let openModNotes = $state(false);
-  let reason = $state<"Accept" | "Reject" | "Edit">("Accept");
+  let reason = $state<"Accept" | "Reject">("Accept");
 
   let dirty: boolean = $state(false);
 
@@ -967,7 +967,6 @@
   <ManageCubeStatus
     cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
     cube_id={cube.id}
-    existingNote={cube.notes ?? ""}
     {reason}
     onCancel={() => (openModNotes = false)}
   />

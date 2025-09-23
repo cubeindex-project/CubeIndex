@@ -1,7 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { SsgoiTransition } from "@ssgoi/svelte";
-  import { getContext, hasContext } from "svelte";
 
   const { data } = $props();
   const { user } = data;

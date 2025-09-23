@@ -205,9 +205,6 @@ export interface Profiles {
 
   /** User role, defaults to 'User' */
   role: UsersRoles;
-
-  /** Whether the user has beta access, defaults to false */
-  beta_access: boolean;
 }
 
 export interface CubeVendorLinks {

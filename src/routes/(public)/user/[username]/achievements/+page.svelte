@@ -182,7 +182,7 @@
                 <div class="p-5">
                   <div class="-mt-9 mb-3 flex items-center justify-between gap-3">
                     <div
-                      class={"inline-flex h-14 w-14 items-center justify-center rounded-xl ring-2 ring-base-200 bg-base-100 text-3xl select-none"}
+                      class="inline-flex h-14 w-14 items-center justify-center rounded-xl ring-2 ring-base-200 bg-base-100 text-3xl select-none"
                       aria-hidden="true"
                     >
                       {achievement.icon}

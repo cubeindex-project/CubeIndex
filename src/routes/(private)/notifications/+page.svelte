@@ -31,7 +31,7 @@
         return;
       }
       toast.success("Verification email sent. Check your inbox.");
-    } catch (e) {
+    } catch {
       toast.error("Network error while resending email.");
     } finally {
       isResending = false;

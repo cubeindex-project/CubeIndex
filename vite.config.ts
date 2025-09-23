@@ -11,11 +11,7 @@ export default defineConfig(() => {
         allow: [".."],
       },
     },
-    plugins: [
-      devtoolsJson(),
-      tailwindcss(),
-      sveltekit(),
-    ],
+    plugins: [devtoolsJson(), tailwindcss(), sveltekit()],
     test: {
       workspace: [
         {

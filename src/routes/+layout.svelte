@@ -3,7 +3,6 @@
   import "../app.css";
   import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
-  import BetaBanner from "$lib/components/layout/betaBanner.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import { Ssgoi } from "@ssgoi/svelte";
@@ -13,7 +12,6 @@
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
-  import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 
   const config = {
     defaultTransition: blur(),
@@ -26,11 +24,6 @@
       },
     ],
   };
-
-  const deploymentChannel = (PUBLIC_DEPLOYMENT_CHANNEL || "production").toLowerCase();
-  const isBetaDeployment = deploymentChannel === "beta";
-  const siteTitle = isBetaDeployment ? "CubeIndex Beta" : "CubeIndex";
-  const shouldShowBetaBanner = deploymentChannel === "production";
 
   let { data, children } = $props();
 
@@ -56,7 +49,7 @@
 </script>
 
 <svelte:head>
-  <title>{siteTitle}</title>
+  <title>CubeIndex</title>
   <script>
     (function () {
       try {
@@ -92,10 +85,6 @@
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Navbar {profile} />
-
-{#if shouldShowBetaBanner && data.user}
-  <BetaBanner />
-{/if}
 
 <Toaster />
 <ClientErrorReporter />

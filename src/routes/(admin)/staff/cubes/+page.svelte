@@ -398,7 +398,7 @@
 
         {#if loading}
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {#each Array(6) as i}
+            {#each Array(6)}
               <div class="bg-neutral rounded-2xl overflow-hidden animate-pulse">
                 <div class="h-48 bg-neutral-content"></div>
                 <div class="p-5 space-y-4">

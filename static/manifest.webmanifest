@@ -1,6 +1,6 @@
 {
-  "name": "CubeIndex{SUFFIX}",
-  "short_name": "CubeIndex{SUFFIX}",
+  "name": "CubeIndex",
+  "short_name": "CubeIndex",
   "description": "Track and explore speedcubes",
   "theme_color": "#044eb4",
   "background_color": "#FFFFFF",

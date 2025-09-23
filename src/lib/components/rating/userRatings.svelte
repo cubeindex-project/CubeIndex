@@ -1,7 +1,6 @@
 <script lang="ts">
   import UserRatingCard from "./userRatingCard.svelte";
   import Pagination from "../misc/pagination.svelte";
-  import StarRating from "./starRating.svelte";
   import type { Cube } from "../dbTableTypes";
   import SearchBar from "../misc/searchBar.svelte";
   import { getContext } from "svelte";

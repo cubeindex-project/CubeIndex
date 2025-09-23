@@ -14,14 +14,8 @@
 
   // Search & Filters
   let searchTerm: string = $state("");
-  let showFilters = $state(false);
   let verifiedOnly: boolean = $state(false);
   let certifiedOnly: boolean = $state(false);
-
-  // Sorting
-  type SortKey = "name" | "username";
-  let sortBy: SortKey = $state("name");
-  let sortDir: "asc" | "desc" = $state("asc");
 
   // Pagination
   let currentPage: number = $state(1);

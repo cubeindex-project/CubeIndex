@@ -1,5 +1,4 @@
 import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
-import { PUBLIC_DEPLOYMENT_CHANNEL } from "$env/static/public";
 import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
 
 const isProduction =
@@ -10,8 +9,6 @@ const level = LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
 const baseBindings: Record<string, string> = { app: "cubeindex" };
 const currentEnv = NODE_ENV ?? process.env.NODE_ENV;
 if (currentEnv) baseBindings.env = currentEnv;
-if (PUBLIC_DEPLOYMENT_CHANNEL)
-  baseBindings.deploymentChannel = PUBLIC_DEPLOYMENT_CHANNEL;
 
 // Base options shared in all envs
 const baseOptions: LoggerOptions = {

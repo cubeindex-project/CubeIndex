@@ -10,13 +10,11 @@
     onCancel,
     cube_id,
     cube_name,
-    existingNote = "",
   }: {
     reason: "Accept" | "Reject";
     onCancel: () => void;
     cube_id: number;
     cube_name: string;
-    existingNote?: string;
   } = $props();
 
   let note: string = $state("");
@@ -89,12 +87,6 @@
       <h2 class="card-title">
         You are {reason.toLowerCase()}ing: {cube_name} as {username}
       </h2>
-
-      {#if existingNote}
-        <p class="mt-2 text-sm text-base-content/70">
-          Existing moderator note: {existingNote}
-        </p>
-      {/if}
 
       {#if reason !== "Accept"}
         <div class="mt-4">

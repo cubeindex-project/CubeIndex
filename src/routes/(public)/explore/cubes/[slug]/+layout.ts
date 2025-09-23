@@ -67,7 +67,7 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
     .select(
       `
     *, verified_by_id(display_name, username),
-    submitted_by_id(display_name, username)
+    submitted_by:submitted_by_id(display_name, username)
   `
     )
     .eq("slug", slug)
@@ -180,7 +180,7 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
     relatedCube: relatedRes.data ?? null,
     cubeTrims: trimsRes.data ?? [],
     verifiedBy: cube.verified_by_id,
-    submittedBy: cube.submitted_by_id,
+    submittedBy: cube.submitted_by,
     stats: { ratingAvg, ratingCount, shopsCount, ownersCount },
     meta: {
       title: `${cube.series} ${cube.model}${

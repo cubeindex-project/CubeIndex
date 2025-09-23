@@ -12,8 +12,16 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
-  let { cube, user, meta, sameSeries, relatedCube, cubeTrims, features } =
-    $derived(data);
+  let {
+    cube,
+    user,
+    profile,
+    meta,
+    sameSeries,
+    relatedCube,
+    cubeTrims,
+    features,
+  } = $derived(data);
 
   let cubeUserCount: number | undefined = $derived(
     data.user_cubes?.length ?? 0
@@ -44,11 +52,22 @@
     { label: "Shops & Prices", key: "price", icon: "fa-store" },
     { label: "Ratings", key: "ratings", icon: "fa-star" },
   ] as const;
+
+  const isCubeSubmitter = $derived(user?.id === cube.submitted_by_id);
+  const submissionStatusDescription = $derived.by(() => {
+    if (cube.status === "Pending") {
+      return "is awaiting verification by moderators";
+    }
+    if (cube.status === "Rejected") {
+      return "has been rejected";
+    }
+    return "is being reviewed";
+  });
 </script>
 
 <SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
-    {#if user && cube.submitted_by_id === user.id && cube.status !== "Approved"}
+    {#if isCubeSubmitter && cube.status !== "Approved"}
       <div
         class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
         'Pending'
@@ -61,9 +80,7 @@
           <i class="fa-solid fa-triangle-exclamation"></i>
         {/if}
 
-        Your submission {cube.status === "Pending"
-          ? "is awaiting verification by moderators"
-          : "has been rejected"}.
+        {`Your submission ${submissionStatusDescription}.`}
       </div>
     {:else if cube.status === "Rejected"}
       <div
@@ -171,8 +188,7 @@
     </div>
 
     <!-- Tabs: URL-aware, scrollable on mobile, accessible roles -->
-    <nav
-      class="my-6 -mx-6 px-6 overflow-x-auto">
+    <nav class="my-6 -mx-6 px-6 overflow-x-auto">
       <div
         class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
         role="tablist"
@@ -180,7 +196,9 @@
       >
         {#each tabs as tab}
           <a
-            href={tab.key ? `/explore/cubes/${cube.slug}/${tab.key}` : `/explore/cubes/${cube.slug}`}
+            href={tab.key
+              ? `/explore/cubes/${cube.slug}/${tab.key}`
+              : `/explore/cubes/${cube.slug}`}
             class="tab tab-sm sm:tab-md whitespace-nowrap"
             class:tab-active={tab.key === currentTab}
             role="tab"
@@ -197,7 +215,7 @@
 
     {@render children()}
 
-    {#if cube.notes && user && user.id === cube.submitted_by_id}
+    {#if cube.notes && isCubeSubmitter}
       <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
         <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
           <i class="fa-solid fa-note-sticky"></i>

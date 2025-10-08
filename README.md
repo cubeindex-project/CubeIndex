@@ -18,9 +18,9 @@
 <summary>📸 See Screenshots</summary>
 <br/>
 <div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
-  <img src=".github/images/readme/cubeindex_home.png" alt="Home" style="max-width:48%;height:auto;border-radius:8px;" />
-  <img src=".github/images/readme/cubeindex_collection.png" alt="Collection" style="max-width:48%;height:auto;border-radius:8px;" />
-  <img src=".github/images/readme/cubeindex_price_tracking.png" alt="Price Tracking" style="max-width:48%;height:auto;border-radius:8px;" />
+  <img src=".github/images/cubeindex_home.png" alt="Home" style="max-width:48%;height:auto;border-radius:8px;" />
+  <img src=".github/images/cubeindex_collection.png" alt="Collection" style="max-width:48%;height:auto;border-radius:8px;" />
+  <img src=".github/images/cubeindex_price_tracking.png" alt="Price Tracking" style="max-width:48%;height:auto;border-radius:8px;" />
 </div>
 </details>
 

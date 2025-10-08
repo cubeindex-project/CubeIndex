@@ -1,7 +1,7 @@
 # CubeIndex
 
 <p align="center">
-  <img src="static\images\CubeIndex-Pixel-Art.png" alt="CubeIndex Logo" width="160" />
+  <img src=".github\images\CubeIndex-Pixel-Art.png" alt="CubeIndex Logo" width="160" />
 </p>
 
 <p align="center">

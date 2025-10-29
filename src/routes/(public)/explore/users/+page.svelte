@@ -88,7 +88,7 @@
   });
 
   // Calculate total pages for pagination
-  const totalPages = $derived(Math.ceil(sortedUsers.length / itemsPerPage));
+  const totalPages = $derived(Math.max(Math.ceil(sortedUsers.length / itemsPerPage), 1));
 
   $effect(() => {
     const _ = sortedUsers;

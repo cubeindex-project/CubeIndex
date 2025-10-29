@@ -14,7 +14,7 @@
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(12);
 
-  const totalPages = $derived(Math.ceil(vendors.length / itemsPerPage));
+  const totalPages = $derived(Math.max(Math.ceil(vendors.length / itemsPerPage), 1));
 
   const filteredVendors = $derived.by(() => {
     return vendors.filter((vendor) =>
@@ -57,7 +57,7 @@
       <SearchBar
         showFilter={false}
         bind:searchTerm
-        placeholderLabel="Search vendors"
+        placeholderLabel="Search Vendors"
       />
 
       <div

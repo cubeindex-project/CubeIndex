@@ -32,7 +32,7 @@
       type="text"
       placeholder={placeholderLabel}
       bind:value={searchTerm}
-      class="input w-full h-12.5 {showFilter
+      class="input bg-base-200 w-full h-12.5 {showFilter
         ? 'rounded-l-none'
         : ''} border-base-300"
     />

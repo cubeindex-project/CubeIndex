@@ -7,9 +7,9 @@ import {
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
-import { error } from "@sveltejs/kit";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
+import { logError } from "$lib/server/logError";
 
 const profileSchema = z.object({
   // Accept a file upload for the avatar; optional
@@ -49,7 +49,9 @@ export const load = (async ({ locals, setHeaders }) => {
     .eq("user_id", user?.id)
     .single();
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return logError(500, "Unable to load profile settings", locals.log, err);
+  }
 
   const profileForm = await superValidate(
     {
@@ -214,7 +216,7 @@ export const actions: Actions = {
       .eq("user_id", locals.user?.id);
 
     if (err) {
-      throw error(500, err.message);
+      return logError(500, "Failed to update profile", locals.log, err);
     }
 
     // 4) Success: redirect back or return success data
@@ -247,7 +249,12 @@ export const actions: Actions = {
       .eq("user_id", locals.user?.id);
 
     if (err) {
-      throw error(500, err.message);
+      return logError(
+        500,
+        "Failed to update social links",
+        locals.log,
+        err
+      );
     }
 
     // 4) Success: redirect back or return success data
@@ -275,7 +282,7 @@ export const actions: Actions = {
     );
 
     if (err) {
-      throw error(500, err.message);
+      return logError(500, "Failed to update password", locals.log, err);
     }
 
     if (passUpdateData === "incorrect")

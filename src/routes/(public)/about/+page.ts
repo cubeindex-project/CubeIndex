@@ -1,7 +1,8 @@
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { supabase } from "$lib/supabaseClient";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ setHeaders }) => {
   const { data: team, error: err } = await supabase
@@ -10,7 +11,9 @@ export const load = (async ({ setHeaders }) => {
     .neq("role", "User")
     .neq("username", "cubeindex");
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return clientLogError("Unable to load team profiles", clientLogger, err);
+  }
 
   const logoDesigner = team.find(
     (p: Profiles) => p.user_id === "b49da5bb-6d82-463e-b8ee-fd7c9feebde6"
@@ -20,7 +23,9 @@ export const load = (async ({ setHeaders }) => {
     .from("features")
     .select("*");
 
-  if (fErr) throw error(500, fErr.message);
+  if (fErr) {
+    return clientLogError("Unable to load feature list", clientLogger, fErr);
+  }
 
   const currentFeatures = features.filter((f) => f.implemented === true);
   const futureFeatures = features.filter((f) => f.implemented === false);

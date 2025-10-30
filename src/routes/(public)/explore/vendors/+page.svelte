@@ -14,7 +14,7 @@
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(12);
 
-  const totalPages = $derived(Math.ceil(vendors.length / itemsPerPage));
+  const totalPages = $derived(Math.max(Math.ceil(vendors.length / itemsPerPage), 1));
 
   const filteredVendors = $derived.by(() => {
     return vendors.filter((vendor) =>
@@ -57,7 +57,7 @@
       <SearchBar
         showFilter={false}
         bind:searchTerm
-        placeholderLabel="Search vendors"
+        placeholderLabel="Search Vendors"
       />
 
       <div
@@ -231,6 +231,26 @@
               </footer>
             </section>
           {/key}
+        {:else}
+          <!-- No results state -->
+          <div
+            class="col-span-full flex flex-col items-center justify-center py-20"
+          >
+            <i class="fa-solid fa-shop fa-3x mb-4"></i>
+            <h2 class="text-2xl font-semibold mb-2">No vendors found</h2>
+            <p class="mb-6 text-center max-w-xs">
+              We couldn't find any vendors matching your search or filters. Try
+              adjusting them or resetting to see everything.
+            </p>
+            <button
+              onclick={() => (searchTerm = "")}
+              class="btn btn-outline flex items-center"
+              aria-label="Reset filters"
+            >
+              <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+              Reset
+            </button>
+          </div>
         {/each}
       </div>
 

@@ -1,6 +1,7 @@
 import { supabase } from "$lib/supabaseClient";
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ setHeaders, parent }) => {
   const { user } = await parent();
@@ -10,7 +11,14 @@ export const load = (async ({ setHeaders, parent }) => {
     .select("*")
     .order("name", { ascending: true });
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return clientLogError(
+      "Unable to load achievements",
+      clientLogger,
+      err,
+      true
+    );
+  }
 
   let currentUserAchi = [];
 
@@ -20,7 +28,14 @@ export const load = (async ({ setHeaders, parent }) => {
       .select("*")
       .eq("user_id", user?.id);
 
-    if (cuaErr) throw error(500, cuaErr.message);
+    if (cuaErr) {
+      return clientLogError(
+        "Unable to load awarded achievements",
+        clientLogger,
+        cuaErr,
+        true
+      );
+    }
 
     currentUserAchi = data;
   }

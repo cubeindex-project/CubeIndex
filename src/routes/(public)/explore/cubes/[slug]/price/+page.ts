@@ -1,6 +1,7 @@
 import type { PageLoad } from "./$types";
 import type { Cube } from "$lib/components/dbTableTypes";
-import { error } from "@sveltejs/kit";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ parent, params }) => {
   const { supabase } = await parent();
@@ -33,15 +34,27 @@ export const load = (async ({ parent, params }) => {
 
   const cube = cubeRes.data as Cube | null;
 
-  if (!cube) throw error(404, "Cube not found");
+  if (!cube) {
+    return clientLogError(
+      "Cube not found",
+      clientLogger,
+      new Error(`Cube "${slug}" not found`),
+      true,
+      404
+    );
+  }
   if (vendorRes.error) {
-    throw new Error(
-      `Failed to fetch vendor links for cube "${slug}": ${vendorRes.error.message}`
+    return clientLogError(
+      "Unable to load vendor links",
+      clientLogger,
+      vendorRes.error
     );
   }
   if (priceHistoryRes.error) {
-    throw new Error(
-      `Failed to fetch price history for cube "${slug}": ${priceHistoryRes.error.message}`
+    return clientLogError(
+      "Unable to load price history",
+      clientLogger,
+      priceHistoryRes.error
     );
   }
 

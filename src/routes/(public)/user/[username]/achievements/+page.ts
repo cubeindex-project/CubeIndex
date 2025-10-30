@@ -1,6 +1,7 @@
 import type { PageLoad } from "./$types";
-import { error } from "@sveltejs/kit";
 import { supabase } from "$lib/supabaseClient";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ parent }) => {
   const { profile } = await parent();
@@ -12,7 +13,13 @@ export const load = (async ({ parent }) => {
     )
     .eq("user_id", profile.user_id);
 
-  if (userAchieveError) throw error(500, userAchieveError.message);
+  if (userAchieveError) {
+    return clientLogError(
+      "Unable to load user achievements",
+      clientLogger,
+      userAchieveError
+    );
+  }
 
   const user_achievements = data.map((ua) => ({
     ...ua.achievement,

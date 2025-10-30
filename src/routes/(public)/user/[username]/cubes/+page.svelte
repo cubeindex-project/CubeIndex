@@ -82,16 +82,24 @@
         return bd - ad; // default desc
       }
       if (sortBy === "name") {
-        const an = `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
-        const bn = `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
+        const an =
+          `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
+        const bn =
+          `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
         return an.localeCompare(bn);
       }
       if (sortBy === "type") {
-        return (a.cube_model?.type ?? "").localeCompare(b.cube_model?.type ?? "");
+        return (a.cube_model?.type ?? "").localeCompare(
+          b.cube_model?.type ?? ""
+        );
       }
       if (sortBy === "rating") {
-        const ar = user_cube_ratings.find((r) => r.cube_slug === a.cube_model?.slug)?.rating ?? 0;
-        const br = user_cube_ratings.find((r) => r.cube_slug === b.cube_model?.slug)?.rating ?? 0;
+        const ar =
+          user_cube_ratings.find((r) => r.cube_slug === a.cube_model?.slug)
+            ?.rating ?? 0;
+        const br =
+          user_cube_ratings.find((r) => r.cube_slug === b.cube_model?.slug)
+            ?.rating ?? 0;
         return br - ar; // default desc
       }
       return 0;
@@ -115,6 +123,12 @@
     return sortedCubes.slice(start, end);
   });
 
+  function resetFilters() {
+    selectedType = "All";
+    selectedStatus = "All";
+    selectedCondition = "All";
+  }
+
   $effect(() => {
     const _ = filteredCubes;
     currentPage = 1;
@@ -137,7 +151,11 @@
     {#if user?.id === profile.user_id && user_cubes.length > 0}
       <div class="flex items-center gap-2">
         <!-- Sort controls -->
-        <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
+        <SortSelector
+          bind:sortField={sortBy}
+          bind:sortOrder={sortDir}
+          fields={sortFields}
+        />
 
         <div class="divider divider-horizontal m-0"></div>
 
@@ -172,7 +190,10 @@
       <div>
         <label class="form-control w-full">
           <span class="label-text text-sm">Type</span>
-          <select bind:value={selectedType} class="select select-bordered w-full">
+          <select
+            bind:value={selectedType}
+            class="select select-bordered w-full"
+          >
             <option>All</option>
             {#each allTypes as t}
               <option>{t}</option>
@@ -183,7 +204,10 @@
       <div>
         <label class="form-control w-full">
           <span class="label-text text-sm">Condition</span>
-          <select bind:value={selectedCondition} class="select select-bordered w-full">
+          <select
+            bind:value={selectedCondition}
+            class="select select-bordered w-full"
+          >
             <option>All</option>
             {#each allConditions as c}
               <option>{c}</option>
@@ -194,7 +218,10 @@
       <div>
         <label class="form-control w-full">
           <span class="label-text text-sm">Status</span>
-          <select bind:value={selectedStatus} class="select select-bordered w-full">
+          <select
+            bind:value={selectedStatus}
+            class="select select-bordered w-full"
+          >
             <option>All</option>
             {#each allStatuses as s}
               <option>{s}</option>
@@ -205,12 +232,7 @@
       <div>
         <button
           class="btn btn-outline w-full mt-2"
-          onclick={() => {
-            selectedType = "All";
-            selectedStatus = "All";
-            selectedCondition = "All";
-            searchTerm = "";
-          }}
+          onclick={resetFilters}
           type="button"
         >
           <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
@@ -253,10 +275,33 @@
               mode={edit ? "edit" : "view"}
               cube={row.cube_model}
               user_details={row}
-              user_rating={
-                user_cube_ratings.find((ucr) => ucr.cube_slug === row.cube_model?.slug)?.rating ?? 0
-              }
+              user_rating={user_cube_ratings.find(
+                (ucr) => ucr.cube_slug === row.cube_model?.slug
+              )?.rating ?? 0}
             />
+          {:else}
+            <!-- No results state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-20"
+            >
+              <i class="fa-solid fa-cube fa-3x mb-4"></i>
+              <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+              <p class="mb-6 text-center max-w-xs">
+                We couldn't find any cubes matching your search or filters. Try
+                adjusting them or resetting to see everything.
+              </p>
+              <button
+                onclick={() => {
+                  resetFilters;
+                  searchTerm = "";
+                }}
+                class="btn btn-outline flex items-center"
+                aria-label="Reset filters"
+              >
+                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                Reset
+              </button>
+            </div>
           {/each}
         </ul>
       {:else}

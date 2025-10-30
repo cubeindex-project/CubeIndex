@@ -223,7 +223,7 @@
   });
 
   // Calculate total pages for pagination
-  const totalPages = $derived(Math.ceil(sortedCubes.length / $params.size));
+  const totalPages = $derived(Math.max(Math.ceil(sortedCubes.length / $params.size), 1));
 
   // Reset all filters to default state
   function resetFilters() {
@@ -312,6 +312,7 @@
         oninput={() => (_userChangedFilters = true)}
         bind:searchTerm={$params.q}
         filterAction={() => (showFilters = !showFilters)}
+        placeholderLabel="Search Cubes"
       />
 
       <div class="flex flex-col lg:flex-row gap-8">

@@ -35,7 +35,9 @@
   const allTypes: string[] = $derived(
     Array.from(
       new Set(
-        user_cube_ratings.map((r) => r.cube_model?.type as string).filter(Boolean)
+        user_cube_ratings
+          .map((r) => r.cube_model?.type as string)
+          .filter(Boolean)
       )
     ).sort()
   );
@@ -48,7 +50,8 @@
         .trim()
         .toLowerCase();
       const typeOk = selectedType === "All" || c.type === selectedType;
-      const hasCommentOk = !onlyWithComments || (r.comment ?? "").trim().length > 0;
+      const hasCommentOk =
+        !onlyWithComments || (r.comment ?? "").trim().length > 0;
       let ratingOk = true;
       const val = r.rating ?? 0;
       if (selectedRating === "5") ratingOk = val === 5;
@@ -71,8 +74,10 @@
         return (b.rating ?? 0) - (a.rating ?? 0); // default desc
       }
       if (sortBy === "name") {
-        const an = `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
-        const bn = `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
+        const an =
+          `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
+        const bn =
+          `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
         return an.localeCompare(bn);
       }
       return 0;
@@ -88,7 +93,15 @@
     return sortedRatings.slice(start, end);
   });
 
-  const totalPages = $derived.by(() => Math.max(1, Math.ceil(sortedRatings.length / itemsPerPage)));
+  const totalPages = $derived.by(() =>
+    Math.max(1, Math.ceil(sortedRatings.length / itemsPerPage))
+  );
+
+  function resetFilters() {
+    selectedType = "All";
+    selectedRating = "All";
+    onlyWithComments = false;
+  }
 
   $effect(() => {
     const _ = filteredRatings;
@@ -111,7 +124,11 @@
 
     {#if total > 0}
       <div class="flex items-center gap-2">
-        <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
+        <SortSelector
+          bind:sortField={sortBy}
+          bind:sortOrder={sortDir}
+          fields={sortFields}
+        />
 
         <div class="divider divider-horizontal m-0"></div>
 
@@ -145,7 +162,10 @@
       <div>
         <label class="form-control w-full">
           <span class="label-text text-sm">Type</span>
-          <select bind:value={selectedType} class="select select-bordered w-full">
+          <select
+            bind:value={selectedType}
+            class="select select-bordered w-full"
+          >
             <option>All</option>
             {#each allTypes as t}
               <option>{t}</option>
@@ -156,7 +176,10 @@
       <div>
         <label class="form-control w-full">
           <span class="label-text text-sm">Rating</span>
-          <select bind:value={selectedRating} class="select select-bordered w-full">
+          <select
+            bind:value={selectedRating}
+            class="select select-bordered w-full"
+          >
             <option>All</option>
             <option value="5">5</option>
             <option value="4+">4+</option>
@@ -167,7 +190,11 @@
       </div>
       <div>
         <label class="cursor-pointer label justify-start gap-3">
-          <input type="checkbox" class="checkbox" bind:checked={onlyWithComments} />
+          <input
+            type="checkbox"
+            class="checkbox"
+            bind:checked={onlyWithComments}
+          />
           <span class="label-text">Only with comments</span>
         </label>
       </div>
@@ -175,12 +202,7 @@
         <button
           class="btn btn-outline w-full mt-2"
           type="button"
-          onclick={() => {
-            selectedType = "All";
-            selectedRating = "All";
-            onlyWithComments = false;
-            searchTerm = "";
-          }}
+          onclick={resetFilters}
         >
           <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
           Reset Filters
@@ -189,7 +211,7 @@
     </FilterSidebar>
 
     <div class="flex-1">
-      {#if paginatedRatings.length > 0}
+      {#if user_cube_ratings && user_cube_ratings.length > 0}
         <ul class="flex flex-col gap-4">
           {#each paginatedRatings as user_rating (user_rating.id)}
             <li>
@@ -200,6 +222,29 @@
                 showCubeDetails={true}
               />
             </li>
+          {:else}
+            <!-- No results state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-20"
+            >
+              <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
+              <h2 class="text-2xl font-semibold mb-2">No ratings found</h2>
+              <p class="mb-6 text-center max-w-xs">
+                We couldn't find any ratings matching your search or filters. Try
+                adjusting them or resetting to see everything.
+              </p>
+              <button
+                onclick={() => {
+                  resetFilters;
+                  searchTerm = "";
+                }}
+                class="btn btn-outline flex items-center"
+                aria-label="Reset filters"
+              >
+                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                Reset
+              </button>
+            </div>
           {/each}
         </ul>
 
@@ -207,9 +252,13 @@
           <Pagination bind:currentPage {totalPages} />
         </div>
       {:else}
-        <div class="col-span-full flex flex-col items-center justify-center py-20">
+        <div
+          class="col-span-full flex flex-col items-center justify-center py-20"
+        >
           <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">This user didn't rate any cube.</h2>
+          <h2 class="text-2xl font-semibold mb-2">
+            This user didn't rate any cube.
+          </h2>
           {#if user?.id === profile.user_id}
             <a href="/explore/cubes" class="btn btn-primary mt-3">
               Browse cubes to rate

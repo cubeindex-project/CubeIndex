@@ -1,7 +1,8 @@
+import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
-export const load = (async ({ locals: { user, supabase } }) => {
+export const load = (async ({ locals: { user, supabase, log } }) => {
   if (!user) redirect(303, "/auth/login");
 
   const { data: profile, error: err } = await supabase
@@ -10,7 +11,13 @@ export const load = (async ({ locals: { user, supabase } }) => {
     .eq("user_id", user.id)
     .single();
 
-  if (err) throw error(500, err.message);
+  if (err) 
+      logError(
+        Number(err.code),
+        "An error occurred while retrieving your profile",
+        log,
+        err
+      );
 
   if (profile.role !== "Admin" && profile.role !== "Database Manager")
     redirect(303, "/staff/dashboard");

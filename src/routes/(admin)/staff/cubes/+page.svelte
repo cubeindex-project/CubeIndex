@@ -7,6 +7,8 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
+  import { clientLogError } from "$lib/logger/clientLogError";
+  import { clientLogger } from "$lib/logger/client";
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -48,7 +50,12 @@
         .select("*, verified_by_id(user_id, display_name)")
         .range(start, start + BATCH - 1);
 
-      if (error) throw error;
+      if (error)
+        return clientLogError(
+          "An error occured while fetching vendors",
+          clientLogger,
+          error
+        );
       if (data.length === 0) {
         break;
       }

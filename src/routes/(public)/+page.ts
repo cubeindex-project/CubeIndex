@@ -1,6 +1,8 @@
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import { error, redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ parent }) => {
   // If already authenticated, send users to their dashboard instead of marketing homepage
@@ -19,9 +21,27 @@ export const load = (async ({ parent }) => {
     supabase.from("achievements").select("unlockable"),
   ]);
 
-  if (err) throw error(500, err.message);
-  if (profilesErr) throw error(500, profilesErr.message);
-  if (achiErr) throw error(500, achiErr.message);
+  if (err) {
+    return clientLogError(
+      "Unable to load cube statistics",
+      clientLogger,
+      err
+    );
+  }
+  if (profilesErr) {
+    return clientLogError(
+      "Unable to load user statistics",
+      clientLogger,
+      profilesErr
+    );
+  }
+  if (achiErr) {
+    return clientLogError(
+      "Unable to load achievements",
+      clientLogger,
+      achiErr
+    );
+  }
 
   return {
     totalCubes: totalCubesConst ?? 0,

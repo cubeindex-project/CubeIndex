@@ -1,8 +1,9 @@
 import type { LayoutLoad } from "./$types";
 import type { Cube } from "$lib/components/dbTableTypes";
-import { error } from "@sveltejs/kit";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 import { buildProductJSONLD } from "$lib/components/buildProductJSONLD.js";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -78,7 +79,15 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
   ]);
 
   const cube = cubeRes.data;
-  if (!cube) throw error(404, "Cube not found");
+  if (!cube) {
+    return clientLogError(
+      "Cube not found",
+      clientLogger,
+      new Error(`Cube "${slug}" not found`),
+      true,
+      404
+    );
+  }
 
   // 2) Stats (counts via HEAD + exact)
   const [
@@ -101,7 +110,12 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
   ]);
 
   if (rErr || sErr || oErr) {
-    throw error(500, "Failed to load cube stats");
+    const statsErr = rErr ?? sErr ?? oErr ?? new Error("Unknown cube stats error");
+    return clientLogError(
+      "Unable to load cube statistics",
+      clientLogger,
+      statsErr
+    );
   }
 
   const ratingAvg = Number.isFinite(cube.rating)
@@ -160,11 +174,19 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
   ]);
 
   if (featErr) {
-    throw new Error("A 500 status code error occured:" + featErr.message);
+    return clientLogError(
+      "Unable to load cube features",
+      clientLogger,
+      featErr
+    );
   }
 
   if (ucErr) {
-    throw new Error(`Failed to fetch cube user counts: ${ucErr.message}`);
+    return clientLogError(
+      "Unable to load cube ownership data",
+      clientLogger,
+      ucErr
+    );
   }
 
   setHeaders({

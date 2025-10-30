@@ -1,6 +1,7 @@
 import type { PageLoad } from "./$types";
 import type { Cube } from "$lib/components/dbTableTypes";
-import { error } from "@sveltejs/kit";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ parent, params }) => {
 	const { supabase } = await parent();
@@ -24,10 +25,20 @@ export const load = (async ({ parent, params }) => {
 
 	const cube = cubeRes.data as Cube | null;
 
-	if (!cube) throw error(404, "Cube not found");
+	if (!cube) {
+		return clientLogError(
+			"Cube not found",
+			clientLogger,
+			new Error(`Cube "${slug}" not found`),
+			true,
+			404
+		);
+	}
 	if (ratingsRes.error) {
-		throw new Error(
-			`Failed to fetch user ratings for cube "${slug}": ${ratingsRes.error.message}`
+		return clientLogError(
+			"Unable to load cube ratings",
+			clientLogger,
+			ratingsRes.error
 		);
 	}
 

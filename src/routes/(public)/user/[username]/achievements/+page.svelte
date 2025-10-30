@@ -80,7 +80,9 @@
       const name = (a.name ?? "").toLowerCase();
       const desc = (a.description ?? "").toLowerCase();
       const rarityOk = selectedRarity === "All" || a.rarity === selectedRarity;
-      const descOk = !onlyWithDescription || (!!a.description && a.description.trim().length > 0);
+      const descOk =
+        !onlyWithDescription ||
+        (!!a.description && a.description.trim().length > 0);
       const textOk = name.includes(term) || desc.includes(term);
       return rarityOk && descOk && textOk;
     });
@@ -108,7 +110,9 @@
     return arr;
   });
 
-  const totalPages = $derived.by(() => Math.max(1, Math.ceil(sorted.length / itemsPerPage)));
+  const totalPages = $derived.by(() =>
+    Math.max(1, Math.ceil(sorted.length / itemsPerPage))
+  );
   const paginated = $derived.by(() => {
     const page = Math.min(Math.max(1, currentPage), totalPages);
     const start = (page - 1) * itemsPerPage;
@@ -138,7 +142,11 @@
     {#if total > 0}
       <div class="flex items-center gap-2">
         <div class="flex items-center gap-2">
-          <SortSelector bind:sortField={sortBy} bind:sortOrder={sortDir} fields={sortFields} />
+          <SortSelector
+            bind:sortField={sortBy}
+            bind:sortOrder={sortDir}
+            fields={sortFields}
+          />
         </div>
 
         <div class="divider divider-horizontal m-0"></div>
@@ -177,10 +185,14 @@
                 class="group relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm ring-1 ring-transparent transition focus-within:ring-2 focus-within:ring-accent"
                 aria-label={`Achievement: ${achievement.name}`}
               >
-                <div class={"h-16 w-full " + styleFor(achievement.rarity).bg}></div>
+                <div
+                  class={"h-16 w-full " + styleFor(achievement.rarity).bg}
+                ></div>
 
                 <div class="p-5">
-                  <div class="-mt-9 mb-3 flex items-center justify-between gap-3">
+                  <div
+                    class="-mt-9 mb-3 flex items-center justify-between gap-3"
+                  >
                     <div
                       class="inline-flex h-14 w-14 items-center justify-center rounded-xl ring-2 ring-base-200 bg-base-100 text-3xl select-none"
                       aria-hidden="true"
@@ -199,7 +211,9 @@
                     </span>
                   </div>
 
-                  <h3 class="text-lg font-bold leading-snug">{achievement.name}</h3>
+                  <h3 class="text-lg font-bold leading-snug">
+                    {achievement.name}
+                  </h3>
 
                   {#if achievement.description}
                     <p class="mt-1 text-sm text-base-content/70 line-clamp-2">
@@ -219,6 +233,26 @@
                   </dl>
                 </div>
               </article>
+            </div>
+          {:else}
+            <!-- No results state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-20"
+            >
+              <i class="fa-solid fa-trophy fa-3x mb-4"></i>
+              <h2 class="text-2xl font-semibold mb-2">No achievements found</h2>
+              <p class="mb-6 text-center max-w-xs">
+                We couldn't find any achievements matching your search or filters.
+                Try adjusting them or resetting to see everything.
+              </p>
+              <button
+                onclick={() => (searchTerm = "")}
+                class="btn btn-outline flex items-center"
+                aria-label="Reset filters"
+              >
+                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                Reset
+              </button>
             </div>
           {/each}
         </div>

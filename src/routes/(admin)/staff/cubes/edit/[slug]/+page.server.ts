@@ -1,5 +1,5 @@
 import { supabase } from "$lib/supabaseClient";
-import { type Actions, fail, error, redirect } from "@sveltejs/kit";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
 import { slugify } from "$lib/components/helper_functions/slugify.svelte.js";
 import { getSubTypes } from "$lib/components/helper_functions/subType.svelte.js";
 import { message, superValidate } from "sveltekit-superforms";
@@ -8,9 +8,12 @@ import type { PageServerLoad } from "./$types.js";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner.js";
 import type { Cube } from "$lib/components/dbTableTypes.js";
 import { cubeSchema } from "$lib/components/validation/cubeForm.js";
+import { logError } from "$lib/server/logError";
+import { createLogger } from "$lib/server/logger";
 
 export const load: PageServerLoad = async ({ params }) => {
   const { slug } = params;
+  const log = createLogger({ scope: "staff-cube-edit-load", slug });
 
   let cube: Cube = {} as Cube;
 
@@ -21,7 +24,7 @@ export const load: PageServerLoad = async ({ params }) => {
     .single();
 
   if (cErr) {
-    throw error(500, "Failed cube fetch " + cErr.message);
+    return logError(500, "Failed to load cube details", log, cErr);
   }
 
   cube = data;
@@ -32,7 +35,7 @@ export const load: PageServerLoad = async ({ params }) => {
     .eq("related_to", cube.slug);
 
   if (ctErr) {
-    throw error(500, "Failed cube trims fetch " + ctErr.message);
+    return logError(500, "Failed to load cube trims", log, ctErr);
   }
 
   let relatedCube = [];
@@ -45,7 +48,7 @@ export const load: PageServerLoad = async ({ params }) => {
       .single();
 
     if (rcErr) {
-      throw error(500, "Failed related cube fetch " + rcErr.message);
+      return logError(500, "Failed to load related cube", log, rcErr);
     }
 
     relatedCube = data;
@@ -59,7 +62,12 @@ export const load: PageServerLoad = async ({ params }) => {
     .neq("model", cube.model);
 
   if (ssErr) {
-    throw error(500, "Failed same series fetch " + ssErr.message);
+    return logError(
+      500,
+      "Failed to load cubes from the same series",
+      log,
+      ssErr
+    );
   }
 
   const { data: vendor_links, error: vlError } = await supabase
@@ -67,33 +75,35 @@ export const load: PageServerLoad = async ({ params }) => {
     .select("*")
     .eq("cube_slug", slug);
 
-  if (vlError)
-    throw error(
-      500,
-      `Failed to fetch vendor links for cube "${slug}": ${vlError.message}`
-    );
+  if (vlError) {
+    return logError(500, "Failed to load vendor links", log, vlError);
+  }
 
   const { data: vendors, error: vendorError } = await supabase
     .from("vendors")
     .select("name, base_url");
 
-  if (vendorError)
-    throw error(500, `Failed to fetch vendors: ${vendorError.message}`);
+  if (vendorError) {
+    return logError(500, "Failed to load vendor list", log, vendorError);
+  }
 
   const { data: types, error: typesError } = await supabase
     .from("cube_types")
     .select("name")
     .order("name", { ascending: true });
 
-  if (typesError)
-    throw error(500, `Failed to fetch types: ${typesError.message}`);
+  if (typesError) {
+    return logError(500, "Failed to load cube types", log, typesError);
+  }
 
   const { data: features, error: featErr } = await supabase
     .from("cubes_model_features")
     .select("*")
     .eq("cube", cube.slug);
 
-  if (featErr) throw error(500, featErr.message);
+  if (featErr) {
+    return logError(500, "Failed to load cube features", log, featErr);
+  }
 
   const form = await superValidate(
     {
@@ -131,8 +141,9 @@ export const load: PageServerLoad = async ({ params }) => {
     .from("profiles")
     .select("id, username");
 
-  if (profilesError)
-    throw error(500, `Failed to fetch profiles: ${profilesError.message}`);
+  if (profilesError) {
+    return logError(500, "Failed to load profiles", log, profilesError);
+  }
 
   return {
     cube,
@@ -176,22 +187,18 @@ export const actions: Actions = {
         .from("cube_types")
         .insert([{ name: data.otherType, added_by_id: locals.user?.id }]);
 
-      if (err)
-        throw error(
-          500,
-          `Failed to add new cube type "${data.otherType}": ${err.message}`
-        );
+      if (err) {
+        return logError(500, "Failed to add new cube type", locals.log, err);
+      }
     }
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
         .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
 
-      if (brandErr)
-        throw error(
-          500,
-          `Failed to add new brand "${data.otherBrand}": ${brandErr.message}`
-        );
+      if (brandErr) {
+        return logError(500, "Failed to add new brand", locals.log, brandErr);
+      }
     }
 
     const cubePayload = {
@@ -233,11 +240,9 @@ export const actions: Actions = {
       .update(cubePayload)
       .eq("id", data.id);
 
-    if (updateErr)
-      throw error(
-        500,
-        `Failed to update cube information: ${updateErr.message}`
-      );
+    if (updateErr) {
+      return logError(500, "Failed to update cube information", locals.log, updateErr);
+    }
 
     const { error: upsertVenErr } = await locals.supabase
       .from("cube_vendor_links")
@@ -246,16 +251,17 @@ export const actions: Actions = {
     if (
       upsertVenErr?.message ===
       'new row violates row-level security policy for table "cube_vendor_links"'
-    )
-      throw error(
+    ) {
+      return logError(
         401,
-        "You do not have permission to update vendor links for this cube."
+        "You do not have permission to update vendor links for this cube.",
+        locals.log,
+        upsertVenErr
       );
-    if (upsertVenErr)
-      throw error(
-        500,
-        `Failed to update vendor links: ${upsertVenErr.message}`
-      );
+    }
+    if (upsertVenErr) {
+      return logError(500, "Failed to update vendor links", locals.log, upsertVenErr);
+    }
 
     const features = data.features;
 
@@ -268,11 +274,14 @@ export const actions: Actions = {
       .select("*")
       .eq("cube", slug);
 
-    if (rowsErr)
-      throw error(
+    if (rowsErr) {
+      return logError(
         500,
-        `Failed to fetch existing cube features: ${rowsErr.message}`
+        "Failed to load existing cube features",
+        locals.log,
+        rowsErr
       );
+    }
 
     const existingFeatures = existingRows.map((r) => r.feature);
     const newFeatures = Object.entries(features)
@@ -291,11 +300,14 @@ export const actions: Actions = {
         .from("cubes_model_features")
         .upsert(insertPayload);
 
-      if (featUpErr)
-        throw error(
+      if (featUpErr) {
+        return logError(
           500,
-          `Failed to add new features to cube: ${featUpErr.message}`
+          "Failed to add cube features",
+          locals.log,
+          featUpErr
         );
+      }
     }
 
     if (toRemove.length) {
@@ -308,11 +320,14 @@ export const actions: Actions = {
           toRemove.map((code) => code)
         );
 
-      if (featUpErr)
-        throw error(
+      if (featUpErr) {
+        return logError(
           500,
-          `Failed to remove features from cube: ${featUpErr.message}`
+          "Failed to remove cube features",
+          locals.log,
+          featUpErr
         );
+      }
     }
 
     message(form, "Cube edited successfully!");

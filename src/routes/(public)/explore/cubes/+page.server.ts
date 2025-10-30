@@ -1,11 +1,12 @@
 import type { PageServerLoad } from "./$types";
-import { error } from "@sveltejs/kit";
+import { logError } from "$lib/server/logError";
 
 // Server-side load to improve SSR performance:
 // - Uses server Supabase client (cookies-aware, no client bundle cost)
 // - Selects only the fields needed by the explore page
 // - Sets cache headers to enable CDN/browser caching
-export const load: PageServerLoad = async ({ locals: { supabase }, setHeaders }) => {
+export const load: PageServerLoad = async ({ locals, setHeaders }) => {
+  const { supabase, log } = locals;
   // Keep this list tight — it maps to what the explore list renders
   const selectFields = [
     "id",
@@ -38,7 +39,9 @@ export const load: PageServerLoad = async ({ locals: { supabase }, setHeaders })
     .select(selectFields)
     .eq("status", "Approved");
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return logError(500, "Failed to load cubes", log, err);
+  }
 
   // Cache aggressively on the edge, allow stale while revalidating
   setHeaders({

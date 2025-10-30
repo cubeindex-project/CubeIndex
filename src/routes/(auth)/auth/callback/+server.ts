@@ -1,17 +1,30 @@
 import type { RequestHandler } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { logError } from "$lib/server/logError";
 
-export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
+  const { supabase, log } = locals;
   const code = url.searchParams.get("code") as string;
   const next = url.searchParams.get("next") ?? "/";
 
-  if (!code) throw error(500, "Authorization code is missing.");
+  if (!code) {
+    return logError(
+      500,
+      "Authorization code is missing.",
+      log,
+      new Error("Authorization code not provided")
+    );
+  }
 
   const { data, error: err } = await supabase.auth.exchangeCodeForSession(code);
-  if (err) throw error(500, err.message);
+  if (err) {
+    return logError(500, "Authentication failed", log, err);
+  }
 
   const { user } = data;
-  if (!user) throw error(500, "User data is missing.");
+  if (!user) {
+    return logError(500, "User data is missing.", log, new Error("User not returned after authentication"));
+  }
 
   // Check if a profile already exists for this user
   const { data: existingProfile, error: profileFetchError } = await supabase
@@ -35,7 +48,9 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
       verified: true,
     });
 
-  if (profileError) throw error(500, profileError.message);
+  if (profileError) {
+    return logError(500, "Failed to create profile", log, profileError);
+  }
 
   throw redirect(303, `${url.origin}/auth/signup?step=profile`);
 };

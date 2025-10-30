@@ -4,6 +4,8 @@
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { supabase } from "$lib/supabaseClient";
+  import { clientLogger } from "$lib/logger/client";
+  import { clientLogError } from "$lib/logger/clientLogError";
 
   /**
    * Combines a user's cube ownership details with minimal vendor info
@@ -55,7 +57,11 @@
 
       vendors = data;
     } catch (err: any) {
-      throw Error(err.message);
+      clientLogError(
+        "An error occured while fetching vendors",
+        clientLogger,
+        err
+      );
     }
   }
 

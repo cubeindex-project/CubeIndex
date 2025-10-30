@@ -82,15 +82,15 @@
           key: `cube:${c.cube}:${c.acquired_at}`,
         })),
         // Achievements
-        ...user_achievements.map((a) => ({
-          type: "achievement" as const,
-          item: a,
-          ts: a.awarded_at
-            ? new Date(a.awarded_at).getTime()
-            : a.created_at
-              ? new Date(a.created_at).getTime()
-              : 0,
-          key: `achievement:${a.achievement_id}:${a.awarded_at ?? a.created_at}`,
+        ...user_achievements.map((a, index) => ({
+            type: "achievement" as const,
+            item: a,
+            ts: a.awarded_at
+              ? new Date(a.awarded_at).getTime()
+              : a.created_at
+                ? new Date(a.created_at).getTime()
+                : 0,
+            key: `achievement:${index}`,
         })),
       ] satisfies ActivityItem[]
     )
@@ -216,7 +216,7 @@
       <div>
         <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {#each main_cubes as mc}
+          {#each main_cubes as mc, i ("main:" + i)}
             <a class="group block" href="/explore/cubes/{mc.cube}">
               <article
                 class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm transition hover:shadow-md"
@@ -359,10 +359,10 @@
             Top Types
           </h3>
           <div class="flex flex-wrap gap-2">
-            {#each typeCounts as t}
+            {#each typeCounts as t (t.type)}
               <span class="badge badge-ghost">
                 {t.type}
-                <span class="ml-1 text-xs opacity-70">×{t.count}</span>
+                <span class="ml-1 text-xs opacity-70">x{t.count}</span>
               </span>
             {/each}
             {#if typeCounts.length === 0}
@@ -376,10 +376,10 @@
             By Status
           </h3>
           <div class="flex flex-wrap gap-2">
-            {#each statusCounts as s}
+            {#each statusCounts as s (s.status)}
               <span class="badge badge-outline">
                 {s.status}
-                <span class="ml-1 text-xs opacity-70">×{s.count}</span>
+                <span class="ml-1 text-xs opacity-70">x{s.count}</span>
               </span>
             {/each}
             {#if statusCounts.length === 0}
@@ -391,3 +391,4 @@
     </div>
   </div>
 </div>
+

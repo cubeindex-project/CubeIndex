@@ -1,7 +1,8 @@
 import type { LayoutLoad } from "./$types";
-import { error } from "@sveltejs/kit";
 import type { UserFollowsRow } from "$lib/components/dbTableTypes.js";
 import { supabase } from "$lib/supabaseClient";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -64,9 +65,19 @@ export const load = (async ({ params, parent, url }) => {
     .eq("username", username)
     .single();
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return clientLogError("Unable to load profile", clientLogger, err);
+  }
 
-  if (!profile) throw error(404, "User not found");
+  if (!profile) {
+    return clientLogError(
+      "User not found",
+      clientLogger,
+      new Error(`Profile "${username}" not found`),
+      true,
+      404
+    );
+  }
 
   let following: UserFollowsRow[] = [];
 
@@ -77,7 +88,13 @@ export const load = (async ({ params, parent, url }) => {
       .eq("follower_id", user.id)
       .eq("following_id", profile.user_id);
 
-    if (followErr) throw error(500, followErr.message);
+    if (followErr) {
+      return clientLogError(
+        "Unable to check follow status",
+        clientLogger,
+        followErr
+      );
+    }
 
     following = data;
   }
@@ -108,7 +125,12 @@ export const load = (async ({ params, parent, url }) => {
   ]);
 
   if (f1Err || f2Err || cErr || aErr) {
-    throw error(500, "Failed to load profile stats");
+    const statsErr = f1Err ?? f2Err ?? cErr ?? aErr ?? new Error("Unknown stats error");
+    return clientLogError(
+      "Unable to load profile statistics",
+      clientLogger,
+      statsErr
+    );
   }
 
   // 3) Meta

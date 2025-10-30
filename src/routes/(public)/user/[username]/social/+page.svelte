@@ -126,7 +126,7 @@
 
   <div class="flex flex-col lg:flex-row gap-8">
     <main class="flex-1">
-      {#if paginated.length > 0}
+      {#if sourceList && sourceList.length > 0}
         <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           {#each paginated as f (f.user_id)}
             <li>
@@ -148,6 +148,38 @@
                 </article>
               </a>
             </li>
+          {:else}
+            <!-- No results state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-20"
+            >
+              {#if tab === "following"}
+                <i class="fa-solid fa-user fa-3x mb-4"></i>
+              {:else}
+                <i class="fa-solid fa-users fa-3x mb-4"></i>
+              {/if}
+              <h2 class="text-2xl font-semibold mb-2">
+                No {tab === "followers"
+                  ? `users following ${profile.display_name}`
+                  : `users ${profile.display_name} follows`} found
+              </h2>
+              <p class="mb-6 text-center max-w-xs">
+                We couldn't find any {tab === "followers"
+                  ? `users following ${profile.display_name}`
+                  : `users ${profile.display_name} follows`} matching your search
+                or filters. Try adjusting them or resetting to see everything.
+              </p>
+              <button
+                onclick={() => {
+                  searchTerm = "";
+                }}
+                class="btn btn-outline flex items-center"
+                aria-label="Reset filters"
+              >
+                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                Reset
+              </button>
+            </div>
           {/each}
         </ul>
 

@@ -132,6 +132,26 @@
           {#key paginatedUsers}
             <UserCard {profile} />
           {/key}
+        {:else}
+          <!-- No results state -->
+          <div
+            class="col-span-full flex flex-col items-center justify-center py-20"
+          >
+            <i class="fa-solid fa-users fa-3x mb-4"></i>
+            <h2 class="text-2xl font-semibold mb-2">No users found</h2>
+            <p class="mb-6 text-center max-w-xs">
+              We couldn't find any users matching your search or filters. Try
+              adjusting them or resetting to see everything.
+            </p>
+            <button
+              onclick={() => (searchTerm = "")}
+              class="btn btn-outline flex items-center"
+              aria-label="Reset filters"
+            >
+              <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+              Reset
+            </button>
+          </div>
         {/each}
       </div>
 

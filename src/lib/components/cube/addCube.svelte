@@ -4,6 +4,8 @@
   import Portal from "../misc/portal.svelte";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { supabase } from "$lib/supabaseClient";
+  import { clientLogError } from "$lib/logger/clientLogError";
+  import { clientLogger } from "$lib/logger/client";
 
   type Status = "Owned" | "Wishlist" | "Loaned" | "Borrowed" | "Lost";
   type Condition =
@@ -116,7 +118,11 @@
 
       vendors = data;
     } catch (err: any) {
-      throw Error(err.message);
+      clientLogError(
+        "An error occured while fetching vendors",
+        clientLogger,
+        err
+      );
     }
   }
 
@@ -411,7 +417,8 @@
             >
               {#if isSubmitting}
                 <span class="loading loading-spinner"></span>
-                <span class="ml-2">{alreadyAdded ? "Editing…" : "Adding…"}</span>
+                <span class="ml-2">{alreadyAdded ? "Editing…" : "Adding…"}</span
+                >
               {:else if showSuccess}
                 <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
                 {alreadyAdded ? "Edited!" : "Added!"}

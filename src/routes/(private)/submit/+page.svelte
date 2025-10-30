@@ -1,11 +1,15 @@
 <script lang="ts">
+  import type { PageData } from "./$types";
   import { superForm } from "sveltekit-superforms";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
-  const { data } = $props();
+  let { data }: { data: PageData } = $props();
   const { brands, types, surfaces, subTypes } = data;
   let cubes: Cube[] = $derived(data.cubes);
+  type ScrapRun = NonNullable<PageData["scrapRuns"]>[number];
+  let scrapRuns: ScrapRun[] = $derived((data.scrapRuns ?? []) as ScrapRun[]);
+  let showManualForm = $state(false);
 
   let search = $state("");
   let searchCubes: {
@@ -31,6 +35,17 @@
     }
   );
 
+  const {
+    form: scrapeForm,
+    errors: scrapeErrors,
+    message: scrapeMessage,
+    enhance: scrapeEnhance,
+  } = superForm(data.scrapeForm, {
+    dataType: "json",
+    resetForm: true,
+    invalidateAll: "pessimistic",
+  });
+
   let allCubes: {
     label: string;
     value: string;
@@ -49,6 +64,50 @@
       )
     ).sort();
   });
+
+  const shortDateTime = new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const formatTimestamp = (value: string | null) =>
+    value ? shortDateTime.format(new Date(value)) : null;
+
+  const statusBadge = (status: string) => {
+    const normalized = status.toLowerCase();
+    if (normalized === "queued") return "badge-warning";
+    if (normalized === "running" || normalized === "in_progress") {
+      return "badge-info";
+    }
+    if (normalized === "completed") return "badge-success";
+    if (normalized === "failed" || normalized === "error") return "badge-error";
+    return "badge-neutral";
+  };
+
+  const formatStatus = (status: string) =>
+    status
+      .split("_")
+      .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+      .join(" ");
+
+  const shortenUrl = (url: string) =>
+    url.length > 80 ? `${url.slice(0, 77)}...` : url;
+
+  const runTimeline = (run: ScrapRun) =>
+    [
+      `Requested ${formatTimestamp(run.created_at)}`,
+      run.started_at && `Processing started ${formatTimestamp(run.started_at)}`,
+      run.finished_at && `Completed ${formatTimestamp(run.finished_at)}`,
+    ].filter((entry): entry is string => Boolean(entry));
+
+  const runDisplayName = (run: ScrapRun) => {
+    const name = run.name?.trim();
+    return name && name.length > 0 ? name : `Run #${run.id}`;
+  };
+
+  const manualToggleLabel = $derived(
+    showManualForm ? "Hide manual form" : "Use advanced manual form"
+  );
 
   const fillWithDemoData = () => {
     const brandName = brands[0]?.name;
@@ -113,13 +172,27 @@
     <div
       class="grid items-start gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
     >
-      <form
-        method="POST"
-        use:enhance
-        class="card border border-base-200 bg-base-100 shadow-xl"
-      >
+      <div class="flex flex-col gap-8">
+        {#if showManualForm}
+        <form
+          method="POST"
+          use:enhance
+          class="card border border-base-200 bg-base-100 shadow-xl"
+          id="manual-cube-form"
+          action="?/advanced"
+        >
         <div class="card-body space-y-10">
-          <div class="flex justify-end">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              class="btn btn-outline btn-sm"
+              onclick={() => {
+                showManualForm = false;
+              }}
+            >
+              <i class="fa-solid fa-arrow-left mr-2"></i>
+              Back to import flow
+            </button>
             <button
               type="button"
               class="btn btn-ghost btn-sm"
@@ -611,6 +684,219 @@
           {/if}
         </div>
       </form>
+        {:else}
+        <section
+          id="import-from-links"
+          class="card border border-dashed border-primary/30 bg-base-100 shadow-lg"
+          aria-labelledby="scrape-heading"
+        >
+          <div class="card-body space-y-6">
+            <div
+              class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between"
+            >
+              <div class="space-y-2">
+                <h2
+                  id="scrape-heading"
+                  class="text-xl font-semibold text-base-content"
+                >
+                  Import from store URLs
+                </h2>
+                <p class="text-sm text-base-content/70">
+                  Paste links from trusted cube retailers. We queue a background import, normalize specs, and draft the submission for you.
+                </p>
+                <p class="text-xs text-base-content/60">
+                  Keep each request focused on one cube. Use different shops for the same model so we can cross-check pricing and specs.
+                </p>
+                <p class="text-xs text-base-content/60">
+                  Track progress on your
+                  <a
+                    href="/user/submissions#import-status"
+                    class="link link-primary"
+                  >
+                    submissions dashboard
+                  </a>
+                  while the scraper works.
+                </p>
+              </div>
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm md:self-center"
+                onclick={() => {
+                  showManualForm = !showManualForm;
+                }}
+                aria-controls="manual-cube-form"
+                aria-expanded={showManualForm ? "true" : "false"}
+              >
+                <i class="fa-solid fa-sliders mr-2"></i>
+                {manualToggleLabel}
+              </button>
+            </div>
+
+            <form
+              method="POST"
+              action="?/scrape"
+              use:scrapeEnhance
+              class="space-y-4"
+            >
+              <div class="form-control flex flex-col">
+                <label class="label" for="runName">
+                  <span class="label-text font-semibold text-base-content">
+                    Run name
+                  </span>
+                  <span class="label-text-alt text-xs text-base-content/60">
+                    Optional - helps you find the batch later
+                  </span>
+                </label>
+                <input
+                  id="runName"
+                  name="runName"
+                  type="text"
+                  class="input input-bordered"
+                  bind:value={$scrapeForm.runName}
+                  maxlength="120"
+                  placeholder="e.g. Gan 12 UV retailer audit"
+                  aria-invalid={$scrapeErrors.runName?.length ? "true" : "false"}
+                />
+                {#if $scrapeErrors.runName?.length}
+                  <p class="mt-2 text-xs text-error">
+                    {$scrapeErrors.runName.join(" ")}
+                  </p>
+                {/if}
+              </div>
+
+              <div class="form-control flex flex-col">
+                <label class="label" for="storeUrls">
+                  <span class="label-text font-semibold text-base-content">
+                    Store URLs
+                  </span>
+                  <span class="label-text-alt text-xs text-base-content/60">
+                    Up to 10 links, one per line
+                  </span>
+                </label>
+                <textarea
+                  id="storeUrls"
+                  name="storeUrls"
+                  class="textarea textarea-bordered h-40 font-mono text-sm w-full"
+                  bind:value={$scrapeForm.storeUrls}
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="https://example-store.com/product...&#10;https://another-shop.com/item..."
+                  aria-invalid={$scrapeErrors.storeUrls?.length ? "true" : "false"}
+                ></textarea>
+                {#if $scrapeErrors.storeUrls?.length}
+                  <p class="mt-2 text-xs text-error">
+                    {$scrapeErrors.storeUrls.join(" ")}
+                  </p>
+                {/if}
+              </div>
+
+              {#if $scrapeErrors._errors?.length}
+                <div class="alert alert-error text-sm">
+                  <span>{$scrapeErrors._errors.join(" ")}</span>
+                </div>
+              {/if}
+
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <button type="submit" class="btn btn-primary">
+                  Queue import
+                </button>
+                {#if $scrapeMessage}
+                  <span class="text-sm text-success">{$scrapeMessage}</span>
+                {/if}
+              </div>
+            </form>
+
+            <div class="rounded-xl bg-base-200/60 px-4 py-3 text-sm text-base-content/80">
+              A background job fetches the product pages, extracts specs, and lets you review the draft before publishing.
+            </div>
+
+            <div class="space-y-3 border-t border-base-200 pt-4">
+              <div class="flex items-center justify-between gap-3">
+                <h3 class="text-base font-semibold text-base-content">
+                  Recent import requests
+                </h3>
+                <div class="flex items-center gap-3 text-xs text-base-content/60">
+                  <span class="uppercase tracking-wide">
+                    Auto-refreshes on submit
+                  </span>
+                  <a
+                    href="/user/submissions/jobs"
+                    class="link link-primary whitespace-nowrap"
+                  >
+                    View full history
+                  </a>
+                </div>
+              </div>
+
+              {#if scrapRuns.length}
+                <ul class="space-y-3">
+                  {#each scrapRuns as run (run.id)}
+                    {@const timeline = runTimeline(run)}
+                    <li class="rounded-2xl border border-base-200 bg-base-100/70 p-4 shadow-sm">
+                      <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="space-y-1">
+                          <p class="text-sm font-semibold text-base-content">
+                            {runDisplayName(run)}
+                          </p>
+                          <p class="text-xs uppercase tracking-wide text-base-content/50">
+                            Run #{run.id}
+                          </p>
+                          <ul class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-base-content/60">
+                            {#each timeline as label}
+                              <li>{label}</li>
+                            {/each}
+                          </ul>
+                        </div>
+                        <span class={`badge ${statusBadge(run.status)} badge-sm`}>
+                          {formatStatus(run.status)}
+                        </span>
+                      </div>
+
+                      <details class="collapse collapse-arrow mt-3 bg-base-200/40">
+                        <summary class="collapse-title text-sm font-medium text-base-content/80">
+                          {run.urls.length} retailer {run.urls.length === 1 ? "link" : "links"}
+                        </summary>
+                        <div class="collapse-content">
+                          <ul class="space-y-2">
+                            {#each run.urls as url (url.id)}
+                              <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-base-100/80 px-3 py-2">
+                                <div class="min-w-0 text-xs text-base-content/80">
+                                  <p
+                                    class="truncate font-medium text-base-content"
+                                    title={url.source_url}
+                                  >
+                                    {shortenUrl(url.source_url)}
+                                  </p>
+                                  {#if url.normalized_url && url.normalized_url !== url.source_url}
+                                    <p
+                                      class="truncate text-[0.7rem] text-base-content/60"
+                                      title={url.normalized_url}
+                                    >
+                                      Normalized: {shortenUrl(url.normalized_url)}
+                                    </p>
+                                  {/if}
+                                </div>
+                                <span class={`badge ${statusBadge(url.status)} badge-xs`}>
+                                  {formatStatus(url.status)}
+                                </span>
+                              </li>
+                            {/each}
+                          </ul>
+                        </div>
+                      </details>
+                    </li>
+                  {/each}
+                </ul>
+              {:else}
+                <p class="text-sm text-base-content/60">
+                  No automated imports yet. Paste a few product links to kick things off.
+                </p>
+              {/if}
+            </div>
+          </div>
+        </section>
+        {/if}
+      </div>
 
       <aside class="space-y-4">
         <div class="card border border-base-200 bg-base-100/80 shadow-sm">

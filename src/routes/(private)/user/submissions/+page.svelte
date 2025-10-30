@@ -1,213 +1,221 @@
-﻿<script lang="ts">
-  import type { PageData } from "./$types";
-  import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
+<script lang="ts">
+	import type { PageData } from "./$types";
+	import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
 
-  let { data }: { data: PageData } = $props();
+	const { data } = $props<{ data: PageData }>();
+	let submissions = $derived(data.submissions ?? []);
+	let summary = $derived(data.summary);
+	let importPreview = $derived(data.importPreview ?? []);
 
-  const { submittedCubes = [], user, profile } = data;
+	type FilterKey = "all" | "pending" | "approved" | "rejected";
+	let activeFilter = $state<FilterKey>("all");
 
-  type SubmissionStatus = PageData["submittedCubes"][number]["status"];
-  type StatusFilter = SubmissionStatus | "All";
+	const filters = $derived([
+		{ label: "All", value: "all" as const, count: summary.total },
+		{ label: "Pending", value: "pending" as const, count: summary.pending },
+		{ label: "Approved", value: "approved" as const, count: summary.approved },
+		{ label: "Rejected", value: "rejected" as const, count: summary.rejected },
+	]);
 
-  const statusOrder: SubmissionStatus[] = ["Pending", "Approved", "Rejected"];
-  const statusVariants: Record<
-    SubmissionStatus,
-    { label: string; badgeClass: string; description: string }
-  > = {
-    Approved: {
-      label: "Approved",
-      badgeClass: "badge-success",
-      description: "Published on CubeIndex and visible to the community.",
-    },
-    Pending: {
-      label: "Pending Review",
-      badgeClass: "badge-warning",
-      description:
-        "Awaiting a moderator decision. We typically respond within a few days.",
-    },
-    Rejected: {
-      label: "Rejected",
-      badgeClass: "badge-error",
-      description:
-        "Refused for the reason given in the moderator note.",
-    },
-  };
+	const filteredSubmissions = $derived(
+		activeFilter === "all"
+			? submissions
+			: submissions.filter(
+					(cube) => cube.status.toLowerCase() === activeFilter,
+			  ),
+	);
 
-  const summary = submittedCubes.reduce<
-    Record<SubmissionStatus | "total", number>
-  >(
-    (acc, cube) => {
-      acc[cube.status] = (acc[cube.status] ?? 0) + 1;
-      acc.total += 1;
-      return acc;
-    },
-    { Approved: 0, Pending: 0, Rejected: 0, total: 0 }
-  );
+	const hasSubmissions = $derived(submissions.length > 0);
+	const hasFilteredResults = $derived(filteredSubmissions.length > 0);
 
-  let statusFilter: StatusFilter = $state("All");
-  const filterTabs: StatusFilter[] = ["All", ...statusOrder];
+	const dtFormatter = new Intl.DateTimeFormat(undefined, {
+		dateStyle: "medium",
+		timeStyle: "short",
+	});
 
-  const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-  });
-  const isIsoString = (value: string | null | undefined): value is string =>
-    Boolean(value);
+	const formatDateTime = (value: string | null) =>
+		value ? dtFormatter.format(new Date(value)) : null;
 
-  const latestTimestampIso = submittedCubes.reduce<string | null>(
-    (latest, cube) => {
-      const candidates = [
-        cube.updated_at,
-        cube.verified_at,
-        cube.created_at,
-      ].filter(isIsoString);
-      const cubeLatest = candidates.reduce<string | null>(
-        (currentLatest, iso) => {
-          if (!currentLatest || new Date(iso) > new Date(currentLatest))
-            return iso;
-          return currentLatest;
-        },
-        null
-      );
-      if (!cubeLatest) return latest;
-      if (!latest || new Date(cubeLatest) > new Date(latest)) return cubeLatest;
-      return latest;
-    },
-    null
-  );
+	const statusBadge = (status: string) => {
+		const normalized = status.toLowerCase();
+		if (normalized === "approved") return "badge-success";
+		if (normalized === "pending") return "badge-warning";
+		if (normalized === "rejected") return "badge-error";
+		return "badge-neutral";
+	};
 
-  const submissionCountCopy =
-    summary.total === 1 ? "submission" : "submissions";
+	const formatStatus = (status: string) =>
+		status
+			.split("_")
+			.map(
+				(segment) =>
+					segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase(),
+			)
+			.join(" ");
 
-  const getStatusLabel = (filter: StatusFilter): string =>
-    filter === "All" ? "All statuses" : statusVariants[filter].label;
-
-  const getEmptyStateQualifier = (filter: StatusFilter): string =>
-    filter === "All"
-      ? "yet"
-      : `marked as ${statusVariants[filter].label.toLowerCase()}`;
-
-  let latestUpdateLabel = latestTimestampIso
-    ? dateFormatter.format(new Date(latestTimestampIso))
-    : null;
-  const filteredCubes = $derived(
-    statusFilter === "All"
-      ? submittedCubes
-      : submittedCubes.filter((cube) => cube.status === statusFilter)
-  );
+	const shortenUrl = (value: string) =>
+		value.length > 60 ? `${value.slice(0, 57)}...` : value;
 </script>
 
-<div class="relative max-w-6xl mx-auto mt-12 px-4 pb-16">
-  <section
-    class="rounded-3xl border border-base-300 bg-base-200/60 backdrop-blur p-6 md:p-8 shadow-xl"
-  >
-    <div
-      class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
-    >
-      <div class="flex-1">
-        <p class="text-xs uppercase tracking-[0.2em] text-base-content/50">
-          Submission overview
-        </p>
-        <h1 class="mt-2 text-3xl font-bold text-base-content md:text-4xl">
-          {profile.display_name ?? profile.username}&apos;s cube submissions
-        </h1>
-        <p class="mt-3 max-w-2xl text-sm text-base-content/70">
-          Track the status of every cube you&apos;ve shared with the community,
-          follow up on moderator feedback, and queue new models when you&apos;re
-          ready.
-        </p>
-      </div>
-      <a href="/submit" class="btn btn-info btn-wide md:self-start">
-        <i class="fa-solid fa-plus"></i>
-        Submit a cube
-      </a>
-    </div>
-  </section>
+<svelte:head>
+	<title>My Submissions - CubeIndex</title>
+	<meta name="robots" content="noindex" />
+</svelte:head>
 
-  <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-    <div class="rounded-2xl border border-base-300 bg-base-200 p-5">
-      <p class="text-sm text-base-content/70">In review pipeline</p>
-      <p class="mt-2 text-3xl font-semibold text-base-content">
-        {summary.total}
-      </p>
-      {#if latestUpdateLabel}
-        <p class="mt-3 text-xs text-base-content/60">
-          Latest activity {latestUpdateLabel}
-        </p>
-      {/if}
-    </div>
-    {#each statusOrder as status}
-      <div
-        class="rounded-2xl border border-base-300 bg-base-200 p-5 flex flex-col gap-3"
-      >
-        <div class="flex items-center justify-between">
-          <p class="font-semibold text-base-content">
-            {statusVariants[status].label}
-          </p>
-          <span class={`badge ${statusVariants[status].badgeClass}`}
-            >{summary[status]}</span
-          >
-        </div>
-        <p class="text-sm text-base-content/70">
-          {statusVariants[status].description}
-        </p>
-      </div>
-    {/each}
-  </div>
+<div class="mx-auto max-w-6xl px-4 py-8 flex flex-col gap-8">
+	<header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+		<div class="space-y-1">
+			<h1 class="text-3xl font-clash tracking-tight">My submissions</h1>
+			<p class="text-sm text-base-content/70">
+				Track every cube you have sent to the catalog and keep an eye on moderator decisions.
+			</p>
+		</div>
+		<div class="flex flex-wrap items-center gap-3">
+			<a href="/user/submissions/jobs" class="btn btn-outline btn-sm">
+				<i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
+				<span>Queued jobs</span>
+			</a>
+			<a href="/submit" class="btn btn-primary btn-sm">
+				<i class="fa-solid fa-plus" aria-hidden="true"></i>
+				<span>Submit a cube</span>
+			</a>
+		</div>
+	</header>
 
-  <div class="mt-10 flex flex-col gap-4">
-    <div
-      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
-    >
-      <h2 class="text-lg font-semibold text-base-content">
-        Submission tracker
-      </h2>
-      <div
-        class="join"
-        role="tablist"
-        aria-label="Filter submissions by status"
-      >
-        {#each filterTabs as tab}
-          <button
-            type="button"
-            class={`join-item btn btn-sm ${statusFilter === tab ? "btn-primary" : "btn-ghost"}`}
-            onclick={() => {
-              statusFilter = tab;
-            }}
-            aria-pressed={statusFilter === tab}
-          >
-            {getStatusLabel(tab)}
-            <span class="badge badge-sm badge-ghost ml-2">
-              {tab === "All" ? summary.total : summary[tab]}
-            </span>
-          </button>
-        {/each}
-      </div>
-    </div>
+	<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+		<article class="card border border-base-200 bg-base-100/80 shadow-sm">
+			<div class="card-body">
+				<p class="text-sm text-base-content/60">Total submissions</p>
+				<p class="text-4xl font-semibold text-base-content">{summary.total}</p>
+				{#if summary.lastSubmittedAt}
+					<p class="text-xs text-base-content/50 mt-2">
+						Last submitted on {formatDateTime(summary.lastSubmittedAt)}
+					</p>
+				{/if}
+			</div>
+		</article>
+		<article class="card border border-base-200 bg-base-100/80 shadow-sm">
+			<div class="card-body">
+				<p class="text-sm text-base-content/60">Pending review</p>
+				<p class="text-4xl font-semibold text-warning">{summary.pending}</p>
+			</div>
+		</article>
+		<article class="card border border-base-200 bg-base-100/80 shadow-sm">
+			<div class="card-body">
+				<p class="text-sm text-base-content/60">Approved</p>
+				<p class="text-4xl font-semibold text-success">{summary.approved}</p>
+				{#if summary.lastUpdatedAt}
+					<p class="text-xs text-base-content/50 mt-2">
+						Last update on {formatDateTime(summary.lastUpdatedAt)}
+					</p>
+				{/if}
+			</div>
+		</article>
+		<article class="card border border-base-200 bg-base-100/80 shadow-sm">
+			<div class="card-body">
+				<p class="text-sm text-base-content/60">Rejected</p>
+				<p class="text-4xl font-semibold text-error">{summary.rejected}</p>
+			</div>
+		</article>
+	</section>
 
-    {#if filteredCubes.length > 0}
-      <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {#each filteredCubes as cube (cube.slug)}
-          <li class="flex flex-col">
-            <SubmissionCubeCard {cube} />
-          </li>
-        {/each}
-      </ul>
-    {:else}
-      <div
-        class="mt-12 rounded-3xl border border-dashed border-base-300 bg-base-200/70 p-10 text-center"
-      >
-        <h3 class="text-2xl font-semibold text-base-content">
-          No submissions {getEmptyStateQualifier(statusFilter)}
-        </h3>
-        <p class="mt-3 text-sm text-base-content/70">
-          We couldn&apos;t find any cubes in this view. Adjust the filter or
-          start a new submission to fill the pipeline.
-        </p>
-        <a href="/submit" class="btn btn-outline btn-primary mt-6">
-          <i class="fa-solid fa-plus"></i>
-          Submit a cube
-        </a>
-      </div>
-    {/if}
-  </div>
+	<section class="space-y-4">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<h2 class="text-lg font-semibold text-base-content">Submitted cubes</h2>
+			<div class="flex flex-wrap gap-2">
+				{#each filters as filter}
+					<button
+						type="button"
+						class={`btn btn-xs md:btn-sm ${activeFilter === filter.value ? "btn-primary" : "btn-ghost"}`}
+						onclick={() => (activeFilter = filter.value)}
+						aria-pressed={activeFilter === filter.value}
+					>
+						{filter.label}
+						<span class="badge badge-xs ml-2">{filter.count}</span>
+					</button>
+				{/each}
+			</div>
+		</div>
+
+		{#if hasSubmissions}
+			{#if hasFilteredResults}
+				<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+					{#each filteredSubmissions as cube (cube.slug)}
+						<SubmissionCubeCard cube={cube} />
+					{/each}
+				</div>
+			{:else}
+				<div class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-6 text-center">
+					<p class="text-base font-semibold text-base-content">
+						No cubes match that filter yet.
+					</p>
+					<p class="mt-2 text-sm text-base-content/60">
+						Try another status or submit a new cube.
+					</p>
+				</div>
+			{/if}
+		{:else}
+			<div class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-10 text-center">
+				<p class="text-xl font-semibold text-base-content mb-2">
+					You have not submitted any cubes yet.
+				</p>
+				<p class="text-sm text-base-content/70">
+					Start with our guided form and we will keep you posted as moderators review your submission.
+				</p>
+				<a href="/submit" class="btn btn-primary mt-4 inline-flex items-center gap-2">
+					<i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+					<span>Submit your first cube</span>
+				</a>
+			</div>
+		{/if}
+	</section>
+
+	<section id="import-status" class="space-y-4">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<h2 class="text-lg font-semibold text-base-content">Queued import jobs</h2>
+			<a href="/user/submissions/jobs" class="btn btn-ghost btn-sm">
+				View all jobs
+				<i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+			</a>
+		</div>
+		{#if importPreview.length}
+			<ul class="space-y-3">
+				{#each importPreview as run (run.id)}
+					<li class="rounded-2xl border border-base-200 bg-base-100/70 p-4 shadow-sm">
+						<div class="flex flex-wrap items-start justify-between gap-3">
+							<div class="space-y-1">
+								<p class="text-sm font-semibold text-base-content">
+									{run.name?.trim() || `Run #${run.id}`}
+								</p>
+								<p class="text-xs text-base-content/60">
+									Queued {formatDateTime(run.created_at)}
+								</p>
+							</div>
+							<span class={`badge badge-sm ${statusBadge(run.status)}`}>
+								{formatStatus(run.status)}
+							</span>
+						</div>
+						{#if run.urls.length}
+							<ul class="mt-3 flex flex-wrap gap-2 text-xs text-base-content/60">
+								{#each run.urls as url (url.id)}
+									<li
+										class="rounded-full bg-base-200/80 px-3 py-1"
+										title={url.source_url}
+									>
+										{shortenUrl(url.source_url)}
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<div class="rounded-2xl border border-dashed border-base-200 bg-base-100/60 p-6 text-center">
+				<p class="text-sm text-base-content/70">
+					No automated imports queued yet. Use the scraper on the submission page to import retailer listings.
+				</p>
+			</div>
+		{/if}
+	</section>
 </div>

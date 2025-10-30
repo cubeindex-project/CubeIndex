@@ -1,12 +1,14 @@
 import type { PageServerLoad } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { logError } from "$lib/server/logError";
 
 /**
  * Load data for the authenticated user dashboard.
  * - Requires a valid session; otherwise redirects to `/auth/login`.
  * - Returns lightweight profile info and key counts for quick overview.
  */
-export const load = (async ({ locals: { supabase, user } }) => {
+export const load = (async ({ locals }) => {
+  const { supabase, user, log } = locals;
   if (!user) throw redirect(302, "/auth/login");
 
   // Fetch profile (username, display name, role) for greetings and links
@@ -16,7 +18,9 @@ export const load = (async ({ locals: { supabase, user } }) => {
     .eq("user_id", user.id)
     .single();
 
-  if (pErr) throw error(500, "Unable to load profile: " + pErr.message);
+  if (pErr) {
+    return logError(500, "Unable to load profile", log, pErr);
+  }
 
   // Parallel counts for dashboard stats
   const [
@@ -49,7 +53,8 @@ export const load = (async ({ locals: { supabase, user } }) => {
   ]);
 
   if (cErr || rErr || aErr || f1Err || f2Err) {
-    throw error(500, "Failed to load dashboard stats");
+    const aggregateError = cErr ?? rErr ?? aErr ?? f1Err ?? f2Err;
+    return logError(500, "Failed to load dashboard stats", log, aggregateError);
   }
 
   // Recent activity (lightweight)
@@ -84,20 +89,32 @@ export const load = (async ({ locals: { supabase, user } }) => {
       .limit(5),
   ]);
 
-  if (rcErr || !recentCubesRaw)
-    throw error(500, "Failed to load recent cube activity: " + rcErr?.message);
-
-  if (rrErr || !recentRatingsRaw)
-    throw error(
+  if (rcErr || !recentCubesRaw) {
+    return logError(
       500,
-      "Failed to load recent rating activity: " + rrErr?.message
+      "Failed to load recent cube activity",
+      log,
+      rcErr ?? new Error("Missing recent cube activity data")
     );
+  }
 
-  if (raErr || !recentAchievementsRaw)
-    throw error(
+  if (rrErr || !recentRatingsRaw) {
+    return logError(
       500,
-      "Failed to load recent achievement activity: " + raErr?.message
+      "Failed to load recent rating activity",
+      log,
+      rrErr ?? new Error("Missing recent rating activity data")
     );
+  }
+
+  if (raErr || !recentAchievementsRaw) {
+    return logError(
+      500,
+      "Failed to load recent achievement activity",
+      log,
+      raErr ?? new Error("Missing recent achievement activity data")
+    );
+  }
 
   const recentCubes = recentCubesRaw.map((r) => ({
     ...r,

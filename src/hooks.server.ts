@@ -1,10 +1,5 @@
 import { sequence } from "@sveltejs/kit/hooks";
-import {
-  type Handle,
-  redirect,
-  error,
-  type HandleServerError,
-} from "@sveltejs/kit";
+import { type Handle, redirect, type HandleServerError } from "@sveltejs/kit";
 import { createServerClient } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
@@ -12,6 +7,7 @@ import {
 } from "$env/static/public";
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
+import { logError } from "$lib/server/logError";
 
 const context: Handle = async ({ event, resolve }) => {
   event.locals.reqId = randomUUID();
@@ -114,7 +110,13 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .select("id, username, role")
     .eq("user_id", user?.id);
 
-  if (err) throw error(500, err.message);
+  if (err)
+    logError(
+      500,
+      "An error occured while fetching your profile",
+      event.locals.log,
+      err
+    );
 
   const profile = profiles?.[0];
 

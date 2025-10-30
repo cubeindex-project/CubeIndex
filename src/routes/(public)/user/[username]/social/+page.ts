@@ -1,7 +1,8 @@
 import type { UserFollowsRow } from "$lib/components/dbTableTypes";
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 
 export const load = (async ({ parent }) => {
@@ -21,8 +22,20 @@ export const load = (async ({ parent }) => {
       .eq("following_id", profile.user_id),
   ]);
 
-  if (followingErr) throw error(500, followingErr.message);
-  if (followedErr) throw error(500, followedErr.message);
+  if (followingErr) {
+    return clientLogError(
+      "Unable to load following list",
+      clientLogger,
+      followingErr
+    );
+  }
+  if (followedErr) {
+    return clientLogError(
+      "Unable to load follower list",
+      clientLogger,
+      followedErr
+    );
+  }
 
   const following = followingId.map((ingId) => {
     const user = ingId.following_id;
@@ -43,7 +56,13 @@ export const load = (async ({ parent }) => {
       .eq("follower_id", user.id)
       .eq("following_id", profile.user_id);
 
-    if (followErr) throw error(500, followErr.message);
+    if (followErr) {
+      return clientLogError(
+        "Unable to check follow status",
+        clientLogger,
+        followErr
+      );
+    }
     currentFollowingUser = data;
   }
 

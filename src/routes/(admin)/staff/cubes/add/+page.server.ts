@@ -1,13 +1,14 @@
 import type { PageServerLoad, Actions } from "./$types";
-import { error, redirect } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 import { slugify } from "$lib/components/helper_functions/slugify.svelte";
 import { getSubTypes } from "$lib/components/helper_functions/subType.svelte";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
+import { logError } from "$lib/server/logError";
 
-export const load = (async ({ locals }) => {
+export const load: PageServerLoad = async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
 
   const { data: brands, error: brandsErr } = await locals.supabase
@@ -15,15 +16,18 @@ export const load = (async ({ locals }) => {
     .select("name")
     .order("name", { ascending: true });
 
-  if (brandsErr) throw error(500, brandsErr.message);
+  if (brandsErr) {
+    return logError(500, "Failed to load brands", locals.log, brandsErr);
+  }
 
   const { data: types, error: typesError } = await locals.supabase
     .from("cube_types")
     .select("name")
     .order("name", { ascending: true });
 
-  if (typesError)
-    throw error(500, `Failed to fetch types: ${typesError.message}`);
+  if (typesError) {
+    return logError(500, "Failed to load cube types", locals.log, typesError);
+  }
 
   const { data: surfaces } = await locals.supabase.rpc("get_types", {
     enum_type: "cube_surface_finishes",
@@ -34,7 +38,7 @@ export const load = (async ({ locals }) => {
   });
 
   return { form, brands, types, surfaces, subTypes };
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
@@ -53,22 +57,18 @@ export const actions: Actions = {
         .from("cube_types")
         .insert([{ name: data.otherType, added_by_id: locals.user?.id }]);
 
-      if (err)
-        throw error(
-          500,
-          `Failed to add new cube type "${data.otherType}": ${err.message}`
-        );
+      if (err) {
+        return logError(500, "Failed to add new cube type", locals.log, err);
+      }
     }
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
         .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
 
-      if (brandErr)
-        throw error(
-          500,
-          `Failed to add new brand "${data.otherBrand}": ${brandErr.message}`
-        );
+      if (brandErr) {
+        return logError(500, "Failed to add new brand", locals.log, brandErr);
+      }
     }
 
     const payload = {
@@ -105,7 +105,9 @@ export const actions: Actions = {
       .from("cube_models")
       .insert(payload);
 
-    if (insertErr) throw error(500, insertErr.message);
+    if (insertErr) {
+      return logError(500, "Failed to create cube", locals.log, insertErr);
+    }
 
     const features = data.features;
 
@@ -118,11 +120,14 @@ export const actions: Actions = {
       .select("*")
       .eq("cube", slug);
 
-    if (rowsErr)
-      throw error(
+    if (rowsErr) {
+      return logError(
         500,
-        `Failed to fetch existing cube features: ${rowsErr.message}`
+        "Failed to load existing cube features",
+        locals.log,
+        rowsErr
       );
+    }
 
     const existingFeatures = existingRows.map((r) => r.feature);
     const newFeatures = Object.entries(features)
@@ -141,11 +146,14 @@ export const actions: Actions = {
         .from("cubes_model_features")
         .upsert(insertPayload);
 
-      if (featUpErr)
-        throw error(
+      if (featUpErr) {
+        return logError(
           500,
-          `Failed to add new features to cube: ${featUpErr.message}`
+          "Failed to add cube features",
+          locals.log,
+          featUpErr
         );
+      }
     }
 
     if (toRemove.length) {
@@ -158,11 +166,14 @@ export const actions: Actions = {
           toRemove.map((code) => code)
         );
 
-      if (featUpErr)
-        throw error(
+      if (featUpErr) {
+        return logError(
           500,
-          `Failed to remove features from cube: ${featUpErr.message}`
+          "Failed to remove cube features",
+          locals.log,
+          featUpErr
         );
+      }
     }
 
     message(form, "Cube added successfully!");

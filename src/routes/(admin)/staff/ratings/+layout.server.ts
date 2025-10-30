@@ -1,7 +1,9 @@
 import type { LayoutServerLoad } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { logError } from "$lib/server/logError";
 
-export const load = (async ({ locals: { user, supabase } }) => {
+export const load = (async ({ locals }) => {
+  const { user, supabase, log } = locals;
   if (!user) redirect(303, "/auth/login");
 
   const { data: profile, error: err } = await supabase
@@ -10,7 +12,9 @@ export const load = (async ({ locals: { user, supabase } }) => {
     .eq("user_id", user.id)
     .single();
 
-  if (err) throw error(500, err.message);
+  if (err) {
+    return logError(500, "Unable to load profile", log, err);
+  }
 
   if (profile.role !== "Admin" && profile.role !== "Moderator")
     redirect(303, "/staff/dashboard");

@@ -2,10 +2,11 @@
   import { superForm } from "sveltekit-superforms";
   import { blur } from "svelte/transition";
   import { onMount } from "svelte";
-  import { error } from "@sveltejs/kit";
   import { supabase } from "$lib/supabaseClient.js";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import { clientLogError } from "$lib/logger/clientLogError";
+  import { clientLogger } from "$lib/logger/client";
 
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
@@ -62,7 +63,13 @@
       .from("cube_models")
       .select("*")
       .neq("status", "Rejected");
-    if (cubesErr) throw error(500, cubesErr.message);
+    if (cubesErr) {
+      return clientLogError(
+        "Unable to load cubes",
+        clientLogger,
+        cubesErr
+      );
+    }
     cubes = data;
   });
 </script>

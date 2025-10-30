@@ -1,6 +1,7 @@
-import { error } from "@sveltejs/kit";
 import type { PageLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
+import { clientLogError } from "$lib/logger/clientLogError";
+import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ parent }) => {
   const { profile } = await parent();
@@ -24,10 +25,26 @@ export const load = (async ({ parent }) => {
       .eq("user_id", profile.user_id),
   ]);
 
-  if (ucErr) throw error(500, ucErr.message);
-  if (uaErr) throw error(500, uaErr.message);
+  if (ucErr) {
+    return clientLogError(
+      "Unable to load user cubes",
+      clientLogger,
+      ucErr
+    );
+  }
+  if (uaErr) {
+    return clientLogError(
+      "Unable to load user achievements",
+      clientLogger,
+      uaErr
+    );
+  }
   if (urErr) {
-    throw error(500, `Failed to fetch user ratings: ${urErr.message}`);
+    return clientLogError(
+      "Unable to load user ratings",
+      clientLogger,
+      urErr
+    );
   }
 
   const main_cubes = user_cubes.filter((uc) => uc.main === true);

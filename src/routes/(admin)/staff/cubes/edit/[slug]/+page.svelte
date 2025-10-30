@@ -6,10 +6,11 @@
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient.js";
-  import { error } from "@sveltejs/kit";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import { clientLogError } from "$lib/logger/clientLogError";
+  import { clientLogger } from "$lib/logger/client";
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -108,7 +109,13 @@
       .from("cube_models")
       .select("*")
       .neq("status", "Rejected");
-    if (cubesErr) throw error(500, cubesErr.message);
+    if (cubesErr) {
+      return clientLogError(
+        "Unable to load cubes",
+        clientLogger,
+        cubesErr
+      );
+    }
 
     cubes = data;
 
@@ -117,7 +124,13 @@
       .select("name")
       .order("name", { ascending: true });
 
-    if (brandsErr) throw error(500, brandsErr.message);
+    if (brandsErr) {
+      return clientLogError(
+        "Unable to load brands",
+        clientLogger,
+        brandsErr
+      );
+    }
 
     allBrands = brands;
 

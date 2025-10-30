@@ -1,5 +1,6 @@
 import type { PageServerLoad } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
+import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({ locals }) => {
   // Require auth
@@ -16,7 +17,9 @@ export const load: PageServerLoad = async ({ locals }) => {
     .eq("user_id", user.id)
     .single();
 
-  if (pErr) throw error(500, "Unable to load your profile:" + pErr.message);
+  if (pErr) {
+    return logError(500, "Unable to load your profile", locals.log, pErr);
+  }
 
   return {
     username: profile.username,

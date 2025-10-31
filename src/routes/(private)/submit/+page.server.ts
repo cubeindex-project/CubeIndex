@@ -78,7 +78,7 @@ export const load = (async ({ locals }) => {
     { data: brands, error: brandErr },
     { data: types, error: typeErr },
   ] = await Promise.all([
-    locals.supabase.from("cube_models").select("*").neq("status", "Rejected"),
+    locals.supabase.from("cube_models").select("*").eq("status", "Approved"),
     locals.supabase
       .from("brands")
       .select("name")

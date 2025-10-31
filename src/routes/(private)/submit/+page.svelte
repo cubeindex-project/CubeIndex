@@ -3,7 +3,6 @@
   import { superForm } from "sveltekit-superforms";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
-  import Badge from "$lib/components/user/badge.svelte";
   import Tag from "$lib/components/misc/tag.svelte";
 
   let { data }: { data: PageData } = $props();

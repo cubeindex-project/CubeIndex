@@ -3,6 +3,8 @@
   import { superForm } from "sveltekit-superforms";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import Badge from "$lib/components/user/badge.svelte";
+  import Tag from "$lib/components/misc/tag.svelte";
 
   let { data }: { data: PageData } = $props();
   const { brands, types, surfaces, subTypes, hasAccess } = data;
@@ -161,8 +163,11 @@
     ></div>
     <div class="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
       <header class="flex flex-col items-center text-center gap-3">
-        <h1 class="text-4xl font-clash font-semibold text-base-content">
-          Submit a Cube
+        <h1 class="text-4xl font-clash font-semibold text-base-content items-center flex gap-2">
+          Submit a Cube <Tag
+            label="Beta"
+            gradient="from-indigo-500 via-purple-500 to-pink-500"
+          />
         </h1>
         <p class="max-w-2xl text-base-content/70">
           Provide accurate manufacturer details so the CubeIndex team can review

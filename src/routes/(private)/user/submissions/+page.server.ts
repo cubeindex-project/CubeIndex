@@ -67,7 +67,8 @@ export const load = (async ({ locals }) => {
 			verified_at
 		`)
 		.eq("submitted_by_id", user.id)
-		.order("created_at", { ascending: false });
+		.order("created_at", { ascending: false })
+		.limit(100);
 
 	if (error) {
 		return logError(

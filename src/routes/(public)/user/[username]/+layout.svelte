@@ -371,14 +371,13 @@
       {/each}
       {#if user?.id === profile.user_id}
         <a
-          href="/user/{profile.username}/submissions"
+          href="/user/submissions"
           class="hover:text-primary border-0 {activeTab === 'Submissions'
             ? 'border-b-4'
             : ''} border-primary"
           onclick={() => {
             activeTab = "Submissions";
           }}
-          data-sveltekit-noscroll
         >
           Submissions
         </a>

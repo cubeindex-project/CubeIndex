@@ -13,10 +13,7 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
     "test:unit": "vitest",
-    "test": "npm run test:unit -- --run",
-    "db:push": "drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "test": "npm run test:unit -- --run"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
@@ -61,7 +58,6 @@
     "github-markdown-css": "^5.8.1",
     "isomorphic-dompurify": "^2.26.0",
     "pino": "^9.10.0",
-    "pino-pretty": "^13.1.1",
     "satori": "^0.16.2",
     "sharp": "^0.34.3",
     "svelte-exmarkdown": "^5.0.1",

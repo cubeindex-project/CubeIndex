@@ -125,7 +125,7 @@
 								<td class="max-w-xs">
 									{#if run.error_message}
 										<button
-											class="w-full rounded-xl border border-error/40 bg-error/10 px-3 py-2 text-left text-xs text-error transition hover:bg-error/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
+											class="w-full rounded-xl border border-error/40 bg-error/10 px-3 py-2 text-left text-xs text-error transition hover:bg-error/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
 											type="button"
 											onclick={() => toggleError(run.id)}
 											aria-expanded={expandedErrorId === run.id}

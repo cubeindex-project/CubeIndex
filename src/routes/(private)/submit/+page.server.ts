@@ -7,6 +7,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { z } from "zod/v4";
+import { logError } from "$lib/server/logError";
 
 /** Schema for store URL scraping requests. */
 const scrapSchema = z.object({
@@ -51,6 +52,22 @@ export const load = (async ({ locals }) => {
     errors: false,
   });
 
+  let hasAccess: boolean = false;
+
+  if (locals.user?.id) {
+    const { data, error } = await locals.supabase
+      .from("profiles")
+      .select("beta_flags")
+      .eq("user_id", locals.user.id)
+      .single();
+    
+    if (error) {
+      logError(500, "An error occured while fetching your profile", locals.log, error)
+    }
+
+    hasAccess = data.beta_flags.submit_cubes
+  }
+  
   const [
     { data: cubes, error: cubeErr },
     { data: brands, error: brandErr },
@@ -129,6 +146,7 @@ export const load = (async ({ locals }) => {
     subTypes,
     scrapeForm,
     scrapRuns,
+    hasAccess
   };
 }) satisfies PageServerLoad;
 

@@ -86,6 +86,12 @@
       implemented: true,
     },
     {
+      href: "/staff/jobs",
+      icon: "📦",
+      label: "Monitor Jobs",
+      implemented: true,
+    },
+    {
       href: "/staff/users",
       icon: "👤",
       label: "Manage Users",

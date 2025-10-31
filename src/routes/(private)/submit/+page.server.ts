@@ -60,14 +60,19 @@ export const load = (async ({ locals }) => {
       .select("beta_flags")
       .eq("user_id", locals.user.id)
       .single();
-    
+
     if (error) {
-      logError(500, "An error occured while fetching your profile", locals.log, error)
+      logError(
+        500,
+        "An error occured while fetching your profile",
+        locals.log,
+        error
+      );
     }
 
-    hasAccess = data.beta_flags.submit_cubes
+    hasAccess = data.beta_flags.submit_cubes;
   }
-  
+
   const [
     { data: cubes, error: cubeErr },
     { data: brands, error: brandErr },
@@ -146,7 +151,7 @@ export const load = (async ({ locals }) => {
     subTypes,
     scrapeForm,
     scrapRuns,
-    hasAccess
+    hasAccess,
   };
 }) satisfies PageServerLoad;
 
@@ -155,6 +160,25 @@ export const actions: Actions = {
     const { supabase, user, log } = locals;
 
     if (!user) throw error(401, "Unauthorized");
+
+    const { data, error: err } = await locals.supabase
+      .from("profiles")
+      .select("beta_flags")
+      .eq("user_id", user.id)
+      .single();
+
+    if (err) {
+      logError(
+        500,
+        "An error occured while fetching your profile",
+        locals.log,
+        err
+      );
+    }
+
+    const hasAccess: boolean = data.beta_flags.submit_cubes;
+
+    if (!hasAccess) throw error(401, "Unauthorized");
 
     const form = await superValidate(request, zod4(scrapSchema));
 
@@ -234,6 +258,25 @@ export const actions: Actions = {
   advanced: async ({ request, locals }) => {
     const { supabase, user } = locals;
     if (!user) throw error(401, "Unauthorized");
+
+    const { data: profile, error: err } = await locals.supabase
+      .from("profiles")
+      .select("beta_flags")
+      .eq("user_id", user.id)
+      .single();
+
+    if (err) {
+      logError(
+        500,
+        "An error occured while fetching your profile",
+        locals.log,
+        err
+      );
+    }
+
+    const hasAccess: boolean = profile.beta_flags.submit_cubes;
+
+    if (!hasAccess) throw error(401, "Unauthorized");
 
     const form = await superValidate(request, zod4(cubeSchema));
 

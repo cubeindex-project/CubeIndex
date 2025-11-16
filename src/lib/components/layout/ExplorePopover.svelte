@@ -90,5 +90,22 @@
       </a>
     {/each}
   </div>
+  <div
+    class="mt-4 flex items-center justify-between gap-3 rounded-xl border border-base-300 bg-base-200/70 px-4 py-3"
+  >
+    <div class="min-w-0">
+      <p class="text-sm font-semibold text-base-content">
+        Missing a cube?
+      </p>
+      <p class="text-xs text-base-content/70">
+        Submit models that are not in the catalog and help keep CubeIndex updated.
+      </p>
+    </div>
+    <a class="btn btn-primary btn-sm" href="/submit">
+      <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+      <span class="hidden sm:inline">Submit a cube</span>
+      <span class="sm:hidden">Submit</span>
+    </a>
+  </div>
   <p class="sr-only">Use arrow keys to navigate options</p>
 </div>

@@ -29,6 +29,7 @@ export const load = (async ({ locals }) => {
     { count: achievementsCount = 0, error: aErr },
     { count: followersCount = 0, error: f1Err },
     { count: followingCount = 0, error: f2Err },
+    { count: submissionsCount = 0, error: sErr },
   ] = await Promise.all([
     supabase
       .from("user_cubes")
@@ -50,86 +51,37 @@ export const load = (async ({ locals }) => {
       .from("user_follows")
       .select("*", { head: true, count: "exact" })
       .eq("follower_id", user.id),
+    supabase
+      .from("cube_models")
+      .select("*", { head: true, count: "exact" })
+      .eq("submitted_by_id", user.id),
   ]);
 
-  if (cErr || rErr || aErr || f1Err || f2Err) {
-    const aggregateError = cErr ?? rErr ?? aErr ?? f1Err ?? f2Err;
+  if (cErr || rErr || aErr || f1Err || f2Err || sErr) {
+    const aggregateError = cErr ?? rErr ?? aErr ?? f1Err ?? f2Err ?? sErr;
     return logError(500, "Failed to load dashboard stats", log, aggregateError);
   }
 
   // Recent activity (lightweight)
-  const [
-    { data: recentCubesRaw = [], error: rcErr },
-    { data: recentRatingsRaw = [], error: rrErr },
-    { data: recentAchievementsRaw = [], error: raErr },
-  ] = await Promise.all([
-    supabase
-      .from("user_cubes")
-      .select(
-        "cube, created_at, main, status, condition, cube_models(slug, series, model, version_name, brand, image_url)"
-      )
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("user_cube_ratings")
-      .select(
-        "cube_slug, rating, updated_at, cube_models(slug, series, model, version_name, brand, image_url)"
-      )
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("user_achievements")
-      .select(
-        "achievement_slug, awarded_at, achievements(name, title, icon), rarity:v_achievement_rarity(rarity)"
-      )
-      .eq("user_id", user.id)
-      .order("awarded_at", { ascending: false })
-      .limit(5),
-  ]);
+  const { data: recentSubmissionsRaw = [], error: rsErr } = await supabase
+    .from("cube_models")
+    .select("slug, brand, model, version_name, image_url, status, created_at")
+    .eq("submitted_by_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(5);
 
-  if (rcErr || !recentCubesRaw) {
+  if (rsErr || !recentSubmissionsRaw) {
     return logError(
       500,
-      "Failed to load recent cube activity",
+      "Failed to load recent submission activity",
       log,
-      rcErr ?? new Error("Missing recent cube activity data")
+      rsErr ?? new Error("Missing recent submission activity data")
     );
   }
 
-  if (rrErr || !recentRatingsRaw) {
-    return logError(
-      500,
-      "Failed to load recent rating activity",
-      log,
-      rrErr ?? new Error("Missing recent rating activity data")
-    );
-  }
-
-  if (raErr || !recentAchievementsRaw) {
-    return logError(
-      500,
-      "Failed to load recent achievement activity",
-      log,
-      raErr ?? new Error("Missing recent achievement activity data")
-    );
-  }
-
-  const recentCubes = recentCubesRaw.map((r) => ({
+  const recentSubmissions = recentSubmissionsRaw.map((r) => ({
     ...r,
-    cube_data: r.cube_models,
-  }));
-  const recentRatings = recentRatingsRaw.map((r) => ({
-    ...r,
-    cube_data: r.cube_models,
-  }));
-  const recentAchievements = recentAchievementsRaw.map((r) => ({
-    ...r,
-    achievement_data: {
-      ...(r.achievements || {}),
-      ...(r.rarity || {}),
-    },
+    image_url: r.image_url ?? null,
   }));
 
   return {
@@ -140,11 +92,10 @@ export const load = (async ({ locals }) => {
       achievementsCount: achievementsCount ?? 0,
       followersCount: followersCount ?? 0,
       followingCount: followingCount ?? 0,
+      submissionsCount: submissionsCount ?? 0,
     },
     recent: {
-      cubes: recentCubes,
-      ratings: recentRatings,
-      achievements: recentAchievements,
+      submissions: recentSubmissions,
     },
   };
 }) satisfies PageServerLoad;

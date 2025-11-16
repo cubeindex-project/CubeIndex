@@ -18,33 +18,8 @@ const scrapSchema = z.object({
       return trimmed.length === 0 ? undefined : trimmed;
     }, z.string().min(3, "Run name must be at least 3 characters long.").max(120, "Run names are limited to 120 characters."))
     .optional(),
-  storeUrls: z
-    .string()
-    .min(1, "Add at least one store URL.")
-    .max(5000, "Please keep the request under 5,000 characters."),
+  storeUrl: z.string().nonempty("Store URL is mandatory."),
 });
-
-/** Captures each store page queued for scraping. */
-interface ScrapRunUrl {
-  id: number;
-  source_url: string;
-  normalized_url: string | null;
-  status: string;
-  created_at: string;
-  started_at: string | null;
-  finished_at: string | null;
-}
-
-/** Describes a queued import request created by a user. */
-interface ScrapRun {
-  id: number;
-  name: string | null;
-  status: string;
-  created_at: string;
-  started_at: string | null;
-  finished_at: string | null;
-  urls: ScrapRunUrl[];
-}
 
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
@@ -123,25 +98,6 @@ export const load = (async ({ locals }) => {
     error(500, "Failed to fetch sub types");
   }
 
-  let scrapRuns: ScrapRun[] = [];
-  if (locals.user) {
-    const { data: runs, error: runsErr } = await locals.supabase
-      .from("cube_scrap_runs")
-      .select("id, name, created_at,")
-      .eq("user_id", locals.user.id)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (runsErr) {
-      locals.log.error(
-        { err: runsErr.message },
-        "Failed to fetch cube scrap runs"
-      );
-    } else {
-      scrapRuns = runs ?? [];
-    }
-  }
-
   return {
     form,
     cubes,
@@ -150,7 +106,6 @@ export const load = (async ({ locals }) => {
     surfaces,
     subTypes,
     scrapeForm,
-    scrapRuns,
     hasAccess,
   };
 }) satisfies PageServerLoad;
@@ -186,35 +141,21 @@ export const actions: Actions = {
       return { form };
     }
 
-    const entries = form.data.storeUrls
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
+    const linkEntry = form.data.storeUrl;
 
-    if (!entries.length) {
-      return setError(form, "storeUrls", "Add at least one store URL.", {
+    if (!linkEntry) {
+      return setError(form, "storeUrl", "Add at least one store URL.", {
         status: 400,
       });
     }
 
-    const uniqueEntries = Array.from(new Set(entries));
-    const maxUrls = 10;
-
-    if (uniqueEntries.length > maxUrls) {
-      return setError(
-        form,
-        "storeUrls",
-        `Please limit requests to ${maxUrls} store URLs at a time.`,
-        { status: 400 }
-      );
-    }
-
     const runName = form.data.runName ?? null;
+    const cleanEntry = cleanLink(linkEntry);
 
     const { data: run, error: runErr } = await supabase
       .from("cube_scrap_runs")
-      .insert({ user_id: user.id, name: runName })
-      .select("id, name")
+      .insert({ user_id: user.id, name: runName, url: cleanEntry })
+      .select("id, name, url")
       .single();
 
     if (runErr || !run) {
@@ -223,29 +164,6 @@ export const actions: Actions = {
         form,
         "",
         "We couldn't queue that scrape run. Please try again later.",
-        { status: 500 }
-      );
-    }
-
-    const urlPayload = uniqueEntries.map((source) => ({
-      run_id: run.id,
-      source_url: source,
-      normalized_url: cleanLink(source),
-    }));
-
-    const { error: urlErr } = await supabase
-      .from("cube_scrap_runs_url")
-      .insert(urlPayload);
-
-    if (urlErr) {
-      log.error(
-        { err: urlErr.message },
-        "Failed to insert cube scrap run URLs"
-      );
-      return setError(
-        form,
-        "storeUrls",
-        "We couldn't queue those store URLs. Please try again later.",
         { status: 500 }
       );
     }

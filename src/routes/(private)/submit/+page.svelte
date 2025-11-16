@@ -5,11 +5,9 @@
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import Tag from "$lib/components/misc/tag.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   const { brands, types, surfaces, subTypes, hasAccess } = data;
   let cubes: Cube[] = $derived(data.cubes);
-  type ScrapRun = NonNullable<PageData["scrapRuns"]>[number];
-  let scrapRuns: ScrapRun[] = $derived((data.scrapRuns ?? []) as ScrapRun[]);
   let showManualForm = $state(false);
 
   let search = $state("");
@@ -91,21 +89,6 @@
       .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
       .join(" ");
 
-  const shortenUrl = (url: string) =>
-    url.length > 80 ? `${url.slice(0, 77)}...` : url;
-
-  const runTimeline = (run: ScrapRun) =>
-    [
-      `Requested ${formatTimestamp(run.created_at)}`,
-      run.started_at && `Processing started ${formatTimestamp(run.started_at)}`,
-      run.finished_at && `Completed ${formatTimestamp(run.finished_at)}`,
-    ].filter((entry): entry is string => Boolean(entry));
-
-  const runDisplayName = (run: ScrapRun) => {
-    const name = run.name?.trim();
-    return name && name.length > 0 ? name : `Run #${run.id}`;
-  };
-
   const manualToggleLabel = $derived(
     showManualForm ? "Hide manual form" : "Use advanced manual form"
   );
@@ -162,7 +145,9 @@
     ></div>
     <div class="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
       <header class="flex flex-col items-center text-center gap-3">
-        <h1 class="text-4xl font-clash font-semibold text-base-content items-center flex gap-2">
+        <h1
+          class="text-4xl font-clash font-semibold text-base-content items-center flex gap-2"
+        >
           Submit a Cube <Tag
             label="Beta"
             gradient="from-indigo-500 via-purple-500 to-pink-500"
@@ -812,27 +797,24 @@
                   <div class="form-control flex flex-col">
                     <label class="label" for="storeUrls">
                       <span class="label-text font-semibold text-base-content">
-                        Store URLs
-                      </span>
-                      <span class="label-text-alt text-xs text-base-content/60">
-                        Up to 10 links, one per line
+                        Store URL
                       </span>
                     </label>
-                    <textarea
-                      id="storeUrls"
-                      name="storeUrls"
-                      class="textarea textarea-bordered h-40 font-mono text-sm w-full"
-                      bind:value={$scrapeForm.storeUrls}
+                    <input
+                      id="storeUrl"
+                      name="storeUrl"
+                      class="input input-bordered font-mono text-sm w-full"
+                      bind:value={$scrapeForm.storeUrl}
                       autocomplete="off"
                       spellcheck="false"
-                      placeholder="https://example-store.com/product...&#10;https://another-shop.com/item..."
-                      aria-invalid={$scrapeErrors.storeUrls?.length
+                      placeholder="https://example-store.com/product..."
+                      aria-invalid={$scrapeErrors.storeUrl?.length
                         ? "true"
                         : "false"}
-                    ></textarea>
-                    {#if $scrapeErrors.storeUrls?.length}
+                    />
+                    {#if $scrapeErrors.storeUrl?.length}
                       <p class="mt-2 text-xs text-error">
-                        {$scrapeErrors.storeUrls.join(" ")}
+                        {$scrapeErrors.storeUrl.join(" ")}
                       </p>
                     {/if}
                   </div>
@@ -854,126 +836,6 @@
                     {/if}
                   </div>
                 </form>
-
-                <div
-                  class="rounded-xl bg-base-200/60 px-4 py-3 text-sm text-base-content/80"
-                >
-                  A background job fetches the product pages, extracts specs,
-                  and lets you review the draft before publishing.
-                </div>
-
-                <div class="space-y-3 border-t border-base-200 pt-4">
-                  <div class="flex items-center justify-between gap-3">
-                    <h3 class="text-base font-semibold text-base-content">
-                      Recent import requests
-                    </h3>
-                    <div
-                      class="flex items-center gap-3 text-xs text-base-content/60"
-                    >
-                      <span class="uppercase tracking-wide">
-                        Auto-refreshes on submit
-                      </span>
-                      <a
-                        href="/user/submissions/jobs"
-                        class="link link-primary whitespace-nowrap"
-                      >
-                        View full history
-                      </a>
-                    </div>
-                  </div>
-
-                  {#if scrapRuns.length}
-                    <ul class="space-y-3">
-                      {#each scrapRuns as run (run.id)}
-                        {@const timeline = runTimeline(run)}
-                        <li
-                          class="rounded-2xl border border-base-200 bg-base-100/70 p-4 shadow-sm"
-                        >
-                          <div
-                            class="flex flex-wrap items-start justify-between gap-3"
-                          >
-                            <div class="space-y-1">
-                              <p
-                                class="text-sm font-semibold text-base-content"
-                              >
-                                {runDisplayName(run)}
-                              </p>
-                              <p
-                                class="text-xs uppercase tracking-wide text-base-content/50"
-                              >
-                                Run #{run.id}
-                              </p>
-                              <ul
-                                class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-base-content/60"
-                              >
-                                {#each timeline as label}
-                                  <li>{label}</li>
-                                {/each}
-                              </ul>
-                            </div>
-                            <span
-                              class={`badge ${statusBadge(run.status)} badge-sm`}
-                            >
-                              {formatStatus(run.status)}
-                            </span>
-                          </div>
-
-                          <details
-                            class="collapse collapse-arrow mt-3 bg-base-200/40"
-                          >
-                            <summary
-                              class="collapse-title text-sm font-medium text-base-content/80"
-                            >
-                              {run.urls.length} retailer {run.urls.length === 1
-                                ? "link"
-                                : "links"}
-                            </summary>
-                            <div class="collapse-content">
-                              <ul class="space-y-2">
-                                {#each run.urls as url (url.id)}
-                                  <li
-                                    class="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-base-100/80 px-3 py-2"
-                                  >
-                                    <div
-                                      class="min-w-0 text-xs text-base-content/80"
-                                    >
-                                      <p
-                                        class="truncate font-medium text-base-content"
-                                        title={url.source_url}
-                                      >
-                                        {shortenUrl(url.source_url)}
-                                      </p>
-                                      {#if url.normalized_url && url.normalized_url !== url.source_url}
-                                        <p
-                                          class="truncate text-[0.7rem] text-base-content/60"
-                                          title={url.normalized_url}
-                                        >
-                                          Normalized: {shortenUrl(
-                                            url.normalized_url
-                                          )}
-                                        </p>
-                                      {/if}
-                                    </div>
-                                    <span
-                                      class={`badge ${statusBadge(url.status)} badge-xs`}
-                                    >
-                                      {formatStatus(url.status)}
-                                    </span>
-                                  </li>
-                                {/each}
-                              </ul>
-                            </div>
-                          </details>
-                        </li>
-                      {/each}
-                    </ul>
-                  {:else}
-                    <p class="text-sm text-base-content/60">
-                      No automated imports yet. Paste a few product links to
-                      kick things off.
-                    </p>
-                  {/if}
-                </div>
               </div>
             </section>
           {/if}

@@ -47,9 +47,6 @@ export const load = (async ({ locals, parent }) => {
 				id,
 				username,
 				display_name
-			),
-			urls:cube_scrap_runs_url (
-				id
 			)
 		`
 		)

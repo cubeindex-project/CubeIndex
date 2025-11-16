@@ -5,17 +5,15 @@
 
   const { data } = $props<{ data: PageData }>();
   let submissions: Cube[] = $derived(data.submissions ?? []);
-  let summary = $derived(data.summary);
-  let importPreview = $derived(data.importPreview ?? []);
 
   type FilterKey = "all" | "pending" | "approved" | "rejected";
   let activeFilter = $state<FilterKey>("all");
 
   const filters = $derived([
-    { label: "All", value: "all" as const, count: summary.total },
-    { label: "Pending", value: "pending" as const, count: summary.pending },
-    { label: "Approved", value: "approved" as const, count: summary.approved },
-    { label: "Rejected", value: "rejected" as const, count: summary.rejected },
+    { label: "All", value: "all" as const },
+    { label: "Pending", value: "pending" as const },
+    { label: "Approved", value: "approved" as const },
+    { label: "Rejected", value: "rejected" as const},
   ]);
 
   const filteredSubmissions = $derived(
@@ -61,7 +59,7 @@
   <meta name="robots" content="noindex" />
 </svelte:head>
 
-<div class="mx-auto max-w-6xl px-4 py-8 flex flex-col gap-8">
+<div class="min-h-screen mx-auto max-w-6xl px-4 py-8 flex flex-col gap-8">
   <header
     class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
   >
@@ -84,43 +82,6 @@
     </div>
   </header>
 
-  <section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-    <article class="card border border-base-200 bg-base-100/80 shadow-sm">
-      <div class="card-body">
-        <p class="text-sm text-base-content/60">Total submissions</p>
-        <p class="text-4xl font-semibold text-base-content">{summary.total}</p>
-        {#if summary.lastSubmittedAt}
-          <p class="text-xs text-base-content/50 mt-2">
-            Last submitted on {formatDateTime(summary.lastSubmittedAt)}
-          </p>
-        {/if}
-      </div>
-    </article>
-    <article class="card border border-base-200 bg-base-100/80 shadow-sm">
-      <div class="card-body">
-        <p class="text-sm text-base-content/60">Pending review</p>
-        <p class="text-4xl font-semibold text-warning">{summary.pending}</p>
-      </div>
-    </article>
-    <article class="card border border-base-200 bg-base-100/80 shadow-sm">
-      <div class="card-body">
-        <p class="text-sm text-base-content/60">Approved</p>
-        <p class="text-4xl font-semibold text-success">{summary.approved}</p>
-        {#if summary.lastUpdatedAt}
-          <p class="text-xs text-base-content/50 mt-2">
-            Last update on {formatDateTime(summary.lastUpdatedAt)}
-          </p>
-        {/if}
-      </div>
-    </article>
-    <article class="card border border-base-200 bg-base-100/80 shadow-sm">
-      <div class="card-body">
-        <p class="text-sm text-base-content/60">Rejected</p>
-        <p class="text-4xl font-semibold text-error">{summary.rejected}</p>
-      </div>
-    </article>
-  </section>
-
   <section class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="text-lg font-semibold text-base-content">Submitted cubes</h2>
@@ -133,7 +94,6 @@
             aria-pressed={activeFilter === filter.value}
           >
             {filter.label}
-            <span class="badge badge-xs ml-2">{filter.count}</span>
           </button>
         {/each}
       </div>

@@ -39,7 +39,7 @@ export const load = (async ({ locals }) => {
     if (error) {
       logError(
         500,
-        "An error occured while fetching your profile",
+        "An error occurred while fetching your profile",
         locals.log,
         error
       );
@@ -125,7 +125,7 @@ export const actions: Actions = {
     if (err) {
       logError(
         500,
-        "An error occured while fetching your profile",
+        "An error occurred while fetching your profile",
         locals.log,
         err
       );
@@ -186,7 +186,7 @@ export const actions: Actions = {
     if (err) {
       logError(
         500,
-        "An error occured while fetching your profile",
+        "An error occurred while fetching your profile",
         locals.log,
         err
       );
@@ -269,7 +269,7 @@ export const actions: Actions = {
 
     if (insertErr) {
       locals.log.error({ err: insertErr.message }, "Failed to insert cube");
-      return setError(form, "An error occured while submitting the cube", {
+      return setError(form, "An error occurred while submitting the cube", {
         status: 500,
       });
     }
@@ -287,7 +287,7 @@ export const actions: Actions = {
 
     if (rowsErr) {
       locals.log.error({ err: rowsErr.message }, "Failed to fetch features");
-      setError(form, "An error occured while submitting the cube", {
+      setError(form, "An error occurred while submitting the cube", {
         status: 500,
       });
     }
@@ -319,7 +319,7 @@ export const actions: Actions = {
           { err: featUpErr.message },
           "Failed to insert features"
         );
-        setError(form, "An error occured while submitting the cube", {
+        setError(form, "An error occurred while submitting the cube", {
           status: 500,
         });
       }
@@ -337,7 +337,7 @@ export const actions: Actions = {
           { err: featUpErr.message },
           "Failed to delete features"
         );
-        setError(form, "An error occured while submitting the cube", {
+        setError(form, "An error occurred while submitting the cube", {
           status: 500,
         });
       }

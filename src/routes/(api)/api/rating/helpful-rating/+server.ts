@@ -45,7 +45,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
       return json(
         {
           success: false,
-          error: "An error occured while deleting: " + err.message,
+          error: "An error occurred while deleting: " + err.message,
         },
         { status: 500 }
       );
@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
       return json(
         {
           success: false,
-          error: "An error occured while inserting: " + err.message,
+          error: "An error occurred while inserting: " + err.message,
         },
         { status: 500 }
       );

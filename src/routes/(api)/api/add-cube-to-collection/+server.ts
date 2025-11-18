@@ -38,7 +38,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   if (userCubesErr)
     return json(
-      { success: false, error: "An error occured: " + userCubesErr.message },
+      { success: false, error: "An error occurred: " + userCubesErr.message },
       { status: 500 }
     );
 

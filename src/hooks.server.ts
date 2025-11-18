@@ -113,7 +113,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   if (err)
     logError(
       500,
-      "An error occured while fetching your profile",
+      "An error occurred while fetching your profile",
       event.locals.log,
       err
     );

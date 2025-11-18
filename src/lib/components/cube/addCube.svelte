@@ -119,7 +119,7 @@
       vendors = data;
     } catch (err: any) {
       clientLogError(
-        "An error occured while fetching vendors",
+        "An error occurred while fetching vendors",
         clientLogger,
         err
       );

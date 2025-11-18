@@ -16,7 +16,7 @@ export const GET = async ({ params, locals }) => {
 
   if (err)
     return new Response(
-      "An error occured while fetching the profile: " + err.message,
+      "An error occurred while fetching the profile: " + err.message,
       { status: 404 }
     );
 
@@ -51,30 +51,30 @@ export const GET = async ({ params, locals }) => {
 
   if (ecErr)
     return new Response(
-      "An error occured while fetching the user cubes count: " + ecErr.message,
+      "An error occurred while fetching the user cubes count: " + ecErr.message,
       { status: 404 }
     );
   if (userAchieveError)
     return new Response(
-      "An error occured while fetching the user achievements count: " +
+      "An error occurred while fetching the user achievements count: " +
         userAchieveError.message,
       { status: 404 }
     );
   if (urErr)
     return new Response(
-      "An error occured while fetching the user ratings count: " +
+      "An error occurred while fetching the user ratings count: " +
         urErr.message,
       { status: 404 }
     );
   if (followingErr)
     return new Response(
-      "An error occured while fetching the user following count: " +
+      "An error occurred while fetching the user following count: " +
         followingErr.message,
       { status: 404 }
     );
   if (followedErr)
     return new Response(
-      "An error occured while fetching the user followers count: " +
+      "An error occurred while fetching the user followers count: " +
         followedErr.message,
       { status: 404 }
     );

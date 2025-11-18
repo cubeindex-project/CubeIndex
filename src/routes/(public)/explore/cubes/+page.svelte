@@ -42,7 +42,13 @@
   };
 
   // narrow types
-  const SORT_FIELDS = ["name", "rating", "popularity", "date", "price"] as const;
+  const SORT_FIELDS = [
+    "name",
+    "rating",
+    "popularity",
+    "date",
+    "price",
+  ] as const;
   type SortField = (typeof SORT_FIELDS)[number];
   type SortDir = "asc" | "desc";
 
@@ -223,7 +229,9 @@
   });
 
   // Calculate total pages for pagination
-  const totalPages = $derived(Math.max(Math.ceil(sortedCubes.length / $params.size), 1));
+  const totalPages = $derived(
+    Math.max(Math.ceil(sortedCubes.length / $params.size), 1)
+  );
 
   // Reset all filters to default state
   function resetFilters() {
@@ -478,9 +486,7 @@
           </div>
 
           <!-- Display paginated cubes -->
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {#if paginatedCubes.length > 0}
               {#each paginatedCubes as cube}
                 {#key paginatedCubes}
@@ -508,20 +514,28 @@
                 <i class="fa-solid fa-cube fa-3x mb-4"></i>
                 <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
                 <p class="mb-6 text-center max-w-xs">
-                  We couldn't find any cubes matching your search or filters.
-                  Try adjusting them or resetting to see everything.
+                  We couldn't find any cubes matching your search or filters;
+                  try adjusting them or resetting to see everything. If the cube
+                  you're looking for isn't listed, consider submitting it to
+                  help grow our database.
                 </p>
-                <button
-                  onclick={() => {
-                    resetFilters();
-                    $params.q = "";
-                  }}
-                  class="btn btn-outline flex items-center"
-                  aria-label="Reset filters"
-                >
-                  <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                  Reset
-                </button>
+                <div class="flex flex-col justify-center gap-4">
+                  <a href="/submit" class="btn btn-primary flex items-center">
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    Submit a New Cube
+                  </a>
+                  <button
+                    onclick={() => {
+                      resetFilters();
+                      $params.q = "";
+                    }}
+                    class="btn btn-outline flex items-center"
+                    aria-label="Reset filters"
+                  >
+                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                    Reset Filters
+                  </button>
+                </div>
               </div>
             {/if}
           </div>

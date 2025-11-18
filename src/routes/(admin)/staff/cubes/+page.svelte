@@ -34,7 +34,7 @@
       .select("*");
 
     if (featErr) {
-      throw new Error("A 500 status code error occured:" + featErr.message);
+      throw new Error("A 500 status code error occurred:" + featErr.message);
     }
 
     for (const { cube, feature } of features) {
@@ -52,7 +52,7 @@
 
       if (error)
         return clientLogError(
-          "An error occured while fetching vendors",
+          "An error occurred while fetching vendors",
           clientLogger,
           error
         );

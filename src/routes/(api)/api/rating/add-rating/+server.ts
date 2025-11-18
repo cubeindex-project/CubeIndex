@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   if (err)
     return json(
-      { success: false, error: "An error occured: " + err.message },
+      { success: false, error: "An error occurred: " + err.message },
       { status: 500 }
     );
 

@@ -2,44 +2,17 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
 
-  const { data } = $props<{
-    data: {
-      profile: {
-        username: string;
-        display_name: string;
-        role: string;
-        profile_picture?: string | null;
-      };
-      stats: {
-        cubesCount: number;
-        ratingsCount: number;
-        achievementsCount: number;
-        followersCount: number;
-        followingCount: number;
-      };
-      recent: {
-        cubes: Array<{
-          cube: string;
-          created_at: string;
-          main: boolean;
-          status: string;
-          condition: string;
-          cube_data: any | null;
-        }>;
-        ratings: Array<{
-          cube_slug: string;
-          rating: number;
-          updated_at: string;
-          cube_data: any | null;
-        }>;
-        achievements: Array<{
-          achievement: string;
-          awarded_at: string;
-          achievement_data: any | null;
-        }>;
-      };
-    };
-  }>();
+  type SubmissionSummary = {
+    slug: string;
+    brand: string | null;
+    model: string | null;
+    version_name: string | null;
+    image_url: string | null;
+    status: string;
+    created_at: string;
+  };
+
+  const { data } = $props();
 
   const { profile, stats, recent } = data;
 
@@ -68,7 +41,37 @@
       icon: "fa-user-group",
       href: `/user/${profile.username}/social`,
     },
+    {
+      label: "Submissions",
+      value: stats.submissionsCount,
+      icon: "fa-paper-plane",
+      href: "/user/submissions",
+    },
   ];
+
+  const submissionStatusBadge = (status: string) => {
+    const normalized = status.toLowerCase();
+    if (normalized === "approved") return "badge-success";
+    if (normalized === "pending") return "badge-warning";
+    if (normalized === "rejected") return "badge-error";
+    return "badge-ghost";
+  };
+
+  const submissionStatusLabel = (status: string) =>
+    status
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(" ");
+
+  const submissionName = (submission: SubmissionSummary) => {
+    const parts = [
+      submission.brand,
+      submission.model,
+      submission.version_name,
+    ].filter(Boolean);
+    if (parts.length === 0) return submission.slug;
+    return parts.join(" ").trim();
+  };
 </script>
 
 <svelte:head>
@@ -100,7 +103,7 @@
     </div>
   </header>
 
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
     {#each cards as c}
       <a
         href={c.href}
@@ -132,142 +135,60 @@
     </a>
   </section>
 
-  <section class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-    <!-- Recent Collection -->
+  <section class="grid grid-cols-1 xl:grid-cols-1 gap-6 mb-8">
+    <!-- Recent Submissions -->
     <div class="card bg-base-100 border border-base-300 xl:col-span-1">
       <div class="card-body">
-        <h2 class="card-title">Recent Collection</h2>
-        {#if recent.cubes.length === 0}
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="card-title">Recent Submissions</h2>
+          <a class="btn btn-xs" href="/user/submissions">View all</a>
+        </div>
+        {#if recent.submissions.length === 0}
           <div class="text-sm opacity-70">
-            No cubes yet. <a class="link" href="/explore/cubes">Explore cubes</a
-            > to start your collection.
+            Share cubes that are missing from the catalog and track their status
+            from here. <a class="link" href="/submit">Submit a cube</a> to get
+            started.
           </div>
         {:else}
           <ul class="divide-y divide-base-300">
-            {#each recent.cubes as r}
+            {#each recent.submissions as submission}
               <li class="py-3 flex items-center gap-3">
-                {#if r.cube_data?.image_url}
+                {#if submission.image_url}
                   <img
-                    src={r.cube_data.image_url}
-                    alt={r.cube_data.model}
+                    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{submission.image_url}"
+                    alt={submissionName(submission)}
                     class="w-10 h-10 rounded object-cover"
                   />
                 {:else}
                   <div
                     class="w-10 h-10 rounded bg-base-300 flex items-center justify-center"
                   >
-                    <i class="fa-solid fa-cube"></i>
+                    <i class="fa-solid fa-paper-plane"></i>
                   </div>
                 {/if}
-                <div class="min-w-0">
-                  <a
-                    class="font-medium hover:underline"
-                    href={`/explore/cubes/${r.cube}`}
-                    >{r.cube_data?.brand} {r.cube_data?.model ?? r.cube}</a
-                  >
-                  <div class="text-xs opacity-70">
-                    {formatDate(r.created_at)} • {r.status}{r.main
-                      ? " • Main"
-                      : ""}
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-2">
+                    <a
+                      class="font-medium hover:underline"
+                      href={`/explore/cubes/${submission.slug}`}
+                    >
+                      {submissionName(submission)}
+                    </a>
+                    <span
+                      class={`badge badge-sm ${submissionStatusBadge(submission.status)}`}
+                    >
+                      {submissionStatusLabel(submission.status)}
+                    </span>
                   </div>
+                  <p class="text-xs opacity-70">
+                    Submitted {formatDate(submission.created_at)}
+                  </p>
                 </div>
               </li>
             {/each}
           </ul>
-          <div class="pt-3">
-            <a class="btn btn-sm" href={`/user/${profile.username}/cubes`}>
-              View all
-            </a>
-          </div>
-        {/if}
-      </div>
-    </div>
-
-    <!-- Recent Ratings -->
-    <div class="card bg-base-100 border border-base-300 xl:col-span-1">
-      <div class="card-body">
-        <h2 class="card-title">Recent Ratings</h2>
-        {#if recent.ratings.length === 0}
-          <div class="text-sm opacity-70">
-            No ratings yet. Rate cubes from their pages.
-          </div>
-        {:else}
-          <ul class="divide-y divide-base-300">
-            {#each recent.ratings as r}
-              <li class="py-3 flex items-center gap-3">
-                {#if r.cube_data?.image_url}
-                  <img
-                    src={r.cube_data.image_url}
-                    alt={r.cube_data.model}
-                    class="w-10 h-10 rounded object-cover"
-                  />
-                {:else}
-                  <div
-                    class="w-10 h-10 rounded bg-base-300 flex items-center justify-center"
-                  >
-                    <i class="fa-solid fa-cube"></i>
-                  </div>
-                {/if}
-                <div class="min-w-0">
-                  <a
-                    class="font-medium hover:underline"
-                    href={`/explore/cubes/${r.cube_slug}`}
-                  >
-                    {r.cube_data?.brand}
-                    {r.cube_data?.model ?? r.cube_slug}
-                  </a>
-                  <div class="text-xs opacity-70">
-                    {formatDate(r.updated_at)} • Rated {r.rating.toFixed(1)}★
-                  </div>
-                </div>
-              </li>
-            {/each}
-          </ul>
-          <div class="pt-3">
-            <a class="btn btn-sm" href={`/user/${profile.username}/ratings`}>
-              View all
-            </a>
-          </div>
-        {/if}
-      </div>
-    </div>
-
-    <!-- Recent Achievements -->
-    <div class="card bg-base-100 border border-base-300 xl:col-span-1">
-      <div class="card-body">
-        <h2 class="card-title">Recent Achievements</h2>
-        {#if recent.achievements.length === 0}
-          <div class="text-sm opacity-70">
-            No achievements yet. Keep collecting and engaging!
-          </div>
-        {:else}
-          <ul class="divide-y divide-base-300">
-            {#each recent.achievements as a}
-              <li class="py-3 flex items-center gap-3">
-                <div
-                  class="w-10 h-10 rounded bg-base-300 flex items-center justify-center"
-                >
-                  {a.achievement_data.icon}
-                </div>
-                <div class="min-w-0">
-                  <span class="font-medium">
-                    {a.achievement_data.name}
-                  </span>
-                  <div class="text-xs opacity-70">
-                    {formatDate(a.awarded_at)} • {a.achievement_data?.rarity ??
-                      ""}
-                  </div>
-                </div>
-              </li>
-            {/each}
-          </ul>
-          <div class="pt-3">
-            <a
-              class="btn btn-sm"
-              href={`/user/${profile.username}/achievements`}
-            >
-              View all
-            </a>
+          <div class="pt-3 flex flex-wrap">
+            <a class="btn btn-ghost btn-sm" href="/submit">Submit another cube</a>
           </div>
         {/if}
       </div>
@@ -284,6 +205,8 @@
         <a class="btn" href={`/user/${profile.username}/cubes`}>
           Manage Collection
         </a>
+        <a class="btn" href="/user/submissions">My Submissions</a>
+        <a class="btn" href="/submit">Submit a Cube</a>
         <a class="btn" href={`/user/${profile.username}/ratings`}>My Ratings</a>
         <a class="btn" href="/achievements">Browse Achievements</a>
         <a class="btn" href="/explore/users">Discover Users</a>

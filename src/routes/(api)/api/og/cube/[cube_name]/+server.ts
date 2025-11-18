@@ -16,7 +16,7 @@ export const GET = async ({ params, locals }) => {
 
   if (cErr)
     return new Response(
-      "An error occured while fetching the cube: " + cErr.message,
+      "An error occurred while fetching the cube: " + cErr.message,
       { status: 404 }
     );
 
@@ -41,18 +41,18 @@ export const GET = async ({ params, locals }) => {
 
   if (urErr)
     return new Response(
-      "An error occured while fetching user ratings count: " + urErr.message,
+      "An error occurred while fetching user ratings count: " + urErr.message,
       { status: 404 }
     );
   if (cvlErr)
     return new Response(
-      "An error occured while fetching the cube vendors count: " +
+      "An error occurred while fetching the cube vendors count: " +
         cvlErr.message,
       { status: 404 }
     );
   if (ucErr)
     return new Response(
-      "An error occured while fetching the user cubes count: " + ucErr.message,
+      "An error occurred while fetching the user cubes count: " + ucErr.message,
       { status: 404 }
     );
 

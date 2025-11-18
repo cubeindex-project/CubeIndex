@@ -70,7 +70,6 @@
 					<tr>
 						<th class="whitespace-nowrap">Run</th>
 						<th class="whitespace-nowrap">Status</th>
-						<th class="whitespace-nowrap">URLs</th>
 						<th class="whitespace-nowrap">Requested by</th>
 						<th class="whitespace-nowrap">Queued</th>
 						<th class="whitespace-nowrap">Finished</th>
@@ -96,12 +95,6 @@
 								<td>
 									<span class={`badge badge-sm ${statusBadge(run.status)}`}>
 										{formatStatus(run.status)}
-									</span>
-								</td>
-								<td>
-									<span class="badge badge-outline badge-sm">
-										{run.urls.length}
-										<span class="sr-only"> queued URLs</span>
 									</span>
 								</td>
 								<td>

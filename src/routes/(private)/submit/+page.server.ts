@@ -152,6 +152,29 @@ export const actions: Actions = {
     const runName = form.data.runName ?? null;
     const cleanEntry = cleanLink(linkEntry);
 
+    const { data: linkAlreadyExists, error: linkExistsErr } = await supabase
+      .from("cube_vendor_links")
+      .select("url")
+      .eq("url", cleanEntry)
+      .maybeSingle();
+
+    if (linkExistsErr) {
+      log.error(
+        { err: linkExistsErr.message },
+        "Failed to check for duplicate link"
+      );
+      return setError(form, "", "Failed to check for duplicate link", {
+        status: 500,
+      });
+    }
+
+    if (linkAlreadyExists) {
+      log.error("This link already exists.");
+      return setError(form, "storeUrl", "This link already exists.", {
+        status: 400,
+      });
+    }
+
     const { data: run, error: runErr } = await supabase
       .from("cube_scrap_runs")
       .insert({ user_id: user.id, name: runName, url: cleanEntry })

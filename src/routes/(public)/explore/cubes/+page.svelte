@@ -12,6 +12,7 @@
   import { SsgoiTransition } from "@ssgoi/svelte";
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import { queryParameters, ssp } from "sveltekit-search-params";
+  import Fuse from "fuse.js";
 
   // Extend Cube type with metadata for filtering and sorting
   type CubeWithMeta = Cube & {
@@ -138,9 +139,21 @@
     allSubTypes = SubType;
   }
 
+  const fuse = new Fuse(cubes, {
+    keys: ["name"],
+    threshold: 0.4,
+    includeScore: true,
+    ignoreLocation: true,
+  });
+
   // 3) Reactive filtered list based on selected criteria
   const filteredCubes = $derived.by(() => {
-    return cubes.filter(
+    const query = $params.q.trim();
+
+    // 1. Decide the source list based on fuzzy search
+    const source = query === "" ? cubes : fuse.search(query).map((r) => r.item);
+
+    return source.filter(
       (c) =>
         // Type filter
         ($params.type === "All" || c.type === $params.type) &&
@@ -171,9 +184,7 @@
         ($params.mag === undefined || c.magnetic === $params.mag) &&
         ($params.mod === undefined || c.modded === $params.mod) &&
         ($params.stick === undefined || c.stickered === $params.stick) &&
-        ($params.smart === undefined || c.smart === $params.smart) &&
-        // Text search on combined name
-        c.name.toLowerCase().trim().includes($params.q.toLowerCase())
+        ($params.smart === undefined || c.smart === $params.smart)
     );
   });
 

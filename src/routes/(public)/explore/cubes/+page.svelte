@@ -139,21 +139,9 @@
     allSubTypes = SubType;
   }
 
-  const fuse = new Fuse(cubes, {
-    keys: ["name"],
-    threshold: 0.4,
-    includeScore: true,
-    ignoreLocation: true,
-  });
-
   // 3) Reactive filtered list based on selected criteria
   const filteredCubes = $derived.by(() => {
-    const query = $params.q.trim();
-
-    // 1. Decide the source list based on fuzzy search
-    const source = query === "" ? cubes : fuse.search(query).map((r) => r.item);
-
-    return source.filter(
+    return cubes.filter(
       (c) =>
         // Type filter
         ($params.type === "All" || c.type === $params.type) &&
@@ -188,10 +176,22 @@
     );
   });
 
+  const fuse = new Fuse(cubes, {
+    keys: ["name"],
+    threshold: 0.4,
+    includeScore: true,
+    ignoreLocation: true,
+  });
+
+  const isSearching = $derived($params.q.trim().length > 0);
+
   // Sort the filtered cubes based on selected field and order
   const sortedCubes = $derived.by(() => {
-    const arr = filteredCubes.slice();
-    arr.sort((a, b) => {
+    const sortedArr = filteredCubes.slice();
+
+    const query = $params.q.trim();
+
+    sortedArr.sort((a, b) => {
       let av: any;
       let bv: any;
       switch ($params.sort) {
@@ -229,6 +229,9 @@
       if (av > bv) return $params.dir === "asc" ? 1 : -1;
       return 0;
     });
+
+    const arr = query === "" ? sortedArr : fuse.search(query).map((r) => r.item);
+
     return arr;
   });
 
@@ -476,6 +479,8 @@
                 bind:sortField={$params.sort}
                 bind:sortOrder={$params.dir}
                 fields={sortFields}
+                disabled={isSearching}
+                label="Sort"
                 useronchange={() => (_userChangedFilters = true)}
               />
             </div>

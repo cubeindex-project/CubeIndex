@@ -27,6 +27,8 @@
     id = "sortBy",
     /** Optional label text. */
     label = "Sort",
+    /** Optional: disable interaction (e.g., when search is active). */
+    disabled = false,
   }: {
     sortField: string;
     sortOrder: "asc" | "desc";
@@ -34,6 +36,7 @@
     useronchange?: () => void;
     id?: string;
     label?: string;
+    disabled?: boolean;
   } = $props();
 
   function toggleDir() {
@@ -48,6 +51,7 @@
     class="select select-bordered"
     bind:value={sortField}
     onchange={useronchange}
+    disabled={disabled}
   >
     {#each fields as f}
       <option value={f.value}>{f.label}</option>
@@ -58,6 +62,7 @@
     class="btn btn-ghost btn-sm"
     title={sortOrder === "desc" ? "Descending" : "Ascending"}
     aria-label="Toggle sort direction"
+    disabled={disabled}
     onclick={() => {
       toggleDir();
       useronchange();

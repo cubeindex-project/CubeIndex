@@ -176,24 +176,45 @@
     );
   });
 
-  const fuse = new Fuse(cubes, {
-    keys: ["name"],
-    threshold: 0.4,
-    includeScore: true,
-    ignoreLocation: true,
-  });
+  // Fuzzy search instance, derived from the currently filtered cubes
+  const fuse = $derived.by(
+    () =>
+      new Fuse(filteredCubes, {
+        keys: ["name"],
+        threshold: 0.4,
+        includeScore: true,
+        ignoreLocation: true,
+      })
+  );
 
-  const isSearching = $derived($params.q.trim().length > 0);
+  let sortByRelevance = $state(false);
+  let sortManuallySet = $state(false);
+
+  // Optional: effect to set the default sort mode based on the query
+  $effect(() => {
+    const query = $params.q.trim();
+
+    if (query && !sortManuallySet) {
+      // Default to relevance when the user starts typing
+      sortByRelevance = true;
+    }
+
+    if (!query) {
+      // Reset when the query is cleared
+      sortByRelevance = false;
+      sortManuallySet = false;
+    }
+  });
 
   // Sort the filtered cubes based on selected field and order
   const sortedCubes = $derived.by(() => {
-    const sortedArr = filteredCubes.slice();
-
+    const base = filteredCubes.slice();
     const query = $params.q.trim();
 
-    sortedArr.sort((a, b) => {
+    const compare = (a: CubeWithMeta, b: CubeWithMeta) => {
       let av: any;
       let bv: any;
+
       switch ($params.sort) {
         case "rating":
           av = a.rating ?? 0;
@@ -207,32 +228,53 @@
           av = a.avg_price ?? 0;
           bv = b.avg_price ?? 0;
           break;
-        case "name":
-          av = a.name;
-          bv = b.name;
+        case "name": {
+          const an = a.name;
+          const bn = b.name;
           return $params.dir === "asc"
-            ? av.localeCompare(bv, undefined, {
+            ? an.localeCompare(bn, undefined, {
                 numeric: true,
                 sensitivity: "base",
                 ignorePunctuation: true,
               })
-            : bv.localeCompare(av, undefined, {
+            : bn.localeCompare(an, undefined, {
                 numeric: true,
                 sensitivity: "base",
                 ignorePunctuation: true,
               });
+        }
         default:
           av = new Date(a.verified_at ?? a.created_at).getTime();
           bv = new Date(b.verified_at ?? b.created_at).getTime();
       }
+
       if (av < bv) return $params.dir === "asc" ? -1 : 1;
       if (av > bv) return $params.dir === "asc" ? 1 : -1;
       return 0;
-    });
+    };
 
-    const arr = query === "" ? sortedArr : fuse.search(query).map((r) => r.item);
+    // No query => just sort the filtered cubes
+    if (!query) {
+      return base.sort(compare);
+    }
 
-    return arr;
+    const results = fuse.search(query);
+
+    // Base set of slugs for the current filters
+    const baseSlugs = new Set(base.map((c) => c.slug));
+
+    if (sortByRelevance && !sortManuallySet) {
+      // Relevance-first: keep Fuse order, but only for cubes that are in the filtered set
+      return results
+        .map((r) => r.item)
+        .filter((cube) => baseSlugs.has(cube.slug));
+    }
+
+    // Manual sort selected: keep only matching cubes, then sort with the selected compare
+    const resultSlugs = new Set(results.map((r) => r.item.slug));
+    const matches = base.filter((cube) => resultSlugs.has(cube.slug));
+
+    return matches.sort(compare);
   });
 
   // Paginate the sorted list
@@ -473,15 +515,22 @@
               <ItemsPerPageSelector
                 bind:itemsPerPage={$params.size}
                 label="Cubes per page"
-                onchange={() => (_userChangedFilters = true)}
+                onchange={() => {
+                  _userChangedFilters = true;
+                  sortManuallySet = true;
+                  sortByRelevance = false;
+                }}
               />
               <SortSelector
                 bind:sortField={$params.sort}
                 bind:sortOrder={$params.dir}
                 fields={sortFields}
-                disabled={isSearching}
                 label="Sort"
-                useronchange={() => (_userChangedFilters = true)}
+                useronchange={() => {
+                  _userChangedFilters = true;
+                  sortManuallySet = true;
+                  sortByRelevance = false;
+                }}
               />
             </div>
             <!-- Link to compare page -->

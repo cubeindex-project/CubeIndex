@@ -55,6 +55,7 @@
     "culori": "^4.0.2",
     "daisyui": "^5.0.43",
     "file-type": "^21.0.0",
+    "fuse.js": "^7.1.0",
     "github-markdown-css": "^5.8.1",
     "isomorphic-dompurify": "^2.26.0",
     "pino": "^9.10.0",

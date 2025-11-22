@@ -492,6 +492,7 @@ export interface AwardsCategory {
   description: string;
   created_at: Date;
   slug: string;
+  icon: string;
 }
 
 export interface AwardsNominee {

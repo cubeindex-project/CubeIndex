@@ -1,21 +1,79 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import NumberFlow from "@number-flow/svelte";
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import type {
+    AwardsCategory,
+    AwardsEvent,
+  } from "$lib/components/dbTableTypes.js";
+
+  const { data } = $props();
+  const event: AwardsEvent = data.current_event;
+  const categories: AwardsCategory[] = data.awards_category;
+
+  const formatDuration = (targetMs: number) => {
+    if (!Number.isFinite(targetMs)) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
+    const totalSeconds = Math.max(0, Math.floor(targetMs / 1000));
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return { days, hours, minutes, seconds };
+  };
 
   let mounted = $state(false);
+  let now = $state(new Date());
 
-  type Accent = "primary" | "secondary" | "accent" | "info";
+  type EventPhase = "upcoming" | "live" | "past" | "none";
 
-  /** Awards categories surfaced to visitors. */
-  type AwardCategory = {
-    title: string;
-    subtitle: string;
-    description: string;
-    criteria: string[];
-    icon: string;
-    accent: Accent;
-  };
+  const startAt = $derived.by(() =>
+    event?.start_at ? new Date(event.start_at) : null,
+  );
+  const endAt = $derived.by(() => (event?.end_at ? new Date(event.end_at) : null));
+
+  const eventStatus: EventPhase = $derived.by(() => {
+    if (!startAt || !endAt) return "none";
+
+    const startTime = startAt.getTime();
+    const endTime = endAt.getTime();
+    if (Number.isNaN(startTime) || Number.isNaN(endTime)) return "none";
+
+    if (now.getTime() < startTime) return "upcoming";
+    if (now.getTime() <= endTime) return "live";
+    return "past";
+  });
+
+  const countdownTarget = $derived.by(() => {
+    if (eventStatus === "upcoming") return startAt;
+    if (eventStatus === "live") return endAt;
+    return null;
+  });
+
+  const countdownLabel = $derived.by(() => {
+    if (!countdownTarget) return "";
+    return eventStatus === "upcoming" ? "Starts in" : "Ends in";
+  });
+
+  const countdownParts = $derived.by(() => {
+    if (!countdownTarget) return null;
+    const diff = countdownTarget.getTime() - now.getTime();
+    return formatDuration(diff);
+  });
+
+  const countdownSegments = $derived.by(() => {
+    if (!countdownParts) return [];
+    return [
+      { label: "Days", value: countdownParts.days },
+      { label: "Hours", value: countdownParts.hours },
+      { label: "Minutes", value: countdownParts.minutes },
+      { label: "Seconds", value: countdownParts.seconds },
+    ];
+  });
 
   type Partner = {
     name: string;
@@ -23,63 +81,6 @@
     description: string;
     link: { label: string; url: string };
   };
-
-  const awardCategories: AwardCategory[] = [
-    {
-      title: "Flagship of the Year",
-      subtitle: "Performance-first releases that defined 2024.",
-      description:
-        "Celebrates the most complete main-worthy speedcube and the team that built it.",
-      criteria: ["Elite results", "Hardware polish", "Consistency"],
-      icon: "fa-bolt",
-      accent: "primary",
-    },
-    {
-      title: "Innovation Award",
-      subtitle: "Ideas that bent expectations.",
-      description:
-        "Highlights breakthroughs in tensioning, tactility, smart tech, or sustainability.",
-      criteria: ["New tech", "Smart features", "Patent-pending"],
-      icon: "fa-lightbulb",
-      accent: "accent",
-    },
-    {
-      title: "Budget Breakthrough",
-      subtitle: "Affordable cubes that punch way up.",
-      description:
-        "Spotlights community-loved releases under $25 that still feel premium.",
-      criteria: ["Accessibility", "Durability", "Out-of-box feel"],
-      icon: "fa-coins",
-      accent: "info",
-    },
-    {
-      title: "Community Favorite",
-      subtitle: "The crowd-sourced champion.",
-      description:
-        "100% fan vote driven by showcase submissions, streams, and CubeIndex data.",
-      criteria: ["Fan vote", "Shareability", "Memorable design"],
-      icon: "fa-heart",
-      accent: "secondary",
-    },
-    {
-      title: "Collector's Choice",
-      subtitle: "Pieces that belong on every shelf.",
-      description:
-        "Limited runs, artist collaborations, and story-rich puzzles earn the spotlight.",
-      criteria: ["Story", "Finish quality", "Rarity"],
-      icon: "fa-gem",
-      accent: "primary",
-    },
-    {
-      title: "Sustainability Impact",
-      subtitle: "Design that respects the planet.",
-      description:
-        "Rewards companies using recycled materials, modular builds, or smarter packaging.",
-      criteria: ["Materials", "Repairability", "Packaging"],
-      icon: "fa-leaf",
-      accent: "accent",
-    },
-  ];
 
   const partners: Partner[] = [
     {
@@ -98,32 +99,6 @@
     },
   ];
 
-  const accentClasses: Record<
-    Accent,
-    { icon: string; border: string; glow: string }
-  > = {
-    primary: {
-      icon: "bg-primary/15 text-primary ring-primary/30",
-      border: "border-primary/25",
-      glow: "from-primary/25",
-    },
-    secondary: {
-      icon: "bg-secondary/15 text-secondary ring-secondary/30",
-      border: "border-secondary/25",
-      glow: "from-secondary/25",
-    },
-    accent: {
-      icon: "bg-accent/15 text-accent ring-accent/30",
-      border: "border-accent/25",
-      glow: "from-accent/25",
-    },
-    info: {
-      icon: "bg-info/15 text-info ring-info/30",
-      border: "border-info/25",
-      glow: "from-info/25",
-    },
-  };
-
   const ui = {
     section: "relative overflow-hidden py-20 px-6",
     container: "mx-auto max-w-6xl",
@@ -133,20 +108,28 @@
     lead: "text-lg sm:text-xl text-base-content/80",
     pill: "inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm ring-1",
     ctas: "flex flex-col sm:flex-row gap-4 justify-center",
+    countdownCard:
+      "inline-flex flex-col sm:flex-row items-center gap-3 rounded-2xl border border-base-200/80 bg-base-100/80 backdrop-blur px-5 py-3 shadow-sm w-fit mx-auto",
+    countdownLabel: "inline-flex items-center gap-2 text-sm font-semibold",
+    countdownList: "flex items-center gap-3 sm:gap-4",
+    countdownPill:
+      "flex flex-col items-center justify-center rounded-xl bg-base-200/60 px-3 py-2 min-w-[64px]",
+    countdownValue: "font-mono text-2xl font-semibold tracking-tight",
+    countdownUnit: "text-xs uppercase tracking-wide text-base-content/70",
     tileCard:
-      "group relative overflow-hidden rounded-2xl border bg-base-100/70 backdrop-blur p-6 shadow-sm hover:shadow-lg transition",
+      "group relative overflow-hidden rounded-2xl border bg-base-200/70 backdrop-blur p-6 shadow-sm hover:shadow-lg transition",
     tileIcon:
-      "inline-flex size-12 items-center justify-center rounded-2xl ring-1",
-    statCard:
-      "rounded-2xl border border-base-200/80 bg-base-100/70 backdrop-blur p-6 text-left shadow-sm",
-    timelineCard:
-      "rounded-2xl border border-base-200/80 bg-base-100/80 backdrop-blur px-5 py-4 shadow-sm",
+      "inline-flex size-12 items-center justify-center rounded-2xl bg-base-300",
     partnerCard:
       "rounded-2xl border border-base-200/80 bg-base-100/70 backdrop-blur p-6 flex flex-col gap-3 shadow-sm",
   };
 
   onMount(() => {
+    const timer = setInterval(() => {
+      now = new Date();
+    }, 1000);
     mounted = true;
+    return () => clearInterval(timer);
   });
 </script>
 
@@ -173,21 +156,44 @@
       <div class="space-y-6 max-w-4xl mx-auto">
         <span class={`${ui.pill} ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-award text-primary"></i>
-          CubeIndex Awards 2024
+          {event.title}
         </span>
         <h1 class={ui.h1}>Celebrate the Cubes that Redefined the Season</h1>
         <p class={ui.lead}>
           The CubeIndex Awards honor the most innovative, beloved, and
-          collectible puzzles of the year. Nominate your favorites, vote with
-          the community, and tune in for the live broadcast on December 7.
+          collectible puzzles of the year. Nominate your favorites, and vote
+          with the community.
         </p>
+        {#if mounted && countdownSegments.length}
+          <div class={ui.countdownCard}>
+            <span
+              class={`${ui.countdownLabel} ${eventStatus === "live" ? "text-secondary" : "text-primary"}`}
+            >
+              <i
+                class={`fa-regular ${eventStatus === "live" ? "fa-clock" : "fa-hourglass-half"}`}
+              ></i>
+              {countdownLabel}
+            </span>
+            <div class={ui.countdownList}>
+              {#each countdownSegments as segment (segment.label)}
+                <div class={ui.countdownPill}>
+                  <NumberFlow
+                    value={segment.value}
+                    format={{ minimumIntegerDigits: 2 }}
+                  />
+                  <span class={ui.countdownUnit}>{segment.label}</span>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
         <div class={ui.ctas}>
-          <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl"
-            >Nominate a Cube</a
-          >
-          <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl"
-            >View Categories</a
-          >
+          <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl">
+            Nominate a Cube
+          </a>
+          <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl">
+            View Categories
+          </a>
         </div>
       </div>
     </div>
@@ -198,9 +204,9 @@
       <div class="text-center max-w-3xl mx-auto space-y-4">
         <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-list-check text-secondary"></i>
-          Award Categories
+          Categories
         </p>
-        <h2 class={ui.h2}>Nominate Across Six Signature Trophies</h2>
+        <h2 class={ui.h2}>Nominate Across {categories.length} Categories</h2>
         <p class="text-base-content/70">
           Each category balances performance data, community excitement, and
           storytelling. Explore the criteria before you submit your ballot.
@@ -208,28 +214,17 @@
       </div>
 
       <div class="mt-12 grid gap-6 md:grid-cols-2">
-        {#each awardCategories as category (category.title)}
+        {#each categories as category (category.name)}
           <article class={`${ui.tileCard} border-base-200/70`}>
             <div class="flex items-center gap-3">
-              <span
-                class={`${ui.tileIcon} ${accentClasses[category.accent].icon}`}
-              >
+              <span class={ui.tileIcon}>
                 <i class={`fa-solid ${category.icon}`}></i>
               </span>
               <div class="text-left">
-                <h3 class="text-2xl font-bold">{category.title}</h3>
-                <p class="text-sm text-base-content/70">{category.subtitle}</p>
+                <h3 class="text-2xl font-bold">{category.name}</h3>
               </div>
             </div>
             <p class="mt-4 text-base-content/80">{category.description}</p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              {#each category.criteria as criterion (criterion)}
-                <span
-                  class="rounded-full bg-base-200/70 px-3 py-1 text-xs uppercase tracking-wide"
-                  >{criterion}</span
-                >
-              {/each}
-            </div>
           </article>
         {/each}
       </div>

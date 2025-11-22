@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit";
-import type { LayoutServerLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log } }) => {
   const now = new Date().toISOString();
@@ -35,5 +35,15 @@ export const load = (async ({ locals: { supabase, log } }) => {
     current_event = next_event;
   }
 
-  return { current_event };
-}) satisfies LayoutServerLoad;
+  const { data: awards_category, error: acErr } = await supabase
+    .from("awards_category")
+    .select("*")
+    .eq("event_id", current_event.id);
+
+  if (acErr) {
+    log.error({ err: acErr }, "Failed to fetch the current event categories");
+    throw error(500, "Failed to fetch the current event categories");
+  }
+
+  return { current_event, awards_category };
+}) satisfies PageServerLoad;

@@ -30,7 +30,7 @@
   function isNewCube(addedDateString: Date | null): boolean {
     if (!addedDateString) return false;
 
-    const addedDate = addedDateString;
+    const addedDate = new Date(addedDateString);
     const now = new Date();
 
     const diffMs = now.getTime() - addedDate.getTime();

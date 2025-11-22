@@ -8,19 +8,62 @@
     DetailedCube,
   } from "$lib/components/dbTableTypes";
 
+  interface NomineeCube extends DetailedCube {
+    nominee_id: number;
+  }
+
   let { data } = $props();
 
   const event: AwardsEvent = data.current_event;
   const category: AwardsCategory = data.awards_category;
-  const nominees: DetailedCube[] = data.awards_nominee;
+  const nominees: NomineeCube[] = data.awards_nominee;
+  let userVote = $state(data.user_vote);
 
-  let selectedNomineeId: number | null = $state(null);
-  let activeNominee: DetailedCube | null = $state(null);
+  let selectedNomineeId: number | null = $derived(userVote);
 
-  const selectNominee = (nominee: DetailedCube) => {
-    selectedNomineeId = nominee.id;
-    activeNominee = nominee;
+  const selectNominee = (nominee: NomineeCube) => {
+    selectedNomineeId = nominee.nominee_id;
   };
+
+  let voting = $state(false);
+  let voted = $state(false);
+
+  async function submitVote() {
+    voting = true;
+    const res = await fetch("/api/awards/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event_id: event.id,
+        category_id: category.id,
+        nominee_id: selectedNomineeId,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      voting = false;
+      throw new Error(data.error || "Vote failed");
+    }
+
+    voting = false;
+    voted = true;
+    userVote = selectedNomineeId;
+  }
+  $effect(() => {
+    const _ = voting;
+    if (!voting) return;
+    const id = setTimeout(() => {
+      voting = false;
+      throw new Error("Timeout, please try again in a few minutes.");
+    }, 10000);
+    return () => {
+      clearTimeout(id);
+    };
+  });
 </script>
 
 <svelte:head>
@@ -41,7 +84,7 @@
         <p class="text-sm text-base-content/70">{category.description}</p>
       </header>
 
-      <form class="grid gap-6">
+      <div class="gap-6">
         <section class="space-y-3">
           <h2 class="text-lg font-semibold">Nominees</h2>
           <div class="grid gap-3 md:grid-cols-2">
@@ -51,13 +94,21 @@
                   <button
                     type="button"
                     class="btn flex-1"
-                    class:btn-primary={nominee.id !== selectedNomineeId}
-                    class:btn-outline={nominee.id !== selectedNomineeId}
-                    class:btn-success={nominee.id === selectedNomineeId}
+                    class:btn-primary={nominee.nominee_id !== selectedNomineeId}
+                    class:btn-outline={nominee.nominee_id !== selectedNomineeId}
+                    class:btn-success={nominee.nominee_id === selectedNomineeId}
                     aria-pressed={nominee.id === selectedNomineeId}
                     onclick={() => selectNominee(nominee)}
+                    disabled={userVote !== null &&
+                      userVote !== nominee.nominee_id}
                   >
-                    {nominee.id === selectedNomineeId ? "Selected" : "Select"}
+                    {#if userVote !== nominee.nominee_id}
+                      {nominee.nominee_id === selectedNomineeId
+                        ? "Selected"
+                        : "Select"}
+                    {:else}
+                      Voted
+                    {/if}
                   </button>
                   <a
                     href="/explore/cubes/{nominee.slug}"
@@ -69,15 +120,21 @@
                   </a>
                 </div>
               {/snippet}
-              <CubeCardSkeleton
-                cube={nominee}
-                rating={false}
-                showMeta={true}
-                content={cubeCardContent}
-              />
+              <div
+                class={nominee.nominee_id === userVote
+                  ? "border border-success rounded-2xl"
+                  : ""}
+              >
+                <CubeCardSkeleton
+                  cube={nominee}
+                  rating={false}
+                  showMeta={false}
+                  content={cubeCardContent}
+                />
+              </div>
             {:else}
               <div
-                class="rounded-xl border border-dashed border-base-300 bg-base-200/70 p-6 text-center space-y-3 w-full"
+                class="col-span-full w-full rounded-xl border border-dashed border-base-300 bg-base-200/70 p-6 text-center space-y-3"
               >
                 <p class="text-base font-semibold">
                   No cubes have been nominated for this category yet.
@@ -85,14 +142,30 @@
                 <p class="text-sm text-base-content/70">
                   Check back soon to vote once nominations are announced.
                 </p>
-                <a class="btn btn-primary" href="/awards/vote">
-                  Back to categories
-                </a>
+                <a class="btn btn-primary" href="/awards/vote"
+                  >Back to categories</a
+                >
               </div>
             {/each}
           </div>
+          <div>
+            <button
+              class="btn btn-primary w-full"
+              onclick={submitVote}
+              disabled={userVote !== null || nominees.length === 0}
+            >
+              {#if voting}
+                <span class="loading loading-spinner"></span>
+                Voting...
+              {:else if voted}
+                Voted!
+              {:else}
+                {userVote === null ? "Vote" : "You have already voted!"}
+              {/if}
+            </button>
+          </div>
         </section>
-      </form>
+      </div>
     </div>
   </div>
 </SsgoiTransition>

@@ -1,7 +1,11 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ locals: { log, supabase }, parent, params }) => {
+export const load = (async ({
+  locals: { log, supabase, user },
+  parent,
+  params,
+}) => {
   const current_event = (await parent()).current_event;
   const current_category = params.category;
 
@@ -30,7 +34,7 @@ export const load = (async ({ locals: { log, supabase }, parent, params }) => {
 
   const { data: awards_nominee_raw, error: anErr } = await supabase
     .from("awards_nominee")
-    .select("cube:v_detailed_cube_models(*)")
+    .select("*, cube:v_detailed_cube_models(*)")
     .eq("category_id", awards_category.id);
 
   if (anErr) {
@@ -44,7 +48,34 @@ export const load = (async ({ locals: { log, supabase }, parent, params }) => {
     );
   }
 
-  const awards_nominee = awards_nominee_raw.map((an) => an.cube);
+  const awards_nominee = awards_nominee_raw.map((an) => {
+    return { ...an.cube, nominee_id: an.id };
+  });
 
-  return { current_event, awards_category, awards_nominee };
+  let user_vote: number | null = null;
+
+  if (user) {
+    const { data, error: auvErr } = await supabase
+      .from("awards_user_vote")
+      .select("*")
+      .eq("event_id", current_event.id)
+      .eq("user_id", user.id)
+      .eq("category_id", awards_category.id)
+      .maybeSingle();
+
+    if (auvErr) {
+      log.error(
+        { err: auvErr },
+        "An error occured while fetching the user vote for the current category"
+      );
+      throw error(
+        500,
+        "An error occured while fetching the user vote for the current category"
+      );
+    }
+
+    user_vote = data?.nominee_id ?? null;
+  }
+
+  return { awards_category, awards_nominee, user_vote };
 }) satisfies PageServerLoad;

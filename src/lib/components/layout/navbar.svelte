@@ -57,7 +57,7 @@
   });
 
   const navLinks = [
-    { name: "Achievements", href: "/achievements" },
+    { name: "Awards", href: "/awards" },
     { name: "About", href: "/about" },
   ];
 

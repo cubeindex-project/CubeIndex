@@ -35,6 +35,14 @@
         "Explore user profiles, discover top solvers, and see community activity.",
       available: true,
     },
+    {
+      href: "achievements",
+      icon: "🏅",
+      title: "Achievements",
+      description:
+        "Browse achievements, and track community unlock progress.",
+      available: true,
+    },
   ];
 </script>
 

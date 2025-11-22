@@ -21,6 +21,33 @@
 
   let selectedNomineeId: number | null = $derived(userVote);
 
+  const endTime = new Date(event.end_at).getTime();
+  const formatCountdown = () => {
+    const now = Date.now();
+    const diffMs = endTime - now;
+    if (diffMs <= 0) return "Voting closed";
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const parts = [
+      days > 0 ? `${days}d` : null,
+      `${hours}h`,
+      `${minutes}m`,
+      `${seconds}s`
+    ].filter(Boolean);
+    return parts.join(" ");
+  };
+
+  let countdownLabel = $state(formatCountdown());
+  $effect(() => {
+    const id = setInterval(() => {
+      countdownLabel = formatCountdown();
+    }, 1000);
+    return () => clearInterval(id);
+  });
+
   const selectNominee = (nominee: NomineeCube) => {
     selectedNomineeId = nominee.nominee_id;
   };
@@ -72,58 +99,95 @@
 </svelte:head>
 
 <SsgoiTransition id={page.url.pathname}>
-  <div class="bg-base-100 min-h-screen">
-    <div class="mx-auto max-w-5xl px-4 py-10 space-y-8">
-      <header class="space-y-2">
-        <p class="text-sm text-base-content/70">
-          {event.title}
-        </p>
-        <h1 class="text-3xl font-clash font-bold md:text-4xl">
-          {category.name}
-        </h1>
-        <p class="text-sm text-base-content/70">{category.description}</p>
+  <div class="min-h-screen bg-base-100">
+    <div class="mx-auto max-w-6xl space-y-10 px-4 py-12">
+      <header
+        class="rounded-3xl border border-base-200 bg-base-200/50 p-6 shadow-sm"
+      >
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="space-y-3">
+            <p class="text-xs uppercase tracking-[0.25em] text-base-content/60">
+              {event.title}
+            </p>
+            <div class="space-y-1">
+              <h1 class="text-3xl font-clash font-bold md:text-4xl">
+                {category.name}
+              </h1>
+              <p class="text-sm text-base-content/70 max-w-3xl">
+                {category.description}
+              </p>
+            </div>
+            <p class="text-xs text-base-content/60">
+              Select one nominee. Votes are final once submitted.
+            </p>
+          </div>
+          <div
+            class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
+          >
+            <p class="text-xs text-base-content/60">Voting closes in</p>
+            <p class="text-lg font-semibold">{countdownLabel}</p>
+          </div>
+        </div>
       </header>
 
-      <div class="gap-6">
-        <section class="space-y-3">
-          <h2 class="text-lg font-semibold">Nominees</h2>
-          <div class="grid gap-3 md:grid-cols-2">
+      <div class="gap-6 space-y-4">
+        <section class="space-y-4">
+          <div class="flex flex-wrap items-end justify-between gap-3">
+            <div class="space-y-1">
+              <h2 class="text-lg font-semibold">Nominees</h2>
+              <p class="text-sm text-base-content/70">
+                Review the cubes and pick the one that best fits this category.
+              </p>
+            </div>
+            {#if nominees.length > 0}
+              <span
+                class="badge badge-lg border-base-300 bg-base-100 shadow-sm"
+              >
+                {nominees.length} available
+              </span>
+            {/if}
+          </div>
+          <div class="grid gap-4 md:grid-cols-2">
             {#each nominees as nominee}
               {#snippet cubeCardContent()}
-                <div class="mt-4 gap-3 flex w-full items-center">
-                  <button
-                    type="button"
-                    class="btn flex-1"
-                    class:btn-primary={nominee.nominee_id !== selectedNomineeId}
-                    class:btn-outline={nominee.nominee_id !== selectedNomineeId}
-                    class:btn-success={nominee.nominee_id === selectedNomineeId}
-                    aria-pressed={nominee.id === selectedNomineeId}
-                    onclick={() => selectNominee(nominee)}
-                    disabled={userVote !== null &&
-                      userVote !== nominee.nominee_id}
-                  >
-                    {#if userVote !== nominee.nominee_id}
-                      {nominee.nominee_id === selectedNomineeId
-                        ? "Selected"
-                        : "Select"}
-                    {:else}
-                      Voted
-                    {/if}
-                  </button>
-                  <a
-                    href="/explore/cubes/{nominee.slug}"
-                    class="btn btn-primary flex-1"
-                    aria-label="View Cube Details"
-                  >
-                    View Details
-                    <i class="fa-solid fa-arrow-right"></i>
-                  </a>
+                <div class="mt-4 space-y-3">
+                  <div class="flex flex-col gap-2 md:flex-row md:items-center">
+                    <button
+                      type="button"
+                      class="btn flex-1 justify-center"
+                      class:btn-primary={nominee.nominee_id ===
+                        selectedNomineeId}
+                      class:btn-outline={nominee.nominee_id !==
+                        selectedNomineeId}
+                      aria-pressed={nominee.id === selectedNomineeId}
+                      onclick={() => selectNominee(nominee)}
+                      disabled={userVote !== null &&
+                        userVote !== nominee.nominee_id}
+                    >
+                      {#if userVote !== nominee.nominee_id}
+                        {nominee.nominee_id === selectedNomineeId
+                          ? "Selected"
+                          : "Choose this nominee"}
+                      {:else}
+                        Voted
+                      {/if}
+                    </button>
+                    <a
+                      href="/explore/cubes/{nominee.slug}"
+                      class="btn btn-ghost border border-base-300 flex-1 justify-center"
+                      aria-label="View Cube Details"
+                    >
+                      View details
+                    </a>
+                  </div>
                 </div>
               {/snippet}
               <div
-                class={nominee.nominee_id === userVote
-                  ? "border border-success rounded-2xl"
-                  : ""}
+                class={`rounded-2xl border ${
+                  nominee.nominee_id === selectedNomineeId
+                    ? "border-primary/70 ring-1 ring-primary/25"
+                    : "border-base-200"
+                }`}
               >
                 <CubeCardSkeleton
                   cube={nominee}
@@ -142,27 +206,46 @@
                 <p class="text-sm text-base-content/70">
                   Check back soon to vote once nominations are announced.
                 </p>
-                <a class="btn btn-primary" href="/awards/vote"
-                  >Back to categories</a
-                >
+                <a class="btn btn-primary" href="/awards/vote">
+                  Back to categories
+                </a>
               </div>
             {/each}
           </div>
-          <div>
-            <button
-              class="btn btn-primary w-full"
-              onclick={submitVote}
-              disabled={userVote !== null || nominees.length === 0}
+          <div
+            class="rounded-2xl border border-base-200 bg-base-100 p-5 shadow-sm"
+          >
+            <div
+              class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
             >
-              {#if voting}
-                <span class="loading loading-spinner"></span>
-                Voting...
-              {:else if voted}
-                Voted!
-              {:else}
-                {userVote === null ? "Vote" : "You have already voted!"}
-              {/if}
-            </button>
+              <div class="space-y-1">
+                <p class="text-sm font-semibold">Submit your vote</p>
+                <p class="text-xs text-base-content/70">
+                  You can submit one vote per category. Double-check your
+                  selection.
+                </p>
+              </div>
+              <button
+                class="btn btn-primary w-full md:w-auto"
+                onclick={submitVote}
+                disabled={userVote !== null ||
+                  nominees.length === 0 ||
+                  selectedNomineeId === null}
+              >
+                {#if voting}
+                  <span class="loading loading-spinner"></span>
+                  Voting...
+                {:else if voted}
+                  Voted!
+                {:else if userVote !== null}
+                  You have already voted!
+                {:else if selectedNomineeId === null}
+                  Select a nominee to vote
+                {:else}
+                  Submit vote
+                {/if}
+              </button>
+            </div>
           </div>
         </section>
       </div>

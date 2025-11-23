@@ -58,7 +58,6 @@ export const load = (async ({
     const { data, error: auvErr } = await supabase
       .from("awards_user_vote")
       .select("*")
-      .eq("event_id", current_event.id)
       .eq("user_id", user.id)
       .eq("category_id", awards_category.id)
       .maybeSingle();

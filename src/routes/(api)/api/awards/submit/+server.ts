@@ -108,7 +108,6 @@ export const POST: RequestHandler = async ({
   const { count: awards_user_vote_count, error: auvcErr } = await supabase
     .from("awards_user_vote")
     .select("id", { count: "exact", head: true })
-    .eq("event_id", event_id)
     .eq("user_id", user_id)
     .eq("category_id", category_id);
 
@@ -132,7 +131,7 @@ export const POST: RequestHandler = async ({
     );
   }
 
-  const payload = { user_id, nominee_id, category_id, event_id };
+  const payload = { user_id, nominee_id, category_id };
 
   const { error: auvErr } = await supabase
     .from("awards_user_vote")

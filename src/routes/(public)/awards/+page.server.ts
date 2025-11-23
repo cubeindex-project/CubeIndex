@@ -45,5 +45,19 @@ export const load = (async ({ locals: { supabase, log } }) => {
     throw error(500, "Failed to fetch the current event categories");
   }
 
-  return { current_event, awards_category };
+  const {
+    data: previous_events,
+    error: prevErr,
+  } = await supabase
+    .from("awards_event")
+    .select("*")
+    .lt("year", current_event.year)
+    .order("year", { ascending: false });
+
+  if (prevErr) {
+    log.error({ err: prevErr }, "Failed to fetch previous awards events");
+    throw error(500, "Failed to fetch previous awards events");
+  }
+
+  return { current_event, awards_category, previous_events };
 }) satisfies PageServerLoad;

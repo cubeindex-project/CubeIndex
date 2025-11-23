@@ -11,6 +11,7 @@
   const { data } = $props();
   const event: AwardsEvent = data.current_event;
   const categories: AwardsCategory[] = data.awards_category;
+  const previousEvents: AwardsEvent[] = data.previous_events ?? [];
 
   const formatDuration = (targetMs: number) => {
     if (!Number.isFinite(targetMs)) {
@@ -29,12 +30,44 @@
   let mounted = $state(false);
   let now = $state(new Date());
 
+  const formatEventRange = (eventItem: AwardsEvent) => {
+    const startDate = new Date(eventItem.start_at);
+    const endDate = new Date(eventItem.end_at);
+
+    if (
+      !Number.isFinite(startDate.getTime()) ||
+      !Number.isFinite(endDate.getTime())
+    ) {
+      return "";
+    }
+
+    const formatter = new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+    });
+
+    return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
+  };
+
+  type PreviousEventSummary = {
+    event: AwardsEvent;
+    range: string;
+  };
+
+  const previousEventSummaries: PreviousEventSummary[] = previousEvents.map(
+    (eventItem) => ({
+      event: eventItem,
+      range: formatEventRange(eventItem),
+    })
+  );
+
   type EventPhase = "upcoming" | "live" | "past" | "none";
 
   const startAt = $derived.by(() =>
-    event?.start_at ? new Date(event.start_at) : null,
+    event?.start_at ? new Date(event.start_at) : null
   );
-  const endAt = $derived.by(() => (event?.end_at ? new Date(event.end_at) : null));
+  const endAt = $derived.by(() =>
+    event?.end_at ? new Date(event.end_at) : null
+  );
 
   const eventStatus: EventPhase = $derived.by(() => {
     if (!startAt || !endAt) return "none";
@@ -164,7 +197,7 @@
           collectible puzzles of the year. Nominate your favorites, and vote
           with the community.
         </p>
-        {#if mounted && countdownSegments.length}
+        {#if countdownSegments.length}
           <div class={ui.countdownCard}>
             <span
               class={`${ui.countdownLabel} ${eventStatus === "live" ? "text-secondary" : "text-primary"}`}
@@ -187,82 +220,141 @@
             </div>
           </div>
         {/if}
-        <div class={ui.ctas}>
-          <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl">
-            Nominate a Cube
-          </a>
-          <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl">
-            View Categories
-          </a>
+
+        {#if eventStatus === "live"}
+          <div class={ui.ctas}>
+            <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl">
+              Nominate a Cube
+            </a>
+            <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl">
+              View Categories
+            </a>
+          </div>
+        {/if}
+      </div>
+    </div>
+  </section>
+
+  {#if categories.length > 0}
+    <section id="categories" class={ui.section}>
+      <div class={ui.container}>
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+          <p
+            class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}
+          >
+            <i class="fa-solid fa-list-check text-secondary"></i>
+            Categories
+          </p>
+          <h2 class={ui.h2}>Nominate Across {categories.length} Categories</h2>
+          <p class="text-base-content/70">
+            Each category balances performance data, community excitement, and
+            storytelling. Explore the criteria before you submit your ballot.
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {#each categories as category (category.name)}
+            <article class={`${ui.tileCard} border-base-200/70`}>
+              <div class="flex items-center gap-3">
+                <span class={ui.tileIcon}>
+                  <i class={`fa-solid ${category.icon}`}></i>
+                </span>
+                <div class="text-left">
+                  <h3 class="text-2xl font-bold">{category.name}</h3>
+                </div>
+              </div>
+              <p class="mt-4 text-base-content/80">{category.description}</p>
+            </article>
+          {/each}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {/if}
 
-  <section id="categories" class={ui.section}>
-    <div class={ui.container}>
-      <div class="text-center max-w-3xl mx-auto space-y-4">
-        <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
-          <i class="fa-solid fa-list-check text-secondary"></i>
-          Categories
-        </p>
-        <h2 class={ui.h2}>Nominate Across {categories.length} Categories</h2>
-        <p class="text-base-content/70">
-          Each category balances performance data, community excitement, and
-          storytelling. Explore the criteria before you submit your ballot.
-        </p>
-      </div>
+  {#if previousEventSummaries.length > 0}
+    <section class={ui.section}>
+      <div class={ui.container}>
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+          <p
+            class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}
+          >
+            <i class="fa-solid fa-clock-rotate-left text-secondary"></i>
+            Previous years
+          </p>
+          <h2 class={ui.h2}>Explore past CubeIndex Awards</h2>
+          <p class="text-base-content/70">
+            Revisit winners, finalists, and standout community moments from
+            earlier seasons.
+          </p>
+        </div>
 
-      <div class="mt-12 grid gap-6 md:grid-cols-2">
-        {#each categories as category (category.name)}
-          <article class={`${ui.tileCard} border-base-200/70`}>
-            <div class="flex items-center gap-3">
-              <span class={ui.tileIcon}>
-                <i class={`fa-solid ${category.icon}`}></i>
-              </span>
-              <div class="text-left">
-                <h3 class="text-2xl font-bold">{category.name}</h3>
-              </div>
-            </div>
-            <p class="mt-4 text-base-content/80">{category.description}</p>
-          </article>
-        {/each}
-      </div>
-    </div>
-  </section>
-
-  <section class={ui.section}>
-    <div class={ui.container}>
-      <div class="text-center max-w-3xl mx-auto space-y-4">
-        <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
-          <i class="fa-solid fa-handshake text-primary"></i>
-          Partners
-        </p>
-        <h2 class={ui.h2}>Partners</h2>
-        <p class="text-base-content/70">
-          <!-- To change -->
-          These teams provide the cameras, stages, and prizes that make the CubeIndex
-          Awards unforgettable.
-        </p>
-      </div>
-
-      <div class="mt-12 grid gap-6 sm:grid-cols-2">
-        {#each partners as partner (partner.name)}
-          <article class={ui.partnerCard}>
-            <div class="flex items-center gap-3">
-              <span class="text-3xl" aria-hidden="true">{partner.emoji}</span>
-              <h3 class="text-xl font-semibold">{partner.name}</h3>
-            </div>
-            <p class="text-base-content/70">{partner.description}</p>
+        <div class="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {#each previousEventSummaries as summary (summary.event.id)}
             <a
-              href={partner.link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-sm btn-outline w-fit">{partner.link.label}</a
+              class={`${ui.tileCard} border-base-200/70 hover:border-primary/60`}
+              href={`/awards/${summary.event.year}`}
             >
-          </article>
-        {/each}
+              <div class="flex items-start justify-between gap-2">
+                <div class="space-y-1 text-left">
+                  <p
+                    class="text-xs uppercase tracking-[0.25em] text-base-content/60"
+                  >
+                    {summary.event.title}
+                  </p>
+                  <h3 class="text-2xl font-bold">{summary.event.year}</h3>
+                </div>
+                <span class="badge badge-outline border-base-200 bg-base-100">
+                  View
+                </span>
+              </div>
+              {#if summary.range}
+                <p class="mt-3 text-sm text-base-content/70">
+                  {summary.range}
+                </p>
+              {/if}
+            </a>
+          {/each}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  {/if}
+
+  {#if partners.length > 0}
+    <section class={ui.section}>
+      <div class={ui.container}>
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+          <p
+            class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}
+          >
+            <i class="fa-solid fa-handshake text-primary"></i>
+            Partners
+          </p>
+          <h2 class={ui.h2}>Partners</h2>
+          <p class="text-base-content/70">
+            <!-- To change -->
+            These teams provide the cameras, stages, and prizes that make the CubeIndex
+            Awards unforgettable.
+          </p>
+        </div>
+
+        <div class="mt-12 grid gap-6 sm:grid-cols-2">
+          {#each partners as partner (partner.name)}
+            <article class={ui.partnerCard}>
+              <div class="flex items-center gap-3">
+                <span class="text-3xl" aria-hidden="true">{partner.emoji}</span>
+                <h3 class="text-xl font-semibold">{partner.name}</h3>
+              </div>
+              <p class="text-base-content/70">{partner.description}</p>
+              <a
+                href={partner.link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline w-fit">{partner.link.label}</a
+              >
+            </article>
+          {/each}
+        </div>
+      </div>
+    </section>
+  {/if}
 </SsgoiTransition>

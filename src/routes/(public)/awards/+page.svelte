@@ -9,8 +9,8 @@
   } from "$lib/components/dbTableTypes.js";
 
   const { data } = $props();
-  const event: AwardsEvent = data.current_event;
-  const categories: AwardsCategory[] = data.awards_category;
+  const event: AwardsEvent | null = data.current_event;
+  const categories: AwardsCategory[] = data.awards_category ?? [];
   const previousEvents: AwardsEvent[] = data.previous_events ?? [];
 
   const formatDuration = (targetMs: number) => {
@@ -157,6 +157,9 @@
       "rounded-2xl border border-base-200/80 bg-base-100/70 backdrop-blur p-6 flex flex-col gap-3 shadow-sm",
   };
 
+  const hasEvent = $derived(Boolean(event));
+  const heroTitle = $derived.by(() => event?.title ?? "CubeIndex Awards");
+
   onMount(() => {
     const timer = setInterval(() => {
       now = new Date();
@@ -189,7 +192,7 @@
       <div class="space-y-6 max-w-4xl mx-auto">
         <span class={`${ui.pill} ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-award text-primary"></i>
-          {event.title}
+          {heroTitle}
         </span>
         <h1 class={ui.h1}>Celebrate the Cubes that Redefined the Season</h1>
         <p class={ui.lead}>
@@ -197,7 +200,17 @@
           collectible puzzles of the year. Nominate your favorites, and vote
           with the community.
         </p>
-        {#if countdownSegments.length}
+        {#if !hasEvent}
+          <div class={ui.countdownCard}>
+            <span class={`${ui.countdownLabel} text-base-content/70`}>
+              <i class="fa-regular fa-circle-xmark"></i>
+              No awards events are scheduled right now
+            </span>
+            <p class="text-sm text-base-content/70">
+              Check back soon to see the next CubeIndex Awards timeline.
+            </p>
+          </div>
+        {:else if countdownSegments.length}
           <div class={ui.countdownCard}>
             <span
               class={`${ui.countdownLabel} ${eventStatus === "live" ? "text-secondary" : "text-primary"}`}

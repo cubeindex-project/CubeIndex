@@ -35,6 +35,10 @@ export const load = (async ({ locals: { supabase, log } }) => {
     current_event = next_event;
   }
 
+  if (!current_event) {
+    return { current_event: null, awards_category: [], previous_events: [] };
+  }
+
   const { data: awards_category, error: acErr } = await supabase
     .from("awards_category")
     .select("*")

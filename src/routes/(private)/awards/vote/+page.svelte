@@ -2,15 +2,18 @@
   import { SsgoiTransition } from "@ssgoi/svelte";
   import type {
     AwardsEvent,
-    AwardsCategory,
   } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
-  const event: AwardsEvent = data.current_event;
-  const categories: AwardsCategory[] = data.awards_category;
+  const event: AwardsEvent = data.current_event ?? null;
+  const categories = data.awards_category ?? [];
 
-  const startTime = new Date(event.start_at).getTime();
-  const endTime = new Date(event.end_at).getTime();
+  const startTime = $derived.by(() =>
+    event?.start_at ? new Date(event.start_at).getTime() : Number.NaN
+  );
+  const endTime = $derived.by(() =>
+    event?.end_at ? new Date(event.end_at).getTime() : Number.NaN
+  );
 
   type EventPhase = "unknown" | "upcoming" | "live" | "past";
 
@@ -58,6 +61,9 @@
       timeStyle: "short",
     }).format(new Date(startTime));
   });
+
+  const hasEvent = $derived(Boolean(event));
+  const eventTitle = $derived.by(() => event?.title ?? "CubeIndex Awards");
 </script>
 
 <svelte:head>
@@ -74,24 +80,40 @@
         </p>
         <div class="space-y-3">
           <h1 class="text-3xl font-clash font-bold md:text-4xl">
-            No awards event is live right now
+            {#if hasEvent}
+              No awards event is live right now
+            {:else}
+              No awards events are scheduled
+            {/if}
           </h1>
           <p class="text-base-content/70">
             {#if eventPhase === "upcoming" && startDateLabel}
-              Voting opens for {event.title} on {startDateLabel}. Check back
-              once the event begins.
-            {:else}
+              Voting opens for {eventTitle} on {startDateLabel}. Check back once
+              the event begins.
+            {:else if hasEvent}
               Check back soon for the next CubeIndex Awards event.
+            {:else}
+              We haven't scheduled the next CubeIndex Awards yet. Stay tuned.
             {/if}
           </p>
         </div>
-        {#if eventPhase === "upcoming" && startCountdown}
+        {#if eventPhase === "upcoming" && startCountdown && hasEvent}
           <div
             class="mx-auto flex max-w-sm flex-col items-center gap-2 rounded-2xl border border-base-200 bg-base-200/50 px-6 py-5 shadow-sm"
           >
             <span class="text-xs text-base-content/60">Starts in</span>
             <span class="text-2xl font-semibold">{startCountdown}</span>
             <span class="text-sm text-base-content/60">{startDateLabel}</span>
+          </div>
+        {:else if !hasEvent}
+          <div
+            class="mx-auto flex max-w-sm flex-col items-center gap-2 rounded-2xl border border-base-200 bg-base-200/50 px-6 py-5 shadow-sm"
+          >
+            <span class="text-xs text-base-content/60">Status</span>
+            <span class="text-2xl font-semibold">No events planned</span>
+            <span class="text-sm text-base-content/60">
+              We’ll announce the next awards timeline soon.
+            </span>
           </div>
         {/if}
         <div class="flex flex-wrap justify-center gap-3">

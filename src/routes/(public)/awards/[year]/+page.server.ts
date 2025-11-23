@@ -15,6 +15,10 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     throw error(500, "Failed to fetch the event winners");
   }
 
+  if (!winnersData?.length) {
+    throw error(404, "Awards event not found");
+  }
+
   const event = winnersData.map((w) => ({
     id: w.event_id,
     year: w.event_year,

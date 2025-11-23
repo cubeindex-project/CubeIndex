@@ -9,6 +9,11 @@ export const load = (async ({
   const current_event = (await parent()).current_event;
   const current_category = params.category;
 
+  if (!current_event) {
+    log.warn("Tried to access awards category page with no active event");
+    throw error(404, "No awards event found");
+  }
+
   const { data: awards_category, error: acErr } = await supabase
     .from("awards_category")
     .select("*")

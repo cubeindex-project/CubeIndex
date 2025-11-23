@@ -22,9 +22,41 @@
   let selectedNomineeId: number | null = $derived(userVote);
 
   const endTime = new Date(event.end_at).getTime();
+  const startTime = new Date(event.start_at).getTime();
+  let nowMs = $state(Date.now());
+  type EventPhase = "unknown" | "upcoming" | "live" | "past";
+  const eventPhase: EventPhase = $derived.by(() => {
+    if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) {
+      return "unknown";
+    }
+    if (nowMs < startTime) return "upcoming";
+    if (nowMs <= endTime) return "live";
+    return "past";
+  });
+  const votingEnabled = $derived(() => eventPhase === "live");
+  const formatDateTime = (value: number) => {
+    if (!Number.isFinite(value)) return "";
+    return new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(value));
+  };
+  const startDateLabel = $derived.by(() => formatDateTime(startTime));
+  const endDateLabel = $derived.by(() => formatDateTime(endTime));
+  const voteStatusMessage = $derived.by(() => {
+    if (eventPhase === "upcoming" && startDateLabel) {
+      return `Voting opens on ${startDateLabel}.`;
+    }
+    if (eventPhase === "past" && endDateLabel) {
+      return `Voting closed on ${endDateLabel}.`;
+    }
+    if (eventPhase === "unknown") {
+      return "Voting is not available right now.";
+    }
+    return "";
+  });
   const formatCountdown = () => {
-    const now = Date.now();
-    const diffMs = endTime - now;
+    const diffMs = endTime - nowMs;
     if (diffMs <= 0) return "Voting closed";
     const totalSeconds = Math.floor(diffMs / 1000);
     const days = Math.floor(totalSeconds / 86400);
@@ -43,6 +75,7 @@
   let countdownLabel = $state(formatCountdown());
   $effect(() => {
     const id = setInterval(() => {
+      nowMs = Date.now();
       countdownLabel = formatCountdown();
     }, 1000);
     return () => clearInterval(id);
@@ -122,13 +155,16 @@
             </p>
           </div>
           <div
-            class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
-          >
-            <p class="text-xs text-base-content/60">Voting closes in</p>
-            <p class="text-lg font-semibold">{countdownLabel}</p>
+              class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
+            >
+              <p class="text-xs text-base-content/60">Voting closes in</p>
+              <p class="text-lg font-semibold">{countdownLabel}</p>
+            </div>
           </div>
-        </div>
-      </header>
+          {#if voteStatusMessage}
+            <p class="text-xs text-warning/80">{voteStatusMessage}</p>
+          {/if}
+        </header>
 
       <div class="gap-6 space-y-4">
         <section class="space-y-4">
@@ -159,9 +195,9 @@
                         selectedNomineeId}
                       class:btn-outline={nominee.nominee_id !==
                         selectedNomineeId}
-                      aria-pressed={nominee.id === selectedNomineeId}
+                      aria-pressed={nominee.nominee_id === selectedNomineeId}
                       onclick={() => selectNominee(nominee)}
-                      disabled={userVote !== null &&
+                      disabled={!votingEnabled || userVote !== null &&
                         userVote !== nominee.nominee_id}
                     >
                       {#if userVote !== nominee.nominee_id}
@@ -228,7 +264,8 @@
               <button
                 class="btn btn-primary w-full md:w-auto"
                 onclick={submitVote}
-                disabled={userVote !== null ||
+                disabled={!votingEnabled ||
+                  userVote !== null ||
                   nominees.length === 0 ||
                   selectedNomineeId === null}
               >
@@ -237,6 +274,8 @@
                   Voting...
                 {:else if voted}
                   Voted!
+                {:else if !votingEnabled}
+                  Voting not open
                 {:else if userVote !== null}
                   You have already voted!
                 {:else if selectedNomineeId === null}

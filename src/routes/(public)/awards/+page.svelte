@@ -115,22 +115,7 @@
     link: { label: string; url: string };
   };
 
-  const partners: Partner[] = [
-    {
-      name: "SpeedLab Studios",
-      emoji: "🎥",
-      description:
-        "Production partner powering the broadcast stage, gear labs, and backstage set tours.",
-      link: { label: "Visit SpeedLab", url: "https://speedlab.example.com" },
-    },
-    {
-      name: "CubeDepot",
-      emoji: "🛒",
-      description:
-        "Retail partner providing prize kits, community giveaways, and sustainability spotlights.",
-      link: { label: "Shop CubeDepot", url: "https://cubedepot.example.com" },
-    },
-  ];
+  const partners: Partner[] = [];
 
   const ui = {
     section: "relative overflow-hidden py-20 px-6",

@@ -52,10 +52,11 @@ export const load = (async ({ locals: { supabase, log } }) => {
       log.error({ err: acErr }, "Failed to fetch the current event categories");
       throw error(500, "Failed to fetch the current event categories");
     }
+
     awards_category = data;
   }
 
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   const { data: previous_events, error: prevErr } = await supabase
     .from("awards_event")

@@ -14,21 +14,14 @@
   let { data, children }: LayoutProps = $props();
   let {
     cube,
-    user,
-    profile,
-    meta,
     sameSeries,
     relatedCube,
     cubeTrims,
     features,
+    alreadyAdded,
+    isCubeSubmitter,
+    userCubeDetail,
   } = $derived(data);
-
-  let cubeUserCount: number | undefined = $derived(
-    data.user_cubes?.length ?? 0
-  );
-
-  const userCubeDetail = data.user_cubes.find((uc) => uc.user_id === user?.id);
-  const alreadyAdded = userCubeDetail !== undefined;
 
   let openAddCard = $state(false);
   let openReport = $state(false);
@@ -53,7 +46,6 @@
     { label: "Ratings", key: "ratings", icon: "fa-star" },
   ] as const;
 
-  const isCubeSubmitter = $derived(user?.id === cube.submitted_by_id);
   const submissionStatusDescription = $derived.by(() => {
     if (cube.status === "Pending") {
       return "is awaiting verification by moderators";
@@ -98,17 +90,28 @@
       </div>
     {/if}
 
-    <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
-      <img
-        data-hero-key={`cube-image-${cube.id}`}
-        src={meta.preloadImage}
-        alt="{cube.series} {cube.model} {cube.version_name}"
-        fetchpriority="high"
-        decoding="async"
-        width="768"
-        height="384"
-        class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
-      />
+    <div class="my-6 flex flex-col items-start">
+      <figure class="relative w-full max-w-md">
+        <img
+          data-hero-key={`cube-image-${cube.id}`}
+          src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
+            cube.image_url
+          )}"
+          alt="{cube.series} {cube.model} {cube.version_name}"
+          fetchpriority="high"
+          decoding="async"
+          width="768"
+          height="384"
+          class="rounded-2xl bg-base-200 p-4 mt-4 border border-base-300 object-contain w-full max-h-96"
+        />
+        {#if cube.image_source}
+          <figcaption
+            class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium"
+          >
+            Image &copy;{cube.image_source}. All rights reserved.
+          </figcaption>
+        {/if}
+      </figure>
     </div>
     <h1 class="flex flex-col mb-4">
       <!-- top row: text + discontinued badge -->
@@ -137,7 +140,7 @@
     </h1>
 
     <p class="mb-4">
-      {cubeUserCount} user{cubeUserCount === 1 ? "" : "s"}
+      {cube.popularity} user{cube.popularity === 1 ? "" : "s"}
       have this cube
     </p>
 
@@ -145,7 +148,7 @@
       <div class="flex justify-start join">
         {#if cube.status === "Approved"}
           <AddToCollectionButton
-            alreadyAdded={userCubeDetail !== undefined}
+            alreadyAdded
             onClick={() => {
               openAddCard = !openAddCard;
             }}
@@ -281,7 +284,7 @@
     {/if}
 
     <!-- Related-to (for modded / non-base) -->
-    {#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
+    {#if (cube.version_type !== "Base" || features.some((f) => f === "modded") === true) && relatedCube}
       <section class="my-10">
         <header class="mb-4 flex items-center gap-2">
           <h2

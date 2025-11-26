@@ -474,3 +474,49 @@ export interface UserCubeRatings {
   /** ID of the user (FK to profiles.user_id) */
   user_id: string; // UUID
 }
+
+export interface DetailedCube {
+  brand: string | null;
+  image_url: string | null;
+  image_source: string | null;  // vendor name
+
+  model: string;
+  rating: number | null;
+  slug: string;
+
+  created_at: Date;
+  updated_at: Date | null;
+
+  type: string;
+  discontinued: boolean | null;
+  release_date: Date | null;
+  series: string | null;
+
+  id: number;
+  sub_type: string | null;
+  weight: number | null;
+  related_to: string | null;
+  version_type: string | null;
+  version_name: string | null;
+  status: string | null;
+  notes: string | null;
+  surface_finish: string | null;
+  verified_at: Date | null;
+  size: number | null;
+
+  submitted_by_id: string | null;  // UUID
+  verified_by_id: string | null;   // UUID
+
+  ball_core: boolean;
+  maglev: boolean;
+  magnetic: boolean;
+  modded: boolean;
+  smart: boolean;
+  stickered: boolean;
+  wca_legal: boolean;
+
+  name: string;
+  year: number | null;
+  popularity: number;
+  avg_price: number | null;
+}

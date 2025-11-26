@@ -12,15 +12,16 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
-  let { cube, user, meta, sameSeries, relatedCube, cubeTrims, features } =
-    $derived(data);
-
-  let cubeUserCount: number | undefined = $derived(
-    data.user_cubes?.length ?? 0
-  );
-
-  const userCubeDetail = data.user_cubes.find((uc) => uc.user_id === user?.id);
-  const alreadyAdded = userCubeDetail !== undefined;
+  let {
+    cube,
+    sameSeries,
+    relatedCube,
+    cubeTrims,
+    features,
+    alreadyAdded,
+    isCubeSubmitter,
+    userCubeDetail,
+  } = $derived(data);
 
   let openAddCard = $state(false);
   let openReport = $state(false);
@@ -45,7 +46,6 @@
     { label: "Ratings", key: "ratings", icon: "fa-star" },
   ] as const;
 
-  const isCubeSubmitter = $derived(user?.id === cube.submitted_by_id);
   const submissionStatusDescription = $derived.by(() => {
     if (cube.status === "Pending") {
       return "is awaiting verification by moderators";
@@ -94,7 +94,9 @@
       <figure class="relative w-full max-w-md">
         <img
           data-hero-key={`cube-image-${cube.id}`}
-          src={meta.preloadImage}
+          src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
+            cube.image_url
+          )}"
           alt="{cube.series} {cube.model} {cube.version_name}"
           fetchpriority="high"
           decoding="async"
@@ -138,7 +140,7 @@
     </h1>
 
     <p class="mb-4">
-      {cubeUserCount} user{cubeUserCount === 1 ? "" : "s"}
+      {cube.popularity} user{cube.popularity === 1 ? "" : "s"}
       have this cube
     </p>
 
@@ -146,7 +148,7 @@
       <div class="flex justify-start join">
         {#if cube.status === "Approved"}
           <AddToCollectionButton
-            alreadyAdded={userCubeDetail !== undefined}
+            alreadyAdded
             onClick={() => {
               openAddCard = !openAddCard;
             }}
@@ -282,7 +284,7 @@
     {/if}
 
     <!-- Related-to (for modded / non-base) -->
-    {#if (cube.version_type !== "Base" || features.some((f) => f.feature === "modded") === true) && relatedCube}
+    {#if (cube.version_type !== "Base" || features.some((f) => f === "modded") === true) && relatedCube}
       <section class="my-10">
         <header class="mb-4 flex items-center gap-2">
           <h2

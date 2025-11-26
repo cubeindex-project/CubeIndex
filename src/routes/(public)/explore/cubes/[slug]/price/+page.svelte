@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Cube, CubeVendorLinks } from "$lib/components/dbTableTypes";
+  import type { CubeVendorLinks, DetailedCube } from "$lib/components/dbTableTypes";
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
@@ -8,7 +8,7 @@
   // Props / derived (Svelte 5)
   let { data } = $props();
   let {
-    cube = {} as Cube,
+    cube = {} as DetailedCube,
     vendor_links = [] as CubeVendorLinks[],
     dates = [] as string[],
     historyByVendor = {} as Record<string, { date: string; price: number }[]>,
@@ -16,7 +16,7 @@
 
   // Page title
   const pageTitle = $derived(
-    `${cube.series} ${cube.model}${cube.version_name ? ` ${cube.version_name}` : ""} - Price Tracking`
+    `${cube.name} - Price Tracking`
   );
 
   // Formatting helpers

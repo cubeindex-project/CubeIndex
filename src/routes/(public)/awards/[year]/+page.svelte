@@ -86,7 +86,7 @@
             {phaseCopy[eventPhase].description}
           </p>
         </div>
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="grid gap-3 grid-cols-2">
           <div
             class="rounded-2xl border border-base-200 bg-base-100 px-4 py-3 shadow-sm"
           >

@@ -62,12 +62,8 @@
 
   type EventPhase = "upcoming" | "live" | "past" | "none";
 
-  const startAt = $derived.by(() =>
-    event?.start_at ? new Date(event.start_at) : null
-  );
-  const endAt = $derived.by(() =>
-    event?.end_at ? new Date(event.end_at) : null
-  );
+  const startAt = $derived(event?.start_at ? new Date(event.start_at) : null);
+  const endAt = $derived(event?.end_at ? new Date(event.end_at) : null);
 
   const eventStatus: EventPhase = $derived.by(() => {
     if (!startAt || !endAt) return "none";
@@ -127,19 +123,18 @@
     pill: "inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm ring-1",
     ctas: "flex flex-col sm:flex-row gap-4 justify-center",
     countdownCard:
-      "inline-flex flex-col sm:flex-row items-center gap-3 rounded-2xl border border-base-200/80 bg-base-100/80 backdrop-blur px-5 py-3 shadow-sm w-fit mx-auto",
+      "inline-flex flex-col sm:flex-row items-center gap-3 rounded-2xl border border-base-200 bg-base-100 px-5 py-3 shadow-sm w-fit mx-auto",
     countdownLabel: "inline-flex items-center gap-2 text-sm font-semibold",
-    countdownList: "flex items-center gap-3 sm:gap-4",
+    countdownList:
+      "grid grid-cols-2 justify-center gap-3 sm:flex sm:flex-nowrap sm:items-center sm:justify-center sm:gap-4",
     countdownPill:
       "flex flex-col items-center justify-center rounded-xl bg-base-200/60 px-3 py-2 min-w-[64px]",
     countdownValue: "font-mono text-2xl font-semibold tracking-tight",
     countdownUnit: "text-xs uppercase tracking-wide text-base-content/70",
     tileCard:
-      "group relative overflow-hidden rounded-2xl border bg-base-200/70 backdrop-blur p-6 shadow-sm hover:shadow-lg transition",
-    tileIcon:
-      "inline-flex size-12 items-center justify-center rounded-2xl bg-base-300",
+      "group relative overflow-hidden rounded-2xl border bg-base-200/70 p-6 shadow-sm hover:shadow-lg transition",
     partnerCard:
-      "rounded-2xl border border-base-200/80 bg-base-100/70 backdrop-blur p-6 flex flex-col gap-3 shadow-sm",
+      "rounded-2xl border border-base-200/80 bg-base-100/70 p-6 flex flex-col gap-3 shadow-sm",
   };
 
   const hasEvent = $derived(Boolean(event));
@@ -254,9 +249,6 @@
           {#each categories as category (category.name)}
             <article class={`${ui.tileCard} border-base-200/70`}>
               <div class="flex items-center gap-3">
-                <span class={ui.tileIcon}>
-                  <i class={`fa-solid ${category.icon}`}></i>
-                </span>
                 <div class="text-left">
                   <h3 class="text-2xl font-bold">{category.name}</h3>
                 </div>

@@ -67,7 +67,7 @@
       days > 0 ? `${days}d` : null,
       `${hours}h`,
       `${minutes}m`,
-      `${seconds}s`
+      `${seconds}s`,
     ].filter(Boolean);
     return parts.join(" ");
   };
@@ -155,16 +155,16 @@
             </p>
           </div>
           <div
-              class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
-            >
-              <p class="text-xs text-base-content/60">Voting closes in</p>
-              <p class="text-lg font-semibold">{countdownLabel}</p>
-            </div>
+            class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
+          >
+            <p class="text-xs text-base-content/60">Voting closes in</p>
+            <p class="text-lg font-semibold">{countdownLabel}</p>
           </div>
-          {#if voteStatusMessage}
-            <p class="text-xs text-warning/80">{voteStatusMessage}</p>
-          {/if}
-        </header>
+        </div>
+        {#if voteStatusMessage}
+          <p class="text-xs text-warning/80">{voteStatusMessage}</p>
+        {/if}
+      </header>
 
       <div class="gap-6 space-y-4">
         <section class="space-y-4">
@@ -187,7 +187,7 @@
             {#each nominees as nominee}
               {#snippet cubeCardContent()}
                 <div class="mt-4 space-y-3">
-                  <div class="flex flex-col gap-2 md:flex-row md:items-center">
+                  <div class="flex flex-row gap-2 items-center">
                     <button
                       type="button"
                       class="btn flex-1 justify-center"
@@ -197,8 +197,8 @@
                         selectedNomineeId}
                       aria-pressed={nominee.nominee_id === selectedNomineeId}
                       onclick={() => selectNominee(nominee)}
-                      disabled={!votingEnabled || userVote !== null &&
-                        userVote !== nominee.nominee_id}
+                      disabled={!votingEnabled ||
+                        (userVote !== null && userVote !== nominee.nominee_id)}
                     >
                       {#if userVote !== nominee.nominee_id}
                         {nominee.nominee_id === selectedNomineeId

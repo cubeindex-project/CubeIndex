@@ -386,13 +386,6 @@
                 <i class="fa-solid fa-cube text-xs opacity-80"></i>
                 <span>Cubes</span>
               </a>
-              <span
-                class="flex items-center gap-2 py-2 text-sm opacity-60 rounded-lg px-2"
-                aria-disabled="true"
-              >
-                <i class="fa-solid fa-toolbox text-xs opacity-60"></i>
-                <span>Accessories (Soon)</span>
-              </span>
               <a
                 href="/explore/vendors"
                 class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
@@ -409,6 +402,14 @@
                 <i class="fa-solid fa-users text-xs opacity-80"></i>
                 <span>Users</span>
               </a>
+              <a
+                href="/explore/achievements"
+                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
+                onclick={closeMobileMenus}
+              >
+                <i class="fa-solid fa-trophy text-xs opacity-80"></i>
+                <span>Achievements</span>
+              </a>
             </div>
           </details>
         </li>
@@ -421,8 +422,8 @@
               onclick={closeMobileMenus}
             >
               <i
-                class="fa-solid {name === 'Achievements'
-                  ? 'fa-trophy'
+                class="fa-solid {name === 'Awards'
+                  ? 'fa-award'
                   : 'fa-circle-info'} text-xs opacity-80"
               ></i>
               <span>{name}</span>

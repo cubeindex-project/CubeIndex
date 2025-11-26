@@ -106,7 +106,7 @@
         />
         {#if cube.image_source}
           <figcaption
-            class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium"
+            class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium bg-base-200/80"
           >
             Image &copy;{cube.image_source}. All rights reserved.
           </figcaption>

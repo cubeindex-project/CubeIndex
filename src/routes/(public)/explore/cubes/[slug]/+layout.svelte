@@ -12,16 +12,8 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
 
   let { data, children }: LayoutProps = $props();
-  let {
-    cube,
-    user,
-    profile,
-    meta,
-    sameSeries,
-    relatedCube,
-    cubeTrims,
-    features,
-  } = $derived(data);
+  let { cube, user, meta, sameSeries, relatedCube, cubeTrims, features } =
+    $derived(data);
 
   let cubeUserCount: number | undefined = $derived(
     data.user_cubes?.length ?? 0
@@ -98,17 +90,26 @@
       </div>
     {/if}
 
-    <div class="my-6 flex flex-col sm:flex-row items-center gap-6">
-      <img
-        data-hero-key={`cube-image-${cube.id}`}
-        src={meta.preloadImage}
-        alt="{cube.series} {cube.model} {cube.version_name}"
-        fetchpriority="high"
-        decoding="async"
-        width="768"
-        height="384"
-        class="rounded-2xl bg-base-200 p-4 my-4 border border-base-300 object-contain w-full max-w-md max-h-96"
-      />
+    <div class="my-6 flex flex-col items-start">
+      <figure class="relative w-full max-w-md">
+        <img
+          data-hero-key={`cube-image-${cube.id}`}
+          src={meta.preloadImage}
+          alt="{cube.series} {cube.model} {cube.version_name}"
+          fetchpriority="high"
+          decoding="async"
+          width="768"
+          height="384"
+          class="rounded-2xl bg-base-200 p-4 mt-4 border border-base-300 object-contain w-full max-h-96"
+        />
+        {#if cube.image_source}
+          <figcaption
+            class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium"
+          >
+            Image &copy;{cube.image_source}. All rights reserved.
+          </figcaption>
+        {/if}
+      </figure>
     </div>
     <h1 class="flex flex-col mb-4">
       <!-- top row: text + discontinued badge -->

@@ -64,12 +64,9 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
   const { supabase } = await parent();
 
   const cubePromise = supabase
-    .from("cube_models")
+    .from("v_detailed_cube_models")
     .select(
-      `
-    *, verified_by_id(display_name, username),
-    submitted_by:submitted_by_id(display_name, username)
-  `
+      "*,verified_by_id(display_name, username),submitted_by:submitted_by_id(display_name, username)"
     )
     .eq("slug", slug)
     .single();
@@ -88,6 +85,8 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
       404
     );
   }
+
+  console.log(cube)
 
   // 2) Stats (counts via HEAD + exact)
   const [
@@ -203,7 +202,6 @@ export const load = (async ({ setHeaders, params, url, parent }) => {
     cubeTrims: trimsRes.data ?? [],
     verifiedBy: cube.verified_by_id,
     submittedBy: cube.submitted_by,
-    stats: { ratingAvg, ratingCount, shopsCount, ownersCount },
     meta: {
       title: `${cube.series} ${cube.model}${
         cube.version_name ? ` ${cube.version_name}` : ""

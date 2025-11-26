@@ -4,12 +4,11 @@
 
   let { data } = $props();
   let {
-    cube = {} as Cube,
+    cube = {},
     features = [],
     submittedBy,
     verifiedBy,
     meta,
-    stats,
   } = $derived(data);
 
   const feats = $derived.by(() => {
@@ -186,18 +185,18 @@
         <i class="fa-regular fa-circle-check opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Verified By</div>
-          <a class="font-medium link" href="/user/{verifiedBy?.username}"
-            >{verifiedBy?.display_name || "Unknown"}</a
-          >
+          <a class="font-medium link" href="/user/{verifiedBy?.username}">
+            {verifiedBy?.display_name || "Unknown"}
+          </a>
         </div>
       </div>
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-user opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Submitted By</div>
-          <a class="font-medium link" href="/user/{submittedBy?.username}"
-            >{submittedBy?.display_name || "Unknown"}</a
-          >
+          <a class="font-medium link" href="/user/{submittedBy?.username}">
+            {submittedBy?.display_name || "Unknown"}
+          </a>
         </div>
       </div>
       <div class="flex items-center gap-3">

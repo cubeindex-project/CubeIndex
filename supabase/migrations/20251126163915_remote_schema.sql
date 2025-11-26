@@ -1959,6 +1959,7 @@ ALTER TABLE "public"."vendors" OWNER TO "postgres";
 CREATE OR REPLACE VIEW "public"."v_detailed_cube_models" WITH ("security_invoker"='on') AS
  SELECT "cm"."brand",
     "cm"."image_url",
+    "v"."name" AS "image_source",
     "cm"."model",
     "cm"."rating",
     "cm"."slug",
@@ -2009,16 +2010,17 @@ CREATE OR REPLACE VIEW "public"."v_detailed_cube_models" WITH ("security_invoker
           WHERE ("uc"."cube" = "cm"."slug")) AS "popularity",
     ( SELECT "avg"("cvl"."price") AS "avg"
            FROM "public"."cube_vendor_links" "cvl"
-          WHERE (("cvl"."cube_slug" = "cm"."slug") AND (( SELECT "v"."currency"
-                   FROM "public"."vendors" "v"
-                  WHERE ("cvl"."vendor_name" = "v"."name")) = 'USD'::"text"))) AS "avg_price"
-   FROM "public"."cube_models" "cm";
+          WHERE (("cvl"."cube_slug" = "cm"."slug") AND (( SELECT "v_1"."currency"
+                   FROM "public"."vendors" "v_1"
+                  WHERE ("cvl"."vendor_name" = "v_1"."name")) = 'USD'::"text"))) AS "avg_price"
+   FROM ("public"."cube_models" "cm"
+     LEFT JOIN "public"."vendors" "v" ON (("lower"("regexp_replace"("split_part"("regexp_replace"("cm"."image_url", '^https?://'::"text", ''::"text"), '/'::"text", 1), '^www\.'::"text", ''::"text")) = "lower"("regexp_replace"("split_part"("regexp_replace"("v"."base_url", '^https?://'::"text", ''::"text"), '/'::"text", 1), '^www\.'::"text", ''::"text")))));
 
 
 ALTER TABLE "public"."v_detailed_cube_models" OWNER TO "postgres";
 
 
-CREATE OR REPLACE VIEW "public"."v_awards_category_winners" AS
+CREATE OR REPLACE VIEW "public"."v_awards_category_winners" WITH ("security_invoker"='on') AS
  WITH "vote_counts" AS (
          SELECT "n_1"."id" AS "nominee_id",
             "n_1"."category_id",
@@ -2917,6 +2919,10 @@ CREATE POLICY "Enable read access for all users" ON "public"."awards_nominee" FO
 
 
 CREATE POLICY "Enable read access for all users" ON "public"."brands" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Enable read access for all users" ON "public"."cube_features" FOR SELECT USING (true);
 
 
 

@@ -76,14 +76,15 @@ export const load = (async ({
       .from("user_cubes")
       .select("*")
       .eq("user_id", user.id)
-      .single();
+      .eq("cube", cube.slug)
+      .maybeSingle();
 
     if (ucErr) {
       log.error({ err: ucErr }, "Failed to fetch user_cubes");
       throw error(500, "Failed to fetch user cubes");
     }
 
-    alreadyAdded = user_cube !== undefined;
+    alreadyAdded = user_cube !== null
     userCubeDetail = user_cube;
   }
 

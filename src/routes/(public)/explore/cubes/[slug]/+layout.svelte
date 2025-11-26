@@ -148,7 +148,7 @@
       <div class="flex justify-start join">
         {#if cube.status === "Approved"}
           <AddToCollectionButton
-            alreadyAdded
+            {alreadyAdded}
             onClick={() => {
               openAddCard = !openAddCard;
             }}

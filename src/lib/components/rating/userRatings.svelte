@@ -1,12 +1,12 @@
 <script lang="ts">
   import UserRatingCard from "./userRatingCard.svelte";
   import Pagination from "../misc/pagination.svelte";
-  import type { Cube } from "../dbTableTypes";
+  import type { DetailedCube } from "../dbTableTypes";
   import SearchBar from "../misc/searchBar.svelte";
   import { getContext } from "svelte";
   import type { User } from "@supabase/supabase-js";
 
-  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: Cube } =
+  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: DetailedCube } =
     $props();
 
   let user = getContext<User>("user");

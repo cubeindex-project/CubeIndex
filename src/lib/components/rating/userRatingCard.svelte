@@ -3,7 +3,6 @@
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
   import { supabase } from "$lib/supabaseClient";
-  import type { Profiles } from "../dbTableTypes";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
 

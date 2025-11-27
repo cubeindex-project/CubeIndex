@@ -1,14 +1,12 @@
 <script lang="ts">
   import UserRatings from "$lib/components/rating/userRatings.svelte";
-  import type { Cube } from "$lib/components/dbTableTypes";
+  import type { DetailedCube } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
-  let { cube = {} as Cube, user_cube_ratings = [] as any[] } = $derived(data);
+  let { cube = {} as DetailedCube, user_cube_ratings = [] as any[] } = $derived(data);
 
   const pageTitle = $derived(
-    `${cube.series} ${cube.model}${
-      cube.version_name ? ` ${cube.version_name}` : ""
-    } - Ratings`
+    `${cube.name} - Ratings`
   );
 </script>
 

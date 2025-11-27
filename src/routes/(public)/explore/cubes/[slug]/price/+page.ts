@@ -1,5 +1,5 @@
 import type { PageLoad } from "./$types";
-import type { Cube } from "$lib/components/dbTableTypes";
+import type { DetailedCube } from "$lib/components/dbTableTypes";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 
@@ -32,7 +32,7 @@ export const load = (async ({ parent, params }) => {
     priceHistoryPromise,
   ]);
 
-  const cube = cubeRes.data as Cube | null;
+  const cube = cubeRes.data as DetailedCube | null;
 
   if (!cube) {
     return clientLogError(

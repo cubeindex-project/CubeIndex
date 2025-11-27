@@ -514,28 +514,34 @@ export interface AwardsUserVote {
 export interface DetailedCube {
   brand: string | null;
   image_url: string | null;
+  image_source: string | null;  // vendor name
+
   model: string;
   rating: number | null;
   slug: string;
+
   created_at: Date;
   updated_at: Date | null;
+
   type: string;
   discontinued: boolean | null;
   release_date: Date | null;
   series: string | null;
+
   id: number;
   sub_type: string | null;
   weight: number | null;
   related_to: string | null;
   version_type: string | null;
   version_name: string | null;
-  status: string;
+  status: string | null;
   notes: string | null;
   surface_finish: string | null;
   verified_at: Date | null;
   size: number | null;
-  submitted_by_id: string | null; // UUID
-  verified_by_id: string | null; // UUID
+
+  submitted_by_id: string | null;  // UUID
+  verified_by_id: string | null;   // UUID
 
   ball_core: boolean;
   maglev: boolean;

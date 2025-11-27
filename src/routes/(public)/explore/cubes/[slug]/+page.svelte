@@ -1,28 +1,14 @@
 <script lang="ts">
-  import type { Cube } from "$lib/components/dbTableTypes.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   let { data } = $props();
-  let {
-    cube = {} as Cube,
-    features = [],
-    submittedBy,
-    verifiedBy,
-    meta,
-    stats,
-  } = $derived(data);
+  let { cube = {}, features = [], submittedBy, verifiedBy } = $derived(data);
 
-  const feats = $derived.by(() => {
-    const s = new Set<string>();
-    for (const f of features) if (f.cube === cube.slug) s.add(f.feature);
-    return s;
-  });
-
-  const isMagnetic = $derived.by(() => feats.has("magnetic"));
-  const isSmart = $derived.by(() => feats.has("smart"));
-  const isWcaLegal = $derived.by(() => feats.has("wca_legal"));
+  const isMagnetic = $derived.by(() => features.includes("magnetic"));
+  const isSmart = $derived.by(() => features.includes("smart"));
+  const isWcaLegal = $derived.by(() => features.includes("wca_legal"));
   const isDiscontinued = $derived.by(() => cube.discontinued);
-  const isModded = $derived.by(() => feats.has("modded"));
+  const isModded = $derived.by(() => features.includes("modded"));
 
   const allFeatureBadges = [
     { label: "Smart", key: "smart", icon: "fa-microchip" },
@@ -35,33 +21,19 @@
   ] as const;
 
   const presentFeatures = $derived.by(() =>
-    allFeatureBadges.filter((b) => feats.has(b.key))
+    allFeatureBadges.filter((b) => features.includes(b.key))
   );
 </script>
 
 <svelte:head>
-  <title>{meta.title}</title>
-  <meta name="description" content={meta.description} />
-
-  <meta property="og:title" content={meta.title} />
-  <meta property="og:description" content={meta.description} />
-  <meta property="og:image" content={meta.ogImage} />
-  <meta property="og:url" content={meta.canonical} />
-  <meta property="og:type" content="website" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={meta.title} />
-  <meta name="twitter:description" content={meta.description} />
-  <meta name="twitter:image" content={meta.ogImage} />
-
-  <link rel="canonical" href={meta.canonical} />
-
-  {@html `<script type="application/ld+json">${meta.ldJSON}</script>`}
+  <title>{cube.name} - CubeIndex</title>
 
   <link
     rel="preload"
     as="image"
-    href={meta.preloadImage}
+    href="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
+      cube.image_url
+    )}"
     fetchpriority="high"
   />
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
@@ -186,18 +158,18 @@
         <i class="fa-regular fa-circle-check opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Verified By</div>
-          <a class="font-medium link" href="/user/{verifiedBy?.username}"
-            >{verifiedBy?.display_name || "Unknown"}</a
-          >
+          <a class="font-medium link" href="/user/{verifiedBy?.username}">
+            {verifiedBy?.display_name || "Unknown"}
+          </a>
         </div>
       </div>
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-user opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Submitted By</div>
-          <a class="font-medium link" href="/user/{submittedBy?.username}"
-            >{submittedBy?.display_name || "Unknown"}</a
-          >
+          <a class="font-medium link" href="/user/{submittedBy?.username}">
+            {submittedBy?.display_name || "Unknown"}
+          </a>
         </div>
       </div>
       <div class="flex items-center gap-3">

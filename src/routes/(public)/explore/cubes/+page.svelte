@@ -83,8 +83,9 @@
       brand: ssp.string("All"),
       year: {
         // allow empty, otherwise number
-        encode: (n: number | null) => (n == null ? undefined : String(n)),
-        decode: (s: string | null) => (s ? s : null),
+        encode: (n: number | null) => (n === null ? undefined : String(n)),
+        decode: (s: string | null) =>
+          s ? (s !== "All" ? Number(s) : s) : null,
         defaultValue: "All",
       },
 
@@ -117,27 +118,29 @@
   ];
 
   // 2) Options for filter dropdowns
-  let allTypes: string[] = $state([]);
-  let allBrands: string[] = $state([]);
-  let allYears: number[] = $state([]);
-  let allSubTypes: string[] = $state([]);
-
-  /** Calculate unique sets for dropdown filters whenever cubes change */
-  function calcAll() {
-    const Types = Array.from(new Set(cubes.map((c) => c.type))).sort();
-    const Brands = Array.from(new Set(cubes.map((c) => c.brand))).sort();
-    const Years = Array.from(
-      new Set(cubes.map((c) => new Date(c.release_date!).getFullYear()))
-    ).sort((a, b) => b - a); // Descending order
-    const SubType = Array.from(
-      new Set(cubes.map((c) => c.sub_type ?? ""))
-    ).sort();
-
-    allBrands = Brands;
-    allTypes = Types;
-    allYears = Years;
-    allSubTypes = SubType;
+  function uniqueSorted<T>(
+    values: (T | null | undefined)[],
+    compareFn?: (a: T, b: T) => number
+  ): T[] {
+    return Array.from(new Set(values.filter((v): v is T => v != null))).sort(
+      compareFn
+    );
   }
+
+  let allTypes: string[] = $derived(uniqueSorted(cubes.map((c) => c.type)));
+
+  let allBrands: string[] = $derived(uniqueSorted(cubes.map((c) => c.brand)));
+
+  let allYears: number[] = $derived(
+    uniqueSorted(
+      cubes.map((c) => c.year),
+      (a, b) => b - a
+    )
+  );
+
+  let allSubTypes: string[] = $derived(
+    uniqueSorted(cubes.map((c) => c.sub_type))
+  );
 
   // 3) Reactive filtered list based on selected criteria
   const filteredCubes = $derived.by(() => {
@@ -346,12 +349,6 @@
     }
   });
 
-  // Recalculate filter options when loading state changes (i.e., new data arrives)
-  $effect(() => {
-    const _ = sortedCubes;
-    calcAll();
-  });
-
   // State for toggling filter sidebar
   let showFilters = $state(false);
 </script>
@@ -551,7 +548,7 @@
           </div>
 
           <!-- Display paginated cubes -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="grid [grid-template-columns:repeat(auto-fill,minmax(310px,1fr))] gap-8">
             {#if paginatedCubes.length > 0}
               {#each paginatedCubes as cube}
                 {#key paginatedCubes}

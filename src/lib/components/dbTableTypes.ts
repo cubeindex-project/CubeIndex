@@ -475,6 +475,42 @@ export interface UserCubeRatings {
   user_id: string; // UUID
 }
 
+export interface AwardsEvent {
+  id: number;
+  title: string;
+  year: number;
+  start_at: Date;
+  end_at: Date;
+  is_published: boolean;
+  created_at: Date;
+}
+
+export interface AwardsCategory {
+  id: number;
+  event_id: number;
+  name: string;
+  description: string;
+  created_at: Date;
+  slug: string;
+  icon: string;
+}
+
+export interface AwardsNominee {
+  id: number;
+  category_id: number;
+  cube_id: number;
+  extra_info: string | null;
+  created_at: Date;
+}
+
+export interface AwardsUserVote {
+  id: number;
+  user_id: string;
+  category_id: number;
+  nominee_id: number;
+  voted_at: Date;
+}
+
 export interface DetailedCube {
   brand: string | null;
   image_url: string | null;

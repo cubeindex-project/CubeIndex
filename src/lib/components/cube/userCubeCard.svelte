@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Cube, UserCubes } from "../dbTableTypes";
+  import type { DetailedCube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { supabase } from "$lib/supabaseClient";
@@ -22,7 +22,7 @@
     user_rating,
   }: {
     mode?: "view" | "edit";
-    cube: Cube;
+    cube: DetailedCube;
     user_details: LocalUserCubesType;
     user_rating: number;
   } = $props();

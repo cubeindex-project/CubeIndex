@@ -1,12 +1,12 @@
 ﻿<script lang="ts">
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
-  import type { Cube } from "../dbTableTypes";
+  import type { DetailedCube } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
 
   let {
     cube,
   }: {
-    cube: Cube;
+    cube: DetailedCube;
   } = $props();
 
   const statusCopy: Partial<Record<string, string>> = {
@@ -45,14 +45,14 @@
       <div class="text-xs text-base-content/60 flex flex-wrap gap-x-4 gap-y-2">
         <span>
           <span class="font-medium text-base-content/80">Submitted:</span>
-          <time datetime={cube.created_at} class="ml-1 text-base-content">
+          <time datetime={cube.created_at.toString()} class="ml-1 text-base-content">
             {formatDate(cube.created_at)}
           </time>
         </span>
         {#if cube.verified_at}
           <span>
             <span class="font-medium text-base-content/80">Verified:</span>
-            <time datetime={cube.verified_at} class="ml-1 text-base-content">
+            <time datetime={cube.verified_at.toString()} class="ml-1 text-base-content">
               {formatDate(cube.verified_at)}
             </time>
           </span>

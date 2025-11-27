@@ -1,25 +1,10 @@
 <script lang="ts">
   import AddCube from "./addCube.svelte";
   import RateCube from "../rating/rateCube.svelte";
-  import type { Cube } from "../dbTableTypes";
+  import type { DetailedCube } from "../dbTableTypes";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
   import RateCubeButton from "../misc/rateCubeButton.svelte";
-
-  /**
-   * Cube data for the card. Supports additional optional metadata fields
-   * (e.g., popularity, avg_price, feature flags) that may come from DB views.
-   */
-  type CubeWithMeta = Cube &
-    Partial<{
-      avg_price: number;
-      popularity: number;
-      wca_legal: boolean;
-      magnetic: boolean;
-      smart: boolean;
-      modded: boolean;
-      stickered: boolean;
-    }>;
 
   let {
     cube,
@@ -29,7 +14,7 @@
     alreadyAdded,
     userCubeDetail,
   }: {
-    cube: CubeWithMeta;
+    cube: DetailedCube;
     rate: boolean;
     add: boolean;
     details: boolean;
@@ -42,7 +27,7 @@
   let openAddCard = $state(false);
   let openRateCard = $state(false);
 
-  function isNewCube(addedDateString: string | null): boolean {
+  function isNewCube(addedDateString: Date | null): boolean {
     if (!addedDateString) return false;
 
     const addedDate = new Date(addedDateString);

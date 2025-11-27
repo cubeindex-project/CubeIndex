@@ -551,7 +551,7 @@
           </div>
 
           <!-- Display paginated cubes -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="grid [grid-template-columns:repeat(auto-fill,minmax(310px,1fr))] gap-8">
             {#if paginatedCubes.length > 0}
               {#each paginatedCubes as cube}
                 {#key paginatedCubes}

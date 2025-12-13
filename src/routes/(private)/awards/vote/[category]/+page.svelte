@@ -183,8 +183,8 @@
               </span>
             {/if}
           </div>
-          <div class="grid gap-4 md:grid-cols-2">
-            {#each nominees as nominee}
+          <div class="grid gap-4 md:grid-cols-3 items-stretch">
+            {#each nominees as nominee (nominee.id)}
               {#snippet cubeCardContent()}
                 <div class="mt-4 space-y-3">
                   <div class="flex flex-row gap-2 items-center">
@@ -203,7 +203,7 @@
                       {#if userVote !== nominee.nominee_id}
                         {nominee.nominee_id === selectedNomineeId
                           ? "Selected"
-                          : "Choose this nominee"}
+                          : "Select"}
                       {:else}
                         Voted
                       {/if}

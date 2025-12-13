@@ -37,7 +37,7 @@
 </svelte:head>
 
 <div
-  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col z-50"
+  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col h-full z-50"
 >
   {@render top?.()}
   <a href="/explore/cubes/{cube.slug}">

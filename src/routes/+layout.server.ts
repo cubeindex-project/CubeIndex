@@ -1,6 +1,7 @@
 import type { LayoutServerLoad } from "./$types";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { logError } from "$lib/server/logError";
+import { dev } from "$app/environment";
 
 export const load: LayoutServerLoad = async ({
   locals: { safeGetSession, supabase, log },
@@ -23,7 +24,7 @@ export const load: LayoutServerLoad = async ({
         "Error while retrieving profile in layout",
         log,
         err,
-        false
+        false,
       );
       profile = null;
     }
@@ -31,9 +32,16 @@ export const load: LayoutServerLoad = async ({
     profile = data;
   }
 
+  let umamiTag = false;
+
+  if (!dev) {
+    umamiTag = true;
+  }
+
   return {
     profile,
     session,
     cookies: cookies.getAll(),
+    umamiTag,
   };
 };

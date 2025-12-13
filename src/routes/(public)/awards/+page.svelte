@@ -12,6 +12,7 @@
   const event: AwardsEvent | null = data.current_event;
   const categories: AwardsCategory[] = data.awards_category ?? [];
   const previousEvents: AwardsEvent[] = data.previous_events ?? [];
+  const logoDesigner = data.logoDesigner;
 
   const formatDuration = (targetMs: number) => {
     if (!Number.isFinite(targetMs)) {
@@ -170,6 +171,21 @@
 
     <div class={`${ui.container} relative z-10 space-y-12 text-center`}>
       <div class="space-y-6 max-w-4xl mx-auto">
+          <div class="gap-3 flex flex-col items-center">
+        <img
+          src="/images/CubeIndex_Awards_Logo.webp"
+          alt="CubeIndex Awards logo"
+          class="mx-auto h-32 w-auto rounded-2xl"
+          loading="lazy"
+        />
+        {#if logoDesigner}
+        <p class="text-xs italic text-base-content/70">
+          Logo designed by <a href="/user/{logoDesigner.username}" class="link">
+            {logoDesigner.display_name}
+          </a>.
+        </p>
+        {/if}
+          </div>
         <span class={`${ui.pill} ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-award text-primary"></i>
           {heroTitle}

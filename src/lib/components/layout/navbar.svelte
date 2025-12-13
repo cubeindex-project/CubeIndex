@@ -56,9 +56,21 @@
     };
   });
 
-  const navLinks = [
-    { name: "Awards", href: "/awards" },
-    { name: "About", href: "/about" },
+  interface NavLink {
+    name: string;
+    href: string;
+    icon: string;
+    emphasis?: boolean;
+  }
+
+  const navLinks: NavLink[] = [
+    {
+      name: "Vote in the Awards",
+      href: "/awards",
+      icon: "fa-award",
+      emphasis: true,
+    },
+    { name: "About", href: "/about", icon: "fa-circle-info" },
   ];
 
   let bellAnimate = $state(false);
@@ -243,12 +255,15 @@
         </div>
       {/key}
 
-      {#each navLinks as { name, href }}
+      {#each navLinks as link (link.href)}
         <a
-          {href}
-          class="text-sm text-base-content/80 hover:text-base-content transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
+          href={link.href}
+          class={`inline-flex items-center gap-2 text-sm transition px-3 py-1.5 rounded-full focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 ${link.emphasis
+            ? "bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
+            : "text-base-content/80 hover:text-base-content"}`}
         >
-          {name}
+          <i class={`fa-solid ${link.icon} text-xs opacity-80`}></i>
+          <span class="font-medium">{link.name}</span>
         </a>
       {/each}
 
@@ -265,7 +280,7 @@
           <ul
             class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
-            {#each getProfileMenuItems(profile) as item}
+            {#each getProfileMenuItems(profile) as item (item.href)}
               <li>
                 <a
                   href={item.href}
@@ -414,19 +429,19 @@
           </details>
         </li>
 
-        {#each navLinks as { name, href }}
+        {#each navLinks as link (link.href)}
           <li>
             <a
-              {href}
-              class="flex items-center gap-2 py-3 text-base border-b border-base-300 text-base-content/80 hover:text-base-content"
+              href={link.href}
+              class={`flex items-center gap-2 py-3 text-base border-b border-base-300 ${link.emphasis
+                ? "text-base-content font-semibold"
+                : "text-base-content/80 hover:text-base-content"}`}
               onclick={closeMobileMenus}
             >
               <i
-                class="fa-solid {name === 'Awards'
-                  ? 'fa-award'
-                  : 'fa-circle-info'} text-xs opacity-80"
+                class={`fa-solid ${link.icon} text-xs opacity-80`}
               ></i>
-              <span>{name}</span>
+              <span>{link.name}</span>
             </a>
           </li>
         {/each}
@@ -486,7 +501,7 @@
                 class="mt-2 flex flex-col gap-3"
                 transition:blur={{ duration: 250 }}
               >
-                {#each getProfileMenuItems(profile) as item}
+                {#each getProfileMenuItems(profile) as item (item.href)}
                   <li>
                     <a
                       href={item.href}

@@ -69,5 +69,16 @@ export const load = (async ({ locals: { supabase, log } }) => {
     throw error(500, "Failed to fetch previous awards events");
   }
 
-  return { current_event, awards_category, previous_events };
+  const { data: logoDesigner, error: err } = await supabase
+    .from("profiles")
+    .select("username, display_name")
+    .eq("user_id", "b49da5bb-6d82-463e-b8ee-fd7c9feebde6")
+    .maybeSingle();
+
+  if (err) {
+    log.error({ err }, "Unable to logo designer profile");
+    throw error(500, "Unable to load logo designer profile");
+  }
+
+  return { current_event, awards_category, previous_events, logoDesigner };
 }) satisfies PageServerLoad;

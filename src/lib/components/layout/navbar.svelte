@@ -59,7 +59,7 @@
   interface NavLink {
     name: string;
     href: string;
-    icon: string;
+    icon?: string;
     emphasis?: boolean;
   }
 
@@ -70,7 +70,7 @@
       icon: "fa-award",
       emphasis: true,
     },
-    { name: "About", href: "/about", icon: "fa-circle-info" },
+    { name: "About", href: "/about" },
   ];
 
   let bellAnimate = $state(false);

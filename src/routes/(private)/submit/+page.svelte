@@ -69,7 +69,7 @@
       autofillCardData.errorMessage = "";
       autofillCardData.loading = false;
       autofillCardData.success = false;
-    }, 2000);
+    }, 10000);
 
     return () => clearTimeout(resetTimeout);
   });
@@ -169,10 +169,11 @@
                       class:btn-primary={!autofillCardData.errorMessage &&
                         !autofillCardData.success}
                       type="button"
+                      disabled={wakingUp}
                     >
                       {#if wakingUp}
                         <i class="fa-solid fa-spinner fa-spin"></i>
-                        Starting service...
+                        Starting autofill service...
                       {:else if autofillCardData.success}
                         Success!
                       {:else if autofillCardData.errorMessage}
@@ -186,6 +187,18 @@
                         Autofill
                       {/if}
                     </button>
+                    {#if wakingUp}
+                      <p
+                        class="mt-2 flex max-w-xs items-start gap-2 text-right text-xs text-base-content/70"
+                        aria-live="polite"
+                      >
+                        <i class="fa-solid fa-clock mt-0.5"></i>
+                        <span>
+                          Warming up the autofill service. It can take up to a
+                          minute to be ready.
+                        </span>
+                      </p>
+                    {/if}
                   </div>
                 </div>
                 <div class="grid gap-6 md:grid-cols-2">

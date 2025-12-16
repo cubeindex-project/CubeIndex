@@ -43,17 +43,17 @@
         `/api/submit/autocomplete?url=${encodeURIComponent(sanitizedUrl)}`,
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        variables.errorMessage = "We could not process that link right now.";
+        variables.errorMessage =
+          data.error || "We could not process that link right now.";
         return;
       }
 
-      const data = await response.json();
-
       applyData(data);
       variables.success = true;
-    } catch (err) {
-      console.error("Autofill request failed:", err);
+    } catch {
       variables.errorMessage =
         "Something went wrong while contacting the autofill service.";
     } finally {

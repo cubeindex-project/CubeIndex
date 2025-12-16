@@ -70,7 +70,14 @@ export const GET: RequestHandler = async ({
 
   const host = normalizeHost(parsedUrl.hostname);
   if (!SUPPORTED_STORES.has(host)) {
-    return json({ error: "This store is not yet supported." }, { status: 400 });
+    return json(
+      {
+        error:
+          "This store is not yet supported. Supported stores are: " +
+          Array.from(SUPPORTED_STORES).join(", "),
+      },
+      { status: 400 },
+    );
   }
 
   const payload = JSON.stringify({

@@ -6,46 +6,34 @@ import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
-import { z } from "zod/v4";
 import { logError } from "$lib/server/logError";
-
-/** Schema for store URL scraping requests. */
-const scrapSchema = z.object({
-  runName: z
-    .preprocess((value) => {
-      if (typeof value !== "string") return value;
-      const trimmed = value.trim();
-      return trimmed.length === 0 ? undefined : trimmed;
-    }, z.string().min(3, "Run name must be at least 3 characters long.").max(120, "Run names are limited to 120 characters."))
-    .optional(),
-  storeUrl: z.string().nonempty("Store URL is mandatory."),
-});
 
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
-  const scrapeForm = await superValidate(zod4(scrapSchema), {
-    errors: false,
-  });
 
   let hasAccess: boolean = false;
 
   if (locals.user?.id) {
-    const { data, error } = await locals.supabase
+    const { data: profile, error: profileErr } = await locals.supabase
       .from("profiles")
       .select("beta_flags")
       .eq("user_id", locals.user.id)
       .single();
 
-    if (error) {
+    if (profileErr) {
       logError(
         500,
         "An error occurred while fetching your profile",
         locals.log,
-        error
+        profileErr,
       );
     }
 
-    hasAccess = data.beta_flags.submit_cubes;
+    if (!profile) {
+      throw error(500, "Failed to fetch your profile");
+    }
+
+    hasAccess = Boolean(profile.beta_flags?.submit_cubes);
   }
 
   const [
@@ -53,7 +41,11 @@ export const load = (async ({ locals }) => {
     { data: brands, error: brandErr },
     { data: types, error: typeErr },
   ] = await Promise.all([
-    locals.supabase.from("cube_models").select("*").eq("status", "Approved"),
+    locals.supabase
+      .from("v_detailed_cube_models")
+      .select("name, slug")
+      .eq("status", "Approved")
+      .eq("version_type", "Base"),
     locals.supabase
       .from("brands")
       .select("name")
@@ -91,11 +83,11 @@ export const load = (async ({ locals }) => {
 
   if (surfaceErr) {
     locals.log.error({ err: surfaceErr.message }, "Failed to fetch surfaces");
-    error(500, "Failed to fetch surfaces");
+    throw error(500, "Failed to fetch surfaces");
   }
   if (subTypeErr) {
     locals.log.error({ err: subTypeErr.message }, "Failed to fetch sub types");
-    error(500, "Failed to fetch sub types");
+    throw error(500, "Failed to fetch sub types");
   }
 
   return {
@@ -105,98 +97,12 @@ export const load = (async ({ locals }) => {
     types,
     surfaces,
     subTypes,
-    scrapeForm,
     hasAccess,
   };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  scrape: async ({ request, locals }) => {
-    const { supabase, user, log } = locals;
-
-    if (!user) throw error(401, "Unauthorized");
-
-    const { data, error: err } = await locals.supabase
-      .from("profiles")
-      .select("beta_flags")
-      .eq("user_id", user.id)
-      .single();
-
-    if (err) {
-      logError(
-        500,
-        "An error occurred while fetching your profile",
-        locals.log,
-        err
-      );
-    }
-
-    const hasAccess: boolean = data.beta_flags.submit_cubes;
-
-    if (!hasAccess) throw error(401, "Unauthorized");
-
-    const form = await superValidate(request, zod4(scrapSchema));
-
-    if (!form.valid) {
-      return { form };
-    }
-
-    const linkEntry = form.data.storeUrl;
-
-    if (!linkEntry) {
-      return setError(form, "storeUrl", "Add at least one store URL.", {
-        status: 400,
-      });
-    }
-
-    const runName = form.data.runName ?? null;
-    const cleanEntry = cleanLink(linkEntry);
-
-    const { data: linkAlreadyExists, error: linkExistsErr } = await supabase
-      .from("cube_vendor_links")
-      .select("url")
-      .eq("url", cleanEntry)
-      .maybeSingle();
-
-    if (linkExistsErr) {
-      log.error(
-        { err: linkExistsErr.message },
-        "Failed to check for duplicate link"
-      );
-      return setError(form, "", "Failed to check for duplicate link", {
-        status: 500,
-      });
-    }
-
-    if (linkAlreadyExists) {
-      log.error("This link already exists.");
-      return setError(form, "storeUrl", "This link already exists.", {
-        status: 400,
-      });
-    }
-
-    const { data: run, error: runErr } = await supabase
-      .from("cube_scrap_runs")
-      .insert({ user_id: user.id, name: runName, url: cleanEntry })
-      .select("id, name, url")
-      .single();
-
-    if (runErr || !run) {
-      log.error({ err: runErr?.message }, "Failed to create cube scrap run");
-      return setError(
-        form,
-        "",
-        "We couldn't queue that scrape run. Please try again later.",
-        { status: 500 }
-      );
-    }
-
-    return message(
-      form,
-      "Your store URLs were queued. We'll email you when the import finishes."
-    );
-  },
-  advanced: async ({ request, locals }) => {
+  default: async ({ request, locals }) => {
     const { supabase, user } = locals;
     if (!user) throw error(401, "Unauthorized");
 
@@ -211,11 +117,15 @@ export const actions: Actions = {
         500,
         "An error occurred while fetching your profile",
         locals.log,
-        err
+        err,
       );
     }
 
-    const hasAccess: boolean = profile.beta_flags.submit_cubes;
+    if (!profile) {
+      throw error(500, "Failed to fetch your profile");
+    }
+
+    const hasAccess: boolean = Boolean(profile.beta_flags?.submit_cubes);
 
     if (!hasAccess) throw error(401, "Unauthorized");
 
@@ -232,7 +142,7 @@ export const actions: Actions = {
     const slugSource = [
       data.series && data.series.length > 0 ? data.series : null,
       data.model,
-      data.versionType === "Base" ? null : data.versionName ?? null,
+      data.versionType === "Base" ? null : (data.versionName ?? null),
     ]
       .filter((value): value is string => Boolean(value && value.length > 0))
       .join(" ");
@@ -243,7 +153,7 @@ export const actions: Actions = {
       return message(
         form,
         "Unable to derive a slug from the provided model details.",
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -256,7 +166,7 @@ export const actions: Actions = {
       slug,
       series: data.series && data.series.length > 0 ? data.series : null,
       model: data.model,
-      version_name: data.versionType === "Base" ? "" : data.versionName ?? "",
+      version_name: data.versionType === "Base" ? "" : (data.versionName ?? ""),
       brand: data.brand,
       type: data.type,
       sub_type: computedSubType,
@@ -310,7 +220,7 @@ export const actions: Actions = {
 
     if (rowsErr) {
       locals.log.error({ err: rowsErr.message }, "Failed to fetch features");
-      setError(form, "An error occurred while submitting the cube", {
+      return setError(form, "An error occurred while submitting the cube", {
         status: 500,
       });
     }
@@ -322,10 +232,10 @@ export const actions: Actions = {
       .map(([key]) => normalizeKey(key));
 
     const toAdd = newFeatures.filter(
-      (feature) => !existingFeatures.includes(feature)
+      (feature) => !existingFeatures.includes(feature),
     );
     const toRemove = existingFeatures.filter(
-      (feature) => !newFeatures.includes(feature)
+      (feature) => !newFeatures.includes(feature),
     );
 
     if (toAdd.length) {
@@ -340,9 +250,9 @@ export const actions: Actions = {
       if (featUpErr) {
         locals.log.error(
           { err: featUpErr.message },
-          "Failed to insert features"
+          "Failed to insert features",
         );
-        setError(form, "An error occurred while submitting the cube", {
+        return setError(form, "An error occurred while submitting the cube", {
           status: 500,
         });
       }
@@ -358,9 +268,9 @@ export const actions: Actions = {
       if (featUpErr) {
         locals.log.error(
           { err: featUpErr.message },
-          "Failed to delete features"
+          "Failed to delete features",
         );
-        setError(form, "An error occurred while submitting the cube", {
+        return setError(form, "An error occurred while submitting the cube", {
           status: 500,
         });
       }
@@ -368,7 +278,7 @@ export const actions: Actions = {
 
     return message(
       form,
-      'Cube submitted for review! Track its status on <a class="link" href="/user/submissions">your submissions page</a>.'
+      'Cube submitted for review! Track its status on <a class="link" href="/user/submissions">your submissions page</a>.',
     );
   },
 };

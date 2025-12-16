@@ -27,7 +27,9 @@
   const bbcode = `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`;
 
   let copied = $state<null | string>(null);
-  let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">("Markdown");
+  let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">(
+    "Markdown",
+  );
 
   function handleLoad() {
     previewLoaded = true;
@@ -103,9 +105,7 @@
       <div class="relative inline-flex overflow-hidden rounded">
         <div
           class={`absolute inset-0 rounded transition-opacity duration-200 ${
-            previewLoaded
-              ? "opacity-0 pointer-events-none"
-              : "opacity-100"
+            previewLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
           role="status"
           aria-live={previewError ? "assertive" : "polite"}
@@ -135,7 +135,7 @@
             </div>
           {/if}
         </div>
-        <a href={'/user/' + username} class="block" aria-busy={!previewLoaded}>
+        <a href={"/user/" + username} class="block" aria-busy={!previewLoaded}>
           <img
             src={previewUrl}
             alt={`${displayName} - CubeIndex userbar`}
@@ -181,54 +181,78 @@
   <section>
     <h2 class="text-sm font-medium mb-2">Embed Snippets</h2>
     <div class="tabs tabs-boxed mb-3">
-      <button class={`tab ${active === 'Markdown' ? 'tab-active' : ''}`} onclick={() => (active = 'Markdown')}>Markdown</button>
-      <button class={`tab ${active === 'HTML' ? 'tab-active' : ''}`} onclick={() => (active = 'HTML')}>HTML</button>
-      <button class={`tab ${active === 'BBCode' ? 'tab-active' : ''}`} onclick={() => (active = 'BBCode')}>BBCode</button>
-      <button class={`tab ${active === 'Direct URL' ? 'tab-active' : ''}`} onclick={() => (active = 'Direct URL')}>Direct URL</button>
+      <button
+        class={`tab ${active === "Markdown" ? "tab-active" : ""}`}
+        onclick={() => (active = "Markdown")}>Markdown</button
+      >
+      <button
+        class={`tab ${active === "HTML" ? "tab-active" : ""}`}
+        onclick={() => (active = "HTML")}>HTML</button
+      >
+      <button
+        class={`tab ${active === "BBCode" ? "tab-active" : ""}`}
+        onclick={() => (active = "BBCode")}>BBCode</button
+      >
+      <button
+        class={`tab ${active === "Direct URL" ? "tab-active" : ""}`}
+        onclick={() => (active = "Direct URL")}>Direct URL</button
+      >
     </div>
 
-    {#if active === 'Markdown'}
+    {#if active === "Markdown"}
       <div class="relative">
-        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{markdown}</code></pre>
+        <pre
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
+            >{markdown}</code
+          ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === 'Markdown' ? 'btn-success' : ''}`}
-          onclick={() => copy(markdown, 'Markdown')}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "Markdown" ? "btn-success" : ""}`}
+          onclick={() => copy(markdown, "Markdown")}
           aria-label="Copy Markdown"
         >
-          {copied === 'Markdown' ? 'Copied' : 'Copy'}
+          {copied === "Markdown" ? "Copied" : "Copy"}
         </button>
       </div>
-    {:else if active === 'HTML'}
+    {:else if active === "HTML"}
       <div class="relative">
-        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{html}</code></pre>
+        <pre
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
+            >{html}</code
+          ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === 'HTML' ? 'btn-success' : ''}`}
-          onclick={() => copy(html, 'HTML')}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "HTML" ? "btn-success" : ""}`}
+          onclick={() => copy(html, "HTML")}
           aria-label="Copy HTML"
         >
-          {copied === 'HTML' ? 'Copied' : 'Copy'}
+          {copied === "HTML" ? "Copied" : "Copy"}
         </button>
       </div>
-    {:else if active === 'BBCode'}
+    {:else if active === "BBCode"}
       <div class="relative">
-        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{bbcode}</code></pre>
+        <pre
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
+            >{bbcode}</code
+          ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === 'BBCode' ? 'btn-success' : ''}`}
-          onclick={() => copy(bbcode, 'BBCode')}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "BBCode" ? "btn-success" : ""}`}
+          onclick={() => copy(bbcode, "BBCode")}
           aria-label="Copy BBCode"
         >
-          {copied === 'BBCode' ? 'Copied' : 'Copy'}
+          {copied === "BBCode" ? "Copied" : "Copy"}
         </button>
       </div>
     {:else}
       <div class="relative">
-        <pre class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 border border-base-300"><code>{directUrl}</code></pre>
+        <pre
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
+            >{directUrl}</code
+          ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === 'Direct URL' ? 'btn-success' : ''}`}
-          onclick={() => copy(directUrl, 'Direct URL')}
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "Direct URL" ? "btn-success" : ""}`}
+          onclick={() => copy(directUrl, "Direct URL")}
           aria-label="Copy Direct URL"
         >
-          {copied === 'Direct URL' ? 'Copied' : 'Copy'}
+          {copied === "Direct URL" ? "Copied" : "Copy"}
         </button>
       </div>
     {/if}

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { logError } from "$lib/server/logError";
+import type { DetailedCube } from "$lib/components/dbTableTypes";
 
 /**
  * Load data for the authenticated user dashboard.
@@ -63,9 +64,9 @@ export const load = (async ({ locals }) => {
   }
 
   // Recent activity (lightweight)
-  const { data: recentSubmissionsRaw = [], error: rsErr } = await supabase
-    .from("cube_models")
-    .select("slug, brand, model, version_name, image_url, status, created_at")
+  const { data: recentSubmissionsRaw, error: rsErr } = await supabase
+    .from("v_detailed_cube_models")
+    .select("slug, name, image_url, status, created_at")
     .eq("submitted_by_id", user.id)
     .order("created_at", { ascending: false })
     .limit(5);
@@ -75,7 +76,7 @@ export const load = (async ({ locals }) => {
       500,
       "Failed to load recent submission activity",
       log,
-      rsErr ?? new Error("Missing recent submission activity data")
+      rsErr ?? new Error("Missing recent submission activity data"),
     );
   }
 
@@ -95,7 +96,7 @@ export const load = (async ({ locals }) => {
       submissionsCount: submissionsCount ?? 0,
     },
     recent: {
-      submissions: recentSubmissions,
+      submissions: recentSubmissions as DetailedCube[],
     },
   };
 }) satisfies PageServerLoad;

@@ -11,7 +11,7 @@
   // Props & initial state
   let { data }: { data: PageData } = $props();
 
-  const { form, errors, enhance, message, delayed, tainted, isTainted } =
+  const { form, errors, enhance, message, delayed, isTainted } =
     superForm(data.profileForm, {
       invalidateAll: "pessimistic",
       delayMs: 500,
@@ -25,7 +25,6 @@
     enhance: socialEnhance,
     message: socialMessage,
     delayed: socialDelayed,
-    tainted: socialTainted,
     isTainted: socialIsTainted,
   } = superForm(data.socialForm, {
     invalidateAll: "pessimistic",
@@ -40,7 +39,6 @@
     enhance: passwordEnhance,
     message: passwordMessage,
     delayed: passwordDelayed,
-    tainted: passwordTainted,
     isTainted: passwordIsTainted,
   } = superForm(data.passwordForm, {
     invalidateAll: "pessimistic",
@@ -272,26 +270,9 @@
     }
   });
 
-  let dirty: boolean = $state(false);
-
-  $effect(() => {
-    const _ = $tainted;
-    dirty = isTainted();
-  });
-
-  let socialDirty: boolean = $state(false);
-
-  $effect(() => {
-    const _ = $socialTainted;
-    socialDirty = socialIsTainted();
-  });
-
-  let passwordDirty: boolean = $state(false);
-
-  $effect(() => {
-    const _ = $passwordTainted;
-    passwordDirty = passwordIsTainted();
-  });
+  let dirty: boolean = $derived(isTainted());
+  let socialDirty: boolean = $derived(socialIsTainted());
+  let passwordDirty: boolean = $derived(passwordIsTainted());
 </script>
 
 <svelte:head>
@@ -320,7 +301,7 @@
           >
             <nav class="card-body p-2 sm:p-3">
               <ul class="menu menu-vertical gap-1 rounded-lg">
-                {#each tabs as it}
+                {#each tabs as it (it.id)}
                   <li>
                     <button
                       class="group relative w-full justify-start flex gap-3 px-3 py-2 rounded-lg
@@ -822,7 +803,7 @@
                     <div
                       class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                     >
-                      {#each lightThemes as t}
+                      {#each lightThemes as t (t)}
                         <label
                           data-theme={t}
                           class="cursor-pointer rounded-2xl"
@@ -870,7 +851,7 @@
                     <div
                       class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                     >
-                      {#each darkThemes as t}
+                      {#each darkThemes as t (t)}
                         <label
                           data-theme={t}
                           class="cursor-pointer rounded-2xl"

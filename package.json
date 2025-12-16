@@ -31,11 +31,13 @@
     "eslint-plugin-svelte": "^3.0.0",
     "globals": "^16.0.0",
     "jsdom": "^26.0.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-svelte": "^3.4.0",
     "svelte": "^5.37.1",
     "svelte-check": "^4.0.0",
     "svelte-turnstile": "^0.11.0",
     "sveltekit-search-params": "^3.0.0",
-    "sveltekit-superforms": "^2.27.4",
+    "sveltekit-superforms": "^2.28.1",
     "tailwindcss": "^4.1.8",
     "tsx": "^4.20.3",
     "typescript": "^5.0.0",
@@ -43,9 +45,10 @@
     "vite": "^6.2.5",
     "vite-plugin-devtools-json": "^0.2.0",
     "vitest": "^3.0.0",
-    "zod": "^3.25.73"
+    "zod": "^4.1.13"
   },
   "dependencies": {
+    "@gcornut/valibot-json-schema": "^0.42.0",
     "@number-flow/svelte": "^0.3.9",
     "@resvg/resvg-js": "^2.6.2",
     "@ssgoi/svelte": "^0.0.8",
@@ -65,7 +68,8 @@
     "svelte-exmarkdown": "^5.0.1",
     "svelte-sonner": "^1.0.1",
     "sveltekit-top-loader": "^0.1.0",
-    "theme-change": "^2.5.0"
+    "theme-change": "^2.5.0",
+    "valibot": "^1.2.0"
   },
   "overrides": {
     "cookie": "^1.0.2",

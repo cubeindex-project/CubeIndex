@@ -478,7 +478,7 @@ export interface UserCubeRatings {
 export interface DetailedCube {
   brand: string | null;
   image_url: string | null;
-  image_source: string | null;  // vendor name
+  image_source: string | null; // vendor name
 
   model: string;
   rating: number | null;
@@ -498,14 +498,14 @@ export interface DetailedCube {
   related_to: string | null;
   version_type: string | null;
   version_name: string | null;
-  status: string | null;
+  status: string;
   notes: string | null;
   surface_finish: string | null;
   verified_at: Date | null;
   size: number | null;
 
-  submitted_by_id: string | null;  // UUID
-  verified_by_id: string | null;   // UUID
+  submitted_by_id: string | null; // UUID
+  verified_by_id: string | null; // UUID
 
   ball_core: boolean;
   maglev: boolean;

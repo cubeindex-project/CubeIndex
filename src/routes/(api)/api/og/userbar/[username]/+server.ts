@@ -3,7 +3,6 @@ import { Resvg } from "@resvg/resvg-js";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { oklch as parseOklch, formatHex } from "culori";
-import { queryDetailedProfiles } from "$lib/queries/detailedProfiles";
 
 const CLASH_FONT_PATH = join(
   process.cwd(),
@@ -66,15 +65,16 @@ const USERBAR_FONTS: Font[] = [
 export const GET = async ({ params, locals }) => {
   const username = params.username;
 
-  const { data: profile, error } = await queryDetailedProfiles(locals.supabase)
+  const { data: profile, error } = await locals.supabase
+    .from("v_detailed_profiles")
+    .select("display_name, username, user_cubes_count, user_achievements_count")
     .eq("username", username)
     .maybeSingle();
 
   if (error)
-    return new Response(
-      `Unable to load profile: ${error.message}`,
-      { status: 500 },
-    );
+    return new Response(`Unable to load profile: ${error.message}`, {
+      status: 500,
+    });
 
   if (!profile) return new Response("Profile not found", { status: 404 });
 

@@ -5,6 +5,9 @@
 
   let hidden = $state(true);
 
+  const finishDate = Date.UTC(2026, 0, 4);
+  const eventFinished = Date.now() >= finishDate;
+
   onMount(() => {
     try {
       hidden = localStorage.getItem(storageKey) === "true";
@@ -23,7 +26,7 @@
   }
 </script>
 
-{#if !hidden}
+{#if !hidden && !eventFinished}
   <section class="relative w-full bg-primary text-primary-content">
     <!-- Close button: visible and top-right ONLY on mobile -->
     <button

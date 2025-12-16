@@ -2,16 +2,6 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
 
-  type SubmissionSummary = {
-    slug: string;
-    brand: string | null;
-    model: string | null;
-    version_name: string | null;
-    image_url: string | null;
-    status: string;
-    created_at: string;
-  };
-
   const { data } = $props();
 
   const { profile, stats, recent } = data;
@@ -56,22 +46,6 @@
     if (normalized === "rejected") return "badge-error";
     return "badge-ghost";
   };
-
-  const submissionStatusLabel = (status: string) =>
-    status
-      .split("_")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-      .join(" ");
-
-  const submissionName = (submission: SubmissionSummary) => {
-    const parts = [
-      submission.brand,
-      submission.model,
-      submission.version_name,
-    ].filter(Boolean);
-    if (parts.length === 0) return submission.slug;
-    return parts.join(" ").trim();
-  };
 </script>
 
 <svelte:head>
@@ -104,7 +78,7 @@
   </header>
 
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-    {#each cards as c}
+    {#each cards as c (c.label)}
       <a
         href={c.href}
         class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition"
@@ -146,17 +120,16 @@
         {#if recent.submissions.length === 0}
           <div class="text-sm opacity-70">
             Share cubes that are missing from the catalog and track their status
-            from here. <a class="link" href="/submit">Submit a cube</a> to get
-            started.
+            from here. <a class="link" href="/submit">Submit a cube</a> to get started.
           </div>
         {:else}
           <ul class="divide-y divide-base-300">
-            {#each recent.submissions as submission}
+            {#each recent.submissions as submission (submission.slug)}
               <li class="py-3 flex items-center gap-3">
                 {#if submission.image_url}
                   <img
                     src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{submission.image_url}"
-                    alt={submissionName(submission)}
+                    alt={submission.name}
                     class="w-10 h-10 rounded object-cover"
                   />
                 {:else}
@@ -172,12 +145,12 @@
                       class="font-medium hover:underline"
                       href={`/explore/cubes/${submission.slug}`}
                     >
-                      {submissionName(submission)}
+                      {submission.name}
                     </a>
                     <span
                       class={`badge badge-sm ${submissionStatusBadge(submission.status)}`}
                     >
-                      {submissionStatusLabel(submission.status)}
+                      {submission.status}
                     </span>
                   </div>
                   <p class="text-xs opacity-70">
@@ -188,7 +161,9 @@
             {/each}
           </ul>
           <div class="pt-3 flex flex-wrap">
-            <a class="btn btn-ghost btn-sm" href="/submit">Submit another cube</a>
+            <a class="btn btn-ghost btn-sm" href="/submit"
+              >Submit another cube</a
+            >
           </div>
         {/if}
       </div>

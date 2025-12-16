@@ -13,45 +13,19 @@
     { label: "All", value: "all" as const },
     { label: "Pending", value: "pending" as const },
     { label: "Approved", value: "approved" as const },
-    { label: "Rejected", value: "rejected" as const},
+    { label: "Rejected", value: "rejected" as const },
   ]);
 
   const filteredSubmissions = $derived(
     activeFilter === "all"
       ? submissions
-      : submissions.filter((cube) => cube.status.toLowerCase() === activeFilter)
+      : submissions.filter(
+          (cube) => cube.status.toLowerCase() === activeFilter,
+        ),
   );
 
   const hasSubmissions = $derived(submissions.length > 0);
   const hasFilteredResults = $derived(filteredSubmissions.length > 0);
-
-  const dtFormatter = new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-
-  const formatDateTime = (value: string | null) =>
-    value ? dtFormatter.format(new Date(value)) : null;
-
-  const statusBadge = (status: string) => {
-    const normalized = status.toLowerCase();
-    if (normalized === "approved") return "badge-success";
-    if (normalized === "pending") return "badge-warning";
-    if (normalized === "rejected") return "badge-error";
-    return "badge-neutral";
-  };
-
-  const formatStatus = (status: string) =>
-    status
-      .split("_")
-      .map(
-        (segment) =>
-          segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase()
-      )
-      .join(" ");
-
-  const shortenUrl = (value: string) =>
-    value.length > 60 ? `${value.slice(0, 57)}...` : value;
 </script>
 
 <svelte:head>
@@ -71,10 +45,6 @@
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
-      <a href="/user/submissions/jobs" class="btn btn-outline btn-sm">
-        <i class="fa-solid fa-diagram-project" aria-hidden="true"></i>
-        <span>Queued jobs</span>
-      </a>
       <a href="/submit" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Submit a cube</span>
@@ -86,7 +56,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="text-lg font-semibold text-base-content">Submitted cubes</h2>
       <div class="flex flex-wrap gap-2">
-        {#each filters as filter}
+        {#each filters as filter (filter.label)}
           <button
             type="button"
             class={`btn btn-xs md:btn-sm ${activeFilter === filter.value ? "btn-primary" : "btn-ghost"}`}

@@ -62,26 +62,13 @@
   }
 </script>
 
-<Card>
+<Card title="Autofill Service" {onCancel}>
   <div class="flex items-start gap-3">
-    <div class="flex-1 space-y-1">
-      <h2 id="add-cube-title" class="card-title leading-tight">
-        Autofill Service
-      </h2>
-      <p class="text-sm text-base-content/70">
-        Paste the exact product page for this cube from a shop like
-        SpeedCubeShop, DailyPuzzles, or a manufacturer store. We will scan it
-        and fill what we can.
-      </p>
-    </div>
-    <button
-      type="button"
-      class="btn btn-ghost btn-sm rounded-xl"
-      onclick={onCancel}
-      aria-label="Close"
-    >
-      &Cross;
-    </button>
+    <p class="text-sm text-base-content/70">
+      Paste the exact product page for this cube from a shop like<br />
+      SpeedCubeShop, DailyPuzzles, or a manufacturer store.<br /> We will scan it
+      and fill what we can.
+    </p>
   </div>
 
   <form class="space-y-4 pt-4" onsubmit={requestAutofill}>

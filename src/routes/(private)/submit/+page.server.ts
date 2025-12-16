@@ -11,31 +11,6 @@ import { logError } from "$lib/server/logError";
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
 
-  let hasAccess: boolean = false;
-
-  if (locals.user?.id) {
-    const { data: profile, error: profileErr } = await locals.supabase
-      .from("profiles")
-      .select("beta_flags")
-      .eq("user_id", locals.user.id)
-      .single();
-
-    if (profileErr) {
-      logError(
-        500,
-        "An error occurred while fetching your profile",
-        locals.log,
-        profileErr,
-      );
-    }
-
-    if (!profile) {
-      throw error(500, "Failed to fetch your profile");
-    }
-
-    hasAccess = Boolean(profile.beta_flags?.submit_cubes);
-  }
-
   const [
     { data: cubes, error: cubeErr },
     { data: brands, error: brandErr },
@@ -97,7 +72,6 @@ export const load = (async ({ locals }) => {
     types,
     surfaces,
     subTypes,
-    hasAccess,
   };
 }) satisfies PageServerLoad;
 

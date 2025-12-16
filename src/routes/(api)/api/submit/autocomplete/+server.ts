@@ -4,6 +4,7 @@ import type {
   CubeSurfaceFinishes,
   CubeVersionType,
 } from "$lib/components/dbTableTypes";
+import { AUTOFILL_SERVICE_URL } from "$env/static/private";
 
 export interface AutofillResult {
   brand?: string;
@@ -24,6 +25,12 @@ export interface AutofillResult {
   ball_core?: boolean;
 }
 
+const SUPPORTED_STORES = new Set(["thecubicle.com", "speedcubeshop.com"]);
+
+function normalizeHost(host: string) {
+  return host.toLowerCase().replace(/^www\./, "");
+}
+
 export const GET: RequestHandler = async ({
   url,
   locals: { safeGetSession },
@@ -37,7 +44,6 @@ export const GET: RequestHandler = async ({
   }
 
   const storeUrl = url.searchParams.get("url");
-
   if (!storeUrl) {
     return json(
       { error: "Provide a product link to continue." },
@@ -49,8 +55,10 @@ export const GET: RequestHandler = async ({
   try {
     parsedUrl = new URL(storeUrl);
   } catch {
-    const message = "The provided link is not a valid URL.";
-    return json({ error: message }, { status: 400 });
+    return json(
+      { error: "The provided link is not a valid URL." },
+      { status: 400 },
+    );
   }
 
   if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
@@ -60,23 +68,59 @@ export const GET: RequestHandler = async ({
     );
   }
 
-  const payload = JSON.stringify({ id: crypto.randomUUID(), url: storeUrl });
-
-  const request = await fetch("https://cubescraper.onrender.com/autofill", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.access_token}`,
-    },
-    body: payload,
-  });
-
-  if (!request.ok) {
-    const message = "Failed to fetch data from the server.";
-    return json({ error: message }, { status: 500 });
+  const host = normalizeHost(parsedUrl.hostname);
+  if (!SUPPORTED_STORES.has(host)) {
+    return json({ error: "This store is not yet supported." }, { status: 400 });
   }
 
-  const aufillData: AutofillResult = await request.json();
+  const payload = JSON.stringify({
+    id: crypto.randomUUID(),
+    url: parsedUrl.toString(),
+  });
 
-  return json(aufillData);
+  // Timeout protection
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+
+  let res: Response;
+  try {
+    res = await fetch(AUTOFILL_SERVICE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: payload,
+      signal: controller.signal,
+    });
+  } catch {
+    clearTimeout(timeout);
+    return json({ error: "Autofill service is unreachable." }, { status: 502 });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  if (!res.ok) {
+    // Try to forward a useful message from the upstream service
+    const upstreamText = await res.text().catch(() => "");
+    return json(
+      {
+        error:
+          upstreamText || "Failed to fetch data from the autofill service.",
+      },
+      { status: res.status },
+    );
+  }
+
+  let autofillData: AutofillResult;
+  try {
+    autofillData = (await res.json()) as AutofillResult;
+  } catch {
+    return json(
+      { error: "Autofill service returned invalid JSON." },
+      { status: 502 },
+    );
+  }
+
+  return json(autofillData);
 };

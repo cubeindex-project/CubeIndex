@@ -375,21 +375,39 @@ end;$$;
 ALTER FUNCTION "public"."cube_links_snapshot_table_rules"() OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."cube_models_table_rules"() RETURNS "trigger"
+CREATE OR REPLACE FUNCTION "public"."cube_links_table_rules"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$begin
-if old.status <> 'Pending' then if new.verified_at is distinct from old.verified_at then raise exception 'Cannot change verified_at unless status = Pending';
+
+if tg_op = 'UPDATE' and row(old.*) is distinct from row(new.*) then
+new.last_modified := now();
+end if;
+
+return new;
+
+end;$$;
+
+
+ALTER FUNCTION "public"."cube_links_table_rules"() OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."cube_models_table_rules"() RETURNS "trigger"
+    LANGUAGE "plpgsql"
+    AS $$begin if tg_op = 'UPDATE'
+and old.status <> 'Pending' then if new.verified_at is distinct from old.verified_at then raise exception 'Cannot change verified_at unless status = Pending';
 
 end if;
 
-if new.verified_by_id is distinct from old.verified_by_id then raise exception 'Cannot change verified_by_id unless status = Pending';
+if tg_op = 'UPDATE'
+and old.status <> 'Pending' and new.verified_by_id is distinct from old.verified_by_id then raise exception 'Cannot change verified_by_id unless status = Pending';
 
 end if;
 
 end if;
 
 if old.status = 'Rejected'
-and row (new.*) is distinct from row (old.*) and tg_op = 'UPDATE' then raise exception 'Cannot update rejected cubes';
+and row (new.*) is distinct from row (old.*)
+and tg_op = 'UPDATE' then raise exception 'Cannot update rejected cubes';
 
 end if;
 
@@ -399,15 +417,18 @@ end if;
 
 end if;
 
-if new.submitted_by_id is distinct from old.submitted_by_id and tg_op = 'UPDATE' then raise exception 'Cannot change submitted_by_id';
+if new.submitted_by_id is distinct from old.submitted_by_id
+and tg_op = 'UPDATE' then raise exception 'Cannot change submitted_by_id';
 
 end if;
 
-if new.id is distinct from old.id and tg_op = 'UPDATE' then raise exception 'Cannot change id';
+if new.id is distinct from old.id
+and tg_op = 'UPDATE' then raise exception 'Cannot change id';
 
 end if;
 
-if new.created_at is distinct from old.created_at and tg_op = 'UPDATE' then raise exception 'Cannot change created_at';
+if new.created_at is distinct from old.created_at
+and tg_op = 'UPDATE' then raise exception 'Cannot change created_at';
 
 end if;
 
@@ -423,7 +444,7 @@ end if;
 end if;
 
 if old.status <> 'Rejected'
-and tg_op = 'DELETE' then raise exception 'Cannot delete non‑Rejected cubes';
+and tg_op = 'DELETE' then raise exception 'Cannot delete non-Rejected cubes';
 
 end if;
 
@@ -525,64 +546,54 @@ ALTER FUNCTION "public"."insert_user_achievement"() OWNER TO "postgres";
 CREATE OR REPLACE FUNCTION "public"."log_data_changes"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$declare
-  jwt_sub text;
   actor uuid;
 begin
-  jwt_sub := current_setting('request.jwt.claim.sub', true);
-  if jwt_sub is not null and jwt_sub <> '' then
-    actor := jwt_sub::uuid;
+  actor := coalesce(
+    auth.uid(),
+    '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::uuid
+  );
+
+  if TG_OP = 'INSERT' then
+    insert into public.staff_logs (staff_id, action, target_table, old_data, new_data)
+    values (
+      actor,
+      TG_OP::public.staff_actions,
+      TG_TABLE_NAME,
+      null,
+      to_jsonb(NEW)
+    );
+
+    return NEW;
+
+  elsif TG_OP = 'UPDATE' then
+    if to_jsonb(OLD) <> to_jsonb(NEW) then
+      insert into public.staff_logs (staff_id, action, target_table, old_data, new_data)
+      values (
+        actor,
+        TG_OP::public.staff_actions,
+        TG_TABLE_NAME,
+        to_jsonb(OLD),
+        to_jsonb(NEW)
+      );
+    end if;
+
+    return NEW;
+
+  elsif TG_OP = 'DELETE' then
+    insert into public.staff_logs (staff_id, action, target_table, old_data, new_data)
+    values (
+      actor,
+      TG_OP::public.staff_actions,
+      TG_TABLE_NAME,
+      to_jsonb(OLD),
+      null
+    );
+
+    return OLD;
+
   else
-    actor := '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::uuid; -- system user
+    return null;
   end if;
-
-if (tg_op = 'INSERT') then
-insert into
-  public.staff_logs (staff_id, action, target_table, old_data, new_data)
-values
-  (
-    actor,
-    TG_OP::public.staff_actions,
-    TG_TABLE_NAME,
-    null,
-    to_jsonb(NEW)
-  );
-
-return new;
-
-elsif (tg_op = 'UPDATE') then if to_jsonb(OLD) <> to_jsonb(NEW) then
-insert into
-  public.staff_logs (staff_id, action, target_table, old_data, new_data)
-values
-  (
-    actor,
-    TG_OP::public.staff_actions,
-    TG_TABLE_NAME,
-    to_jsonb(OLD),
-    to_jsonb(NEW)
-  );
-
-end if;
-
-return new;
-
-elsif (tg_op = 'DELETE') then
-insert into
-  public.staff_logs (staff_id, action, target_table, old_data, new_data)
-values
-  (
-    actor,
-    TG_OP::public.staff_actions,
-    TG_TABLE_NAME,
-    to_jsonb(OLD),
-    null
-  );
-
-return new;
-
-else return null;
-
-end if;
-
 end;$$;
 
 
@@ -860,8 +871,7 @@ ALTER FUNCTION "public"."reports_table_rules"() OWNER TO "postgres";
 CREATE OR REPLACE FUNCTION "public"."save_cube_vendor_links_snapshots"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
-    AS $$
-begin
+    AS $$begin
   if tg_op in ('INSERT', 'UPDATE') then
     if not exists (
       select 1
@@ -897,8 +907,9 @@ begin
     end if;
 
     return new;
+  end if;
 
-  elsif tg_op = 'DELETE' then
+  if tg_op = 'DELETE' then
     delete from public.cube_vendor_links_snapshot
     where cube_slug   = old.cube_slug
       and vendor_name = old.vendor_name
@@ -908,8 +919,7 @@ begin
   end if;
 
   return null;
-end;
-$$;
+end;$$;
 
 
 ALTER FUNCTION "public"."save_cube_vendor_links_snapshots"() OWNER TO "postgres";
@@ -1419,7 +1429,7 @@ CREATE TABLE IF NOT EXISTS "public"."brands" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "name" "text" DEFAULT ''::"text" NOT NULL,
-    "added_by_id" "uuid"
+    "added_by_id" "uuid" NOT NULL
 );
 
 
@@ -1566,9 +1576,7 @@ CREATE TABLE IF NOT EXISTS "public"."cube_vendor_links" (
     "available" boolean DEFAULT true NOT NULL,
     "cube_slug" "text" NOT NULL,
     "price" double precision DEFAULT '0'::double precision NOT NULL,
-    "etag" "text",
-    "last_modified" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "streak_unchanged" bigint DEFAULT '0'::bigint NOT NULL
+    "last_modified" timestamp with time zone DEFAULT "now"() NOT NULL
 );
 
 
@@ -2003,7 +2011,7 @@ CREATE OR REPLACE VIEW "public"."v_detailed_cube_models" WITH ("security_invoker
     (EXISTS ( SELECT 1
            FROM "public"."cubes_model_features" "f"
           WHERE (("f"."cube" = "cm"."slug") AND ("f"."feature" = 'wca_legal'::"text")))) AS "wca_legal",
-    (((("cm"."series" || ' '::"text") || "cm"."model") || ' '::"text") || "cm"."version_name") AS "name",
+    TRIM(BOTH FROM ((((COALESCE("cm"."series", ''::"text") || ' '::"text") || COALESCE("cm"."model", ''::"text")) || ' '::"text") || COALESCE("cm"."version_name", ''::"text"))) AS "name",
     (EXTRACT(year FROM "cm"."release_date"))::integer AS "year",
     ( SELECT "count"(*) AS "count"
            FROM "public"."user_cubes" "uc"
@@ -2549,6 +2557,10 @@ CREATE OR REPLACE TRIGGER "trg_create_following_notif" AFTER INSERT ON "public".
 CREATE OR REPLACE TRIGGER "trg_cube_links_snapshot_table_rules" BEFORE UPDATE ON "public"."cube_vendor_links_snapshot" FOR EACH ROW EXECUTE FUNCTION "public"."cube_links_snapshot_table_rules"();
 
 ALTER TABLE "public"."cube_vendor_links_snapshot" DISABLE TRIGGER "trg_cube_links_snapshot_table_rules";
+
+
+
+CREATE OR REPLACE TRIGGER "trg_cube_links_table_rules" BEFORE INSERT OR DELETE OR UPDATE ON "public"."cube_vendor_links" FOR EACH ROW EXECUTE FUNCTION "public"."cube_links_table_rules"();
 
 
 
@@ -3418,6 +3430,12 @@ GRANT ALL ON FUNCTION "public"."cube_links_snapshot_table_rules"() TO "service_r
 
 
 
+GRANT ALL ON FUNCTION "public"."cube_links_table_rules"() TO "anon";
+GRANT ALL ON FUNCTION "public"."cube_links_table_rules"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."cube_links_table_rules"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."cube_models_table_rules"() TO "anon";
 GRANT ALL ON FUNCTION "public"."cube_models_table_rules"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."cube_models_table_rules"() TO "service_role";
@@ -3984,30 +4002,21 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
+  create policy "Everyone can select avatars 1oj01fe_0"
+  on "storage"."objects"
+  as permissive
+  for select
+  to public
+using ((bucket_id = 'avatars'::text));
+
+
+
   create policy "Everyone can select banners 1tghu4n_0"
   on "storage"."objects"
   as permissive
   for select
   to public
 using ((bucket_id = 'banners'::text));
-
-
-
-  create policy "Everyone can select pn4br_0"
-  on "storage"."objects"
-  as permissive
-  for select
-  to public
-using ((bucket_id = 'submissions'::text));
-
-
-
-  create policy "Everyone can upload pn4br_0"
-  on "storage"."objects"
-  as permissive
-  for insert
-  to public
-with check ((bucket_id = 'submissions'::text));
 
 
 
@@ -4018,6 +4027,15 @@ with check ((bucket_id = 'submissions'::text));
   to authenticated
 using (((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)))
 with check (((bucket_id = 'avatars'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)));
+
+
+
+  create policy "Users can upload their avatar 1oj01fe_1"
+  on "storage"."objects"
+  as permissive
+  for insert
+  to authenticated
+with check ((bucket_id = 'avatars'::text));
 
 
 
@@ -4036,15 +4054,6 @@ with check (((bucket_id = 'banners'::text) AND ((storage.foldername(name))[1] = 
   for update
   to authenticated
 using (((bucket_id = 'banners'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)));
-
-
-
-  create policy "Users can upload their avatar"
-  on "storage"."objects"
-  as permissive
-  for insert
-  to authenticated
-with check ((bucket_id = 'avatars'::text));
 
 
 

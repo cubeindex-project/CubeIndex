@@ -23,7 +23,7 @@ export const load: LayoutServerLoad = async ({
         "Error while retrieving profile in layout",
         log,
         err,
-        false
+        false,
       );
       profile = null;
     }

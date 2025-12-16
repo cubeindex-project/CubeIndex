@@ -104,4 +104,3 @@
 {#if profile}
   <MobileBottomNav {profile} />
 {/if}
-

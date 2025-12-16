@@ -12,12 +12,7 @@ export const load = (async ({ setHeaders, parent }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    return clientLogError(
-      "Unable to load achievements",
-      clientLogger,
-      err,
-      true
-    );
+    return clientLogError("Unable to load achievements", clientLogger, err);
   }
 
   let currentUserAchi = [];
@@ -32,8 +27,7 @@ export const load = (async ({ setHeaders, parent }) => {
       return clientLogError(
         "Unable to load awarded achievements",
         clientLogger,
-        cuaErr,
-        true
+        cuaErr
       );
     }
 

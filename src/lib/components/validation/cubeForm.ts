@@ -1,7 +1,7 @@
 import z from "zod/v4";
 
-const releaseDatePattern = /^\d{4}-\d{2}-\d{2}$/;
-const sizePattern =
+export const releaseDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+export const sizePattern =
   /^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$/;
 
 const defaultFeatures = {
@@ -40,10 +40,10 @@ const vendorLinksSchema = z
   .array(
     z.object({
       vendor_name: z.string().trim().min(1, "Vendor name is required"),
-      url: z.string().trim().url("Must be a valid URL"),
+      url: z.url("Must be a valid URL").trim(),
       price: z.coerce.number().min(0, "Price must be >= 0"),
       available: z.coerce.boolean().default(false),
-    })
+    }),
   )
   .default([]);
 
@@ -67,7 +67,7 @@ export const cubeSchema = z
       .refine((val) => releaseDatePattern.test(val), {
         message: "Release date must be YYYY-MM-DD",
       }),
-    imageUrl: z.string().trim().url("Image URL must be valid"),
+    imageUrl: z.url("Image URL must be valid"),
     surfaceFinish: z.string().trim().min(1, "Surface finish is required"),
     weight: z.coerce.number().min(0, "Weight must be >= 0"),
     size: z.coerce

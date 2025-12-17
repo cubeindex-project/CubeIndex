@@ -1,6 +1,7 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { AwardsCategory } from "$lib/components/dbTableTypes";
+import { AWARDS_PARTNERS } from "$lib/content/awardsPartners";
 
 export const load = (async ({ locals: { supabase, log } }) => {
   const now = new Date().toISOString();
@@ -80,5 +81,11 @@ export const load = (async ({ locals: { supabase, log } }) => {
     throw error(500, "Unable to load logo designer profile");
   }
 
-  return { current_event, awards_category, previous_events, logoDesigner };
+  return {
+    current_event,
+    awards_category,
+    previous_events,
+    logoDesigner,
+    partners: AWARDS_PARTNERS,
+  };
 }) satisfies PageServerLoad;

@@ -5,6 +5,7 @@
     AwardsCategory,
     AwardsEvent,
   } from "$lib/components/dbTableTypes.js";
+  import type { AwardsPartner } from "$lib/content/awardsPartners";
   import YoutubeVideoCard from "$lib/components/misc/youtubeVideoCard.svelte";
 
   const { data } = $props();
@@ -12,6 +13,7 @@
   const categories: AwardsCategory[] = data.awards_category ?? [];
   const previousEvents: AwardsEvent[] = data.previous_events ?? [];
   const logoDesigner = data.logoDesigner;
+  const partners: AwardsPartner[] = data.partners ?? [];
 
   const formatDuration = (targetMs: number) => {
     if (!Number.isFinite(targetMs)) {
@@ -57,7 +59,7 @@
     (eventItem) => ({
       event: eventItem,
       range: formatEventRange(eventItem),
-    })
+    }),
   );
 
   type EventPhase = "upcoming" | "live" | "past" | "none";
@@ -104,14 +106,19 @@
     ];
   });
 
-  type Partner = {
-    name: string;
-    emoji: string;
-    description: string;
-    link: { label: string; url: string };
-  };
+  const getPartnerInitials = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return "?";
 
-  const partners: Partner[] = [];
+    const tokens = trimmed.split(/\s+/).filter(Boolean);
+    const initials = tokens
+      .slice(0, 2)
+      .map((token) => token[0]?.toUpperCase())
+      .filter(Boolean)
+      .join("");
+
+    return initials || "?";
+  };
 
   const ui = {
     section: "relative overflow-hidden py-20 px-6",
@@ -134,7 +141,8 @@
     tileCard:
       "group relative overflow-hidden rounded-2xl border bg-base-200/70 p-6 shadow-sm hover:shadow-lg transition",
     partnerCard:
-      "rounded-2xl border border-base-200/80 bg-base-100/70 p-6 flex flex-col gap-3 shadow-sm",
+      "rounded-2xl border border-base-200/80 bg-base-100/70 p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition",
+    partnerGrid: "mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   };
 
   const hasEvent = $derived(Boolean(event));
@@ -200,7 +208,7 @@
         community.
       </p>
       <p class="text-sm text-base-content/70">
-        Curious about how it works?
+        See the release trailer on Youtube.
         <button
           class="link link-primary"
           onclick={() => (showVideo = !showVideo)}
@@ -256,6 +264,69 @@
     </div>
   </div>
 </section>
+
+{#if partners.length > 0}
+  <section class={ui.section}>
+    <div class={ui.container}>
+      <div class="text-center max-w-3xl mx-auto space-y-4">
+        <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
+          <i class="fa-solid fa-handshake text-primary"></i>
+          Partners
+        </p>
+        <h2 class={ui.h2}>Partners</h2>
+        <p class="text-base-content/70">
+          The teams and brands supporting the CubeIndex Awards with coverage,
+          venues, and prizes.
+        </p>
+      </div>
+
+      <div class={ui.partnerGrid}>
+        {#each partners as partner (partner.name)}
+          <article class={ui.partnerCard}>
+            <div class="flex items-start gap-4">
+              <div
+                class="h-14 w-14 shrink-0 rounded-2xl border border-base-200 bg-base-100 grid place-items-center overflow-hidden"
+              >
+                {#if partner.logo}
+                  <img
+                    src={partner.logo.src}
+                    alt={partner.logo.alt}
+                    class="h-10 w-10 object-contain"
+                    loading="lazy"
+                  />
+                {:else}
+                  <span class="text-base font-semibold text-base-content/70">
+                    {getPartnerInitials(partner.name)}
+                  </span>
+                {/if}
+              </div>
+
+              <div class="min-w-0 text-left">
+                <h3 class="text-lg font-bold leading-tight">{partner.name}</h3>
+                <p class="mt-2 text-sm text-base-content/70">
+                  {partner.description}
+                </p>
+              </div>
+            </div>
+
+            {#if partner.url}
+              <a
+                href={partner.url}
+                class="link link-primary inline-flex items-center gap-2"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Learn more
+                <i class="fa-solid fa-arrow-up-right-from-square text-[0.75em]"
+                ></i>
+              </a>
+            {/if}
+          </article>
+        {/each}
+      </div>
+    </div>
+  </section>
+{/if}
 
 {#if categories.length > 0}
   <section id="categories" class={ui.section}>
@@ -328,43 +399,6 @@
               </p>
             {/if}
           </a>
-        {/each}
-      </div>
-    </div>
-  </section>
-{/if}
-
-{#if partners.length > 0}
-  <section class={ui.section}>
-    <div class={ui.container}>
-      <div class="text-center max-w-3xl mx-auto space-y-4">
-        <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
-          <i class="fa-solid fa-handshake text-primary"></i>
-          Partners
-        </p>
-        <h2 class={ui.h2}>Partners</h2>
-        <p class="text-base-content/70">
-          <!-- To change -->
-          These teams provide the cameras, stages, and prizes that make the CubeIndex
-          Awards unforgettable.
-        </p>
-      </div>
-
-      <div class="mt-12 grid gap-6 sm:grid-cols-2">
-        {#each partners as partner (partner.name)}
-          <article class={ui.partnerCard}>
-            <div class="flex items-center gap-3">
-              <span class="text-3xl" aria-hidden="true">{partner.emoji}</span>
-              <h3 class="text-xl font-semibold">{partner.name}</h3>
-            </div>
-            <p class="text-base-content/70">{partner.description}</p>
-            <a
-              href={partner.link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-sm btn-outline w-fit">{partner.link.label}</a
-            >
-          </article>
         {/each}
       </div>
     </div>

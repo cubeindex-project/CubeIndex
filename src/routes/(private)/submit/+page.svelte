@@ -666,7 +666,7 @@
                 >Submit cube</button
               >
               <p class="text-center text-xs text-base-content/60">
-                It make take up to a week for your submission to be approved.
+                It may take up to a week for your submission to be approved.
               </p>
             </div>
 

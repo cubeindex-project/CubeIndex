@@ -401,7 +401,7 @@
 {#if showVideo}
   <YoutubeVideoCard
     title="The CubeIndex Awards Trailer"
-    videoUrl="https://www.youtube.com/embed/tbz_0Cn0I6k?si=c75tAIEP7OCekMUS"
+    videoUrl="https://www.youtube.com/embed/XwcnE7LAbC8?si=1lLuqwX_9qi3O7HG"
     onCancel={() => {
       showVideo = false;
     }}

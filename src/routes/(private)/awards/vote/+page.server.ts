@@ -18,7 +18,7 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
       throw error(500, "Failed to fetch the current event categories");
     }
 
-    awards_category = data;
+    awards_category = data.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   return { awards_category };

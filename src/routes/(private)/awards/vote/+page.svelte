@@ -1,18 +1,16 @@
 <script lang="ts">
   import { SsgoiTransition } from "@ssgoi/svelte";
-  import type {
-    AwardsEvent,
-  } from "$lib/components/dbTableTypes";
+  import type { AwardsEvent } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
   const event: AwardsEvent = data.current_event ?? null;
   const categories = data.awards_category ?? [];
 
   const startTime = $derived.by(() =>
-    event?.start_at ? new Date(event.start_at).getTime() : Number.NaN
+    event?.start_at ? new Date(event.start_at).getTime() : Number.NaN,
   );
   const endTime = $derived.by(() =>
-    event?.end_at ? new Date(event.end_at).getTime() : Number.NaN
+    event?.end_at ? new Date(event.end_at).getTime() : Number.NaN,
   );
 
   type EventPhase = "unknown" | "upcoming" | "live" | "past";
@@ -169,8 +167,8 @@
               </span>
             {/if}
           </div>
-          <div class="grid gap-4 md:grid-cols-2">
-            {#each categories as category}
+          <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            {#each categories as category (category.id)}
               <a
                 class="group rounded-2xl border border-base-200 bg-base-200 p-5 transition hover:border-primary/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/40"
                 href="/awards/vote/{category.slug}"

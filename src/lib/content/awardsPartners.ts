@@ -26,4 +26,13 @@ export const AWARDS_PARTNERS: AwardsPartner[] = [
       alt: "acubemy Logo",
     },
   },
+  {
+    name: "CubingPanda",
+    description: "The friendliest online cubing community",
+    url: "https://discord.gg/VHhYR6nyzs",
+    logo: {
+      src: "/partners-logo/cubingpanda_logo.webp",
+      alt: "CubingPanda Logo",
+    },
+  },
 ];

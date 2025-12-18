@@ -141,7 +141,7 @@
     tileCard:
       "group relative overflow-hidden rounded-2xl border bg-base-200/70 p-6 shadow-sm hover:shadow-lg transition",
     partnerCard:
-      "rounded-2xl border border-base-200/80 bg-base-100/70 p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition",
+      "rounded-2xl border border-base-300 bg-base-200 p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition",
     partnerGrid: "mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   };
 
@@ -274,10 +274,6 @@
           Partners
         </p>
         <h2 class={ui.h2}>Partners</h2>
-        <p class="text-base-content/70">
-          The teams and brands supporting the CubeIndex Awards with coverage,
-          venues, and prizes.
-        </p>
       </div>
 
       <div class={ui.partnerGrid}>
@@ -337,10 +333,6 @@
           Categories
         </p>
         <h2 class={ui.h2}>Nominate Across {categories.length} Categories</h2>
-        <p class="text-base-content/70">
-          Each category balances performance data, community excitement, and
-          storytelling. Explore the criteria before you submit your ballot.
-        </p>
       </div>
 
       <div class="mt-12 grid gap-6 md:grid-cols-2">

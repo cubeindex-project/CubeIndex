@@ -87,7 +87,7 @@ export const GET: RequestHandler = async ({
 
   // Timeout protection
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10_000);
+  const timeout = setTimeout(() => controller.abort(), 15_000);
 
   let res: Response;
   try {

@@ -56,9 +56,24 @@
     };
   });
 
-  const navLinks = [
-    { name: "Achievements", href: "/achievements" },
-    { name: "About", href: "/about" },
+  interface NavLink {
+    name: string;
+    href: string;
+    icon?: string;
+    emphasis?: boolean;
+    pc: boolean;
+  }
+
+  const navLinks: NavLink[] = [
+    { name: "Explore", href: "/explore", icon: "fa-compass", pc: false },
+    {
+      name: "Vote in the Awards",
+      href: "/awards",
+      icon: "fa-award",
+      emphasis: true,
+      pc: true,
+    },
+    { name: "About", href: "/about", icon: "fa-info-circle", pc: true },
   ];
 
   let bellAnimate = $state(false);
@@ -194,7 +209,9 @@
         height="12"
         fetchpriority="high"
       />
-      <span class="font-clash text-3xl font-bold inline-flex items-center gap-2">
+      <span
+        class="font-clash text-3xl font-bold inline-flex items-center gap-2"
+      >
         CubeIndex
       </span>
     </a>
@@ -243,13 +260,20 @@
         </div>
       {/key}
 
-      {#each navLinks as { name, href }}
-        <a
-          {href}
-          class="text-sm text-base-content/80 hover:text-base-content transition px-2 py-1 rounded-md focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
-        >
-          {name}
-        </a>
+      {#each navLinks as link (link.href)}
+          {#if link.pc}
+            <a
+              href={link.href}
+              class={`inline-flex items-center gap-2 text-sm transition px-3 py-1.5 rounded-full focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 ${
+                link.emphasis
+                  ? "bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
+                  : "text-base-content/80 hover:text-base-content"
+              }`}
+            >
+              <i class={`fa-solid ${link.icon} text-xs opacity-80`}></i>
+              <span class="font-medium">{link.name}</span>
+            </a>
+          {/if}
       {/each}
 
       {#if profile}
@@ -265,7 +289,7 @@
           <ul
             class="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 mt-2 shadow-sm"
           >
-            {#each getProfileMenuItems(profile) as item}
+            {#each getProfileMenuItems(profile) as item (item.href)}
               <li>
                 <a
                   href={item.href}
@@ -363,102 +387,48 @@
       aria-label="Mobile navigation"
     >
       <ul class="flex flex-col gap-3">
-        <!-- Explore Disclosure (mobile/touch) -->
-        <li>
-          <details class="group">
-            <summary
-              class="flex items-center justify-between cursor-pointer py-3 text-base border-b border-base-300"
-            >
-              <span class="inline-flex items-center gap-2 text-base-content/90">
-                <i class="fa-solid fa-compass text-sm opacity-80"></i>
-                Explore
-              </span>
-              <i
-                class="fa-solid fa-caret-down group-open:rotate-180 transition-transform"
-              ></i>
-            </summary>
-            <div class="mt-2 pl-2 flex flex-col gap-1.5">
-              <a
-                href="/explore/cubes"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-cube text-xs opacity-80"></i>
-                <span>Cubes</span>
-              </a>
-              <span
-                class="flex items-center gap-2 py-2 text-sm opacity-60 rounded-lg px-2"
-                aria-disabled="true"
-              >
-                <i class="fa-solid fa-toolbox text-xs opacity-60"></i>
-                <span>Accessories (Soon)</span>
-              </span>
-              <a
-                href="/explore/vendors"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-store text-xs opacity-80"></i>
-                <span>Vendors</span>
-              </a>
-              <a
-                href="/explore/users"
-                class="flex items-center gap-2 py-2 text-sm text-base-content/80 hover:text-base-content rounded-lg hover:bg-base-200/60 px-2"
-                onclick={closeMobileMenus}
-              >
-                <i class="fa-solid fa-users text-xs opacity-80"></i>
-                <span>Users</span>
-              </a>
-            </div>
-          </details>
-        </li>
-
-        {#each navLinks as { name, href }}
+        {#each navLinks as link (link.href)}
           <li>
             <a
-              {href}
+              href={link.href}
               class="flex items-center gap-2 py-3 text-base border-b border-base-300 text-base-content/80 hover:text-base-content"
               onclick={closeMobileMenus}
             >
-              <i
-                class="fa-solid {name === 'Achievements'
-                  ? 'fa-trophy'
-                  : 'fa-circle-info'} text-xs opacity-80"
-              ></i>
-              <span>{name}</span>
+              <i class={`fa-solid ${link.icon} text-xs opacity-80`}></i>
+              <span>{link.name}</span>
             </a>
           </li>
         {/each}
 
-        <!-- Notification Bell (Mobile) -->
-        <li class="relative">
-          <a
-            class="flex items-center w-full text-left py-3 text-base-content/80 rounded-lg hover:bg-base-200/60 transition"
-            aria-label="Notifications"
-            href="/notifications"
-            onclick={closeMobileMenus}
-          >
-            <i class="fa-solid fa-bell"></i>
-            <span class="ml-2">Notifications</span>
-          </a>
-          {#if profile && !isEmailVerified}
-            <span
-              class="size-2 rounded-full bg-error animate-ping absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Verify your email"
-            ></span>
-            <span
-              class="size-2 rounded-full bg-error absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Verify your email"
-            ></span>
-          {:else if hasUnread}
-            <span
-              class="size-2 rounded-full bg-info absolute top-1/2 right-2 -translate-y-1/2"
-              aria-label="Unread notifications"
-            ></span>
-          {/if}
-        </li>
-
         {#if profile}
+          <!-- Notification Bell (Mobile) -->
+          <li class="relative">
+            <a
+              class="flex items-center gap-2 py-3 text-base border-b border-base-300 text-base-content/80 hover:text-base-content"
+              aria-label="Notifications"
+              href="/notifications"
+              onclick={closeMobileMenus}
+            >
+              <i class="fa-solid fa-bell"></i>
+              <span class="ml-2">Notifications</span>
+            </a>
+            {#if profile && !isEmailVerified}
+              <span
+                class="size-2 rounded-full bg-error animate-ping absolute top-1/2 right-2 -translate-y-1/2"
+                aria-label="Verify your email"
+              ></span>
+              <span
+                class="size-2 rounded-full bg-error absolute top-1/2 right-2 -translate-y-1/2"
+                aria-label="Verify your email"
+              ></span>
+            {:else if hasUnread}
+              <span
+                class="size-2 rounded-full bg-info absolute top-1/2 right-2 -translate-y-1/2"
+                aria-label="Unread notifications"
+              ></span>
+            {/if}
+          </li>
+
           <li class="relative">
             <button
               onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
@@ -485,7 +455,7 @@
                 class="mt-2 flex flex-col gap-3"
                 transition:blur={{ duration: 250 }}
               >
-                {#each getProfileMenuItems(profile) as item}
+                {#each getProfileMenuItems(profile) as item (item.href)}
                   <li>
                     <a
                       href={item.href}

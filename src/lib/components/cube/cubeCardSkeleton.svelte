@@ -1,22 +1,11 @@
 ﻿<script lang="ts">
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
-  import type { Cube } from "../dbTableTypes";
+  import type { DetailedCube } from "../dbTableTypes";
   import type { Snippet } from "svelte";
 
-  type CubeWithMeta = Cube &
-    Partial<{
-      avg_price: number;
-      popularity: number;
-      wca_legal: boolean;
-      magnetic: boolean;
-      smart: boolean;
-      modded: boolean;
-      stickered: boolean;
-    }>;
-
   interface Props {
-    cube: CubeWithMeta;
+    cube: DetailedCube;
     rating: boolean;
     top?: Snippet<[]>;
     content: Snippet<[]>;
@@ -48,7 +37,7 @@
 </svelte:head>
 
 <div
-  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col z-50"
+  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col h-full z-50"
 >
   {@render top?.()}
   <a href="/explore/cubes/{cube.slug}">

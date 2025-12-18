@@ -46,6 +46,7 @@
   setContext("session", data.session);
 
   import AchievementUnlocked from "$lib/components/misc/achievementUnlocked.svelte";
+  import Banner from "$lib/components/layout/banner.svelte";
 </script>
 
 <svelte:head>
@@ -94,6 +95,8 @@
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Navbar {profile} />
+
+<Banner />
 
 <Toaster />
 <ClientErrorReporter />

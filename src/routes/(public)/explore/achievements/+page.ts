@@ -12,7 +12,11 @@ export const load = (async ({ setHeaders, parent }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    return clientLogError("Unable to load achievements", clientLogger, err);
+    return clientLogError(
+      "Unable to load achievements",
+      clientLogger,
+      err
+    );
   }
 
   let currentUserAchi = [];

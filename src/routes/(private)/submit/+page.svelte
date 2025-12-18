@@ -4,7 +4,6 @@
   import SearchCubes, {
     type SearchCube,
   } from "$lib/components/cube/searchCubes.svelte";
-  import Tag from "$lib/components/misc/tag.svelte";
   import AutofillCard from "$lib/components/submit/autofillCard.svelte";
   import type { AutofillResult } from "../../(api)/api/submit/autocomplete/+server.js";
   import {

@@ -28,6 +28,25 @@
     return filteredVendors.slice(start, end);
   });
 
+  const vendorBuyerCounts = $derived.by(() => {
+    const buyersByVendor = new Map<string, Set<string>>();
+
+    user_cubes.forEach((userCube) => {
+      if (!userCube.bought_from) return;
+
+      const userIdentifier = userCube.user_id ?? userCube.username;
+
+      if (!userIdentifier) return;
+
+      const buyers = buyersByVendor.get(userCube.bought_from) ?? new Set<string>();
+
+      buyers.add(userIdentifier);
+      buyersByVendor.set(userCube.bought_from, buyers);
+    });
+
+    return buyersByVendor;
+  });
+
   // Function to convert ISO country code to flag emoji
   function getFlagEmoji(countryCode: string): string {
     return String.fromCodePoint(
@@ -79,9 +98,9 @@
             {@const stock_count =
               cubesSold.filter((cs) => cs.vendor_name === vendor.name).length ??
               0}
-            {@const cube_bought =
-              user_cubes.filter((uc) => uc.bought_from === vendor.slug)
-                .length ?? 0}
+            {@const buyers =
+              vendorBuyerCounts.get(vendor.slug) ?? new Set<string>()}
+            {@const uniqueBuyerCount = buyers.size}
 
             <!-- Card -->
             <section
@@ -212,7 +231,10 @@
                 <!-- Buyers -->
                 <div class="flex items-center gap-2">
                   <i class="fa-solid fa-user-check" aria-hidden="true"></i>
-                  <span>{cube_bought} user{cube_bought !== 1 ? "s" : ""} purchased here</span>
+                  <span>
+                    {uniqueBuyerCount}
+                    user{uniqueBuyerCount === 1 ? "" : "s"} purchased here
+                  </span>
                 </div>
               </div>
 

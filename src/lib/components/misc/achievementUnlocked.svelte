@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { AchievementRarity } from "$lib/components/dbTableTypes";
+  import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import { supabase } from "$lib/supabaseClient";
   import type { User } from "@supabase/supabase-js";
   import type { Achievements } from "../dbTableTypes";
@@ -10,26 +12,8 @@
   let open = $state(false);
   let achievement: Achievements | null = $state(null);
 
-  // Map rarity to visual styles
-  const rarityBg: Record<string, string> = {
-    Special: "bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600",
-    Mythic: "bg-gradient-to-r from-red-600 to-rose-700",
-    Legendary: "bg-gradient-to-r from-yellow-300 to-yellow-500",
-    Exotic: "bg-gradient-to-r from-teal-400 to-cyan-400",
-    Epic: "bg-gradient-to-r from-purple-600 to-fuchsia-600",
-    Rare: "bg-gradient-to-r from-blue-600 to-indigo-600",
-    Common: "bg-neutral-700",
-  };
-  const rarityDot: Record<string, string> = {
-    Special: "bg-yellow-300",
-    Mythic: "bg-rose-400",
-    Legendary: "bg-yellow-400",
-    Exotic: "bg-teal-300",
-    Epic: "bg-purple-400",
-    Rare: "bg-blue-400",
-    Common: "bg-neutral-400",
-  };
-  const dotFor = (r?: string) => rarityDot[r ?? "Common"] ?? rarityDot.Common;
+  const dotFor = (r?: string) =>
+    getAchievementRarityStyle(r as AchievementRarity).dot;
 
   let closeBtnEl: HTMLButtonElement | null = null;
 

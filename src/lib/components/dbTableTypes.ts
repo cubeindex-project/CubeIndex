@@ -36,11 +36,14 @@ export type DisclaimerPurpose =
 export type UnlockMethod = "Automatic" | "Manual";
 export type BadgeRarity =
   | "Special"
-  | "Legendary"
   | "Mythic"
+  | "Legendary"
+  | "Exotic"
   | "Epic"
   | "Rare"
+  | "Uncommon"
   | "Common";
+export type AchievementRarity = BadgeRarity | "Unknown";
 export type AccessoriesCategories =
   | "Timer"
   | "Mat"

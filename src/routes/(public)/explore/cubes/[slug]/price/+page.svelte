@@ -114,14 +114,14 @@
         text: "In stock",
         icon: "fa-solid fa-circle-check",
         badgeClass:
-          "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+          "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200 whitespace-nowrap",
       };
     }
     return {
       text: "Out of stock",
       icon: "fa-solid fa-circle-xmark",
       badgeClass:
-        "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
+        "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 whitespace-nowrap",
     };
   }
 </script>

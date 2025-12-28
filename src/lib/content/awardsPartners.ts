@@ -20,7 +20,7 @@ export const AWARDS_PARTNERS: AwardsPartner[] = [
   {
     name: "acubemy",
     description: "Level up your cubing",
-    url: "https://acubemy.com/",
+    url: "https://acubemy.com/r/cubeindex",
     logo: {
       src: "/partners-logo/acubemy_logo.svg",
       alt: "acubemy Logo",

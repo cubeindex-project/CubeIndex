@@ -161,16 +161,47 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
-    const form = await superValidate(request, zod4(cubeSchema));
+	const form = await superValidate(request, zod4(cubeSchema));
 
-    const data = form.data;
+	const data = form.data;
 
-    if (!form.valid)
-      return fail(400, {
-        form,
-        message:
-          "There are errors in your submission. Please review the highlighted fields and try again.",
-      });
+	if (!form.valid)
+		return fail(400, {
+			form,
+			message:
+				"There are errors in your submission. Please review the highlighted fields and try again.",
+		});
+
+	const { data: existingCube, error: existingCubeError } = await locals.supabase
+		.from("cube_models")
+		.select("slug")
+		.eq("id", data.id)
+		.single();
+
+	if (existingCubeError) {
+		return logError(
+			500,
+			"Failed to load existing cube details",
+			locals.log,
+			existingCubeError
+		);
+	}
+
+	const previousSlug = existingCube.slug;
+
+	const { data: existingVendorLinks, error: existingVendorError } = await locals.supabase
+		.from("cube_vendor_links")
+		.select("vendor_name")
+		.eq("cube_slug", previousSlug);
+
+	if (existingVendorError) {
+		return logError(
+			500,
+			"Failed to load existing vendor links",
+			locals.log,
+			existingVendorError
+		);
+	}
 
     const slug = slugify(
       `${data.series ? data.series.trim() : ""} ${data.model.trim()} ${
@@ -227,28 +258,30 @@ export const actions: Actions = {
       updated_at: new Date().toISOString(),
     };
 
-    const vendorPayload = data.vendorLinks.map((vendorLink) => ({
-      cube_slug: slug,
-      vendor_name: vendorLink.vendor_name,
-      url: cleanLink(vendorLink.url)?.trim(),
-      available: vendorLink.available,
-      price: vendorLink.price,
-    }));
+	const vendorPayload = data.vendorLinks.map((vendorLink) => ({
+		cube_slug: slug,
+		vendor_name: vendorLink.vendor_name,
+		url: cleanLink(vendorLink.url)?.trim(),
+		available: vendorLink.available,
+		price: vendorLink.price,
+	}));
 
-    const { error: updateErr } = await locals.supabase
-      .from("cube_models")
-      .update(cubePayload)
-      .eq("id", data.id);
+	const vendorNames = vendorPayload.map((vendorLink) => vendorLink.vendor_name);
+
+	const { error: updateErr } = await locals.supabase
+		.from("cube_models")
+		.update(cubePayload)
+		.eq("id", data.id);
 
     if (updateErr) {
       return logError(500, "Failed to update cube information", locals.log, updateErr);
     }
 
-    const { error: upsertVenErr } = await locals.supabase
-      .from("cube_vendor_links")
-      .upsert(vendorPayload);
+	const { error: upsertVenErr } = await locals.supabase
+		.from("cube_vendor_links")
+		.upsert(vendorPayload);
 
-    if (
+	if (
       upsertVenErr?.message ===
       'new row violates row-level security policy for table "cube_vendor_links"'
     ) {
@@ -258,10 +291,49 @@ export const actions: Actions = {
         locals.log,
         upsertVenErr
       );
-    }
-    if (upsertVenErr) {
-      return logError(500, "Failed to update vendor links", locals.log, upsertVenErr);
-    }
+	}
+	if (upsertVenErr) {
+		return logError(500, "Failed to update vendor links", locals.log, upsertVenErr);
+	}
+
+	if (slug === previousSlug) {
+		const existingVendorNames =
+			existingVendorLinks?.map((vendorLink) => vendorLink.vendor_name) ?? [];
+		const namesToDelete = existingVendorNames.filter(
+			(existingName) => !vendorNames.includes(existingName)
+		);
+
+		if (namesToDelete.length) {
+			const { error: deleteVendorError } = await locals.supabase
+				.from("cube_vendor_links")
+				.delete()
+				.eq("cube_slug", slug)
+				.in("vendor_name", namesToDelete);
+
+			if (deleteVendorError) {
+				return logError(
+					500,
+					"Failed to delete removed vendor links",
+					locals.log,
+					deleteVendorError
+				);
+			}
+		}
+	} else {
+		const { error: deleteVendorError } = await locals.supabase
+			.from("cube_vendor_links")
+			.delete()
+			.eq("cube_slug", previousSlug);
+
+		if (deleteVendorError) {
+			return logError(
+				500,
+				"Failed to delete vendor links for old cube slug",
+				locals.log,
+				deleteVendorError
+			);
+		}
+	}
 
     const features = data.features;
 

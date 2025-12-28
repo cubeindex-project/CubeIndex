@@ -14,10 +14,19 @@
     historyByVendor = {} as Record<string, { date: string; price: number }[]>,
   } = $derived(data);
 
+  const cubeDisplayName = $derived(() => {
+    const parts = [
+      cube.series,
+      cube.model,
+      cube.version_type && cube.version_type !== "Base" ? cube.version_name : undefined,
+    ].filter(Boolean);
+
+    const fallback = parts.join(" ").trim() || cube.slug;
+    return cube.name || fallback;
+  });
+
   // Page title
-  const pageTitle = $derived(
-    `${cube.name} - Price Tracking`
-  );
+  const pageTitle = $derived(`${cubeDisplayName} - Price Tracking`);
 
   // Formatting helpers
   const nf = (currency?: string) =>

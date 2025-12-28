@@ -5,8 +5,19 @@
   let { data } = $props();
   let { cube = {} as DetailedCube, user_cube_ratings = [] as any[] } = $derived(data);
 
+  const cubeDisplayName = $derived(() => {
+    const parts = [
+      cube.series,
+      cube.model,
+      cube.version_type && cube.version_type !== "Base" ? cube.version_name : undefined,
+    ].filter(Boolean);
+
+    const fallback = parts.join(" ").trim() || cube.slug;
+    return cube.name || fallback;
+  });
+
   const pageTitle = $derived(
-    `${cube.name} - Ratings`
+    `${cubeDisplayName} - Ratings`
   );
 </script>
 

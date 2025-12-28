@@ -1,20 +1,25 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { getContext, onMount, tick } from "svelte";
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
+  import type { User } from "@supabase/supabase-js";
 
   let { profile } = $props();
 
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
+  let mobileUserMenuOpen = $state(false);
+  let mobileUserMenuRef = $state<HTMLDivElement | null>(null);
+  let mobileAvatarButton = $state<HTMLButtonElement | null>(null);
+  const user = getContext<User | null>("user");
 
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {
     isOpen = false;
-    mobileProfileDropdown = false;
+    mobileUserMenuOpen = false;
   }
 
   let hasUnread = $state(false);
@@ -76,6 +81,15 @@
     { name: "About", href: "/about", icon: "fa-info-circle", pc: true },
   ];
 
+  const userDisplayName = $derived(profile?.display_name?.trim() ?? "");
+  const primaryUserLabel = $derived(userDisplayName || user?.email || "User");
+  const secondaryUserLabel = $derived(
+    userDisplayName && user?.email && user.email !== userDisplayName
+      ? user.email
+      : "",
+  );
+  const avatarInitial = $derived(primaryUserLabel.charAt(0).toUpperCase());
+
   let bellAnimate = $state(false);
   $effect(() => {
     if (bellAnimate) {
@@ -133,11 +147,9 @@
   }
 
   const desktopLinkBase = "block px-4 py-2 text-sm";
-  const mobileLinkBase = "block py-2 text-sm border-b border-base-300";
 
   onMount(() => themeChange(false));
 
-  let mobileProfileDropdown = $state(false);
   // Desktop Explore open/close management with small delay for usability
   let exploreOpen = $state(false);
   let exploreCloseTimer: ReturnType<typeof setTimeout> | null = null;
@@ -186,6 +198,76 @@
     if (exploreCloseTimer) clearTimeout(exploreCloseTimer);
     exploreCloseTimer = setTimeout(() => (exploreOpen = false), delay);
   }
+
+  const mobileMenuFocusableSelectors =
+    'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  async function focusFirstMobileMenuItem() {
+    await tick();
+    const firstAction =
+      mobileUserMenuRef?.querySelector<HTMLElement>("[data-menu-focus-target]");
+    if (firstAction) {
+      firstAction.focus();
+      return;
+    }
+    const fallback =
+      mobileUserMenuRef?.querySelector<HTMLElement>(mobileMenuFocusableSelectors);
+    fallback?.focus();
+  }
+
+  $effect(() => {
+    if (!mobileUserMenuOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (
+        (target && mobileUserMenuRef?.contains(target)) ||
+        (target && mobileAvatarButton?.contains(target))
+      ) {
+        return;
+      }
+      mobileUserMenuOpen = false;
+    };
+
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        mobileUserMenuOpen = false;
+        queueMicrotask(() => mobileAvatarButton?.focus());
+        return;
+      }
+
+      if (event.key === "Tab" && mobileUserMenuRef) {
+        const focusable = Array.from(
+          mobileUserMenuRef.querySelectorAll<HTMLElement>(
+            mobileMenuFocusableSelectors,
+          ),
+        );
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+
+        if (event.shiftKey && active === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    focusFirstMobileMenuItem();
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  });
 </script>
 
 <header
@@ -216,8 +298,9 @@
       </span>
     </a>
 
-    <!-- Desktop Nav -->
-    <nav class="hidden items-center gap-6 md:flex">
+    <div class="flex items-center gap-3">
+      <!-- Desktop Nav -->
+      <nav class="hidden items-center gap-6 md:flex">
       <!-- Explore Dropdown (hover) -->
       {#key "explore-desktop"}
         <div
@@ -353,20 +436,111 @@
           Login
         </a>
       {/if}
-    </nav>
+      </nav>
 
-    <!-- Mobile Menu Button -->
-    <button
-      class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen
-        ? 'swap-active'
-        : ''}"
-      aria-label={isOpen ? "Close menu" : "Open menu"}
-      aria-expanded={isOpen}
-      onclick={() => (isOpen = !isOpen)}
-    >
-      <i class="fa-solid fa-bars swap-off"></i>
-      <i class="fa-solid fa-xmark swap-on"></i>
-    </button>
+      {#if profile}
+        <div class="relative md:hidden">
+          <button
+            type="button"
+            class="btn btn-ghost btn-circle size-12 overflow-hidden border border-base-300"
+            aria-haspopup="menu"
+            aria-expanded={mobileUserMenuOpen}
+            aria-controls="mobile-user-menu"
+            aria-label="User menu"
+            bind:this={mobileAvatarButton}
+            onclick={() => {
+              mobileUserMenuOpen = !mobileUserMenuOpen;
+              isOpen = false;
+            }}
+          >
+            {#if profile.profile_picture}
+              <img
+                src={profile.profile_picture}
+                alt="User avatar"
+                class="size-full object-cover"
+                loading="eager"
+              />
+            {:else}
+              <div class="avatar placeholder">
+                <div class="bg-base-300 text-base-content size-full rounded-full">
+                  <span class="text-sm font-semibold">{avatarInitial}</span>
+                </div>
+              </div>
+            {/if}
+          </button>
+
+          {#if mobileUserMenuOpen}
+            <div
+              class="absolute right-0 mt-3 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg"
+              role="menu"
+              aria-label="User menu"
+              id="mobile-user-menu"
+              bind:this={mobileUserMenuRef}
+              tabindex="-1"
+            >
+              <div class="px-4 py-3 border-b border-base-300">
+                <p class="text-sm font-semibold leading-tight">
+                  {primaryUserLabel}
+                </p>
+                {#if secondaryUserLabel}
+                  <p class="text-xs text-base-content/70 mt-1">
+                    {secondaryUserLabel}
+                  </p>
+                {/if}
+              </div>
+              <div class="flex flex-col px-2 py-1">
+                <a
+                  href="/user/settings"
+                  class="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
+                  data-menu-focus-target
+                  onclick={() => (mobileUserMenuOpen = false)}
+                >
+                  <span>Settings</span>
+                  <i class="fa-solid fa-gear text-xs opacity-70"></i>
+                </a>
+                {#if profile.role !== "User"}
+                  <a
+                    href="/staff/dashboard"
+                    class="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
+                    onclick={() => (mobileUserMenuOpen = false)}
+                  >
+                    <span>Staff dashboard</span>
+                    <i class="fa-solid fa-gauge-high text-xs opacity-70"></i>
+                  </a>
+                {/if}
+                <button
+                  type="button"
+                  class="flex items-center justify-between rounded-xl px-3 py-2 text-sm text-error hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
+                  onclick={() => {
+                    signOutConfirmation = true;
+                    mobileUserMenuOpen = false;
+                  }}
+                >
+                  <span>Log out</span>
+                  <i class="fa-solid fa-arrow-right-from-bracket text-xs opacity-70"></i>
+                </button>
+              </div>
+            </div>
+          {/if}
+        </div>
+      {/if}
+
+      <!-- Mobile Menu Button -->
+      <button
+        class="btn btn-square btn-ghost md:hidden swap swap-rotate text-2xl {isOpen
+          ? 'swap-active'
+          : ''}"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
+        onclick={() => {
+          isOpen = !isOpen;
+          mobileUserMenuOpen = false;
+        }}
+      >
+        <i class="fa-solid fa-bars swap-off"></i>
+        <i class="fa-solid fa-xmark swap-on"></i>
+      </button>
+    </div>
   </div>
 
   <!-- Mobile overlay (click to close) -->
@@ -428,74 +602,12 @@
               ></span>
             {/if}
           </li>
-
-          <li class="relative">
-            <button
-              onclick={() => (mobileProfileDropdown = !mobileProfileDropdown)}
-              class="btn btn-primary btn-sm w-full inline-flex items-center justify-between"
-            >
-              <span class="inline-flex items-center gap-2">
-                {profile.display_name}
-              </span>
-              <label class="swap swap-rotate">
-                <input
-                  type="checkbox"
-                  bind:checked={mobileProfileDropdown}
-                  hidden
-                  disabled
-                />
-
-                <i class="fa-solid swap-on fa-caret-up"></i>
-
-                <i class="fa-solid swap-off fa-caret-down"></i>
-              </label>
-            </button>
-            {#if mobileProfileDropdown}
-              <ul
-                class="mt-2 flex flex-col gap-3"
-                transition:blur={{ duration: 250 }}
-              >
-                {#each getProfileMenuItems(profile) as item (item.href)}
-                  <li>
-                    <a
-                      href={item.href}
-                      onclick={() => {
-                        isOpen = false;
-                        mobileProfileDropdown = false;
-                      }}
-                      class={`${mobileLinkBase} ${item.tag ? "flex justify-between" : ""}`}
-                    >
-                      {item.label}
-                      {#if item.tag}
-                        <Tag
-                          label={item.tag.label}
-                          gradient={item.tag.gradient}
-                        />
-                      {/if}
-                    </a>
-                  </li>
-                {/each}
-                <li>
-                  <button
-                    onclick={() => {
-                      signOutConfirmation = true;
-                      closeMobileMenus();
-                    }}
-                    class="py-2 text-sm border-b border-base-300 w-full justify-start flex"
-                  >
-                    Sign Out
-                  </button>
-                </li>
-              </ul>
-            {/if}
-          </li>
         {:else}
           <li>
             <a
               href="/auth/login"
               onclick={() => {
                 isOpen = false;
-                mobileProfileDropdown = false;
               }}
               class="btn btn-primary btn-sm w-full"
             >

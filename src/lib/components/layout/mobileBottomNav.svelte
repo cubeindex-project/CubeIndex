@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import type { Profiles } from "../dbTableTypes";
 
-  let { profile }: { profile: Profiles } = $props();
+  let { profile }: { profile: Profiles | null } = $props();
 
   const pathname = $derived(page.url.pathname);
   const isEmailVerified = $derived(profile?.verified ?? false);
@@ -92,12 +92,23 @@
     <span class="dock-label">Notifications</span>
   </a>
 
-  <a
-    class:dock-active={isActive(`/user/${profile.username}`)}
-    href="/user/{profile.username}"
-    aria-label="Profile"
-  >
-    <i class="fa-solid fa-user"></i>
-    <span class="dock-label">Profile</span>
-  </a>
+  {#if profile}
+    <a
+      class:dock-active={isActive(`/user/${profile.username}`)}
+      href={`/user/${profile.username}`}
+      aria-label="Profile"
+    >
+      <i class="fa-solid fa-user"></i>
+      <span class="dock-label">Profile</span>
+    </a>
+  {:else}
+    <a
+      class:dock-active={isActive("/auth/login")}
+      href="/auth/login"
+      aria-label="Login"
+    >
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span class="dock-label">Login</span>
+    </a>
+  {/if}
 </nav>

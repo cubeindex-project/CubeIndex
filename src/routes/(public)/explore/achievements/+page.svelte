@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
@@ -199,8 +197,6 @@
     </button>
   </div>
 {/snippet}
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-20 md:py-24">
     <div class="max-w-7xl mx-auto">
       <header class="mb-10 text-center">
@@ -550,4 +546,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

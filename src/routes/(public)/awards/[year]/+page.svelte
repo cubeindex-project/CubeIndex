@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import type { PageProps } from "./$types";
 
   type EventPhase = "upcoming" | "live" | "past" | "unknown";
@@ -53,8 +51,6 @@
 <svelte:head>
   <title>{event.title} Results - CubeIndex Awards</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="relative isolate overflow-hidden bg-base-100">
     <div aria-hidden="true" class="absolute inset-0">
       <div
@@ -244,4 +240,3 @@
       </section>
     </div>
   </section>
-</SsgoiTransition>

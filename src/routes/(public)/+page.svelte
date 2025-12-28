@@ -1,8 +1,6 @@
 <script lang="ts">
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { onMount } from "svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import FeatureSection from "$lib/components/marketing/FeatureSection.svelte";
   import { inView } from "$lib/actions/inView.js";
 
@@ -193,8 +191,6 @@
 <svelte:head>
   <title>CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <!-- HERO -->
   <section class="relative overflow-hidden {ui.section} bg-base-100">
     <div aria-hidden="true" class="absolute inset-0">
@@ -639,4 +635,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

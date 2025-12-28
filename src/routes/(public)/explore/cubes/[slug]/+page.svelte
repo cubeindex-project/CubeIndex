@@ -23,6 +23,29 @@
   const presentFeatures = $derived.by(() =>
     allFeatureBadges.filter((b) => features.includes(b.key))
   );
+
+  const missingFields = $derived.by(() => {
+    const missing: string[] = [];
+    const trackIfMissing = (value: unknown, label: string) => {
+      if (
+        value === null ||
+        value === undefined ||
+        (typeof value === "string" && value.trim() === "")
+      ) {
+        missing.push(label);
+      }
+    };
+
+    trackIfMissing(cube.brand, "Brand");
+    trackIfMissing(cube.type, "Type");
+    trackIfMissing(cube.release_date, "Release date");
+    trackIfMissing(cube.weight, "Weight");
+    trackIfMissing(cube.size, "Size");
+    trackIfMissing(cube.surface_finish, "Surface finish");
+    trackIfMissing(cube.image_url, "Image");
+
+    return missing;
+  });
 </script>
 
 <svelte:head>
@@ -40,6 +63,24 @@
 </svelte:head>
 
 <section class="space-y-6">
+  {#if missingFields.length > 0}
+    <div
+      class="alert alert-warning bg-warning/10 border border-warning text-warning-content"
+      role="status"
+      aria-live="polite"
+    >
+      <i class="fa-solid fa-circle-exclamation text-warning"></i>
+      <div>
+        <p class="font-semibold">Some cube details are missing</p>
+        <p class="text-sm opacity-80">
+          Missing:
+          {missingFields.join(", ")}. Have these details? Let us know so we can
+          fill them in.
+        </p>
+      </div>
+    </div>
+  {/if}
+
   <!-- Overview / Description -->
   <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
     <h2 class="text-base font-semibold opacity-70 mb-2">About</h2>

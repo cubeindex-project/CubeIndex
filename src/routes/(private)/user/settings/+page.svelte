@@ -51,11 +51,15 @@
   const params = queryParameters();
 
   // Tabs: 'profile' | 'social' | 'security'
-  let tab: "profile" | "social" | "security" | "appearance" = $derived(
-    $params.tab ?? "profile"
-  );
+  let tab: "profile" | "social" | "security" | "appearance" | "about" =
+    $derived($params.tab ?? "profile");
 
-  type TabId = "profile" | "social" | "security" | "appearance";
+  type TabId =
+    | "profile"
+    | "social"
+    | "security"
+    | "appearance"
+    | "about";
   type TabItem = { id: TabId; label: string; icon: string };
 
   const tabs: TabItem[] = [
@@ -63,6 +67,7 @@
     { id: "social", label: "Social Links", icon: "fa-solid fa-globe" },
     { id: "security", label: "Security", icon: "fa-solid fa-lock" },
     { id: "appearance", label: "Appearance", icon: "fa-solid fa-palette" },
+    { id: "about", label: "About", icon: "fa-solid fa-circle-info" },
   ];
 
   // Avatar preview state
@@ -776,7 +781,7 @@
                   </div>
                 </form>
               </div>
-            {:else}
+            {:else if tab === "appearance"}
               <div class="card bg-base-100 shadow-sm">
                 <div class="card-body space-y-6">
                   <div class="flex items-center justify-between">
@@ -891,6 +896,135 @@
                           </div>
                         </label>
                       {/each}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {:else}
+              <div class="card bg-base-100 shadow-sm">
+                <div class="card-body space-y-6">
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="btn btn-ghost btn-circle btn-sm text-primary bg-primary/10"
+                        aria-hidden="true"
+                      >
+                        <i class="fa-solid fa-cube"></i>
+                      </div>
+                      <div>
+                        <h2 class="card-title">About CubeIndex</h2>
+                        <p class="text-sm opacity-70">
+                          CubeIndex is open source and released under the
+                          Apache License 2.0. You can review the codebase, open
+                          issues, or contribute improvements on GitHub.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="rounded-2xl bg-base-200/60 p-4 border border-base-300 space-y-3">
+                      <div class="flex items-center gap-2 text-primary font-semibold">
+                        <i class="fa-solid fa-code-branch"></i>
+                        <span>Open source</span>
+                      </div>
+                      <div class="space-y-2 text-sm opacity-80">
+                        <p>
+                          CubeIndex is licensed under the Apache License 2.0
+                          and welcomes community contributions.
+                        </p>
+                        <p class="flex items-start gap-2">
+                          <i class="fa-brands fa-github mt-0.5 text-base-content/70"></i>
+                          <span>
+                            View the code, star the project, or file issues on
+                            <a
+                              class="link link-primary"
+                              href="https://github.com/cubeindex-project/CubeIndex"
+                              target="_blank"
+                              rel="noreferrer"
+                              >GitHub</a
+                            >.
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-base-200/60 p-4 border border-base-300 space-y-3">
+                      <div class="flex items-center gap-2 text-primary font-semibold">
+                        <i class="fa-solid fa-shield-heart"></i>
+                        <span>Privacy & support</span>
+                      </div>
+                      <div class="space-y-2 text-sm opacity-80">
+                        <p>
+                          You control who sees your profile. Set it to private
+                          anytime from the Profile tab to keep your information
+                          visible only to you.
+                        </p>
+                        <p class="flex items-start gap-2">
+                          <i class="fa-solid fa-envelope mt-0.5 text-base-content/70"></i>
+                          <span
+                            >Need help or spotted an issue? Reach out at
+                            <a
+                              class="link link-primary"
+                              href="mailto:support@cubeindex.com"
+                              >support@cubeindex.com</a
+                            >.</span
+                          >
+                        </p>
+                        <p>
+                          We regularly update CubeIndex to improve stability,
+                          performance, and accessibility for every cuber.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-base-200/60 p-4 border border-base-300 space-y-3">
+                      <div class="flex items-center gap-2 text-primary font-semibold">
+                        <i class="fa-solid fa-link"></i>
+                        <span>Helpful links</span>
+                      </div>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm opacity-80">
+                        <div class="space-y-1">
+                          <a class="link link-primary" href="/">Home</a>
+                          <a class="link link-primary" href="/explore">Explore</a>
+                          <a class="link link-primary" href="/achievements">Achievements</a>
+                          <a class="link link-primary" href="/report">Report</a>
+                          <a
+                            class="link link-primary"
+                            href="/discord"
+                            rel="noreferrer"
+                            target="_blank"
+                            >Discord</a
+                          >
+                        </div>
+                        <div class="space-y-1">
+                          <a
+                            class="link link-primary"
+                            href="https://github.com/cubeindex-project/CubeIndex"
+                            rel="noreferrer"
+                            target="_blank"
+                            >GitHub</a
+                          >
+                          <a
+                            class="link link-primary"
+                            href="https://twitter.com/thecubeindex"
+                            rel="noreferrer"
+                            target="_blank"
+                            >Twitter</a
+                          >
+                          <a
+                            class="link link-primary"
+                            href="https://www.youtube.com/@cubeindex"
+                            rel="noreferrer"
+                            target="_blank"
+                            >Youtube</a
+                          >
+                          <a class="link link-primary" href="mailto:thecubeindex@gmail.com">Email</a>
+                          <a class="link link-primary" href="/tos">Terms of Service</a>
+                          <a class="link link-primary" href="/privacy">Privacy Policy</a>
+                          <a class="link link-primary" href="/sitemap.xml">Sitemap</a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -116,6 +116,9 @@ export interface UserCubes {
   /** Shop the user bought the cube from */
   bought_from: string | null;
 
+  /** Price paid by the user when purchasing the cube */
+  purchase_price: number | null;
+
   /** Optional notes, defaults to empty string */
   notes: string | null;
 

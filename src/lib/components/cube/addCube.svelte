@@ -29,6 +29,7 @@
       bought_from: null,
       notes: "",
       acquired_at: "",
+      purchase_price: null as number | null,
     },
   } = $props();
 
@@ -49,6 +50,12 @@
   let bought_from = $state(defaultData.bought_from || null);
   let notes = $state(defaultData.notes);
   let acquired_at = $state(defaultData.acquired_at);
+  let purchase_price = $state<number | null>(
+    defaultData.purchase_price === null ||
+      defaultData.purchase_price === undefined
+      ? null
+      : Number(defaultData.purchase_price)
+  );
 
   // sensible defaults
   $effect(() => {
@@ -68,6 +75,12 @@
     if (!condition) return "Please choose a condition.";
     if (!quantity || quantity < 1 || quantity > 999)
       return "Quantity must be between 1 and 999.";
+    if (purchase_price !== null) {
+      if (!Number.isFinite(purchase_price) || purchase_price < 0)
+        return "Price must be a valid number greater than or equal to 0.";
+      if (purchase_price > 100000)
+        return "Price seems too high. Please double-check.";
+    }
     if (acquired_at) {
       const today = new Date().toISOString().slice(0, 10);
       if (acquired_at > today) return "Acquired date cannot be in the future.";
@@ -153,6 +166,7 @@
       bought_from,
       notes,
       acquired_at,
+      purchase_price,
     };
 
     try {
@@ -353,6 +367,27 @@
                 <option value={vendor.slug}>{vendor.name}</option>
               {/each}
             </select>
+          </label>
+
+          <label class="form-control">
+            <div class="label">
+              <span class="label-text">Purchase Price</span>
+              <span class="label-text-alt opacity-70">Optional</span>
+            </div>
+            <label class="input input-bordered flex items-center gap-2 rounded-xl">
+              <span aria-hidden="true">$</span>
+              <input
+                type="number"
+                name="purchase_price"
+                bind:value={purchase_price}
+                class="grow"
+                min="0"
+                max="100000"
+                step="0.01"
+                placeholder="0.00"
+                inputmode="decimal"
+              />
+            </label>
           </label>
 
           <!-- Notes (full width on md) -->

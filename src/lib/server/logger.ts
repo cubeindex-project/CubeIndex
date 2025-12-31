@@ -1,10 +1,12 @@
-import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
+import { NODE_ENV } from "$env/static/private";
+import { env } from "$env/dynamic/private";
 import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
 
 const isProduction =
   (NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() === "production";
 
-const level = LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
+const level =
+  env.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
 
 const baseBindings: Record<string, string> = { app: "cubeindex" };
 const currentEnv = NODE_ENV ?? process.env.NODE_ENV;

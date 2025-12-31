@@ -25,12 +25,36 @@
 
 	type ChartCtor = typeof import("chart.js/auto").default;
 	let ChartClass: ChartCtor | null = $state(null);
-	let chartRefs: Record<string, HTMLCanvasElement | null> = $state({});
+	let chartRefs: {
+		brands: HTMLCanvasElement | null;
+		stores: HTMLCanvasElement | null;
+		types: HTMLCanvasElement | null;
+		conditions: HTMLCanvasElement | null;
+		valueBrand: HTMLCanvasElement | null;
+		valueType: HTMLCanvasElement | null;
+		valueStore: HTMLCanvasElement | null;
+		rated: HTMLCanvasElement | null;
+		monthlyCounts: HTMLCanvasElement | null;
+		monthlySpend: HTMLCanvasElement | null;
+		cumulativeSpend: HTMLCanvasElement | null;
+		ratingBrand: HTMLCanvasElement | null;
+		ratingType: HTMLCanvasElement | null;
+	} = $state({
+		brands: null,
+		stores: null,
+		types: null,
+		conditions: null,
+		valueBrand: null,
+		valueType: null,
+		valueStore: null,
+		rated: null,
+		monthlyCounts: null,
+		monthlySpend: null,
+		cumulativeSpend: null,
+		ratingBrand: null,
+		ratingType: null,
+	});
 	let chartInstances: Record<string, any> = $state({});
-
-	const setCanvas = (key: string) => (el: HTMLCanvasElement | null) => {
-		chartRefs = { ...chartRefs, [key]: el };
-	};
 
 	onMount(async () => {
 		const mod = await import("chart.js/auto");
@@ -66,7 +90,7 @@
 		return minorTotal > 0 ? [...major, { label: "Other", value: minorTotal }] : major;
 	}
 
-	function renderPie(id: string, series: PieDatum[]) {
+	function renderPie(id: keyof typeof chartRefs, series: PieDatum[]) {
 		if (!ChartClass) return;
 		const ctx = chartRefs[id];
 		if (!ctx) return;
@@ -91,7 +115,7 @@
 		});
 	}
 
-	function renderLine(id: string, series: LineDatum[], label: string) {
+	function renderLine(id: keyof typeof chartRefs, series: LineDatum[], label: string) {
 		if (!ChartClass) return;
 		const ctx = chartRefs[id];
 		if (!ctx) return;
@@ -121,7 +145,7 @@
 		});
 	}
 
-	function renderBar(id: string, series: { label: string; value: number }[], title: string) {
+	function renderBar(id: keyof typeof chartRefs, series: { label: string; value: number }[], title: string) {
 		if (!ChartClass) return;
 		const ctx = chartRefs[id];
 		if (!ctx) return;
@@ -166,15 +190,15 @@
 			groupSmallSlices(buildPieSeries(stats.condition_counts ?? [], "condition"))
 		);
 		renderPie(
-			"value-brand",
+			"valueBrand",
 			groupSmallSlices(buildPieSeries(stats.value_by_brand ?? [], "brand"))
 		);
 		renderPie(
-			"value-type",
+			"valueType",
 			groupSmallSlices(buildPieSeries(stats.value_by_type ?? [], "cube_type"))
 		);
 		renderPie(
-			"value-store",
+			"valueStore",
 			groupSmallSlices(buildPieSeries(stats.value_by_store ?? [], "store_name"))
 		);
 		renderPie(
@@ -185,22 +209,22 @@
 			]
 		);
 		renderLine(
-			"monthly-counts",
+			"monthlyCounts",
 			buildLineSeries(stats.monthly_counts ?? []),
 			"Cubes"
 		);
 		renderLine(
-			"monthly-spend",
+			"monthlySpend",
 			buildLineSeries(stats.monthly_spend ?? []),
 			"Spend"
 		);
 		renderLine(
-			"cumulative-spend",
+			"cumulativeSpend",
 			buildLineSeries(stats.cumulative_spend ?? []),
 			"Cumulative"
 		);
 		renderBar(
-			"rating-brand",
+			"ratingBrand",
 			(stats.avg_rating_by_brand ?? []).map((b) => ({
 				label: b.brand ?? "Unknown",
 				value: b.avg_rating ?? 0,
@@ -208,7 +232,7 @@
 			"Average rating"
 		);
 		renderBar(
-			"rating-type",
+			"ratingType",
 			(stats.avg_rating_by_type ?? []).map((t) => ({
 				label: t.cube_type ?? "Unknown",
 				value: t.avg_rating ?? 0,
@@ -291,9 +315,9 @@
 
 		<section class="grid gap-6 lg:grid-cols-3">
 			<article class="card bg-base-200 shadow-sm" aria-label="Cubes per brand">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Cubes per brand</h2>
-					<canvas bind:this={setCanvas("brands")}></canvas>
+					<div class="card-body">
+						<h2 class="card-title text-lg">Cubes per brand</h2>
+					<canvas bind:this={chartRefs.brands}></canvas>
 					<ul class="text-sm space-y-1">
 						{#each stats.brand_counts ?? [] as b}
 							<li class="flex justify-between"><span>{b.brand ?? "Unknown"}</span><span>{b.count}</span></li>
@@ -302,9 +326,9 @@
 				</div>
 			</article>
 			<article class="card bg-base-200 shadow-sm" aria-label="Stores most used">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Stores</h2>
-					<canvas bind:this={setCanvas("stores")}></canvas>
+					<div class="card-body">
+						<h2 class="card-title text-lg">Stores</h2>
+					<canvas bind:this={chartRefs.stores}></canvas>
 					<ul class="text-sm space-y-1">
 						{#each stats.store_counts ?? [] as s}
 							<li class="flex justify-between"><span>{s.store_name ?? "Unknown"}</span><span>{s.count}</span></li>
@@ -313,9 +337,9 @@
 				</div>
 			</article>
 			<article class="card bg-base-200 shadow-sm" aria-label="Cubes by type">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Types</h2>
-					<canvas bind:this={setCanvas("types")}></canvas>
+					<div class="card-body">
+						<h2 class="card-title text-lg">Types</h2>
+					<canvas bind:this={chartRefs.types}></canvas>
 					<ul class="text-sm space-y-1">
 						{#each stats.type_counts ?? [] as t}
 							<li class="flex justify-between"><span>{t.cube_type ?? "Unknown"}</span><span>{t.count}</span></li>
@@ -327,15 +351,15 @@
 
 		<section class="grid gap-6 lg:grid-cols-2">
 			<article class="card bg-base-200 shadow-sm" aria-label="Cubes added over time">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Cubes over time</h2>
-					<canvas bind:this={setCanvas("monthly-counts")}></canvas>
-				</div>
-			</article>
-			<article class="card bg-base-200 shadow-sm" aria-label="Condition breakdown">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Condition</h2>
-					<canvas bind:this={setCanvas("conditions")}></canvas>
+					<div class="card-body">
+						<h2 class="card-title text-lg">Cubes over time</h2>
+					<canvas bind:this={chartRefs.monthlyCounts}></canvas>
+					</div>
+				</article>
+				<article class="card bg-base-200 shadow-sm" aria-label="Condition breakdown">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Condition</h2>
+					<canvas bind:this={chartRefs.conditions}></canvas>
 					<ul class="text-sm space-y-1">
 						{#each stats.condition_counts ?? [] as c}
 							<li class="flex justify-between"><span>{c.condition ?? "Unknown"}</span><span>{c.count}</span></li>
@@ -347,29 +371,29 @@
 
 		<section class="grid gap-6 lg:grid-cols-2">
 			<article class="card bg-base-200 shadow-sm" aria-label="Collection value by brand">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Value by brand</h2>
-					<canvas bind:this={setCanvas("value-brand")}></canvas>
-				</div>
-			</article>
-			<article class="card bg-base-200 shadow-sm" aria-label="Value by type">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Value by type</h2>
-					<canvas bind:this={setCanvas("value-type")}></canvas>
-				</div>
-			</article>
-		</section>
+					<div class="card-body">
+						<h2 class="card-title text-lg">Value by brand</h2>
+					<canvas bind:this={chartRefs.valueBrand}></canvas>
+					</div>
+				</article>
+				<article class="card bg-base-200 shadow-sm" aria-label="Value by type">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Value by type</h2>
+					<canvas bind:this={chartRefs.valueType}></canvas>
+					</div>
+				</article>
+			</section>
 
-		<section class="grid gap-6 lg:grid-cols-2">
-			<article class="card bg-base-200 shadow-sm" aria-label="Value by store">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Value by store</h2>
-					<canvas bind:this={setCanvas("value-store")}></canvas>
-				</div>
-			</article>
-			<article class="card bg-base-200 shadow-sm" aria-label="Ratings distribution">
-				<div class="card-body space-y-3">
-					<h2 class="card-title text-lg">Ratings distribution</h2>
+			<section class="grid gap-6 lg:grid-cols-2">
+				<article class="card bg-base-200 shadow-sm" aria-label="Value by store">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Value by store</h2>
+					<canvas bind:this={chartRefs.valueStore}></canvas>
+					</div>
+				</article>
+				<article class="card bg-base-200 shadow-sm" aria-label="Ratings distribution">
+					<div class="card-body space-y-3">
+						<h2 class="card-title text-lg">Ratings distribution</h2>
 					<div class="grid grid-cols-6 gap-2 text-xs">
 						{#each histogramBins as bin}
 							<div class="space-y-1">
@@ -384,40 +408,40 @@
 							<div class="text-center">Unrated</div>
 						</div>
 					</div>
-					<canvas bind:this={setCanvas("rated")}></canvas>
-				</div>
-			</article>
-		</section>
+					<canvas bind:this={chartRefs.rated}></canvas>
+					</div>
+				</article>
+			</section>
 
-		<section class="grid gap-6 lg:grid-cols-2">
-			<article class="card bg-base-200 shadow-sm" aria-label="Monthly spend">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Monthly spend</h2>
-					<canvas bind:this={setCanvas("monthly-spend")}></canvas>
-				</div>
-			</article>
-			<article class="card bg-base-200 shadow-sm" aria-label="Cumulative spend">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Cumulative spend</h2>
-					<canvas bind:this={setCanvas("cumulative-spend")}></canvas>
-				</div>
-			</article>
-		</section>
+			<section class="grid gap-6 lg:grid-cols-2">
+				<article class="card bg-base-200 shadow-sm" aria-label="Monthly spend">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Monthly spend</h2>
+					<canvas bind:this={chartRefs.monthlySpend}></canvas>
+					</div>
+				</article>
+				<article class="card bg-base-200 shadow-sm" aria-label="Cumulative spend">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Cumulative spend</h2>
+					<canvas bind:this={chartRefs.cumulativeSpend}></canvas>
+					</div>
+				</article>
+			</section>
 
-		<section class="grid gap-6 lg:grid-cols-2">
-			<article class="card bg-base-200 shadow-sm" aria-label="Average rating by brand">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Average rating by brand</h2>
-					<canvas bind:this={setCanvas("rating-brand")}></canvas>
-				</div>
-			</article>
-			<article class="card bg-base-200 shadow-sm" aria-label="Average rating by cube type">
-				<div class="card-body">
-					<h2 class="card-title text-lg">Average rating by type</h2>
-					<canvas bind:this={setCanvas("rating-type")}></canvas>
-				</div>
-			</article>
-		</section>
+			<section class="grid gap-6 lg:grid-cols-2">
+				<article class="card bg-base-200 shadow-sm" aria-label="Average rating by brand">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Average rating by brand</h2>
+					<canvas bind:this={chartRefs.ratingBrand}></canvas>
+					</div>
+				</article>
+				<article class="card bg-base-200 shadow-sm" aria-label="Average rating by cube type">
+					<div class="card-body">
+						<h2 class="card-title text-lg">Average rating by type</h2>
+					<canvas bind:this={chartRefs.ratingType}></canvas>
+					</div>
+				</article>
+			</section>
 
 		<section class="card bg-base-200 shadow-sm" aria-label="New additions cadence">
 			<div class="card-body space-y-3">

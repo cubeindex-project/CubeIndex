@@ -175,7 +175,8 @@ function pickLatestSnapshot(list: SnapshotRow[], storeSlug: string | null) {
 function cubeName(cube: UserCubeRow) {
 	const model = cube.cube_model;
 	const nameParts = [model?.brand, model?.model, model?.version_name].filter(Boolean);
-	return (model?.name ?? nameParts.join(" ").trim() || cube.cube).trim();
+	const fallbackName = nameParts.join(" ").trim();
+	return ((model?.name ?? fallbackName) || cube.cube).trim();
 }
 
 function sumBy<T>(items: T[], selector: (item: T) => number) {

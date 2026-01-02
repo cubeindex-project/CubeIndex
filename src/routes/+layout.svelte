@@ -30,20 +30,19 @@
   setContext("user", data.user);
   setContext("session", data.session);
 
-  import AchievementUnlocked from "$lib/components/misc/achievementUnlocked.svelte";
   import Banner from "$lib/components/layout/banner.svelte";
 </script>
 
 <svelte:head>
   <title>CubeIndex</title>
 
-    {#if umamiTag}
-      <script
-        defer
-        src="https://cloud.umami.is/script.js"
-        data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
-      ></script>
-    {/if}
+  {#if umamiTag}
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
+    ></script>
+  {/if}
 
   <script>
     (function () {
@@ -89,7 +88,6 @@
 <div class="pb-16 md:pb-0">
   {@render children()}
 
-  <AchievementUnlocked user={data.user} />
   <Footer />
 
   <BackButton />

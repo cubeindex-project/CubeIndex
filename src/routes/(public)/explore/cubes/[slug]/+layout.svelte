@@ -422,6 +422,7 @@
       bought_from: userCubeDetail?.bought_from,
       notes: userCubeDetail?.notes,
       acquired_at: userCubeDetail?.acquired_at,
+      purchase_price: userCubeDetail?.purchase_price ?? null,
     }}
   />
 {/if}

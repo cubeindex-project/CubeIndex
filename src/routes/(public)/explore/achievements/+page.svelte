@@ -1,6 +1,8 @@
 <script lang="ts">
   import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
+  import type { AchievementRarity } from "$lib/components/dbTableTypes";
+  import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
@@ -12,53 +14,8 @@
   const { data } = $props();
   const { achievements, currentUserAchi } = data;
 
-  // Centralize styling by rarity for maintainability
-  const rarityStyles: Record<
-    string,
-    { bar: string; badge: string; badgeText?: string }
-  > = {
-    Special: {
-      bar: "bg-gradient-to-b from-yellow-400 via-pink-500 to-purple-600",
-      badge:
-        "bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 text-neutral-900",
-    },
-    Mythic: {
-      bar: "bg-red-600",
-      badge: "bg-red-600 text-white",
-    },
-    Legendary: {
-      bar: "bg-yellow-400",
-      badge: "bg-yellow-400 text-neutral-900",
-    },
-    Exotic: {
-      bar: "bg-teal-400",
-      badge: "bg-teal-400 text-neutral-900",
-    },
-    Epic: {
-      bar: "bg-purple-600",
-      badge: "bg-purple-600 text-white",
-    },
-    Rare: {
-      bar: "bg-blue-600",
-      badge: "bg-blue-600 text-white",
-    },
-    Uncommon: {
-      bar: "bg-green-600",
-      badge: "bg-green-600 text-white",
-    },
-    Common: {
-      bar: "bg-neutral-700",
-      badge: "bg-neutral-700 text-white",
-    },
-    Unknown: {
-      bar: "bg-base-300",
-      badge: "bg-base-300 text-neutral-900",
-    },
-  };
-
-  function getRarityStyle(rarity?: string) {
-    return rarityStyles[rarity ?? "Common"] ?? rarityStyles.Common;
-  }
+  const rarityStyle = (rarity?: string) =>
+    getAchievementRarityStyle(rarity as AchievementRarity);
 
   function pct(n: number | null | undefined) {
     const v = Number.isFinite(n as number) ? Number(n) : 0;
@@ -264,7 +221,7 @@
                   <!-- Rarity Accent Bar -->
                   <div
                     class={"absolute left-0 top-0 h-full w-1.5 " +
-                      getRarityStyle(isHidden ? "Unknown" : achievement.rarity)
+                      rarityStyle(isHidden ? "Unknown" : achievement.rarity)
                         .bar}
                   ></div>
 
@@ -330,7 +287,9 @@
                       {:else}
                         <span
                           class={"inline-flex flex-shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ring-1 ring-black/5 select-none " +
-                            getRarityStyle(achievement.rarity).badge}
+                            rarityStyle(achievement.rarity).badge +
+                            " " +
+                            rarityStyle(achievement.rarity).badgeText}
                           title={`Rarity: ${achievement.rarity}`}
                         >
                           {achievement.rarity}
@@ -403,7 +362,7 @@
                                 fill="none"
                                 stroke-width="6"
                                 stroke-linecap="round"
-                                class={getRarityStyle(achievement.rarity).bar +
+                                class={rarityStyle(achievement.rarity).bar +
                                   " [stroke:currentColor] [paint-order:stroke] " +
                                   (isUnlocked
                                     ? "drop-shadow-[0_0_6px_rgba(0,0,0,0.2)]"
@@ -438,7 +397,7 @@
                                 <!-- filled -->
                                 <div
                                   class={"h-full " +
-                                    getRarityStyle(achievement.rarity).bar +
+                                    rarityStyle(achievement.rarity).bar +
                                     " transition-[width] duration-700 ease-out"}
                                   style={`width:${value}%;`}
                                 ></div>

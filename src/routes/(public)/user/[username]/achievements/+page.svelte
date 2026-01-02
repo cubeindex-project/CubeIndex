@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { PageData } from "./$types";
+  import type { AchievementRarity } from "$lib/components/dbTableTypes";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
@@ -28,42 +30,11 @@
   // Derived
   const total = $derived(user_achievements.length);
 
-  // Centralized rarity styles → maintainable & consistent
-  type RarityKey =
-    | "Special"
-    | "Mythic"
-    | "Legendary"
-    | "Exotic"
-    | "Epic"
-    | "Rare"
-    | "Common";
-  const rarityStyles: Record<
-    RarityKey,
-    { bg: string; text: string; ring?: string }
-  > = {
-    Special: {
-      bg: "bg-gradient-to-b from-yellow-400 via-pink-500 to-purple-600",
-      text: "text-neutral-900",
-    },
-    Mythic: {
-      bg: "bg-gradient-to-r from-red-600 to-rose-700",
-      text: "text-white",
-    },
-    Legendary: {
-      bg: "bg-gradient-to-r from-yellow-300 to-yellow-500",
-      text: "text-neutral-900",
-    },
-    Exotic: { bg: "bg-teal-400", text: "text-neutral-900" },
-    Epic: { bg: "bg-purple-600", text: "text-white" },
-    Rare: { bg: "bg-blue-600", text: "text-white" },
-    Common: { bg: "bg-neutral-700", text: "text-white" },
-  };
-
   function styleFor(rarity?: string) {
-    const key = (rarity as RarityKey) ?? "Common";
-    return rarityStyles[key] ?? rarityStyles.Common;
+    return getAchievementRarityStyle(rarity as AchievementRarity);
   }
 
+  type RarityKey = Exclude<AchievementRarity, "Unknown">;
   const rarityWeight: Record<RarityKey, number> = {
     Special: 7,
     Mythic: 6,
@@ -71,6 +42,7 @@
     Exotic: 4,
     Epic: 3,
     Rare: 2,
+    Uncommon: 1.5,
     Common: 1,
   };
 

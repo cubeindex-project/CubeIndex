@@ -6,16 +6,7 @@
   import { supabase } from "$lib/supabaseClient";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
-
-  type Status = "Owned" | "Wishlist" | "Loaned" | "Borrowed" | "Lost";
-  type Condition =
-    | "New in box"
-    | "New"
-    | "Good"
-    | "Fair"
-    | "Worn"
-    | "Poor"
-    | "Broken";
+  import type { UserCubeCondition, UserCubeStatus } from "../dbTableTypes";
 
   let {
     onCancel,
@@ -23,9 +14,9 @@
     alreadyAdded,
     defaultData = {
       quantity: 1,
-      condition: "" as Condition | "",
+      condition: "" as UserCubeCondition | "",
       main: false,
-      status: "" as Status | "",
+      status: "" as UserCubeStatus | "",
       bought_from: null,
       notes: "",
       acquired_at: "",
@@ -44,9 +35,9 @@
   // form state
   let slug = $derived(cube.slug);
   let quantity = $state(defaultData.quantity ?? 1);
-  let condition = $state<Condition | "">(defaultData.condition || "");
+  let condition = $state<UserCubeCondition | "">(defaultData.condition || "");
   let main = $state(defaultData.main);
-  let status = $state<Status | "">(defaultData.status || "");
+  let status = $state<UserCubeStatus | "">(defaultData.status || "");
   let bought_from = $state(defaultData.bought_from || null);
   let notes = $state(defaultData.notes);
   let acquired_at = $state(defaultData.acquired_at);
@@ -54,7 +45,7 @@
     defaultData.purchase_price === null ||
       defaultData.purchase_price === undefined
       ? null
-      : Number(defaultData.purchase_price)
+      : Number(defaultData.purchase_price),
   );
 
   // sensible defaults
@@ -65,7 +56,6 @@
 
   // wishlist rule
   $effect(() => {
-    const _ = status;
     if (status === "Wishlist") quantity = 1;
   });
 
@@ -98,10 +88,10 @@
     }
     if (e.key === "Tab" && dialogEl) {
       const focusables = dialogEl.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
       );
       const list = Array.from(focusables).filter(
-        (el) => !el.hasAttribute("inert")
+        (el) => !el.hasAttribute("inert"),
       );
       if (list.length === 0) return;
       const first = list[0];
@@ -130,11 +120,11 @@
       if (error) throw new Error(error.message);
 
       vendors = data;
-    } catch (err: any) {
+    } catch (err) {
       clientLogError(
         "An error occurred while fetching vendors",
         clientLogger,
-        err
+        err,
       );
     }
   }
@@ -183,7 +173,7 @@
         setTimeout(onCancel, 900);
       } else {
         throw new Error(
-          data?.error || "Unable to add the cube. Please try again."
+          data?.error || "Unable to add the cube. Please try again.",
         );
       }
     } catch (err: any) {
@@ -193,10 +183,7 @@
     }
   }
 
-  let readonly: boolean = $state(false);
-  $effect(() => {
-    readonly = status === "Wishlist";
-  });
+  let readonly: boolean = $derived(status === "Wishlist");
 
   // assume `quantity` and `readonly` exist in scope
   const MIN = 1;
@@ -363,7 +350,7 @@
               class="select select-bordered rounded-xl w-full"
             >
               <option value={null}>None</option>
-              {#each vendors as vendor}
+              {#each vendors as vendor (vendor.slug)}
                 <option value={vendor.slug}>{vendor.name}</option>
               {/each}
             </select>
@@ -374,7 +361,7 @@
               <span class="label-text">Purchase Price</span>
               <span class="label-text-alt opacity-70">Optional</span>
             </div>
-            <label class="input input-bordered flex items-center gap-2 rounded-xl">
+            <label class="input flex items-center gap-2 rounded-xl">
               <span aria-hidden="true">$</span>
               <input
                 type="number"

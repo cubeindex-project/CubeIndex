@@ -1,7 +1,6 @@
 <script lang="ts">
   // Components and style
   import "../app.css";
-  import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
@@ -10,7 +9,6 @@
   import { hero } from "@ssgoi/svelte/view-transitions";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
-  import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
 
   const config = {
@@ -107,9 +105,6 @@
   </Ssgoi>
 
   <AchievementUnlocked user={data.user} />
-  <Footer />
-
-  <BackButton />
   <ScrollToTop />
 </div>
 

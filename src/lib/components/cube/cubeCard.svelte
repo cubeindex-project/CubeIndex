@@ -18,8 +18,6 @@
     rate: boolean;
     add: boolean;
     details: boolean;
-    badges: boolean;
-    image: boolean;
     alreadyAdded: boolean;
     userCubeDetail: any;
   } = $props();

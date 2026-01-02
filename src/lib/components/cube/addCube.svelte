@@ -6,16 +6,7 @@
   import { supabase } from "$lib/supabaseClient";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
-
-  type Status = "Owned" | "Wishlist" | "Loaned" | "Borrowed" | "Lost";
-  type Condition =
-    | "New in box"
-    | "New"
-    | "Good"
-    | "Fair"
-    | "Worn"
-    | "Poor"
-    | "Broken";
+  import type { UserCubeCondition, UserCubeStatus } from "../dbTableTypes";
 
   let {
     onCancel,
@@ -23,12 +14,13 @@
     alreadyAdded,
     defaultData = {
       quantity: 1,
-      condition: "" as Condition | "",
+      condition: "" as UserCubeCondition | "",
       main: false,
-      status: "" as Status | "",
+      status: "" as UserCubeStatus | "",
       bought_from: null,
       notes: "",
       acquired_at: "",
+      purchase_price: null as number | null,
     },
   } = $props();
 
@@ -43,12 +35,18 @@
   // form state
   let slug = $derived(cube.slug);
   let quantity = $state(defaultData.quantity ?? 1);
-  let condition = $state<Condition | "">(defaultData.condition || "");
+  let condition = $state<UserCubeCondition | "">(defaultData.condition || "");
   let main = $state(defaultData.main);
-  let status = $state<Status | "">(defaultData.status || "");
+  let status = $state<UserCubeStatus | "">(defaultData.status || "");
   let bought_from = $state(defaultData.bought_from || null);
   let notes = $state(defaultData.notes);
   let acquired_at = $state(defaultData.acquired_at);
+  let purchase_price = $state<number | null>(
+    defaultData.purchase_price === null ||
+      defaultData.purchase_price === undefined
+      ? null
+      : Number(defaultData.purchase_price),
+  );
 
   // sensible defaults
   $effect(() => {
@@ -58,7 +56,6 @@
 
   // wishlist rule
   $effect(() => {
-    const _ = status;
     if (status === "Wishlist") quantity = 1;
   });
 
@@ -68,6 +65,12 @@
     if (!condition) return "Please choose a condition.";
     if (!quantity || quantity < 1 || quantity > 999)
       return "Quantity must be between 1 and 999.";
+    if (purchase_price !== null) {
+      if (!Number.isFinite(purchase_price) || purchase_price < 0)
+        return "Price must be a valid number greater than or equal to 0.";
+      if (purchase_price > 100000)
+        return "Price seems too high. Please double-check.";
+    }
     if (acquired_at) {
       const today = new Date().toISOString().slice(0, 10);
       if (acquired_at > today) return "Acquired date cannot be in the future.";
@@ -85,10 +88,10 @@
     }
     if (e.key === "Tab" && dialogEl) {
       const focusables = dialogEl.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
       );
       const list = Array.from(focusables).filter(
-        (el) => !el.hasAttribute("inert")
+        (el) => !el.hasAttribute("inert"),
       );
       if (list.length === 0) return;
       const first = list[0];
@@ -117,11 +120,11 @@
       if (error) throw new Error(error.message);
 
       vendors = data;
-    } catch (err: any) {
+    } catch (err) {
       clientLogError(
         "An error occurred while fetching vendors",
         clientLogger,
-        err
+        err,
       );
     }
   }
@@ -153,6 +156,7 @@
       bought_from,
       notes,
       acquired_at,
+      purchase_price,
     };
 
     try {
@@ -169,7 +173,7 @@
         setTimeout(onCancel, 900);
       } else {
         throw new Error(
-          data?.error || "Unable to add the cube. Please try again."
+          data?.error || "Unable to add the cube. Please try again.",
         );
       }
     } catch (err: any) {
@@ -179,10 +183,7 @@
     }
   }
 
-  let readonly: boolean = $state(false);
-  $effect(() => {
-    readonly = status === "Wishlist";
-  });
+  let readonly: boolean = $derived(status === "Wishlist");
 
   // assume `quantity` and `readonly` exist in scope
   const MIN = 1;
@@ -349,10 +350,31 @@
               class="select select-bordered rounded-xl w-full"
             >
               <option value={null}>None</option>
-              {#each vendors as vendor}
+              {#each vendors as vendor (vendor.slug)}
                 <option value={vendor.slug}>{vendor.name}</option>
               {/each}
             </select>
+          </label>
+
+          <label class="form-control">
+            <div class="label">
+              <span class="label-text">Purchase Price</span>
+              <span class="label-text-alt opacity-70">Optional</span>
+            </div>
+            <label class="input flex items-center gap-2 rounded-xl">
+              <span aria-hidden="true">$</span>
+              <input
+                type="number"
+                name="purchase_price"
+                bind:value={purchase_price}
+                class="grow"
+                min="0"
+                max="100000"
+                step="0.01"
+                placeholder="0.00"
+                inputmode="decimal"
+              />
+            </label>
           </label>
 
           <!-- Notes (full width on md) -->

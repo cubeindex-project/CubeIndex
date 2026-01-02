@@ -11,15 +11,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     bought_from,
     notes,
     acquired_at,
+    purchase_price,
   }: {
     cube: string;
     quantity: number;
     main: boolean;
     condition: string;
     status: string;
-    bought_from: string;
+    bought_from: string | null;
     notes: string;
     acquired_at: string;
+    purchase_price: number | null;
   } = await request.json();
 
   const { error: userCubesErr } = await locals.supabase
@@ -34,6 +36,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       bought_from,
       notes,
       acquired_at: acquired_at ? acquired_at : null,
+      purchase_price: purchase_price ?? null,
     });
 
   if (userCubesErr)

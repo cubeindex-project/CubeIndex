@@ -34,7 +34,7 @@ export type DisclaimerPurpose =
   | "info"
   | "update";
 export type UnlockMethod = "Automatic" | "Manual";
-export type BadgeRarity =
+export type AchievementRarity =
   | "Special"
   | "Mythic"
   | "Legendary"
@@ -43,7 +43,6 @@ export type BadgeRarity =
   | "Rare"
   | "Uncommon"
   | "Common";
-export type AchievementRarity = BadgeRarity | "Unknown";
 export type AccessoriesCategories =
   | "Timer"
   | "Mat"

@@ -250,132 +250,6 @@
               <span class="label-text-alt opacity-70">
                 Locked for wishlist
               </span>
-            </div>
-            <div class="join">
-              <input
-                type="checkbox"
-                name="main"
-                bind:checked={main}
-                class="toggle join-item bg-base-100"
-                aria-label="Set as main cube"
-              />
-            </div>
-          </label>
-
-          <!-- Condition -->
-          <label class="form-control md:col-span-1">
-            <div class="label"><span class="label-text">Condition</span></div>
-            <select
-              name="condition"
-              bind:value={condition}
-              class="select select-bordered rounded-xl w-full"
-              required
-            >
-              <option value="New in box">New in box</option>
-              <option value="New">New</option>
-              <option value="Good">Good</option>
-              <option value="Fair">Fair</option>
-              <option value="Worn">Worn</option>
-              <option value="Poor">Poor</option>
-              <option value="Broken">Broken</option>
-            </select>
-          </label>
-
-          <!-- Status -->
-          <label class="form-control md:col-span-1">
-            <div class="label"><span class="label-text">Status</span></div>
-            <select
-              name="status"
-              bind:value={status}
-              class="select select-bordered rounded-xl w-full"
-              required
-            >
-              <option value="Owned">Owned</option>
-              <option value="Wishlist">Wishlist</option>
-              <option value="Loaned">Loaned</option>
-              <option value="Borrowed">Borrowed</option>
-              <option value="Lost">Lost</option>
-            </select>
-          </label>
-
-          <label class="form-control">
-            <div class="label"><span class="label-text">Bought From</span></div>
-            <select
-              name="bought_from"
-              bind:value={bought_from}
-              class="select select-bordered rounded-xl w-full"
-            >
-              <option value={null}>None</option>
-              {#each vendors as vendor (vendor.slug)}
-                <option value={vendor.slug}>{vendor.name}</option>
-              {/each}
-            </select>
-          </label>
-
-          <label class="form-control">
-            <div class="label">
-              <span class="label-text">Purchase Price</span>
-              <span class="label-text-alt opacity-70">Optional</span>
-            </div>
-            <label class="input flex items-center gap-2 rounded-xl">
-              <span aria-hidden="true">$</span>
-              <input
-                type="number"
-                name="purchase_price"
-                bind:value={purchase_price}
-                class="grow"
-                min="0"
-                max="100000"
-                step="0.01"
-                placeholder="0.00"
-                inputmode="decimal"
-              />
-            </label>
-          </label>
-
-          <!-- Notes (full width on md) -->
-          <label class="form-control md:col-span-2">
-            <div class="label">
-              <span class="label-text">Notes</span>
-              <span class="label-text-alt opacity-70">Optional</span>
-            </div>
-            <textarea
-              name="notes"
-              placeholder="Lubed with..., setup..., special mod..., etc."
-              bind:value={notes}
-              class="textarea textarea-bordered rounded-2xl w-full min-h-24"
-              maxlength="2000"
-            ></textarea>
-          </label>
-
-          <!-- Acquired date -->
-          <label class="form-control md:col-span-1">
-            <div class="label">
-              <span class="label-text">Acquired on</span>
-              <span class="label-text-alt opacity-70">Optional</span>
-            </div>
-            <input
-              name="acquiredAt"
-              type="date"
-              bind:value={acquired_at}
-              class="input input-bordered rounded-xl w-full"
-              max={new Date().toISOString().slice(0, 10)}
-            />
-          </label>
-        </div>
-
-        <!-- Footer -->
-        <div
-          class="flex flex-col md:flex-row gap-3 justify-between items-center"
-        >
-          <div
-            class="text-sm min-h-5 text-error"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {formMessage}
-            {#if !isConnected}
-              You must be logged in to perform this action.
             {/if}
           </div>
           <div class="flex w-full items-center gap-2">
@@ -474,10 +348,31 @@
             class="select select-bordered rounded-xl w-full"
           >
             <option value={null}>None</option>
-            {#each vendors as vendor}
+            {#each vendors as vendor (vendor.slug)}
               <option value={vendor.slug}>{vendor.name}</option>
             {/each}
           </select>
+        </label>
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Purchase Price</span>
+            <span class="label-text-alt opacity-70">Optional</span>
+          </div>
+          <label class="input flex items-center gap-2 rounded-xl">
+            <span aria-hidden="true">$</span>
+            <input
+              type="number"
+              name="purchase_price"
+              bind:value={purchase_price}
+              class="grow"
+              min="0"
+              max="100000"
+              step="0.01"
+              placeholder="0.00"
+              inputmode="decimal"
+            />
+          </label>
         </label>
 
         <!-- Notes (full width on md) -->
@@ -512,9 +407,7 @@
       </div>
 
       <!-- Footer -->
-      <div
-        class="flex flex-col md:flex-row gap-3 justify-between items-center"
-      >
+      <div class="flex flex-col md:flex-row gap-3 justify-between items-center">
         <div
           class="text-sm min-h-5 text-error"
           aria-live="polite"

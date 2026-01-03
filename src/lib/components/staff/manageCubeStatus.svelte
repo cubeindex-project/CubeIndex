@@ -3,7 +3,6 @@
   import { blur } from "svelte/transition";
   import { getContext } from "svelte";
   import { supabase } from "$lib/supabaseClient";
-  import Portal from "../misc/portal.svelte";
 
   let {
     reason,
@@ -75,7 +74,6 @@
   }
 </script>
 
-<Portal>
   <div
     class="fixed inset-0 bg-base-300/60 backdrop-blur-md flex items-center justify-center z-50"
     transition:blur
@@ -149,4 +147,3 @@
       </div>
     </form>
   </div>
-</Portal>

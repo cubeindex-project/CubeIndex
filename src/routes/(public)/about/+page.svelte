@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/state";
   import Badge from "$lib/components/user/badge.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   const { data } = $props();
   const { logoDesigner, team, features, futureFeatures } = data;
 
@@ -25,8 +23,6 @@
 <svelte:head>
   <title>About - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <!-- Subtle background gradient -->
   <div
     aria-hidden="true"
@@ -205,4 +201,3 @@
       </div>
     </section>
   </div>
-</SsgoiTransition>

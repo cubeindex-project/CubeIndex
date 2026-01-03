@@ -5,25 +5,10 @@
   import Navbar from "$lib/components/layout/navbar.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
-  import { Ssgoi } from "@ssgoi/svelte";
-  import { blur } from "@ssgoi/svelte/transitions";
-  import { hero } from "@ssgoi/svelte/view-transitions";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
-
-  const config = {
-    defaultTransition: blur(),
-    transitions: [
-      {
-        from: "/explore/cubes",
-        to: "/explore/cubes/*",
-        transition: hero(),
-        symmetric: true,
-      },
-    ],
-  };
 
   let { data, children } = $props();
 
@@ -45,20 +30,19 @@
   setContext("user", data.user);
   setContext("session", data.session);
 
-  import AchievementUnlocked from "$lib/components/misc/achievementUnlocked.svelte";
   import Banner from "$lib/components/layout/banner.svelte";
 </script>
 
 <svelte:head>
   <title>CubeIndex</title>
 
-    {#if umamiTag}
-      <script
-        defer
-        src="https://cloud.umami.is/script.js"
-        data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
-      ></script>
-    {/if}
+  {#if umamiTag}
+    <script
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
+    ></script>
+  {/if}
 
   <script>
     (function () {
@@ -102,11 +86,8 @@
 <ClientErrorReporter />
 
 <div class="pb-16 md:pb-0">
-  <Ssgoi {config}>
-    {@render children()}
-  </Ssgoi>
+  {@render children()}
 
-  <AchievementUnlocked user={data.user} />
   <Footer />
 
   <BackButton />

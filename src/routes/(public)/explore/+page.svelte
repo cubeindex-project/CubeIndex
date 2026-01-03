@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
 
   const cards = [
     {
@@ -36,8 +34,6 @@
 <svelte:head>
   <title>CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section
     class="min-h-screen flex flex-col items-center justify-center px-6 py-16 space-y-12"
   >
@@ -97,4 +93,3 @@
       {/each}
     </div>
   </section>
-</SsgoiTransition>

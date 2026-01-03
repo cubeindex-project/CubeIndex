@@ -3,7 +3,6 @@
   import { fade, scale } from "svelte/transition";
   import StarRating from "./starRating.svelte";
   import { getContext } from "svelte";
-  import Portal from "../misc/portal.svelte";
 
   let { onCancel, cube, rating = 0, comment = "" } = $props();
 
@@ -103,7 +102,6 @@
   }
 </script>
 
-<Portal>
   <!-- Backdrop -->
   <div
     class="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm"
@@ -232,4 +230,3 @@
       </div>
     </form>
   </div>
-</Portal>

@@ -1,5 +1,8 @@
 <script lang="ts">
-  import type { CubeVendorLinks, DetailedCube } from "$lib/components/dbTableTypes";
+  import type {
+    CubeVendorLinks,
+    DetailedCube,
+  } from "$lib/components/dbTableTypes";
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
@@ -15,9 +18,7 @@
   } = $derived(data);
 
   // Page title
-  const pageTitle = $derived(
-    `${cube.name} - Price Tracking`
-  );
+  const pageTitle = $derived(`${cube.name} - Price Tracking`);
 
   // Formatting helpers
   const nf = (currency?: string) =>
@@ -41,7 +42,8 @@
     };
   }
 
-  let canvasEl: HTMLCanvasElement;
+  // Bound canvas element reference must be reactive for Svelte 5
+  let canvasEl = $state<HTMLCanvasElement | null>(null);
   let chartInstance: Chart | undefined;
 
   // Build chart on mount; clean up on destroy
@@ -50,6 +52,8 @@
       typeof window !== "undefined" &&
       window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!canvasEl) return;
 
     chartInstance = new Chart(canvasEl, {
       type: "line",
@@ -75,7 +79,7 @@
                 if (v == null) return `${ctx.dataset.label}: —`;
                 // If vendor_links include currency per vendor, prefer that; else show plain $
                 const vendorCurrency = vendor_links.find(
-                  (vl) => vl.vendor_name === ctx.dataset.label
+                  (vl) => vl.vendor_name === ctx.dataset.label,
                 )?.vendor?.currency;
                 return `${ctx.dataset.label}: ${
                   vendorCurrency
@@ -167,7 +171,7 @@
                         {nf(shop.vendor.currency).format(shop.price)}
                       {:else}
                         {getCurrencySymbol(
-                          shop.vendor?.currency
+                          shop.vendor?.currency,
                         )}{shop.price.toFixed(2)}
                       {/if}
                     </span>

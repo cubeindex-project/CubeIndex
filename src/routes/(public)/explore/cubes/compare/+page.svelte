@@ -2,8 +2,6 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import type { Cube } from "$lib/components/dbTableTypes";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
 
   type CubeWithMeta = Cube & {
     year: number; // Release year extracted from date
@@ -119,8 +117,6 @@
 <svelte:head>
   <title>Compare Cubes - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-4 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-4xl font-clash font-bold text-center mb-2">
@@ -299,4 +295,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

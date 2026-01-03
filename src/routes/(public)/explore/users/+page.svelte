@@ -1,7 +1,5 @@
 <script lang="ts">
   import UserCard from "$lib/components/user/userCard.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
@@ -99,8 +97,6 @@
 <svelte:head>
   <title>Explore Users - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-10 text-center">
@@ -160,4 +156,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

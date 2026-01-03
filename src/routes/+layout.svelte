@@ -5,25 +5,10 @@
   import Navbar from "$lib/components/layout/navbar.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
-  import { Ssgoi } from "@ssgoi/svelte";
-  import { blur } from "@ssgoi/svelte/transitions";
-  import { hero } from "@ssgoi/svelte/view-transitions";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
-
-  const config = {
-    defaultTransition: blur(),
-    transitions: [
-      {
-        from: "/explore/cubes",
-        to: "/explore/cubes/*",
-        transition: hero(),
-        symmetric: true,
-      },
-    ],
-  };
 
   let { data, children } = $props();
 
@@ -101,9 +86,7 @@
 <ClientErrorReporter />
 
 <div class="pb-16 md:pb-0">
-  <Ssgoi {config}>
-    {@render children()}
-  </Ssgoi>
+  {@render children()}
 
   <Footer />
 

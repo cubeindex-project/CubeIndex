@@ -6,7 +6,7 @@
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
-  import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
+  import BottomNav from "$lib/components/layout/bottomNav.svelte";
 
   let { data, children } = $props();
 
@@ -30,7 +30,6 @@
 
   import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/footer.svelte";
-  import BackButton from "$lib/components/misc/backButton.svelte";
 </script>
 
 <svelte:head>
@@ -88,10 +87,11 @@
 <div class="pb-16 md:pb-0">
   {@render children()}
 
-  <Footer />
+  <div class="hidden md:block">
+    <Footer />
+  </div>
 
-  <BackButton />
   <ScrollToTop />
 </div>
 
-<MobileBottomNav {profile} />
+<BottomNav {profile} />

@@ -1100,7 +1100,7 @@
 
                           <a
                             class="link link-hover link-primary flex items-center gap-2"
-                            href="mailto:support@cubeindex.com"
+                            href="mailto:thecubeindex@gmail.com"
                           >
                             <i class="fa-solid fa-envelope text-base-content/60"
                             ></i>

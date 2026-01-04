@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import type { AwardsEvent } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
@@ -68,8 +67,6 @@
   <title>Awards Voting - CubeIndex</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
-
-<SsgoiTransition id="awards-vote">
   {#if eventPhase !== "live"}
     <div class="min-h-screen bg-base-100">
       <div class="mx-auto max-w-4xl space-y-8 px-4 py-16 text-center">
@@ -188,4 +185,3 @@
       </div>
     </div>
   {/if}
-</SsgoiTransition>

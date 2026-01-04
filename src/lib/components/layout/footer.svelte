@@ -56,7 +56,6 @@
             <a href="/achievements" class="link link-hover">Achievements</a>
           </li>
           <li><a href="/report" class="link link-hover">Report</a></li>
-          <li><a href="/about" class="link link-hover">About</a></li>
         </ul>
       </div>
 

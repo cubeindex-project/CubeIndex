@@ -7,7 +7,6 @@
   import { page } from "$app/state";
   import Report from "$lib/components/report/report.svelte";
   import AddCube from "$lib/components/cube/addCube.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
 
@@ -56,8 +55,6 @@
     return "is being reviewed";
   });
 </script>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
     {#if isCubeSubmitter && cube.status !== "Approved"}
       <div
@@ -346,46 +343,48 @@
           >
         </header>
 
-        <ul
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
-          aria-label={"Cubes in the " + sameSeries[0].series + " series"}
-        >
-          {#each sameSeries as seriesCube}
-            <li>
-              <a
-                href="/explore/cubes/{seriesCube.slug}"
-                class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                aria-label={"Open " +
-                  (seriesCube.series + " " + seriesCube.model)}
-              >
-                <div class="p-3">
-                  <div
-                    class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
-                  >
-                    <img
-                      src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
-                      alt={seriesCube.version_name}
-                      loading="lazy"
-                      decoding="async"
-                      width="256"
-                      height="256"
-                      class="size-full object-contain p-2 transition-transform duration-200"
-                    />
+        <div class="-mx-2 overflow-x-auto pb-2">
+          <ul
+            class="flex gap-4 px-2 snap-x snap-mandatory"
+            aria-label={"Cubes in the " + sameSeries[0].series + " series"}
+          >
+            {#each sameSeries as seriesCube}
+              <li class="w-48 shrink-0 snap-start">
+                <a
+                  href="/explore/cubes/{seriesCube.slug}"
+                  class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                  aria-label={"Open " +
+                    (seriesCube.series + " " + seriesCube.model)}
+                >
+                  <div class="p-3">
+                    <div
+                      class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
+                    >
+                      <img
+                        src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
+                        alt={seriesCube.version_name}
+                        loading="lazy"
+                        decoding="async"
+                        width="256"
+                        height="256"
+                        class="size-full object-contain p-2 transition-transform duration-200"
+                      />
+                    </div>
+                    <div class="mt-2 text-center">
+                      <p class="text-sm font-semibold line-clamp-2">
+                        {seriesCube.series}
+                        {seriesCube.model}
+                      </p>
+                      <p class="text-xs opacity-70 line-clamp-1">
+                        {seriesCube.version_name}
+                      </p>
+                    </div>
                   </div>
-                  <div class="mt-2 text-center">
-                    <p class="text-sm font-semibold line-clamp-2">
-                      {seriesCube.series}
-                      {seriesCube.model}
-                    </p>
-                    <p class="text-xs opacity-70 line-clamp-1">
-                      {seriesCube.version_name}
-                    </p>
-                  </div>
-                </div>
-              </a>
-            </li>
-          {/each}
-        </ul>
+                </a>
+              </li>
+            {/each}
+          </ul>
+        </div>
       </section>
     {/if}
 
@@ -399,7 +398,7 @@
       ← Back to Explore
     </a>
   </section>
-</SsgoiTransition>
+
 
 {#if openReport}
   <Report
@@ -425,6 +424,7 @@
       bought_from: userCubeDetail?.bought_from,
       notes: userCubeDetail?.notes,
       acquired_at: userCubeDetail?.acquired_at,
+      purchase_price: userCubeDetail?.purchase_price ?? null,
     }}
   />
 {/if}

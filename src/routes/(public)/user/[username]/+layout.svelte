@@ -2,7 +2,6 @@
   import Badge from "$lib/components/user/badge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import { page } from "$app/state";
   import Avatar from "$lib/components/user/avatar.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
@@ -163,8 +162,6 @@
     description: meta.description,
   })}</script>`}
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-0 py-12 pt-0">
     <div class="bg-base-200">
       <!-- Banner full width -->
@@ -397,7 +394,7 @@
       </section>
     {/if}
   </section>
-</SsgoiTransition>
+
 
 {#if openReport}
   <Report

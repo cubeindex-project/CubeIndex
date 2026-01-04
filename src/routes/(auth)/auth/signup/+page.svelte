@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import { superForm } from "sveltekit-superforms";
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
   import { Turnstile } from "svelte-turnstile";
@@ -62,8 +60,6 @@
 <svelte:head>
   <title>Signup - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen">
     <div class="grid grid-cols-1 md:grid-cols-2 min-h-screen">
       <!-- Left: Signup process -->
@@ -522,4 +518,3 @@
       </aside>
     </div>
   </section>
-</SsgoiTransition>

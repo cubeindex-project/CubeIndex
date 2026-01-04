@@ -1,7 +1,5 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
@@ -61,8 +59,6 @@
 <svelte:head>
   <title>Explore Vendors - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen bg-base-100 px-6 py-16">
     <div class="max-w-6xl mx-auto">
       <h1 class="text-4xl sm:text-5xl font-clash font-bold mb-10 text-center">
@@ -281,4 +277,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

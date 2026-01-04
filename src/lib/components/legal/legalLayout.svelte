@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-
   /**
    * A content section in a legal document page.
    */
@@ -21,31 +18,28 @@
     historyURL?: string;
   } = $props();
 </script>
+<section class="min-h-screen px-6 py-24">
+  <div class="max-w-4xl mx-auto">
+    <article class="prose prose-zinc dark:prose-invert max-w-none">
+      <h1 class="mb-2">{title}</h1>
+      <p class="!mt-0 text-sm">
+        Last updated: {lastUpdated}
+        {#if historyURL}
+          ·
+          <a
+            href={historyURL}
+            target="_blank"
+            rel="noopener"
+            class="link link-hover"
+            >View change history on GitHub</a
+          >
+        {/if}
+      </p>
 
-<SsgoiTransition id={page.url.pathname}>
-  <section class="min-h-screen px-6 py-24">
-    <div class="max-w-4xl mx-auto">
-      <article class="prose prose-zinc dark:prose-invert max-w-none">
-        <h1 class="mb-2">{title}</h1>
-        <p class="!mt-0 text-sm">
-          Last updated: {lastUpdated}
-          {#if historyURL}
-            ·
-            <a
-              href={historyURL}
-              target="_blank"
-              rel="noopener"
-              class="link link-hover"
-              >View change history on GitHub</a
-            >
-          {/if}
-        </p>
-
-        {#each sections as section, i}
-          <h2>{i + 1}. {section.title}</h2>
-          <p>{@html section.content}</p>
-        {/each}
-      </article>
-    </div>
-  </section>
-</SsgoiTransition>
+      {#each sections as section, i}
+        <h2>{i + 1}. {section.title}</h2>
+        <p>{@html section.content}</p>
+      {/each}
+    </article>
+  </div>
+</section>

@@ -392,8 +392,8 @@ export interface Achievements {
   /** Username of who submitted it, references profiles.user_id */
   submitted_by: string | null;
 
-  /** Badge rarity enum, defaults to 'Common' */
-  rarity: BadgeRarity;
+  /** Achievement rarity enum, defaults to 'Common' */
+  rarity: AchievementRarity;
 
   /** Optional achievement category enum */
   category: string | null;
@@ -577,4 +577,15 @@ export interface UserStats {
   cubes_per_condition: Record<string, number>; // jsonb object: { "new": 2, "used": 5, ... }
 
   cubes_over_time: Record<string, number>; // jsonb object: { "2026-01": 4, "2026-02": 1, ... }
+}
+
+export interface PriceHistoryPoint {
+  date: string; // "YYYY-MM-DD"
+  price: number;
+}
+
+export interface PriceHistoryRow {
+  cube_slug: string;
+  vendor_name: string;
+  price_history: PriceHistoryPoint[]; // aggregated JSON array
 }

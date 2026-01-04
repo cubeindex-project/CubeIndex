@@ -1,7 +1,5 @@
 <script lang="ts">
   import { supabase } from "$lib/supabaseClient.js";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import { Turnstile } from "svelte-turnstile";
   import { superForm } from "sveltekit-superforms";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
@@ -49,8 +47,6 @@
 <svelte:head>
   <title>Login - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section
     class="min-h-screen flex flex-col items-center justify-center gap-6 px-6 py-10"
   >
@@ -177,4 +173,3 @@
       </p>
     </div>
   </section>
-</SsgoiTransition>

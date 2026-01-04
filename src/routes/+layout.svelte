@@ -29,6 +29,8 @@
   setContext("session", data.session);
 
   import Banner from "$lib/components/layout/banner.svelte";
+  import Footer from "$lib/components/layout/footer.svelte";
+  import BackButton from "$lib/components/misc/backButton.svelte";
 </script>
 
 <svelte:head>
@@ -86,7 +88,6 @@
 <div class="pb-16 md:pb-0">
   {@render children()}
 
-  <AchievementUnlocked user={data.user} />
   <Footer />
 
   <BackButton />

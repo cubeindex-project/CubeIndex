@@ -1,13 +1,11 @@
 <script lang="ts">
   // Components and style
   import "../app.css";
-  import Footer from "$lib/components/layout/footer.svelte";
   import Navbar from "$lib/components/layout/navbar.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
-  import BackButton from "$lib/components/misc/backButton.svelte";
   import MobileBottomNav from "$lib/components/layout/mobileBottomNav.svelte";
 
   let { data, children } = $props();
@@ -31,6 +29,8 @@
   setContext("session", data.session);
 
   import Banner from "$lib/components/layout/banner.svelte";
+  import Footer from "$lib/components/layout/footer.svelte";
+  import BackButton from "$lib/components/misc/backButton.svelte";
 </script>
 
 <svelte:head>

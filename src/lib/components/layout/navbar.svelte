@@ -73,7 +73,6 @@
       // emphasis: true,
       pc: true,
     },
-    { name: "About", href: "/about", icon: "fa-info-circle", pc: true },
   ];
 
   let bellAnimate = $state(false);

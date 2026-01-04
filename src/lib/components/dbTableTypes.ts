@@ -561,3 +561,20 @@ export interface DetailedCube {
   popularity: number;
   avg_price: number | null;
 }
+
+export interface UserStats {
+  user_id: string; // uuid
+
+  cube_count: number; // bigint in SQL, but returned as number in many clients
+  collection_value: number | null; // sum(...) can be null if all purchase_price are null
+
+  rating_count: number;
+  rating_avg: number | null; // avg(...) can be null if no ratings
+
+  cubes_per_brand: Record<string, number>; // jsonb object: { "gancube": 5, ... }
+  cubes_per_store: Record<string, number>; // jsonb object: { "Cubezz": 3, ... }
+  cubes_per_type: Record<string, number>; // jsonb object: { "3x3": 10, ... }
+  cubes_per_condition: Record<string, number>; // jsonb object: { "new": 2, "used": 5, ... }
+
+  cubes_over_time: Record<string, number>; // jsonb object: { "2026-01": 4, "2026-02": 1, ... }
+}

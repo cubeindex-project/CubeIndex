@@ -199,7 +199,7 @@
   <div class="max-w-7xl mx-auto">
     <h1 class="text-4xl font-clash font-bold mb-6 text-center">Manage Cubes</h1>
     <p class="mb-12 text-center">
-      Add, and manage all cubes in the database from this page.
+      Review and manage all cubes in the database from this page.
     </p>
 
     <!-- Search Bar + Toggle -->
@@ -387,16 +387,9 @@
       <!-- Cube Cards Grid -->
       <div class="flex-1">
         <div
-          class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-4"
+          class="flex flex-col sm:flex-row items-center justify-start mb-4 gap-4"
         >
           <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
-
-          <div>
-            <a href="cubes/add" class="btn bg-primary text-primary-content">
-              <i class="fa-solid fa-plus mr-2"></i>
-              Add Cube
-            </a>
-          </div>
         </div>
 
         <div class="mb-10">

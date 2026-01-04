@@ -15,6 +15,7 @@
   let { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
   const cubes: DetailedCube[] = $derived(data.cubes);
+  const imageHostnames: string[] = $derived(data.imageHostnames ?? []);
 
   const {
     form,
@@ -421,9 +422,12 @@
                   {#if $errors.imageUrl}
                     <span class="text-xs text-error">{$errors.imageUrl}</span>
                   {/if}
-                  <span class="text-xs text-base-content/60"
-                    >Use an official product or press image.</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    Use an official product or press image hosted on an approved
+                    vendor domain{#if imageHostnames.length}
+                      : {imageHostnames.join(", ")}
+                    {/if}.
+                  </span>
                 </label>
               </div>
 

@@ -1,23 +1,22 @@
 <script lang="ts">
-  import type { CubeVendorLinks, DetailedCube } from "$lib/components/dbTableTypes";
+  import type {
+    CubeVendorLinks,
+    DetailedCube,
+  } from "$lib/components/dbTableTypes";
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
   import Tag from "$lib/components/misc/tag.svelte";
 
-  // Props / derived (Svelte 5)
   let { data } = $props();
   let {
     cube = {} as DetailedCube,
     vendor_links = [] as CubeVendorLinks[],
-    dates = [] as string[],
-    historyByVendor = {} as Record<string, { date: string; price: number }[]>,
+    per_vendor_history,
   } = $derived(data);
 
   // Page title
-  const pageTitle = $derived(
-    `${cube.name} - Price Tracking`
-  );
+  const pageTitle = $derived(`${cube.name} - Price Tracking`);
 
   // Formatting helpers
   const nf = (currency?: string) =>
@@ -27,40 +26,49 @@
       maximumFractionDigits: 2,
     });
 
-  function datasetFor(vendor: string) {
-    const series = historyByVendor[vendor] ?? [];
-    const map = new Map(series.map((p) => [p.date, p.price]));
-    const aligned = dates.map((d) => (map.has(d) ? map.get(d)! : null));
-    return {
-      label: vendor,
-      data: aligned,
-      spanGaps: true,
-      borderWidth: 2,
-      pointRadius: 3,
-      tension: 0.25,
-    };
-  }
-
-  let canvasEl: HTMLCanvasElement;
-  let chartInstance: Chart | undefined;
+  // Bound canvas element reference must be reactive for Svelte 5
+  let canvas: HTMLCanvasElement | null = $state(null);
+  let chart: Chart | null = $state(null);
 
   // Build chart on mount; clean up on destroy
   onMount(() => {
-    const prefersReducedMotion =
-      typeof window !== "undefined" &&
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!canvas) return;
 
-    chartInstance = new Chart(canvasEl, {
+    chart?.destroy();
+
+    const labels = Array.from(
+      new Set(
+        per_vendor_history.flatMap((row) =>
+          row.price_history.map((p) => p.date),
+        ),
+      ),
+    ).sort();
+
+    const datasets = per_vendor_history.map((row) => {
+      // Map date -> price for quick lookup
+      const priceByDate = new Map(
+        row.price_history.map((p) => [p.date, p.price] as const),
+      );
+
+      return {
+        label: row.vendor_name,
+        data: labels.map((date) => priceByDate.get(date) ?? null) as (
+          | number
+          | null
+        )[], // null makes a gap
+        spanGaps: true,
+      };
+    });
+
+    chart = new Chart(canvas, {
       type: "line",
       data: {
-        labels: dates,
-        datasets: Object.keys(historyByVendor).map(datasetFor),
+        labels,
+        datasets,
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: prefersReducedMotion ? false : { duration: 300 },
         interaction: { mode: "index", intersect: false },
         plugins: {
           legend: {
@@ -70,18 +78,12 @@
           },
           tooltip: {
             callbacks: {
-              label(ctx) {
-                const v = ctx.parsed.y;
-                if (v == null) return `${ctx.dataset.label}: —`;
-                // If vendor_links include currency per vendor, prefer that; else show plain $
-                const vendorCurrency = vendor_links.find(
-                  (vl) => vl.vendor_name === ctx.dataset.label
+              label: ({ parsed: { y }, dataset: { label } }) => {
+                if (y == null) return `${label}: -`;
+                const currency = vendor_links.find(
+                  (l) => l.vendor_name === label,
                 )?.vendor?.currency;
-                return `${ctx.dataset.label}: ${
-                  vendorCurrency
-                    ? nf(vendorCurrency).format(v)
-                    : `$${v.toFixed(2)}`
-                }`;
+                return `${label}: ${currency ? nf(currency).format(y) : `$${y.toFixed(2)}`}`;
               },
             },
           },
@@ -103,8 +105,7 @@
   });
 
   onDestroy(() => {
-    chartInstance?.destroy();
-    chartInstance = undefined;
+    chart?.destroy();
   });
 
   // Vendor pill status
@@ -114,14 +115,14 @@
         text: "In stock",
         icon: "fa-solid fa-circle-check",
         badgeClass:
-          "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+          "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200 whitespace-nowrap",
       };
     }
     return {
       text: "Out of stock",
       icon: "fa-solid fa-circle-xmark",
       badgeClass:
-        "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
+        "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 whitespace-nowrap",
     };
   }
 </script>
@@ -146,7 +147,7 @@
         Available at
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {#each vendor_links as shop}
+        {#each vendor_links as shop (shop.id)}
           {@const status = getVendorStatus(shop)}
           <a
             href={shop.url}
@@ -167,7 +168,7 @@
                         {nf(shop.vendor.currency).format(shop.price)}
                       {:else}
                         {getCurrencySymbol(
-                          shop.vendor?.currency
+                          shop.vendor?.currency,
                         )}{shop.price.toFixed(2)}
                       {/if}
                     </span>
@@ -217,11 +218,11 @@
       <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
     </h2>
 
-    {#if dates.length > 0 && Object.keys(historyByVendor).length > 0}
+    {#if per_vendor_history.length > 0}
       <div
         class="w-full h-80 rounded-xl border border-base-300 bg-base-200 p-3"
       >
-        <canvas bind:this={canvasEl} aria-label="Line chart of price history"
+        <canvas bind:this={canvas} aria-label="Line chart of price history"
         ></canvas>
       </div>
     {:else}

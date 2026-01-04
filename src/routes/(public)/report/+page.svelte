@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import { SsgoiTransition } from "@ssgoi/svelte";
 
   const { data } = $props();
   const { user } = data;
@@ -121,8 +119,6 @@
     }
   }
 </script>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen w-full flex flex-col">
     <div class="mx-auto w-full max-w-3xl px-4 py-8">
       <div>
@@ -425,4 +421,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

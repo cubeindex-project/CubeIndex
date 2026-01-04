@@ -3,11 +3,10 @@
   import type { DetailedCube } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
-  let { cube = {} as DetailedCube, user_cube_ratings = [] as any[] } = $derived(data);
+  let { cube = {} as DetailedCube, user_cube_ratings = [] as any[] } =
+    $derived(data);
 
-  const pageTitle = $derived(
-    `${cube.name} - Ratings`
-  );
+  const pageTitle = $derived(`${cube.name} - Ratings`);
 </script>
 
 <svelte:head>

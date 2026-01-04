@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
   import type {
     AwardsEvent,
@@ -130,8 +128,6 @@
   <title>{category.name} - Awards Ballot</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <div class="min-h-screen bg-base-100">
     <div class="mx-auto max-w-6xl space-y-10 px-4 py-12">
       <header
@@ -290,4 +286,3 @@
       </div>
     </div>
   </div>
-</SsgoiTransition>

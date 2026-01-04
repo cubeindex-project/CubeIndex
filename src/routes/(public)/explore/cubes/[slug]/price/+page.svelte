@@ -17,17 +17,6 @@
     historyByVendor = {} as Record<string, { date: string; price: number }[]>,
   } = $derived(data);
 
-  const cubeDisplayName = $derived(() => {
-    const parts = [
-      cube.series,
-      cube.model,
-      cube.version_type && cube.version_type !== "Base" ? cube.version_name : undefined,
-    ].filter(Boolean);
-
-    const fallback = parts.join(" ").trim() || cube.slug;
-    return cube.name || fallback;
-  });
-
   // Page title
   const pageTitle = $derived(`${cube.name} - Price Tracking`);
 
@@ -161,7 +150,7 @@
         Available at
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {#each vendor_links as shop}
+        {#each vendor_links as shop (shop.id)}
           {@const status = getVendorStatus(shop)}
           <a
             href={shop.url}

@@ -8,9 +8,9 @@ export const load = (async ({ parent, params }) => {
   const { slug } = params;
 
   const cubePromise = supabase
-    .from("cube_models")
+    .from("v_detailed_cube_models")
     .select(
-      "*, verified_by_id(display_name, username), submitted_by_id(display_name, username)"
+      "*, verified_by_id(display_name, username), submitted_by_id(display_name, username)",
     )
     .eq("slug", slug)
     .single();
@@ -40,21 +40,21 @@ export const load = (async ({ parent, params }) => {
       clientLogger,
       new Error(`Cube "${slug}" not found`),
       true,
-      404
+      404,
     );
   }
   if (vendorRes.error) {
     return clientLogError(
       "Unable to load vendor links",
       clientLogger,
-      vendorRes.error
+      vendorRes.error,
     );
   }
   if (priceHistoryRes.error) {
     return clientLogError(
       "Unable to load price history",
       clientLogger,
-      priceHistoryRes.error
+      priceHistoryRes.error,
     );
   }
 

@@ -150,7 +150,7 @@
         Available at
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {#each vendor_links as shop}
+        {#each vendor_links as shop (shop.id)}
           {@const status = getVendorStatus(shop)}
           <a
             href={shop.url}

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import { supabase } from "$lib/supabaseClient.js";
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
 
@@ -54,8 +52,6 @@
   <meta name="robots" content="noindex" />
   <meta name="description" content="Reset your CubeIndex account password" />
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen flex items-center justify-center px-6 py-10">
     <div class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8">
       <h1 class="text-3xl font-clash font-bold mb-2">Reset Password</h1>
@@ -141,5 +137,3 @@
       </p>
     </div>
   </section>
-</SsgoiTransition>
-

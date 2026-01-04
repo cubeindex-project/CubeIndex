@@ -3,8 +3,6 @@
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
   import { queryParameters } from "sveltekit-search-params";
-  import { SsgoiTransition } from "@ssgoi/svelte";
-  import { page } from "$app/state";
   import Avatar from "$lib/components/user/avatar.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
 
@@ -285,8 +283,6 @@
     {tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex
   </title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="px-4 py-8 min-h-screen">
     <div class="max-w-6xl mx-auto">
       <div class="mb-6">
@@ -1035,4 +1031,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

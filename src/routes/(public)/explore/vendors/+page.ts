@@ -5,36 +5,12 @@ import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ setHeaders }) => {
   const { data: vendors, error: vendorsErr } = await supabase
-    .from("vendors")
+    .from("v_detailed_vendors")
     .select("*")
     .order("name", { ascending: true });
 
   if (vendorsErr) {
     return clientLogError("Unable to load vendors", clientLogger, vendorsErr);
-  }
-
-  const { data: cubesSold, error: csErr } = await supabase
-    .from("cube_vendor_links")
-    .select("*");
-
-  if (csErr) {
-    return clientLogError(
-      "Unable to load vendor inventory",
-      clientLogger,
-      csErr
-    );
-  }
-
-  const { data: user_cubes, error: ucErr } = await supabase
-    .from("user_cubes")
-    .select("*");
-
-  if (ucErr) {
-    return clientLogError(
-      "Unable to load user cube data",
-      clientLogger,
-      ucErr
-    );
   }
 
   const sortedVendors = vendors.sort((a, b) => {
@@ -49,5 +25,5 @@ export const load = (async ({ setHeaders }) => {
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { vendors: sortedVendors, cubesSold, user_cubes };
+  return { vendors: sortedVendors };
 }) satisfies PageLoad;

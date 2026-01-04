@@ -7,7 +7,6 @@
   import { page } from "$app/state";
   import Report from "$lib/components/report/report.svelte";
   import AddCube from "$lib/components/cube/addCube.svelte";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
 
@@ -56,8 +55,6 @@
     return "is being reviewed";
   });
 </script>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
     {#if isCubeSubmitter && cube.status !== "Approved"}
       <div
@@ -399,7 +396,7 @@
       ← Back to Explore
     </a>
   </section>
-</SsgoiTransition>
+
 
 {#if openReport}
   <Report
@@ -425,6 +422,7 @@
       bought_from: userCubeDetail?.bought_from,
       notes: userCubeDetail?.notes,
       acquired_at: userCubeDetail?.acquired_at,
+      purchase_price: userCubeDetail?.purchase_price ?? null,
     }}
   />
 {/if}

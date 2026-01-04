@@ -34,12 +34,14 @@ export type DisclaimerPurpose =
   | "info"
   | "update";
 export type UnlockMethod = "Automatic" | "Manual";
-export type BadgeRarity =
+export type AchievementRarity =
   | "Special"
-  | "Legendary"
   | "Mythic"
+  | "Legendary"
+  | "Exotic"
   | "Epic"
   | "Rare"
+  | "Uncommon"
   | "Common";
 export type AccessoriesCategories =
   | "Timer"
@@ -115,6 +117,9 @@ export interface UserCubes {
 
   /** Shop the user bought the cube from */
   bought_from: string | null;
+
+  /** Price paid by the user when purchasing the cube */
+  purchase_price: number | null;
 
   /** Optional notes, defaults to empty string */
   notes: string | null;
@@ -387,8 +392,8 @@ export interface Achievements {
   /** Username of who submitted it, references profiles.user_id */
   submitted_by: string | null;
 
-  /** Badge rarity enum, defaults to 'Common' */
-  rarity: BadgeRarity;
+  /** Achievement rarity enum, defaults to 'Common' */
+  rarity: AchievementRarity;
 
   /** Optional achievement category enum */
   category: string | null;
@@ -555,4 +560,32 @@ export interface DetailedCube {
   year: number | null;
   popularity: number;
   avg_price: number | null;
+}
+
+export interface UserStats {
+  user_id: string; // uuid
+
+  cube_count: number; // bigint in SQL, but returned as number in many clients
+  collection_value: number | null; // sum(...) can be null if all purchase_price are null
+
+  rating_count: number;
+  rating_avg: number | null; // avg(...) can be null if no ratings
+
+  cubes_per_brand: Record<string, number>; // jsonb object: { "gancube": 5, ... }
+  cubes_per_store: Record<string, number>; // jsonb object: { "Cubezz": 3, ... }
+  cubes_per_type: Record<string, number>; // jsonb object: { "3x3": 10, ... }
+  cubes_per_condition: Record<string, number>; // jsonb object: { "new": 2, "used": 5, ... }
+
+  cubes_over_time: Record<string, number>; // jsonb object: { "2026-01": 4, "2026-02": 1, ... }
+}
+
+export interface PriceHistoryPoint {
+  date: string; // "YYYY-MM-DD"
+  price: number;
+}
+
+export interface PriceHistoryRow {
+  cube_slug: string;
+  vendor_name: string;
+  price_history: PriceHistoryPoint[]; // aggregated JSON array
 }

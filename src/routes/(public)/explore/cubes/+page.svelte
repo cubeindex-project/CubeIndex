@@ -8,8 +8,6 @@
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  import { page } from "$app/state";
-  import { SsgoiTransition } from "@ssgoi/svelte";
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
@@ -356,8 +354,6 @@
 <svelte:head>
   <title>Explore Cubes - CubeIndex</title>
 </svelte:head>
-
-<SsgoiTransition id={page.url.pathname}>
   <section class="min-h-screen px-6 py-16">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-6 text-center">
@@ -610,4 +606,3 @@
       </div>
     </div>
   </section>
-</SsgoiTransition>

@@ -16,12 +16,14 @@
     if (navigator.share) {
       try {
         await navigator.share({ title: document.title, text, url });
-        return;
       } catch (err) {
-        new Error(
-          `Sharing link failed: ${err instanceof Error ? err.message : err}`
+        console.warn(
+          "Sharing link was canceled or failed.",
+          err instanceof Error ? err.message : err
         );
       }
+
+      return;
     }
 
     try {

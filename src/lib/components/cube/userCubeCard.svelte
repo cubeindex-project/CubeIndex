@@ -31,6 +31,13 @@
   let showSuccess = $state(false);
   let formMessage = $state("");
 
+  const currencyFormatter = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   $effect(() => {
     if (showSuccess) location.reload();
   });
@@ -43,6 +50,12 @@
   let bought_from = $state(user_details.bought_from);
   let notes = $state(user_details.notes);
   let acquired_at = $state(user_details.acquired_at);
+  let purchase_price = $state<number | null>(
+    user_details.purchase_price === null ||
+      user_details.purchase_price === undefined
+      ? null
+      : Number(user_details.purchase_price)
+  );
 
   let vendors: { slug: string; name: string }[] = $state([]);
 
@@ -70,6 +83,21 @@
   async function update() {
     isSubmitting = true;
     formMessage = "";
+
+    if (purchase_price !== null) {
+      if (!Number.isFinite(purchase_price) || purchase_price < 0) {
+        formMessage =
+          "Price must be a valid number greater than or equal to 0.";
+        isSubmitting = false;
+        return;
+      }
+      if (purchase_price > 100000) {
+        formMessage = "Price seems too high. Please double-check.";
+        isSubmitting = false;
+        return;
+      }
+    }
+
     const payload = {
       cube: slug,
       quantity,
@@ -79,6 +107,7 @@
       bought_from,
       notes,
       acquired_at,
+      purchase_price,
     };
 
     try {
@@ -189,6 +218,13 @@
           </div>
         {/if}
 
+        {#if user_details.purchase_price !== null}
+          <div class="badge badge-lg gap-1 bg-base-300" title="Purchase price">
+            <i class="fa-solid fa-tag"></i>
+            {currencyFormatter.format(user_details.purchase_price)}
+          </div>
+        {/if}
+
         {#if user_details.acquired_at}
           <div class="badge badge-lg gap-1 bg-base-300" title="Acquired on">
             <i class="fa-solid fa-calendar-day"></i>
@@ -275,6 +311,25 @@
               <option value={vendor.slug}>{vendor.name}</option>
             {/each}
           </select>
+        </label>
+
+        <label class="form-control">
+          <span class="label-text font-semibold">Purchase Price</span>
+          <label class="input input-bordered flex items-center gap-2 rounded-xl">
+            <span aria-hidden="true">$</span>
+            <input
+              id="purchase_price"
+              name="purchase_price"
+              type="number"
+              min="0"
+              max="100000"
+              step="0.01"
+              placeholder="0.00"
+              bind:value={purchase_price}
+              class="grow"
+              inputmode="decimal"
+            />
+          </label>
         </label>
 
         <label class="form-control md:col-span-2">

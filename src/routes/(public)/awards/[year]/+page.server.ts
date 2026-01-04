@@ -1,54 +1,71 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { getEventPhase } from "$lib/components/helper_functions/eventPhase";
+import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals: { supabase, log }, params }) => {
   const year = params.year;
 
-  const { data: winnersData, error: winnersErr } = await supabase
-    .from("v_awards_category_winners")
+  const { data: event, error: eventErr } = await supabase
+    .from("awards_event")
     .select("*")
-    .eq("event_year", year);
+    .eq("year", year)
+    .maybeSingle();
+
+  if (eventErr) {
+    logError(500, "Failed to fetch the event data", log, eventErr);
+  }
+
+  if (!event) {
+    logError(404, "Event not found", log, new Error("Event not found"));
+  }
+
+  const { data: categories, error: categoriesErr } = await supabase
+    .from("awards_category")
+    .select("*")
+    .eq("event_id", event.id);
+
+  if (categoriesErr) {
+    logError(500, "Failed to fetch the categories data", log, categoriesErr);
+  }
+
+  const { data: winnerNominees, error: winnersErr } = await supabase
+    .from("v_awards_category_winners")
+    .select("nominee_slug, vote_count, nominee_count, category_id")
+    .in(
+      "category_id",
+      categories.map((category) => category.id),
+    );
 
   if (winnersErr) {
     log.error({ err: winnersErr }, "Failed to fetch the event winners");
     throw error(500, "Failed to fetch the event winners");
   }
 
-  if (!winnersData?.length) {
-    throw error(404, "Awards event not found");
+  const { data: winnerCubes, error: winnerCubesErr } = await supabase
+    .from("v_detailed_cube_models")
+    .select("id, slug, name, image_url")
+    .in(
+      "slug",
+      winnerNominees.map((w) => w.nominee_slug),
+    );
+
+  if (winnerCubesErr) {
+    logError(500, "Failed to fetch the winner cubes data", log, winnerCubesErr);
   }
 
-  const event = winnersData.map((w) => ({
-    id: w.event_id,
-    year: w.event_year,
-    title: w.event_title,
-    start_at: w.start_at,
-    end_at: w.end_at,
-    is_published: w.is_published,
-  }))[0];
-
-  const categories = winnersData.map((w) => ({
-    id: w.category_id,
-    name: w.category_name,
-    icon: w.category_icon,
-    description: w.category_description,
-    nominees_count: w.nominees_count
+  const winners = winnerNominees.map((winner) => ({
+    category_id: categories.find(
+      (category) => category.id === winner.category_id,
+    )?.id,
+    cube: winnerCubes.find((cube) => cube.slug === winner.nominee_slug),
+    voteCount: winner.vote_count,
+    nomineeCount: winner.nominee_count,
   }));
 
-  const winners = winnersData.map((w) => ({
-    id: w.nominee_id,
-    cube_id: w.cube_id,
-    category_id: w.category_id,
-    votes: w.votes,
-    brand: w.brand,
-    slug: w.cube_slug,
-    image_url: w.image_url,
-    version_type: w.version_type,
-    name: w.cube_name,
-  }));
+  console.log(winners);
 
-  const eventPhase = getEventPhase(event)
+  const eventPhase = getEventPhase(event);
 
   return { event, eventPhase, categories, winners };
 }) satisfies PageServerLoad;

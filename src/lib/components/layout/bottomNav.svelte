@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import type { Profiles } from "../dbTableTypes";
 
-  let { profile }: { profile: Profiles } = $props();
+  let { profile }: { profile: Profiles | null } = $props();
 
   const pathname = $derived(page.url.pathname);
   const isEmailVerified = $derived(profile?.verified ?? false);
@@ -40,24 +40,20 @@
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
   });
-
-  const isActive = (href: string): boolean => {
-    if (href === "/") return pathname === "/";
-    // Profile: match any /user/* path
-    if (href.startsWith("/user/")) return pathname.startsWith("/user/");
-    return pathname === href || pathname.startsWith(href + "/");
-  };
 </script>
 
-<!-- DaisyUI bottom navigation: small screens only, sticky/fixed -->
 <nav class="dock bg-base-100/80 backdrop-blur md:hidden z-50">
-  <a class:dock-active={isActive("/dashboard")} href="/" aria-label="Home">
+  <a
+    class:dock-active={pathname === "/" || pathname === "/dashboard"}
+    href="/"
+    aria-label="Home"
+  >
     <i class="fa-solid fa-house"></i>
     <span class="dock-label">Home</span>
   </a>
 
   <a
-    class:dock-active={isActive("/explore")}
+    class:dock-active={pathname.startsWith("/explore")}
     href="/explore"
     aria-label="Explore"
   >
@@ -66,7 +62,7 @@
   </a>
 
   <a
-    class:dock-active={isActive("/notifications")}
+    class:dock-active={pathname === "/notifications"}
     href="/notifications"
     aria-label="Notifications"
     class="relative"
@@ -92,12 +88,23 @@
     <span class="dock-label">Notifications</span>
   </a>
 
-  <a
-    class:dock-active={isActive(`/user/${profile.username}`)}
-    href="/user/{profile.username}"
-    aria-label="Profile"
-  >
-    <i class="fa-solid fa-user"></i>
-    <span class="dock-label">Profile</span>
-  </a>
+  {#if profile}
+    <a
+      class:dock-active={pathname === `/user/${profile.username}`}
+      href={`/user/${profile.username}`}
+      aria-label="Profile"
+    >
+      <i class="fa-solid fa-user"></i>
+      <span class="dock-label">Profile</span>
+    </a>
+  {:else}
+    <a
+      class:dock-active={pathname === "/auth/login"}
+      href="/auth/login"
+      aria-label="Login"
+    >
+      <i class="fa-solid fa-right-to-bracket"></i>
+      <span class="dock-label">Login</span>
+    </a>
+  {/if}
 </nav>

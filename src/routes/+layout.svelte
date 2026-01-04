@@ -94,6 +94,4 @@
   <ScrollToTop />
 </div>
 
-{#if profile}
-  <MobileBottomNav {profile} />
-{/if}
+<MobileBottomNav {profile} />

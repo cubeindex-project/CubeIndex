@@ -1,4 +1,4 @@
-<!-- Code copied from : https://github.com/ErnaneJ/svelte-star-rating/blob/master/src/Stars.svelte 
+<!-- Code copied from : https://github.com/ErnaneJ/svelte-star-rating/blob/master/src/Stars.svelte
  Your npm package didn't work so I copied the code, srry bro 🙏 -->
 
 <script lang="ts">
@@ -16,7 +16,7 @@
   $effect(() => {
     const _ = rating;
     fills = Array.from({ length: 5 }, (_, i) =>
-      Math.max(0, Math.min(1, rating - i))
+      Math.max(0, Math.min(1, rating - i)),
     );
   });
 </script>
@@ -25,7 +25,7 @@
   <div class="relative flex items-center justify-center gap-2">
     <div class="relative flex flex-row items-center gap-2">
       <div class="flex items-center justify-center gap-2">
-        {#each fills as fill, id}
+        {#each fills as fill, id (id)}
           <Star {id} {readOnly} fillPercentage={fill} />
         {/each}
       </div>
@@ -41,8 +41,4 @@
       {/if}
     </div>
   </div>
-
-  <span class="select-none text-sm">
-    {rating} out of 5
-  </span>
 </section>

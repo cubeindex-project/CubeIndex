@@ -1,8 +1,7 @@
-import type { LayoutLoad } from "./$types";
-import type { UserFollowsRow } from "$lib/components/dbTableTypes.js";
+import type { LayoutServerLoad } from "./$types";
+import type { Profiles, UserFollowsRow } from "$lib/components/dbTableTypes.js";
 import { supabase } from "$lib/supabaseClient";
-import { clientLogError } from "$lib/logger/clientLogError";
-import { clientLogger } from "$lib/logger/client";
+import { logError } from "$lib/server/logError";
 
 function plural(n: number, s: string, p = s + "s") {
   return `${n} ${n === 1 ? s : p}`;
@@ -30,7 +29,7 @@ function buildProfileDescription(
     achievementsCount: number;
     followersCount: number;
     followingCount: number;
-  }
+  },
 ) {
   const name = profile.display_name?.trim() || profile.username;
   const handle = `@${profile.username}`;
@@ -54,9 +53,8 @@ function buildProfileDescription(
   return desc;
 }
 
-export const load = (async ({ params, parent, url }) => {
+export const load = (async ({ locals: { user, log }, params, url }) => {
   const { username } = params;
-  const { user } = await parent();
 
   // 1) Profile
   const { data: profile, error: err } = await supabase
@@ -66,16 +64,15 @@ export const load = (async ({ params, parent, url }) => {
     .single();
 
   if (err) {
-    return clientLogError("Unable to load profile", clientLogger, err);
+    return logError(500, "Unable to load profile", log, err);
   }
 
   if (!profile) {
-    return clientLogError(
+    return logError(
+      404,
       "User not found",
-      clientLogger,
+      log,
       new Error(`Profile "${username}" not found`),
-      true,
-      404
     );
   }
 
@@ -89,11 +86,7 @@ export const load = (async ({ params, parent, url }) => {
       .eq("following_id", profile.user_id);
 
     if (followErr) {
-      return clientLogError(
-        "Unable to check follow status",
-        clientLogger,
-        followErr
-      );
+      return logError(500, "Unable to check follow status", log, followErr);
     }
 
     following = data;
@@ -125,12 +118,9 @@ export const load = (async ({ params, parent, url }) => {
   ]);
 
   if (f1Err || f2Err || cErr || aErr) {
-    const statsErr = f1Err ?? f2Err ?? cErr ?? aErr ?? new Error("Unknown stats error");
-    return clientLogError(
-      "Unable to load profile statistics",
-      clientLogger,
-      statsErr
-    );
+    const statsErr =
+      f1Err ?? f2Err ?? cErr ?? aErr ?? new Error("Unknown stats error");
+    return logError(500, "Unable to load profile statistics", log, statsErr);
   }
 
   // 3) Meta
@@ -150,11 +140,11 @@ export const load = (async ({ params, parent, url }) => {
     profile.profile_picture ?? `${origin}/images/avatar-placeholder.png`; // change if you have a different placeholder
 
   const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256,h_256,c_fill/${encodeURIComponent(
-    avatarSrc
+    avatarSrc,
   )}`;
 
   return {
-    profile,
+    profile: profile as Profiles,
     following,
     stats: { cubesCount, achievementsCount, followersCount, followingCount },
     meta: {
@@ -167,4 +157,4 @@ export const load = (async ({ params, parent, url }) => {
       preloadImage,
     },
   };
-}) satisfies LayoutLoad;
+}) satisfies LayoutServerLoad;

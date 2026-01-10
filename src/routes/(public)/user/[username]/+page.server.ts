@@ -1,9 +1,8 @@
-import type { PageLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 import { supabase } from "$lib/supabaseClient";
-import { clientLogError } from "$lib/logger/clientLogError";
-import { clientLogger } from "$lib/logger/client";
+import { logError } from "$lib/server/logError";
 
-export const load = (async ({ parent }) => {
+export const load = (async ({ parent, locals: { log } }) => {
   const { profile } = await parent();
 
   const [
@@ -26,25 +25,13 @@ export const load = (async ({ parent }) => {
   ]);
 
   if (ucErr) {
-    return clientLogError(
-      "Unable to load user cubes",
-      clientLogger,
-      ucErr
-    );
+    return logError(500, "Unable to load user cubes", log, ucErr);
   }
   if (uaErr) {
-    return clientLogError(
-      "Unable to load user achievements",
-      clientLogger,
-      uaErr
-    );
+    return logError(500, "Unable to load user achievements", log, uaErr);
   }
   if (urErr) {
-    return clientLogError(
-      "Unable to load user ratings",
-      clientLogger,
-      urErr
-    );
+    return logError(500, "Unable to load user ratings", log, urErr);
   }
 
   const main_cubes = user_cubes.filter((uc) => uc.main === true);
@@ -55,4 +42,4 @@ export const load = (async ({ parent }) => {
     user_achievements,
     user_cube_ratings,
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

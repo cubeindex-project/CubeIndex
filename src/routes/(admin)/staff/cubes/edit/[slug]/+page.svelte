@@ -15,6 +15,7 @@
   // Destructure props passed to the component
   let { data } = $props();
   let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
+  const imageHostnames: string[] = $derived(data.imageHostnames ?? []);
 
   // Initialize form handling with options for JSON data and custom error handling
   const {
@@ -186,6 +187,11 @@
             {#if $errors.imageUrl}
               <span class="text-error">{$errors.imageUrl}</span>
             {/if}
+            <p class="mt-1 text-sm text-base-content/70">
+              Image must be hosted on a known vendor domain{#if imageHostnames.length}
+                : {imageHostnames.join(", ")}
+              {/if}.
+            </p>
           </div>
           <div>
             <label class="block mb-1 font-medium">

@@ -84,7 +84,7 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
   const categoryRatings: ReviewCategoryRating[] = reviewCategories.map(
     (category: UserCubeReviewsCategory) => ({
       ...category,
-      rating: reviewRatings.get(category.id) ?? 0,
+      rating: reviewRatings.get(category.id) ?? 0.5,
     }),
   );
 

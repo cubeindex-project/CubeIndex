@@ -16,7 +16,7 @@
   let review = $state(data.review.review ?? "");
 
   const titleMaxLength = 80;
-  const reviewMinLength = 500;
+  const reviewMinLength = 1000;
 
   function keyOf(s: Snapshot) {
     return JSON.stringify({
@@ -61,8 +61,8 @@
   );
 
   const statusBadgeClass = (() => {
-    if (data.review.status === "draft") return "badge-ghost";
-    else if (data.review.status === "published") return "badge-success";
+    if (status === "draft") return "badge-ghost";
+    else if (status === "published") return "badge-success";
     else return "badge-neutral";
   })();
 
@@ -111,7 +111,7 @@
       throw new Error(responseData.error ?? "Failed to save draft");
     }
 
-    setRatings();
+    await setRatings();
     markClean();
   }
 
@@ -132,7 +132,7 @@
       throw new Error(responseData.error ?? "Failed to save review");
     }
 
-    setRatings();
+    await setRatings();
     markClean();
 
     published = true;
@@ -144,7 +144,7 @@
   }
 </script>
 
-<section class="mx-auto w-full max-w-4xl space-y-6 min-h-screen my-5">
+<section class="mx-auto px-5 my-5 w-full max-w-4xl space-y-6 min-h-screen">
   <header
     class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
   >
@@ -159,7 +159,9 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <span class={`badge ${statusBadgeClass}`}>Status: {prettyStatus}</span>
+      <span class="badge {statusBadgeClass} whitespace-nowrap">
+        {prettyStatus}
+      </span>
       {#if isDirty}
         <span class="badge badge-warning">Unsaved</span>
       {/if}
@@ -167,7 +169,7 @@
   </header>
 
   <div class="card border border-base-300 bg-base-200/60">
-    <div class="flex flex-row">
+    <div class="flex flex-col md:flex-row">
       <div class="card-body space-y-5 flex-1">
         <div class="space-y-3">
           <h3 class="font-bold text-xl">Review</h3>
@@ -191,7 +193,7 @@
             <div class="label">
               <span class="label-text font-medium">Main review</span>
               <span class="label-text-alt opacity-70">
-                {review.trim().length}/{reviewMinLength} characters
+                Min. {reviewMinLength} characters
               </span>
             </div>
 

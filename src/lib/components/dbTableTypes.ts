@@ -43,15 +43,8 @@ export type AchievementRarity =
   | "Rare"
   | "Uncommon"
   | "Common";
-export type AccessoriesCategories =
-  | "Timer"
-  | "Mat"
-  | "Lube"
-  | "Storage"
-  | "Keychain"
-  | "Charging pod"
-  | "Bag"
-  | "Stand";
+export type RatingHalfStep = 0.5 | 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
+export type CubeReviewStatus = "draft" | "published";
 
 export interface UserFollowsRow {
   /** BIGINT identity (not the primary key). Represented as string for 64‑bit safety. */
@@ -402,47 +395,6 @@ export interface Achievements {
   title: string | null;
 }
 
-export interface Accessories {
-  /** Release date (ISO date string) */
-  release_date: string;
-
-  /** Optional brand, defaults to empty string */
-  brand: string | null;
-
-  /** Optional image URL */
-  image_url: string | null;
-
-  /** Accessory name (unique) */
-  name: string;
-
-  /** Optional rating (real), defaults to 0 */
-  rating: number | null;
-
-  /** Creation timestamp (ISO string), defaults to now() */
-  created_at: string;
-
-  /** Update timestamp (ISO string), defaults to now() */
-  updated_at: string;
-
-  /** Whether approved, defaults to false */
-  approved: boolean;
-
-  /** Whether discontinued, defaults to false */
-  discontinued: boolean;
-
-  /** Auto-generated ID */
-  id: number;
-
-  /** Unique slug identifier */
-  slug: string;
-
-  /** Optional category enum */
-  category: AccessoriesCategories | null;
-
-  /** Optional compatibility info */
-  compatibility: string | null;
-}
-
 export interface CubesModelFeatures {
   /** Primary key ID */
   id: number;
@@ -462,7 +414,7 @@ export interface UserCubeRatings {
   cube_slug: string;
 
   /** User's rating for the cube (0.5 to 5) */
-  rating: number;
+  rating: RatingHalfStep;
 
   /** Optional comment from the user */
   comment: string | null;
@@ -518,7 +470,7 @@ export interface AwardsUserVote {
 
 export interface DetailedCube {
   brand: string | null;
-  image_url: string | null;
+  image_url: string;
   image_source: string | null; // vendor name
 
   model: string;
@@ -588,4 +540,50 @@ export interface PriceHistoryRow {
   cube_slug: string;
   vendor_name: string;
   price_history: PriceHistoryPoint[]; // aggregated JSON array
+}
+
+export interface UserCubeReviewsCategory {
+  id: number; // bigint (JS numbers are safe up to 2^53-1)
+  created_at: string; // timestamp with time zone (ISO string)
+  slug: string; // text
+  label: string; // text
+  active: boolean; // boolean
+}
+
+export interface UserCubeReviewRating {
+  created_at: string; // timestamp with time zone (ISO string)
+  review_id: number; // bigint
+  category_id: number; // bigint
+  rating: RatingHalfStep; // real (allowed: > 0.5 and <= 5)
+}
+
+export interface UserCubeReview {
+  id: number; // bigint (JS numbers are safe up to 2^53-1)
+  created_at: string; // timestamp with time zone (ISO string)
+  updated_at: string; // timestamp with time zone (ISO string)
+
+  title: string; // text
+  review: string; // text
+  status: CubeReviewStatus;
+
+  user_id: string; // uuid
+  cube: string; // references cube_models.slug
+}
+
+export type DetailedUserCubeReviewRatings = Record<string, number>;
+
+export interface DetailedUserCubeReview {
+  id: number;
+  created_at: string; // timestamptz ISO string
+  updated_at: string; // timestamptz ISO string
+
+  title: string;
+  review: string;
+  status: CubeReviewStatus; // from your enum union
+  user_id: string; // uuid
+  cube: string; // cube slug
+
+  ratings: DetailedUserCubeReviewRatings; // { [categoryLabel]: rating }
+
+  helpful_count: number;
 }

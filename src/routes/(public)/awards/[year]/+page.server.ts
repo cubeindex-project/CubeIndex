@@ -63,8 +63,6 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     nomineeCount: winner.nominee_count,
   }));
 
-  console.log(winners);
-
   const eventPhase = getEventPhase(event);
 
   return { event, eventPhase, categories, winners };

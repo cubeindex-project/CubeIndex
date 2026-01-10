@@ -1,5 +1,11 @@
+import type { DetailedCube } from "$lib/components/dbTableTypes";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
+
+type DetailedCubeExtended = Omit<DetailedCube, "verified_by_id"> & {
+  verified_by_id: { display_name: string; username: string } | null;
+  submitted_by: { display_name: string; username: string };
+};
 
 export const load = (async ({
   locals: { supabase, log, user },
@@ -8,10 +14,10 @@ export const load = (async ({
 }) => {
   const slug = params.slug;
 
-  const { data: cube, error: cubeErr } = await supabase
+  const { data, error: cubeErr } = await supabase
     .from("v_detailed_cube_models")
     .select(
-      "*,verified_by_id(display_name, username),submitted_by:submitted_by_id(display_name, username)"
+      "*,verified_by_id(display_name, username),submitted_by:submitted_by_id(display_name, username)",
     )
     .eq("slug", slug)
     .single();
@@ -19,10 +25,12 @@ export const load = (async ({
   if (cubeErr) {
     log.error(
       { err: cubeErr },
-      "An error occured while fetching the cube data"
+      "An error occured while fetching the cube data",
     );
     throw error(500, "An error occured while fetching the cube data");
   }
+
+  const cube: DetailedCubeExtended = data;
 
   if (!cube) {
     throw error(404, "Cube not found");
@@ -84,7 +92,7 @@ export const load = (async ({
       throw error(500, "Failed to fetch user cubes");
     }
 
-    alreadyAdded = user_cube !== null
+    alreadyAdded = user_cube !== null;
     userCubeDetail = user_cube;
   }
 

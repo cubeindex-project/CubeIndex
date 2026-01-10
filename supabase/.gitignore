@@ -2,6 +2,7 @@
 .branches
 .temp
 seed.sql
+snippets
 
 # dotenvx
 .env.keys

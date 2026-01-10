@@ -2,7 +2,7 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   let { data } = $props();
-  let { cube = {}, features = [], submittedBy, verifiedBy } = $derived(data);
+  let { cube, features = [], submittedBy, verifiedBy } = $derived(data);
 
   const isMagnetic = $derived.by(() => features.includes("magnetic"));
   const isSmart = $derived.by(() => features.includes("smart"));
@@ -21,22 +21,12 @@
   ] as const;
 
   const presentFeatures = $derived.by(() =>
-    allFeatureBadges.filter((b) => features.includes(b.key))
+    allFeatureBadges.filter((b) => features.includes(b.key)),
   );
 </script>
 
 <svelte:head>
   <title>{cube.name} - CubeIndex</title>
-
-  <link
-    rel="preload"
-    as="image"
-    href="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
-      cube.image_url
-    )}"
-    fetchpriority="high"
-  />
-  <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
 
 <section class="space-y-6">
@@ -124,18 +114,12 @@
       <h3 class="text-base font-semibold opacity-70 mb-3">Features</h3>
       {#if presentFeatures.length > 0}
         <div class="flex flex-wrap gap-2">
-          {#each presentFeatures as f}
+          {#each presentFeatures as f (f.key)}
             <span class="badge badge-success badge-outline gap-1">
               <i class={`fa-solid ${f.icon}`}></i>
               {f.label}
             </span>
           {/each}
-          {#if isDiscontinued}
-            <span class="badge badge-error gap-1">
-              <i class="fa-solid fa-ban"></i>
-              Discontinued
-            </span>
-          {/if}
         </div>
       {:else}
         <p class="opacity-70">No special features listed.</p>

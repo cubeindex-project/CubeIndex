@@ -2,6 +2,7 @@
   import type { PageData } from "./$types";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
 
@@ -23,8 +24,9 @@
       : 0
   );
 
+  const emptyValue = m.user_overview_empty_value_text();
   const averageDisplay = $derived(
-    totalRatings ? averageRating.toFixed(1) : "—"
+    totalRatings ? averageRating.toFixed(1) : emptyValue
   );
   const avgRounded = $derived(Math.round(averageRating)); // for star fill
 
@@ -98,10 +100,12 @@
       .slice(0, 12)
   );
 
+  const unknownLabel = m.user_overview_unknown_label();
+
   const typeCounts = $derived(
     Object.entries(
       user_cubes.reduce((acc: Record<string, number>, uc: any) => {
-        const t = uc?.cube_model?.type ?? "Unknown";
+        const t = uc?.cube_model?.type ?? unknownLabel;
         acc[t] = (acc[t] ?? 0) + 1;
         return acc;
       }, {})
@@ -114,7 +118,7 @@
   const statusCounts = $derived(
     Object.entries(
       user_cubes.reduce((acc: Record<string, number>, uc: any) => {
-        const s = uc?.status ?? "Unknown";
+        const s = uc?.status ?? unknownLabel;
         acc[s] = (acc[s] ?? 0) + 1;
         return acc;
       }, {})
@@ -123,7 +127,9 @@
 </script>
 
 <svelte:head>
-  <title>{profile.display_name}'s Profile - CubeIndex</title>
+  <title>
+    {m.user_overview_meta_title({ displayName: profile.display_name })}
+  </title>
 </svelte:head>
 
 <div
@@ -133,7 +139,9 @@
     <!-- Bio Card -->
     {#if profile.bio}
       <div>
-        <h2 class="text-xl font-semibold mb-2">Bio</h2>
+        <h2 class="text-xl font-semibold mb-2">
+          {m.user_overview_bio_title_h2()}
+        </h2>
 
         <div
           class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
@@ -145,14 +153,16 @@
 
     <!-- Stats Card -->
     <div>
-      <h2 class="text-xl font-semibold mb-4">Stats</h2>
+      <h2 class="text-xl font-semibold mb-4">
+        {m.user_overview_stats_title_h2()}
+      </h2>
       <div class="stats stats-vertical bg-base-200 rounded-2xl gap-2 w-full">
         <!-- Total Cubes -->
         <div class="stat">
           <div class="stat-figure text-primary">
             <i class="fa-solid fa-cube text-2xl"></i>
           </div>
-          <div class="stat-title">Total Cubes</div>
+          <div class="stat-title">{m.user_overview_total_cubes_label()}</div>
           <div class="stat-value">{totalCubes}</div>
         </div>
 
@@ -161,7 +171,7 @@
           <div class="stat-figure text-secondary">
             <i class="fa-solid fa-trophy text-2xl"></i>
           </div>
-          <div class="stat-title">Achievements</div>
+          <div class="stat-title">{m.user_overview_achievements_label()}</div>
           <div class="stat-value">{totalAchievements}</div>
         </div>
 
@@ -170,16 +180,10 @@
           <div class="stat-figure text-info">
             <i class="fa-solid fa-clipboard-check text-2xl"></i>
           </div>
-          <div class="stat-title">Ratings</div>
+          <div class="stat-title">{m.user_overview_ratings_label()}</div>
           <div class="stat-value">{totalRatings}</div>
           <div class="stat-desc">
-            {#if totalRatings === 0}
-              No ratings yet
-            {:else if totalRatings === 1}
-              1 rating given
-            {:else}
-              {totalRatings} ratings given
-            {/if}
+            {m.user_overview_ratings_summary_text({ count: totalRatings })}
           </div>
         </div>
 
@@ -188,10 +192,17 @@
           <div class="stat-figure text-warning">
             <i class="fa-solid fa-star text-2xl"></i>
           </div>
-          <div class="stat-title">Average Rating</div>
+          <div class="stat-title">
+            {m.user_overview_average_rating_label()}
+          </div>
           <div class="stat-value flex items-center gap-2">
             {averageDisplay}
-            <div class="rating rating-sm" title={`Average: ${averageDisplay}`}>
+            <div
+              class="rating rating-sm"
+              title={m.user_overview_average_rating_title({
+                value: averageDisplay,
+              })}
+            >
               {#each [1, 2, 3, 4, 5] as n}
                 <input
                   type="radio"
@@ -203,7 +214,9 @@
             </div>
           </div>
           <div class="stat-desc">
-            {totalRatings > 0 ? "Based on recent ratings" : "—"}
+            {m.user_overview_average_note_text({
+              state: totalRatings > 0 ? "data" : "empty",
+            })}
           </div>
         </div>
       </div>

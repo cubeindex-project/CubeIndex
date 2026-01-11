@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
   import type {
     AwardsEvent,
@@ -41,31 +42,36 @@
   };
   const startDateLabel = $derived.by(() => formatDateTime(startTime));
   const endDateLabel = $derived.by(() => formatDateTime(endTime));
-  const voteStatusMessage = $derived.by(() => {
-    if (eventPhase === "upcoming" && startDateLabel) {
-      return `Voting opens on ${startDateLabel}.`;
-    }
-    if (eventPhase === "past" && endDateLabel) {
-      return `Voting closed on ${endDateLabel}.`;
-    }
-    if (eventPhase === "unknown") {
-      return "Voting is not available right now.";
-    }
-    return "";
+  const voteStatusState = $derived.by(() => {
+    if (eventPhase === "upcoming" && startDateLabel) return "upcoming";
+    if (eventPhase === "past" && endDateLabel) return "past";
+    if (eventPhase === "unknown") return "unavailable";
+    return "none";
   });
+  const voteStatusMessage = $derived.by(() =>
+    voteStatusState === "none"
+      ? ""
+      : m.awards_vote_status_text({
+          state: voteStatusState,
+          startDateLabel,
+          endDateLabel,
+        }),
+  );
   const formatCountdown = () => {
     const diffMs = endTime - nowMs;
-    if (diffMs <= 0) return "Voting closed";
+    if (diffMs <= 0) return m.awards_vote_countdown_closed_text();
     const totalSeconds = Math.floor(diffMs / 1000);
     const days = Math.floor(totalSeconds / 86400);
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     const parts = [
-      days > 0 ? `${days}d` : null,
-      `${hours}h`,
-      `${minutes}m`,
-      `${seconds}s`,
+      days > 0
+        ? m.awards_vote_countdown_day_short_text({ count: days })
+        : null,
+      m.awards_vote_countdown_hour_short_text({ count: hours }),
+      m.awards_vote_countdown_minute_short_text({ count: minutes }),
+      m.awards_vote_countdown_second_short_text({ count: seconds }),
     ].filter(Boolean);
     return parts.join(" ");
   };
@@ -82,9 +88,22 @@
   const selectNominee = (nominee: NomineeCube) => {
     selectedNomineeId = nominee.nominee_id;
   };
+  const nomineeButtonState = (nomineeId: number) => {
+    if (userVote === nomineeId) return "voted";
+    if (nomineeId === selectedNomineeId) return "selected";
+    return "select";
+  };
 
   let voting = $state(false);
   let voted = $state(false);
+  const submitButtonState = $derived.by(() => {
+    if (voting) return "loading";
+    if (voted) return "voted";
+    if (!votingEnabled) return "closed";
+    if (userVote !== null) return "already_voted";
+    if (selectedNomineeId === null) return "select_nominee";
+    return "ready";
+  });
 
   async function submitVote() {
     voting = true;
@@ -104,7 +123,7 @@
 
     if (!res.ok) {
       voting = false;
-      throw new Error(data.error || "Vote failed");
+      throw new Error(data.error || m.awards_vote_submit_error_text());
     }
 
     voting = false;
@@ -116,7 +135,7 @@
     if (!voting) return;
     const id = setTimeout(() => {
       voting = false;
-      throw new Error("Timeout, please try again in a few minutes.");
+      throw new Error(m.awards_vote_submit_timeout_text());
     }, 10000);
     return () => {
       clearTimeout(id);
@@ -125,7 +144,9 @@
 </script>
 
 <svelte:head>
-  <title>{category.name} - Awards Ballot</title>
+  <title>
+    {m.awards_vote_category_meta_title({ categoryName: category.name })}
+  </title>
   <meta name="robots" content="noindex" />
 </svelte:head>
   <div class="min-h-screen bg-base-100">
@@ -147,13 +168,15 @@
               </p>
             </div>
             <p class="text-xs text-base-content/60">
-              Select one nominee. Votes are final once submitted.
+              {m.awards_vote_nominee_instructions_text()}
             </p>
           </div>
           <div
             class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
           >
-            <p class="text-xs text-base-content/60">Voting closes in</p>
+            <p class="text-xs text-base-content/60">
+              {m.awards_vote_closing_label()}
+            </p>
             <p class="text-lg font-semibold">{countdownLabel}</p>
           </div>
         </div>
@@ -166,16 +189,20 @@
         <section class="space-y-4">
           <div class="flex flex-wrap items-end justify-between gap-3">
             <div class="space-y-1">
-              <h2 class="text-lg font-semibold">Nominees</h2>
+              <h2 class="text-lg font-semibold">
+                {m.awards_vote_nominees_title()}
+              </h2>
               <p class="text-sm text-base-content/70">
-                Review the cubes and pick the one that best fits this category.
+                {m.awards_vote_nominees_hint_text()}
               </p>
             </div>
             {#if nominees.length > 0}
               <span
                 class="badge badge-lg border-base-300 bg-base-100 shadow-sm"
               >
-                {nominees.length} available
+                {m.awards_vote_nominees_available_badge_text({
+                  count: nominees.length,
+                })}
               </span>
             {/if}
           </div>
@@ -196,20 +223,16 @@
                       disabled={!votingEnabled ||
                         (userVote !== null && userVote !== nominee.nominee_id)}
                     >
-                      {#if userVote !== nominee.nominee_id}
-                        {nominee.nominee_id === selectedNomineeId
-                          ? "Selected"
-                          : "Select"}
-                      {:else}
-                        Voted
-                      {/if}
+                      {m.awards_vote_nominee_button_label({
+                        state: nomineeButtonState(nominee.nominee_id),
+                      })}
                     </button>
                     <a
                       href="/explore/cubes/{nominee.slug}"
                       class="btn btn-ghost border border-base-300 flex-1 justify-center"
-                      aria-label="View Cube Details"
+                      aria-label={m.awards_vote_nominee_details_aria()}
                     >
-                      View details
+                      {m.awards_vote_nominee_details_cta()}
                     </a>
                   </div>
                 </div>
@@ -233,13 +256,13 @@
                 class="col-span-full w-full rounded-xl border border-dashed border-base-300 bg-base-200/70 p-6 text-center space-y-3"
               >
                 <p class="text-base font-semibold">
-                  No cubes have been nominated for this category yet.
+                  {m.awards_vote_nominees_empty_title_text()}
                 </p>
                 <p class="text-sm text-base-content/70">
-                  Check back soon to vote once nominations are announced.
+                  {m.awards_vote_nominees_empty_description_text()}
                 </p>
                 <a class="btn btn-primary" href="/awards/vote">
-                  Back to categories
+                  {m.awards_vote_nominees_empty_cta()}
                 </a>
               </div>
             {/each}
@@ -251,10 +274,11 @@
               class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
             >
               <div class="space-y-1">
-                <p class="text-sm font-semibold">Submit your vote</p>
+                <p class="text-sm font-semibold">
+                  {m.awards_vote_submit_title_text()}
+                </p>
                 <p class="text-xs text-base-content/70">
-                  You can submit one vote per category. Double-check your
-                  selection.
+                  {m.awards_vote_submit_hint_text()}
                 </p>
               </div>
               <button
@@ -265,20 +289,10 @@
                   nominees.length === 0 ||
                   selectedNomineeId === null}
               >
-                {#if voting}
+                {#if submitButtonState === "loading"}
                   <span class="loading loading-spinner"></span>
-                  Voting...
-                {:else if voted}
-                  Voted!
-                {:else if !votingEnabled}
-                  Voting not open
-                {:else if userVote !== null}
-                  You have already voted!
-                {:else if selectedNomineeId === null}
-                  Select a nominee to vote
-                {:else}
-                  Submit vote
                 {/if}
+                {m.awards_vote_submit_button_label({ state: submitButtonState })}
               </button>
             </div>
           </div>

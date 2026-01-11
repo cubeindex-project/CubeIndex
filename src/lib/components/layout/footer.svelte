@@ -1,6 +1,13 @@
+<script>
+  import { m } from "$lib/paraglide/messages";
+
+  const startYear = 2025;
+  const currentYear = new Date().getFullYear();
+</script>
+
 <footer
   class="relative overflow-hidden bg-base-100 px-6 pt-12 h-full"
-  aria-label="Footer"
+  aria-label={m.footer_layout_region_label()}
 >
   <!-- Background visuals: gradients + top accent line (no noise) -->
   <div
@@ -28,16 +35,18 @@
           <div class="flex items-center gap-2 mb-4">
             <img
               src="/images/CubeIndex_Logo.webp"
-              alt="CubeIndex logo"
+              alt={m.footer_brand_logo_alt()}
               class="h-10 w-10 rounded-full"
               width="12"
               height="12"
               fetchpriority="high"
             />
-            <span class="text-2xl font-clash font-bold">CubeIndex</span>
+            <span class="text-2xl font-clash font-bold">
+              {m.app_brand_name_text()}
+            </span>
           </div>
           <p class="text-sm text-base-content/70">
-            Track, explore and share your speedcube collection.
+            {m.footer_brand_catch_phrase_text()}
           </p>
         </a>
       </div>
@@ -47,15 +56,19 @@
         <h3
           class="font-semibold mb-3 uppercase tracking-wide text-xs text-base-content/70"
         >
-          Navigation
+          {m.footer_nav_section_title()}
         </h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/" class="link link-hover">Home</a></li>
-          <li><a href="/explore" class="link link-hover">Explore</a></li>
+          <li><a href="/" class="link link-hover">{m.footer_nav_home_label()}</a></li>
           <li>
-            <a href="/achievements" class="link link-hover">Achievements</a>
+            <a href="/explore" class="link link-hover">{m.footer_nav_explore_label()}</a>
           </li>
-          <li><a href="/report" class="link link-hover">Report</a></li>
+          <li>
+            <a href="/achievements" class="link link-hover"
+              >{m.footer_nav_achievements_label()}</a
+            >
+          </li>
+          <li><a href="/report" class="link link-hover">{m.footer_nav_report_label()}</a></li>
         </ul>
       </div>
 
@@ -64,7 +77,7 @@
         <h3
           class="font-semibold mb-3 uppercase tracking-wide text-xs text-base-content/70"
         >
-          Connect
+          {m.footer_social_section_title()}
         </h3>
         <ul class="space-y-2 text-sm">
           <li>
@@ -72,7 +85,7 @@
               href="/discord"
               target="_blank"
               rel="noopener noreferrer"
-              class="link link-hover">Discord</a
+              class="link link-hover">{m.footer_social_discord_label()}</a
             >
           </li>
           <li>
@@ -80,7 +93,7 @@
               href="https://github.com/cubeindex-project/CubeIndex"
               target="_blank"
               rel="noopener noreferrer"
-              class="link link-hover">GitHub</a
+              class="link link-hover">{m.footer_social_github_label()}</a
             >
           </li>
           <li>
@@ -88,7 +101,7 @@
               href="https://twitter.com/thecubeindex"
               target="_blank"
               rel="noopener noreferrer"
-              class="link link-hover">Twitter</a
+              class="link link-hover">{m.footer_social_twitter_label()}</a
             >
           </li>
           <li>
@@ -96,12 +109,12 @@
               href="https://www.youtube.com/@cubeindex"
               target="_blank"
               rel="noopener noreferrer"
-              class="link link-hover">Youtube</a
+              class="link link-hover">{m.footer_social_youtube_label()}</a
             >
           </li>
           <li>
             <a href="mailto:thecubeindex@gmail.com" class="link link-hover"
-              >Email</a
+              >{m.footer_social_email_label()}</a
             >
           </li>
         </ul>
@@ -112,18 +125,35 @@
         <h3
           class="font-semibold mb-3 uppercase tracking-wide text-xs text-base-content/70"
         >
-          Legal
+          {m.footer_legal_section_title()}
         </h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/tos" class="link link-hover">Terms of Service</a></li>
-          <li><a href="/privacy" class="link link-hover">Privacy Policy</a></li>
-          <li><a href="/sitemap.xml" class="link link-hover">Sitemap</a></li>
+          <li>
+            <a href="/tos" class="link link-hover"
+              >{m.footer_legal_terms_label()}</a
+            >
+          </li>
+          <li>
+            <a href="/privacy" class="link link-hover"
+              >{m.footer_legal_privacy_label()}</a
+            >
+          </li>
+          <li>
+            <a href="/sitemap.xml" class="link link-hover"
+              >{m.footer_legal_sitemap_label()}</a
+            >
+          </li>
         </ul>
       </div>
     </div>
 
     <div class="my-10 text-center text-xs text-base-content/70">
-      &copy; 2025 - {new Date().getFullYear()} CubeIndex. All rights reserved.
+      &copy;
+      {m.footer_legal_copyright_text({
+        startYear,
+        currentYear,
+        brandName: m.app_brand_name_text(),
+      })}
     </div>
   </div>
 
@@ -137,7 +167,7 @@
       class="absolute inset-x-0 top-0 -translate-y-1/3 text-center text-[16vw]
              font-clash tracking-tight uppercase leading-none text-base-content/30 blur-2xl"
     >
-      CubeIndex
+      {m.app_brand_name_text()}
     </div>
 
     <!-- Main gradient wordmark -->
@@ -148,7 +178,7 @@
              text-transparent bg-clip-text
              bg-gradient-to-b from-base-content/30 via-base-content/15 to-transparent"
     >
-      CubeIndex
+      {m.app_brand_name_text()}
     </div>
   </div>
 </footer>

@@ -7,12 +7,7 @@
   import ExplorePopover from "./ExplorePopover.svelte";
   import type { User } from "@supabase/supabase-js";
   import { m } from "$lib/paraglide/messages";
-  import {
-    locale,
-    setAppLocale,
-    supportedLocales,
-    type SupportedLocale,
-  } from "$lib/i18n";
+  import { getLocale, setLocale } from "$lib/paraglide/runtime";
 
   let { profile } = $props();
 
@@ -20,12 +15,15 @@
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
   const user = getContext<User | null>("user");
-  const activeLocale = $derived($locale);
 
-  // Utility: close all mobile-only UI bits
-  function closeMobileMenus() {
-    isOpen = false;
-    mobileUserMenuOpen = false;
+  let activeLocale = $state(getLocale());
+
+  function onLocaleChange(e: Event) {
+    const next = (e.currentTarget as HTMLSelectElement).value as "en" | "fr";
+
+    activeLocale = next;
+
+    setLocale(next);
   }
 
   let hasUnread = $state(false);
@@ -68,7 +66,7 @@
   });
 
   interface NavLink {
-    name: () => string;
+    name: string;
     href: string;
     icon?: string;
     emphasis?: boolean;
@@ -77,7 +75,7 @@
 
   const navLinks: NavLink[] = [
     {
-      name: m["nav.awards"],
+      name: m.nav_main_awards_label(),
       href: "/awards",
       icon: "fa-award",
       // emphasis: true,
@@ -131,20 +129,20 @@
     role: string;
   }): ProfileMenuItem[] {
     const items: ProfileMenuItem[] = [
-      { label: m["nav.profile"](), href: `/user/${p.username}` },
-      { label: m["nav.settings"](), href: "/user/settings" },
+      { label: m.nav_user_profile_label(), href: `/user/${p.username}` },
+      { label: m.nav_user_settings_label(), href: "/user/settings" },
       {
-        label: m["nav.userbar"](),
+        label: m.nav_user_userbar_label(),
         href: "/userbar",
         tag: {
-          label: m["nav.userbar_tag"](),
+          label: m.nav_user_userbar_tag_text(),
           gradient: "from-green-500 to-emerald-600",
         },
       },
     ];
     if (p.role !== "User") {
       items.push({
-        label: m["nav.staff_dashboard"](),
+        label: m.nav_staff_dashboard_label(),
         href: "/staff/dashboard",
       });
     }
@@ -203,13 +201,6 @@
     if (exploreCloseTimer) clearTimeout(exploreCloseTimer);
     exploreCloseTimer = setTimeout(() => (exploreOpen = false), delay);
   }
-
-  function handleLocaleChange(event: Event) {
-    const value = (event.currentTarget as HTMLSelectElement | null)?.value;
-    if (value && supportedLocales.includes(value as SupportedLocale)) {
-      setAppLocale(value as SupportedLocale);
-    }
-  }
 </script>
 
 <header
@@ -224,11 +215,11 @@
     <a
       href="/"
       class="flex items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 hover:opacity-90 transition"
-      aria-label={m["nav.home_aria"]()}
+      aria-label={m.nav_brand_home_aria()}
     >
       <img
         src="/images/CubeIndex_Logo.webp"
-        alt={m["nav.logo_alt"]()}
+        alt={m.nav_brand_logo_alt()}
         class="h-12 w-12 rounded-full"
         width="12"
         height="12"
@@ -237,7 +228,7 @@
       <span
         class="font-clash text-3xl font-bold inline-flex items-center gap-2"
       >
-        CubeIndex
+        {m.app_brand_name_text()}
       </span>
     </a>
 
@@ -264,7 +255,7 @@
               aria-controls="explore-popover"
               tabindex="0"
             >
-              {m["nav.explore"]()}
+              {m.nav_main_explore_label()}
               <i
                 class="fa-solid fa-chevron-down transition-transform duration-200 {exploreOpen
                   ? 'rotate-180'
@@ -297,7 +288,7 @@
               }`}
             >
               <i class={`fa-solid ${link.icon} text-xs opacity-80`}></i>
-              <span class="font-medium">{link.name()}</span>
+              <span class="font-medium">{link.name}</span>
             </a>
           {/if}
         {/each}
@@ -338,7 +329,7 @@
                   }}
                   class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
                 >
-                  {m["nav.sign_out"]()}
+                  {m.nav_user_logout_cta()}
                 </button>
               </li>
             </ul>
@@ -348,7 +339,7 @@
             <a
               href="/notifications"
               class="btn btn-ghost btn-circle btn-lg focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
-              aria-label={m["nav.notifications"]()}
+              aria-label={m.nav_main_notifications_label()}
               onclick={() => {
                 bellAnimate = true;
               }}
@@ -357,16 +348,16 @@
                 {#if profile && !isEmailVerified}
                   <span
                     class="indicator-item size-2 rounded-full bg-error animate-ping"
-                    aria-label={m["nav.verify_email"]()}
+                    aria-label={m.nav_email_verify_aria()}
                   ></span>
                   <span
                     class="indicator-item size-2 rounded-full bg-error"
-                    aria-label={m["nav.verify_email"]()}
+                    aria-label={m.nav_email_verify_aria()}
                   ></span>
                 {:else if hasUnread}
                   <span
                     class="indicator-item size-2 rounded-full bg-info"
-                    aria-label={m["nav.unread_notifications"]()}
+                    aria-label={m.nav_notifications_unread_aria()}
                   ></span>
                 {/if}
                 <i class="fa-solid fa-bell {bellAnimate ? 'animate-ring' : ''}"
@@ -379,23 +370,24 @@
             href="/auth/login"
             class="rounded-xl bg-primary text-primary-content px-4 py-2 text-sm transition"
           >
-            {m["nav.login"]()}
+            {m.nav_auth_login_cta()}
           </a>
         {/if}
       </nav>
 
       <div class="flex items-center">
         <label class="sr-only" for="locale-select">
-          {m["nav.language"]()}
+          {m.nav_locale_language_label()}
         </label>
+
         <select
           id="locale-select"
-          class="select select-bordered select-sm max-w-[7rem]"
-          value={activeLocale}
-          onchange={handleLocaleChange}
-          aria-label={m["nav.language"]()}
+          class="select"
+          bind:value={activeLocale}
+          onchange={onLocaleChange}
+          aria-label={m.nav_locale_language_label()}
         >
-          {#each supportedLocales as languageTag}
+          {#each ["en", "fr"] as languageTag}
             <option value={languageTag}>
               {languageTag.toUpperCase()}
             </option>
@@ -411,7 +403,7 @@
             aria-haspopup="menu"
             aria-expanded={mobileUserMenuOpen}
             aria-controls="mobile-user-menu"
-            aria-label={m["nav.user_menu"]()}
+            aria-label={m.nav_user_menu_aria()}
             onclick={() => {
               mobileUserMenuOpen = !mobileUserMenuOpen;
               isOpen = false;
@@ -420,7 +412,7 @@
             {#if profile.profile_picture}
               <img
                 src={profile.profile_picture}
-                alt="User avatar"
+                alt={m.nav_user_avatar_alt()}
                 class="size-full object-cover"
                 loading="eager"
               />
@@ -439,7 +431,7 @@
             <div
               class="absolute right-0 mt-3 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg"
               role="menu"
-              aria-label="User menu"
+              aria-label={m.nav_user_menu_aria()}
               id="mobile-user-menu"
               tabindex="-1"
             >
@@ -458,7 +450,7 @@
                   data-menu-focus-target
                   onclick={() => (mobileUserMenuOpen = false)}
                 >
-                  <span>{m["nav.settings"]()}</span>
+                  <span>{m.nav_user_settings_label()}</span>
                   <i class="fa-solid fa-gear text-xs opacity-70"></i>
                 </a>
                 {#if profile.role !== "User"}
@@ -467,7 +459,7 @@
                     class="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
                     onclick={() => (mobileUserMenuOpen = false)}
                   >
-                    <span>{m["nav.staff_dashboard"]()}</span>
+                    <span>{m.nav_staff_dashboard_label()}</span>
                     <i class="fa-solid fa-gauge-high text-xs opacity-70"></i>
                   </a>
                 {/if}
@@ -479,7 +471,7 @@
                     mobileUserMenuOpen = false;
                   }}
                 >
-                  <span>{m["nav.log_out"]()}</span>
+                  <span>{m.nav_user_logout_cta()}</span>
                   <i
                     class="fa-solid fa-arrow-right-from-bracket text-xs opacity-70"
                   ></i>

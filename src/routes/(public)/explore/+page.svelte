@@ -1,44 +1,42 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
 
   const cards = [
     {
       href: "cubes",
       icon: "🧊",
-      title: "Cubes",
-      description:
-        "Browse thousands of cubes by brand, type, and community rating.",
+      title: m.nav_explore_card_cubes_title(),
+      description: m.nav_explore_card_cubes_text(),
     },
     {
       href: "vendors",
       icon: "🏬",
-      title: "Vendors",
-      description:
-        "Find trusted cube shops and compare prices from top vendors worldwide.",
+      title: m.nav_explore_card_vendors_title(),
+      description: m.nav_explore_card_vendors_text(),
     },
     {
       href: "users",
       icon: "🧍",
-      title: "Users",
-      description:
-        "Explore user profiles, discover top solvers, and see community activity.",
+      title: m.nav_explore_card_users_title(),
+      description: m.nav_explore_card_users_text(),
     },
     {
       href: "achievements",
       icon: "🏅",
-      title: "Achievements",
-      description: "Browse achievements, and track community unlock progress.",
+      title: m.nav_explore_card_achievements_title(),
+      description: m.nav_explore_card_achievements_text(),
     },
   ];
 </script>
 
 <svelte:head>
-  <title>CubeIndex</title>
+  <title>{m.app_brand_name_text()}</title>
 </svelte:head>
   <section
     class="min-h-screen flex flex-col items-center justify-center px-6 py-16 space-y-12"
   >
     <h1 class="text-4xl sm:text-5xl font-clash font-bold text-center">
-      What would you like to explore?
+      {m.explore_landing_title_h1()}
     </h1>
 
     <div
@@ -83,7 +81,7 @@
             <div
               class="mt-1 inline-flex items-center gap-2 text-sm font-medium text-primary"
             >
-              Explore
+              {m.nav_explore_card_cta_label()}
               <i
                 class="fa-solid fa-arrow-right translate-x-0 group-hover:translate-x-0.5 transition-transform"
               ></i>

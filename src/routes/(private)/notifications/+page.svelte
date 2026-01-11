@@ -3,6 +3,7 @@
   import type { Notifications } from "$lib/components/dbTableTypes";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import { toast } from "svelte-sonner";
+  import { m } from "$lib/paraglide/messages";
 
   // Page state
   let notifications: Notifications[] = $state([]);
@@ -23,16 +24,17 @@
       isResending = true;
       const res = await fetch("/auth/resend");
       if (!res.ok) {
+        const fallbackMessage = m.notifications_resend_failed_text();
         const msg = await res
           .json()
           .then((d) => d?.message)
-          .catch(() => "Failed to resend verification email.");
-        toast.error(msg ?? "Failed to resend verification email.");
+          .catch(() => fallbackMessage);
+        toast.error(msg ?? fallbackMessage);
         return;
       }
-      toast.success("Verification email sent. Check your inbox.");
+      toast.success(m.notifications_resend_success_text());
     } catch {
-      toast.error("Network error while resending email.");
+      toast.error(m.notifications_resend_network_error_text());
     } finally {
       isResending = false;
     }
@@ -86,9 +88,9 @@
         error?: string;
       };
       if (!body.success)
-        throw new Error(body.error || "Failed to update notifications");
+        throw new Error(body.error || m.notifications_update_failed_text());
     } catch (e) {
-      toast.error("Failed to mark notifications as read.");
+      toast.error(m.notifications_mark_read_error_text());
       // Revert local state if update fails
       notifications = notifications.map((n) =>
         ids.includes(n.id) ? { ...n, read: false } : n
@@ -112,7 +114,7 @@
     try {
       markingAll = true;
       await markNotificationsAsRead(ids);
-      toast.success("All notifications marked as read.");
+      toast.success(m.notifications_mark_all_success_text());
     } catch {
       /* handled in helper */
     } finally {
@@ -125,9 +127,13 @@
   <div class="max-w-2xl mx-auto">
     <div class="flex items-start sm:items-center justify-between mb-6 gap-3 flex-wrap">
       <div class="flex items-center gap-2">
-        <h1 class="text-3xl sm:text-4xl font-clash font-bold">Notifications</h1>
+        <h1 class="text-3xl sm:text-4xl font-clash font-bold">
+          {m.notifications_title_h1()}
+        </h1>
         {#if unreadCount > 0}
-          <span class="badge badge-info badge-sm sm:badge-md">{unreadCount} unread</span>
+          <span class="badge badge-info badge-sm sm:badge-md">
+            {m.notifications_unread_badge_text({ count: unreadCount })}
+          </span>
         {/if}
       </div>
       <div class="flex items-center gap-2 flex-wrap w-full sm:w-fit">
@@ -140,12 +146,16 @@
             {#if markingAll}
               <span class="loading loading-spinner loading-xs mr-2"></span>
             {/if}
-            Mark all as read
+            {m.notifications_mark_all_cta()}
           </button>
         {/if}
-        <button class="btn btn-sm w-full sm:w-auto" onclick={getMessages} aria-label="Refresh">
+        <button
+          class="btn btn-sm w-full sm:w-auto"
+          onclick={getMessages}
+          aria-label={m.notifications_refresh_aria()}
+        >
           <i class="fa-solid fa-rotate"></i>
-          <span class="ml-2">Refresh</span>
+          <span class="ml-2">{m.notifications_refresh_cta()}</span>
         </button>
       </div>
     </div>
@@ -153,9 +163,9 @@
       <div class="alert alert-error mb-4">
         <i class="fa-solid fa-circle-exclamation"></i>
         <div>
-          <h3 class="font-bold">Email not verified</h3>
+          <h3 class="font-bold">{m.notifications_verify_title_text()}</h3>
           <div class="text-sm">
-            Please verify your email to unlock all features.
+            {m.notifications_verify_description_text()}
           </div>
         </div>
         <div class="ml-auto">
@@ -167,7 +177,7 @@
             {#if isResending}
               <span class="loading loading-spinner loading-xs mr-2"></span>
             {/if}
-            Resend email
+            {m.notifications_resend_cta()}
           </button>
         </div>
       </div>
@@ -189,7 +199,7 @@
       {:else if notifications.length === 0}
         <div class="py-16 text-center text-base-content/50 text-lg">
           <i class="fa-solid fa-bell-slash text-3xl mb-2"></i><br />
-          You have no notifications yet.
+          {m.notifications_empty_text()}
         </div>
       {:else}
         <ul class="flex flex-col gap-3 px-2 sm:px-4 py-4 sm:py-6">
@@ -217,7 +227,10 @@
                         {n.message}
                       </p>
                       {#if !n.read}
-                        <span class="mt-1 size-2 rounded-full bg-info" aria-label="Unread"></span>
+                        <span
+                          class="mt-1 size-2 rounded-full bg-info"
+                          aria-label={m.notifications_unread_aria()}
+                        ></span>
                       {/if}
                     </div>
                     <div class="mt-2 flex items-center gap-3 text-xs text-base-content/70">
@@ -229,7 +242,7 @@
                           rel="noopener noreferrer"
                           class="link link-hover inline-flex items-center gap-1"
                         >
-                          {`${n.link_text === "" ? "Open link" : n.link_text}`}
+                          {`${n.link_text === "" ? m.notifications_link_default_label() : n.link_text}`}
                           <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </a>
                       {/if}
@@ -241,16 +254,18 @@
                           class="btn btn-primary btn-sm"
                           disabled={markingIds.has(n.id)}
                           onclick={() => markOneAsRead(n.id)}
-                          aria-label="Mark notification as read"
-                          title="Mark as read"
+                          aria-label={m.notifications_mark_read_aria()}
+                          title={m.notifications_mark_read_title()}
                         >
                           {#if markingIds.has(n.id)}
                             <span class="loading loading-spinner loading-xs mr-2"></span>
                           {/if}
-                          Mark read
+                          {m.notifications_mark_read_cta()}
                         </button>
                       {:else}
-                        <span class="badge badge-ghost">Read</span>
+                        <span class="badge badge-ghost">
+                          {m.notifications_read_label()}
+                        </span>
                       {/if}
                     </div>
                   </div>
@@ -264,18 +279,18 @@
                     class="btn btn-primary h-full rounded-l-none rounded-r-xl px-4 md:px-6 whitespace-nowrap"
                     disabled={markingIds.has(n.id)}
                     onclick={() => markOneAsRead(n.id)}
-                    aria-label="Mark notification as read"
-                    title="Mark as read"
+                    aria-label={m.notifications_mark_read_aria()}
+                    title={m.notifications_mark_read_title()}
                   >
                     {#if markingIds.has(n.id)}
                       <span class="loading loading-spinner loading-xs mr-2"></span>
                     {/if}
-                    Mark read
+                    {m.notifications_mark_read_cta()}
                   </button>
                 {:else}
                   <button class="btn btn-primary h-full rounded-l-none rounded-r-xl px-4 md:px-6 whitespace-nowrap" disabled>
                     <i class="fa-solid fa-check mr-2"></i>
-                    Read
+                    {m.notifications_read_label()}
                   </button>
                 {/if}
               </div>

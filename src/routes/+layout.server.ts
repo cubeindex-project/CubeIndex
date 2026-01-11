@@ -4,7 +4,7 @@ import { logError } from "$lib/server/logError";
 import { dev } from "$app/environment";
 
 export const load: LayoutServerLoad = async ({
-  locals: { safeGetSession, supabase, log, locale },
+  locals: { safeGetSession, supabase, log },
   cookies,
 }) => {
   const { session, user } = await safeGetSession();
@@ -42,7 +42,6 @@ export const load: LayoutServerLoad = async ({
     profile,
     session,
     cookies: cookies.getAll(),
-    locale,
     umamiTag,
   };
 };

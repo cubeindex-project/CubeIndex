@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PageProps } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   type EventPhase = "upcoming" | "live" | "past" | "unknown";
 
@@ -18,24 +19,24 @@
     }
   > = {
     upcoming: {
-      label: "Upcoming",
+      label: m.awards_year_phase_upcoming_label(),
       tone: "primary",
-      description: "Results unlock once voting closes.",
+      description: m.awards_year_phase_upcoming_description_text(),
     },
     live: {
-      label: "Voting in progress",
+      label: m.awards_year_phase_live_label(),
       tone: "secondary",
-      description: "Votes are still coming in. Check back after the finale.",
+      description: m.awards_year_phase_live_description_text(),
     },
     past: {
-      label: "Completed",
+      label: m.awards_year_phase_past_label(),
       tone: "accent",
-      description: "Explore winners and finalist highlights below.",
+      description: m.awards_year_phase_past_description_text(),
     },
     unknown: {
-      label: "Status unavailable",
+      label: m.awards_year_phase_unknown_label(),
       tone: "primary",
-      description: "Event timing could not be determined.",
+      description: m.awards_year_phase_unknown_description_text(),
     },
   };
 
@@ -49,7 +50,9 @@
 </script>
 
 <svelte:head>
-  <title>{event.title} Results - CubeIndex Awards</title>
+  <title>
+    {m.awards_year_meta_title({ eventTitle: event.title })}
+  </title>
 </svelte:head>
 <section class="relative isolate overflow-hidden bg-base-100">
   <div aria-hidden="true" class="absolute inset-0">
@@ -76,7 +79,7 @@
         <h1
           class="text-4xl font-clash font-extrabold leading-tight sm:text-5xl"
         >
-          Event Results
+          {m.awards_year_title_h1()}
         </h1>
         <p class="max-w-2xl text-base-content/70">
           {phaseCopy[eventPhase].description}
@@ -87,7 +90,7 @@
           class="rounded-2xl border border-base-200 bg-base-100 px-4 py-3 shadow-sm"
         >
           <p class="text-xs uppercase tracking-[0.25em] text-base-content/60">
-            Event started
+            {m.awards_year_start_label()}
           </p>
           <p class="text-sm font-semibold">
             {formatDateTime(event.start_at)}
@@ -97,7 +100,7 @@
           class="rounded-2xl border border-base-200 bg-base-100 px-4 py-3 shadow-sm"
         >
           <p class="text-xs uppercase tracking-[0.25em] text-base-content/60">
-            Event ended
+            {m.awards_year_end_label()}
           </p>
           <p class="text-sm font-semibold">{formatDateTime(event.end_at)}</p>
         </div>
@@ -109,23 +112,25 @@
         class="rounded-2xl border border-dashed border-base-300 bg-base-200/60 px-5 py-4 text-sm text-base-content/80"
       >
         <i class="fa-regular fa-hourglass-half mr-2 text-primary"></i>
-        Results will appear once the event concludes. Check back after {formatDateTime(
-          event.end_at,
-        )}.
+        {m.awards_year_results_locked_text({
+          endDate: formatDateTime(event.end_at),
+        })}
       </div>
     {/if}
 
     <section class="space-y-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
-          <h2 class="text-2xl font-bold">Categories</h2>
+          <h2 class="text-2xl font-bold">
+            {m.awards_year_categories_title()}
+          </h2>
           <p class="text-sm text-base-content/70">
-            Explore each category to see finalists and winners.
+            {m.awards_year_categories_intro_text()}
           </p>
         </div>
         {#if categories.length > 0}
           <span class="badge badge-lg border-base-300 bg-base-100 shadow-sm">
-            {categories.length} categories
+            {m.awards_year_categories_badge_text({ count: categories.length })}
           </span>
         {/if}
       </div>
@@ -135,10 +140,10 @@
           class="rounded-2xl border border-dashed border-base-300 bg-base-200/60 p-6 text-center"
         >
           <p class="text-base font-semibold">
-            No categories found for this event.
+            {m.awards_year_categories_empty_title_text()}
           </p>
           <p class="text-sm text-base-content/70">
-            Check back once categories are announced.
+            {m.awards_year_categories_empty_description_text()}
           </p>
         </div>
       {:else}
@@ -161,7 +166,9 @@
                   <span
                     class="badge border-base-200 bg-base-200/70 text-xs text-nowrap"
                   >
-                    {winner?.nomineeCount} nominees
+                    {m.awards_year_nominees_badge_text({
+                      count: winner?.nomineeCount ?? 0,
+                    })}
                   </span>
                 </div>
 
@@ -170,12 +177,12 @@
                     class="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-base-100 p-5 shadow-md"
                   >
                     <div class="flex flex-col gap-4">
-                      <div
-                        class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary"
-                      >
-                        <i class="fa-solid fa-crown text-sm"></i>
-                        Winner
-                      </div>
+                        <div
+                          class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary"
+                        >
+                          <i class="fa-solid fa-crown text-sm"></i>
+                          {m.awards_year_winner_label()}
+                        </div>
 
                       <div class="flex flex-col gap-3">
                         <a
@@ -205,9 +212,9 @@
                             <span
                               class="inline-flex h-6 items-center rounded-full border border-primary/20 bg-base-100 px-2 font-semibold text-primary"
                             >
-                              {winner.voteCount} vote{winner.voteCount === 1
-                                ? ""
-                                : "s"}
+                              {m.awards_year_votes_text({
+                                count: winner.voteCount,
+                              })}
                             </span>
                           </p>
                         </div>
@@ -216,9 +223,11 @@
                       <a
                         class="btn btn-sm btn-primary w-full sm:w-auto shadow-sm"
                         href={`/explore/cubes/${winner.cube.slug}`}
-                        aria-label={`View details for ${winner.cube.name}`}
+                        aria-label={m.awards_year_view_details_aria({
+                          cubeName: winner.cube.name,
+                        })}
                       >
-                        View details
+                        {m.awards_year_view_details_cta()}
                       </a>
                     </div>
                   </div>
@@ -227,7 +236,7 @@
                     class="rounded-xl border border-base-300 bg-base-300 p-4 text-sm text-base-content/70"
                   >
                     <i class="fa-regular fa-clock mr-2 text-primary"></i>
-                    Results available after the event ends.
+                    {m.awards_year_results_pending_text()}
                   </div>
                 {/if}
               </div>

@@ -4,18 +4,38 @@ const COMMON = new Set([
   "password","123456","qwerty","111111","123123","letmein","abc123","iloveyou","admin","welcome"
 ]);
 
+export type StrengthLabel =
+  | "very_weak"
+  | "weak"
+  | "fair"
+  | "strong"
+  | "very_strong";
+
+export type StrengthSuggestion =
+  | "use_longer"
+  | "avoid_common"
+  | "use_12_plus"
+  | "add_uppercase"
+  | "add_lowercase"
+  | "add_number"
+  | "add_symbol";
+
 export type Strength = {
   score: 0 | 1 | 2 | 3 | 4;
-  label: "Very weak" | "Weak" | "Fair" | "Strong" | "Very strong";
-  suggestions: string[];
+  label: StrengthLabel;
+  suggestions: StrengthSuggestion[];
 };
 
 export function passwordStrength(pw: string): Strength {
-  const suggestions: string[] = [];
+  const suggestions: StrengthSuggestion[] = [];
   let score = 0 as Strength["score"];
 
   if (!pw || pw.length < 4) {
-    return { score: 0, label: "Very weak", suggestions: ["Use a longer password"] };
+    return {
+      score: 0,
+      label: "very_weak",
+      suggestions: ["use_longer"],
+    };
   }
 
   // Base score from length
@@ -35,16 +55,16 @@ export function passwordStrength(pw: string): Strength {
   if (COMMON.has(pw.toLowerCase())) score = 0;
 
   // Suggestions
-  if (COMMON.has(pw.toLowerCase())) suggestions.push("Avoid common passwords");
-  if (pw.length < 12) suggestions.push("Use 12+ characters");
-  if (!hasUpper) suggestions.push("Add an uppercase letter");
-  if (!hasLower) suggestions.push("Add a lowercase letter");
-  if (!hasDigit) suggestions.push("Add a number");
-  if (!hasSymbol) suggestions.push("Add a symbol");
+  if (COMMON.has(pw.toLowerCase())) suggestions.push("avoid_common");
+  if (pw.length < 12) suggestions.push("use_12_plus");
+  if (!hasUpper) suggestions.push("add_uppercase");
+  if (!hasLower) suggestions.push("add_lowercase");
+  if (!hasDigit) suggestions.push("add_number");
+  if (!hasSymbol) suggestions.push("add_symbol");
 
   // Clamp 0-4
   score = Math.max(0, Math.min(4, score)) as Strength["score"];
-  const label = ["Very weak", "Weak", "Fair", "Strong", "Very strong"][score];
+  const label = ["very_weak", "weak", "fair", "strong", "very_strong"][score];
 
-  return { score, label: label as Strength["label"], suggestions };
+  return { score, label, suggestions };
 }

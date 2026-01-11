@@ -10,6 +10,7 @@ import { fail } from "@sveltejs/kit";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 import { logError } from "$lib/server/logError";
+import { m } from "$lib/paraglide/messages";
 
 const profileSchema = z.object({
   // Accept a file upload for the avatar; optional
@@ -18,7 +19,7 @@ const profileSchema = z.object({
   banner: z.any().optional(),
   display_name: z
     .string()
-    .min(3, "The display name must have more than 3 characters"),
+    .min(3, m.user_settings_display_name_length_error_text()),
   bio: z.string(),
   private_profile: z.boolean(),
 });
@@ -33,11 +34,13 @@ const socialSchema = z.object({
 });
 
 const passwordSchema = z.object({
-  currentPassword: z.string().nonempty("The current password is required"),
+  currentPassword: z
+    .string()
+    .nonempty(m.user_settings_current_password_required_text()),
   newPassword: z
     .string()
-    .nonempty("The new password is required")
-    .min(8, "The new password must have more than 8 characters"),
+    .nonempty(m.user_settings_new_password_required_text())
+    .min(8, m.user_settings_new_password_length_error_text()),
 });
 
 export const load = (async ({ locals, setHeaders }) => {
@@ -88,8 +91,7 @@ export const actions: Actions = {
     if (!form.valid)
       return fail(400, {
         form,
-        message:
-          "There are errors in your submission. Please review the highlighted fields and try again.",
+        message: m.user_settings_form_error_text(),
       });
 
     const isFileLike = (v: unknown): v is File =>
@@ -114,14 +116,18 @@ export const actions: Actions = {
       });
       if (!resp.ok) {
         const errText = await resp.text();
-        form.message =
-          "Avatar processing failed: " + errText || resp.statusText;
+        form.message = m.user_settings_avatar_processing_error_text({
+          error: errText,
+        });
         return withFiles(fail(400, { profileForm: form }));
       }
       const processed = new Uint8Array(await resp.arrayBuffer());
 
       if (!locals.user)
-        return fail(400, { profileForm: form, message: "Must be logged in!" });
+        return fail(400, {
+          profileForm: form,
+          message: m.user_settings_auth_required_text(),
+        });
 
       // 2) Upload normalized bytes to Storage with a fixed path & content type
       const path = `${locals.user.id}/avatar.webp`;
@@ -136,7 +142,9 @@ export const actions: Actions = {
           fail(400, {
             profileForm: {
               ...form,
-              message: "Avatar upload failed: " + upErr.message,
+              message: m.user_settings_avatar_upload_error_text({
+                error: upErr.message,
+              }),
             },
           })
         );
@@ -161,14 +169,18 @@ export const actions: Actions = {
       });
       if (!resp.ok) {
         const errText = await resp.text();
-        form.message =
-          "Banner processing failed: " + (errText || resp.statusText);
+        form.message = m.user_settings_banner_processing_error_text({
+          error: errText || resp.statusText,
+        });
         return withFiles(fail(400, { profileForm: form }));
       }
       const processed = new Uint8Array(await resp.arrayBuffer());
 
       if (!locals.user)
-        return fail(400, { profileForm: form, message: "Must be logged in!" });
+        return fail(400, {
+          profileForm: form,
+          message: m.user_settings_auth_required_text(),
+        });
 
       const path = `${locals.user.id}/banner.webp`;
       const { error: upErr } = await locals.supabase.storage
@@ -182,7 +194,9 @@ export const actions: Actions = {
           fail(400, {
             profileForm: {
               ...form,
-              message: "Banner upload failed: " + upErr.message,
+              message: m.user_settings_banner_upload_error_text({
+                error: upErr.message,
+              }),
             },
           })
         );
@@ -220,7 +234,7 @@ export const actions: Actions = {
     }
 
     // 4) Success: redirect back or return success data
-    return message(form, "Profile edited successfully!");
+    return message(form, m.user_settings_profile_success_text());
   },
 
   socials: async ({ request, locals }) => {
@@ -230,8 +244,7 @@ export const actions: Actions = {
     if (!form.valid)
       return fail(400, {
         form,
-        message:
-          "There are errors in your submission. Please review the highlighted fields and try again.",
+        message: m.user_settings_form_error_text(),
       });
 
     const { error: err } = await locals.supabase
@@ -258,7 +271,7 @@ export const actions: Actions = {
     }
 
     // 4) Success: redirect back or return success data
-    return message(form, "Social links edited successfully!");
+    return message(form, m.user_settings_social_success_text());
   },
 
   password: async ({ request, locals }) => {
@@ -268,8 +281,7 @@ export const actions: Actions = {
     if (!form.valid)
       return fail(400, {
         form,
-        message:
-          "There are errors in your submission. Please review the highlighted fields and try again.",
+        message: m.user_settings_form_error_text(),
       });
 
     const { data: passUpdateData, error: err } = await locals.supabase.rpc(
@@ -289,9 +301,9 @@ export const actions: Actions = {
       return setError(
         form,
         "currentPassword",
-        "The provided password is incorect"
+        m.user_settings_password_incorrect_error_text()
       );
 
-    return message(form, "Password edited successfully!");
+    return message(form, m.user_settings_password_success_text());
   },
 };

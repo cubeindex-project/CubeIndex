@@ -3,11 +3,12 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
   import type { PageData } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   let { cube, review } = $derived(data);
 
-  const pageTitle = $derived(`${cube.name} - Review`);
+  const pageTitle = $derived(m.explore_review_meta_title({ name: cube.name }));
   const reviewText = $derived(review.review.trim());
 
   const ratingsEntries = $derived.by(() =>
@@ -35,7 +36,7 @@
       const data = await response.json();
 
       if (!response.ok) {
-        helpfulError = data.error ?? "An unexpected error occurred";
+        helpfulError = data.error ?? m.common_error_unexpected_text();
         return;
       }
 
@@ -47,7 +48,7 @@
 
       isHelpful = !isHelpful;
     } catch {
-      helpfulError = "An unexpected error occurred";
+      helpfulError = m.common_error_unexpected_text();
     } finally {
       isSubmitting = false;
     }
@@ -67,7 +68,7 @@
         data-sveltekit-noscroll
       >
         <i class="fa-solid fa-arrow-left mr-2"></i>
-        All reviews
+        {m.common_action_all_reviews_cta()}
       </a>
     </div>
   </header>
@@ -99,7 +100,7 @@
           <div
             class="mt-0.5 flex flex-wrap items-center gap-2 text-xs opacity-70"
           >
-            <span title="Last update">
+            <span title={m.common_meta_last_update_label()}>
               {formatDate(review.updated_at ?? review.created_at)}
             </span>
           </div>
@@ -121,7 +122,9 @@
                 : "fa-regular fa-thumbs-up"}
             ></i>
 
-            <span class="ml-2 whitespace-nowrap">Helpful</span>
+            <span class="ml-2 whitespace-nowrap">
+              {m.explore_review_helpful_cta()}
+            </span>
 
             <span
               class="ml-2 badge badge-ghost badge-sm tabular-nums whitespace-nowrap"

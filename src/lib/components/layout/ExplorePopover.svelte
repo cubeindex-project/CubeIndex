@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   /**
    * Popover content for Explore menu.
    * Renders the same cards previously shown on /explore.
@@ -16,50 +18,46 @@
     {
       href: "cubes",
       icon: "🧊",
-      title: "Cubes",
-      description:
-        "Browse thousands of cubes by brand, type, and community rating.",
+      title: m.nav_explore_card_cubes_title(),
+      description: m.nav_explore_card_cubes_text(),
     },
     {
       href: "vendors",
       icon: "🏬",
-      title: "Vendors",
-      description:
-        "Find trusted cube shops and compare prices from top vendors worldwide.",
+      title: m.nav_explore_card_vendors_title(),
+      description: m.nav_explore_card_vendors_text(),
     },
     {
       href: "users",
       icon: "🧍",
-      title: "Users",
-      description:
-        "Explore user profiles, discover top solvers, and see community activity.",
+      title: m.nav_explore_card_users_title(),
+      description: m.nav_explore_card_users_text(),
     },
     {
       href: "achievements",
       icon: "🏅",
-      title: "Achievements",
-      description:
-        "Browse achievements, and track community unlock progress.",
+      title: m.nav_explore_card_achievements_title(),
+      description: m.nav_explore_card_achievements_text(),
     },
   ];
 </script>
 
 <div
   role="menu"
-  aria-label="Explore Menu"
+  aria-label={m.nav_explore_menu_aria()}
   {id}
   class="w-[90vw] max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5 shadow-xl"
 >
   <div class="mb-3 flex items-baseline justify-between">
     <h2 class="text-sm font-semibold tracking-wide text-base-content/80">
-      Explore Database
+      {m.nav_explore_title_text()}
     </h2>
     <a
       href="/explore"
       class="text-xs text-base-content/60 hover:text-primary transition inline-flex items-center gap-1"
-      aria-label="View all explore options"
+      aria-label={m.nav_explore_view_all_aria()}
     >
-      View all
+      {m.nav_explore_view_all_label()}
       <i class="fa-solid fa-arrow-right text-[11px]"></i>
     </a>
   </div>
@@ -87,7 +85,7 @@
             <span
               class="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-primary"
             >
-              Explore
+              {m.nav_explore_card_cta_label()}
               <i
                 class="fa-solid fa-arrow-right translate-x-0 group-hover:translate-x-0.5 transition-transform"
               ></i>
@@ -102,17 +100,17 @@
   >
     <div class="min-w-0">
       <p class="text-sm font-semibold text-base-content">
-        Missing a cube?
+        {m.nav_explore_submit_prompt_title()}
       </p>
       <p class="text-xs text-base-content/70">
-        Submit models that are not in the catalog and help keep CubeIndex updated.
+        {m.nav_explore_submit_prompt_text()}
       </p>
     </div>
     <a class="btn btn-primary btn-sm" href="/submit">
       <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-      <span class="hidden sm:inline">Submit a cube</span>
-      <span class="sm:hidden">Submit</span>
+      <span class="hidden sm:inline">{m.nav_explore_submit_cta()}</span>
+      <span class="sm:hidden">{m.nav_explore_submit_short_cta()}</span>
     </a>
   </div>
-  <p class="sr-only">Use arrow keys to navigate options</p>
+  <p class="sr-only">{m.nav_explore_keyboard_hint_text()}</p>
 </div>

@@ -1,22 +1,1471 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "nav": {
-    "awards": "Récompenses",
-    "explore": "Explorer",
-    "home_aria": "Accueil CubeIndex",
-    "language": "Langue",
-    "login": "Connexion",
-    "logo_alt": "Logo CubeIndex",
-    "log_out": "Se déconnecter",
-    "notifications": "Notifications",
-    "profile": "Profil",
-    "settings": "Paramètres",
-    "sign_out": "Se déconnecter",
-    "staff_dashboard": "Tableau de bord du staff",
-    "unread_notifications": "Notifications non lues",
-    "user_menu": "Menu utilisateur",
-    "userbar": "Barre utilisateur",
-    "userbar_tag": "Nouveau",
-    "verify_email": "Vérifiez votre e-mail"
-  }
+  "app_brand_name_text": "CubeIndex",
+  "app_home_return_cta": "Retour à l'accueil",
+  "auth_login_discord_cta": "Se connecter avec Discord",
+  "auth_login_email_label": "E-mail",
+  "auth_login_email_required_error_text": "Veuillez saisir une adresse e-mail",
+  "auth_login_forgot_password_text": "Mot de passe oublié ?",
+  "auth_login_intro_text": "Connectez-vous à votre profil CubeIndex",
+  "auth_login_meta_title": "Connexion - CubeIndex",
+  "auth_login_no_account_text": "Vous n'avez pas de compte ?",
+  "auth_login_or_divider_text": "ou",
+  "auth_login_password_label": "Mot de passe",
+  "auth_login_reset_password_cta": "Réinitialiser",
+  "auth_login_reset_sent_text": "Consultez votre messagerie pour réinitialiser votre mot de passe.",
+  "auth_login_signup_cta": "S'inscrire",
+  "auth_login_submit_cta": "Se connecter",
+  "auth_login_submitting_text": "Connexion en cours...",
+  "auth_login_title_h1": "Content de te revoir",
+  "auth_login_unknown_error_text": "Erreur inconnue",
+  "auth_password_strength_label": [
+    {
+      "declarations": [
+        "input label"
+      ],
+      "match": {
+        "label=*": "{label}",
+        "label=fair": "Équitable",
+        "label=strong": "Fort",
+        "label=very_strong": "Très fort",
+        "label=very_weak": "Très faible",
+        "label=weak": "Faible"
+      },
+      "selectors": [
+        "label"
+      ]
+    }
+  ],
+  "auth_password_suggestion_text": [
+    {
+      "declarations": [
+        "input suggestion"
+      ],
+      "match": {
+        "suggestion=*": "{suggestion}",
+        "suggestion=add_lowercase": "Ajoutez une lettre minuscule",
+        "suggestion=add_number": "Ajouter un nombre",
+        "suggestion=add_symbol": "Ajouter un symbole",
+        "suggestion=add_uppercase": "Ajoutez une lettre majuscule",
+        "suggestion=avoid_common": "Évitez les mots de passe courants.",
+        "suggestion=use_12_plus": "Utilisez au moins 12 caractères",
+        "suggestion=use_longer": "Utilisez un mot de passe plus long"
+      },
+      "selectors": [
+        "suggestion"
+      ]
+    }
+  ],
+  "auth_reset_back_to_login_cta": "Retour à la connexion",
+  "auth_reset_back_to_login_prompt_text": "Tu t'en souviens ?",
+  "auth_reset_confirm_password_label": "Confirmez le mot de passe",
+  "auth_reset_intro_text": "Veuillez saisir un nouveau mot de passe pour votre compte.",
+  "auth_reset_meta_description": "Réinitialisez le mot de passe de votre compte CubeIndex",
+  "auth_reset_meta_title": "Réinitialiser le mot de passe - CubeIndex",
+  "auth_reset_new_password_label": "Nouveau mot de passe",
+  "auth_reset_password_length_error_text": "Le mot de passe doit contenir au moins {minLength} caractères",
+  "auth_reset_password_match_error_text": "Les mots de passe ne correspondent pas.",
+  "auth_reset_password_update_error_text": "Impossible de mettre à jour le mot de passe. Le lien est peut-être invalide ou expiré.",
+  "auth_reset_password_update_success_text": "Mot de passe mis à jour. Vous pouvez maintenant vous connecter.",
+  "auth_reset_submit_cta": "Mettre à jour le mot de passe",
+  "auth_reset_submitting_text": "Mise à jour en cours...",
+  "auth_reset_title_h1": "Réinitialiser le mot de passe",
+  "auth_signout_cancel_cta": "Annuler",
+  "auth_signout_confirm_cta": "Se déconnecter",
+  "auth_signout_prompt_text": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "auth_signout_title_h2": "Confirmer la déconnexion",
+  "auth_signup_complete_body_text": "Consultez votre boîte mail pour vérifier votre compte. Une fois vérifié, vous pourrez suivre votre collection, comparer les boutiques et recevoir des alertes de baisse de prix sur Discord.",
+  "auth_signup_complete_cta": "Commencez votre collection !",
+  "auth_signup_complete_title_h2": "C'est tout bon !",
+  "auth_signup_confirm_password_label": "Confirmez le mot de passe",
+  "auth_signup_continue_cta": "Continuer",
+  "auth_signup_discord_cta": "Inscrivez-vous sur Discord",
+  "auth_signup_discover_label": "Comment avez-vous découvert CubeIndex ?",
+  "auth_signup_discover_option_discord_label": "Discorde",
+  "auth_signup_discover_option_friend_label": "Ami",
+  "auth_signup_discover_option_other_label": "Autre",
+  "auth_signup_discover_option_reddit_label": "Reddit",
+  "auth_signup_discover_option_search_label": "Moteur de recherche",
+  "auth_signup_discover_option_youtube_label": "YouTube",
+  "auth_signup_discover_placeholder_label": "Sélectionnez une option.",
+  "auth_signup_display_name_label": "Nom d'affichage",
+  "auth_signup_email_label": "E-mail",
+  "auth_signup_existing_cta": "Se connecter",
+  "auth_signup_existing_prompt_text": "Vous avez déjà un compte ?",
+  "auth_signup_finish_cta": "Finition",
+  "auth_signup_interest_achievements_label": "Réalisations",
+  "auth_signup_interest_collection_management_label": "Gestion des collections",
+  "auth_signup_interest_discord_alerts_label": "alertes Discord",
+  "auth_signup_interest_label": "Quelles fonctionnalités vous intéressent le plus ?",
+  "auth_signup_interest_price_tracking_label": "Suivi des prix",
+  "auth_signup_interest_ratings_reviews_label": "Évaluations et avis",
+  "auth_signup_interest_shop_compare_label": "Comparateur de prix",
+  "auth_signup_intro_text": "Créez un compte gratuit pour commencer à suivre votre collection",
+  "auth_signup_marketing_achievements_text": "Débloquez des badges au fur et à mesure que vous agrandissez votre collection.",
+  "auth_signup_marketing_achievements_title": "Réalisations",
+  "auth_signup_marketing_collection_text": "Ajouter des cubes, définir la condition et l'état, et marquer les éléments principaux.",
+  "auth_signup_marketing_collection_title": "Gestion des collections",
+  "auth_signup_marketing_intro_text": "Suivez votre collection, évaluez les cubes, débloquez des succès et recevez des mises à jour sur les prix.",
+  "auth_signup_marketing_ratings_text": "Partagez votre expérience et découvrez ce qu'en pensent les autres.",
+  "auth_signup_marketing_ratings_title": "Évaluations et avis",
+  "auth_signup_marketing_title_h2": "Tous vos cubes, au même endroit",
+  "auth_signup_meta_title": "Inscription - CubeIndex",
+  "auth_signup_or_divider_text": "ou",
+  "auth_signup_other_label": "Autre chose?",
+  "auth_signup_other_placeholder": "Facultatif",
+  "auth_signup_password_label": "Mot de passe",
+  "auth_signup_privacy_policy_label": "politique de confidentialité",
+  "auth_signup_profile_picture_label": "Photo de profil",
+  "auth_signup_step_account_label": "Compte",
+  "auth_signup_step_done_label": "Fait",
+  "auth_signup_step_preferences_label": "Préférences",
+  "auth_signup_step_profile_label": "Profil",
+  "auth_signup_terms_of_service_label": "Conditions d'utilisation",
+  "auth_signup_title_h1": "Rejoignez CubeIndex",
+  "auth_signup_tos_accept_conjunction_text": "et",
+  "auth_signup_tos_accept_prefix_text": "J'accepte",
+  "auth_signup_username_label": "Nom d'utilisateur",
+  "awards_landing_categories_kicker_label": "Catégories",
+  "awards_landing_categories_title_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Nominer dans la catégorie {count}",
+        "countPlural=other": "Nominer dans les catégories {count}"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_days_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Jour",
+        "countPlural=other": "Jours"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_hours_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Heure",
+        "countPlural=other": "Heures"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Débute dans",
+        "state=live": "Se termine par",
+        "state=upcoming": "Débute dans"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_landing_countdown_minutes_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Minute",
+        "countPlural=other": "Minutes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_seconds_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Deuxième",
+        "countPlural=other": "Secondes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_cta_categories": "Afficher les catégories",
+  "awards_landing_cta_nominate": "Proposez un cube",
+  "awards_landing_empty_description_text": "Revenez bientôt consulter le calendrier des prochains CubeIndex Awards.",
+  "awards_landing_empty_title_text": "Aucune cérémonie de remise de prix n'est prévue pour le moment.",
+  "awards_landing_event_title_default_text": "Prix CubeIndex",
+  "awards_landing_hero_lead_text": "Les CubeIndex Awards récompensent les puzzles les plus innovants, appréciés et recherchés de l'année. Proposez vos favoris et votez avec la communauté.",
+  "awards_landing_hero_title_h1": "Célébrez les Cubes qui ont redéfini la saison",
+  "awards_landing_logo_alt_text": "Logo des CubeIndex Awards",
+  "awards_landing_logo_credit_prefix_text": "Logo conçu par ",
+  "awards_landing_meta_title": "Prix CubeIndex",
+  "awards_landing_partners_kicker_label": "Partenaires",
+  "awards_landing_partners_learn_more_cta": "Apprendre encore plus",
+  "awards_landing_partners_title_h2": "Partenaires",
+  "awards_landing_previous_intro_text": "Revivez les gagnants, les finalistes et les moments marquants de la communauté des saisons précédentes.",
+  "awards_landing_previous_kicker_label": "Années précédentes",
+  "awards_landing_previous_title_h2": "Découvrez les prix CubeIndex passés",
+  "awards_landing_previous_view_label": "Voir",
+  "awards_landing_trailer_cta": "Plus d'infos",
+  "awards_landing_trailer_prompt_text": "Visionnez la bande-annonce sur YouTube.",
+  "awards_landing_trailer_title_text": "Bande-annonce des CubeIndex Awards",
+  "awards_vote_categories_hint_text": "Choisissez une catégorie pour consulter les candidats et voter.",
+  "awards_vote_categories_open_badge_text": "{count} ouvrir",
+  "awards_vote_categories_title": "Catégories",
+  "awards_vote_category_meta_title": "{categoryName} - Bulletin de vote des prix",
+  "awards_vote_closing_label": "Le vote se termine dans",
+  "awards_vote_countdown_closed_text": "Le vote est clos.",
+  "awards_vote_countdown_day_short_text": "{count} d",
+  "awards_vote_countdown_hour_short_text": "{count} h",
+  "awards_vote_countdown_minute_short_text": "{count} m",
+  "awards_vote_countdown_second_short_text": "{count} s",
+  "awards_vote_countdown_start_label": "Débute dans",
+  "awards_vote_countdown_zero_short_text": "0s",
+  "awards_vote_empty_action_overview_cta": "Aperçu des prix",
+  "awards_vote_empty_description_text": [
+    {
+      "declarations": [
+        "input eventTitle",
+        "input startDateLabel",
+        "input state"
+      ],
+      "match": {
+        "state=*": "Revenez bientôt pour connaître les dates du prochain événement CubeIndex Awards.",
+        "state=none": "La prochaine cérémonie des CubeIndex Awards n'est pas encore programmée. Restez à l'écoute.",
+        "state=scheduled": "Revenez bientôt pour connaître les dates du prochain événement CubeIndex Awards.",
+        "state=upcoming": "Les votes sont ouverts pour {eventTitle} le {startDateLabel} . Revenez consulter cette page une fois l'événement commencé."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_empty_status_description_text": "Nous annoncerons prochainement le calendrier des prochaines remises de prix.",
+  "awards_vote_empty_status_label": "Statut",
+  "awards_vote_empty_status_title_text": "Aucun événement prévu",
+  "awards_vote_empty_title_text": [
+    {
+      "declarations": [
+        "input hasEvent"
+      ],
+      "match": {
+        "hasEvent=*": "Aucune cérémonie de remise de prix n'est prévue.",
+        "hasEvent=false": "Aucune cérémonie de remise de prix n'est prévue.",
+        "hasEvent=true": "Aucune cérémonie de remise de prix n'est diffusée en direct pour le moment."
+      },
+      "selectors": [
+        "hasEvent"
+      ]
+    }
+  ],
+  "awards_vote_event_title_default_text": "Prix CubeIndex",
+  "awards_vote_kicker_label": "Vote pour les prix",
+  "awards_vote_live_intro_text": "Examinez chaque catégorie et participez au vote pour faire vos choix.",
+  "awards_vote_meta_title": "Vote pour les prix - CubeIndex",
+  "awards_vote_nominee_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Sélectionner",
+        "state=select": "Sélectionner",
+        "state=selected": "Choisi",
+        "state=voted": "Élu"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_nominee_details_aria": "Voir les détails du cube",
+  "awards_vote_nominee_details_cta": "Voir les détails",
+  "awards_vote_nominee_instructions_text": "Choisissez un candidat. Les votes sont définitifs une fois soumis.",
+  "awards_vote_nominees_available_badge_text": "{count} disponible",
+  "awards_vote_nominees_empty_cta": "Retour aux catégories",
+  "awards_vote_nominees_empty_description_text": "Revenez bientôt pour voter une fois les nominations annoncées.",
+  "awards_vote_nominees_empty_title_text": "Aucun cube n'a encore été nominé dans cette catégorie.",
+  "awards_vote_nominees_hint_text": "Examinez les cubes et choisissez celui qui correspond le mieux à cette catégorie.",
+  "awards_vote_nominees_title": "Candidats",
+  "awards_vote_status_text": [
+    {
+      "declarations": [
+        "input endDateLabel",
+        "input startDateLabel",
+        "input state"
+      ],
+      "match": {
+        "state=*": "Le vote n'est pas disponible pour le moment.",
+        "state=past": "Le vote est clos sur {endDateLabel} .",
+        "state=unavailable": "Le vote n'est pas disponible pour le moment.",
+        "state=upcoming": "Le vote est ouvert le {startDateLabel} ."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_submit_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Soumettre le vote",
+        "state=already_voted": "Vous avez déjà voté !",
+        "state=closed": "Le vote n'est pas ouvert.",
+        "state=loading": "Vote...",
+        "state=ready": "Soumettre le vote",
+        "state=select_nominee": "Désignez un candidat pour voter",
+        "state=voted": "J'ai voté !"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_submit_error_text": "Le vote a échoué",
+  "awards_vote_submit_hint_text": "Vous pouvez voter une fois par catégorie. Veuillez vérifier votre sélection.",
+  "awards_vote_submit_timeout_text": "Délai d'attente dépassé, veuillez réessayer dans quelques minutes.",
+  "awards_vote_submit_title_text": "Soumettez votre vote",
+  "awards_year_categories_badge_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} catégorie",
+        "countPlural=other": "{count} catégories"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_categories_empty_description_text": "Revenez consulter cette page une fois les catégories annoncées.",
+  "awards_year_categories_empty_title_text": "Aucune catégorie n'a été trouvée pour cet événement.",
+  "awards_year_categories_intro_text": "Explorez chaque catégorie pour découvrir les finalistes et les gagnants.",
+  "awards_year_categories_title": "Catégories",
+  "awards_year_end_label": "L'événement s'est terminé.",
+  "awards_year_meta_title": "{eventTitle} des CubeIndex Awards",
+  "awards_year_nominees_badge_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} candidat",
+        "countPlural=other": "{count} candidats"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_phase_live_description_text": "Les votes continuent d'arriver. Revenez consulter cette page après la finale.",
+  "awards_year_phase_live_label": "Vote en cours",
+  "awards_year_phase_past_description_text": "Découvrez ci-dessous les lauréats et les finalistes.",
+  "awards_year_phase_past_label": "Complété",
+  "awards_year_phase_unknown_description_text": "L'heure de l'événement n'a pas pu être déterminée.",
+  "awards_year_phase_unknown_label": "Statut indisponible",
+  "awards_year_phase_upcoming_description_text": "Les résultats seront disponibles une fois le vote clos.",
+  "awards_year_phase_upcoming_label": "Prochain",
+  "awards_year_results_locked_text": "Les résultats s'afficheront une fois l'événement terminé. Revenez après {endDate} .",
+  "awards_year_results_pending_text": "Les résultats seront disponibles après la fin de l'événement.",
+  "awards_year_start_label": "L'événement a commencé",
+  "awards_year_title_h1": "Résultats de l'événement",
+  "awards_year_view_details_aria": "Afficher les détails pour {cubeName}",
+  "awards_year_view_details_cta": "Voir les détails",
+  "awards_year_votes_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} vote",
+        "countPlural=other": "{count} votes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_winner_label": "Gagnant",
+  "common_action_all_reviews_cta": "Tous les avis",
+  "common_action_clear_both_cta": "Effacer les deux",
+  "common_action_clear_cta": "Clair",
+  "common_action_read_label": "Lire",
+  "common_action_read_more_label": "En savoir plus",
+  "common_action_reset_cta": "Réinitialiser",
+  "common_action_reset_filters_aria": "Réinitialiser les filtres",
+  "common_action_reset_filters_cta": "Réinitialiser les filtres",
+  "common_action_submit_new_cube_cta": "Soumettre un nouveau cube",
+  "common_action_swap_cta": "Échanger",
+  "common_action_visit_store_cta": "Visitez le magasin",
+  "common_action_write_review_cta": "Rédiger un avis",
+  "common_error_unexpected_text": "Une erreur inattendue s'est produite.",
+  "common_filter_all_label": "Tous",
+  "common_label_cube_1_text": "Cube 1",
+  "common_label_cube_2_text": "Cube 2",
+  "common_label_date_text": "Date",
+  "common_label_feature_text": "Fonctionnalité",
+  "common_label_no_text": "Non",
+  "common_label_price_text": "Prix",
+  "common_label_yes_text": "Oui",
+  "common_meta_last_update_label": "Dernière mise à jour",
+  "common_meta_unknown_label": "Inconnu",
+  "common_percent_label": "{value} %",
+  "common_sort_label": "Trier",
+  "common_sort_name_label": "Nom",
+  "common_sort_popularity_label": "Popularité",
+  "common_sort_price_label": "Prix",
+  "common_sort_rating_label": "Notation",
+  "common_sort_recent_label": "Récent",
+  "common_status_hidden_label": "Caché",
+  "common_status_unsaved_label": "Non sauvegardé",
+  "dashboard_action_browse_achievements_cta": "Parcourir les succès",
+  "dashboard_action_discover_users_cta": "Découvrir les utilisateurs",
+  "dashboard_action_manage_collection_cta": "Gérer la collection",
+  "dashboard_action_my_ratings_cta": "Mes évaluations",
+  "dashboard_action_my_submissions_cta": "Mes soumissions",
+  "dashboard_action_submit_cta": "Soumettre un cube",
+  "dashboard_action_userbar_cta": "Barre d'utilisateur",
+  "dashboard_action_view_profile_cta": "Voir le profil",
+  "dashboard_actions_title": "Actions rapides",
+  "dashboard_card_achievements_label": "Réalisations",
+  "dashboard_card_collection_label": "Collection",
+  "dashboard_card_followers_label": "Abonnés",
+  "dashboard_card_ratings_label": "Évaluations",
+  "dashboard_card_submissions_label": "Soumissions",
+  "dashboard_cta_description_text": "Trouvez des cubes à ajouter à votre collection.",
+  "dashboard_cta_kicker_label": "Commencer",
+  "dashboard_cta_title_text": "Explorez les cubes",
+  "dashboard_intro_text": "Voici votre aperçu personnel et votre activité récente.",
+  "dashboard_meta_title": "Tableau de bord - CubeIndex",
+  "dashboard_recent_empty_cta": "Soumettre un cube",
+  "dashboard_recent_empty_suffix_text": " pour commencer.",
+  "dashboard_recent_empty_text": "Partagez les cubes manquants au catalogue et suivez leur statut à partir d'ici. ",
+  "dashboard_recent_submit_another_cta": "Soumettez un autre cube",
+  "dashboard_recent_submitted_text": "Soumis {date}",
+  "dashboard_recent_title": "Soumissions récentes",
+  "dashboard_recent_view_all_cta": "Afficher tout",
+  "dashboard_welcome_title_text": "Bienvenue à nouveau, {name}",
+  "errors_bug_report_prompt_text": "Si vous pensez qu'il s'agit d'un bug, merci de nous le signaler !",
+  "errors_encountered_text": "Il semble que vous ayez rencontré une erreur.",
+  "errors_generic_message_text": "Quelque chose a mal fonctionné !",
+  "errors_legendary_cube_alt_text": "Cube légendaire",
+  "errors_report_bug_cta": "Signaler un bug",
+  "explore_achievements_card_aria": "Réalisation : {name}",
+  "explore_achievements_claimed_by_aria": "Revendiqué par {percent} % des utilisateurs",
+  "explore_achievements_empty_body_text": "Aucun succès ne correspond à votre recherche ni à vos filtres. Essayez de les modifier ou de les réinitialiser pour tout afficher.",
+  "explore_achievements_empty_none_title": "Aucun succès pour l'instant",
+  "explore_achievements_empty_title": "Aucun succès trouvé",
+  "explore_achievements_filter_obtainable_label": "Disponible",
+  "explore_achievements_filter_rarity_label": "Rareté:",
+  "explore_achievements_hidden_description_text": "Débloquez ce succès pour révéler son nom et sa description.",
+  "explore_achievements_hidden_title": "Ce succès est caché",
+  "explore_achievements_intro_text": "Débloquez des succès en participant à la communauté CubeIndex. Collectionnez-les tous pour mettre en valeur votre parcours.",
+  "explore_achievements_items_per_page_label": "Réalisations par page",
+  "explore_achievements_meta_category_label": "Catégorie",
+  "explore_achievements_meta_claimed_by_label": "Revendiqué par",
+  "explore_achievements_meta_title": "Réalisations - CubeIndex",
+  "explore_achievements_meta_unlock_method_label": "Méthode de déverrouillage",
+  "explore_achievements_not_unlockable_text": "Non déblocable actuellement",
+  "explore_achievements_rarity_title": "Rareté : {rarity}",
+  "explore_achievements_search_placeholder": "Recherche de succès",
+  "explore_achievements_sort_unlock_rate_label": "Taux de déverrouillage",
+  "explore_achievements_title_h1": "Réalisations",
+  "explore_achievements_title_reward_label": "Récompense du titre :",
+  "explore_compare_cube_image_alt": "{series} {model} {versionName}",
+  "explore_compare_empty_text": "Sélectionnez au moins un cube à comparer.",
+  "explore_compare_field_brand_label": "Marque",
+  "explore_compare_field_discontinued_label": "Produit abandonné",
+  "explore_compare_field_maglev_label": "Maglev",
+  "explore_compare_field_magnetic_label": "Magnétique",
+  "explore_compare_field_modded_label": "Modifié",
+  "explore_compare_field_model_label": "Modèle",
+  "explore_compare_field_rating_label": "Notation",
+  "explore_compare_field_related_to_label": "Lié à",
+  "explore_compare_field_release_date_label": "Date de sortie",
+  "explore_compare_field_series_label": "Série",
+  "explore_compare_field_size_label": "Taille (mm3)",
+  "explore_compare_field_smart_label": "Intelligent",
+  "explore_compare_field_stickered_label": "autocollant",
+  "explore_compare_field_subtype_label": "Sous-type",
+  "explore_compare_field_surface_finish_label": "Finition de surface",
+  "explore_compare_field_type_label": "Taper",
+  "explore_compare_field_version_name_label": "Nom de la version",
+  "explore_compare_field_version_type_label": "Type de version",
+  "explore_compare_field_wca_legal_label": "WCA Legal",
+  "explore_compare_field_weight_label": "Poids (g)",
+  "explore_compare_intro_text": "Sélectionnez jusqu'à deux cubes pour afficher leurs spécifications côte à côte.",
+  "explore_compare_meta_title": "Comparer les cubes - CubeIndex",
+  "explore_compare_title_h1": "Comparer les cubes",
+  "explore_compare_vs_text": "CONTRE",
+  "explore_cube_about_heading_label": "À propos",
+  "explore_cube_about_intro_text": "Le {name} est un puzzle tortueux {type}",
+  "explore_cube_about_summary_text": "Il s'agit {magneticState} , {smartState} , et {wcaState} . Actuellement {availabilityState} avec une note communautaire de {rating} /5 et {moddedState} .",
+  "explore_cube_add_disabled_tooltip_text": "Seuls les cubes approuvés peuvent être ajoutés à votre collection",
+  "explore_cube_availability_state_text": [
+    {
+      "declarations": [
+        "input isDiscontinued"
+      ],
+      "match": {
+        "isDiscontinued=*": "disponible",
+        "isDiscontinued=false": "disponible",
+        "isDiscontinued=true": "discontinué"
+      },
+      "selectors": [
+        "isDiscontinued"
+      ]
+    }
+  ],
+  "explore_cube_back_to_explore_cta": "Retour à la section Explorer",
+  "explore_cube_database_added_label": "Ajouté",
+  "explore_cube_database_heading_label": "Base de données",
+  "explore_cube_database_id_label": "IDENTIFIANT",
+  "explore_cube_database_last_updated_label": "Dernière mise à jour",
+  "explore_cube_database_submitted_by_label": "Soumis par",
+  "explore_cube_database_verified_by_label": "Vérifié par",
+  "explore_cube_discontinued_label": "Produit abandonné",
+  "explore_cube_feature_ball_core_label": "Noyau sphérique",
+  "explore_cube_feature_maglev_label": "Maglev",
+  "explore_cube_feature_magnetic_label": "Magnétique",
+  "explore_cube_feature_modded_label": "Modifié",
+  "explore_cube_feature_smart_label": "Intelligent",
+  "explore_cube_feature_stickered_label": "autocollant",
+  "explore_cube_feature_wca_legal_label": "WCA Legal",
+  "explore_cube_features_empty_text": "Aucune caractéristique particulière n'est répertoriée.",
+  "explore_cube_features_heading_label": "Caractéristiques",
+  "explore_cube_image_alt": "{series} {model} {versionName}",
+  "explore_cube_image_credit_text": "Image © {source} . Tous droits réservés.",
+  "explore_cube_magnetic_state_text": [
+    {
+      "declarations": [
+        "input isMagnetic"
+      ],
+      "match": {
+        "isMagnetic=*": "magnétique",
+        "isMagnetic=false": "non magnétique",
+        "isMagnetic=true": "magnétique"
+      },
+      "selectors": [
+        "isMagnetic"
+      ]
+    }
+  ],
+  "explore_cube_meta_title": "{name} - CubeIndex",
+  "explore_cube_modded_state_text": [
+    {
+      "declarations": [
+        "input isModded"
+      ],
+      "match": {
+        "isModded=*": "original",
+        "isModded=false": "original",
+        "isModded=true": "modifié"
+      },
+      "selectors": [
+        "isModded"
+      ]
+    }
+  ],
+  "explore_cube_moderator_note_hint": "(Vous seul pouvez voir ceci)",
+  "explore_cube_moderator_note_title": "Note du modérateur",
+  "explore_cube_not_available_label": "Pas disponible",
+  "explore_cube_popularity_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} L'utilisateur possède ce cube",
+        "countPlural=other": "{count} Les utilisateurs ont ce cube"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_cube_rate_disabled_tooltip_text": "Seuls les cubes homologués peuvent être notés.",
+  "explore_cube_related_open_aria": "Ouvrir {series} {model}",
+  "explore_cube_related_section_title": "Lié à",
+  "explore_cube_release_date_text": " publié le {date}",
+  "explore_cube_report_cta": "Signaler des données incorrectes ou manquantes",
+  "explore_cube_report_label": "le {series} {model} {versionName}",
+  "explore_cube_same_series_list_aria": "Cubes dans la série {series}",
+  "explore_cube_same_series_open_aria": "Ouvrir {series} {model}",
+  "explore_cube_same_series_section_title": "Dans la même série",
+  "explore_cube_smart_state_text": [
+    {
+      "declarations": [
+        "input isSmart"
+      ],
+      "match": {
+        "isSmart=*": "intelligent",
+        "isSmart=false": "non intelligent",
+        "isSmart=true": "intelligent"
+      },
+      "selectors": [
+        "isSmart"
+      ]
+    }
+  ],
+  "explore_cube_specs_brand_label": "Marque",
+  "explore_cube_specs_heading_label": "Caractéristiques",
+  "explore_cube_specs_size_label": "Taille",
+  "explore_cube_specs_surface_label": "Surface",
+  "explore_cube_specs_type_label": "Taper",
+  "explore_cube_specs_version_label": "Version",
+  "explore_cube_specs_weight_label": "Poids",
+  "explore_cube_status_pending_text": "Ce cube est en attente de vérification par les modérateurs.",
+  "explore_cube_status_rejected_text": "Ce cube a été rejeté.",
+  "explore_cube_submission_notice_text": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Votre soumission est en cours d'examen.",
+        "status=Pending": "Votre soumission est en attente de vérification par les modérateurs.",
+        "status=Rejected": "Votre proposition a été rejetée."
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_cube_tab_details_label": "Détails",
+  "explore_cube_tab_prices_label": "Boutiques et prix",
+  "explore_cube_tab_ratings_label": "Évaluations",
+  "explore_cube_tab_reviews_label": "Avis",
+  "explore_cube_tabs_aria": "sections cubiques",
+  "explore_cube_trim_list_aria": "Finitions disponibles",
+  "explore_cube_trim_open_aria": "Ouvrir {name}",
+  "explore_cube_trim_section_title": "Choisissez la finition",
+  "explore_cube_wca_state_text": [
+    {
+      "declarations": [
+        "input isWcaLegal"
+      ],
+      "match": {
+        "isWcaLegal=*": "WCA-légal",
+        "isWcaLegal=false": "non conforme à la loi WCA",
+        "isWcaLegal=true": "WCA-légal"
+      },
+      "selectors": [
+        "isWcaLegal"
+      ]
+    }
+  ],
+  "explore_cubes_compare_prefix_text": "Comparer",
+  "explore_cubes_compare_suffix_text": "Cubes",
+  "explore_cubes_empty_body_text": "Aucun cube ne correspond à votre recherche ni à vos filtres ; essayez de les modifier ou de les réinitialiser pour tout afficher. Si le cube que vous recherchez n'est pas listé, n'hésitez pas à le soumettre pour enrichir notre base de données.",
+  "explore_cubes_empty_title": "Aucun cube trouvé",
+  "explore_cubes_filter_base_label": "Base",
+  "explore_cubes_filter_brand_label": "Marque:",
+  "explore_cubes_filter_limited_label": "Limité",
+  "explore_cubes_filter_magnetic_label": "Magnétique",
+  "explore_cubes_filter_modded_label": "Modifié",
+  "explore_cubes_filter_release_year_label": "Année de sortie :",
+  "explore_cubes_filter_smart_label": "Intelligent",
+  "explore_cubes_filter_stickered_label": "autocollant",
+  "explore_cubes_filter_sub_type_label": "Sous-type :",
+  "explore_cubes_filter_trim_label": "Garniture",
+  "explore_cubes_filter_type_label": "Taper:",
+  "explore_cubes_filter_wca_label": "WCA Legal",
+  "explore_cubes_intro_text": "Parcourez tous vos cubes préférés par type, marque ou évaluation.",
+  "explore_cubes_items_per_page_label": "Cubes par page",
+  "explore_cubes_meta_title": "Explorez les cubes - CubeIndex",
+  "explore_cubes_search_placeholder": "Cubes de recherche",
+  "explore_cubes_title_h1": "Explorez les cubes",
+  "explore_landing_title_h1": "Qu'aimeriez-vous explorer ?",
+  "explore_price_beta_label": "Bêta",
+  "explore_price_chart_aria": "Graphique linéaire de l'historique des prix",
+  "explore_price_chart_empty_body_text": "Revenez plus tard, lorsque nous aurons recueilli davantage d'informations sur les prix.",
+  "explore_price_chart_empty_title": "Données insuffisantes pour le moment",
+  "explore_price_empty_body_text": "Nous afficherons les magasins et les prix dès que nous les aurons enregistrés.",
+  "explore_price_empty_title": "Aucune information sur le fournisseur disponible",
+  "explore_price_history_heading_label": "Historique des prix",
+  "explore_price_meta_description": "Suivi historique des prix de ce cube auprès de différents fournisseurs.",
+  "explore_price_meta_title": "{name} - Suivi des prix",
+  "explore_price_status_in_stock_label": "En stock",
+  "explore_price_status_out_of_stock_label": "En rupture de stock",
+  "explore_price_tooltip_missing_text": "{label} : -",
+  "explore_price_vendor_open_aria": "Ouvrir {name} dans un nouvel onglet",
+  "explore_price_vendors_heading_label": "Disponible chez",
+  "explore_price_visit_store_cta": "Visitez le magasin",
+  "explore_ratings_meta_title": "{name} - Évaluations",
+  "explore_review_action_primary_cta": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Modifier",
+        "status=draft": "Publier"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_action_success_text": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Édité",
+        "status=draft": "Publié"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_body_label": "Critique principale",
+  "explore_review_body_min_length_text": "Min. {minLength} caractères",
+  "explore_review_error_body_length_text": "La révision doit comporter au moins {minLength} caractères.",
+  "explore_review_error_save_draft_text": "Impossible d'enregistrer le brouillon",
+  "explore_review_error_save_review_text": "Impossible d'enregistrer l'avis",
+  "explore_review_error_set_ratings_text": "Impossible de définir une note",
+  "explore_review_error_title_length_text": "Le titre ne peut pas dépasser {maxLength} caractères",
+  "explore_review_helpful_cta": "Utile",
+  "explore_review_intro_text": "Rédigez un avis utile. Soyez précis : parlez de la sensation, des performances et du public cible.",
+  "explore_review_meta_title": "{name} - Revue",
+  "explore_review_rating_hint_text": "Évaluez chaque catégorie de 0,5 à 5 étoiles.",
+  "explore_review_rating_title": "Notation",
+  "explore_review_save_draft_cta": "Enregistrer le brouillon",
+  "explore_review_section_title": "Revoir",
+  "explore_review_status_label": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Revoir",
+        "status=draft": "Brouillon",
+        "status=published": "Publié"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_title_h1": "Examen de {name}",
+  "explore_review_title_label": "Titre",
+  "explore_reviews_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} revue",
+        "countPlural=other": "{count} avis"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_reviews_empty_hint_text": "Soyez le premier à partager votre expérience avec ce cube.",
+  "explore_reviews_empty_text": "Aucun avis pour le moment.",
+  "explore_reviews_heading_label": "Avis de la communauté",
+  "explore_reviews_meta_title": "{name} - Avis",
+  "explore_reviews_open_full_aria": "Lire l'avis complet",
+  "explore_users_empty_body_text": "Aucun utilisateur ne correspond à votre recherche ni à vos filtres. Veuillez les modifier ou les réinitialiser pour tout afficher.",
+  "explore_users_empty_title": "Aucun utilisateur trouvé",
+  "explore_users_items_per_page_label": "Utilisateurs par page",
+  "explore_users_meta_title": "Explorer les utilisateurs - CubeIndex",
+  "explore_users_search_placeholder": "Recherche d'utilisateurs",
+  "explore_users_sort_achievements_label": "Réalisations",
+  "explore_users_sort_cubes_label": "Cubes",
+  "explore_users_sort_followers_label": "Abonnés",
+  "explore_users_title_h1": "Explorer les utilisateurs",
+  "explore_vendors_buyer_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} utilisateur a acheté ici",
+        "countPlural=other": "{count} utilisateurs ont acheté ici"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_vendors_default_currency_label": "Devise par défaut",
+  "explore_vendors_empty_body_text": "Aucun vendeur ne correspond à votre recherche ni à vos filtres. Veuillez les modifier ou les réinitialiser pour afficher tous les vendeurs.",
+  "explore_vendors_empty_title": "Aucun vendeur trouvé",
+  "explore_vendors_intro_text": "Trouvez les meilleures boutiques et les vendeurs de confiance dans le monde du cubing.",
+  "explore_vendors_items_per_page_label": "Vendeurs par page",
+  "explore_vendors_logo_alt": "{name} logo",
+  "explore_vendors_logo_placeholder_aria": "{name} logo d'espace réservé",
+  "explore_vendors_meta_title": "Explorer les fournisseurs - CubeIndex",
+  "explore_vendors_search_placeholder": "Rechercher des fournisseurs",
+  "explore_vendors_sponsored_label": "Sponsorisé",
+  "explore_vendors_title_h1": "Explorer les fournisseurs",
+  "explore_vendors_verified_label": "Vérifié",
+  "footer_brand_catch_phrase_text": "Suivez, explorez et partagez votre collection de speedcubes.",
+  "footer_brand_logo_alt": "Logo CubeIndex",
+  "footer_layout_region_label": "Pied de page",
+  "footer_legal_copyright_text": "{startYear} - {currentYear} {brandName} . Tous droits réservés.",
+  "footer_legal_privacy_label": "politique de confidentialité",
+  "footer_legal_section_title": "Légal",
+  "footer_legal_sitemap_label": "Plan du site",
+  "footer_legal_terms_label": "Conditions d'utilisation",
+  "footer_nav_achievements_label": "Réalisations",
+  "footer_nav_explore_label": "Explorer",
+  "footer_nav_home_label": "Maison",
+  "footer_nav_report_label": "Rapport",
+  "footer_nav_section_title": "Navigation",
+  "footer_social_discord_label": "Discorde",
+  "footer_social_email_label": "E-mail",
+  "footer_social_github_label": "GitHub",
+  "footer_social_section_title": "Connecter",
+  "footer_social_twitter_label": "Gazouillement",
+  "footer_social_youtube_label": "YouTube",
+  "home_cta_description_text": "Rejoignez la communauté CubeIndex et commencez à suivre votre collection, à débloquer des succès et à vous connecter avec des cubeurs du monde entier.",
+  "home_cta_primary_cta": "Commencer",
+  "home_cta_secondary_cta": "Explorer la base de données",
+  "home_cta_title_h2": "Prêt à passer au niveau supérieur dans votre jeu de cubes ?",
+  "home_features_list_aria": "Principaux avantages",
+  "home_features_title_h2": "Pourquoi CubeIndex",
+  "home_hero_lead_text": "Suivez vos cubes, débloquez des succès et explorez la plus grande base de données de cubes au monde.",
+  "home_hero_primary_cta": "Commencer",
+  "home_hero_scroll_aria": "Défilez pour accéder au contenu",
+  "home_hero_scroll_label": "Rouleau",
+  "home_hero_secondary_cta": "Explorer la base de données",
+  "home_hero_title_h1": "Constituez votre collection ultime de cubes",
+  "home_meta_title": "CubeIndex",
+  "home_partner_algarchive_description_text": "L'archive ouverte des algorithmes de Rubik's Cube. Parcourez les solutions validées par la communauté pour chaque type de puzzle, étiquetez-les avec votre moyenne sur 5 et partagez vos secrets pour battre vos records personnels.",
+  "home_partner_algarchive_discord_cta": "Rejoignez Discord",
+  "home_partner_algarchive_name_text": "Archives d'alg",
+  "home_partner_algarchive_site_cta": "Visitez le site",
+  "home_partner_cubingpanda_description_text": "CubingPanda est la communauté de référence pour les fans de Rubik's Cube de tous niveaux, que vous soyez un speedcuber chevronné ou quelqu'un qui n'a jamais résolu une seule face.",
+  "home_partner_cubingpanda_discord_cta": "Rejoignez Discord",
+  "home_partner_cubingpanda_name_text": "CuberPanda",
+  "home_partners_title_h2": "Nos partenaires",
+  "home_section_achievements_description": "Célébrez les étapes importantes de votre collection, de votre évaluation et de votre exploration. Débloquez des succès en relevant des défis et en enrichissant votre collection.",
+  "home_section_achievements_eyebrow": "Réalisations",
+  "home_section_achievements_image_alt": "Illustration des badges de réussite et des progrès",
+  "home_section_achievements_title": "Réussir",
+  "home_section_collection_description": "Cataloguez toute votre collection de puzzles. Notez leur état et ajoutez des notes personnelles, puis partagez-la avec vos amis pour les admirer et vous vanter !",
+  "home_section_collection_eyebrow": "Collection",
+  "home_section_collection_image_alt": "Illustration d'un tableau de bord de collection personnelle avec des cubes catégorisés",
+  "home_section_collection_title": "Ajoutez et gérez votre collection de Rubik's Cubes",
+  "home_section_community_description": "Découvrez des collections inspirantes de toute la communauté.",
+  "home_section_community_eyebrow": "Communauté",
+  "home_section_community_image_alt": "Illustration des profils communautaires et des collections partagées",
+  "home_section_community_title": "Voir la collection de cubes des autres",
+  "home_section_pricing_description": "Sachez où acheter. Comparez les prix des différents vendeurs, vérifiez la disponibilité et accédez directement à la meilleure offre.",
+  "home_section_pricing_eyebrow": "Tarification",
+  "home_section_pricing_image_alt": "Illustration montrant des tableaux comparatifs de prix dans plusieurs magasins",
+  "home_section_pricing_title": "Comparer les prix entre les magasins",
+  "home_section_ratings_description": "Partagez votre expérience. Laissez des notes et des commentaires pour aider les autres à trouver leur personnage principal idéal ; votre avis contribue à améliorer la base de données pour tous.",
+  "home_section_ratings_eyebrow": "Évaluations",
+  "home_section_ratings_image_alt": "Illustration des étoiles d'évaluation et des cartes de commentaires",
+  "home_section_ratings_title": "Cubes de taux",
+  "home_stats_achievements_aria": "Succès déblocables : {unlocked} sur {total}",
+  "home_stats_achievements_description_text": "Gagnez dès aujourd'hui en fonction de votre collection et de votre activité.",
+  "home_stats_achievements_label": "Succès à débloquer",
+  "home_stats_cubes_aria": "Nombre total de cubes enregistrés : {count}",
+  "home_stats_cubes_description_text": "Répertoriés par marques, types et générations.",
+  "home_stats_cubes_label": "Cubes enregistrés",
+  "home_stats_list_aria": "Statistiques clés",
+  "home_stats_title_h2": "CubeIndex en nombres",
+  "home_stats_users_aria": "Utilisateurs enregistrés : {count}",
+  "home_stats_users_description_text": "Une communauté grandissante de cubistes à travers le monde.",
+  "home_stats_users_label": "Utilisateurs enregistrés",
+  "home_tiles_achievements_description_text": "Gagnez des badges pour vos exploits et vos découvertes rares. Affichez-les sur votre profil.",
+  "home_tiles_achievements_title_text": "Débloquer des succès",
+  "home_tiles_collection_description_text": "Consignez chaque cube avec des notes et les versions. Gardez votre collection organisée et facile à consulter.",
+  "home_tiles_collection_title_text": "Suivez votre collection",
+  "home_tiles_community_description_text": "Suivez les collectionneurs, partagez vos trouvailles et comparez votre collection à celles du monde entier.",
+  "home_tiles_community_title_text": "Découvrez la communauté",
+  "home_tiles_explore_description_text": "Explorez la plus grande base de données de cubes. Des cubes 2×2 aux grands cubes en passant par les mods rares, tout y est.",
+  "home_tiles_explore_title_text": "Explorez chaque puzzle",
+  "home_tiles_notifications_description_text": "Recevez les dernières informations sur les nouvelles versions, les alertes et les actualités de la communauté, toujours en temps voulu.",
+  "home_tiles_notifications_title_text": "Restez informé",
+  "home_tiles_pricing_description_text": "Comparez les vendeurs, consultez l'historique des prix et recevez des alertes instantanées sur les baisses de prix et les réapprovisionnements.",
+  "home_tiles_pricing_title_text": "Suivre les tendances des prix",
+  "nav_auth_login_cta": "Se connecter",
+  "nav_brand_home_aria": "Accueil CubeIndex",
+  "nav_brand_logo_alt": "Logo CubeIndex",
+  "nav_email_verify_aria": "Vérifiez votre courriel",
+  "nav_explore_card_achievements_text": "Consultez vos succès et suivez la progression du déblocage communautaire.",
+  "nav_explore_card_achievements_title": "Réalisations",
+  "nav_explore_card_cta_label": "Explorer",
+  "nav_explore_card_cubes_text": "Parcourez des milliers de cubes par marque, type et évaluation de la communauté.",
+  "nav_explore_card_cubes_title": "Cubes",
+  "nav_explore_card_users_text": "Explorez les profils des utilisateurs, découvrez les meilleurs contributeurs et consultez l'activité de la communauté.",
+  "nav_explore_card_users_title": "Utilisateurs",
+  "nav_explore_card_vendors_text": "Trouvez des boutiques de cubes de confiance et comparez les prix des meilleurs fournisseurs du monde entier.",
+  "nav_explore_card_vendors_title": "Fournisseurs",
+  "nav_explore_keyboard_hint_text": "Utilisez les touches fléchées pour naviguer entre les options",
+  "nav_explore_menu_aria": "Explorer le menu",
+  "nav_explore_submit_cta": "Soumettre un cube",
+  "nav_explore_submit_prompt_text": "Soumettez les modèles qui ne figurent pas dans le catalogue et contribuez à la mise à jour de CubeIndex.",
+  "nav_explore_submit_prompt_title": "Il vous manque un cube ?",
+  "nav_explore_submit_short_cta": "Soumettre",
+  "nav_explore_title_text": "Explorer la base de données",
+  "nav_explore_view_all_aria": "Afficher toutes les options d'exploration",
+  "nav_explore_view_all_label": "Afficher tout",
+  "nav_locale_language_label": "Langue",
+  "nav_main_awards_label": "Prix",
+  "nav_main_explore_label": "Explorer",
+  "nav_main_home_label": "Maison",
+  "nav_main_notifications_label": "Notifications",
+  "nav_notifications_unread_aria": "Notifications non lues",
+  "nav_staff_dashboard_label": "Tableau de bord du personnel",
+  "nav_user_avatar_alt": "Avatar de l'utilisateur",
+  "nav_user_logout_cta": "Déconnexion",
+  "nav_user_menu_aria": "Menu utilisateur",
+  "nav_user_profile_label": "Profil",
+  "nav_user_settings_label": "Paramètres",
+  "nav_user_userbar_label": "Barre d'utilisateur",
+  "nav_user_userbar_tag_text": "Nouveau",
+  "notifications_empty_text": "Vous n'avez encore reçu aucune notification.",
+  "notifications_link_default_label": "Ouvrir le lien",
+  "notifications_mark_all_cta": "Marquer tout comme lu",
+  "notifications_mark_all_success_text": "Toutes les notifications marquées comme lues.",
+  "notifications_mark_read_aria": "Marquer la notification comme lue",
+  "notifications_mark_read_cta": "Mark a lu",
+  "notifications_mark_read_error_text": "Impossible de marquer les notifications comme lues.",
+  "notifications_mark_read_title": "Marquer comme lu",
+  "notifications_read_label": "Lire",
+  "notifications_refresh_aria": "Rafraîchir",
+  "notifications_refresh_cta": "Rafraîchir",
+  "notifications_resend_cta": "Renvoyer l'e-mail",
+  "notifications_resend_failed_text": "Impossible de renvoyer l'e-mail de vérification.",
+  "notifications_resend_network_error_text": "Erreur réseau lors du renvoi de l'e-mail.",
+  "notifications_resend_success_text": "Courriel de vérification envoyé. Veuillez consulter votre boîte de réception.",
+  "notifications_title_h1": "Notifications",
+  "notifications_unread_aria": "Non lu",
+  "notifications_unread_badge_text": "{count} non lu",
+  "notifications_update_failed_text": "Échec de la mise à jour des notifications",
+  "notifications_verify_description_text": "Veuillez vérifier votre adresse e-mail pour débloquer toutes les fonctionnalités.",
+  "notifications_verify_title_text": "Adresse électronique non vérifiée",
+  "privacy_last_updated_text": "14 septembre 2025",
+  "privacy_section_changes_content_html": "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Les modifications seront publiées.\nPublié ici avec la date de mise à jour.",
+  "privacy_section_changes_title": "Modifications apportées à cette politique",
+  "privacy_section_children_content_html": "CubeIndex n'est pas destiné aux enfants de moins de 13 ans. Nous ne collectons pas sciemment de données personnelles auprès d'enfants de moins de 13 ans. Si vous pensez qu'un enfant de moins de 13 ans a fourni des données personnelles, veuillez nous contacter à l'adresse suivante :\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a> .",
+  "privacy_section_children_title": "Protection de la vie privée des enfants",
+  "privacy_section_collect_content_html": "<ul>\n<li><strong>Informations du compte :</strong> Adresse e-mail, nom d’utilisateur, photo de profil.</li>\n<li> <strong>Données d'utilisation :</strong> Interactions avec le site (pages consultées, cubes ajoutés, etc.).</li>\n<li> <strong>Informations sur l'appareil :</strong> adresse IP, type de navigateur et système d'exploitation (utilisés à des fins d'analyse).</li>\n</ul>",
+  "privacy_section_collect_title": "Informations que nous recueillons",
+  "privacy_section_contact_content_html": "Pour toute question ou préoccupation, veuillez nous envoyer un courriel à\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a> .",
+  "privacy_section_contact_title": "Contact",
+  "privacy_section_intro_content_html": "Chez CubeIndex, nous attachons une grande importance à la protection de votre vie privée. La présente politique de confidentialité décrit comment nous recueillons, utilisons et protégeons vos informations lorsque vous utilisez le service CubeIndex (« le Service »).",
+  "privacy_section_intro_title": "Introduction",
+  "privacy_section_rights_content_html": "<p>Tu peux:</p>\n<ul>\n<li> Accédez à votre profil ou mettez-le à jour à tout moment.</li>\n<li> Demandez la suppression de votre compte et de vos données en envoyant un e-mail <a href=\"mailto:thecubeindex@gmail.com\">à thecubeindex@gmail.com</a></li>\n<li> Remarque : Le contenu supprimé peut rester dans les sauvegardes système pendant une durée limitée.</li>\n<li> Désactivation du suivi analytique (bientôt disponible)</li>\n</ul>",
+  "privacy_section_rights_title": "Vos droits",
+  "privacy_section_security_content_html": "Nous utilisons une infrastructure sécurisée (par exemple, Supabase Auth, HTTPS) et nous respectons les consignes.\nmeilleures pratiques pour protéger vos données.",
+  "privacy_section_security_title": "Sécurité des données",
+  "privacy_section_sharing_content_html": "<p>Nous ne vendons ni ne partageons vos informations personnelles avec des tiers, sauf :</p>\n<ul>\n<li> Pour se conformer aux obligations légales</li>\n<li> Avec des outils tiers qui alimentent notre service (par exemple, Supabase, Netlify)</li>\n<li> Lors de l'intégration ou de la création de liens vers du contenu ou des services de fournisseurs tiers, lesquels possèdent leurs propres politiques, veuillez consulter les politiques en vigueur.</li>\n</ul>",
+  "privacy_section_sharing_title": "Partage de vos données",
+  "privacy_section_use_content_html": "<p>Nous utilisons vos données pour :</p>\n<ul>\n<li> Gérez et personnalisez votre expérience sur CubeIndex</li>\n<li> Proposer des fonctionnalités telles que des collections, des profils et des réalisations</li>\n<li> Améliorer les performances, l'ergonomie et la modération du contenu de la plateforme</li>\n<li> Envoyer occasionnellement des courriels relatifs au service (par exemple, des liens de connexion ou des mises à jour).</li>\n</ul>",
+  "privacy_section_use_title": "Comment nous utilisons vos informations",
+  "privacy_title": "politique de confidentialité",
+  "report_bug_actual_label": "Comportement réel",
+  "report_bug_actual_placeholder": "Que s'est-il réellement passé ?",
+  "report_bug_browser_label": "Navigateur",
+  "report_bug_browser_placeholder": "par exemple Chrome 126",
+  "report_bug_device_desktop_label": "Ordinateur de bureau",
+  "report_bug_device_laptop_label": "Ordinateur portable",
+  "report_bug_device_phone_label": "Smartphone",
+  "report_bug_device_tablet_label": "Comprimé",
+  "report_bug_device_type_label": "Type d'appareil",
+  "report_bug_error_prefix_text": "Message d'erreur : {message}",
+  "report_bug_expected_label": "Comportement attendu",
+  "report_bug_expected_placeholder": "À quoi vous attendiez-vous ?",
+  "report_bug_extra_label": "Contexte supplémentaire",
+  "report_bug_extra_placeholder": "Autre chose ? (facultatif)",
+  "report_bug_image_alt_text": "Capture d'écran ci-jointe",
+  "report_bug_image_label": "URL de la capture d'écran / de l'image",
+  "report_bug_image_placeholder": "https://...",
+  "report_bug_os_label": "Système opérateur",
+  "report_bug_os_placeholder": "par exemple Windows 11, Android 14",
+  "report_bug_steps_label": "Étapes de reproduction",
+  "report_bug_steps_placeholder": "1. Allez à…\n2. Cliquez sur…\n3. ...",
+  "report_bug_submit_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Envoyer un rapport",
+        "state=idle": "Envoyer un rapport",
+        "state=loading": "Rapport…",
+        "state=success": "Signalé !"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "report_bug_title_h2": "Signaler un bug",
+  "report_bug_title_helper_text": "80 caractères maximum",
+  "report_bug_title_label": "Titre",
+  "report_feature_description_helper_text": "Expliquez le rôle de cette fonctionnalité.",
+  "report_feature_description_label": "Description",
+  "report_feature_extra_label": "Contexte supplémentaire",
+  "report_feature_priority_high_label": "Haut",
+  "report_feature_priority_label": "Priorité",
+  "report_feature_priority_low_label": "Faible",
+  "report_feature_priority_medium_label": "Moyen",
+  "report_feature_submit_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Envoyer une suggestion",
+        "state=idle": "Envoyer une suggestion",
+        "state=loading": "Envoi…",
+        "state=success": "Envoyé!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "report_feature_title_h2": "Suggérer une fonctionnalité",
+  "report_feature_title_helper_text": "Soyez précis et concis",
+  "report_feature_title_label": "Titre de l'article",
+  "report_feature_use_case_helper_text": "Comment l'utiliseriez-vous ?",
+  "report_feature_use_case_label": "Cas d'utilisation",
+  "report_page_intro_text": "Aidez-nous à améliorer CubeIndex en signalant les bugs ou en suggérant des fonctionnalités.",
+  "report_page_title_h1": "Commentaires et rapports",
+  "report_signin_required_text": "Vous devez être connecté pour soumettre votre candidature. Veuillez vous connecter pour continuer.",
+  "report_submit_signin_title": "Connectez-vous pour soumettre",
+  "report_tabs_aria_label": "Sélectionnez le type de rapport",
+  "report_tabs_bug_label": "Signaler un bug",
+  "report_tabs_feature_label": "Suggérer une fonctionnalité",
+  "status_construction_body_text": "Nous travaillons d'arrache-pied pour finaliser cette partie du site. Revenez bientôt pour découvrir une super nouveauté !",
+  "status_construction_title_h1": "Page en construction",
+  "submit_autofill_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Remplissage automatique",
+        "state=error": "Une erreur s'est produite !",
+        "state=idle": "Remplissage automatique",
+        "state=loading": "Chargement...",
+        "state=starting": "Démarrage du service de remplissage automatique...",
+        "state=success": "Succès!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "submit_autofill_warmup_text": "Le service de remplissage automatique est en cours de préparation. Cela peut prendre jusqu'à une minute.",
+  "submit_checklist_item_one_text": "Veuillez vérifier le nom du modèle, la date de sortie et les spécifications en les comparant à la documentation du fabricant.",
+  "submit_checklist_item_three_text": "Expliquez les liens avec les cubes existants lors de la soumission de modifications, de finitions ou d'éditions limitées.",
+  "submit_checklist_item_two_text": "Téléchargez des images libres de droits qui montrent clairement le produit vendu au détail.",
+  "submit_checklist_title": "Liste de vérification pour la soumission",
+  "submit_duplicate_error_text": "Ce cube existe déjà dans notre base de données.",
+  "submit_error_title_text": "Veuillez corriger les champs mis en évidence",
+  "submit_error_unknown_text": "Erreur inconnue",
+  "submit_feature_ball_core_helper_text": "Comprend un ensemble noyau-bille magnétique.",
+  "submit_feature_ball_core_label": "Noyau sphérique",
+  "submit_feature_discontinued_helper_text": "Le fabricant ne produit plus ce cube.",
+  "submit_feature_discontinued_label": "Produit abandonné",
+  "submit_feature_maglev_helper_text": "Système de tension par lévitation magnétique.",
+  "submit_feature_maglev_label": "MagLev",
+  "submit_feature_magnetic_helper_text": "Aimants installés en usine pour l'alignement des couches.",
+  "submit_feature_magnetic_label": "Magnétique",
+  "submit_feature_modded_helper_text": "Mod communautaire ou premium plutôt que matériel d'origine.",
+  "submit_feature_modded_label": "Modifié",
+  "submit_feature_smart_helper_text": "Fonctionnalités de suivi via Bluetooth ou application.",
+  "submit_feature_smart_label": "Intelligent",
+  "submit_feature_stickered_helper_text": "Livré avec des autocollants d'usine au lieu de tuiles ou de plastique d'origine.",
+  "submit_feature_stickered_label": "autocollant",
+  "submit_feature_wca_legal_helper_text": "Approuvé pour une utilisation en compétitions officielles.",
+  "submit_feature_wca_legal_label": "WCA légal",
+  "submit_features_intro_text": "Indiquez toutes les fonctionnalités matérielles fournies avec ce cube.",
+  "submit_features_title": "Profil de fonctionnalité",
+  "submit_field_brand_helper_text": "Il manque un fabricant ? Signalez-le à l’équipe via le bouton de signalement du cube ou sur Discord, et nous l’ajouterons pour vous.",
+  "submit_field_brand_label": "Marque",
+  "submit_field_image_url_helper_text": "Utilisez une image officielle du produit ou une image de presse.",
+  "submit_field_image_url_label": "URL de l'image",
+  "submit_field_image_url_placeholder": "https://...",
+  "submit_field_model_label": "Modèle",
+  "submit_field_model_placeholder": "Maglev",
+  "submit_field_related_model_helper_text": "Seuls les cubes approuvés apparaissent ici. Sélectionnez le modèle de base dont cette version est dérivée.",
+  "submit_field_related_model_label": "Lien vers le modèle associé",
+  "submit_field_release_date_label": "date de sortie",
+  "submit_field_series_label": "Série",
+  "submit_field_series_placeholder": "GAN356",
+  "submit_field_size_label": "Taille (mm)",
+  "submit_field_size_placeholder": "L x H x P",
+  "submit_field_subtype_auto_label": "Gestion automatique",
+  "submit_field_subtype_label": "Sous-type",
+  "submit_field_surface_finish_label": "Finition de surface",
+  "submit_field_type_helper_text": "Vous avez besoin d'un autre type de cube ? Faites-le savoir à l'équipe via le bouton de signalement de cube ou sur Discord, et nous l'ajouterons pour vous.",
+  "submit_field_type_label": "Type de cube",
+  "submit_field_version_name_label": "Nom de l'édition",
+  "submit_field_version_name_placeholder": "Édition UV / 10 ans",
+  "submit_field_version_type_base_label": "Base",
+  "submit_field_version_type_label": "Type d'édition",
+  "submit_field_version_type_limited_label": "Édition limitée",
+  "submit_field_version_type_trim_label": "Garniture",
+  "submit_field_weight_label": "Poids (g)",
+  "submit_form_error_text": "Veuillez corriger les champs surlignés et réessayer.",
+  "submit_help_discord_label": "Discorde",
+  "submit_help_prompt_text": "Besoin d'aide directe ? Contactez-nous au ",
+  "submit_identity_intro_text": "Dites-nous comment le fabricant désigne ce cube.",
+  "submit_identity_title": "Identité du cube",
+  "submit_media_specs_intro_text": "Partager des images de référence et les principales caractéristiques physiques.",
+  "submit_media_specs_title": "Médias et spécifications",
+  "submit_next_steps_item_one_text": "Nos examinateurs vérifient l'exactitude et l'exhaustivité de votre soumission.",
+  "submit_next_steps_item_two_text": "Les cubes approuvés sont mis en ligne sur CubeIndex et crédités sur votre profil.",
+  "submit_next_steps_title": "Que va-t-il se passer ensuite ?",
+  "submit_page_intro_text": "Fournissez des informations précises sur le fabricant afin que l'équipe de CubeIndex puisse examiner et publier votre cube rapidement. Vérifiez bien les spécifications avant de les envoyer.",
+  "submit_page_title_h1": "Soumettre un cube",
+  "submit_server_error_text": "Une erreur s'est produite lors de la soumission du cube.",
+  "submit_slug_error_text": "Impossible de déduire un slug à partir des détails du modèle fournis.",
+  "submit_submit_cta": "Soumettre le cube",
+  "submit_submit_helper_text": "L'approbation de votre demande peut prendre jusqu'à une semaine.",
+  "submit_success_message_html": "Cube soumis pour évaluation ! Suivez son statut sur <a class=\"link\" href=\"/user/submissions\">votre page de soumissions</a> .",
+  "tos_last_updated_text": "14 septembre 2025",
+  "tos_section_acceptance_content_html": "En accédant à CubeIndex (« le Service ») ou en l’utilisant, vous acceptez d’être lié par les présentes conditions générales.\nConditions d’utilisation (« Conditions »). Si vous n’acceptez pas ces conditions, veuillez ne pas utiliser le Service.",
+  "tos_section_acceptance_title": "Acceptation des conditions",
+  "tos_section_accounts_content_html": "<ul>\n<li>Vous êtes responsable de toute activité effectuée sur votre compte.</li>\n<li> Vous devez protéger vos identifiants de connexion.</li>\n<li> Vous acceptez de fournir et de maintenir une <strong>adresse électronique exacte et valide</strong> .</li>\n<li>\nLa suppression de compte <strong>depuis l'application n'est pas encore disponible</strong> . Vous pouvez en faire la demande par e-mail.\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a> .\n</li>\n<li>\nIl n'existe actuellement <strong>aucune politique concernant les comptes inactifs</strong> . Si cela change, nous mettrons à jour ces conditions et vous en informerons.\n</li>\n</ul>",
+  "tos_section_accounts_title": "Comptes et responsabilités",
+  "tos_section_api_content_html": "<strong>Le prélèvement limité et à faible volume de données</strong> à des fins personnelles et non commerciales est autorisé à condition qu'il :\n<ul>\n<li> est peu fréquent et ne dégrade pas les performances ;</li>\n<li> obéit aux directives des robots et aux limites de débit ;</li>\n<li> Cible uniquement les pages publiques ;</li>\n<li> ne tente pas d'exporter en masse ;</li>\n<li> S'arrête immédiatement sur demande.</li>\n</ul>",
+  "tos_section_api_title": "API, accès aux données et extraction de données",
+  "tos_section_changes_content_html": "Nous pouvons être amenés à modifier ces conditions générales de temps à autre. Les modifications seront publiées sur cette page avec la date de « Dernière mise à jour ».\n<strong>Les modifications importantes</strong> peuvent être notifiées dans le Service ou par courriel. L'utilisation continue après les modifications\nsignifie l'acceptation des conditions révisées.",
+  "tos_section_changes_title": "Modifications des conditions",
+  "tos_section_contact_content_html": "Des questions concernant ces conditions générales ? Contactez-nous à l’adresse suivante :\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a> .",
+  "tos_section_contact_title": "Contact",
+  "tos_section_content_license_content_html": "Vous conservez la propriété du contenu que vous soumettez (par exemple, les avis, les images, les commentaires).\nEn soumettant du contenu, vous accordez à CubeIndex une licence mondiale, non exclusive et gratuite.\nlicence d'utilisation, d'hébergement, de reproduction, de modification (pour la mise en forme/l'affichage), d'affichage public,\net diffuser votre contenu au sein du Service et dans des supports qui en font la promotion\nService. Cette licence prend fin lorsque votre contenu est supprimé, à l'exception des sauvegardes nécessaires.",
+  "tos_section_content_license_title": "Contenu utilisateur et licence accordée à CubeIndex",
+  "tos_section_description_content_html": "CubeIndex fournit une base de données de produits de speedcubing et d'outils de gestion de cubes.\ncollections, consultation des informations sur les produits et participation aux fonctionnalités communautaires\ntels que les profils et les réalisations. Le service est offert pour\n<strong>Utilisation personnelle et non commerciale,</strong> sauf autorisation écrite préalable de notre part.",
+  "tos_section_description_title": "Description du service",
+  "tos_section_eligibility_content_html": "Vous devez avoir au moins <strong>13 ans</strong> pour utiliser CubeIndex. Nous ne le faisons pas sciemment.\ncollecter des données personnelles auprès d'enfants de moins de 13 ans. Si vous pensez qu'un enfant de moins de 13 ans a fourni\nPour toute question relative à vos données personnelles, veuillez nous contacter à l'adresse suivante :\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a> .",
+  "tos_section_eligibility_title": "Admissibilité et âge",
+  "tos_section_governing_content_html": "Les présentes conditions générales sont régies par le droit de l' <strong>Union européenne</strong> et de l'État membre.\nlà où CubeIndex est établi. Les litiges seront d'abord résolus à l'amiable dans un délai de 30 jours ; sinon,\nL'arbitrage ou les tribunaux locaux peuvent être compétents selon la loi applicable.",
+  "tos_section_governing_title": "Droit applicable et résolution des litiges",
+  "tos_section_guidelines_content_html": "<ul>\n<li>Aucun harcèlement, discours haineux ou menaces.</li>\n<li> Aucun spam, arnaque, pratique trompeuse ou envoi massif de messages non sollicités.</li>\n<li> Aucun contenu illégal, logiciel malveillant ou tentative d'accès non autorisé.</li>\n<li> Aucun contenu sexuellement explicite ou pornographique.</li>\n<li> Respectez la propriété intellectuelle ; ne téléchargez pas de documents protégés par le droit d'auteur sans autorisation.</li>\n</ul>",
+  "tos_section_guidelines_title": "Règles communautaires",
+  "tos_section_indemnification_content_html": "Vous acceptez d'indemniser et de dégager CubeIndex de toute responsabilité en cas de réclamations, dommages et frais.\ndécoulant de votre violation des présentes Conditions ou de l'atteinte aux droits de tiers.",
+  "tos_section_indemnification_title": "Indemnité",
+  "tos_section_liability_content_html": "CubeIndex <strong>accepte sa responsabilité dans la mesure permise par la loi</strong> , y compris en cas de négligence ou de manquement à ses obligations.\nToutefois, CubeIndex ne sera pas responsable des <em>pertes indirectes ou consécutives.</em>\nlorsque l'exclusion est autorisée par la loi.",
+  "tos_section_liability_title": "Responsabilité",
+  "tos_section_moderation_content_html": "CubeIndex peut, à sa seule discrétion, <strong>supprimer ou restreindre tout contenu utilisateur sans préavis.</strong>\nsi nous estimons qu'il enfreint les présentes Conditions ou la loi applicable, ou pour protéger les utilisateurs ou le Service.",
+  "tos_section_moderation_title": "Modération du contenu",
+  "tos_section_open_source_content_html": "Le logiciel CubeIndex est open source et mis à disposition sous licence.\n<strong>Licence Apache, version 2.0</strong> . Voir\n<a href=\"https://www.apache.org/licenses/LICENSE-2.0\" target=\"_blank\" rel=\"noopener\">apache.org/licenses/LICENSE-2.0</a> .\n<br /><br />\n<strong>Marques déposées et service hébergé :</strong> marques déposées, logos et éléments de marque de CubeIndex.\nLa configuration des services hébergés n'est pas autorisée sous Apache 2.0.",
+  "tos_section_open_source_title": "Licence open source et propriété intellectuelle de CubeIndex",
+  "tos_section_privacy_content_html": "Votre utilisation du Service est également soumise à nos conditions générales.\n<a href=\"/privacy\">Politique de confidentialité</a> , qui explique comment nous traitons vos données.",
+  "tos_section_privacy_title": "Confidentialité",
+  "tos_section_quality_content_html": "Nous nous efforçons d'exploiter CubeIndex avec <strong>compétence et diligence raisonnables</strong> , mais le Service peut\nêtre interrompus, retardés ou subir des erreurs (par exemple, maintenance, mises à jour ou problèmes de réseau).",
+  "tos_section_quality_title": "Qualité du service et nos responsabilités",
+  "tos_section_security_abuse_content_html": "<ul>\n<li>Se faire passer pour quelqu'un d'autre ou falsifier son identité ou son affiliation.</li>\n<li> Interférer avec le Service ou le surcharger (par exemple, DDoS, contournement abusif des limitations de débit).</li>\n<li> Toute ingénierie inverse ou tentative de contournement des contrôles de sécurité ou d'accès est interdite, sauf dans les cas autorisés par la loi.</li>\n</ul>",
+  "tos_section_security_abuse_title": "Abus de sécurité interdits",
+  "tos_section_termination_content_html": "Nous pouvons suspendre ou résilier votre accès à CubeIndex à notre discrétion, sans préavis.\nsi nous estimons que vous avez enfreint les présentes Conditions ou la loi applicable. Certaines dispositions (par exemple, propriété intellectuelle, licences, responsabilité)\nsurvivre à la résiliation.",
+  "tos_section_termination_title": "Résiliation et application",
+  "tos_section_third_party_content_html": "Le Service peut afficher des liens vers des fournisseurs ou des sites Web tiers (par exemple, des magasins proposant des prix au cube).\n<strong>Ces services ont leurs propres conditions générales et politiques</strong> , et CubeIndex n'en est pas responsable.",
+  "tos_section_third_party_title": "Liens et fournisseurs tiers",
+  "tos_title": "Conditions d'utilisation",
+  "user_overview_achievements_label": "Réalisations",
+  "user_overview_average_note_text": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "—",
+        "state=data": "D'après les évaluations récentes",
+        "state=empty": "—"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_overview_average_rating_label": "Note moyenne",
+  "user_overview_average_rating_title": "Moyenne : {value}",
+  "user_overview_bio_title_h2": "Bio",
+  "user_overview_empty_value_text": "—",
+  "user_overview_meta_title": "Profil {displayName} - CubeIndex",
+  "user_overview_ratings_label": "Évaluations",
+  "user_overview_ratings_summary_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "count=0, countPlural=other": "Aucune évaluation pour le moment",
+        "countPlural=one": "1 évaluation donnée",
+        "countPlural=other": "{count} évaluations données"
+      },
+      "selectors": [
+        "count",
+        "countPlural"
+      ]
+    }
+  ],
+  "user_overview_stats_title_h2": "Statistiques",
+  "user_overview_total_cubes_label": "Cubes totaux",
+  "user_overview_unknown_label": "Inconnu",
+  "user_profile_banner_alt_text": "{username}",
+  "user_profile_followers_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Suiveur",
+        "countPlural=other": "{count} Abonnés"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_profile_followers_title": "Voir les abonnés",
+  "user_profile_following_count_text": "{count} Suivant",
+  "user_profile_following_title": "Voir ci-dessous",
+  "user_profile_member_since_label": "Membre depuis :",
+  "user_profile_menu_aria_label": "Menu utilisateur",
+  "user_profile_private_description_text": "Vous n'êtes pas autorisé à consulter le profil de cet utilisateur.",
+  "user_profile_private_title_h1": "Ce profil est privé",
+  "user_profile_report_cta": "Rapport",
+  "user_profile_report_label_text": "compte de {username}",
+  "user_profile_settings_aria_label": "Paramètres utilisateur",
+  "user_profile_settings_cta": "Paramètres",
+  "user_profile_social_discord_label": "Discorde",
+  "user_profile_social_logo_alt_text": "{label} logo",
+  "user_profile_social_reddit_label": "Reddit",
+  "user_profile_social_twitter_label": "Twitter/X",
+  "user_profile_social_wca_label": "WCA",
+  "user_profile_social_website_label": "Site web",
+  "user_profile_social_youtube_label": "YouTube",
+  "user_profile_socials_title": "Réseaux sociaux",
+  "user_profile_tab_achievements_label": "Réalisations",
+  "user_profile_tab_cubes_label": "Cubes",
+  "user_profile_tab_overview_label": "Aperçu",
+  "user_profile_tab_ratings_label": "Évaluations",
+  "user_profile_tab_reviews_label": "Avis",
+  "user_profile_tab_social_label": "Sociale",
+  "user_profile_tab_stats_label": "Statistiques",
+  "user_profile_tab_submissions_label": "Soumissions",
+  "user_settings_about_action_discord_label": "Discorde",
+  "user_settings_about_action_github_label": "GitHub",
+  "user_settings_about_action_report_label": "Signaler un problème",
+  "user_settings_about_action_support_label": "Soutien",
+  "user_settings_about_badge_open_source": "Source libre",
+  "user_settings_about_footer_text": "CubeIndex est conçu par des cubeurs pour des cubeurs. Si vous constatez un problème, merci de le signaler afin que nous puissions le corriger rapidement.",
+  "user_settings_about_intro_text": "CubeIndex aide les collectionneurs de cubes à suivre leurs collections, à explorer des données détaillées sur leurs cubes et à consulter l'historique des prix dans différents magasins.",
+  "user_settings_about_links_community_title": "Communauté",
+  "user_settings_about_links_email_label": "E-mail",
+  "user_settings_about_links_title": "Links",
+  "user_settings_about_links_x_label": "X (Twitter)",
+  "user_settings_about_links_youtube_label": "YouTube",
+  "user_settings_about_open_source_links_prefix_text": "Consultez le code, ouvrez les problèmes ou soumettez des demandes de fusion sur ",
+  "user_settings_about_open_source_text": "CubeIndex est distribué sous licence Apache 2.0. Les contributions sont les bienvenues, qu'il s'agisse de petites corrections ou de nouvelles fonctionnalités.",
+  "user_settings_about_open_source_title": "Source libre",
+  "user_settings_about_privacy_footer_text": "Nous publions régulièrement des mises à jour pour améliorer la stabilité, les performances et l'accessibilité.",
+  "user_settings_about_privacy_links_conjunction_text": " et ",
+  "user_settings_about_privacy_links_prefix_text": "Lisez le ",
+  "user_settings_about_privacy_text": "Vous contrôlez qui peut voir votre profil. Vous pouvez le rendre privé à tout moment dans l'onglet Profil.",
+  "user_settings_about_privacy_title": "Confidentialité",
+  "user_settings_about_title": "À propos de CubeIndex",
+  "user_settings_appearance_dark_label": "Sombre:",
+  "user_settings_appearance_intro_text": "Choisissez un thème qui vous plaît. Vous pouvez aussi suivre votre système.",
+  "user_settings_appearance_light_label": "Lumière:",
+  "user_settings_appearance_system_toggle_label": "Utiliser le thème système",
+  "user_settings_appearance_title": "Apparence",
+  "user_settings_auth_required_text": "Vous devez être connecté !",
+  "user_settings_avatar_helper_text": "Formats pris en charge : JPG, PNG, WebP, AVIF. Taille maximale : 2 Mo.",
+  "user_settings_avatar_processing_error_text": "Échec du traitement de l'avatar : {error}",
+  "user_settings_avatar_size_error_text": "Fichier trop volumineux. Maximum 2 Mo.",
+  "user_settings_avatar_title": "Avatar",
+  "user_settings_avatar_type_error_text": "Type d'image non pris en charge. Utilisez JPG, PNG, WebP, GIF ou AVIF.",
+  "user_settings_avatar_upload_error_text": "Échec du chargement de l'avatar : {error}",
+  "user_settings_avatar_upload_label": "Télécharger un nouvel avatar",
+  "user_settings_banner_current_alt": "Bannière actuelle",
+  "user_settings_banner_helper_text": "Formats pris en charge : JPG, PNG, WebP, GIF, AVIF. Taille maximale : 5 Mo.",
+  "user_settings_banner_preview_alt": "Aperçu de la bannière",
+  "user_settings_banner_processing_error_text": "Échec du traitement de la bannière : {error}",
+  "user_settings_banner_title": "Bannière",
+  "user_settings_banner_type_error_text": "Type d'image non pris en charge. Utilisez JPG, PNG, WebP ou AVIF.",
+  "user_settings_banner_upload_error_text": "Échec du chargement de la bannière : {error}",
+  "user_settings_banner_upload_label": "Télécharger une nouvelle bannière",
+  "user_settings_current_password_required_text": "Le mot de passe actuel est requis.",
+  "user_settings_display_name_length_error_text": "Le nom d'affichage doit comporter plus de 3 caractères",
+  "user_settings_form_error_text": "Votre formulaire contient des erreurs. Veuillez vérifier les champs surlignés et réessayer.",
+  "user_settings_intro_text": "Gérez votre profil, vos liens, votre sécurité et votre thème.",
+  "user_settings_markdown_basics_title": "Principes de base de Markdown",
+  "user_settings_markdown_bold_label": "Gras/Italique :",
+  "user_settings_markdown_code_hint_text": "ou des blocs clôturés avec trois tagues arrière",
+  "user_settings_markdown_code_label": "Code:",
+  "user_settings_markdown_heading_label": "Titres :",
+  "user_settings_markdown_links_label": "Links:",
+  "user_settings_markdown_lists_hint_text": "utiliser une ligne par élément",
+  "user_settings_markdown_lists_label": "Listes :",
+  "user_settings_markdown_paragraphs_text": "Paragraphes : laissez une ligne blanche entre eux",
+  "user_settings_meta_title": "{section} Paramètres - CubeIndex",
+  "user_settings_new_password_length_error_text": "Le nouveau mot de passe doit comporter plus de 8 caractères.",
+  "user_settings_new_password_required_text": "Le nouveau mot de passe est requis.",
+  "user_settings_password_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Mettre à jour le mot de passe",
+        "state=idle": "Mettre à jour le mot de passe",
+        "state=updating": "Mise à jour en cours..."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_settings_password_incorrect_error_text": "Le mot de passe fourni est incorrect.",
+  "user_settings_password_success_text": "Mot de passe modifié avec succès !",
+  "user_settings_privacy_title": "Confidentialité du profil",
+  "user_settings_privacy_toggle_label": "Rendre mon profil privé (visible uniquement par moi)",
+  "user_settings_profile_bio_label": "Bio",
+  "user_settings_profile_bio_placeholder": "Dites-nous quelque chose d'intéressant… Markdown est pris en charge.",
+  "user_settings_profile_bio_preview_label": "Aperçu en direct",
+  "user_settings_profile_display_name_label": "Nom d'affichage",
+  "user_settings_profile_intro_text": "Mettez à jour les informations de votre profil public. Votre bio prend en charge la mise en forme Markdown (gras, italique, liens, listes et code). Consultez les conseils ci-dessous.",
+  "user_settings_profile_success_text": "Profil modifié avec succès !",
+  "user_settings_profile_title": "Informations de profil",
+  "user_settings_save_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Enregistrer les modifications",
+        "state=idle": "Enregistrer les modifications",
+        "state=saving": "Économie..."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_settings_security_current_password_label": "Mot de passe actuel",
+  "user_settings_security_intro_text": "Changez votre mot de passe. Choisissez-en un unique et robuste.",
+  "user_settings_security_new_password_label": "Nouveau mot de passe",
+  "user_settings_security_title": "Sécurité du compte",
+  "user_settings_social_discord_label": "Discorde",
+  "user_settings_social_discord_placeholder": "123456789012345678",
+  "user_settings_social_intro_text": "Partagez les endroits où l'on peut vous trouver en ligne.",
+  "user_settings_social_reddit_label": "Reddit",
+  "user_settings_social_reddit_placeholder": "cubeindex",
+  "user_settings_social_success_text": "Liens sociaux modifiés avec succès !",
+  "user_settings_social_title": "Liens sociaux",
+  "user_settings_social_wca_label": "WCA ID",
+  "user_settings_social_wca_placeholder": "2023EXAM01",
+  "user_settings_social_website_label": "Site web personnel",
+  "user_settings_social_website_placeholder": "https://cubeindex.com",
+  "user_settings_social_x_label": "Twitter/X",
+  "user_settings_social_x_placeholder": "l'indice du cube",
+  "user_settings_social_youtube_label": "YouTube",
+  "user_settings_social_youtube_placeholder": "@cubeindex",
+  "user_settings_tab_about_label": "À propos",
+  "user_settings_tab_appearance_label": "Apparence",
+  "user_settings_tab_profile_label": "Profil",
+  "user_settings_tab_security_label": "Sécurité",
+  "user_settings_tab_social_label": "Liens sociaux",
+  "user_settings_tabs_aria_label": "Sections",
+  "user_settings_title_h1": "Paramètres utilisateur",
+  "user_submissions_empty_all_cta": "Soumettez votre premier cube",
+  "user_submissions_empty_all_description_text": "Commencez par remplir notre formulaire guidé et nous vous tiendrons informé(e) au fur et à mesure que les modérateurs examineront votre soumission.",
+  "user_submissions_empty_all_title_text": "Vous n'avez encore soumis aucun cube.",
+  "user_submissions_empty_filter_description_text": "Essayez un autre statut ou soumettez un nouveau cube.",
+  "user_submissions_empty_filter_title_text": "Aucun cube ne correspond encore à ce filtre.",
+  "user_submissions_filter_all_label": "Tous",
+  "user_submissions_filter_approved_label": "Approuvé",
+  "user_submissions_filter_pending_label": "En attente",
+  "user_submissions_filter_rejected_label": "Rejeté",
+  "user_submissions_intro_text": "Suivez chaque cube que vous avez envoyé au catalogue et surveillez les décisions des modérateurs.",
+  "user_submissions_list_title": "Cubes soumis",
+  "user_submissions_meta_title": "Mes contributions - CubeIndex",
+  "user_submissions_submit_cta": "Soumettre un cube",
+  "user_submissions_title_h1": "Mes soumissions",
+  "userbar_beta_tag_label": "Bêta",
+  "userbar_intro_text": "Partagez cette bannière minimaliste sur les forums, dans vos profils et signatures. Elle se met à jour automatiquement en fonction de l'évolution de vos statistiques.",
+  "userbar_page_title_h1": "Barre d'utilisateur",
+  "userbar_preview_download_cta": "Télécharger le PNG",
+  "userbar_preview_error_title_text": "L'aperçu a échoué",
+  "userbar_preview_image_alt_text": "{displayName} - Barre d'utilisateurs CubeIndex",
+  "userbar_preview_loading_text": "Génération de l'aperçu…",
+  "userbar_preview_open_image_cta": "Ouvrir l'image",
+  "userbar_preview_refresh_cta": "Actualiser l'aperçu",
+  "userbar_preview_retry_cta": "Essayer à nouveau",
+  "userbar_preview_size_label": "Taille:",
+  "userbar_preview_title": "Aperçu",
+  "userbar_snippet_copied_toast_text": "Copié {snippet} !",
+  "userbar_snippet_copy_aria_text": "Copier {snippet}",
+  "userbar_snippet_copy_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Copie",
+        "state=copied": "Copié",
+        "state=copy": "Copie"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "userbar_snippet_copy_error_text": "La copie a échoué — vous pouvez sélectionner et copier manuellement.",
+  "userbar_snippet_profile_alt_text": "Profil CubeIndex {displayName}",
+  "userbar_snippet_tab_bbcode_label": "BBCode",
+  "userbar_snippet_tab_direct_url_label": "URL directe",
+  "userbar_snippet_tab_html_label": "HTML",
+  "userbar_snippet_tab_markdown_label": "Réduction",
+  "userbar_snippet_title": "Intégrer des extraits",
+  "userbar_snippet_userbar_alt_text": "Barre d'outils CubeIndex {displayName}"
 }

@@ -7,6 +7,7 @@
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
   import Tag from "$lib/components/misc/tag.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data } = $props();
   let {
@@ -16,7 +17,7 @@
   } = $derived(data);
 
   // Page title
-  const pageTitle = $derived(`${cube.name} - Price Tracking`);
+  const pageTitle = $derived(m.explore_price_meta_title({ name: cube.name }));
 
   // Formatting helpers
   const nf = (currency?: string) =>
@@ -79,7 +80,9 @@
           tooltip: {
             callbacks: {
               label: ({ parsed: { y }, dataset: { label } }) => {
-                if (y == null) return `${label}: -`;
+                if (y == null) {
+                  return m.explore_price_tooltip_missing_text({ label });
+                }
                 const currency = vendor_links.find(
                   (l) => l.vendor_name === label,
                 )?.vendor?.currency;
@@ -91,13 +94,13 @@
         scales: {
           y: {
             beginAtZero: false,
-            title: { display: true, text: "Price" },
+            title: { display: true, text: m.common_label_price_text() },
             ticks: {
               display: false,
             },
           },
           x: {
-            title: { display: true, text: "Date" },
+            title: { display: true, text: m.common_label_date_text() },
           },
         },
       },
@@ -112,14 +115,14 @@
   function getVendorStatus(shop: CubeVendorLinks) {
     if (shop.available) {
       return {
-        text: "In stock",
+        text: m.explore_price_status_in_stock_label(),
         icon: "fa-solid fa-circle-check",
         badgeClass:
           "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200 whitespace-nowrap",
       };
     }
     return {
-      text: "Out of stock",
+      text: m.explore_price_status_out_of_stock_label(),
       icon: "fa-solid fa-circle-xmark",
       badgeClass:
         "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200 whitespace-nowrap",
@@ -131,7 +134,7 @@
   <title>{pageTitle}</title>
   <meta
     name="description"
-    content="Historical price tracking across vendors for this cube."
+    content={m.explore_price_meta_description()}
   />
 </svelte:head>
 
@@ -144,7 +147,7 @@
         class="text-lg font-semibold mb-3 flex items-center gap-2"
       >
         <i class="fa-solid fa-store" aria-hidden="true"></i>
-        Available at
+        {m.explore_price_vendors_heading_label()}
       </h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {#each vendor_links as shop (shop.id)}
@@ -154,7 +157,9 @@
             target="_blank"
             rel="noopener noreferrer"
             class="group block rounded-xl border border-base-300 bg-base-200 hover:bg-base-300/70 focus:outline-none focus-visible:ring focus-visible:ring-primary/40 transition-colors duration-200 p-4"
-            aria-label={`Open ${shop.vendor_name} in a new tab`}
+            aria-label={m.explore_price_vendor_open_aria({
+              name: shop.vendor_name,
+            })}
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
@@ -186,7 +191,7 @@
             <div
               class="mt-3 inline-flex items-center gap-1 text-xs text-base-content/70 group-hover:text-base-content/90"
             >
-              Visit store <i
+              {m.explore_price_visit_store_cta()} <i
                 class="fa-solid fa-arrow-up-right-from-square"
                 aria-hidden="true"
               ></i>
@@ -200,9 +205,9 @@
       aria-live="polite"
       class="rounded-xl border border-dashed border-base-300 p-6 text-center"
     >
-      <p class="font-medium">No vendor information available</p>
+      <p class="font-medium">{m.explore_price_empty_title()}</p>
       <p class="text-sm text-base-content/70">
-        We’ll display shops and prices as soon as we track them.
+        {m.explore_price_empty_body_text()}
       </p>
     </section>
   {/if}
@@ -214,24 +219,29 @@
       class="text-lg font-semibold flex items-center gap-2"
     >
       <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-      Price history
-      <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
+      {m.explore_price_history_heading_label()}
+      <Tag
+        label={m.explore_price_beta_label()}
+        gradient="from-indigo-500 via-purple-500 to-pink-500"
+      />
     </h2>
 
     {#if per_vendor_history.length > 0}
       <div
         class="w-full h-80 rounded-xl border border-base-300 bg-base-200 p-3"
       >
-        <canvas bind:this={canvas} aria-label="Line chart of price history"
+        <canvas
+          bind:this={canvas}
+          aria-label={m.explore_price_chart_aria()}
         ></canvas>
       </div>
     {:else}
       <div
         class="rounded-xl border border-dashed border-base-300 p-6 text-center"
       >
-        <p class="font-medium">Not enough data yet</p>
+        <p class="font-medium">{m.explore_price_chart_empty_title()}</p>
         <p class="text-sm text-base-content/70">
-          Come back later as we gather more price points.
+          {m.explore_price_chart_empty_body_text()}
         </p>
       </div>
     {/if}

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
 
@@ -8,31 +9,31 @@
 
   const cards = [
     {
-      label: "Collection",
+      label: m.dashboard_card_collection_label(),
       value: stats.cubesCount,
       icon: "fa-box-archive",
       href: `/user/${profile.username}/cubes`,
     },
     {
-      label: "Ratings",
+      label: m.dashboard_card_ratings_label(),
       value: stats.ratingsCount,
       icon: "fa-star",
       href: `/user/${profile.username}/ratings`,
     },
     {
-      label: "Achievements",
+      label: m.dashboard_card_achievements_label(),
       value: stats.achievementsCount,
       icon: "fa-trophy",
       href: `/user/${profile.username}/achievements`,
     },
     {
-      label: "Followers",
+      label: m.dashboard_card_followers_label(),
       value: stats.followersCount,
       icon: "fa-user-group",
       href: `/user/${profile.username}/social`,
     },
     {
-      label: "Submissions",
+      label: m.dashboard_card_submissions_label(),
       value: stats.submissionsCount,
       icon: "fa-paper-plane",
       href: "/user/submissions",
@@ -49,7 +50,7 @@
 </script>
 
 <svelte:head>
-  <title>Dashboard - CubeIndex</title>
+  <title>{m.dashboard_meta_title()}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -67,11 +68,13 @@
       <div>
         <div class="flex items-center gap-3">
           <h1 class="text-3xl font-clash tracking-tight">
-            Welcome back, {profile.display_name || profile.username}
+            {m.dashboard_welcome_title_text({
+              name: profile.display_name || profile.username,
+            })}
           </h1>
         </div>
         <p class="text-base-content/70 mt-1">
-          Here’s your personal overview and recent activity.
+          {m.dashboard_intro_text()}
         </p>
       </div>
     </div>
@@ -100,10 +103,12 @@
       class="card bg-primary text-primary-content shadow-md hover:shadow-lg transition"
     >
       <div class="card-body items-start">
-        <p class="text-sm opacity-90">Get Started</p>
-        <p class="text-2xl font-extrabold">Explore Cubes</p>
+        <p class="text-sm opacity-90">{m.dashboard_cta_kicker_label()}</p>
+        <p class="text-2xl font-extrabold">
+          {m.dashboard_cta_title_text()}
+        </p>
         <span class="opacity-90 text-sm">
-          Find cubes to add to your collection.
+          {m.dashboard_cta_description_text()}
         </span>
       </div>
     </a>
@@ -114,13 +119,16 @@
     <div class="card bg-base-100 border border-base-300 xl:col-span-1">
       <div class="card-body">
         <div class="flex items-center justify-between gap-2">
-          <h2 class="card-title">Recent Submissions</h2>
-          <a class="btn btn-xs" href="/user/submissions">View all</a>
+          <h2 class="card-title">{m.dashboard_recent_title()}</h2>
+          <a class="btn btn-xs" href="/user/submissions">
+            {m.dashboard_recent_view_all_cta()}
+          </a>
         </div>
         {#if recent.submissions.length === 0}
           <div class="text-sm opacity-70">
-            Share cubes that are missing from the catalog and track their status
-            from here. <a class="link" href="/submit">Submit a cube</a> to get started.
+            {m.dashboard_recent_empty_text()}
+            <a class="link" href="/submit">{m.dashboard_recent_empty_cta()}</a>
+            {m.dashboard_recent_empty_suffix_text()}
           </div>
         {:else}
           <ul class="divide-y divide-base-300">
@@ -154,7 +162,9 @@
                     </span>
                   </div>
                   <p class="text-xs opacity-70">
-                    Submitted {formatDate(submission.created_at)}
+                    {m.dashboard_recent_submitted_text({
+                      date: formatDate(submission.created_at),
+                    })}
                   </p>
                 </div>
               </li>
@@ -162,7 +172,7 @@
           </ul>
           <div class="pt-3 flex flex-wrap">
             <a class="btn btn-ghost btn-sm" href="/submit"
-              >Submit another cube</a
+              >{m.dashboard_recent_submit_another_cta()}</a
             >
           </div>
         {/if}
@@ -172,20 +182,28 @@
 
   <section class="card bg-base-100 border border-base-300">
     <div class="card-body">
-      <h2 class="card-title">Quick Actions</h2>
+      <h2 class="card-title">{m.dashboard_actions_title()}</h2>
       <div class="flex flex-wrap gap-3">
         <a class="btn btn-primary" href={`/user/${profile.username}`}>
-          View Profile
+          {m.dashboard_action_view_profile_cta()}
         </a>
         <a class="btn" href={`/user/${profile.username}/cubes`}>
-          Manage Collection
+          {m.dashboard_action_manage_collection_cta()}
         </a>
-        <a class="btn" href="/user/submissions">My Submissions</a>
-        <a class="btn" href="/submit">Submit a Cube</a>
-        <a class="btn" href={`/user/${profile.username}/ratings`}>My Ratings</a>
-        <a class="btn" href="/achievements">Browse Achievements</a>
-        <a class="btn" href="/explore/users">Discover Users</a>
-        <a class="btn" href="/userbar">Userbar</a>
+        <a class="btn" href="/user/submissions">
+          {m.dashboard_action_my_submissions_cta()}
+        </a>
+        <a class="btn" href="/submit">{m.dashboard_action_submit_cta()}</a>
+        <a class="btn" href={`/user/${profile.username}/ratings`}>
+          {m.dashboard_action_my_ratings_cta()}
+        </a>
+        <a class="btn" href="/achievements">
+          {m.dashboard_action_browse_achievements_cta()}
+        </a>
+        <a class="btn" href="/explore/users">
+          {m.dashboard_action_discover_users_cta()}
+        </a>
+        <a class="btn" href="/userbar">{m.dashboard_action_userbar_cta()}</a>
       </div>
     </div>
   </section>

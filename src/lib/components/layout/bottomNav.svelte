@@ -62,6 +62,15 @@
   </a>
 
   <a
+    class:dock-active={pathname.startsWith("/marketplace")}
+    href="/marketplace"
+    aria-label="Marketplace"
+  >
+    <i class="fa-solid fa-tags"></i>
+    <span class="dock-label">Marketplace</span>
+  </a>
+
+  <a
     class:dock-active={pathname === "/notifications"}
     href="/notifications"
     aria-label="Notifications"

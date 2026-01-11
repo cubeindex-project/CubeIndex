@@ -9,6 +9,7 @@ declare global {
       reqId: string;
       log: AppLogger;
       supabase: SupabaseClient<Database>;
+      locale: "en" | "fr";
       safeGetSession: () => Promise<{
         session: Session | null;
         user: User | null;
@@ -18,6 +19,7 @@ declare global {
     }
     interface PageData {
       session: Session | null;
+      locale?: "en" | "fr";
     }
     // interface PageState {}
     // interface Platform {}

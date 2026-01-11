@@ -12,12 +12,17 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
+    "i18n:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide --emit-ts-declarations",
+    "prebuild": "npm run i18n:compile",
+    "predev": "npm run i18n:compile",
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
+    "@inlang/paraglide-js": "^2.8.0",
+    "@inlang/plugin-message-format": "^4.2.0",
     "@sveltejs/adapter-netlify": "^5.0.2",
     "@sveltejs/kit": "^2.22.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",

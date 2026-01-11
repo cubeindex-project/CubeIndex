@@ -69,6 +69,7 @@
 
   const navLinks: NavLink[] = [
     { name: "Explore", href: "/explore", icon: "fa-compass", pc: false },
+    { name: "Marketplace", href: "/marketplace", icon: "fa-tags", pc: true },
     {
       name: "Awards",
       href: "/awards",

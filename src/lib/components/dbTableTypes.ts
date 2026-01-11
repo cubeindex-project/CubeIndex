@@ -45,6 +45,62 @@ export type AchievementRarity =
   | "Common";
 export type RatingHalfStep = 0.5 | 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
 export type CubeReviewStatus = "draft" | "published";
+export type MarketplaceListingStatus = "active" | "sold" | "paused" | "removed";
+export type MarketplaceContactMethod =
+	| "external"
+	| "email"
+	| "discord"
+	| "other";
+
+export interface MarketplaceListings {
+	/** Auto-generated UUID */
+	id: string;
+
+	/** Creation timestamp ISO string, defaults to now() */
+	created_at: string;
+
+	/** Update timestamp ISO string, defaults to now() */
+	updated_at: string;
+
+	/** UUID for seller profile, references profiles.user_id */
+	seller_id: string;
+
+	/** Optional cube model slug, references cube_models.slug */
+	cube_slug: string | null;
+
+	/** Display name of the cube being sold */
+	cube_name: string;
+
+	/** Condition of the cube listing */
+	condition: UserCubeCondition;
+
+	/** Listing price amount */
+	price_amount: number;
+
+	/** Three-letter currency code */
+	price_currency: string;
+
+	/** ISO country code for seller location */
+	location_country: string;
+
+	/** Optional region or city for seller location */
+	location_region: string | null;
+
+	/** Optional listing description */
+	description: string | null;
+
+	/** Contact method for off-platform communication */
+	contact_method: MarketplaceContactMethod;
+
+	/** Contact value (URL, handle, or email) */
+	contact_value: string;
+
+	/** Optional image URL for the listing */
+	image_url: string | null;
+
+	/** Listing status */
+	status: MarketplaceListingStatus;
+}
 
 export interface UserFollowsRow {
   /** BIGINT identity (not the primary key). Represented as string for 64‑bit safety. */

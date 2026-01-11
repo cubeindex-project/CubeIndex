@@ -7,6 +7,7 @@
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
+  import { locale, setAppLocale } from "$lib/i18n";
 
   let { data, children } = $props();
 
@@ -15,6 +16,12 @@
   import { onMount } from "svelte";
 
   let { session, supabase, profile, umamiTag } = $derived(data);
+  const activeLocale = $derived(data.locale);
+  $effect(() => {
+    if (activeLocale) {
+      setAppLocale(activeLocale);
+    }
+  });
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) {
@@ -33,6 +40,7 @@
 </script>
 
 <svelte:head>
+  <html lang={$locale}></html>
   <title>CubeIndex</title>
 
   {#if umamiTag}

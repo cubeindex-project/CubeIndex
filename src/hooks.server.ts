@@ -8,6 +8,12 @@ import {
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
 import { logError } from "$lib/server/logError";
+import {
+  LOCALE_COOKIE_MAX_AGE,
+  LOCALE_COOKIE_NAME,
+  resolveLocale,
+} from "$lib/i18n";
+import { setLocale } from "$lib/paraglide/runtime";
 
 const context: Handle = async ({ event, resolve }) => {
   event.locals.reqId = randomUUID();
@@ -134,7 +140,26 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(context, supabase, authGuard);
+const i18n: Handle = async ({ event, resolve }) => {
+  const locale = resolveLocale({
+    cookie: event.cookies.get(LOCALE_COOKIE_NAME),
+    header: event.request.headers.get("accept-language"),
+  });
+  event.locals.locale = locale;
+  setLocale(locale);
+
+  if (event.cookies.get(LOCALE_COOKIE_NAME) !== locale) {
+    event.cookies.set(LOCALE_COOKIE_NAME, locale, {
+      path: "/",
+      sameSite: "lax",
+      maxAge: LOCALE_COOKIE_MAX_AGE,
+    });
+  }
+
+  return resolve(event);
+};
+
+export const handle: Handle = sequence(context, i18n, supabase, authGuard);
 
 export const handleError: HandleServerError = ({ error: err, event }) => {
   const fallbackLogger = createLogger({

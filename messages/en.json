@@ -1,0 +1,22 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav": {
+    "awards": "Awards",
+    "explore": "Explore",
+    "home_aria": "CubeIndex Home",
+    "language": "Language",
+    "login": "Login",
+    "logo_alt": "CubeIndex logo",
+    "log_out": "Log out",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "sign_out": "Sign Out",
+    "staff_dashboard": "Staff Dashboard",
+    "unread_notifications": "Unread notifications",
+    "user_menu": "User menu",
+    "userbar": "Userbar",
+    "userbar_tag": "New",
+    "verify_email": "Verify your email"
+  }
+}

@@ -1,10 +1,9 @@
 import type { LayoutServerLoad } from "./$types";
 import type { DetailedProfiles } from "$lib/components/dbTableTypes.js";
-import { supabase } from "$lib/supabaseClient";
 import { logError } from "$lib/server/logError";
 import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
 
-export const load = (async ({ locals: { user, log }, params, url }) => {
+export const load = (async ({ locals: { user, log, supabase }, params, url }) => {
   const { username } = params;
 
   // 1) Profile
@@ -45,6 +44,10 @@ export const load = (async ({ locals: { user, log }, params, url }) => {
     following = data.length !== 1;
   }
 
+  const title = `${profile.display_name}'s Profile - CubeIndex`;
+  const description = `View ${profile.display_name} (@${profile.username}) on CubeIndex. Explore their cube collection, ratings, reviews, and recent activity.`;
+  const image = `${url.origin}/api/og/user/${profile.username}`;
+
   return {
     profile,
     following,
@@ -55,9 +58,14 @@ export const load = (async ({ locals: { user, log }, params, url }) => {
       followingCount: profile.user_following_count,
     },
     meta: {
-      title: `${profile.display_name}'s Profile - CubeIndex`,
-      description: `View ${profile.display_name} (@${profile.username}) on CubeIndex. Explore their cube collection, ratings, reviews, and recent activity.`,
-      ogImage: `${url.origin}/api/og/profile/${username}`,
+      title,
+      ogTitle: title,
+      twitterTitle: title,
+      description,
+      ogDescription: description,
+      twitterDescription: description,
+      image,
+      twitterImage: image,
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "ProfilePage",

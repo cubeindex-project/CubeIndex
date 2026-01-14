@@ -21,6 +21,7 @@ export const load = (async ({
   locals: { supabase, log, user },
   setHeaders,
   params,
+  url,
 }) => {
   const slug = params.slug;
 
@@ -30,7 +31,7 @@ export const load = (async ({
       "*,verified_by_id(display_name, username),submitted_by:submitted_by_id(display_name, username)",
     )
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
 
   if (cubeErr) {
     log.error(
@@ -113,17 +114,17 @@ export const load = (async ({
     `The ${cube.name} is a ${cube.type} twisty puzzle` +
     (cube.release_date ? ` released on ${formatDate(cube.release_date)}` : "") +
     `. ` +
-    (cube.low_price != null
-      ? `Prices start at $${cube.low_price}. `
-      : "");
-  const image = `/api/og/cube/${cube.slug}`;
+    (cube.low_price != null ? `Prices start at $${cube.low_price}. ` : "");
+  const image = `${url.origin}/api/og/cube/${cube.slug}`;
   const offers = cube_vendor_links.map((offer) => {
     return {
       "@type": "Offer",
       url: offer.url,
       price: offer.price,
       priceCurrency: offer.vendor.currency,
-      availability: offer.available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      availability: offer.available
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
     };
   });
 

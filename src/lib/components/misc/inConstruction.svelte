@@ -20,6 +20,14 @@
 
     <a href="/" class="btn btn-warning btn-lg mt-6">
       🏠 {m.misc_in_construction_return_home_cta()}
+      {m.status_construction_title_h1()}
+    </h1>
+    <p class="mt-4 text-lg max-w-xl">
+      {m.status_construction_body_text()}
+    </p>
+
+    <a href="/" class="btn btn-warning btn-lg mt-6">
+      🏠 {m.app_home_return_cta()}
     </a>
   </div>
 </section>

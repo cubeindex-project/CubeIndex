@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import FeatureSection from "$lib/components/marketing/FeatureSection.svelte";
   import { inView } from "$lib/actions/inView.js";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
   const { totalCubes, totalUsers, achievements } = $derived(
@@ -30,31 +31,29 @@
 
   const partners: Partner[] = [
     {
-      name: "CubingPanda",
+      name: m.home_partner_cubingpanda_name_text(),
       emoji: "🐼",
-      description:
-        "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
+      description: m.home_partner_cubingpanda_description_text(),
       links: [
         {
-          label: "Join Discord",
+          label: m.home_partner_cubingpanda_discord_cta(),
           url: "https://discord.gg/VHhYR6nyzs",
           color: "primary",
         },
       ],
     },
     {
-      name: "AlgArchive",
+      name: m.home_partner_algarchive_name_text(),
       emoji: "📚",
-      description:
-        "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
+      description: m.home_partner_algarchive_description_text(),
       links: [
         {
-          label: "Visit Site",
+          label: m.home_partner_algarchive_site_cta(),
           url: "https://alg-archive.vercel.app/",
           color: "secondary",
         },
         {
-          label: "Join Discord",
+          label: m.home_partner_algarchive_discord_cta(),
           url: "https://discord.gg/NYPG43xe9t",
           color: "primary",
         },
@@ -116,44 +115,38 @@
 
   const tiles: Tile[] = [
     {
-      title: "Track Your Collection",
-      description:
-        "Log every cube with notes and versions. Keep your stash organized and easy to browse.",
+      title: m.home_tiles_collection_title_text(),
+      description: m.home_tiles_collection_description_text(),
       iconClass: "fa-boxes-stacked",
       accent: "primary",
     },
     {
-      title: "Explore Every Puzzle",
-      description:
-        "Search the largest cube database. From 2×2 to big cubes and rare mods, it’s all here.",
+      title: m.home_tiles_explore_title_text(),
+      description: m.home_tiles_explore_description_text(),
       iconClass: "fa-cubes",
       accent: "secondary",
     },
     {
-      title: "Follow Price Trends",
-      description:
-        "Compare vendors, view price history, and get instant alerts on drops and restocks.",
+      title: m.home_tiles_pricing_title_text(),
+      description: m.home_tiles_pricing_description_text(),
       iconClass: "fa-tag",
       accent: "info",
     },
     {
-      title: "Unlock Achievements",
-      description:
-        "Earn badges for milestones and rare finds. Show them off on your profile.",
+      title: m.home_tiles_achievements_title_text(),
+      description: m.home_tiles_achievements_description_text(),
       iconClass: "fa-trophy",
       accent: "accent",
     },
     {
-      title: "Discover the Community",
-      description:
-        "Follow collectors, share finds, and see how your shelf stacks up worldwide.",
+      title: m.home_tiles_community_title_text(),
+      description: m.home_tiles_community_description_text(),
       iconClass: "fa-users",
       accent: "success",
     },
     {
-      title: "Stay Notified",
-      description:
-        "Get updates on releases, alerts, and community news—always right on time.",
+      title: m.home_tiles_notifications_title_text(),
+      description: m.home_tiles_notifications_description_text(),
       iconClass: "fa-bell",
       accent: "neutral",
     },
@@ -189,7 +182,7 @@
 </script>
 
 <svelte:head>
-  <title>CubeIndex</title>
+  <title>{m.home_meta_title()}</title>
 </svelte:head>
   <!-- HERO -->
   <section class="relative overflow-hidden {ui.section} bg-base-100">
@@ -271,17 +264,16 @@
 
     <div class={ui.heroContainer}>
       <div class="relative z-10 max-w-3xl space-y-6">
-        <h1 class={ui.h1}>Build Your Ultimate Cube Collection</h1>
+        <h1 class={ui.h1}>{m.home_hero_title_h1()}</h1>
         <p class={ui.lead}>
-          Track your cubes, unlock achievements, and explore the world's largest
-          cube database.
+          {m.home_hero_lead_text()}
         </p>
         <div class={ui.ctas}>
           <a href="/auth/signup" class="btn btn-primary btn-lg sm:btn-xl"
-            >Get Started</a
+            >{m.home_hero_primary_cta()}</a
           >
           <a href="/explore" class="btn btn-outline btn-lg sm:btn-xl"
-            >Explore Database</a
+            >{m.home_hero_secondary_cta()}</a
           >
         </div>
       </div>
@@ -290,13 +282,13 @@
     <!-- Scroll down indicator -->
     <a
       href="#why"
-      aria-label="Scroll to content"
+      aria-label={m.home_hero_scroll_aria()}
       class="group absolute inset-x-0 bottom-6 mx-auto mb-[7%] w-max select-none"
     >
       <span
         class="mx-auto flex items-center gap-2 rounded-full bg-base-100/70 px-3 py-1 text-sm text-base-content/70 ring-1 ring-base-300 backdrop-blur transition hover:text-base-content/90 hover:ring-base-300/80"
       >
-        <span>Scroll</span>
+        <span>{m.home_hero_scroll_label()}</span>
         <i
           class="fa-solid fa-chevron-down motion-safe:animate-bounce text-base opacity-80 group-hover:opacity-100"
           aria-hidden="true"
@@ -329,12 +321,12 @@
     </div>
 
     <div class={ui.container}>
-      <h2 class={ui.h2}>Why CubeIndex</h2>
+      <h2 class={ui.h2}>{m.home_features_title_h2()}</h2>
 
       <div
         class="mt-10 grid gap-4 sm:gap-6 md:gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
         role="list"
-        aria-label="Key benefits"
+        aria-label={m.home_features_list_aria()}
       >
         {#each tiles as t (t.title)}
           <article class={ui.tileCard} role="listitem">
@@ -366,45 +358,45 @@
 
   <!-- Feature Sections (unchanged content, consistent padding/width handled inside component) -->
   <FeatureSection
-    eyebrow="Collection"
-    title="Add and Manage Your Rubik's Cube Collection"
-    description="Catalog your entire puzzle collection. Track conditions and personal notes, then share with friends to showcase and brag!"
+    eyebrow={m.home_section_collection_eyebrow()}
+    title={m.home_section_collection_title()}
+    description={m.home_section_collection_description()}
     imageSrc="images/home/personal_collection.webp"
-    imageAlt="Illustration of a personal collection dashboard with categorized cubes"
+    imageAlt={m.home_section_collection_image_alt()}
   />
 
   <FeatureSection
     reverse
-    eyebrow="Pricing"
-    title="Compare Prices Between Shops"
-    description="Know where to buy. View vendor pricing side-by-side, check availability, and jump straight to the best deal."
+    eyebrow={m.home_section_pricing_eyebrow()}
+    title={m.home_section_pricing_title()}
+    description={m.home_section_pricing_description()}
     imageSrc="images/home/compare_price.webp"
-    imageAlt="Illustration showing price comparison cards across multiple stores"
+    imageAlt={m.home_section_pricing_image_alt()}
   />
 
   <FeatureSection
-    eyebrow="Ratings"
-    title="Rate Cubes"
-    description="Share your experience. Leave ratings and feedback so others can find their perfect main — your opinion makes the database better for everybody."
+    eyebrow={m.home_section_ratings_eyebrow()}
+    title={m.home_section_ratings_title()}
+    description={m.home_section_ratings_description()}
     imageSrc="images/home/rating.webp"
-    imageAlt="Illustration of rating stars and feedback cards"
+    imageAlt={m.home_section_ratings_image_alt()}
   />
 
   <FeatureSection
     reverse
-    eyebrow="Community"
-    title="See Other People's Cube Collection"
-    description="Discover inspiring collections from across the community."
+    eyebrow={m.home_section_community_eyebrow()}
+    title={m.home_section_community_title()}
+    description={m.home_section_community_description()}
     imageSrc="images/home/community.webp"
-    imageAlt="Illustration of community profiles and shared collections"
+    imageAlt={m.home_section_community_image_alt()}
   />
 
   <FeatureSection
-    eyebrow="Achievements"
-    title="Earn Achievements"
-    description="Celebrate milestones as you collect, rate, and explore. Unlock achievements for completing challenges and growing your collection."
+    eyebrow={m.home_section_achievements_eyebrow()}
+    title={m.home_section_achievements_title()}
+    description={m.home_section_achievements_description()}
     imageSrc="images/home/achievements.webp"
-    imageAlt="Illustration of achievement badges and progress"
+    imageAlt={m.home_section_achievements_image_alt()}
   />
 
   <!-- STATS -->
@@ -434,12 +426,12 @@
     </div>
 
     <div class={`relative z-10 ${ui.container}`}>
-      <h2 class={ui.h2}>CubeIndex in Numbers</h2>
+      <h2 class={ui.h2}>{m.home_stats_title_h2()}</h2>
 
       <div
         class="mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-3"
         role="list"
-        aria-label="Key statistics"
+        aria-label={m.home_stats_list_aria()}
       >
         <!-- Cubes -->
         <article class={ui.statCard} role="listitem">
@@ -448,7 +440,7 @@
               <i class="fa-solid fa-cubes text-base sm:text-lg"></i>
               <span
                 class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-                >Cubes Logged</span
+                >{m.home_stats_cubes_label()}</span
               >
             </div>
           </div>
@@ -469,13 +461,15 @@
                 }}
                 opacityTiming={{ duration: 400, easing: "ease-out" }}
                 class="inline-block align-baseline"
-                aria-label={`Total cubes logged: ${totalCubes}`}
+                aria-label={m.home_stats_cubes_aria({
+                  count: totalCubes,
+                })}
               />
             </span>
           </div>
 
           <p class="mt-3 text-sm text-base-content/70">
-            Cataloged across brands, types, and generations.
+            {m.home_stats_cubes_description_text()}
           </p>
         </article>
 
@@ -486,7 +480,7 @@
               <i class="fa-solid fa-people-group text-base sm:text-lg"></i>
               <span
                 class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-                >Registered Users</span
+                >{m.home_stats_users_label()}</span
               >
             </div>
           </div>
@@ -507,13 +501,13 @@
                 }}
                 opacityTiming={{ duration: 400, easing: "ease-out" }}
                 class="inline-block align-baseline"
-                aria-label={`Registered users: ${totalUsers}`}
+                aria-label={m.home_stats_users_aria({ count: totalUsers })}
               />
             </span>
           </div>
 
           <p class="mt-3 text-sm text-base-content/70">
-            A growing community of cubers worldwide.
+            {m.home_stats_users_description_text()}
           </p>
         </article>
 
@@ -524,7 +518,7 @@
               <i class="fa-solid fa-trophy text-base sm:text-lg"></i>
               <span
                 class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-                >Unlockable Achievements</span
+                >{m.home_stats_achievements_label()}</span
               >
             </div>
           </div>
@@ -546,7 +540,10 @@
                 }}
                 opacityTiming={{ duration: 400, easing: "ease-out" }}
                 class="inline-block align-baseline"
-                aria-label={`Unlockable achievements: ${unlockAchi} out of ${totalAchi}`}
+                aria-label={m.home_stats_achievements_aria({
+                  unlocked: unlockAchi,
+                  total: totalAchi,
+                })}
               />
             </span>
             <span
@@ -557,7 +554,7 @@
           </div>
 
           <p class="mt-3 text-sm text-base-content/70">
-            Earnable today based on your collection & activity.
+            {m.home_stats_achievements_description_text()}
           </p>
         </article>
       </div>
@@ -567,7 +564,7 @@
   <!-- PARTNERS -->
   <section class={`${ui.section} bg-base-100`}>
     <div class={ui.container}>
-      <h2 class={ui.h2}>Our Partners</h2>
+      <h2 class={ui.h2}>{m.home_partners_title_h2()}</h2>
 
       <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
         {#each partners as partner}
@@ -619,18 +616,17 @@
 
     <div class={ui.container}>
       <h2 class="text-4xl font-bold font-clash mb-4">
-        Ready to level up your cube game?
+        {m.home_cta_title_h2()}
       </h2>
       <p class="text-lg max-w-2xl mx-auto mb-8">
-        Join the CubeIndex community and start tracking your collection,
-        unlocking achievements, and connecting with cubers worldwide.
+        {m.home_cta_description_text()}
       </p>
       <div class="flex justify-center gap-4 flex-wrap">
         <a href="/auth/signup" class="btn btn-primary btn-lg sm:btn-xl"
-          >Get Started</a
+          >{m.home_cta_primary_cta()}</a
         >
         <a href="/explore" class="btn btn-outline btn-lg sm:btn-xl"
-          >Explore Database</a
+          >{m.home_cta_secondary_cta()}</a
         >
       </div>
     </div>

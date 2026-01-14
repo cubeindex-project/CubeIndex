@@ -3,6 +3,7 @@
   import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import type { Profiles } from "../dbTableTypes";
+  import { m } from "$lib/paraglide/messages";
 
   let { profile }: { profile: Profiles | null } = $props();
 
@@ -51,12 +52,17 @@
   >
     <i class="fa-solid fa-house"></i>
     <span class="dock-label">{m.nav_bottom_home_label()}</span>
+    aria-label={m.nav_main_home_label()}
+  >
+    <i class="fa-solid fa-house"></i>
+    <span class="dock-label">{m.nav_main_home_label()}</span>
   </a>
 
   <a
     class:dock-active={pathname.startsWith("/explore")}
     href="/explore"
     aria-label={m.nav_bottom_explore_aria()}
+    aria-label={m.nav_main_explore_label()}
   >
     <i class="fa-solid fa-compass"></i>
     <span class="dock-label">{m.nav_main_explore_label()}</span>
@@ -66,6 +72,7 @@
     class:dock-active={pathname === "/notifications"}
     href="/notifications"
     aria-label={m.nav_bottom_notifications_aria()}
+    aria-label={m.nav_main_notifications_label()}
     class="relative"
   >
     <div class="indicator">
@@ -77,6 +84,11 @@
         <span
           class="indicator-item size-2 rounded-full bg-error"
           aria-label={m.nav_notifications_verify_email_aria()}
+          aria-label={m.nav_email_verify_aria()}
+        ></span>
+        <span
+          class="indicator-item size-2 rounded-full bg-error"
+          aria-label={m.nav_email_verify_aria()}
         ></span>
       {:else if hasUnread}
         <span
@@ -97,12 +109,17 @@
     >
       <i class="fa-solid fa-user"></i>
       <span class="dock-label">{m.nav_profile_menu_profile_label()}</span>
+      aria-label={m.nav_user_profile_label()}
+    >
+      <i class="fa-solid fa-user"></i>
+      <span class="dock-label">{m.nav_user_profile_label()}</span>
     </a>
   {:else}
     <a
       class:dock-active={pathname === "/auth/login"}
       href="/auth/login"
       aria-label={m.nav_bottom_login_aria()}
+      aria-label={m.nav_auth_login_cta()}
     >
       <i class="fa-solid fa-right-to-bracket"></i>
       <span class="dock-label">{m.nav_auth_login_cta()}</span>

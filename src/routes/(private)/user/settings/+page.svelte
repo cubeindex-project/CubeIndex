@@ -5,6 +5,7 @@
   import { queryParameters } from "sveltekit-search-params";
   import Avatar from "$lib/components/user/avatar.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   // Props & initial state
   let { data }: { data: PageData } = $props();
@@ -55,15 +56,29 @@
     $derived($params.tab ?? "profile");
 
   type TabId = "profile" | "social" | "security" | "appearance" | "about";
-  type TabItem = { id: TabId; label: string; icon: string };
+  type TabItem = { id: TabId; icon: string };
 
   const tabs: TabItem[] = [
-    { id: "profile", label: "Profile", icon: "fa-solid fa-user" },
-    { id: "social", label: "Social Links", icon: "fa-solid fa-globe" },
-    { id: "security", label: "Security", icon: "fa-solid fa-lock" },
-    { id: "appearance", label: "Appearance", icon: "fa-solid fa-palette" },
-    { id: "about", label: "About", icon: "fa-solid fa-circle-info" },
+    { id: "profile", icon: "fa-solid fa-user" },
+    { id: "social", icon: "fa-solid fa-globe" },
+    { id: "security", icon: "fa-solid fa-lock" },
+    { id: "appearance", icon: "fa-solid fa-palette" },
+    { id: "about", icon: "fa-solid fa-circle-info" },
   ];
+  const tabLabel = (id: TabId) => {
+    switch (id) {
+      case "profile":
+        return m.user_settings_tab_profile_label();
+      case "social":
+        return m.user_settings_tab_social_label();
+      case "security":
+        return m.user_settings_tab_security_label();
+      case "appearance":
+        return m.user_settings_tab_appearance_label();
+      case "about":
+        return m.user_settings_tab_about_label();
+    }
+  };
 
   // Avatar preview state
   let avatarPreviewUrl: string | null = $state(null);
@@ -101,12 +116,12 @@
     ]);
     const maxBytes = 2 * 1024 * 1024; // 2MB for avatars
     if (!allowed.has(f.type)) {
-      avatarError = "Unsupported image type. Use JPG, PNG, WebP, GIF, or AVIF.";
+      avatarError = m.user_settings_avatar_type_error_text();
       input.value = "";
       return;
     }
     if (f.size > maxBytes) {
-      avatarError = "File too large. Max 2MB.";
+      avatarError = m.user_settings_avatar_size_error_text();
       input.value = "";
       return;
     }
@@ -150,7 +165,7 @@
       "image/gif",
     ]);
     if (!allowed.has(f.type)) {
-      bannerError = "Unsupported image type. Use JPG, PNG, WebP, or AVIF.";
+      bannerError = m.user_settings_banner_type_error_text();
       input.value = "";
       return;
     }
@@ -277,17 +292,17 @@
 
 <svelte:head>
   <title>
-    {tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex
+    {m.user_settings_meta_title({ section: tabLabel(tab) })}
   </title>
 </svelte:head>
 <section class="px-4 py-8 min-h-screen">
   <div class="max-w-6xl mx-auto">
     <div class="mb-6">
       <h1 class="text-3xl sm:text-4xl font-clash text-primary">
-        User Settings
+        {m.user_settings_title_h1()}
       </h1>
       <p class="text-sm opacity-70 mt-1">
-        Manage your profile, links, security, and theme.
+        {m.user_settings_intro_text()}
       </p>
     </div>
 
@@ -296,7 +311,7 @@
         <div
           class="tabs tabs-border min-w-max whitespace-nowrap"
           role="tablist"
-          aria-label="Sections"
+          aria-label={m.user_settings_tabs_aria_label()}
         >
           {#each tabs as it (it.id)}
             <button
@@ -316,7 +331,7 @@
                 class={`${it.icon} text-base opacity-70 group-hover:opacity-100`}
               ></i>
               <span class="truncate max-w-[10rem] sm:max-w-none"
-                >{it.label}</span
+                >{tabLabel(it.id)}</span
               >
             </button>
           {/each}
@@ -329,11 +344,11 @@
           {#if tab === "profile"}
             <!-- Profile Information -->
             <div class="card-body">
-              <h2 class="card-title">Profile Information</h2>
+              <h2 class="card-title">
+                {m.user_settings_profile_title()}
+              </h2>
               <p class="text-sm opacity-70">
-                Update your public profile details. Your bio supports Markdown
-                formatting (bold, italics, links, lists, and code). See quick
-                tips below.
+                {m.user_settings_profile_intro_text()}
               </p>
               <form
                 action="?/profile"
@@ -346,7 +361,9 @@
                 <!-- Username -->
                 <div class="form-control w-full">
                   <label class="label" for="display_name">
-                    <span class="label-text font-semibold">Display Name</span>
+                    <span class="label-text font-semibold">
+                      {m.user_settings_profile_display_name_label()}
+                    </span>
                   </label>
                   <input
                     id="display_name"
@@ -362,17 +379,21 @@
 
                 <!-- Bio -->
                 <fieldset class="fieldset">
-                  <legend class="block text-sm font-semibold">Bio</legend>
+                  <legend class="block text-sm font-semibold">
+                    {m.user_settings_profile_bio_label()}
+                  </legend>
                   <div class="flex flex-col sm:flex-row gap-4">
                     <textarea
                       bind:value={$form.bio}
                       name="bio"
-                      placeholder="Tell us something cool... Markdown is supported"
+                      placeholder={m.user_settings_profile_bio_placeholder()}
                       class="textarea textarea-bordered w-full flex-1"
                       rows="6"
                     ></textarea>
                     <div class="flex-1">
-                      <div class="text-xs opacity-60 mb-1">Live Preview</div>
+                      <div class="text-xs opacity-60 mb-1">
+                        {m.user_settings_profile_bio_preview_label()}
+                      </div>
                       <div
                         class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
                       >
@@ -385,36 +406,45 @@
                   {/if}
                   <div class="mt-3">
                     <div class="text-xs opacity-70 font-semibold mb-1">
-                      Markdown basics
+                      {m.user_settings_markdown_basics_title()}
                     </div>
                     <ul
                       class="list-disc list-inside text-xs opacity-70 space-y-1"
                     >
                       <li>
-                        Headings: <code># Title</code>,
+                        {m.user_settings_markdown_heading_label()}
+                        <code># Title</code>,
                         <code>## Section</code>
                       </li>
                       <li>
-                        Bold/Italic: <code>**bold**</code>,
+                        {m.user_settings_markdown_bold_label()}
+                        <code>**bold**</code>,
                         <code>*italic*</code>
                       </li>
                       <li>
-                        Links: <code>[text](https://example.com)</code>
+                        {m.user_settings_markdown_links_label()}
+                        <code>[text](https://example.com)</code>
                       </li>
                       <li>
-                        Lists: <code>- item</code> (use one line per item)
+                        {m.user_settings_markdown_lists_label()}
+                        <code>- item</code>
+                        ({m.user_settings_markdown_lists_hint_text()})
                       </li>
                       <li>
-                        Code: <code>`inline`</code> or fenced blocks with three backticks
+                        {m.user_settings_markdown_code_label()}
+                        <code>`inline`</code>
+                        {m.user_settings_markdown_code_hint_text()}
                       </li>
-                      <li>Paragraphs: leave a blank line between them</li>
+                      <li>{m.user_settings_markdown_paragraphs_text()}</li>
                     </ul>
                   </div>
                 </fieldset>
 
                 <!-- Avatar -->
                 <fieldset class="fieldset">
-                  <legend class="block text-sm font-semibold">Avatar</legend>
+                  <legend class="block text-sm font-semibold">
+                    {m.user_settings_avatar_title()}
+                  </legend>
                   <div class="flex items-start gap-6">
                     <Avatar
                       profile={{
@@ -430,7 +460,8 @@
                     <div class="flex-1 space-y-2">
                       <label
                         class="block text-sm font-semibold"
-                        for="profile_picture">Upload new avatar</label
+                        for="profile_picture"
+                        >{m.user_settings_avatar_upload_label()}</label
                       >
                       <input
                         id="profile_picture"
@@ -442,7 +473,7 @@
                         bind:this={avatarInputEl}
                       />
                       <p class="text-xs opacity-70">
-                        Supported: JPG, PNG, WebP, AVIF. Max size 2MB.
+                        {m.user_settings_avatar_helper_text()}
                       </p>
                       {#if avatarError}
                         <p class="text-error">{avatarError}</p>
@@ -453,7 +484,9 @@
 
                 <!-- Banner -->
                 <fieldset class="fieldset mt-4">
-                  <legend class="block text-sm font-semibold">Banner</legend>
+                  <legend class="block text-sm font-semibold">
+                    {m.user_settings_banner_title()}
+                  </legend>
                   <div class="flex items-start gap-6">
                     <div class="w-full max-w-xl">
                       <div
@@ -462,13 +495,13 @@
                         {#if bannerPreviewUrl}
                           <img
                             src={bannerPreviewUrl}
-                            alt="Banner preview"
+                            alt={m.user_settings_banner_preview_alt()}
                             class="w-full h-full object-cover"
                           />
                         {:else if $form.banner}
                           <img
                             src={$form.banner}
-                            alt="Current banner"
+                            alt={m.user_settings_banner_current_alt()}
                             class="w-full h-full object-cover"
                           />
                         {:else}
@@ -480,7 +513,7 @@
                     </div>
                     <div class="flex-1 space-y-2">
                       <label class="block text-sm font-semibold" for="banner"
-                        >Upload new banner</label
+                        >{m.user_settings_banner_upload_label()}</label
                       >
                       <input
                         id="banner"
@@ -492,7 +525,7 @@
                         bind:this={bannerInputEl}
                       />
                       <p class="text-xs opacity-70">
-                        Supported: JPG, PNG, WebP, GIF, AVIF. Max size 5MB.
+                        {m.user_settings_banner_helper_text()}
                       </p>
                       {#if bannerError}
                         <p class="text-error">{bannerError}</p>
@@ -504,7 +537,9 @@
                 <fieldset
                   class="fieldset bg-base-200 border-base-100 rounded-box w-full border p-4"
                 >
-                  <legend class="fieldset-legend">Profile Privacy</legend>
+                  <legend class="fieldset-legend">
+                    {m.user_settings_privacy_title()}
+                  </legend>
                   <label class="label cursor-pointer justify-start gap-3">
                     <input
                       type="checkbox"
@@ -513,7 +548,7 @@
                       class="toggle bg-base-100"
                     />
                     <span class="label-text"
-                      >Make my profile private (only visible to me)</span
+                      >{m.user_settings_privacy_toggle_label()}</span
                     >
                   </label>
                   {#if $errors.private_profile}
@@ -536,10 +571,10 @@
                   >
                     {#if $delayed}
                       <span class="loading loading-spinner"></span>
-                      Saving...
-                    {:else}
-                      Save Changes
                     {/if}
+                    {m.user_settings_save_button_label({
+                      state: $delayed ? "saving" : "idle",
+                    })}
                   </button>
                 </div>
               </form>
@@ -547,9 +582,9 @@
           {:else if tab === "social"}
             <!-- Social Links -->
             <div class="card-body">
-              <h2 class="card-title">Social Links</h2>
+              <h2 class="card-title">{m.user_settings_social_title()}</h2>
               <p class="text-sm opacity-70">
-                Share where people can find you online.
+                {m.user_settings_social_intro_text()}
               </p>
 
               <form
@@ -563,7 +598,8 @@
                 <label class="form-control w-full">
                   <span class="label">
                     <span class="label-text font-semibold"
-                      ><i class="fa-solid fa-globe"></i> Personal Website</span
+                      ><i class="fa-solid fa-globe"></i>
+                      {m.user_settings_social_website_label()}</span
                     >
                   </span>
                   <input
@@ -571,7 +607,7 @@
                     class="input input-bordered w-full"
                     name="website"
                     bind:value={$socialForm.website}
-                    placeholder="https://cubeindex.com"
+                    placeholder={m.user_settings_social_website_placeholder()}
                   />
                   {#if $socialErrors.website}
                     <p class="text-error">{$socialErrors.website}</p>
@@ -580,7 +616,8 @@
 
                 <!-- Twitter/X -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-x-twitter"></i> Twitter/X
+                  <i class="fa-brands fa-x-twitter"></i>
+                  {m.user_settings_social_x_label()}
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">x.com/</span>
                     <input
@@ -588,7 +625,7 @@
                       class="grow input-ghost"
                       name="x"
                       bind:value={$socialForm.x}
-                      placeholder="thecubeindex"
+                      placeholder={m.user_settings_social_x_placeholder()}
                     />
                   </label>
                   {#if $socialErrors.x}
@@ -598,7 +635,7 @@
 
                 <!-- WCA -->
                 <label class="form-control w-full">
-                  WCA ID
+                  {m.user_settings_social_wca_label()}
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">
                       worldcubeassociation.org/persons/
@@ -608,7 +645,7 @@
                       class="grow input-ghost"
                       name="wca"
                       bind:value={$socialForm.wca}
-                      placeholder="2023EXAM01"
+                      placeholder={m.user_settings_social_wca_placeholder()}
                     />
                   </label>
                   {#if $socialErrors.wca}
@@ -618,7 +655,8 @@
 
                 <!-- Discord -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-discord"></i> Discord
+                  <i class="fa-brands fa-discord"></i>
+                  {m.user_settings_social_discord_label()}
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">discord.com/users/</span>
                     <input
@@ -626,7 +664,7 @@
                       class="grow input-ghost"
                       name="discord"
                       bind:value={$socialForm.discord}
-                      placeholder="123456789012345678"
+                      placeholder={m.user_settings_social_discord_placeholder()}
                     />
                   </label>
                   {#if $socialErrors.discord}
@@ -636,7 +674,8 @@
 
                 <!-- YouTube -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-youtube"></i> YouTube
+                  <i class="fa-brands fa-youtube"></i>
+                  {m.user_settings_social_youtube_label()}
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">youtube.com/</span>
                     <input
@@ -644,7 +683,7 @@
                       class="grow input-ghost"
                       name="youtube"
                       bind:value={$socialForm.youtube}
-                      placeholder="@cubeindex"
+                      placeholder={m.user_settings_social_youtube_placeholder()}
                     />
                   </label>
                   {#if $socialErrors.youtube}
@@ -654,7 +693,8 @@
 
                 <!-- Reddit -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-reddit-alien"></i> Reddit
+                  <i class="fa-brands fa-reddit-alien"></i>
+                  {m.user_settings_social_reddit_label()}
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">reddit.com/u/</span>
                     <input
@@ -662,7 +702,7 @@
                       class="grow input-ghost"
                       name="reddit"
                       bind:value={$socialForm.reddit}
-                      placeholder="cubeindex"
+                      placeholder={m.user_settings_social_reddit_placeholder()}
                     />
                   </label>
                   {#if $socialErrors.reddit}
@@ -685,10 +725,10 @@
                   >
                     {#if $socialDelayed}
                       <span class="loading loading-spinner"></span>
-                      Saving...
-                    {:else}
-                      Save Changes
                     {/if}
+                    {m.user_settings_save_button_label({
+                      state: $socialDelayed ? "saving" : "idle",
+                    })}
                   </button>
                 </div>
               </form>
@@ -696,9 +736,9 @@
           {:else if tab === "security"}
             <!-- Account Security -->
             <div class="card-body">
-              <h2 class="card-title">Account Security</h2>
+              <h2 class="card-title">{m.user_settings_security_title()}</h2>
               <p class="text-sm opacity-70">
-                Change your password. Keep it unique and strong.
+                {m.user_settings_security_intro_text()}
               </p>
 
               <form
@@ -712,7 +752,7 @@
                   <label class="form-control w-full">
                     <span class="label"
                       ><span class="label-text font-semibold"
-                        >Current Password</span
+                        >{m.user_settings_security_current_password_label()}</span
                       ></span
                     >
                     <input
@@ -730,7 +770,8 @@
 
                   <label class="form-control w-full">
                     <span class="label"
-                      ><span class="label-text font-semibold">New Password</span
+                      ><span class="label-text font-semibold"
+                        >{m.user_settings_security_new_password_label()}</span
                       ></span
                     >
                     <input
@@ -760,10 +801,10 @@
                   >
                     {#if $passwordDelayed}
                       <span class="loading loading-spinner"></span>
-                      Updating...
-                    {:else}
-                      Update Password
                     {/if}
+                    {m.user_settings_password_button_label({
+                      state: $passwordDelayed ? "updating" : "idle",
+                    })}
                   </button>
                 </div>
               </form>
@@ -773,13 +814,17 @@
               <div class="card-body space-y-6">
                 <div class="flex items-center justify-between">
                   <div>
-                    <h2 class="card-title">Appearance</h2>
+                    <h2 class="card-title">
+                      {m.user_settings_appearance_title()}
+                    </h2>
                     <p class="text-sm opacity-70">
-                      Choose a theme you like. You can also follow your system.
+                      {m.user_settings_appearance_intro_text()}
                     </p>
                   </div>
                   <label class="label cursor-pointer gap-3">
-                    <span class="label-text">Use system theme</span>
+                    <span class="label-text">
+                      {m.user_settings_appearance_system_toggle_label()}
+                    </span>
                     <input
                       type="checkbox"
                       class="toggle bg-base-100"
@@ -790,7 +835,9 @@
 
                 <!-- Theme picker -->
                 <div>
-                  <p class="font-bold mb-2">Light:</p>
+                  <p class="font-bold mb-2">
+                    {m.user_settings_appearance_light_label()}
+                  </p>
                   <div
                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
@@ -834,7 +881,9 @@
                 </div>
 
                 <div>
-                  <p class="font-bold mb-2">Dark:</p>
+                  <p class="font-bold mb-2">
+                    {m.user_settings_appearance_dark_label()}
+                  </p>
                   <div
                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
@@ -891,15 +940,18 @@
                   </div>
 
                   <div class="space-y-1">
-                    <h2 class="card-title leading-tight">About CubeIndex</h2>
+                    <h2 class="card-title leading-tight">
+                      {m.user_settings_about_title()}
+                    </h2>
                     <p class="text-sm opacity-75">
-                      CubeIndex helps cubers track collections, explore detailed
-                      cube data, and follow price history across stores.
+                      {m.user_settings_about_intro_text()}
                     </p>
 
                     <div class="flex flex-wrap gap-2 pt-2">
                       <!-- Optional: replace with your real version string -->
-                      <span class="badge badge-ghost">Open source</span>
+                      <span class="badge badge-ghost">
+                        {m.user_settings_about_badge_open_source()}
+                      </span>
                       <span class="badge badge-ghost">Apache 2.0</span>
                       <!-- <span class="badge badge-ghost">v{appVersion}</span> -->
                     </div>
@@ -915,7 +967,7 @@
                     rel="noreferrer"
                   >
                     <i class="fa-brands fa-github"></i>
-                    GitHub
+                    {m.user_settings_about_action_github_label()}
                   </a>
 
                   <a
@@ -925,12 +977,12 @@
                     rel="noreferrer"
                   >
                     <i class="fa-brands fa-discord"></i>
-                    Discord
+                    {m.user_settings_about_action_discord_label()}
                   </a>
 
                   <a class="btn btn-sm btn-ghost" href="/report">
                     <i class="fa-solid fa-bug"></i>
-                    Report an issue
+                    {m.user_settings_about_action_report_label()}
                   </a>
 
                   <a
@@ -938,7 +990,7 @@
                     href="mailto:thecubeindex@gmail.com"
                   >
                     <i class="fa-solid fa-envelope"></i>
-                    Support
+                    {m.user_settings_about_action_support_label()}
                   </a>
                 </div>
 
@@ -952,14 +1004,12 @@
                       class="flex items-center gap-2 text-primary font-semibold"
                     >
                       <i class="fa-solid fa-code-branch"></i>
-                      <span>Open source</span>
+                      <span>{m.user_settings_about_open_source_title()}</span>
                     </div>
 
                     <div class="space-y-2 text-sm opacity-80">
                       <p>
-                        CubeIndex is released under the Apache License 2.0.
-                        Contributions are welcome, from small fixes to new
-                        features.
+                        {m.user_settings_about_open_source_text()}
                       </p>
 
                       <p class="flex items-start gap-2">
@@ -967,13 +1017,13 @@
                           class="fa-brands fa-github mt-0.5 text-base-content/70"
                         ></i>
                         <span>
-                          Browse the code, open issues, or submit pull requests
-                          on
+                          {m.user_settings_about_open_source_links_prefix_text()}
                           <a
                             class="link link-primary"
                             href="https://github.com/cubeindex-project/CubeIndex"
                             target="_blank"
-                            rel="noreferrer">GitHub</a
+                            rel="noreferrer"
+                            >{m.user_settings_about_action_github_label()}</a
                           >.
                         </span>
                       </p>
@@ -988,13 +1038,12 @@
                       class="flex items-center gap-2 text-primary font-semibold"
                     >
                       <i class="fa-solid fa-shield-heart"></i>
-                      <span>Privacy</span>
+                      <span>{m.user_settings_about_privacy_title()}</span>
                     </div>
 
                     <div class="space-y-2 text-sm opacity-80">
                       <p>
-                        You control who can see your profile. Switch your
-                        profile to private anytime in the Profile tab.
+                        {m.user_settings_about_privacy_text()}
                       </p>
 
                       <p class="flex items-start gap-2">
@@ -1002,20 +1051,19 @@
                           class="fa-solid fa-file-lines mt-0.5 text-base-content/70"
                         ></i>
                         <span>
-                          Read the
+                          {m.user_settings_about_privacy_links_prefix_text()}
                           <a class="link link-primary" href="/privacy"
-                            >Privacy Policy</a
+                            >{m.footer_legal_privacy_label()}</a
                           >
-                          and
+                          {m.user_settings_about_privacy_links_conjunction_text()}
                           <a class="link link-primary" href="/tos"
-                            >Terms of Service</a
+                            >{m.footer_legal_terms_label()}</a
                           >.
                         </span>
                       </p>
 
                       <p>
-                        We regularly ship updates to improve stability,
-                        performance, and accessibility.
+                        {m.user_settings_about_privacy_footer_text()}
                       </p>
                     </div>
                   </section>
@@ -1028,7 +1076,7 @@
                       class="flex items-center gap-2 text-primary font-semibold"
                     >
                       <i class="fa-solid fa-link"></i>
-                      <span>Links</span>
+                      <span>{m.user_settings_about_links_title()}</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
@@ -1037,7 +1085,7 @@
                         <div
                           class="text-xs font-semibold uppercase tracking-wide opacity-70"
                         >
-                          Community
+                          {m.user_settings_about_links_community_title()}
                         </div>
 
                         <nav class="space-y-1 opacity-85">
@@ -1049,7 +1097,7 @@
                           >
                             <i class="fa-brands fa-github text-base-content/60"
                             ></i>
-                            <span>GitHub</span>
+                            <span>{m.user_settings_about_action_github_label()}</span>
                             <i
                               class="fa-solid fa-arrow-up-right-from-square text-xs"
                             ></i>
@@ -1064,7 +1112,7 @@
                             <i
                               class="fa-brands fa-x-twitter text-base-content/60"
                             ></i>
-                            <span>X (Twitter)</span>
+                            <span>{m.user_settings_about_links_x_label()}</span>
                             <i
                               class="fa-solid fa-arrow-up-right-from-square text-xs"
                             ></i>
@@ -1078,7 +1126,7 @@
                           >
                             <i class="fa-brands fa-youtube text-base-content/60"
                             ></i>
-                            <span>YouTube</span>
+                            <span>{m.user_settings_about_links_youtube_label()}</span>
                             <i
                               class="fa-solid fa-arrow-up-right-from-square text-xs"
                             ></i>
@@ -1092,7 +1140,7 @@
                           >
                             <i class="fa-brands fa-discord text-base-content/60"
                             ></i>
-                            <span>Discord</span>
+                            <span>{m.user_settings_about_action_discord_label()}</span>
                             <i
                               class="fa-solid fa-arrow-up-right-from-square text-xs"
                             ></i>
@@ -1104,7 +1152,7 @@
                           >
                             <i class="fa-solid fa-envelope text-base-content/60"
                             ></i>
-                            <span>Email</span>
+                            <span>{m.user_settings_about_links_email_label()}</span>
                           </a>
                         </nav>
                       </div>
@@ -1114,8 +1162,7 @@
 
                 <!-- Footer note -->
                 <div class="text-xs opacity-60">
-                  CubeIndex is built by cubers for cubers. If something feels
-                  off, please report it so we can fix it quickly.
+                  {m.user_settings_about_footer_text()}
                 </div>
               </div>
             </div>

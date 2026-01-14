@@ -2,6 +2,7 @@
   import type { PageData } from "./$types";
   import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
   import type { Cube } from "$lib/components/dbTableTypes";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props<{ data: PageData }>();
   let submissions: Cube[] = $derived(data.submissions ?? []);
@@ -10,10 +11,19 @@
   let activeFilter = $state<FilterKey>("all");
 
   const filters = $derived([
-    { label: "All", value: "all" as const },
-    { label: "Pending", value: "pending" as const },
-    { label: "Approved", value: "approved" as const },
-    { label: "Rejected", value: "rejected" as const },
+    { label: m.user_submissions_filter_all_label(), value: "all" as const },
+    {
+      label: m.user_submissions_filter_pending_label(),
+      value: "pending" as const,
+    },
+    {
+      label: m.user_submissions_filter_approved_label(),
+      value: "approved" as const,
+    },
+    {
+      label: m.user_submissions_filter_rejected_label(),
+      value: "rejected" as const,
+    },
   ]);
 
   const filteredSubmissions = $derived(
@@ -29,7 +39,7 @@
 </script>
 
 <svelte:head>
-  <title>My Submissions - CubeIndex</title>
+  <title>{m.user_submissions_meta_title()}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -38,23 +48,26 @@
     class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
   >
     <div class="space-y-1">
-      <h1 class="text-3xl font-clash tracking-tight">My submissions</h1>
+      <h1 class="text-3xl font-clash tracking-tight">
+        {m.user_submissions_title_h1()}
+      </h1>
       <p class="text-sm text-base-content/70">
-        Track every cube you have sent to the catalog and keep an eye on
-        moderator decisions.
+        {m.user_submissions_intro_text()}
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
       <a href="/submit" class="btn btn-primary btn-sm">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Submit a cube</span>
+        <span>{m.user_submissions_submit_cta()}</span>
       </a>
     </div>
   </header>
 
   <section class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-3">
-      <h2 class="text-lg font-semibold text-base-content">Submitted cubes</h2>
+      <h2 class="text-lg font-semibold text-base-content">
+        {m.user_submissions_list_title()}
+      </h2>
       <div class="flex flex-wrap gap-2">
         {#each filters as filter (filter.label)}
           <button
@@ -81,10 +94,10 @@
           class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-6 text-center"
         >
           <p class="text-base font-semibold text-base-content">
-            No cubes match that filter yet.
+            {m.user_submissions_empty_filter_title_text()}
           </p>
           <p class="mt-2 text-sm text-base-content/60">
-            Try another status or submit a new cube.
+            {m.user_submissions_empty_filter_description_text()}
           </p>
         </div>
       {/if}
@@ -93,18 +106,17 @@
         class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-10 text-center"
       >
         <p class="text-xl font-semibold text-base-content mb-2">
-          You have not submitted any cubes yet.
+          {m.user_submissions_empty_all_title_text()}
         </p>
         <p class="text-sm text-base-content/70">
-          Start with our guided form and we will keep you posted as moderators
-          review your submission.
+          {m.user_submissions_empty_all_description_text()}
         </p>
         <a
           href="/submit"
           class="btn btn-primary mt-4 inline-flex items-center gap-2"
         >
           <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-          <span>Submit your first cube</span>
+          <span>{m.user_submissions_empty_all_cta()}</span>
         </a>
       </div>
     {/if}

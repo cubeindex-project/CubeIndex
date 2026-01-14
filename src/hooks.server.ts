@@ -8,12 +8,7 @@ import {
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
 import { logError } from "$lib/server/logError";
-import {
-  LOCALE_COOKIE_MAX_AGE,
-  LOCALE_COOKIE_NAME,
-  resolveLocale,
-} from "$lib/i18n";
-import { setLocale } from "$lib/paraglide/runtime";
+import { paraglideMiddleware } from "$lib/paraglide/server";
 
 const context: Handle = async ({ event, resolve }) => {
   event.locals.reqId = randomUUID();
@@ -51,7 +46,7 @@ const supabase: Handle = async ({ event, resolve }) => {
           });
         },
       },
-    }
+    },
   );
   /**
    * Unlike `supabase.auth.getSession()`, which returns the session _without_
@@ -121,7 +116,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
       500,
       "An error occurred while fetching your profile",
       event.locals.log,
-      err
+      err,
     );
 
   const profile = profiles?.[0];
@@ -140,26 +135,26 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-const i18n: Handle = async ({ event, resolve }) => {
-  const locale = resolveLocale({
-    cookie: event.cookies.get(LOCALE_COOKIE_NAME),
-    header: event.request.headers.get("accept-language"),
-  });
-  event.locals.locale = locale;
-  setLocale(locale);
+// creating a handle to use the paraglide middleware
+const paraglideHandle: Handle = ({ event, resolve }) =>
+  paraglideMiddleware(
+    event.request,
+    ({ request: localizedRequest, locale }) => {
+      event.request = localizedRequest;
+      return resolve(event, {
+        transformPageChunk: ({ html }) => {
+          return html.replace("%lang%", locale);
+        },
+      });
+    },
+  );
 
-  if (event.cookies.get(LOCALE_COOKIE_NAME) !== locale) {
-    event.cookies.set(LOCALE_COOKIE_NAME, locale, {
-      path: "/",
-      sameSite: "lax",
-      maxAge: LOCALE_COOKIE_MAX_AGE,
-    });
-  }
-
-  return resolve(event);
-};
-
-export const handle: Handle = sequence(context, i18n, supabase, authGuard);
+export const handle: Handle = sequence(
+  context,
+  paraglideHandle,
+  supabase,
+  authGuard,
+);
 
 export const handleError: HandleServerError = ({ error: err, event }) => {
   const fallbackLogger = createLogger({

@@ -16,7 +16,8 @@
     "prebuild": "npm run i18n:compile",
     "predev": "npm run i18n:compile",
     "test:unit": "vitest",
-    "test": "npm run test:unit -- --run"
+    "test": "npm run test:unit -- --run",
+    "machine-translate": "inlang machine translate --project project.inlang"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
@@ -50,7 +51,8 @@
     "vite": "^6.2.5",
     "vite-plugin-devtools-json": "^0.2.0",
     "vitest": "^3.0.0",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "@inlang/cli": "^3.0.0"
   },
   "dependencies": {
     "@gcornut/valibot-json-schema": "^0.0.29",

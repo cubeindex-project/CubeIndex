@@ -4,6 +4,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   const { vendors } = $derived(data);
@@ -40,29 +41,32 @@
 </script>
 
 <svelte:head>
-  <title>Explore Vendors - CubeIndex</title>
+  <title>{m.explore_vendors_meta_title()}</title>
 </svelte:head>
 <section class="min-h-screen bg-base-100 px-6 py-16">
   <div class="max-w-6xl mx-auto">
     <h1 class="text-4xl sm:text-5xl font-clash font-bold mb-10 text-center">
-      Explore Vendors
+      {m.explore_vendors_title_h1()}
     </h1>
     <p class="text-center text-gray-400 mb-12">
-      Find the best shops and trusted vendors in the cubing world.
+      {m.explore_vendors_intro_text()}
     </p>
 
     <!-- Search bar with filter toggle button -->
     <SearchBar
       showFilter={false}
       bind:searchTerm
-      placeholderLabel="Search Vendors"
+      placeholderLabel={m.explore_vendors_search_placeholder()}
     />
 
     <div
       class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
     >
       <div class="flex flex-wrap items-center gap-4">
-        <ItemsPerPageSelector bind:itemsPerPage label="Vendors per page" />
+        <ItemsPerPageSelector
+          bind:itemsPerPage
+          label={m.explore_vendors_items_per_page_label()}
+        />
         <!-- <SortSelector bind:sortField bind:sortOrder {sortOptions} /> -->
       </div>
     </div>
@@ -85,7 +89,7 @@
               {#if vendor.logo_url}
                 <img
                   src={vendor.logo_url}
-                  alt={`${vendor.name} logo`}
+                  alt={m.explore_vendors_logo_alt({ name: vendor.name })}
                   class="h-16 w-16 shrink-0 rounded-xl p-2 object-contain bg-white"
                   loading="lazy"
                   decoding="async"
@@ -93,7 +97,9 @@
               {:else}
                 <div
                   class="grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-base-300/60 text-lg font-semibold"
-                  aria-label={`${vendor.name} placeholder logo`}
+                  aria-label={m.explore_vendors_logo_placeholder_aria({
+                    name: vendor.name,
+                  })}
                   title={vendor.name}
                 >
                   {vendor.name?.charAt(0)}
@@ -117,7 +123,7 @@
                       class="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-[11px] font-medium text-blue-700"
                     >
                       <i class="fa-solid fa-check"></i>
-                      Verified
+                      {m.explore_vendors_verified_label()}
                     </span>
                   {/if}
 
@@ -126,7 +132,7 @@
                       class="inline-flex items-center gap-1 rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-[11px] font-semibold text-yellow-900"
                     >
                       <i class="fa-solid fa-star"></i>
-                      Sponsored
+                      {m.explore_vendors_sponsored_label()}
                     </span>
                   {/if}
                 </div>
@@ -159,7 +165,7 @@
                       >
                     </div>
                     <div class="text-xs text-base-content/60">
-                      Default currency
+                      {m.explore_vendors_default_currency_label()}
                     </div>
                   </div>
                 </div>
@@ -176,8 +182,9 @@
               <div class="flex items-center gap-2">
                 <i class="fa-solid fa-user-check" aria-hidden="true"></i>
                 <span>
-                  {vendor.buyer_count}
-                  user{vendor.buyer_count === 1 ? "" : "s"} purchased here
+                  {m.explore_vendors_buyer_count_text({
+                    count: vendor.buyer_count,
+                  })}
                 </span>
               </div>
             </div>
@@ -192,7 +199,7 @@
                 rel="noopener noreferrer"
                 class="btn btn-primary w-full"
               >
-                Visit Store
+                {m.common_action_visit_store_cta()}
               </a>
             </footer>
           </section>
@@ -203,18 +210,19 @@
           class="col-span-full flex flex-col items-center justify-center py-20"
         >
           <i class="fa-solid fa-shop fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">No vendors found</h2>
+          <h2 class="text-2xl font-semibold mb-2">
+            {m.explore_vendors_empty_title()}
+          </h2>
           <p class="mb-6 text-center max-w-xs">
-            We couldn't find any vendors matching your search or filters. Try
-            adjusting them or resetting to see everything.
+            {m.explore_vendors_empty_body_text()}
           </p>
           <button
             onclick={() => (searchTerm = "")}
             class="btn btn-outline flex items-center"
-            aria-label="Reset filters"
+            aria-label={m.common_action_reset_filters_aria()}
           >
             <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-            Reset
+            {m.common_action_reset_cta()}
           </button>
         </div>
       {/each}

@@ -7,6 +7,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { logError } from "$lib/server/logError";
+import { m } from "$lib/paraglide/messages";
 
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
@@ -106,7 +107,7 @@ export const actions: Actions = {
     const form = await superValidate(request, zod4(cubeSchema));
 
     if (!form.valid) {
-      return message(form, "Please fix the highlighted fields and try again.", {
+      return message(form, m.submit_form_error_text(), {
         status: 400,
       });
     }
@@ -126,7 +127,7 @@ export const actions: Actions = {
     if (!slug) {
       return message(
         form,
-        "Unable to derive a slug from the provided model details.",
+        m.submit_slug_error_text(),
         { status: 400 },
       );
     }
@@ -169,14 +170,14 @@ export const actions: Actions = {
       insertErr?.message ===
       'duplicate key value violates unique constraint "cubes_name_id_key"'
     ) {
-      return setError(form, "This cube already exists in our database.", {
+      return setError(form, m.submit_duplicate_error_text(), {
         status: 400,
       });
     }
 
     if (insertErr) {
       locals.log.error({ err: insertErr.message }, "Failed to insert cube");
-      return setError(form, "An error occurred while submitting the cube", {
+      return setError(form, m.submit_server_error_text(), {
         status: 500,
       });
     }
@@ -226,7 +227,7 @@ export const actions: Actions = {
           { err: featUpErr.message },
           "Failed to insert features",
         );
-        return setError(form, "An error occurred while submitting the cube", {
+        return setError(form, m.submit_server_error_text(), {
           status: 500,
         });
       }
@@ -244,7 +245,7 @@ export const actions: Actions = {
           { err: featUpErr.message },
           "Failed to delete features",
         );
-        return setError(form, "An error occurred while submitting the cube", {
+        return setError(form, m.submit_server_error_text(), {
           status: 500,
         });
       }
@@ -252,7 +253,7 @@ export const actions: Actions = {
 
     return message(
       form,
-      'Cube submitted for review! Track its status on <a class="link" href="/user/submissions">your submissions page</a>.',
+      m.submit_success_message_html(),
     );
   },
 };

@@ -7,12 +7,7 @@
   import ExplorePopover from "./ExplorePopover.svelte";
   import type { User } from "@supabase/supabase-js";
   import { m } from "$lib/paraglide/messages";
-  import {
-    locale,
-    setAppLocale,
-    supportedLocales,
-    type SupportedLocale,
-  } from "$lib/i18n";
+  import { getLocale, setLocale } from "$lib/paraglide/runtime";
 
   let { profile } = $props();
 
@@ -22,10 +17,14 @@
   const user = getContext<User | null>("user");
   const activeLocale = $derived($locale);
 
-  // Utility: close all mobile-only UI bits
-  function closeMobileMenus() {
-    isOpen = false;
-    mobileUserMenuOpen = false;
+  let activeLocale = $state(getLocale());
+
+  function onLocaleChange(e: Event) {
+    const next = (e.currentTarget as HTMLSelectElement).value as "en" | "fr";
+
+    activeLocale = next;
+
+    setLocale(next);
   }
 
   let hasUnread = $state(false);
@@ -77,7 +76,7 @@
 
   const navLinks: NavLink[] = [
     {
-      name: m.nav_main_awards_label,
+      name: m.nav_main_awards_label(),
       href: "/awards",
       icon: "fa-award",
       // emphasis: true,
@@ -131,13 +130,13 @@
     role: string;
   }): ProfileMenuItem[] {
     const items: ProfileMenuItem[] = [
-      { label: m.nav_profile_menu_profile_label(), href: `/user/${p.username}` },
-      { label: m.nav_profile_menu_settings_label(), href: "/user/settings" },
+      { label: m.nav_user_profile_label(), href: `/user/${p.username}` },
+      { label: m.nav_user_settings_label(), href: "/user/settings" },
       {
-        label: m.nav_profile_menu_userbar_label(),
+        label: m.nav_user_userbar_label(),
         href: "/userbar",
         tag: {
-          label: m.nav_profile_menu_userbar_tag_label(),
+          label: m.nav_user_userbar_tag_text(),
           gradient: "from-green-500 to-emerald-600",
         },
       },
@@ -145,6 +144,7 @@
     if (p.role !== "User") {
       items.push({
         label: m.nav_profile_menu_staff_dashboard_label(),
+        label: m.nav_staff_dashboard_label(),
         href: "/staff/dashboard",
       });
     }
@@ -225,6 +225,7 @@
       href="/"
       class="flex items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 hover:opacity-90 transition"
       aria-label={m.nav_main_home_aria()}
+      aria-label={m.nav_brand_home_aria()}
     >
       <img
         src="/images/CubeIndex_Logo.webp"
@@ -238,6 +239,7 @@
         class="font-clash text-3xl font-bold inline-flex items-center gap-2"
       >
         {m.nav_brand_name_text()}
+        {m.app_brand_name_text()}
       </span>
     </a>
 
@@ -339,6 +341,7 @@
                   class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
                 >
                   {m.nav_profile_menu_signout_cta()}
+                  {m.nav_user_logout_cta()}
                 </button>
               </li>
             </ul>
@@ -362,6 +365,11 @@
                   <span
                     class="indicator-item size-2 rounded-full bg-error"
                     aria-label={m.nav_notifications_verify_email_aria()}
+                    aria-label={m.nav_email_verify_aria()}
+                  ></span>
+                  <span
+                    class="indicator-item size-2 rounded-full bg-error"
+                    aria-label={m.nav_email_verify_aria()}
                   ></span>
                 {:else if hasUnread}
                   <span
@@ -396,6 +404,17 @@
           aria-label={m.nav_main_language_label()}
         >
           {#each supportedLocales as languageTag}
+          {m.nav_locale_language_label()}
+        </label>
+
+        <select
+          id="locale-select"
+          class="select"
+          bind:value={activeLocale}
+          onchange={onLocaleChange}
+          aria-label={m.nav_locale_language_label()}
+        >
+          {#each ["en", "fr"] as languageTag}
             <option value={languageTag}>
               {languageTag.toUpperCase()}
             </option>
@@ -412,6 +431,7 @@
             aria-expanded={mobileUserMenuOpen}
             aria-controls="mobile-user-menu"
             aria-label={m.nav_profile_menu_user_label()}
+            aria-label={m.nav_user_menu_aria()}
             onclick={() => {
               mobileUserMenuOpen = !mobileUserMenuOpen;
               isOpen = false;
@@ -440,6 +460,7 @@
               class="absolute right-0 mt-3 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg"
               role="menu"
               aria-label={m.nav_profile_menu_user_label()}
+              aria-label={m.nav_user_menu_aria()}
               id="mobile-user-menu"
               tabindex="-1"
             >
@@ -459,6 +480,7 @@
                   onclick={() => (mobileUserMenuOpen = false)}
                 >
                   <span>{m.nav_profile_menu_settings_label()}</span>
+                  <span>{m.nav_user_settings_label()}</span>
                   <i class="fa-solid fa-gear text-xs opacity-70"></i>
                 </a>
                 {#if profile.role !== "User"}
@@ -468,6 +490,7 @@
                     onclick={() => (mobileUserMenuOpen = false)}
                   >
                     <span>{m.nav_profile_menu_staff_dashboard_label()}</span>
+                    <span>{m.nav_staff_dashboard_label()}</span>
                     <i class="fa-solid fa-gauge-high text-xs opacity-70"></i>
                   </a>
                 {/if}
@@ -480,6 +503,7 @@
                   }}
                 >
                   <span>{m.nav_auth_logout_cta()}</span>
+                  <span>{m.nav_user_logout_cta()}</span>
                   <i
                     class="fa-solid fa-arrow-right-from-bracket text-xs opacity-70"
                   ></i>

@@ -1,10 +1,14 @@
-<script lang="ts">
+<script>
   import { m } from "$lib/paraglide/messages";
+
+  const startYear = 2025;
+  const currentYear = new Date().getFullYear();
 </script>
 
 <footer
   class="relative overflow-hidden bg-base-100 px-6 pt-12 h-full"
   aria-label={m.footer_region_aria()}
+  aria-label={m.footer_layout_region_label()}
 >
   <!-- Background visuals: gradients + top accent line (no noise) -->
   <div
@@ -33,6 +37,7 @@
             <img
               src="/images/CubeIndex_Logo.webp"
               alt={m.nav_brand_logo_alt()}
+              alt={m.footer_brand_logo_alt()}
               class="h-10 w-10 rounded-full"
               width="12"
               height="12"
@@ -44,6 +49,11 @@
           </div>
           <p class="text-sm text-base-content/70">
             {m.footer_brand_description_text()}
+              {m.app_brand_name_text()}
+            </span>
+          </div>
+          <p class="text-sm text-base-content/70">
+            {m.footer_brand_catch_phrase_text()}
           </p>
         </a>
       </div>
@@ -72,6 +82,19 @@
               {m.footer_report_label()}
             </a>
           </li>
+          {m.footer_nav_section_title()}
+        </h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/" class="link link-hover">{m.footer_nav_home_label()}</a></li>
+          <li>
+            <a href="/explore" class="link link-hover">{m.footer_nav_explore_label()}</a>
+          </li>
+          <li>
+            <a href="/achievements" class="link link-hover"
+              >{m.footer_nav_achievements_label()}</a
+            >
+          </li>
+          <li><a href="/report" class="link link-hover">{m.footer_nav_report_label()}</a></li>
         </ul>
       </div>
 
@@ -81,6 +104,7 @@
           class="font-semibold mb-3 uppercase tracking-wide text-xs text-base-content/70"
         >
           {m.footer_connect_heading_text()}
+          {m.footer_social_section_title()}
         </h3>
         <ul class="space-y-2 text-sm">
           <li>
@@ -145,6 +169,23 @@
             <a href="/sitemap.xml" class="link link-hover">
               {m.footer_sitemap_label()}
             </a>
+          {m.footer_legal_section_title()}
+        </h3>
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a href="/tos" class="link link-hover"
+              >{m.footer_legal_terms_label()}</a
+            >
+          </li>
+          <li>
+            <a href="/privacy" class="link link-hover"
+              >{m.footer_legal_privacy_label()}</a
+            >
+          </li>
+          <li>
+            <a href="/sitemap.xml" class="link link-hover"
+              >{m.footer_legal_sitemap_label()}</a
+            >
           </li>
         </ul>
       </div>
@@ -154,6 +195,11 @@
       {m.footer_copyright_text({
         startYear: 2025,
         endYear: new Date().getFullYear(),
+      &copy;
+      {m.footer_legal_copyright_text({
+        startYear,
+        currentYear,
+        brandName: m.app_brand_name_text(),
       })}
     </div>
   </div>
@@ -169,6 +215,7 @@
              font-clash tracking-tight uppercase leading-none text-base-content/30 blur-2xl"
     >
       {m.footer_brand_name_text()}
+      {m.app_brand_name_text()}
     </div>
 
     <!-- Main gradient wordmark -->
@@ -180,6 +227,7 @@
              bg-gradient-to-b from-base-content/30 via-base-content/15 to-transparent"
     >
       {m.footer_brand_name_text()}
+      {m.app_brand_name_text()}
     </div>
   </div>
 </footer>

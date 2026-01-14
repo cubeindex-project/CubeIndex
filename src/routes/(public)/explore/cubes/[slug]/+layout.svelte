@@ -9,6 +9,7 @@
   import AddCube from "$lib/components/cube/addCube.svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data, children }: LayoutProps = $props();
   let {
@@ -40,21 +41,11 @@
 
   // Tab definitions (keys map to child routes)
   const tabs = [
-    { label: "Details", key: "", icon: "fa-circle-info" },
-    { label: "Shops & Prices", key: "price", icon: "fa-store" },
-    { label: "Ratings", key: "ratings", icon: "fa-star" },
-    { label: "Reviews", key: "reviews", icon: "fa-comment-dots" },
+    { label: m.explore_cube_tab_details_label(), key: "", icon: "fa-circle-info" },
+    { label: m.explore_cube_tab_prices_label(), key: "price", icon: "fa-store" },
+    { label: m.explore_cube_tab_ratings_label(), key: "ratings", icon: "fa-star" },
+    { label: m.explore_cube_tab_reviews_label(), key: "reviews", icon: "fa-comment-dots" },
   ] as const;
-
-  const submissionStatusDescription = $derived.by(() => {
-    if (cube.status === "Pending") {
-      return "is awaiting verification by moderators";
-    }
-    if (cube.status === "Rejected") {
-      return "has been rejected";
-    }
-    return "is being reviewed";
-  });
 </script>
 
 <svelte:head>
@@ -83,21 +74,21 @@
         <i class="fa-solid fa-triangle-exclamation"></i>
       {/if}
 
-      {`Your submission ${submissionStatusDescription}.`}
+      {m.explore_cube_submission_notice_text({ status: cube.status })}
     </div>
   {:else if cube.status === "Rejected"}
     <div
       class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error font-semibold shadow-sm"
     >
       <i class="fa-solid fa-triangle-exclamation"></i>
-      This cube has been rejected.
+      {m.explore_cube_status_rejected_text()}
     </div>
   {:else if cube.status === "Pending"}
     <div
       class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning font-semibold shadow-sm"
     >
       <i class="fa-solid fa-hourglass-half"></i>
-      This cube is awaiting verification by moderators.
+      {m.explore_cube_status_pending_text()}
     </div>
   {/if}
 
@@ -108,7 +99,11 @@
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
           cube.image_url,
         )}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={m.explore_cube_image_alt({
+          series: cube.series,
+          model: cube.model,
+          versionName: cube.version_name,
+        })}
         fetchpriority="high"
         decoding="async"
         width="768"
@@ -119,7 +114,9 @@
         <figcaption
           class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium bg-base-200/80"
         >
-          Image &copy;{cube.image_source}. All rights reserved.
+          {m.explore_cube_image_credit_text({
+            source: cube.image_source,
+          })}
         </figcaption>
       {/if}
     </figure>
@@ -139,7 +136,7 @@
           class="ml-3 flex items-center gap-1 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold"
         >
           <i class="fa-solid fa-ban"></i>
-          <span>Discontinued</span>
+          <span>{m.explore_cube_discontinued_label()}</span>
         </div>
       {/if}
     </div>
@@ -151,8 +148,7 @@
   </h1>
 
   <p class="mb-4">
-    {cube.popularity} user{cube.popularity === 1 ? "" : "s"}
-    have this cube
+    {m.explore_cube_popularity_text({ count: cube.popularity })}
   </p>
 
   <div class="flex flex-wrap mb-4 justify-between">
@@ -169,11 +165,11 @@
         <button
           class="btn btn-error cursor-not-allowed join-item tooltip"
           type="button"
-          aria-label="Only approved cubes can be added to your collection"
-          data-tip="Only approved cubes can be added to your collection"
+          aria-label={m.explore_cube_add_disabled_tooltip_text()}
+          data-tip={m.explore_cube_add_disabled_tooltip_text()}
         >
           <i class="fa-solid fa-ban mr-2"></i>
-          Not Available
+          {m.explore_cube_not_available_label()}
         </button>
       {/if}
       {#if cube.status === "Approved"}
@@ -185,11 +181,11 @@
         <button
           class="btn btn-error cursor-not-allowed join-item tooltip"
           type="button"
-          aria-label="Only approved cubes can be rated"
-          data-tip="Only approved cubes can be rated"
+          aria-label={m.explore_cube_rate_disabled_tooltip_text()}
+          data-tip={m.explore_cube_rate_disabled_tooltip_text()}
         >
           <i class="fa-solid fa-ban mr-2"></i>
-          Not Available
+          {m.explore_cube_not_available_label()}
         </button>
       {/if}
     </div>
@@ -206,7 +202,7 @@
     <div
       class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
       role="tablist"
-      aria-label="Cube sections"
+      aria-label={m.explore_cube_tabs_aria()}
     >
       {#each tabs as tab (tab.key)}
         <a
@@ -233,8 +229,8 @@
     <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
       <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
         <i class="fa-solid fa-note-sticky"></i>
-        Moderator Note
-        <span class="text-xs">(Only you can see this)</span>
+        {m.explore_cube_moderator_note_title()}
+        <span class="text-xs">{m.explore_cube_moderator_note_hint()}</span>
       </h2>
       <p class="whitespace-pre-line">{cube.notes}</p>
     </div>
@@ -248,7 +244,7 @@
           class="text-xl font-semibold tracking-tight flex items-center gap-2"
         >
           <i class="fa-solid fa-palette text-primary"></i>
-          Select Trim
+          {m.explore_cube_trim_section_title()}
         </h2>
         <span class="badge badge-neutral badge-sm ml-2">{cubeTrims.length}</span
         >
@@ -257,14 +253,16 @@
       <!-- Mobile: smooth horizontal scroll; ≥md: grid -->
       <ul
         class="flex gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory pr-1 md:grid md:grid-cols-2 md:sm:grid-cols-3 md:lg:grid-cols-4 md:xl:grid-cols-6 md:gap-4 md:overflow-visible md:snap-none"
-        aria-label="Available trims"
+        aria-label={m.explore_cube_trim_list_aria()}
       >
         {#each cubeTrims ?? [] as trim (trim.id)}
           <li class="min-w-[9.5rem] snap-start md:min-w-0">
             <a
               href="/explore/cubes/{trim.slug}"
               class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              aria-label={"Open " + trim.version_name}
+              aria-label={m.explore_cube_trim_open_aria({
+                name: trim.version_name,
+              })}
             >
               <div class="p-3">
                 <div
@@ -301,7 +299,7 @@
           class="text-xl font-semibold tracking-tight flex items-center gap-2"
         >
           <i class="fa-solid fa-link text-primary"></i>
-          Related To
+          {m.explore_cube_related_section_title()}
         </h2>
       </header>
 
@@ -309,7 +307,10 @@
         <a
           href="/explore/cubes/{relatedCube.slug}"
           class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          aria-label={"Open " + (relatedCube.series + " " + relatedCube.model)}
+          aria-label={m.explore_cube_related_open_aria({
+            series: relatedCube.series,
+            model: relatedCube.model,
+          })}
         >
           <div class="p-4 flex items-center gap-4">
             <div
@@ -348,7 +349,7 @@
           class="text-xl font-semibold tracking-tight flex items-center gap-2"
         >
           <i class="fa-solid fa-layer-group text-primary"></i>
-          In the Same Series
+          {m.explore_cube_same_series_section_title()}
         </h2>
         <span class="badge badge-neutral badge-sm ml-2"
           >{sameSeries.length}</span
@@ -358,15 +359,19 @@
       <div class="-mx-2 overflow-x-auto pb-2">
         <ul
           class="flex gap-4 px-2 snap-x snap-mandatory"
-          aria-label={"Cubes in the " + sameSeries[0].series + " series"}
+          aria-label={m.explore_cube_same_series_list_aria({
+            series: sameSeries[0].series,
+          })}
         >
           {#each sameSeries as seriesCube (seriesCube.slug)}
             <li class="w-48 shrink-0 snap-start">
               <a
                 href="/explore/cubes/{seriesCube.slug}"
                 class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                aria-label={"Open " +
-                  (seriesCube.series + " " + seriesCube.model)}
+                aria-label={m.explore_cube_same_series_open_aria({
+                  series: seriesCube.series,
+                  model: seriesCube.model,
+                })}
               >
                 <div class="p-3">
                   <div
@@ -402,12 +407,12 @@
 
   <div class="mt-4">
     <button onclick={toggleOpenReport} class="btn btn-error">
-      🚩 Report incorrect/missing data
+      🚩 {m.explore_cube_report_cta()}
     </button>
   </div>
 
   <a href="/explore/cubes" class="btn btn-lg btn-primary mt-6">
-    ← Back to Explore
+    ← {m.explore_cube_back_to_explore_cta()}
   </a>
 </section>
 
@@ -416,7 +421,11 @@
     onCancel={() => (openReport = !openReport)}
     reportType="cube"
     reported={cube.slug}
-    reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+    reporLabel={m.explore_cube_report_label({
+      series: cube.series,
+      model: cube.model,
+      versionName: cube.version_name,
+    })}
   />
 {/if}
 

@@ -11,6 +11,7 @@
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
+  import { m } from "$lib/paraglide/messages";
 
   // Extend Cube type with metadata for filtering and sorting
   type CubeWithMeta = Cube & {
@@ -108,11 +109,11 @@
 
   // 1) Sort fields (dropdown) — direction handled by SortSelector toggle
   const sortFields: SortFieldOption[] = [
-    { value: "date", label: "Recent" },
-    { value: "name", label: "Name" },
-    { value: "rating", label: "Rating" },
-    { value: "popularity", label: "Popularity" },
-    { value: "price", label: "Price" },
+    { value: "date", label: m.common_sort_recent_label() },
+    { value: "name", label: m.common_sort_name_label() },
+    { value: "rating", label: m.common_sort_rating_label() },
+    { value: "popularity", label: m.common_sort_popularity_label() },
+    { value: "price", label: m.common_sort_price_label() },
   ];
 
   // 2) Options for filter dropdowns
@@ -352,15 +353,15 @@
 </script>
 
 <svelte:head>
-  <title>Explore Cubes - CubeIndex</title>
+  <title>{m.explore_cubes_meta_title()}</title>
 </svelte:head>
   <section class="min-h-screen px-6 py-16">
     <div class="max-w-7xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-6 text-center">
-        Explore Cubes
+        {m.explore_cubes_title_h1()}
       </h1>
       <p class="mb-12 text-center">
-        Browse all your favorite cubes by type, brand, or rating.
+        {m.explore_cubes_intro_text()}
       </p>
 
       <!-- Search bar with filter toggle button -->
@@ -369,7 +370,7 @@
         oninput={() => (_userChangedFilters = true)}
         bind:searchTerm={$params.q}
         filterAction={() => (showFilters = !showFilters)}
-        placeholderLabel="Search Cubes"
+        placeholderLabel={m.explore_cubes_search_placeholder()}
       />
 
       <div class="flex flex-col lg:flex-row gap-8">
@@ -378,13 +379,13 @@
           <!-- Type dropdown -->
           <div>
             <label class="block text-sm mb-1">
-              Type:
+              {m.explore_cubes_filter_type_label()}
               <select
                 bind:value={$params.type}
                 onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <option>All</option>
+                <option value="All">{m.common_filter_all_label()}</option>
                 {#each allTypes as t}
                   <option>{t}</option>
                 {/each}
@@ -394,13 +395,13 @@
           <!-- Sub-type dropdown -->
           <div>
             <label class="block text-sm mb-1">
-              Sub Type:
+              {m.explore_cubes_filter_sub_type_label()}
               <select
                 bind:value={$params.sub}
                 onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <option>All</option>
+                <option value="All">{m.common_filter_all_label()}</option>
                 {#each allSubTypes as st}
                   <option>{st}</option>
                 {/each}
@@ -410,13 +411,13 @@
           <!-- Brand dropdown -->
           <div>
             <label class="block text-sm mb-1">
-              Brand:
+              {m.explore_cubes_filter_brand_label()}
               <select
                 bind:value={$params.brand}
                 onchange={() => (_userChangedFilters = true)}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <option>All</option>
+                <option value="All">{m.common_filter_all_label()}</option>
                 {#each allBrands as b}
                   <option>{b}</option>
                 {/each}
@@ -426,7 +427,7 @@
           <!-- Year dropdown -->
           <div>
             <label class="block text-sm mb-1">
-              Release Year:
+              {m.explore_cubes_filter_release_year_label()}
               <select
                 bind:value={$params.year}
                 onchange={() => {
@@ -435,7 +436,7 @@
                 }}
                 class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
               >
-                <option>All</option>
+                <option value="All">{m.common_filter_all_label()}</option>
                 {#each allYears as year}
                   <option value={year}>{year}</option>
                 {/each}
@@ -447,42 +448,42 @@
             <TriStateCheckbox
               bind:value={$params.wca}
               onchange={() => (_userChangedFilters = true)}
-              label="WCA Legal"
+              label={m.explore_cubes_filter_wca_label()}
             />
             <TriStateCheckbox
               bind:value={$params.mag}
               onchange={() => (_userChangedFilters = true)}
-              label="Magnetic"
+              label={m.explore_cubes_filter_magnetic_label()}
             />
             <TriStateCheckbox
               bind:value={$params.smart}
               onchange={() => (_userChangedFilters = true)}
-              label="Smart"
+              label={m.explore_cubes_filter_smart_label()}
             />
             <TriStateCheckbox
               bind:value={$params.stick}
               onchange={() => (_userChangedFilters = true)}
-              label="Stickered"
+              label={m.explore_cubes_filter_stickered_label()}
             />
             <TriStateCheckbox
               bind:value={$params.mod}
               onchange={() => (_userChangedFilters = true)}
-              label="Modded"
+              label={m.explore_cubes_filter_modded_label()}
             />
             <TriStateCheckbox
               bind:value={$params.base}
               onchange={() => (_userChangedFilters = true)}
-              label="Base"
+              label={m.explore_cubes_filter_base_label()}
             />
             <TriStateCheckbox
               bind:value={$params.trim}
               onchange={() => (_userChangedFilters = true)}
-              label="Trim"
+              label={m.explore_cubes_filter_trim_label()}
             />
             <TriStateCheckbox
               bind:value={$params.limit}
               onchange={() => (_userChangedFilters = true)}
-              label="Limited"
+              label={m.explore_cubes_filter_limited_label()}
             />
           </div>
           <!-- Reset filters button -->
@@ -493,7 +494,7 @@
               type="button"
             >
               <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-              Reset Filters
+              {m.common_action_reset_filters_cta()}
             </button>
           </div>
         </FilterSidebar>
@@ -507,7 +508,7 @@
             <div class="flex flex-wrap items-center gap-4">
               <ItemsPerPageSelector
                 bind:itemsPerPage={$params.size}
-                label="Cubes per page"
+                label={m.explore_cubes_items_per_page_label()}
                 onchange={() => {
                   _userChangedFilters = true;
                   sortManuallySet = true;
@@ -518,7 +519,7 @@
                 bind:sortField={$params.sort}
                 bind:sortOrder={$params.dir}
                 fields={sortFields}
-                label="Sort"
+                label={m.common_sort_label()}
                 useronchange={() => {
                   _userChangedFilters = true;
                   sortManuallySet = true;
@@ -533,7 +534,10 @@
                 class="btn bg-primary text-primary-content"
               >
                 <i class="fa-solid fa-code-compare sm:mr-2"></i>
-                Compare <span class="hidden sm:block">Cubes</span>
+                {m.explore_cubes_compare_prefix_text()}
+                <span class="hidden sm:block">
+                  {m.explore_cubes_compare_suffix_text()}
+                </span>
               </a>
             </div>
           </div>
@@ -570,17 +574,16 @@
                 class="col-span-full flex flex-col items-center justify-center py-20"
               >
                 <i class="fa-solid fa-cube fa-3x mb-4"></i>
-                <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+                <h2 class="text-2xl font-semibold mb-2">
+                  {m.explore_cubes_empty_title()}
+                </h2>
                 <p class="mb-6 text-center max-w-xs">
-                  We couldn't find any cubes matching your search or filters;
-                  try adjusting them or resetting to see everything. If the cube
-                  you're looking for isn't listed, consider submitting it to
-                  help grow our database.
+                  {m.explore_cubes_empty_body_text()}
                 </p>
                 <div class="flex flex-col justify-center gap-4">
                   <a href="/submit" class="btn btn-primary flex items-center">
                     <i class="fa-solid fa-plus mr-2"></i>
-                    Submit a New Cube
+                    {m.common_action_submit_new_cube_cta()}
                   </a>
                   <button
                     onclick={() => {
@@ -588,10 +591,10 @@
                       $params.q = "";
                     }}
                     class="btn btn-outline flex items-center"
-                    aria-label="Reset filters"
+                    aria-label={m.common_action_reset_filters_aria()}
                   >
                     <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                    Reset Filters
+                    {m.common_action_reset_filters_cta()}
                   </button>
                 </div>
               </div>

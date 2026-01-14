@@ -2,6 +2,7 @@
   import Badge from "$lib/components/user/badge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { m } from "$lib/paraglide/messages";
   import { page } from "$app/state";
   import Avatar from "$lib/components/user/avatar.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
@@ -15,7 +16,7 @@
   let stats = $derived(data.stats);
 
   interface socialObject {
-    label?: string;
+    label: string;
     icon: string;
     bg: string;
     href: (v: string) => string;
@@ -27,31 +28,39 @@
   }
 
   const socialsMap: socialsListObject = {
-    website: { icon: "fa-solid fa-globe", bg: "bg-blue-600", href: (v) => v },
+    website: {
+      label: m.user_profile_social_website_label(),
+      icon: "fa-solid fa-globe",
+      bg: "bg-blue-600",
+      href: (v) => v,
+    },
     wca: {
-      label: "WCA",
+      label: m.user_profile_social_wca_label(),
       icon: "/icons/WCA Logo.svg",
       bg: "bg-[#0051BA]",
       href: (v) => `https://www.worldcubeassociation.org/persons/${v}`,
       isImg: true,
     },
     discord: {
+      label: m.user_profile_social_discord_label(),
       icon: "fa-brands fa-discord",
       bg: "bg-[#5865F2]",
       href: (v) => `https://discord.com/users/${v}`,
     },
     x: {
+      label: m.user_profile_social_twitter_label(),
       icon: "fa-brands fa-x-twitter",
       bg: "bg-blue-400",
       href: (v) => `https://twitter.com/${v}`,
-      label: "Twitter/X",
     },
     youtube: {
+      label: m.user_profile_social_youtube_label(),
       icon: "fa-brands fa-youtube",
       bg: "bg-red-600",
       href: (v) => `https://youtube.com/${v}`,
     },
     reddit: {
+      label: m.user_profile_social_reddit_label(),
       icon: "fa-brands fa-reddit-alien",
       bg: "bg-orange-600",
       href: (v) => `https://reddit.com/user/${v}`,
@@ -69,7 +78,7 @@
               icon,
               bg,
               isImg,
-              label: label ?? key[0].toUpperCase() + key.slice(1),
+              label,
             };
           })
       : []
@@ -82,36 +91,53 @@
   }
 
   const formattedJoinDate = $derived(formatDate(profile?.created_at));
-  let activeTab = $state("Overview");
+  type TabId =
+    | "overview"
+    | "cubes"
+    | "achievements"
+    | "stats"
+    | "ratings"
+    | "reviews"
+    | "social"
+    | "submissions";
+
+  let activeTab = $state<TabId>("overview");
 
   const tabs = [
     {
       link: "",
-      title: "Overview",
+      id: "overview",
+      title: m.user_profile_tab_overview_label(),
     },
     {
       link: "/cubes",
-      title: "Cubes",
+      id: "cubes",
+      title: m.user_profile_tab_cubes_label(),
     },
     {
       link: "/achievements",
-      title: "Achievements",
+      id: "achievements",
+      title: m.user_profile_tab_achievements_label(),
     },
     {
       link: "/stats",
-      title: "Stats",
+      id: "stats",
+      title: m.user_profile_tab_stats_label(),
     },
     {
       link: "/ratings",
-      title: "Ratings",
+      id: "ratings",
+      title: m.user_profile_tab_ratings_label(),
     },
     {
       link: "/reviews",
-      title: "Reviews",
+      id: "reviews",
+      title: m.user_profile_tab_reviews_label(),
     },
     {
       link: "/social",
-      title: "Social",
+      id: "social",
+      title: m.user_profile_tab_social_label(),
     },
   ];
 
@@ -119,13 +145,13 @@
   $effect(() => {
     const path = page.url.pathname;
     const base = `/user/${profile.username}`;
-    if (path === base) activeTab = "Overview";
-    else if (path.startsWith(`${base}/cubes`)) activeTab = "Cubes";
-    else if (path.startsWith(`${base}/achievements`)) activeTab = "Achievements";
-    else if (path.startsWith(`${base}/stats`)) activeTab = "Stats";
-    else if (path.startsWith(`${base}/ratings`)) activeTab = "Ratings";
-    else if (path.startsWith(`${base}/reviews`)) activeTab = "Reviews";
-    else if (path.startsWith(`${base}/social`)) activeTab = "Social";
+    if (path === base) activeTab = "overview";
+    else if (path.startsWith(`${base}/cubes`)) activeTab = "cubes";
+    else if (path.startsWith(`${base}/achievements`)) activeTab = "achievements";
+    else if (path.startsWith(`${base}/stats`)) activeTab = "stats";
+    else if (path.startsWith(`${base}/ratings`)) activeTab = "ratings";
+    else if (path.startsWith(`${base}/reviews`)) activeTab = "reviews";
+    else if (path.startsWith(`${base}/social`)) activeTab = "social";
   });
 </script>
 
@@ -169,7 +195,7 @@
         <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
           <img
             src={profile.banner}
-            alt="{profile.username}'s banner"
+            alt={m.user_profile_banner_alt_text({ username: profile.username })}
             fetchpriority="high"
             class="w-full h-full object-cover object-center"
           />
@@ -214,7 +240,9 @@
                 </h2>
 
                 <p class="gap-1 mt-2">
-                  <span class="font-semibold">Member since:</span>
+                  <span class="font-semibold">
+                    {m.user_profile_member_since_label()}
+                  </span>
                   <span class="font-mono">{formattedJoinDate}</span>
                 </p>
 
@@ -233,7 +261,7 @@
                   class="btn block md:hidden"
                   popovertarget="popover-1"
                   style="anchor-name:--anchor-1"
-                  aria-label="User Menu"
+                  aria-label={m.user_profile_menu_aria_label()}
                 >
                   <i class="fa-solid fa-ellipsis-vertical"></i>
                 </button>
@@ -253,11 +281,11 @@
                     <a
                       href="/user/settings"
                       class="flex items-center gap-2 p-2 btn btn-ghost"
-                      aria-label="User Settings"
-                      title="User Settings"
+                      aria-label={m.user_profile_settings_aria_label()}
+                      title={m.user_profile_settings_aria_label()}
                     >
                       <i class="fa-solid fa-gear"></i>
-                      <span>Settings</span>
+                      <span>{m.user_profile_settings_cta()}</span>
                     </a>
                   {:else}
                     <button
@@ -265,7 +293,7 @@
                       onclick={toggleOpenReport}
                     >
                       <i class="fa-solid fa-flag"></i>
-                      <span>Report</span>
+                      <span>{m.user_profile_report_cta()}</span>
                     </button>
                   {/if}
                 </ul>
@@ -278,11 +306,11 @@
               <a
                 href="/user/settings"
                 class="btn btn-primary ml-4"
-                aria-label="User Settings"
-                title="User Settings"
+                aria-label={m.user_profile_settings_aria_label()}
+                title={m.user_profile_settings_aria_label()}
               >
                 <i class="fa-solid fa-gear"></i>
-                <span>Settings</span>
+                <span>{m.user_profile_settings_cta()}</span>
               </a>
             {:else}
               {#if user?.id && user.id !== profile.user_id}
@@ -293,7 +321,7 @@
               {/if}
               <button class="btn btn-error" onclick={toggleOpenReport}>
                 <i class="fa-solid fa-flag"></i>
-                <span>Report</span>
+                <span>{m.user_profile_report_cta()}</span>
               </button>
             {/if}
           </div>
@@ -304,18 +332,26 @@
             <a
               href="/user/{profile.username}/social"
               class="btn btn-ghost btn-sm"
-              title="View following"
+              title={m.user_profile_following_title()}
             >
               <i class="fa-solid fa-user-plus"></i>
-              <span class="ml-1">{stats.followingCount ?? 0} Following</span>
+              <span class="ml-1">
+                {m.user_profile_following_count_text({
+                  count: stats.followingCount ?? 0,
+                })}
+              </span>
             </a>
             <a
               href="/user/{profile.username}/social"
               class="btn btn-ghost btn-sm"
-              title="View followers"
+              title={m.user_profile_followers_title()}
             >
               <i class="fa-solid fa-users"></i>
-              <span class="ml-1">{stats.followersCount ?? 0} Followers</span>
+              <span class="ml-1">
+                {m.user_profile_followers_count_text({
+                  count: stats.followersCount ?? 0,
+                })}
+              </span>
             </a>
           </div>
         </div>
@@ -325,7 +361,9 @@
           <!-- Socials Section -->
           {#if socialsList.length}
             <div class="mt-4">
-              <h4 class="text-lg font-bold mb-2">Socials</h4>
+              <h4 class="text-lg font-bold mb-2">
+                {m.user_profile_socials_title()}
+              </h4>
               <div class="flex flex-wrap gap-3">
                 {#each socialsList as { href, icon, bg, isImg, label }}
                   <a
@@ -335,7 +373,11 @@
                     class={`flex items-center gap-2 px-4 py-2 rounded-full ${bg} hover:opacity-90 text-white font-medium shadow`}
                   >
                     {#if isImg}
-                      <img src={icon} alt="{label} logo" class="h-5 w-5" />
+                      <img
+                        src={icon}
+                        alt={m.user_profile_social_logo_alt_text({ label })}
+                        class="h-5 w-5"
+                      />
                     {:else}
                       <i class={icon}></i>
                     {/if}
@@ -355,11 +397,11 @@
       {#each tabs as tab}
         <a
           href="/user/{profile.username}{tab.link}"
-          class="hover:text-primary border-0 {activeTab === tab.title
+          class="hover:text-primary border-0 {activeTab === tab.id
             ? 'border-b-4'
             : ''} border-primary"
           onclick={() => {
-            activeTab = tab.title;
+            activeTab = tab.id;
           }}
           data-sveltekit-noscroll
         >
@@ -369,14 +411,14 @@
       {#if user?.id === profile.user_id}
         <a
           href="/user/submissions"
-          class="hover:text-primary border-0 {activeTab === 'Submissions'
+          class="hover:text-primary border-0 {activeTab === 'submissions'
             ? 'border-b-4'
             : ''} border-primary"
           onclick={() => {
-            activeTab = "Submissions";
+            activeTab = "submissions";
           }}
         >
-          Submissions
+          {m.user_profile_tab_submissions_label()}
         </a>
       {/if}
     </div>
@@ -386,9 +428,11 @@
     {:else}
       <section class="px-4 py-12 flex items-center justify-center">
         <div class="text-center">
-          <h1 class="text-3xl font-bold mb-4">This profile is private</h1>
+          <h1 class="text-3xl font-bold mb-4">
+            {m.user_profile_private_title_h1()}
+          </h1>
           <p class="text-gray-400">
-            You do not have permission to view this user's profile.
+            {m.user_profile_private_description_text()}
           </p>
         </div>
       </section>
@@ -401,6 +445,6 @@
     onCancel={() => (openReport = !openReport)}
     reportType="user"
     reported={profile.user_id}
-    reporLabel="{profile.username}'s account"
+    reporLabel={m.user_profile_report_label_text({ username: profile.username })}
   />
 {/if}

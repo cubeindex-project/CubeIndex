@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
+  import { m } from "$lib/paraglide/messages";
 
   // DVD‐logo bouncing cube state
   let cubeX = $state(50);
@@ -34,31 +35,33 @@
       {page.status}
     </h1>
     <p class="mb-6 text-xl font-medium sm:text-2xl">
-      <strong>{page.error?.message ?? "Something went wrong!"}</strong>
+      <strong>{page.error?.message ?? m.errors_generic_message_text()}</strong>
     </p>
   </div>
 
   <p class="mb-8 max-w-md relative z-10">
-    It seems you encountered an error.<br />
-    If you think this is a bug, please let us know!
+    {m.errors_encountered_text()}<br />
+    {m.errors_bug_report_prompt_text()}
   </p>
 
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
+    <a href="/" class="btn btn-lg btn-primary">
+      🏠 {m.app_home_return_cta()}
+    </a>
     <a
       class="btn btn-lg btn-error"
       href={`/report?error=${encodeURIComponent(page.error?.message || "")}`}
     >
-      🐞 Report the Bug
+      🐞 {m.errors_report_bug_cta()}
     </a>
   </div>
 
   <!-- Bouncing Cube -->
   <img
     src="/images/legendary-cube.webp"
-    alt="Legendary Cube"
+    alt={m.errors_legendary_cube_alt_text()}
     class="w-20 sm:w-24 fixed z-30 pointer-events-none"
     style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
   />

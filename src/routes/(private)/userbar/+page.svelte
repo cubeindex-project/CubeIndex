@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import Tag from "$lib/components/misc/tag.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   // Svelte 5 runes flavor
   const { data } = $props<{
@@ -21,15 +22,30 @@
   let previewLoaded = $state(false);
   let previewError = $state(false);
 
+  type SnippetKind = "markdown" | "html" | "bbcode" | "direct_url";
+
+  const snippetLabel = (kind: SnippetKind) => {
+    switch (kind) {
+      case "markdown":
+        return m.userbar_snippet_tab_markdown_label();
+      case "html":
+        return m.userbar_snippet_tab_html_label();
+      case "bbcode":
+        return m.userbar_snippet_tab_bbcode_label();
+      case "direct_url":
+        return m.userbar_snippet_tab_direct_url_label();
+    }
+  };
+
   // Embedding snippets
-  const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${displayName}&apos;s CubeIndex profile")`;
-  const html = `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" /></a>`;
+  const markdownAltText = m.userbar_snippet_userbar_alt_text({ displayName });
+  const profileAltText = m.userbar_snippet_profile_alt_text({ displayName });
+  const markdown = `[![${markdownAltText}](${directUrl})](${origin}/user/${username} "${profileAltText}")`;
+  const html = `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${profileAltText}" width="350" height="19" /></a>`;
   const bbcode = `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`;
 
-  let copied = $state<null | string>(null);
-  let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">(
-    "Markdown",
-  );
+  let copied = $state<SnippetKind | null>(null);
+  let active = $state<SnippetKind>("markdown");
 
   function handleLoad() {
     previewLoaded = true;
@@ -48,14 +64,14 @@
     cacheBust = Date.now() + bustSeed;
   }
 
-  async function copy(text: string, label: string) {
+  async function copy(text: string, label: SnippetKind) {
     try {
       await navigator.clipboard.writeText(text);
       copied = label;
       setTimeout(() => (copied = null), 1400);
     } catch {
       copied = null;
-      alert("Copy failed — you can select and copy manually.");
+      alert(m.userbar_snippet_copy_error_text());
     }
   }
 
@@ -76,18 +92,22 @@
 <div class="mx-auto max-w-5xl px-4 py-8 min-h-screen">
   <header class="mb-6">
     <div class="flex items-center gap-3">
-      <h1 class="text-3xl font-clash tracking-tight">Userbar</h1>
-      <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
+      <h1 class="text-3xl font-clash tracking-tight">
+        {m.userbar_page_title_h1()}
+      </h1>
+      <Tag
+        label={m.userbar_beta_tag_label()}
+        gradient="from-indigo-500 via-purple-500 to-pink-500"
+      />
     </div>
     <p class="text-sm opacity-80 mt-1">
-      Share this slim banner in forums, profiles, and signatures. It updates
-      automatically as your stats change.
+      {m.userbar_intro_text()}
     </p>
   </header>
 
   <!-- Preview -->
   <section class="mb-8">
-    <h2 class="text-sm font-medium mb-2">Preview</h2>
+    <h2 class="text-sm font-medium mb-2">{m.userbar_preview_title()}</h2>
 
     <!-- Subtle checker helps on light/dark themes -->
     <div
@@ -114,13 +134,15 @@
             <div
               class="pointer-events-auto flex h-full w-full flex-col items-center justify-center gap-2 rounded border border-error/40 bg-error/10 px-3 text-center text-xs text-error"
             >
-              <span class="font-semibold">Preview failed</span>
+              <span class="font-semibold">
+                {m.userbar_preview_error_title_text()}
+              </span>
               <button
                 type="button"
                 class="btn btn-xs btn-outline btn-error"
                 onclick={refreshPreview}
               >
-                Try again
+                {m.userbar_preview_retry_cta()}
               </button>
             </div>
           {:else}
@@ -131,14 +153,14 @@
                 class="loading loading-dots loading-xs text-primary"
                 aria-hidden="true"
               ></span>
-              <span>Generating preview…</span>
+              <span>{m.userbar_preview_loading_text()}</span>
             </div>
           {/if}
         </div>
         <a href={"/user/" + username} class="block" aria-busy={!previewLoaded}>
           <img
             src={previewUrl}
-            alt={`${displayName} - CubeIndex userbar`}
+            alt={m.userbar_preview_image_alt_text({ displayName })}
             width={350}
             height={19}
             class={`block rounded transition-opacity duration-200 ${
@@ -161,84 +183,106 @@
         rel="noopener"
         class="link link-primary break-all"
       >
-        Open image
+        {m.userbar_preview_open_image_cta()}
       </a>
       <button
         class="btn btn-sm btn-outline"
         onclick={refreshPreview}
         type="button"
       >
-        Refresh preview
+        {m.userbar_preview_refresh_cta()}
       </button>
       <button class="btn btn-sm btn-primary" onclick={download}>
-        Download PNG
+        {m.userbar_preview_download_cta()}
       </button>
-      <span class="opacity-70">Size: <code>350 x 19 px</code></span>
+      <span class="opacity-70">
+        {m.userbar_preview_size_label()} <code>350 x 19 px</code>
+      </span>
     </div>
   </section>
 
   <!-- Snippets -->
   <section>
-    <h2 class="text-sm font-medium mb-2">Embed Snippets</h2>
+    <h2 class="text-sm font-medium mb-2">{m.userbar_snippet_title()}</h2>
     <div class="tabs tabs-boxed mb-3">
       <button
-        class={`tab ${active === "Markdown" ? "tab-active" : ""}`}
-        onclick={() => (active = "Markdown")}>Markdown</button
+        class={`tab ${active === "markdown" ? "tab-active" : ""}`}
+        onclick={() => (active = "markdown")}
       >
+        {m.userbar_snippet_tab_markdown_label()}
+      </button>
       <button
-        class={`tab ${active === "HTML" ? "tab-active" : ""}`}
-        onclick={() => (active = "HTML")}>HTML</button
+        class={`tab ${active === "html" ? "tab-active" : ""}`}
+        onclick={() => (active = "html")}
       >
+        {m.userbar_snippet_tab_html_label()}
+      </button>
       <button
-        class={`tab ${active === "BBCode" ? "tab-active" : ""}`}
-        onclick={() => (active = "BBCode")}>BBCode</button
+        class={`tab ${active === "bbcode" ? "tab-active" : ""}`}
+        onclick={() => (active = "bbcode")}
       >
+        {m.userbar_snippet_tab_bbcode_label()}
+      </button>
       <button
-        class={`tab ${active === "Direct URL" ? "tab-active" : ""}`}
-        onclick={() => (active = "Direct URL")}>Direct URL</button
+        class={`tab ${active === "direct_url" ? "tab-active" : ""}`}
+        onclick={() => (active = "direct_url")}
       >
+        {m.userbar_snippet_tab_direct_url_label()}
+      </button>
     </div>
 
-    {#if active === "Markdown"}
+    {#if active === "markdown"}
       <div class="relative">
         <pre
           class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
             >{markdown}</code
           ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === "Markdown" ? "btn-success" : ""}`}
-          onclick={() => copy(markdown, "Markdown")}
-          aria-label="Copy Markdown"
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "markdown" ? "btn-success" : ""}`}
+          onclick={() => copy(markdown, "markdown")}
+          aria-label={m.userbar_snippet_copy_aria_text({
+            snippet: snippetLabel("markdown"),
+          })}
         >
-          {copied === "Markdown" ? "Copied" : "Copy"}
+          {m.userbar_snippet_copy_button_label({
+            state: copied === "markdown" ? "copied" : "copy",
+          })}
         </button>
       </div>
-    {:else if active === "HTML"}
+    {:else if active === "html"}
       <div class="relative">
         <pre
           class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
             >{html}</code
           ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === "HTML" ? "btn-success" : ""}`}
-          onclick={() => copy(html, "HTML")}
-          aria-label="Copy HTML"
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "html" ? "btn-success" : ""}`}
+          onclick={() => copy(html, "html")}
+          aria-label={m.userbar_snippet_copy_aria_text({
+            snippet: snippetLabel("html"),
+          })}
         >
-          {copied === "HTML" ? "Copied" : "Copy"}
+          {m.userbar_snippet_copy_button_label({
+            state: copied === "html" ? "copied" : "copy",
+          })}
         </button>
       </div>
-    {:else if active === "BBCode"}
+    {:else if active === "bbcode"}
       <div class="relative">
         <pre
           class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
             >{bbcode}</code
           ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === "BBCode" ? "btn-success" : ""}`}
-          onclick={() => copy(bbcode, "BBCode")}
-          aria-label="Copy BBCode"
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "bbcode" ? "btn-success" : ""}`}
+          onclick={() => copy(bbcode, "bbcode")}
+          aria-label={m.userbar_snippet_copy_aria_text({
+            snippet: snippetLabel("bbcode"),
+          })}
         >
-          {copied === "BBCode" ? "Copied" : "Copy"}
+          {m.userbar_snippet_copy_button_label({
+            state: copied === "bbcode" ? "copied" : "copy",
+          })}
         </button>
       </div>
     {:else}
@@ -248,11 +292,15 @@
             >{directUrl}</code
           ></pre>
         <button
-          class={`btn btn-xs absolute top-2 right-2 ${copied === "Direct URL" ? "btn-success" : ""}`}
-          onclick={() => copy(directUrl, "Direct URL")}
-          aria-label="Copy Direct URL"
+          class={`btn btn-xs absolute top-2 right-2 ${copied === "direct_url" ? "btn-success" : ""}`}
+          onclick={() => copy(directUrl, "direct_url")}
+          aria-label={m.userbar_snippet_copy_aria_text({
+            snippet: snippetLabel("direct_url"),
+          })}
         >
-          {copied === "Direct URL" ? "Copied" : "Copy"}
+          {m.userbar_snippet_copy_button_label({
+            state: copied === "direct_url" ? "copied" : "copy",
+          })}
         </button>
       </div>
     {/if}
@@ -261,7 +309,11 @@
   {#if copied}
     <div class="toast toast-end z-50">
       <div class="alert alert-success text-sm">
-        <span>Copied {copied}!</span>
+        <span>
+          {m.userbar_snippet_copied_toast_text({
+            snippet: snippetLabel(copied),
+          })}
+        </span>
       </div>
     </div>
   {/if}

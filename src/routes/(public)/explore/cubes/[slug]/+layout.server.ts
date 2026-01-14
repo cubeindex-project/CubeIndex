@@ -1,4 +1,5 @@
 import type { DetailedCube } from "$lib/components/dbTableTypes";
+import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -61,21 +62,6 @@ export const load = (async ({
       .limit(24),
   ]);
 
-  const { data: featuresListRaw, error: flErr } = await supabase
-    .from("cube_features")
-    .select("code");
-
-  if (flErr) {
-    log.error({ err: flErr }, "Failed to fetch the list of cube features");
-    throw error(500, "Failed to fetch the list of cube features");
-  }
-
-  const features_list = featuresListRaw.map((f) => f.code);
-
-  const features = Object.entries(cube)
-    .filter(([key, value]) => features_list.includes(key) && value === true)
-    .map(([key]) => key);
-
   let alreadyAdded = false;
   let userCubeDetail = null;
 
@@ -102,10 +88,21 @@ export const load = (async ({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  // Return only what your head/JSON-LD needs; keep/add your own fields as required.
+  const title = `${cube.name} - CubeIndex`
+  const description =
+    `The ${cube.name} is a ${cube.type} twisty puzzle` +
+    (cube.release_date ? ` released on ${formatDate(cube.release_date)}` : "") +
+    `. ` +
+    (cube.low_price != null
+      ? `Prices start at $${cube.low_price}. `
+      : `Price data is not available yet. `) +
+    (cube.rating_count > 0 && cube.rating != null
+      ? `It holds an average rating of ${cube.rating}/5 from ${cube.rating_count} rating${cube.rating_count === 1 ? "" : "s"}.`
+      : `It has no ratings yet, be the first to rate it on CubeIndex.`);
+  const image = `/api/og/cube/${cube.slug}`
+
   return {
     cube,
-    features,
     alreadyAdded,
     isCubeSubmitter,
     userCubeDetail,
@@ -114,5 +111,15 @@ export const load = (async ({
     cubeTrims: trimsRes.data ?? [],
     verifiedBy: cube.verified_by_id,
     submittedBy: cube.submitted_by,
+    meta: {
+      title,
+      ogTitle: title,
+      twitterTitle: title,
+      description,
+      ogDescription: description,
+      twitterDescription: description,
+      image,
+      twitterImage: image, 
+    },
   };
 }) satisfies LayoutServerLoad;

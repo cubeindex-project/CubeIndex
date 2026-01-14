@@ -294,7 +294,7 @@
   {/if}
 
   <!-- Related-to (for modded / non-base) -->
-  {#if (cube.version_type !== "Base" || features.some((f) => f === "modded") === true) && relatedCube}
+  {#if (cube.version_type !== "Base" || cube.modded) && relatedCube}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
         <h2

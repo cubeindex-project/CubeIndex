@@ -7,6 +7,8 @@
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
+  import type { ResolvedMeta } from "$lib/types/meta";
+  import { page } from "$app/state";
 
   let { data, children } = $props();
 
@@ -30,10 +32,35 @@
 
   import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/footer.svelte";
+
+  const meta: ResolvedMeta = $derived.by(() => ({
+    ...data.meta,
+    ...(page.data.meta ?? {}),
+  }));
+  console.log(meta);
+
+  const ogTitle = $derived(meta.ogTitle ?? meta.title);
+  const ogDescription = $derived(meta.ogDescription ?? meta.description);
+  const twitterTitle = $derived(meta.twitterTitle ?? meta.title);
+  const twitterDescription = $derived(
+    meta.twitterDescription ?? meta.description,
+  );
+  const twitterImage = $derived(meta.twitterImage ?? meta.image);
 </script>
 
 <svelte:head>
-  <title>CubeIndex</title>
+  <meta name="description" content={meta.description} />
+  <meta property="og:title" content={ogTitle} />
+  <meta property="og:site_name" content={meta.siteName} />
+  <meta property="og:image" content={meta.image} />
+  <meta property="og:description" content={ogDescription} />
+  <meta property="og:url" content={meta.url} />
+  <meta property="twitter:title" content={twitterTitle} />
+  <meta property="twitter:image" content={twitterImage} />
+  <meta property="twitter:description" content={twitterDescription} />
+  <meta property="twitter:card" content={meta.twitterCard} />
+  <meta name="google-site-verification" content={meta.googleSiteVerification} />
+  <title>{meta.title}</title>
 
   {#if umamiTag}
     <script

@@ -2,11 +2,14 @@ import type { LayoutServerLoad } from "./$types";
 import type { Profiles } from "$lib/components/dbTableTypes";
 import { logError } from "$lib/server/logError";
 import { dev } from "$app/environment";
+import type { Meta } from "$lib/types/meta";
 
 export const load: LayoutServerLoad = async ({
   locals: { safeGetSession, supabase, log },
   cookies,
+  url,
 }) => {
+
   const { session, user } = await safeGetSession();
 
   let profile: Profiles | null = null;
@@ -32,16 +35,24 @@ export const load: LayoutServerLoad = async ({
     profile = data;
   }
 
-  let umamiTag = false;
-
-  if (!dev) {
-    umamiTag = true;
-  }
+  const umamiTag = !dev;
 
   return {
     profile,
     session,
     cookies: cookies.getAll(),
     umamiTag,
+    meta: {
+      title: "CubeIndex",
+      description:
+        "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers. 🧩",
+      ogTitle: "CubeIndex - Speedcubing Database & Collection Tracker",
+      siteName: "CubeIndex",
+      image: "/images/og/cubeindex-og.png",
+      twitterImage: "/images/og/cubeindex-twitter-og.png",
+      url: url.origin,
+      twitterCard: "summary_large_image",
+      googleSiteVerification: "LeqQ-VZhIWm9luPXxKl2DWIb48Udb94UIZclWUjOevE",
+    } as Meta,
   };
 };

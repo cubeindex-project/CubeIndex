@@ -4,12 +4,6 @@
   let { data } = $props();
   let { cube, features = [], submittedBy, verifiedBy } = $derived(data);
 
-  const isMagnetic = $derived.by(() => features.includes("magnetic"));
-  const isSmart = $derived.by(() => features.includes("smart"));
-  const isWcaLegal = $derived.by(() => features.includes("wca_legal"));
-  const isDiscontinued = $derived.by(() => cube.discontinued);
-  const isModded = $derived.by(() => features.includes("modded"));
-
   const allFeatureBadges = [
     { label: "Smart", key: "smart", icon: "fa-microchip" },
     { label: "Magnetic", key: "magnetic", icon: "fa-magnet" },
@@ -25,10 +19,6 @@
   );
 </script>
 
-<svelte:head>
-  <title>{cube.name} - CubeIndex</title>
-</svelte:head>
-
 <section class="space-y-6">
   <!-- Overview / Description -->
   <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
@@ -36,26 +26,26 @@
     <p class="leading-relaxed">
       The
       <span class="font-semibold text-primary">
-        {`${cube.series} ${cube.model}${cube.version_type !== "Base" && cube.version_name ? ` ${cube.version_name}` : ""}`}
+        {cube.name}
       </span>
       is a <span class="font-medium">{cube.type}</span> twisty puzzle
       {#if cube.release_date}
         released on
         <span class="font-medium">{formatDate(cube.release_date)}</span>
       {/if}. It is
-      <span class="font-medium">{isMagnetic ? "magnetic" : "non‑magnetic"}</span
+      <span class="font-medium">{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
       >,
-      <span class="font-medium">{isSmart ? "smart" : "non‑smart"}</span>, and
+      <span class="font-medium">{cube.smart ? "smart" : "non‑smart"}</span>, and
       <span class="font-medium"
-        >{isWcaLegal ? "WCA‑legal" : "not WCA‑legal"}</span
+        >{cube.wca ? "WCA‑legal" : "not WCA‑legal"}</span
       >. Currently
       <span class="font-medium"
-        >{isDiscontinued ? "discontinued" : "available"}</span
+        >{cube.discontinued ? "discontinued" : "available"}</span
       >
       with a community rating of
       <span class="font-medium">{(cube.rating ?? 0).toFixed(1)}/5</span>
       and
-      <span class="font-medium">{isModded ? "modded" : "original"}</span> design.
+      <span class="font-medium">{cube.modded ? "modded" : "original"}</span> design.
     </p>
   </div>
 

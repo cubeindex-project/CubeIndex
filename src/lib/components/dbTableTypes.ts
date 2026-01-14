@@ -475,6 +475,7 @@ export interface DetailedCube {
 
   model: string;
   rating: number | null;
+  rating_count: number;
   slug: string;
 
   created_at: Date;
@@ -512,6 +513,7 @@ export interface DetailedCube {
   year: number | null;
   popularity: number;
   avg_price: number | null;
+  low_price: number | null;
 }
 
 export interface UserStats {

@@ -37,7 +37,6 @@
     ...data.meta,
     ...(page.data.meta ?? {}),
   }));
-  console.log(meta);
 
   const ogTitle = $derived(meta.ogTitle ?? meta.title);
   const ogDescription = $derived(meta.ogDescription ?? meta.description);
@@ -52,7 +51,7 @@
   <title>{meta.title}</title>
   <meta name="description" content={meta.description} />
   {@html `<script type="application/ld+json">
-    ${JSON.stringify(meta.jsonLd)}
+    ${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}
   </script>`}
 
   <meta property="og:title" content={ogTitle} />

@@ -1,5 +1,10 @@
-import type { DetailedCube } from "$lib/components/dbTableTypes";
+import type {
+  CubeVendorLinks,
+  DetailedCube,
+  Vendors,
+} from "$lib/components/dbTableTypes";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -7,6 +12,10 @@ type DetailedCubeExtended = Omit<DetailedCube, "verified_by_id"> & {
   verified_by_id: { display_name: string; username: string } | null;
   submitted_by: { display_name: string; username: string };
 };
+
+interface CubeVendorLinksWithVendor extends CubeVendorLinks {
+  vendor: Vendors;
+}
 
 export const load = (async ({
   locals: { supabase, log, user },
@@ -84,6 +93,17 @@ export const load = (async ({
 
   const isCubeSubmitter = user?.id === cube.submitted_by_id;
 
+  const vendorRes = await supabase
+    .from("cube_vendor_links")
+    .select("*, vendor:vendor_name(*)")
+    .eq("cube_slug", slug);
+
+  if (vendorRes.error) {
+    return logError(500, "Unable to load vendor links", log, vendorRes.error);
+  }
+
+  const cube_vendor_links: CubeVendorLinksWithVendor[] = vendorRes.data;
+
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
@@ -100,6 +120,15 @@ export const load = (async ({
       ? `It holds an average rating of ${cube.rating}/5 from ${cube.rating_count} rating${cube.rating_count === 1 ? "" : "s"}.`
       : `It has no ratings yet, be the first to rate it on CubeIndex.`);
   const image = `/api/og/cube/${cube.slug}`;
+  const offers = cube_vendor_links.map((offer) => {
+    return {
+      "@type": "Offer",
+      url: offer.url,
+      price: offer.price,
+      priceCurrency: offer.vendor.currency,
+      availability: offer.available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+    };
+  });
 
   return {
     cube,
@@ -111,6 +140,7 @@ export const load = (async ({
     cubeTrims: trimsRes.data ?? [],
     verifiedBy: cube.verified_by_id,
     submittedBy: cube.submitted_by,
+    vendorRes,
     meta: {
       title,
       ogTitle: title,
@@ -123,6 +153,7 @@ export const load = (async ({
       jsonLd: {
         "@context": "https://schema.org/",
         "@type": "Product",
+        sku: `CubeIndex:${cube.slug}`,
         name: cube.name,
         description,
         image: [cube.image_url],
@@ -130,18 +161,25 @@ export const load = (async ({
           "@type": "Brand",
           name: cube.brand,
         },
-        aggregateRating: cube.rating ? {
-          "@type": "AggregateRating",
-          ratingValue: cube.rating,
-          reviewCount: cube.rating_count,
-        } : {},
-        offers: cube.low_price
-          ? {
-              "@type": "AggregateOffer",
-              lowPrice: cube.low_price,
-              priceCurrency: "USD",
-            }
-          : {},
+        category: cube.type,
+        aggregateRating:
+          cube.rating_count > 0
+            ? {
+                "@type": "AggregateRating",
+                ratingValue: cube.rating,
+                ratingCount: cube.rating_count,
+              }
+            : {},
+        offers:
+          vendorRes.data.length > 0
+            ? {
+                "@type": "AggregateOffer",
+                offerCount: vendorRes.data.length,
+                lowPrice: cube.low_price,
+                priceCurrency: "USD",
+                offers,
+              }
+            : {},
       },
     },
   };

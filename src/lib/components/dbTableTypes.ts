@@ -87,6 +87,8 @@ export interface Vendors {
 
   /** Optional logo image URL */
   logo_url: string | null;
+
+  currency: string;
 }
 
 export interface UserCubes {

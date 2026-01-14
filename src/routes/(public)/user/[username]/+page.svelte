@@ -6,7 +6,6 @@
   let { data }: { data: PageData } = $props();
 
   const profile = $derived(data.profile);
-  const bio = $derived(profile.bio);
   const main_cubes = $derived(data.main_cubes);
   const user_cubes = $derived(data.user_cubes);
   const user_achievements = $derived(data.user_achievements);
@@ -20,11 +19,11 @@
     totalRatings
       ? user_cube_ratings.map((r) => r.rating ?? 0).reduce((a, b) => a + b, 0) /
           totalRatings
-      : 0
+      : 0,
   );
 
   const averageDisplay = $derived(
-    totalRatings ? averageRating.toFixed(1) : "—"
+    totalRatings ? averageRating.toFixed(1) : "—",
   );
   const avgRounded = $derived(Math.round(averageRating)); // for star fill
 
@@ -83,19 +82,19 @@
         })),
         // Achievements
         ...user_achievements.map((a, index) => ({
-            type: "achievement" as const,
-            item: a,
-            ts: a.awarded_at
-              ? new Date(a.awarded_at).getTime()
-              : a.created_at
-                ? new Date(a.created_at).getTime()
-                : 0,
-            key: `achievement:${index}`,
+          type: "achievement" as const,
+          item: a,
+          ts: a.awarded_at
+            ? new Date(a.awarded_at).getTime()
+            : a.created_at
+              ? new Date(a.created_at).getTime()
+              : 0,
+          key: `achievement:${index}`,
         })),
       ] satisfies ActivityItem[]
     )
       .sort((a, b) => b.ts - a.ts)
-      .slice(0, 12)
+      .slice(0, 12),
   );
 
   const typeCounts = $derived(
@@ -104,11 +103,11 @@
         const t = uc?.cube_model?.type ?? "Unknown";
         acc[t] = (acc[t] ?? 0) + 1;
         return acc;
-      }, {})
+      }, {}),
     )
       .map(([type, count]) => ({ type, count }))
       .sort((a, b) => b.count - a.count)
-      .slice(0, 6)
+      .slice(0, 6),
   );
 
   const statusCounts = $derived(
@@ -117,14 +116,10 @@
         const s = uc?.status ?? "Unknown";
         acc[s] = (acc[s] ?? 0) + 1;
         return acc;
-      }, {})
-    ).map(([status, count]) => ({ status, count }))
+      }, {}),
+    ).map(([status, count]) => ({ status, count })),
   );
 </script>
-
-<svelte:head>
-  <title>{profile.display_name}'s Profile - CubeIndex</title>
-</svelte:head>
 
 <div
   class="min-h-screen lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
@@ -138,7 +133,7 @@
         <div
           class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
         >
-          <Markdown text={bio} />
+          <Markdown text={profile.bio} />
         </div>
       </div>
     {/if}
@@ -391,4 +386,3 @@
     </div>
   </div>
 </div>
-

@@ -159,10 +159,6 @@
   let showVideo = $state(false);
 </script>
 
-<svelte:head>
-  <title>CubeIndex Awards</title>
-</svelte:head>
-
 <section class={`${ui.section} ${ui.hero}`}>
   <div aria-hidden="true" class="absolute inset-0">
     <div

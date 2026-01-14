@@ -9,14 +9,8 @@
 
   const MAX_SUMMARY_CHARS = 180;
 
-  const pageTitle = $derived(`${cube.name} - Reviews`);
-
   const reviewCount = $derived(reviews.length);
 </script>
-
-<svelte:head>
-  <title>{pageTitle}</title>
-</svelte:head>
 
 <section class="space-y-6">
   <header

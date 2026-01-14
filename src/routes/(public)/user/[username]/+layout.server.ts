@@ -1,71 +1,24 @@
 import type { LayoutServerLoad } from "./$types";
-import type { Profiles, UserFollowsRow } from "$lib/components/dbTableTypes.js";
+import type { DetailedProfiles } from "$lib/components/dbTableTypes.js";
 import { supabase } from "$lib/supabaseClient";
 import { logError } from "$lib/server/logError";
-
-function plural(n: number, s: string, p = s + "s") {
-  return `${n} ${n === 1 ? s : p}`;
-}
-
-function stripToPlain(input?: string | null) {
-  if (!input) return "";
-  // remove HTML/MD-ish markup & collapse whitespace
-  return input
-    .replace(/<[^>]+>/g, "")
-    .replace(/[#*_>`~[\]()]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function buildProfileDescription(
-  profile: {
-    display_name?: string | null;
-    username: string;
-    bio?: string | null;
-    created_at?: string | null;
-  },
-  stats: {
-    cubesCount: number;
-    achievementsCount: number;
-    followersCount: number;
-    followingCount: number;
-  },
-) {
-  const name = profile.display_name?.trim() || profile.username;
-  const handle = `@${profile.username}`;
-
-  const bits: string[] = [];
-  bits.push(`${name} (${handle}) on CubeIndex.`);
-
-  const bio = stripToPlain(profile.bio);
-  if (bio) bits.push(bio);
-
-  const counts: string[] = [];
-  counts.push(plural(stats.cubesCount, "cube"));
-  counts.push(plural(stats.achievementsCount, "achievement"));
-  counts.push(plural(stats.followersCount, "follower"));
-  counts.push(plural(stats.followingCount, "following"));
-  bits.push(counts.join(" • "));
-
-  // keep to ~160 chars for search snippets
-  let desc = bits.join(" ");
-  if (desc.length > 160) desc = desc.slice(0, 157) + "…";
-  return desc;
-}
+import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
 
 export const load = (async ({ locals: { user, log }, params, url }) => {
   const { username } = params;
 
   // 1) Profile
-  const { data: profile, error: err } = await supabase
-    .from("profiles")
+  const { data: profileRaw, error: err } = await supabase
+    .from("v_detailed_profiles")
     .select("*")
     .eq("username", username)
-    .single();
+    .maybeSingle();
 
   if (err) {
     return logError(500, "Unable to load profile", log, err);
   }
+
+  const profile: DetailedProfiles | undefined = profileRaw;
 
   if (!profile) {
     return logError(
@@ -76,7 +29,7 @@ export const load = (async ({ locals: { user, log }, params, url }) => {
     );
   }
 
-  let following: UserFollowsRow[] = [];
+  let following: boolean = false;
 
   if (user?.id) {
     const { data, error: followErr } = await supabase
@@ -89,72 +42,51 @@ export const load = (async ({ locals: { user, log }, params, url }) => {
       return logError(500, "Unable to check follow status", log, followErr);
     }
 
-    following = data;
+    following = data.length !== 1;
   }
-
-  // 2) Stats (counts via HEAD+exact)
-  const [
-    { count: followersCount = 0, error: f1Err },
-    { count: followingCount = 0, error: f2Err },
-    { count: cubesCount = 0, error: cErr },
-    { count: achievementsCount = 0, error: aErr },
-  ] = await Promise.all([
-    supabase
-      .from("user_follows")
-      .select("*", { head: true, count: "exact" })
-      .eq("following_id", profile.user_id), // who follows THIS user
-    supabase
-      .from("user_follows")
-      .select("*", { head: true, count: "exact" })
-      .eq("follower_id", profile.user_id), // who THIS user follows
-    supabase
-      .from("user_cubes")
-      .select("*", { head: true, count: "exact" })
-      .eq("user_id", profile.user_id),
-    supabase
-      .from("user_achievements")
-      .select("*", { head: true, count: "exact" })
-      .eq("user_id", profile.user_id),
-  ]);
-
-  if (f1Err || f2Err || cErr || aErr) {
-    const statsErr =
-      f1Err ?? f2Err ?? cErr ?? aErr ?? new Error("Unknown stats error");
-    return logError(500, "Unable to load profile statistics", log, statsErr);
-  }
-
-  // 3) Meta
-  const origin = url.origin; // SSR-safe
-  const canonical = `${origin}/user/${username}`;
-  const ogImage = `${origin}/api/og/profile/${username}`;
-
-  const description = buildProfileDescription(profile, {
-    cubesCount: cubesCount ?? 0,
-    achievementsCount: achievementsCount ?? 0,
-    followersCount: followersCount ?? 0,
-    followingCount: followingCount ?? 0,
-  });
-
-  // Avatar preload (Cloudinary fetch). If no avatar, you can point to a placeholder.
-  const avatarSrc =
-    profile.profile_picture ?? `${origin}/images/avatar-placeholder.png`; // change if you have a different placeholder
-
-  const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256,h_256,c_fill/${encodeURIComponent(
-    avatarSrc,
-  )}`;
 
   return {
-    profile: profile as Profiles,
+    profile,
     following,
-    stats: { cubesCount, achievementsCount, followersCount, followingCount },
+    stats: {
+      cubesCount: profile.user_cubes_count,
+      achievementsCount: profile.user_achievements_count,
+      followersCount: profile.user_follower_count,
+      followingCount: profile.user_following_count,
+    },
     meta: {
-      title: `${profile.display_name || profile.username} (@${
-        profile.username
-      }) - CubeIndex`,
-      description,
-      canonical,
-      ogImage,
-      preloadImage,
+      title: `${profile.display_name}'s Profile - CubeIndex`,
+      description: `View ${profile.display_name} (@${profile.username}) on CubeIndex. Explore their cube collection, ratings, reviews, and recent activity.`,
+      ogImage: `${url.origin}/api/og/profile/${username}`,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        dateCreated: profile.created_at,
+        url: `${url.origin}/user/${username}`,
+        mainEntity: {
+          "@type": "Person",
+          name: profile.display_name,
+          alternateName: profile.username,
+          identifier: profile.id,
+          interactionStatistic: [
+            {
+              "@type": "InteractionCounter",
+              interactionType: "https://schema.org/FollowAction",
+              userInteractionCount: profile.user_follower_count,
+            },
+          ],
+          agentInteractionStatistic: {
+            "@type": "InteractionCounter",
+            interactionType: "https://schema.org/WriteAction",
+            userInteractionCount: profile.cube_reviews_count,
+          },
+          description: profile.bio
+            ? removeMarkdown(profile.bio)
+            : `View ${profile.display_name} (@${profile.username}) on CubeIndex. Explore their cube collection, ratings, reviews, and recent activity.`,
+          image: profile.profile_picture ? profile.profile_picture : undefined,
+          url: `${url.origin}/user/${username}`,
+        },
+      },
     },
   };
 }) satisfies LayoutServerLoad;

@@ -65,5 +65,11 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
 
   const eventPhase = getEventPhase(event);
 
-  return { event, eventPhase, categories, winners };
+  return {
+    event,
+    eventPhase,
+    categories,
+    winners,
+    meta: { title: `${event.title} Results - CubeIndex Awards` },
+  };
 }) satisfies PageServerLoad;

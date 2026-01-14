@@ -62,10 +62,6 @@
   });
 </script>
 
-<svelte:head>
-  <title>{profile.display_name}'s Socials - CubeIndex</title>
-</svelte:head>
-
 <div class="max-w-6xl mx-auto mt-12 px-4">
   <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>

@@ -39,9 +39,6 @@
   }
 </script>
 
-<svelte:head>
-  <title>Explore Vendors - CubeIndex</title>
-</svelte:head>
 <section class="min-h-screen bg-base-100 px-6 py-16">
   <div class="max-w-6xl mx-auto">
     <h1 class="text-4xl sm:text-5xl font-clash font-bold mb-10 text-center">

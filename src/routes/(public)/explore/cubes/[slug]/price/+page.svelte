@@ -10,13 +10,9 @@
 
   let { data } = $props();
   let {
-    cube = {} as DetailedCube,
     vendor_links = [] as CubeVendorLinks[],
     per_vendor_history,
   } = $derived(data);
-
-  // Page title
-  const pageTitle = $derived(`${cube.name} - Price Tracking`);
 
   // Formatting helpers
   const nf = (currency?: string) =>
@@ -126,14 +122,6 @@
     };
   }
 </script>
-
-<svelte:head>
-  <title>{pageTitle}</title>
-  <meta
-    name="description"
-    content="Historical price tracking across vendors for this cube."
-  />
-</svelte:head>
 
 <div class="space-y-8">
   <!-- Vendor grid -->

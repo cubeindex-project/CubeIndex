@@ -33,5 +33,9 @@ export const load = (async ({ params, locals }) => {
 
   const stats: UserStats = data || {};
 
-  return { profile, stats };
+  return {
+    profile,
+    stats,
+    meta: { title: `${profile.display_name}'s Statistics - CubeIndex` },
+  };
 }) satisfies PageServerLoad;

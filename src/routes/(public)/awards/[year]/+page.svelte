@@ -48,9 +48,6 @@
   const resultLocked = eventPhase !== "past";
 </script>
 
-<svelte:head>
-  <title>{event.title} Results - CubeIndex Awards</title>
-</svelte:head>
 <section class="relative isolate overflow-hidden bg-base-100">
   <div aria-hidden="true" class="absolute inset-0">
     <div

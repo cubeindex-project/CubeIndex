@@ -1,12 +1,9 @@
 import type { UserFollowsRow } from "$lib/components/dbTableTypes";
-import type { PageLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
-import { clientLogError } from "$lib/logger/clientLogError";
-import { clientLogger } from "$lib/logger/client";
+import { logError } from "$lib/server/logError";
+import type { PageServerLoad } from "./$types";
 
-
-export const load = (async ({ parent }) => {
-  const { profile, user } = await parent();
+export const load = (async ({ parent, locals: { supabase, log, user } }) => {
+  const { profile } = await parent();
 
   const [
     { data: followingId, error: followingErr },
@@ -23,18 +20,10 @@ export const load = (async ({ parent }) => {
   ]);
 
   if (followingErr) {
-    return clientLogError(
-      "Unable to load following list",
-      clientLogger,
-      followingErr
-    );
+    return logError(500, "Unable to load following list", log, followingErr);
   }
   if (followedErr) {
-    return clientLogError(
-      "Unable to load follower list",
-      clientLogger,
-      followedErr
-    );
+    return logError(500, "Unable to load follower list", log, followedErr);
   }
 
   const following = followingId.map((ingId) => {
@@ -57,11 +46,7 @@ export const load = (async ({ parent }) => {
       .eq("following_id", profile.user_id);
 
     if (followErr) {
-      return clientLogError(
-        "Unable to check follow status",
-        clientLogger,
-        followErr
-      );
+      return logError(500, "Unable to check follow status", log, followErr);
     }
     currentFollowingUser = data;
   }
@@ -70,5 +55,8 @@ export const load = (async ({ parent }) => {
     following,
     followers,
     isFollowing: currentFollowingUser.length !== 1,
+    meta: {
+        title: `${profile.display_name}'s Socials - CubeIndex`
+    }
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

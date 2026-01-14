@@ -22,10 +22,6 @@
   }
 </script>
 
-<svelte:head>
-  <title>{pageTitle}</title>
-</svelte:head>
-
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
   <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>

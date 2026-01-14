@@ -98,5 +98,9 @@ export const load = (async ({ locals }) => {
     recent: {
       submissions: recentSubmissions as DetailedCube[],
     },
+    meta: {
+      title: "Dashboard - CubeIndex",
+      noindex: true
+    }
   };
 }) satisfies PageServerLoad;

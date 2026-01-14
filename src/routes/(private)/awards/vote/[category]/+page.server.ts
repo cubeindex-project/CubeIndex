@@ -24,11 +24,11 @@ export const load = (async ({
   if (acErr) {
     log.error(
       { err: acErr },
-      "An error occured while fetching the current event category"
+      "An error occured while fetching the current event category",
     );
     throw error(
       500,
-      "An error occured while fetching the current event category"
+      "An error occured while fetching the current event category",
     );
   }
 
@@ -45,11 +45,11 @@ export const load = (async ({
   if (anErr) {
     log.error(
       { err: anErr },
-      "An error occured while fetching nominees for the current category"
+      "An error occured while fetching nominees for the current category",
     );
     throw error(
       500,
-      "An error occured while fetching nominees for the current category"
+      "An error occured while fetching nominees for the current category",
     );
   }
 
@@ -70,16 +70,24 @@ export const load = (async ({
     if (auvErr) {
       log.error(
         { err: auvErr },
-        "An error occured while fetching the user vote for the current category"
+        "An error occured while fetching the user vote for the current category",
       );
       throw error(
         500,
-        "An error occured while fetching the user vote for the current category"
+        "An error occured while fetching the user vote for the current category",
       );
     }
 
     user_vote = data?.nominee_id ?? null;
   }
 
-  return { awards_category, awards_nominee, user_vote };
+  return {
+    awards_category,
+    awards_nominee,
+    user_vote,
+    meta: {
+      title: `${awards_category.name} - Awards Ballot`,
+      noindex: true
+    },
+  };
 }) satisfies PageServerLoad;

@@ -124,10 +124,6 @@
   }
 </script>
 
-<svelte:head>
-  <title>Achievements - CubeIndex</title>
-</svelte:head>
-
 {#snippet filterContents()}
   <div>
     <label class="block text-sm mb-1">

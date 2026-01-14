@@ -4,18 +4,19 @@ import { logError } from "$lib/server/logError";
 import type { Cube } from "$lib/components/dbTableTypes";
 
 type SubmissionCube = Cube & {
-	verified_at: string | null;
-	submitted_by_id: string;
-	verified_by_id: string | null;
+  verified_at: string | null;
+  submitted_by_id: string;
+  verified_by_id: string | null;
 };
 
 export const load = (async ({ locals }) => {
-	const { supabase, user, log } = locals;
-	if (!user) throw redirect(302, "/auth/login");
+  const { supabase, user, log } = locals;
+  if (!user) throw redirect(302, "/auth/login");
 
-	const { data, error } = await supabase
-		.from("cube_models")
-		.select(`
+  const { data, error } = await supabase
+    .from("cube_models")
+    .select(
+      `
 			id,
 			slug,
 			brand,
@@ -37,26 +38,26 @@ export const load = (async ({ locals }) => {
 			status,
 			notes,
 			verified_at
-		`)
-		.eq("submitted_by_id", user.id)
-		.order("created_at", { ascending: false })
-		.limit(100);
+		`,
+    )
+    .eq("submitted_by_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(100);
 
-	if (error) {
-		return logError(
-			500,
-			"Failed to load your cube submissions",
-			log,
-			error
-		);
-	}
+  if (error) {
+    return logError(500, "Failed to load your cube submissions", log, error);
+  }
 
-	const submissions = (data ?? []).map((cube) => ({
-		...cube,
-		verified_at: cube.verified_at ?? null,
-	})) satisfies SubmissionCube[];
+  const submissions = (data ?? []).map((cube) => ({
+    ...cube,
+    verified_at: cube.verified_at ?? null,
+  })) satisfies SubmissionCube[];
 
-	return {
-		submissions,
-	};
+  return {
+    submissions,
+    meta: {
+      title: "My Submissions - CubeIndex",
+	  noindex: true
+    },
+  };
 }) satisfies PageServerLoad;

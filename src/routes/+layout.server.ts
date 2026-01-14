@@ -53,6 +53,7 @@ export const load: LayoutServerLoad = async ({
       url: url.origin,
       twitterCard: "summary_large_image",
       googleSiteVerification: "LeqQ-VZhIWm9luPXxKl2DWIb48Udb94UIZclWUjOevE",
+      noindex: false
     } as Meta,
   };
 };

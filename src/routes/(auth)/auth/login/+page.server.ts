@@ -15,6 +15,9 @@ const schema = z.object({
 export const load = async () => {
   return {
     form: await superValidate(zod4(schema)),
+    meta: {
+      title: "Login - CubeIndex"
+    }
   };
 };
 

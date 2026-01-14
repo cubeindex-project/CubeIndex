@@ -67,6 +67,10 @@
 
   <meta name="google-site-verification" content={meta.googleSiteVerification} />
 
+  {#if meta.noindex}
+    <meta name="robots" content="noindex" />
+  {/if}
+
   {#if umamiTag}
     <script
       defer

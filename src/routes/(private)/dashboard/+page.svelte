@@ -48,11 +48,6 @@
   };
 </script>
 
-<svelte:head>
-  <title>Dashboard - CubeIndex</title>
-  <meta name="robots" content="noindex" />
-</svelte:head>
-
 <div class="mx-auto max-w-6xl px-4 py-8">
   <header class="mb-8">
     <div class="flex md:items-center gap-4 flex-col justify-start md:flex-row">

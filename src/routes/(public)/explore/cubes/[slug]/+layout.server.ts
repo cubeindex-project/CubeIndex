@@ -115,10 +115,7 @@ export const load = (async ({
     `. ` +
     (cube.low_price != null
       ? `Prices start at $${cube.low_price}. `
-      : `Price data is not available yet. `) +
-    (cube.rating_count > 0 && cube.rating != null
-      ? `It holds an average rating of ${cube.rating}/5 from ${cube.rating_count} rating${cube.rating_count === 1 ? "" : "s"}.`
-      : `It has no ratings yet, be the first to rate it on CubeIndex.`);
+      : "");
   const image = `/api/og/cube/${cube.slug}`;
   const offers = cube_vendor_links.map((offer) => {
     return {
@@ -169,7 +166,7 @@ export const load = (async ({
                 ratingValue: cube.rating,
                 ratingCount: cube.rating_count,
               }
-            : {},
+            : undefined,
         offers:
           vendorRes.data.length > 0
             ? {
@@ -179,7 +176,7 @@ export const load = (async ({
                 priceCurrency: "USD",
                 offers,
               }
-            : {},
+            : undefined,
       },
     },
   };

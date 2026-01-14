@@ -45,5 +45,8 @@ export const load = (async ({ setHeaders, parent }) => {
   return {
     achievements,
     currentUserAchi,
+    meta: {
+      title: "Achievements - CubeIndex"
+    }
   };
 }) satisfies PageLoad;

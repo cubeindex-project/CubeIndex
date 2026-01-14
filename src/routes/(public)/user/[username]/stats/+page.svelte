@@ -129,10 +129,6 @@
   });
 </script>
 
-<svelte:head>
-  <title>{profile.display_name}'s Statistics - CubeIndex</title>
-</svelte:head>
-
 <section class="relative max-w-6xl mx-auto mt-12 px-4 space-y-8">
   <header class="space-y-2">
     <div

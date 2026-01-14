@@ -25,5 +25,8 @@ export const load = (async ({ setHeaders }) => {
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { vendors: sortedVendors };
+  return {
+    vendors: sortedVendors,
+    meta: { title: "Explore Vendors - CubeIndex" },
+  };
 }) satisfies PageLoad;

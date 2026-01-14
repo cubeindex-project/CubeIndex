@@ -40,7 +40,7 @@ const passwordSchema = z.object({
     .min(8, "The new password must have more than 8 characters"),
 });
 
-export const load = (async ({ locals, setHeaders }) => {
+export const load = (async ({ locals, url }) => {
   const { user } = await locals.safeGetSession();
 
   const { data: profile, error: err } = await locals.supabase
@@ -71,11 +71,11 @@ export const load = (async ({ locals, setHeaders }) => {
 
   const passwordForm = await superValidate(zod4(passwordSchema));
 
-  setHeaders({
-    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
-  });
+  const tab = url.search.slice(5)
 
-  return { profile, profileForm, socialForm, passwordForm };
+  return { profile, profileForm, socialForm, passwordForm, meta: {
+    title: `${tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex`
+  } };
 }) satisfies PageServerLoad;
 
 /** @satisfies {Actions} */

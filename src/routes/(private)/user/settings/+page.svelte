@@ -275,11 +275,6 @@
   let passwordDirty: boolean = $derived(passwordIsTainted());
 </script>
 
-<svelte:head>
-  <title>
-    {tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex
-  </title>
-</svelte:head>
 <section class="px-4 py-8 min-h-screen">
   <div class="max-w-6xl mx-auto">
     <div class="mb-6">

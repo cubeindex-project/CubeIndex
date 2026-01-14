@@ -21,5 +21,11 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
     awards_category = data.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  return { awards_category };
+  return {
+    awards_category,
+    meta: {
+      title: "Awards Voting - CubeIndex",
+      noindex: true,
+    },
+  };
 }) satisfies PageServerLoad;

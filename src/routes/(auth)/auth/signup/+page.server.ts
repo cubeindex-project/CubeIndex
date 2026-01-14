@@ -59,6 +59,9 @@ export const actions: Actions = {
         ...form,
         message: "Please verify your email to continue with your signup.",
       },
+      meta: {
+        title: "Signup - CubeIndex"
+      }
     };
   },
 

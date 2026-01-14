@@ -591,3 +591,37 @@ export interface DetailedUserCubeReview {
 
   helpful_count: number;
 }
+
+export interface DetailedProfiles {
+  id: number; // profiles.id (likely bigint identity)
+  created_at: string; // timestamp/timestamptz ISO string
+  user_id: string; // uuid
+  username: string;
+  private: boolean;
+  profile_picture: string | null;
+  bio: string | null;
+
+  // If socials is json/jsonb in Postgres, keep it flexible.
+  socials: Record<string, unknown> | null;
+
+  banner: string | null;
+  verified: boolean;
+  certified: boolean;
+
+  // If role is a Postgres enum, replace `string` with a union type.
+  role: string;
+
+  display_name: string;
+  onboarded: boolean;
+
+  // COALESCE(..., 0::bigint)
+  user_cubes_count: number;
+  user_achievements_count: number;
+  user_following_count: number;
+  user_follower_count: number;
+  user_cube_ratings_count: number;
+  cube_reviews_count: number;
+
+  // COALESCE(..., 0::double precision)
+  user_avg_rating_count: number;
+}

@@ -98,10 +98,6 @@
   });
 </script>
 
-<svelte:head>
-  <title>{profile.display_name}'s Achievements - CubeIndex</title>
-</svelte:head>
-
 <div class="relative mx-auto mt-12 max-w-6xl px-4">
   <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>

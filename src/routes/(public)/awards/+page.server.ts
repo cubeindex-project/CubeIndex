@@ -87,5 +87,8 @@ export const load = (async ({ locals: { supabase, log } }) => {
     previous_events,
     logoDesigner,
     partners: AWARDS_PARTNERS,
+    meta: {
+      title: "CubeIndex Awards",
+    },
   };
 }) satisfies PageServerLoad;

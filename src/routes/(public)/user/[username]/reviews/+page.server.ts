@@ -24,5 +24,8 @@ export const load = (async ({ parent, locals: { log } }) => {
     logError(500, "Failed to fetch user reviews", log, reviewErr);
   }
 
-  return { reviews: reviewsRaw as UserReviewWithCube[] };
+  return {
+    reviews: reviewsRaw as UserReviewWithCube[],
+    meta: { title: `${profile.display_name}'s Reviews - CubeIndex` },
+  };
 }) satisfies PageServerLoad;

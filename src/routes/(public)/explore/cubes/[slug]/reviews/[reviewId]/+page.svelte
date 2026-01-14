@@ -6,8 +6,7 @@
 
   let { data }: { data: PageData } = $props();
   let { cube, review } = $derived(data);
-
-  const pageTitle = $derived(`${cube.name} - Review`);
+  
   const reviewText = $derived(review.review.trim());
 
   const ratingsEntries = $derived.by(() =>
@@ -53,10 +52,6 @@
     }
   }
 </script>
-
-<svelte:head>
-  <title>{pageTitle}</title>
-</svelte:head>
 
 <section class="space-y-6">
   <header class="space-y-3">

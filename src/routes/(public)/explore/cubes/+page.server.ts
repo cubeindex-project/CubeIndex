@@ -48,5 +48,5 @@ export const load: PageServerLoad = async ({ locals, setHeaders }) => {
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { cubes };
+  return { cubes, meta: { title: "Explore Cubes - CubeIndex" } };
 };

@@ -5,12 +5,6 @@
   let { data } = $props();
   let { cube = {} as DetailedCube, user_cube_ratings = [] as any[] } =
     $derived(data);
-
-  const pageTitle = $derived(`${cube.name} - Ratings`);
 </script>
-
-<svelte:head>
-  <title>{pageTitle}</title>
-</svelte:head>
 
 <UserRatings {user_cube_ratings} {cube} />

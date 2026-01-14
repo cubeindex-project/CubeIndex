@@ -1,13 +1,16 @@
 <script lang="ts">
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import type { PageData } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   let { profile, reviews } = $derived(data);
 
   const MAX_SUMMARY_CHARS = 200;
 
-  const pageTitle = $derived(`${profile.display_name}'s Reviews - CubeIndex`);
+  const pageTitle = $derived(
+    m.user_reviews_page_title_text({ name: profile.display_name })
+  );
   const reviewCount = $derived(reviews.length);
 
   function getSummary(review: string) {
@@ -30,10 +33,10 @@
   <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>
       <h1 class="text-2xl font-extrabold tracking-tight">
-        {profile.display_name}'s reviews
+        {m.user_reviews_heading_h1({ name: profile.display_name })}
       </h1>
       <p class="text-sm text-base-content/70">
-        {reviewCount} review{reviewCount === 1 ? "" : "s"}
+        {m.user_reviews_count_text({ count: reviewCount })}
       </p>
     </div>
   </header>
@@ -86,7 +89,7 @@
                     <div
                       class="mt-0.5 flex flex-wrap items-center gap-2 text-xs opacity-70"
                     >
-                      <span title="Last update">
+                      <span title={m.user_reviews_last_update_title()}>
                         {formatDate(review.updated_at ?? review.created_at)}
                       </span>
                     </div>
@@ -97,10 +100,10 @@
                   <a
                     href="/explore/cubes/{review.cube}/reviews/{review.id}"
                     class="btn btn-sm btn-primary btn-outline"
-                    aria-label="Open full review"
+                    aria-label={m.user_reviews_open_full_review_aria()}
                   >
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span>Read</span>
+                    <span>{m.user_reviews_read_cta()}</span>
                   </a>
                 </div>
               </header>
@@ -120,7 +123,7 @@
                       href="/explore/cubes/{review.cube}/reviews/{review.id}"
                       class="link link-primary text-sm"
                     >
-                      Read more
+                      {m.user_reviews_read_more_cta()}
                     </a>
                   </div>
                 {/if}
@@ -132,9 +135,11 @@
     {:else}
       <div class="flex flex-col items-center justify-center py-20">
         <i class="fa-solid fa-comment-dots fa-3x mb-4"></i>
-        <h2 class="text-2xl font-semibold mb-2">No reviews yet</h2>
+        <h2 class="text-2xl font-semibold mb-2">
+          {m.user_reviews_empty_title_h2()}
+        </h2>
         <p class="mb-6 text-center max-w-xs text-base-content/70">
-          This user hasn't published any reviews yet.
+          {m.user_reviews_empty_description_text()}
         </p>
       </div>
     {/if}

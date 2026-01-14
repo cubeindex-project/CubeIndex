@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import type { Profiles } from "../dbTableTypes";
 
   type ProfileAvatar = Pick<Profiles, "display_name" | "profile_picture">;
@@ -13,7 +14,7 @@
 {#if profile.profile_picture}
   <img
     src={profile.profile_picture}
-    alt="Avatar"
+    alt={m.user_avatar_alt()}
     class="rounded-2xl border-4 border-primary bg-black {imgSize} object-cover"
     loading="eager"
   />

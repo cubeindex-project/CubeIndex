@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { blur } from "svelte/transition";
   import type { Snippet } from "svelte";
 
@@ -26,7 +27,7 @@
       transition:blur
     >
       <div class="flex items-center justify-between mb-4">
-        <span class="font-semibold text-lg">Filters</span>
+        <span class="font-semibold text-lg">{m.misc_filter_sidebar_title()}</span>
       </div>
       <div class="flex flex-col gap-4">
         {@render children()}

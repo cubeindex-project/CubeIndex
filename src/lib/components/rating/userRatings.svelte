@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import UserRatingCard from "./userRatingCard.svelte";
   import Pagination from "../misc/pagination.svelte";
   import type { DetailedCube } from "../dbTableTypes";
@@ -68,14 +69,14 @@
   <div class="flex flex-row justify-between w-full mb-5 items-center">
     <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
       <i class="fa-solid fa-star"></i>
-      User Ratings
+      {m.user_ratings_heading_text()}
     </h2>
   </div>
 
   {#if user_cube_ratings.length}
     <div class="mb-5">
       <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-        {user_cube_ratings.length} total ratings
+        {m.user_ratings_total_text({ count: user_cube_ratings.length })}
       </p>
 
       {#each stats as { rating, pct }}
@@ -84,7 +85,7 @@
             onclick={() => (filterRating = rating)}
             class="link link-primary link-hover"
           >
-            {rating} star
+            {m.user_ratings_star_filter_label({ rating })}
           </button>
 
           <div class="w-2/4 h-5 mx-4 bg-gray-200 rounded-sm dark:bg-gray-700">
@@ -102,22 +103,24 @@
     </div>
 
     <SearchBar
-      placeholderLabel="Search Ratings"
+      placeholderLabel={m.user_ratings_search_placeholder()}
       showFilter={false}
       bind:searchTerm
     />
 
     {#if filterRating !== undefined}
       <div class="mb-2">
-        You are only showing ratings between {filterRating} and {filterRating +
-          1} stars.
+        {m.user_ratings_filter_range_text({
+          minRating: filterRating,
+          maxRating: filterRating + 1,
+        })}
         <button
           class="link link-primary link-hover"
           onclick={() => {
             resetFilters();
           }}
         >
-          See all
+          {m.user_ratings_filter_reset_label()}
         </button>
       </div>
     {/if}
@@ -135,20 +138,21 @@
           class="col-span-full flex flex-col items-center justify-center py-20"
         >
           <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">No ratings found</h2>
+          <h2 class="text-2xl font-semibold mb-2">
+            {m.user_ratings_empty_title_h2()}
+          </h2>
           <p class="mb-6 text-center max-w-xs">
-            We couldn't find any ratings matching your filter. Try adjusting it
-            or resetting to see everything.
+            {m.user_ratings_empty_description_text()}
           </p>
           <button
             class="btn btn-outline flex items-center"
-            aria-label="Reset filters"
+            aria-label={m.user_ratings_reset_filters_aria()}
             onclick={() => {
               resetFilters();
             }}
           >
             <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-            Reset
+            {m.user_ratings_reset_filters_cta()}
           </button>
         </div>
       {/each}
@@ -158,7 +162,7 @@
     </div>
   {:else}
     <div class="text-center italic text-gray-500">
-      No user ratings yet. Be the first to rate this cube!
+      {m.user_ratings_empty_state_text()}
     </div>
   {/if}
 </div>

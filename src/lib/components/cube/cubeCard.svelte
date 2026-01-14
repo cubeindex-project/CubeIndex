@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import AddCube from "./addCube.svelte";
   import RateCube from "../rating/rateCube.svelte";
   import type { DetailedCube } from "../dbTableTypes";
@@ -44,7 +45,7 @@
       <div
         class="absolute top-4 right-[-32px] transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
       >
-        NEW
+        {m.cube_card_new_label()}
       </div>
     {/if}
   </div>
@@ -77,9 +78,9 @@
     <a
       href="/explore/cubes/{cube.slug}"
       class="btn btn-primary mt-4"
-      aria-label="View Cube Details"
+      aria-label={m.cube_card_view_details_aria()}
     >
-      View Details
+      {m.cube_card_view_details_cta()}
       <i class="fa-solid fa-arrow-right"></i>
     </a>
   {/if}

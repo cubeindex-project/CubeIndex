@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   /**
    * Popover content for Explore menu.
    * Renders the same cards previously shown on /explore.
@@ -16,50 +18,50 @@
     {
       href: "cubes",
       icon: "🧊",
-      title: "Cubes",
+      title: m.explore_popover_cubes_title(),
       description:
-        "Browse thousands of cubes by brand, type, and community rating.",
+        m.explore_popover_cubes_description(),
     },
     {
       href: "vendors",
       icon: "🏬",
-      title: "Vendors",
+      title: m.explore_popover_vendors_title(),
       description:
-        "Find trusted cube shops and compare prices from top vendors worldwide.",
+        m.explore_popover_vendors_description(),
     },
     {
       href: "users",
       icon: "🧍",
-      title: "Users",
+      title: m.explore_popover_users_title(),
       description:
-        "Explore user profiles, discover top solvers, and see community activity.",
+        m.explore_popover_users_description(),
     },
     {
       href: "achievements",
       icon: "🏅",
-      title: "Achievements",
+      title: m.explore_popover_achievements_title(),
       description:
-        "Browse achievements, and track community unlock progress.",
+        m.explore_popover_achievements_description(),
     },
   ];
 </script>
 
 <div
   role="menu"
-  aria-label="Explore Menu"
+  aria-label={m.explore_popover_menu_aria()}
   {id}
   class="w-[90vw] max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5 shadow-xl"
 >
   <div class="mb-3 flex items-baseline justify-between">
     <h2 class="text-sm font-semibold tracking-wide text-base-content/80">
-      Explore Database
+      {m.explore_popover_heading_text()}
     </h2>
     <a
       href="/explore"
       class="text-xs text-base-content/60 hover:text-primary transition inline-flex items-center gap-1"
-      aria-label="View all explore options"
+      aria-label={m.explore_popover_view_all_aria()}
     >
-      View all
+      {m.explore_popover_view_all_label()}
       <i class="fa-solid fa-arrow-right text-[11px]"></i>
     </a>
   </div>
@@ -87,7 +89,7 @@
             <span
               class="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-primary"
             >
-              Explore
+              {m.explore_popover_card_cta()}
               <i
                 class="fa-solid fa-arrow-right translate-x-0 group-hover:translate-x-0.5 transition-transform"
               ></i>
@@ -102,17 +104,17 @@
   >
     <div class="min-w-0">
       <p class="text-sm font-semibold text-base-content">
-        Missing a cube?
+        {m.explore_popover_missing_cube_title()}
       </p>
       <p class="text-xs text-base-content/70">
-        Submit models that are not in the catalog and help keep CubeIndex updated.
+        {m.explore_popover_missing_cube_description()}
       </p>
     </div>
     <a class="btn btn-primary btn-sm" href="/submit">
       <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-      <span class="hidden sm:inline">Submit a cube</span>
-      <span class="sm:hidden">Submit</span>
+      <span class="hidden sm:inline">{m.explore_popover_submit_cube_cta()}</span>
+      <span class="sm:hidden">{m.explore_popover_submit_cta()}</span>
     </a>
   </div>
-  <p class="sr-only">Use arrow keys to navigate options</p>
+  <p class="sr-only">{m.explore_popover_keyboard_hint_text()}</p>
 </div>

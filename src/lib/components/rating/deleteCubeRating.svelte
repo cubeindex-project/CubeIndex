@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { blur } from "svelte/transition";
 
   let { cube_slug, onCancel }: { cube_slug: string; onCancel: () => void } =
@@ -32,8 +33,10 @@
   class="absolute -translate-x-1/2 mt-2 z-50 bg-base-100 p-6 rounded-xl w-80 shadow-xl"
   transition:blur
 >
-  <h3 class="font-bold text-lg mb-2">Are you sure?</h3>
-  <p class="mb-4">Do you really want to delete this rating?</p>
+  <h3 class="font-bold text-lg mb-2">
+    {m.rating_delete_confirm_title()}
+  </h3>
+  <p class="mb-4">{m.rating_delete_confirm_description()}</p>
   <div class="flex gap-2">
     <button
       class="btn btn-error flex-1"
@@ -46,15 +49,15 @@
     >
       {#if loading}
         <span class="loading loading-spinner"></span>
-        Deleting...
+        {m.rating_delete_loading_text()}
       {:else if success}
-        Deleted!
+        {m.rating_delete_success_text()}
       {:else}
-        Yes, Delete
+        {m.rating_delete_confirm_cta()}
       {/if}
     </button>
     <button class="btn btn-ghost flex-1" type="button" onclick={onCancel}>
-      Cancel
+      {m.rating_delete_cancel_cta()}
     </button>
   </div>
 </div>

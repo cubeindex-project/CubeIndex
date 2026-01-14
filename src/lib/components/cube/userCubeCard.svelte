@@ -1,6 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { DetailedCube, UserCubes } from "../dbTableTypes";
+  import { m } from "$lib/paraglide/messages";
+  import type {
+    DetailedCube,
+    UserCubeCondition,
+    UserCubes,
+    UserCubeStatus,
+  } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { supabase } from "$lib/supabaseClient";
@@ -59,6 +65,24 @@
 
   let vendors: { slug: string; name: string }[] = $state([]);
 
+  const statusLabels: Record<UserCubeStatus, string> = {
+    Owned: m.cube_status_owned_label(),
+    Wishlist: m.cube_status_wishlist_label(),
+    Loaned: m.cube_status_loaned_label(),
+    Borrowed: m.cube_status_borrowed_label(),
+    Lost: m.cube_status_lost_label(),
+  };
+
+  const conditionLabels: Record<UserCubeCondition, string> = {
+    "New in box": m.cube_condition_new_in_box_label(),
+    New: m.cube_condition_new_label(),
+    Good: m.cube_condition_good_label(),
+    Fair: m.cube_condition_fair_label(),
+    Worn: m.cube_condition_worn_label(),
+    Poor: m.cube_condition_poor_label(),
+    Broken: m.cube_condition_broken_label(),
+  };
+
   async function getVendors() {
     try {
       const { data, error } = await supabase
@@ -86,13 +110,12 @@
 
     if (purchase_price !== null) {
       if (!Number.isFinite(purchase_price) || purchase_price < 0) {
-        formMessage =
-          "Price must be a valid number greater than or equal to 0.";
+        formMessage = m.cube_user_card_price_invalid_text();
         isSubmitting = false;
         return;
       }
       if (purchase_price > 100000) {
-        formMessage = "Price seems too high. Please double-check.";
+        formMessage = m.cube_user_card_price_too_high_text();
         isSubmitting = false;
         return;
       }
@@ -159,15 +182,18 @@
   {#if mode === "view"}
     {#if user_details.main}
       <div class="absolute left-3 top-3">
-        <div class="badge badge-ghost gap-1" title="Main cube">
+        <div class="badge badge-ghost gap-1" title={m.cube_user_card_main_title()}>
           <i class="fa-solid fa-thumbtack"></i>
-          Main
+          {m.cube_user_card_main_label()}
         </div>
       </div>
     {/if}
     {#if user_details.quantity > 1}
       <div class="absolute right-3 top-3">
-        <div class="badge badge-primary badge-lg gap-1" title="Quantity">
+        <div
+          class="badge badge-primary badge-lg gap-1"
+          title={m.cube_user_card_quantity_title()}
+        >
           <i class="fa-solid fa-layer-group"></i>
           x{user_details.quantity}
         </div>
@@ -178,10 +204,10 @@
       <button
         class="btn btn-error btn-sm"
         onclick={remove}
-        aria-label="Remove from collection"
+        aria-label={m.cube_user_card_remove_aria()}
       >
         <i class="fa-solid fa-trash"></i>
-        Remove
+        {m.cube_user_card_remove_cta()}
       </button>
     </div>
   {/if}
@@ -191,42 +217,60 @@
     <div class="mt-4">
       <div class="flex flex-wrap gap-2 items-center">
         {#if user_rating > 0}
-          <div class="badge badge-warning badge-lg gap-1 text-black" title="Your rating">
+          <div
+            class="badge badge-warning badge-lg gap-1 text-black"
+            title={m.cube_user_card_rating_title()}
+          >
             <i class="fa-solid fa-star"></i>
             {user_rating}
           </div>
         {/if}
 
         {#if user_details.status}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Status">
+          <div
+            class="badge badge-lg gap-1 bg-base-300"
+            title={m.cube_user_card_status_title()}
+          >
             <i class="fa-solid fa-clipboard-check"></i>
-            {user_details.status}
+            {statusLabels[user_details.status]}
           </div>
         {/if}
 
         {#if user_details.condition}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Condition">
+          <div
+            class="badge badge-lg gap-1 bg-base-300"
+            title={m.cube_user_card_condition_title()}
+          >
             <i class="fa-solid fa-cube"></i>
-            {user_details.condition}
+            {conditionLabels[user_details.condition]}
           </div>
         {/if}
 
         {#if user_details.bought_from}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Bought from">
+          <div
+            class="badge badge-lg gap-1 bg-base-300"
+            title={m.cube_user_card_bought_from_title()}
+          >
             <i class="fa-solid fa-store"></i>
             {user_details.vendor.name}
           </div>
         {/if}
 
         {#if user_details.purchase_price !== null}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Purchase price">
+          <div
+            class="badge badge-lg gap-1 bg-base-300"
+            title={m.cube_user_card_purchase_price_title()}
+          >
             <i class="fa-solid fa-tag"></i>
             {currencyFormatter.format(user_details.purchase_price)}
           </div>
         {/if}
 
         {#if user_details.acquired_at}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Acquired on">
+          <div
+            class="badge badge-lg gap-1 bg-base-300"
+            title={m.cube_user_card_acquired_on_title()}
+          >
             <i class="fa-solid fa-calendar-day"></i>
             {formatDate(user_details.acquired_at)}
           </div>
@@ -249,7 +293,9 @@
     >
       <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
         <label class="form-control">
-          <span class="label-text font-semibold">Quantity</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_quantity_label()}
+          </span>
           <input
             id="quantity"
             name="quantity"
@@ -263,7 +309,9 @@
         </label>
 
         <label class="form-control">
-          <span class="label-text font-semibold">Status</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_status_label()}
+          </span>
           <select
             id="status"
             name="status"
@@ -271,16 +319,18 @@
             class="select select-bordered w-full"
             required
           >
-            <option value="Owned">Owned</option>
-            <option value="Wishlist">Wishlist</option>
-            <option value="Loaned">Loaned</option>
-            <option value="Borrowed">Borrowed</option>
-            <option value="Lost">Lost</option>
+            <option value="Owned">{m.cube_status_owned_label()}</option>
+            <option value="Wishlist">{m.cube_status_wishlist_label()}</option>
+            <option value="Loaned">{m.cube_status_loaned_label()}</option>
+            <option value="Borrowed">{m.cube_status_borrowed_label()}</option>
+            <option value="Lost">{m.cube_status_lost_label()}</option>
           </select>
         </label>
 
         <label class="form-control">
-          <span class="label-text font-semibold">Condition</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_condition_label()}
+          </span>
           <select
             id="condition"
             name="condition"
@@ -288,25 +338,29 @@
             class="select select-bordered w-full"
             required
           >
-            <option value="New in box">New in box</option>
-            <option value="New">New</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Worn">Worn</option>
-            <option value="Poor">Poor</option>
-            <option value="Broken">Broken</option>
+            <option value="New in box">
+              {m.cube_condition_new_in_box_label()}
+            </option>
+            <option value="New">{m.cube_condition_new_label()}</option>
+            <option value="Good">{m.cube_condition_good_label()}</option>
+            <option value="Fair">{m.cube_condition_fair_label()}</option>
+            <option value="Worn">{m.cube_condition_worn_label()}</option>
+            <option value="Poor">{m.cube_condition_poor_label()}</option>
+            <option value="Broken">{m.cube_condition_broken_label()}</option>
           </select>
         </label>
 
         <label class="form-control">
-          <span class="label-text font-semibold">Bought From</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_bought_from_label()}
+          </span>
           <select
             id="bought_from"
             name="bought_from"
             bind:value={bought_from}
             class="select select-bordered w-full"
           >
-            <option value={null}>None</option>
+            <option value={null}>{m.cube_user_card_bought_from_none_label()}</option>
             {#each vendors as vendor}
               <option value={vendor.slug}>{vendor.name}</option>
             {/each}
@@ -314,7 +368,9 @@
         </label>
 
         <label class="form-control">
-          <span class="label-text font-semibold">Purchase Price</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_purchase_price_label()}
+          </span>
           <label class="input input-bordered flex items-center gap-2 rounded-xl">
             <span aria-hidden="true">$</span>
             <input
@@ -324,7 +380,7 @@
               min="0"
               max="100000"
               step="0.01"
-              placeholder="0.00"
+              placeholder={m.cube_user_card_purchase_price_placeholder()}
               bind:value={purchase_price}
               class="grow"
               inputmode="decimal"
@@ -333,18 +389,22 @@
         </label>
 
         <label class="form-control md:col-span-2">
-          <span class="label-text font-semibold">Notes</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_notes_label()}
+          </span>
           <textarea
             id="notes"
             name="notes"
-            placeholder="Any special notes..."
+            placeholder={m.cube_user_card_notes_placeholder()}
             bind:value={notes}
             class="textarea textarea-bordered rounded-2xl w-full max-h-50"
           ></textarea>
         </label>
 
         <label class="form-control">
-          <span class="label-text font-semibold">Acquired Date</span>
+          <span class="label-text font-semibold">
+            {m.cube_user_card_acquired_date_label()}
+          </span>
           <input
             id="acquiredAt"
             name="acquiredAt"
@@ -362,7 +422,7 @@
             class="checkbox"
             bind:checked={main}
           />
-          <span class="label-text">Set as main cube</span>
+          <span class="label-text">{m.cube_user_card_main_toggle_label()}</span>
         </label>
       </div>
     </form>
@@ -374,9 +434,9 @@
     <a
       href="/explore/cubes/{cube.slug}"
       class="btn btn-primary mt-4"
-      aria-label="View Cube Details"
+      aria-label={m.cube_user_card_view_details_aria()}
     >
-      View Details
+      {m.cube_user_card_view_details_cta()}
       <i class="fa-solid fa-arrow-right"></i>
     </a>
   {:else}
@@ -388,13 +448,13 @@
     >
       {#if isSubmitting}
         <span class="loading loading-spinner"></span>
-        Editing...
+        {m.cube_user_card_save_loading_text()}
       {:else if showSuccess}
         <i class="fa-solid fa-check"></i>
-        Edited!
+        {m.cube_user_card_save_success_text()}
       {:else}
         <i class="fa-solid fa-floppy-disk"></i>
-        Save
+        {m.cube_user_card_save_cta()}
       {/if}
     </button>
 

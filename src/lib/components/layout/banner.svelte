@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
 
   const storageKey = "showCubeAwardsBanner";
@@ -32,7 +33,7 @@
     <button
       type="button"
       onclick={hideBanner}
-      aria-label="Hide the CubeIndex Awards banner"
+      aria-label={m.banner_awards_hide_aria()}
       class="absolute right-4 top-4 btn btn-sm btn-ghost md:hidden"
     >
       <i class="fa-solid fa-x"></i>
@@ -43,19 +44,19 @@
            md:flex-row md:items-center md:justify-between md:py-6 md:px-8"
     >
       <h1 class="font-clash text-2xl md:text-3xl font-semibold">
-        Celebrating the boldest cubes of the season.
+        {m.banner_awards_heading_text()}
       </h1>
 
       <div class="flex items-center gap-3 justify-end">
         <a href="/awards" onclick={hideBanner} class="btn btn-accent btn-md w-full md:w-fit">
-          Enter the awards
+          {m.banner_awards_cta()}
         </a>
 
         <!-- Close button: appears inline ONLY on md+ -->
         <button
           type="button"
           onclick={hideBanner}
-          aria-label="Hide the CubeIndex Awards banner"
+          aria-label={m.banner_awards_hide_aria()}
           class="btn btn-sm btn-ghost hidden md:inline-flex"
         >
           <i class="fa-solid fa-x"></i>

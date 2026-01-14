@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
   const { user } = data;
@@ -42,7 +43,7 @@
     const url = new URL(window.location.href);
     const err = url.searchParams.get("error");
     if (err) {
-      bug.extra = `Error message: ${err}`;
+      bug.extra = m.report_form_error_message_text({ error: err });
     }
   });
 
@@ -130,17 +131,18 @@
         {/if}
         <div class="card-body gap-6">
           <header class="text-center">
-            <h1 class="text-3xl font-clash">Feedback & Reports</h1>
+            <h1 class="text-3xl font-clash">
+              {m.report_feedback_title_h1()}
+            </h1>
             <p class="text-base-content/70 mt-2">
-              Help us improve CubeIndex by reporting bugs or suggesting
-              features.
+              {m.report_feedback_subtitle_text()}
             </p>
           </header>
           <!-- Tabs -->
           <div
             class="tabs tabs-boxed w-full"
             role="tablist"
-            aria-label="Select report type"
+            aria-label={m.report_tabs_select_label_aria()}
           >
             <button
               class="tab grow"
@@ -151,7 +153,7 @@
               tabindex={currentTab === "bug" ? 0 : -1}
               onclick={() => (currentTab = "bug")}
             >
-              Report a Bug
+              {m.report_tabs_bug_label()}
             </button>
             <button
               class="tab grow"
@@ -162,15 +164,13 @@
               tabindex={currentTab === "feature" ? 0 : -1}
               onclick={() => (currentTab = "feature")}
             >
-              Suggest a Feature
+              {m.report_tabs_feature_label()}
             </button>
           </div>
 
           {#if !isConnected}
             <div class="alert alert-warning mt-2">
-              <span
-                >You must be signed in to submit. Please log in to continue.</span
-              >
+              <span>{m.report_auth_required_text()}</span>
             </div>
           {/if}
 
@@ -183,11 +183,14 @@
               aria-busy={isSubmitting}
               autocomplete="off"
             >
-              <h2 class="text-3xl font-clash mb-2 text-center">Report a Bug</h2>
+              <h2 class="text-3xl font-clash mb-2 text-center">
+                {m.report_bug_heading_h2()}
+              </h2>
               <fieldset class="contents" disabled={isSubmitting}>
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    Title <span class="text-red-500">*</span>
+                    {m.report_bug_title_label()}{" "}
+                    <span class="text-red-500">*</span>
                   </span>
                   <input
                     bind:value={bug.title}
@@ -195,46 +198,62 @@
                     class="input input-bordered rounded-xl w-full"
                     maxlength="80"
                   />
-                  <span class="text-xs text-base-content/60"
-                    >Max 80 characters</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    {m.report_bug_title_helper_text()}
+                  </span>
                 </label>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Device Type</span>
+                    <span class="font-semibold">
+                      {m.report_bug_device_label()}
+                    </span>
                     <select
                       bind:value={bug.deviceType}
                       class="select select-bordered rounded-xl"
                     >
-                      <option>Desktop</option>
-                      <option>Laptop</option>
-                      <option>Tablet</option>
-                      <option>Smartphone</option>
+                      <option value="Desktop">
+                        {m.report_bug_device_desktop_label()}
+                      </option>
+                      <option value="Laptop">
+                        {m.report_bug_device_laptop_label()}
+                      </option>
+                      <option value="Tablet">
+                        {m.report_bug_device_tablet_label()}
+                      </option>
+                      <option value="Smartphone">
+                        {m.report_bug_device_smartphone_label()}
+                      </option>
                     </select>
                   </label>
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Operating System</span>
+                    <span class="font-semibold">
+                      {m.report_bug_os_label()}
+                    </span>
                     <input
                       bind:value={bug.os}
-                      placeholder="e.g. Windows 11, Android 14"
+                      placeholder={m.report_bug_os_placeholder()}
                       class="input input-bordered rounded-xl"
                     />
                   </label>
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Browser</span>
+                    <span class="font-semibold">
+                      {m.report_bug_browser_label()}
+                    </span>
                     <input
                       bind:value={bug.browser}
-                      placeholder="e.g. Chrome 126"
+                      placeholder={m.report_bug_browser_placeholder()}
                       class="input input-bordered rounded-xl"
                     />
                   </label>
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Screenshot / Image URL</span>
+                    <span class="font-semibold">
+                      {m.report_bug_screenshot_label()}
+                    </span>
                     <input
                       bind:value={bug.imageUrl}
                       type="url"
-                      placeholder="https://..."
+                      placeholder={m.report_bug_screenshot_placeholder()}
                       class="input input-bordered rounded-xl"
                       inputmode="url"
                       pattern="https?://.+"
@@ -243,7 +262,7 @@
                       <figure class="mt-2">
                         <img
                           src={bug.imageUrl}
-                          alt="Attached screenshot"
+                          alt={m.report_bug_screenshot_alt()}
                           class="rounded-box border max-h-48 object-contain"
                           referrerpolicy="no-referrer"
                         />
@@ -254,60 +273,69 @@
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    Steps to Reproduce <span class="text-red-500">*</span>
+                    {m.report_bug_steps_label()}{" "}
+                    <span class="text-red-500">*</span>
                   </span>
                   <textarea
                     bind:value={bug.steps}
                     required
                     class="textarea textarea-bordered rounded-xl min-h-[60px] w-full"
                     maxlength="400"
-                    placeholder="1. Go to…&#10;2. Click on…&#10;3. ..."
+                    placeholder={m.report_bug_steps_placeholder()}
                   ></textarea>
                 </label>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Expected Behavior</span>
+                    <span class="font-semibold">
+                      {m.report_bug_expected_label()}
+                    </span>
                     <textarea
                       bind:value={bug.expected}
                       class="textarea textarea-bordered rounded-xl min-h-[40px]"
                       maxlength="200"
-                      placeholder="What did you expect to happen?"
+                      placeholder={m.report_bug_expected_placeholder()}
                     ></textarea>
                   </label>
                   <label class="flex flex-col gap-1">
-                    <span class="font-semibold">Actual Behavior</span>
+                    <span class="font-semibold">
+                      {m.report_bug_actual_label()}
+                    </span>
                     <textarea
                       bind:value={bug.actual}
                       class="textarea textarea-bordered rounded-xl min-h-[40px]"
                       maxlength="200"
-                      placeholder="What actually happened?"
+                      placeholder={m.report_bug_actual_placeholder()}
                     ></textarea>
                   </label>
                 </div>
 
                 <label class="flex flex-col gap-1">
-                  <span class="font-semibold">Additional context</span>
+                  <span class="font-semibold">
+                    {m.report_bug_additional_context_label()}
+                  </span>
                   <textarea
                     bind:value={bug.extra}
                     class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
                     maxlength="250"
-                    placeholder="Anything else? (optional)"
+                    placeholder={m.report_bug_additional_context_placeholder()}
                   ></textarea>
                 </label>
                 <div class="flex justify-end gap-2">
                   <button
                     type="submit"
                     class="btn btn-primary"
-                    title={!isConnected ? "Sign in to submit" : undefined}
+                    title={!isConnected ? m.report_submit_signin_title() : undefined}
                     disabled={isSubmitting || !isConnected}
                   >
                     {#if isSubmitting}
-                      <span class="loading loading-spinner"></span> Reporting…
+                      <span class="loading loading-spinner"></span>
+                      {m.report_bug_submit_loading_text()}
                     {:else if showSuccess}
-                      <i class="fa-solid fa-check"></i> Reported!
+                      <i class="fa-solid fa-check"></i>
+                      {m.report_bug_submit_success_text()}
                     {:else}
-                      Send Report
+                      {m.report_bug_submit_cta()}
                     {/if}
                   </button>
                 </div>
@@ -327,12 +355,13 @@
               autocomplete="off"
             >
               <h2 class="text-3xl font-clash mb-2 text-center">
-                Suggest a Feature
+                {m.report_feature_heading_h2()}
               </h2>
               <fieldset class="contents" disabled={isSubmitting}>
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    Feature Title <span class="text-red-500">*</span>
+                    {m.report_feature_title_label()}{" "}
+                    <span class="text-red-500">*</span>
                   </span>
                   <input
                     bind:value={feature.title}
@@ -340,14 +369,15 @@
                     class="input input-bordered rounded-xl w-full"
                     maxlength="80"
                   />
-                  <span class="text-xs text-base-content/60"
-                    >Be specific and concise</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    {m.report_feature_title_helper_text()}
+                  </span>
                 </label>
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    Description <span class="text-red-500">*</span>
+                    {m.report_feature_description_label()}{" "}
+                    <span class="text-red-500">*</span>
                   </span>
                   <textarea
                     bind:value={feature.description}
@@ -355,37 +385,49 @@
                     class="textarea textarea-bordered rounded-xl min-h-[60px] w-full"
                     maxlength="400"
                   ></textarea>
-                  <span class="text-xs text-base-content/60"
-                    >Explain what the feature does</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    {m.report_feature_description_helper_text()}
+                  </span>
                 </label>
 
                 <label class="flex flex-col gap-1">
-                  <span class="font-semibold">Use Case</span>
+                  <span class="font-semibold">
+                    {m.report_feature_use_case_label()}
+                  </span>
                   <textarea
                     bind:value={feature.useCase}
                     class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
                     maxlength="200"
                   ></textarea>
-                  <span class="text-xs text-base-content/60"
-                    >How would you use it?</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    {m.report_feature_use_case_helper_text()}
+                  </span>
                 </label>
 
                 <label class="flex flex-col gap-1">
-                  <span class="font-semibold">Priority</span>
+                  <span class="font-semibold">
+                    {m.report_feature_priority_label()}
+                  </span>
                   <select
                     bind:value={feature.priority}
                     class="select select-bordered rounded-xl w-full"
                   >
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
+                    <option value="Low">
+                      {m.report_feature_priority_low_label()}
+                    </option>
+                    <option value="Medium">
+                      {m.report_feature_priority_medium_label()}
+                    </option>
+                    <option value="High">
+                      {m.report_feature_priority_high_label()}
+                    </option>
                   </select>
                 </label>
 
                 <label class="flex flex-col gap-1">
-                  <span class="font-semibold">Additional Context</span>
+                  <span class="font-semibold">
+                    {m.report_feature_additional_context_label()}
+                  </span>
                   <textarea
                     bind:value={feature.extra}
                     class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
@@ -397,15 +439,17 @@
                   <button
                     type="submit"
                     class="btn btn-primary"
-                    title={!isConnected ? "Sign in to submit" : undefined}
+                    title={!isConnected ? m.report_submit_signin_title() : undefined}
                     disabled={isSubmitting || !isConnected}
                   >
                     {#if isSubmitting}
-                      <span class="loading loading-spinner"></span> Sending…
+                      <span class="loading loading-spinner"></span>
+                      {m.report_feature_submit_loading_text()}
                     {:else if showSuccess}
-                      <i class="fa-solid fa-check"></i> Sent!
+                      <i class="fa-solid fa-check"></i>
+                      {m.report_feature_submit_success_text()}
                     {:else}
-                      Send Suggestion
+                      {m.report_feature_submit_cta()}
                     {/if}
                   </button>
                 </div>

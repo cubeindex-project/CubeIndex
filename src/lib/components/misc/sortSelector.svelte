@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   /**
    * Public sort option for field dropdown.
    * Use with SortSelector by passing an array of these.
@@ -26,7 +28,7 @@
     /** Optional id for the select element. */
     id = "sortBy",
     /** Optional label text. */
-    label = "Sort",
+    label = m.misc_sort_selector_label(),
   }: {
     sortField: string;
     sortOrder: "asc" | "desc";
@@ -56,8 +58,12 @@
   <button
     type="button"
     class="btn btn-ghost btn-sm"
-    title={sortOrder === "desc" ? "Descending" : "Ascending"}
-    aria-label="Toggle sort direction"
+    title={
+      sortOrder === "desc"
+        ? m.misc_sort_selector_descending_label()
+        : m.misc_sort_selector_ascending_label()
+    }
+    aria-label={m.misc_sort_selector_toggle_aria()}
     onclick={() => {
       toggleDir();
       useronchange();

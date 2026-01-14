@@ -8,6 +8,7 @@
   import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
   const { achievements, currentUserAchi } = data;
@@ -53,9 +54,9 @@
   let sortField: string = $state("name"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("asc"); // Sort direction
   const sortFields: SortFieldOption[] = [
-    { value: "date", label: "Recent" },
-    { value: "name", label: "Name" },
-    { value: "unlock-rate", label: "Unlock Rate" },
+    { value: "date", label: m.common_sort_recent_label() },
+    { value: "name", label: m.common_sort_name_label() },
+    { value: "unlock-rate", label: m.explore_achievements_sort_unlock_rate_label() },
   ];
 
   const sortedAchi = $derived.by(() => {
@@ -125,26 +126,32 @@
 </script>
 
 <svelte:head>
-  <title>Achievements - CubeIndex</title>
+  <title>{m.explore_achievements_meta_title()}</title>
 </svelte:head>
 
 {#snippet filterContents()}
   <div>
     <label class="block text-sm mb-1">
-      Rarity:
+      {m.explore_achievements_filter_rarity_label()}
       <select
         bind:value={selectedRarity}
         class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
       >
-        <option>All</option>
+        <option value="All">{m.common_filter_all_label()}</option>
         {#each allRarities as r}
           <option>{r}</option>
         {/each}
       </select>
     </label>
   </div>
-  <TriStateCheckbox bind:value={obtainable} label="Obtainable" />
-  <TriStateCheckbox bind:value={hidden} label="Hidden" />
+  <TriStateCheckbox
+    bind:value={obtainable}
+    label={m.explore_achievements_filter_obtainable_label()}
+  />
+  <TriStateCheckbox
+    bind:value={hidden}
+    label={m.common_status_hidden_label()}
+  />
   <div>
     <button
       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
@@ -152,7 +159,7 @@
       type="button"
     >
       <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-      Reset Filters
+      {m.common_action_reset_filters_cta()}
     </button>
   </div>
 {/snippet}
@@ -160,11 +167,10 @@
   <div class="max-w-7xl mx-auto">
     <header class="mb-10 text-center">
       <h1 class="text-3xl md:text-4xl font-clash font-extrabold tracking-tight">
-        Achievements
+        {m.explore_achievements_title_h1()}
       </h1>
       <p class="mt-3 text-base-content max-w-2xl mx-auto">
-        Unlock achievements by participating in the CubeIndex community. Collect
-        them all to showcase your journey.
+        {m.explore_achievements_intro_text()}
       </p>
     </header>
 
@@ -172,7 +178,7 @@
       bind:searchTerm
       showFilter={true}
       filterAction={() => (showFilters = !showFilters)}
-      placeholderLabel="Search Achievements"
+      placeholderLabel={m.explore_achievements_search_placeholder()}
     />
     <div class="flex flex-col lg:flex-row gap-8">
       <FilterSidebar {showFilters}>
@@ -187,7 +193,7 @@
           <div class="flex flex-wrap items-center gap-4">
             <ItemsPerPageSelector
               bind:itemsPerPage
-              label="Achievements per page"
+              label={m.explore_achievements_items_per_page_label()}
             />
             <SortSelector bind:sortField bind:sortOrder fields={sortFields} />
           </div>
@@ -215,7 +221,9 @@
                 class={"group relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm ring-1 ring-transparent transition " +
                   "focus-within:ring-2 focus-within:ring-accent " +
                   (!isUnlocked ? "opacity-95 grayscale-[18%]" : "")}
-                aria-label={`Achievement: ${achievement.name}`}
+                aria-label={m.explore_achievements_card_aria({
+                  name: achievement.name,
+                })}
               >
                 <!-- Rarity Accent Bar -->
                 <div
@@ -256,7 +264,7 @@
                       <div>
                         <h2 class="text-lg md:text-xl font-bold leading-snug">
                           {#if isHidden}
-                            Hidden
+                            {m.common_status_hidden_label()}
                           {:else}
                             {achievement.name}
                           {/if}
@@ -265,8 +273,7 @@
                           class="mt-1 text-sm text-base-content/70 line-clamp-3"
                         >
                           {#if isHidden}
-                            Unlock this achievement to reveal its name and
-                            description.
+                            {m.explore_achievements_hidden_description_text()}
                           {:else}
                             {achievement.description}
                           {/if}
@@ -278,9 +285,9 @@
                     {#if isHidden}
                       <span
                         class="inline-flex flex-shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ring-1 ring-black/5 select-none bg-base-300 text-base-content/70"
-                        title="This achievement is hidden"
+                        title={m.explore_achievements_hidden_title()}
                       >
-                        Hidden
+                        {m.common_status_hidden_label()}
                       </span>
                     {:else}
                       <span
@@ -288,7 +295,9 @@
                           rarityStyle(achievement.rarity).badge +
                           " " +
                           rarityStyle(achievement.rarity).badgeText}
-                        title={`Rarity: ${achievement.rarity}`}
+                        title={m.explore_achievements_rarity_title({
+                          rarity: achievement.rarity,
+                        })}
                       >
                         {achievement.rarity}
                       </span>
@@ -301,7 +310,9 @@
                       class="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-accent/15 px-3 py-1 text-xs font-medium text-accent ring-1 ring-accent/20"
                     >
                       <i class="fa-regular fa-star" aria-hidden="true"></i>
-                      <span class="opacity-80">Title reward:</span>
+                      <span class="opacity-80">
+                        {m.explore_achievements_title_reward_label()}
+                      </span>
                       <span class="font-semibold text-accent"
                         >“{achievement.title}”</span
                       >
@@ -315,7 +326,9 @@
                   <dl class="mt-5 grid grid-cols-1 gap-2 text-sm">
                     {#if achievement.category}
                       <div class="flex items-start justify-between gap-3">
-                        <dt class="text-base-content/60">Category</dt>
+                        <dt class="text-base-content/60">
+                          {m.explore_achievements_meta_category_label()}
+                        </dt>
                         <dd class="font-medium text-right">
                           {achievement.category}
                         </dd>
@@ -323,7 +336,9 @@
                     {/if}
 
                     <div class="flex items-start justify-between gap-3">
-                      <dt class="text-base-content/60">Unlock Method</dt>
+                      <dt class="text-base-content/60">
+                        {m.explore_achievements_meta_unlock_method_label()}
+                      </dt>
                       <dd class="font-medium text-right">
                         {achievement.unlock_method}
                       </dd>
@@ -332,7 +347,9 @@
                     <div
                       class="flex flex-col items-start justify-between gap-3"
                     >
-                      <dt class="text-base-content/60">Claimed by</dt>
+                      <dt class="text-base-content/60">
+                        {m.explore_achievements_meta_claimed_by_label()}
+                      </dt>
                       <dd class="w-full max-w-[18rem]">
                         <div class="flex items-center gap-3">
                           <!-- Micro donut -->
@@ -340,7 +357,9 @@
                             class="h-9 w-9 flex-shrink-0"
                             viewBox="0 0 40 40"
                             role="img"
-                            aria-label={`Claimed by ${value.toFixed(2)}% of users`}
+                            aria-label={m.explore_achievements_claimed_by_aria({
+                              percent: value.toFixed(2),
+                            })}
                           >
                             <!-- track -->
                             <circle
@@ -390,7 +409,9 @@
                               aria-valuemin="0"
                               aria-valuemax="100"
                               aria-valuenow={value}
-                              title={`${value.toFixed(2)}% of users`}
+                              title={m.explore_achievements_claimed_by_aria({
+                                percent: value.toFixed(2),
+                              })}
                             >
                               <!-- filled -->
                               <div
@@ -411,11 +432,11 @@
                             <div
                               class="mt-1 flex justify-between text-[10px] leading-none text-base-content/60"
                             >
-                              <span>0%</span>
-                              <span>25%</span>
-                              <span>50%</span>
-                              <span>75%</span>
-                              <span>100%</span>
+                              <span>{m.common_percent_label({ value: 0 })}</span>
+                              <span>{m.common_percent_label({ value: 25 })}</span>
+                              <span>{m.common_percent_label({ value: 50 })}</span>
+                              <span>{m.common_percent_label({ value: 75 })}</span>
+                              <span>{m.common_percent_label({ value: 100 })}</span>
                             </div>
                           </div>
                         </div>
@@ -443,7 +464,7 @@
                         class="flex items-center gap-2 rounded-full bg-base-100/70 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-error ring-1 ring-error/20 backdrop-blur-sm"
                       >
                         <i class="fa-solid fa-lock" aria-hidden="true"></i>
-                        Not currently unlockable
+                        {m.explore_achievements_not_unlockable_text()}
                       </div>
                     </div>
 
@@ -467,10 +488,11 @@
               class="col-span-full flex flex-col items-center justify-center py-20"
             >
               <i class="fa-solid fa-trophy fa-3x mb-4"></i>
-              <h2 class="text-2xl font-semibold mb-2">No achievements found</h2>
+              <h2 class="text-2xl font-semibold mb-2">
+                {m.explore_achievements_empty_title()}
+              </h2>
               <p class="mb-6 text-center max-w-xs">
-                We couldn't find any achievements matching your search or
-                filters. Try adjusting them or resetting to see everything.
+                {m.explore_achievements_empty_body_text()}
               </p>
               <button
                 onclick={() => {
@@ -478,10 +500,10 @@
                   searchTerm = "";
                 }}
                 class="btn btn-outline flex items-center"
-                aria-label="Reset filters"
+                aria-label={m.common_action_reset_filters_aria()}
               >
                 <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                Reset
+                {m.common_action_reset_cta()}
               </button>
             </div>
           {/each}
@@ -494,7 +516,9 @@
             >
               🏆
             </div>
-            <h3 class="text-xl font-semibold">No achievements yet</h3>
+            <h3 class="text-xl font-semibold">
+              {m.explore_achievements_empty_none_title()}
+            </h3>
           </div>
         {/if}
 

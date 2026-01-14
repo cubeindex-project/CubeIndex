@@ -2,6 +2,7 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import type { Cube } from "$lib/components/dbTableTypes";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   type CubeWithMeta = Cube & {
     year: number; // Release year extracted from date
@@ -59,7 +60,7 @@
   });
 
   function boolYesNo(v: boolean) {
-    return v ? "Yes" : "No";
+    return v ? m.common_label_yes_text() : m.common_label_no_text();
   }
   function formatFloat(n: number) {
     return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
@@ -73,31 +74,31 @@
   };
 
   const fields: Field[] = [
-    { label: "Version Type", key: "version_type" },
-    { label: "Brand", key: "brand" },
-    { label: "Series", key: "series" },
-    { label: "Model", key: "model" },
-    { label: "Version Name", key: "version_name" },
-    { label: "Type", key: "type" },
-    { label: "Subtype", key: "sub_type" },
-    { label: "Surface Finish", key: "surface_finish" },
-    { label: "Stickered", key: "stickered", format: boolYesNo, boolean: true },
-    { label: "WCA Legal", key: "wca_legal", format: boolYesNo, boolean: true },
-    { label: "Magnetic", key: "magnetic", format: boolYesNo, boolean: true },
-    { label: "Maglev", key: "maglev", format: boolYesNo, boolean: true },
-    { label: "Smart", key: "smart", format: boolYesNo, boolean: true },
-    { label: "Modded", key: "modded", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_version_type_label(), key: "version_type" },
+    { label: m.explore_compare_field_brand_label(), key: "brand" },
+    { label: m.explore_compare_field_series_label(), key: "series" },
+    { label: m.explore_compare_field_model_label(), key: "model" },
+    { label: m.explore_compare_field_version_name_label(), key: "version_name" },
+    { label: m.explore_compare_field_type_label(), key: "type" },
+    { label: m.explore_compare_field_subtype_label(), key: "sub_type" },
+    { label: m.explore_compare_field_surface_finish_label(), key: "surface_finish" },
+    { label: m.explore_compare_field_stickered_label(), key: "stickered", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_wca_legal_label(), key: "wca_legal", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_magnetic_label(), key: "magnetic", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_maglev_label(), key: "maglev", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_smart_label(), key: "smart", format: boolYesNo, boolean: true },
+    { label: m.explore_compare_field_modded_label(), key: "modded", format: boolYesNo, boolean: true },
     {
-      label: "Discontinued",
+      label: m.explore_compare_field_discontinued_label(),
       key: "discontinued",
       format: boolYesNo,
       boolean: true,
     },
-    { label: "Related To", key: "related_to" },
-    { label: "Release Date", key: "release_date", format: formatDate },
-    { label: "Rating", key: "rating", format: formatFloat },
-    { label: "Weight (g)", key: "weight", format: formatFloat },
-    { label: "Size (mm3)", key: "size", format: formatFloat },
+    { label: m.explore_compare_field_related_to_label(), key: "related_to" },
+    { label: m.explore_compare_field_release_date_label(), key: "release_date", format: formatDate },
+    { label: m.explore_compare_field_rating_label(), key: "rating", format: formatFloat },
+    { label: m.explore_compare_field_weight_label(), key: "weight", format: formatFloat },
+    { label: m.explore_compare_field_size_label(), key: "size", format: formatFloat },
   ];
 
   function getValue(c: CubeWithMeta | null, f: Field) {
@@ -115,21 +116,23 @@
 </script>
 
 <svelte:head>
-  <title>Compare Cubes - CubeIndex</title>
+  <title>{m.explore_compare_meta_title()}</title>
 </svelte:head>
   <section class="min-h-screen px-4 py-12">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-4xl font-clash font-bold text-center mb-2">
-        Compare Cubes
+        {m.explore_compare_title_h1()}
       </h1>
       <p class="text-center opacity-70 mb-8">
-        Select up to two cubes to view specifications side by side.
+        {m.explore_compare_intro_text()}
       </p>
       <div
         class="flex flex-col md:flex-row gap-6 justify-center items-stretch mb-6"
       >
         <div class="flex-1">
-          <div class="block mb-2 text-sm font-semibold opacity-70">Cube 1</div>
+          <div class="block mb-2 text-sm font-semibold opacity-70">
+            {m.common_label_cube_1_text()}
+          </div>
           <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
             <SearchCubes cubes={options} bind:outputVar={cube1Value} />
             <div class="mt-2 flex gap-2">
@@ -138,7 +141,7 @@
                 onclick={() => clearSelection(1)}
                 disabled={!cube1Value}
               >
-                Clear
+                {m.common_action_clear_cta()}
               </button>
             </div>
           </div>
@@ -147,26 +150,28 @@
         <div class="flex flex-col justify-center items-center gap-3">
           <span
             class="bg-base-300 rounded-full text-2xl px-5 py-3 text-primary font-bold"
-            >VS</span
+            >{m.explore_compare_vs_text()}</span
           >
           <button
             class="btn btn-outline btn-sm"
             onclick={swapSelections}
             disabled={!cube1Value && !cube2Value}
           >
-            <i class="fa-solid fa-right-left mr-2"></i> Swap
+            <i class="fa-solid fa-right-left mr-2"></i> {m.common_action_swap_cta()}
           </button>
           <button
             class="btn btn-ghost btn-xs"
             onclick={() => clearSelection("both")}
             disabled={!cube1Value && !cube2Value}
           >
-            Clear Both
+            {m.common_action_clear_both_cta()}
           </button>
         </div>
         <!-- Cube 2 Select -->
         <div class="flex-1">
-          <div class="block mb-2 text-sm font-semibold opacity-70">Cube 2</div>
+          <div class="block mb-2 text-sm font-semibold opacity-70">
+            {m.common_label_cube_2_text()}
+          </div>
           <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
             <SearchCubes cubes={options} bind:outputVar={cube2Value} />
             <div class="mt-2 flex gap-2">
@@ -175,7 +180,7 @@
                 onclick={() => clearSelection(2)}
                 disabled={!cube2Value}
               >
-                Clear
+                {m.common_action_clear_cta()}
               </button>
             </div>
           </div>
@@ -193,7 +198,7 @@
                 scope="col"
                 class="py-4 px-4 font-bold text-primary text-lg w-1/3"
               >
-                Feature
+                {m.common_label_feature_text()}
               </th>
               <th
                 scope="col"
@@ -203,7 +208,11 @@
                   <span class="flex flex-col items-center">
                     <img
                       src={cube1.image_url}
-                      alt="{cube1.series} {cube1.model} {cube1.version_name}"
+                      alt={m.explore_compare_cube_image_alt({
+                        series: cube1.series,
+                        model: cube1.model,
+                        versionName: cube1.version_name,
+                      })}
                       class="h-24 rounded-xl mb-2 border border-base-300 bg-base-100 object-cover"
                     />
                     <a
@@ -216,7 +225,7 @@
                     </a>
                   </span>
                 {:else}
-                  <span>Cube 1</span>
+                  <span>{m.common_label_cube_1_text()}</span>
                 {/if}
               </th>
               <th
@@ -227,7 +236,11 @@
                   <span class="flex flex-col items-center">
                     <img
                       src={cube2.image_url}
-                      alt="{cube2.series} {cube2.model} {cube2.version_name}"
+                      alt={m.explore_compare_cube_image_alt({
+                        series: cube2.series,
+                        model: cube2.model,
+                        versionName: cube2.version_name,
+                      })}
                       class="h-24 rounded-xl mb-2 border border-base-300 bg-base-100 object-cover"
                     />
                     <a
@@ -240,7 +253,7 @@
                     </a>
                   </span>
                 {:else}
-                  <span>Cube 2</span>
+                  <span>{m.common_label_cube_2_text()}</span>
                 {/if}
               </th>
             </tr>
@@ -257,9 +270,13 @@
                   {#if cube1}
                     {#if field.boolean}
                       {#if cube1[field.key as keyof CubeWithMeta]}
-                        <span class="badge badge-success">Yes</span>
+                        <span class="badge badge-success">
+                          {m.common_label_yes_text()}
+                        </span>
                       {:else}
-                        <span class="badge badge-ghost">No</span>
+                        <span class="badge badge-ghost">
+                          {m.common_label_no_text()}
+                        </span>
                       {/if}
                     {:else}
                       {getValue(cube1, field)}
@@ -272,9 +289,13 @@
                   {#if cube2}
                     {#if field.boolean}
                       {#if cube2[field.key as keyof CubeWithMeta]}
-                        <span class="badge badge-success">Yes</span>
+                        <span class="badge badge-success">
+                          {m.common_label_yes_text()}
+                        </span>
                       {:else}
-                        <span class="badge badge-ghost">No</span>
+                        <span class="badge badge-ghost">
+                          {m.common_label_no_text()}
+                        </span>
                       {/if}
                     {:else}
                       {getValue(cube2, field)}
@@ -289,7 +310,7 @@
         </table>
         {#if !cube1 && !cube2}
           <div class="text-center py-10 text-lg">
-            Select at least one cube to compare.
+            {m.explore_compare_empty_text()}
           </div>
         {/if}
       </div>

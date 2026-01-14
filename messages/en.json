@@ -1,0 +1,1970 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "app_brand_name_text": "CubeIndex",
+  "app_home_return_cta": "Return Home",
+  "auth_login_discord_cta": "Sign In with Discord",
+  "auth_login_email_label": "Email",
+  "auth_login_email_required_error_text": "Please enter an email",
+  "auth_login_forgot_password_text": "Forgot your password?",
+  "auth_login_intro_text": "Log in to your CubeIndex profile",
+  "auth_login_meta_title": "Login - CubeIndex",
+  "auth_login_no_account_text": "Don't have an account?",
+  "auth_login_or_divider_text": "or",
+  "auth_login_password_label": "Password",
+  "auth_login_reset_password_cta": "Reset",
+  "auth_login_reset_sent_text": "Check your email to reset your password",
+  "auth_login_signup_cta": "Sign Up",
+  "auth_login_submit_cta": "Log In",
+  "auth_login_submitting_text": "Logging In...",
+  "auth_login_title_h1": "Welcome Back",
+  "auth_login_unknown_error_text": "Unknown error",
+  "auth_password_strength_label": [
+    {
+      "declarations": [
+        "input label"
+      ],
+      "match": {
+        "label=*": "{label}",
+        "label=fair": "Fair",
+        "label=strong": "Strong",
+        "label=very_strong": "Very strong",
+        "label=very_weak": "Very weak",
+        "label=weak": "Weak"
+      },
+      "selectors": [
+        "label"
+      ]
+    }
+  ],
+  "auth_password_suggestion_text": [
+    {
+      "declarations": [
+        "input suggestion"
+      ],
+      "match": {
+        "suggestion=*": "{suggestion}",
+        "suggestion=add_lowercase": "Add a lowercase letter",
+        "suggestion=add_number": "Add a number",
+        "suggestion=add_symbol": "Add a symbol",
+        "suggestion=add_uppercase": "Add an uppercase letter",
+        "suggestion=avoid_common": "Avoid common passwords",
+        "suggestion=use_12_plus": "Use 12+ characters",
+        "suggestion=use_longer": "Use a longer password"
+      },
+      "selectors": [
+        "suggestion"
+      ]
+    }
+  ],
+  "auth_reset_back_to_login_cta": "Back to Login",
+  "auth_reset_back_to_login_prompt_text": "Remembered it?",
+  "auth_reset_confirm_password_label": "Confirm Password",
+  "auth_reset_intro_text": "Enter a new password for your account",
+  "auth_reset_meta_description": "Reset your CubeIndex account password",
+  "auth_reset_meta_title": "Reset Password - CubeIndex",
+  "auth_reset_new_password_label": "New Password",
+  "auth_reset_password_length_error_text": "Password must be at least {minLength} characters",
+  "auth_reset_password_match_error_text": "Passwords do not match",
+  "auth_reset_password_update_error_text": "Unable to update password. Link may be invalid or expired.",
+  "auth_reset_password_update_success_text": "Password updated. You can now log in.",
+  "auth_reset_submit_cta": "Update Password",
+  "auth_reset_submitting_text": "Updating...",
+  "auth_reset_title_h1": "Reset Password",
+  "auth_signout_cancel_cta": "Cancel",
+  "auth_signout_confirm_cta": "Sign Out",
+  "auth_signout_prompt_text": "Are you sure you want to sign out?",
+  "auth_signout_title_h2": "Confirm Sign Out",
+  "auth_signup_complete_body_text": "Check your email to verify your account. Once verified, you can start tracking your collection, compare shops, and get price-drop alerts on Discord.",
+  "auth_signup_complete_cta": "Start Collecting!",
+  "auth_signup_complete_title_h2": "You're all set!",
+  "auth_signup_confirm_password_label": "Confirm Password",
+  "auth_signup_continue_cta": "Continue",
+  "auth_signup_discord_cta": "Sign Up with Discord",
+  "auth_signup_discover_label": "How did you discover CubeIndex?",
+  "auth_signup_discover_option_discord_label": "Discord",
+  "auth_signup_discover_option_friend_label": "Friend",
+  "auth_signup_discover_option_other_label": "Other",
+  "auth_signup_discover_option_reddit_label": "Reddit",
+  "auth_signup_discover_option_search_label": "Search Engine",
+  "auth_signup_discover_option_youtube_label": "YouTube",
+  "auth_signup_discover_placeholder_label": "Select one",
+  "auth_signup_display_name_label": "Display Name",
+  "auth_signup_email_label": "Email",
+  "auth_signup_existing_cta": "Log in",
+  "auth_signup_existing_prompt_text": "Already have an account?",
+  "auth_signup_finish_cta": "Finish",
+  "auth_signup_interest_achievements_label": "Achievements",
+  "auth_signup_interest_collection_management_label": "Collection management",
+  "auth_signup_interest_discord_alerts_label": "Discord alerts",
+  "auth_signup_interest_label": "What features interest you the most?",
+  "auth_signup_interest_price_tracking_label": "Price tracking",
+  "auth_signup_interest_ratings_reviews_label": "Ratings & reviews",
+  "auth_signup_interest_shop_compare_label": "Shop compare",
+  "auth_signup_intro_text": "Create a free account to start tracking your collection",
+  "auth_signup_marketing_achievements_text": "Unlock badges as you grow your collection.",
+  "auth_signup_marketing_achievements_title": "Achievements",
+  "auth_signup_marketing_collection_text": "Add cubes, set condition and status, and mark mains.",
+  "auth_signup_marketing_collection_title": "Collection management",
+  "auth_signup_marketing_intro_text": "Track your collection, rate cubes, unlock achievements, and get price updates.",
+  "auth_signup_marketing_ratings_text": "Share your experience and see what others think.",
+  "auth_signup_marketing_ratings_title": "Ratings & reviews",
+  "auth_signup_marketing_title_h2": "All your cubes, in one place",
+  "auth_signup_meta_title": "Signup - CubeIndex",
+  "auth_signup_or_divider_text": "or",
+  "auth_signup_other_label": "Anything else?",
+  "auth_signup_other_placeholder": "Optional",
+  "auth_signup_password_label": "Password",
+  "auth_signup_privacy_policy_label": "Privacy Policy",
+  "auth_signup_profile_picture_label": "Profile Picture",
+  "auth_signup_step_account_label": "Account",
+  "auth_signup_step_done_label": "Done",
+  "auth_signup_step_preferences_label": "Preferences",
+  "auth_signup_step_profile_label": "Profile",
+  "auth_signup_terms_of_service_label": "Terms of Service",
+  "auth_signup_title_h1": "Join CubeIndex",
+  "auth_signup_tos_accept_conjunction_text": "and",
+  "auth_signup_tos_accept_prefix_text": "I accept the",
+  "auth_signup_username_label": "Username",
+  "awards_landing_categories_kicker_label": "Categories",
+  "awards_landing_categories_title_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Nominate Across {count} Category",
+        "countPlural=other": "Nominate Across {count} Categories"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_days_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Day",
+        "countPlural=other": "Days"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_hours_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Hour",
+        "countPlural=other": "Hours"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Starts in",
+        "state=live": "Ends in",
+        "state=upcoming": "Starts in"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_landing_countdown_minutes_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Minute",
+        "countPlural=other": "Minutes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_countdown_seconds_label": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "Second",
+        "countPlural=other": "Seconds"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_landing_cta_categories": "View Categories",
+  "awards_landing_cta_nominate": "Nominate a Cube",
+  "awards_landing_empty_description_text": "Check back soon to see the next CubeIndex Awards timeline.",
+  "awards_landing_empty_title_text": "No awards events are scheduled right now",
+  "awards_landing_event_title_default_text": "CubeIndex Awards",
+  "awards_landing_hero_lead_text": "The CubeIndex Awards honor the most innovative, beloved, and collectible puzzles of the year. Nominate your favorites, and vote with the community.",
+  "awards_landing_hero_title_h1": "Celebrate the Cubes that Redefined the Season",
+  "awards_landing_logo_alt_text": "CubeIndex Awards logo",
+  "awards_landing_logo_credit_prefix_text": "Logo designed by ",
+  "awards_landing_meta_title": "CubeIndex Awards",
+  "awards_landing_partners_kicker_label": "Partners",
+  "awards_landing_partners_learn_more_cta": "Learn more",
+  "awards_landing_partners_title_h2": "Partners",
+  "awards_landing_previous_intro_text": "Revisit winners, finalists, and standout community moments from earlier seasons.",
+  "awards_landing_previous_kicker_label": "Previous years",
+  "awards_landing_previous_title_h2": "Explore past CubeIndex Awards",
+  "awards_landing_previous_view_label": "View",
+  "awards_landing_trailer_cta": "More info",
+  "awards_landing_trailer_prompt_text": "See the release trailer on Youtube.",
+  "awards_landing_trailer_title_text": "The CubeIndex Awards Trailer",
+  "awards_vote_categories_hint_text": "Choose a category to view nominees and submit your vote.",
+  "awards_vote_categories_open_badge_text": "{count} open",
+  "awards_vote_categories_title": "Categories",
+  "awards_vote_category_meta_title": "{categoryName} - Awards Ballot",
+  "awards_vote_closing_label": "Voting closes in",
+  "awards_vote_countdown_closed_text": "Voting closed",
+  "awards_vote_countdown_day_short_text": "{count}d",
+  "awards_vote_countdown_hour_short_text": "{count}h",
+  "awards_vote_countdown_minute_short_text": "{count}m",
+  "awards_vote_countdown_second_short_text": "{count}s",
+  "awards_vote_countdown_start_label": "Starts in",
+  "awards_vote_countdown_zero_short_text": "0s",
+  "awards_vote_empty_action_overview_cta": "Awards overview",
+  "awards_vote_empty_description_text": [
+    {
+      "declarations": [
+        "input eventTitle",
+        "input startDateLabel",
+        "input state"
+      ],
+      "match": {
+        "state=*": "Check back soon for the next CubeIndex Awards event.",
+        "state=none": "We haven't scheduled the next CubeIndex Awards yet. Stay tuned.",
+        "state=scheduled": "Check back soon for the next CubeIndex Awards event.",
+        "state=upcoming": "Voting opens for {eventTitle} on {startDateLabel}. Check back once the event begins."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_empty_status_description_text": "We’ll announce the next awards timeline soon.",
+  "awards_vote_empty_status_label": "Status",
+  "awards_vote_empty_status_title_text": "No events planned",
+  "awards_vote_empty_title_text": [
+    {
+      "declarations": [
+        "input hasEvent"
+      ],
+      "match": {
+        "hasEvent=*": "No awards events are scheduled",
+        "hasEvent=false": "No awards events are scheduled",
+        "hasEvent=true": "No awards event is live right now"
+      },
+      "selectors": [
+        "hasEvent"
+      ]
+    }
+  ],
+  "awards_vote_event_title_default_text": "CubeIndex Awards",
+  "awards_vote_kicker_label": "Awards voting",
+  "awards_vote_live_intro_text": "Review each category and jump into the ballot to cast your picks.",
+  "awards_vote_meta_title": "Awards Voting - CubeIndex",
+  "awards_vote_nominee_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Select",
+        "state=select": "Select",
+        "state=selected": "Selected",
+        "state=voted": "Voted"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_nominee_details_aria": "View Cube Details",
+  "awards_vote_nominee_details_cta": "View details",
+  "awards_vote_nominee_instructions_text": "Select one nominee. Votes are final once submitted.",
+  "awards_vote_nominees_available_badge_text": "{count} available",
+  "awards_vote_nominees_empty_cta": "Back to categories",
+  "awards_vote_nominees_empty_description_text": "Check back soon to vote once nominations are announced.",
+  "awards_vote_nominees_empty_title_text": "No cubes have been nominated for this category yet.",
+  "awards_vote_nominees_hint_text": "Review the cubes and pick the one that best fits this category.",
+  "awards_vote_nominees_title": "Nominees",
+  "awards_vote_status_text": [
+    {
+      "declarations": [
+        "input endDateLabel",
+        "input startDateLabel",
+        "input state"
+      ],
+      "match": {
+        "state=*": "Voting is not available right now.",
+        "state=past": "Voting closed on {endDateLabel}.",
+        "state=unavailable": "Voting is not available right now.",
+        "state=upcoming": "Voting opens on {startDateLabel}."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_submit_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Submit vote",
+        "state=already_voted": "You have already voted!",
+        "state=closed": "Voting not open",
+        "state=loading": "Voting...",
+        "state=ready": "Submit vote",
+        "state=select_nominee": "Select a nominee to vote",
+        "state=voted": "Voted!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "awards_vote_submit_error_text": "Vote failed",
+  "awards_vote_submit_hint_text": "You can submit one vote per category. Double-check your selection.",
+  "awards_vote_submit_timeout_text": "Timeout, please try again in a few minutes.",
+  "awards_vote_submit_title_text": "Submit your vote",
+  "awards_year_categories_badge_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} category",
+        "countPlural=other": "{count} categories"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_categories_empty_description_text": "Check back once categories are announced.",
+  "awards_year_categories_empty_title_text": "No categories found for this event.",
+  "awards_year_categories_intro_text": "Explore each category to see finalists and winners.",
+  "awards_year_categories_title": "Categories",
+  "awards_year_end_label": "Event ended",
+  "awards_year_meta_title": "{eventTitle} Results - CubeIndex Awards",
+  "awards_year_nominees_badge_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} nominee",
+        "countPlural=other": "{count} nominees"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_phase_live_description_text": "Votes are still coming in. Check back after the finale.",
+  "awards_year_phase_live_label": "Voting in progress",
+  "awards_year_phase_past_description_text": "Explore winners and finalist highlights below.",
+  "awards_year_phase_past_label": "Completed",
+  "awards_year_phase_unknown_description_text": "Event timing could not be determined.",
+  "awards_year_phase_unknown_label": "Status unavailable",
+  "awards_year_phase_upcoming_description_text": "Results unlock once voting closes.",
+  "awards_year_phase_upcoming_label": "Upcoming",
+  "awards_year_results_locked_text": "Results will appear once the event concludes. Check back after {endDate}.",
+  "awards_year_results_pending_text": "Results available after the event ends.",
+  "awards_year_start_label": "Event started",
+  "awards_year_title_h1": "Event Results",
+  "awards_year_view_details_aria": "View details for {cubeName}",
+  "awards_year_view_details_cta": "View details",
+  "awards_year_votes_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} vote",
+        "countPlural=other": "{count} votes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "awards_year_winner_label": "Winner",
+  "banner_awards_cta": "Enter the awards",
+  "banner_awards_heading_text": "Celebrating the boldest cubes of the season.",
+  "banner_awards_hide_aria": "Hide the CubeIndex Awards banner",
+  "common_action_all_reviews_cta": "All reviews",
+  "common_action_clear_both_cta": "Clear Both",
+  "common_action_clear_cta": "Clear",
+  "common_action_read_label": "Read",
+  "common_action_read_more_label": "Read more",
+  "common_action_reset_cta": "Reset",
+  "common_action_reset_filters_aria": "Reset filters",
+  "common_action_reset_filters_cta": "Reset Filters",
+  "common_action_submit_new_cube_cta": "Submit a New Cube",
+  "common_action_swap_cta": "Swap",
+  "common_action_visit_store_cta": "Visit Store",
+  "common_action_write_review_cta": "Write a review",
+  "common_error_unexpected_text": "An unexpected error occurred",
+  "common_filter_all_label": "All",
+  "common_label_cube_1_text": "Cube 1",
+  "common_label_cube_2_text": "Cube 2",
+  "common_label_date_text": "Date",
+  "common_label_feature_text": "Feature",
+  "common_label_no_text": "No",
+  "common_label_price_text": "Price",
+  "common_label_yes_text": "Yes",
+  "common_meta_last_update_label": "Last update",
+  "common_meta_unknown_label": "Unknown",
+  "common_percent_label": "{value}%",
+  "common_sort_label": "Sort",
+  "common_sort_name_label": "Name",
+  "common_sort_popularity_label": "Popularity",
+  "common_sort_price_label": "Price",
+  "common_sort_rating_label": "Rating",
+  "common_sort_recent_label": "Recent",
+  "common_status_hidden_label": "Hidden",
+  "common_status_unsaved_label": "Unsaved",
+  "cube_add_acquired_on_label": "Acquired on",
+  "cube_add_add_cta": "Add Cube",
+  "cube_add_add_title": "Add to Collection",
+  "cube_add_added_text": "Added!",
+  "cube_add_adding_text": "Adding…",
+  "cube_add_auth_required_text": "You must be logged in to perform this action.",
+  "cube_add_bought_from_label": "Bought From",
+  "cube_add_bought_from_none_label": "None",
+  "cube_add_cancel_cta": "Cancel",
+  "cube_add_close_aria": "Close",
+  "cube_add_condition_label": "Condition",
+  "cube_add_edit_cta": "Edit Cube",
+  "cube_add_edit_title": "Edit Cube",
+  "cube_add_edited_text": "Edited!",
+  "cube_add_editing_text": "Editing…",
+  "cube_add_main_helper_text": "Shows as your primary",
+  "cube_add_main_label": "Main Cube",
+  "cube_add_main_toggle_aria": "Set as main cube",
+  "cube_add_notes_label": "Notes",
+  "cube_add_notes_placeholder": "Lubed with..., setup..., special mod..., etc.",
+  "cube_add_optional_label": "Optional",
+  "cube_add_purchase_price_label": "Purchase Price",
+  "cube_add_purchase_price_placeholder": "0.00",
+  "cube_add_quantity_decrease_aria": "Decrease quantity",
+  "cube_add_quantity_increase_aria": "Increase quantity",
+  "cube_add_quantity_label": "Quantity",
+  "cube_add_quantity_locked_text": "Locked for wishlist",
+  "cube_add_status_label": "Status",
+  "cube_add_submit_failed_text": "Unable to add the cube. Please try again.",
+  "cube_add_unexpected_error_text": "Unexpected error. Please try again.",
+  "cube_add_validation_acquired_future_text": "Acquired date cannot be in the future.",
+  "cube_add_validation_condition_required_text": "Please choose a condition.",
+  "cube_add_validation_price_invalid_text": "Price must be a valid number greater than or equal to 0.",
+  "cube_add_validation_price_too_high_text": "Price seems too high. Please double-check.",
+  "cube_add_validation_quantity_range_text": "Quantity must be between {min} and {max}.",
+  "cube_add_validation_status_required_text": "Please choose a status.",
+  "cube_card_average_price_title": "Average price",
+  "cube_card_image_alt_text": "{series} {model} {versionName}",
+  "cube_card_new_label": "NEW",
+  "cube_card_popularity_title": "Popularity",
+  "cube_card_view_details_aria": "View Cube Details",
+  "cube_card_view_details_cta": "View Details",
+  "cube_condition_broken_label": "Broken",
+  "cube_condition_fair_label": "Fair",
+  "cube_condition_good_label": "Good",
+  "cube_condition_new_in_box_label": "New in box",
+  "cube_condition_new_label": "New",
+  "cube_condition_poor_label": "Poor",
+  "cube_condition_worn_label": "Worn",
+  "cube_search_aria": "Search cubes",
+  "cube_search_disabled_text": "Disabled",
+  "cube_search_no_matches_text": "No matches",
+  "cube_search_placeholder": "Search cubes…",
+  "cube_status_borrowed_label": "Borrowed",
+  "cube_status_loaned_label": "Loaned",
+  "cube_status_lost_label": "Lost",
+  "cube_status_owned_label": "Owned",
+  "cube_status_wishlist_label": "Wishlist",
+  "cube_submission_moderator_note_label": "Moderator note",
+  "cube_submission_status_approved_label": "Approved",
+  "cube_submission_status_approved_text": "Great news! Your cube is live on CubeIndex.",
+  "cube_submission_status_pending_label": "Pending",
+  "cube_submission_status_pending_text": "Our moderators are reviewing this submission.",
+  "cube_submission_status_rejected_label": "Rejected",
+  "cube_submission_status_rejected_text": "There was an issue with the submission. Check the moderator note for next steps.",
+  "cube_submission_status_title": "Submission status",
+  "cube_submission_submitted_label": "Submitted:",
+  "cube_submission_verified_label": "Verified:",
+  "cube_submission_view_details_aria": "View Cube Details",
+  "cube_submission_view_details_cta": "View Details",
+  "cube_user_card_acquired_date_label": "Acquired Date",
+  "cube_user_card_acquired_on_title": "Acquired on",
+  "cube_user_card_bought_from_label": "Bought From",
+  "cube_user_card_bought_from_none_label": "None",
+  "cube_user_card_bought_from_title": "Bought from",
+  "cube_user_card_condition_label": "Condition",
+  "cube_user_card_condition_title": "Condition",
+  "cube_user_card_main_label": "Main",
+  "cube_user_card_main_title": "Main cube",
+  "cube_user_card_main_toggle_label": "Set as main cube",
+  "cube_user_card_notes_label": "Notes",
+  "cube_user_card_notes_placeholder": "Any special notes...",
+  "cube_user_card_price_invalid_text": "Price must be a valid number greater than or equal to 0.",
+  "cube_user_card_price_too_high_text": "Price seems too high. Please double-check.",
+  "cube_user_card_purchase_price_label": "Purchase Price",
+  "cube_user_card_purchase_price_placeholder": "0.00",
+  "cube_user_card_purchase_price_title": "Purchase price",
+  "cube_user_card_quantity_label": "Quantity",
+  "cube_user_card_quantity_title": "Quantity",
+  "cube_user_card_rating_title": "Your rating",
+  "cube_user_card_remove_aria": "Remove from collection",
+  "cube_user_card_remove_cta": "Remove",
+  "cube_user_card_save_cta": "Save",
+  "cube_user_card_save_loading_text": "Editing...",
+  "cube_user_card_save_success_text": "Edited!",
+  "cube_user_card_status_label": "Status",
+  "cube_user_card_status_title": "Status",
+  "cube_user_card_view_details_aria": "View Cube Details",
+  "cube_user_card_view_details_cta": "View Details",
+  "cube_version_base_label": "Base",
+  "cube_version_limited_label": "Limited Edition",
+  "cube_version_trim_label": "Trim",
+  "dashboard_action_browse_achievements_cta": "Browse Achievements",
+  "dashboard_action_discover_users_cta": "Discover Users",
+  "dashboard_action_manage_collection_cta": "Manage Collection",
+  "dashboard_action_my_ratings_cta": "My Ratings",
+  "dashboard_action_my_submissions_cta": "My Submissions",
+  "dashboard_action_submit_cta": "Submit a Cube",
+  "dashboard_action_userbar_cta": "Userbar",
+  "dashboard_action_view_profile_cta": "View Profile",
+  "dashboard_actions_title": "Quick Actions",
+  "dashboard_card_achievements_label": "Achievements",
+  "dashboard_card_collection_label": "Collection",
+  "dashboard_card_followers_label": "Followers",
+  "dashboard_card_ratings_label": "Ratings",
+  "dashboard_card_submissions_label": "Submissions",
+  "dashboard_cta_description_text": "Find cubes to add to your collection.",
+  "dashboard_cta_kicker_label": "Get Started",
+  "dashboard_cta_title_text": "Explore Cubes",
+  "dashboard_intro_text": "Here’s your personal overview and recent activity.",
+  "dashboard_meta_title": "Dashboard - CubeIndex",
+  "dashboard_recent_empty_cta": "Submit a cube",
+  "dashboard_recent_empty_suffix_text": " to get started.",
+  "dashboard_recent_empty_text": "Share cubes that are missing from the catalog and track their status from here. ",
+  "dashboard_recent_submit_another_cta": "Submit another cube",
+  "dashboard_recent_submitted_text": "Submitted {date}",
+  "dashboard_recent_title": "Recent Submissions",
+  "dashboard_recent_view_all_cta": "View all",
+  "dashboard_welcome_title_text": "Welcome back, {name}",
+  "errors_bug_report_prompt_text": "If you think this is a bug, please let us know!",
+  "errors_encountered_text": "It seems you encountered an error.",
+  "errors_generic_message_text": "Something went wrong!",
+  "errors_legendary_cube_alt_text": "Legendary Cube",
+  "errors_report_bug_cta": "Report the Bug",
+  "explore_achievements_card_aria": "Achievement: {name}",
+  "explore_achievements_claimed_by_aria": "Claimed by {percent}% of users",
+  "explore_achievements_empty_body_text": "We couldn't find any achievements matching your search or filters. Try adjusting them or resetting to see everything.",
+  "explore_achievements_empty_none_title": "No achievements yet",
+  "explore_achievements_empty_title": "No achievements found",
+  "explore_achievements_filter_obtainable_label": "Obtainable",
+  "explore_achievements_filter_rarity_label": "Rarity:",
+  "explore_achievements_hidden_description_text": "Unlock this achievement to reveal its name and description.",
+  "explore_achievements_hidden_title": "This achievement is hidden",
+  "explore_achievements_intro_text": "Unlock achievements by participating in the CubeIndex community. Collect them all to showcase your journey.",
+  "explore_achievements_items_per_page_label": "Achievements per page",
+  "explore_achievements_meta_category_label": "Category",
+  "explore_achievements_meta_claimed_by_label": "Claimed by",
+  "explore_achievements_meta_title": "Achievements - CubeIndex",
+  "explore_achievements_meta_unlock_method_label": "Unlock Method",
+  "explore_achievements_not_unlockable_text": "Not currently unlockable",
+  "explore_achievements_rarity_title": "Rarity: {rarity}",
+  "explore_achievements_search_placeholder": "Search Achievements",
+  "explore_achievements_sort_unlock_rate_label": "Unlock Rate",
+  "explore_achievements_title_h1": "Achievements",
+  "explore_achievements_title_reward_label": "Title reward:",
+  "explore_compare_cube_image_alt": "{series} {model} {versionName}",
+  "explore_compare_empty_text": "Select at least one cube to compare.",
+  "explore_compare_field_brand_label": "Brand",
+  "explore_compare_field_discontinued_label": "Discontinued",
+  "explore_compare_field_maglev_label": "Maglev",
+  "explore_compare_field_magnetic_label": "Magnetic",
+  "explore_compare_field_modded_label": "Modded",
+  "explore_compare_field_model_label": "Model",
+  "explore_compare_field_rating_label": "Rating",
+  "explore_compare_field_related_to_label": "Related To",
+  "explore_compare_field_release_date_label": "Release Date",
+  "explore_compare_field_series_label": "Series",
+  "explore_compare_field_size_label": "Size (mm3)",
+  "explore_compare_field_smart_label": "Smart",
+  "explore_compare_field_stickered_label": "Stickered",
+  "explore_compare_field_subtype_label": "Subtype",
+  "explore_compare_field_surface_finish_label": "Surface Finish",
+  "explore_compare_field_type_label": "Type",
+  "explore_compare_field_version_name_label": "Version Name",
+  "explore_compare_field_version_type_label": "Version Type",
+  "explore_compare_field_wca_legal_label": "WCA Legal",
+  "explore_compare_field_weight_label": "Weight (g)",
+  "explore_compare_intro_text": "Select up to two cubes to view specifications side by side.",
+  "explore_compare_meta_title": "Compare Cubes - CubeIndex",
+  "explore_compare_title_h1": "Compare Cubes",
+  "explore_compare_vs_text": "VS",
+  "explore_cube_about_heading_label": "About",
+  "explore_cube_about_intro_text": "The {name} is a {type} twisty puzzle",
+  "explore_cube_about_summary_text": ". It is {magneticState}, {smartState}, and {wcaState}. Currently {availabilityState} with a community rating of {rating}/5 and {moddedState} design.",
+  "explore_cube_add_disabled_tooltip_text": "Only approved cubes can be added to your collection",
+  "explore_cube_availability_state_text": [
+    {
+      "declarations": [
+        "input isDiscontinued"
+      ],
+      "match": {
+        "isDiscontinued=*": "available",
+        "isDiscontinued=false": "available",
+        "isDiscontinued=true": "discontinued"
+      },
+      "selectors": [
+        "isDiscontinued"
+      ]
+    }
+  ],
+  "explore_cube_back_to_explore_cta": "Back to Explore",
+  "explore_cube_database_added_label": "Added",
+  "explore_cube_database_heading_label": "Database",
+  "explore_cube_database_id_label": "ID",
+  "explore_cube_database_last_updated_label": "Last Updated",
+  "explore_cube_database_submitted_by_label": "Submitted By",
+  "explore_cube_database_verified_by_label": "Verified By",
+  "explore_cube_discontinued_label": "Discontinued",
+  "explore_cube_feature_ball_core_label": "Ball Core",
+  "explore_cube_feature_maglev_label": "Maglev",
+  "explore_cube_feature_magnetic_label": "Magnetic",
+  "explore_cube_feature_modded_label": "Modded",
+  "explore_cube_feature_smart_label": "Smart",
+  "explore_cube_feature_stickered_label": "Stickered",
+  "explore_cube_feature_wca_legal_label": "WCA Legal",
+  "explore_cube_features_empty_text": "No special features listed.",
+  "explore_cube_features_heading_label": "Features",
+  "explore_cube_image_alt": "{series} {model} {versionName}",
+  "explore_cube_image_credit_text": "Image ©{source}. All rights reserved.",
+  "explore_cube_magnetic_state_text": [
+    {
+      "declarations": [
+        "input isMagnetic"
+      ],
+      "match": {
+        "isMagnetic=*": "magnetic",
+        "isMagnetic=false": "non-magnetic",
+        "isMagnetic=true": "magnetic"
+      },
+      "selectors": [
+        "isMagnetic"
+      ]
+    }
+  ],
+  "explore_cube_meta_title": "{name} - CubeIndex",
+  "explore_cube_modded_state_text": [
+    {
+      "declarations": [
+        "input isModded"
+      ],
+      "match": {
+        "isModded=*": "original",
+        "isModded=false": "original",
+        "isModded=true": "modded"
+      },
+      "selectors": [
+        "isModded"
+      ]
+    }
+  ],
+  "explore_cube_moderator_note_hint": "(Only you can see this)",
+  "explore_cube_moderator_note_title": "Moderator Note",
+  "explore_cube_not_available_label": "Not Available",
+  "explore_cube_popularity_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} user has this cube",
+        "countPlural=other": "{count} users have this cube"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_cube_rate_disabled_tooltip_text": "Only approved cubes can be rated",
+  "explore_cube_related_open_aria": "Open {series} {model}",
+  "explore_cube_related_section_title": "Related To",
+  "explore_cube_release_date_text": " released on {date}",
+  "explore_cube_report_cta": "Report incorrect/missing data",
+  "explore_cube_report_label": "the {series} {model} {versionName}",
+  "explore_cube_same_series_list_aria": "Cubes in the {series} series",
+  "explore_cube_same_series_open_aria": "Open {series} {model}",
+  "explore_cube_same_series_section_title": "In the Same Series",
+  "explore_cube_smart_state_text": [
+    {
+      "declarations": [
+        "input isSmart"
+      ],
+      "match": {
+        "isSmart=*": "smart",
+        "isSmart=false": "non-smart",
+        "isSmart=true": "smart"
+      },
+      "selectors": [
+        "isSmart"
+      ]
+    }
+  ],
+  "explore_cube_specs_brand_label": "Brand",
+  "explore_cube_specs_heading_label": "Specifications",
+  "explore_cube_specs_size_label": "Size",
+  "explore_cube_specs_surface_label": "Surface",
+  "explore_cube_specs_type_label": "Type",
+  "explore_cube_specs_version_label": "Version",
+  "explore_cube_specs_weight_label": "Weight",
+  "explore_cube_status_pending_text": "This cube is awaiting verification by moderators.",
+  "explore_cube_status_rejected_text": "This cube has been rejected.",
+  "explore_cube_submission_notice_text": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Your submission is being reviewed.",
+        "status=Pending": "Your submission is awaiting verification by moderators.",
+        "status=Rejected": "Your submission has been rejected."
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_cube_tab_details_label": "Details",
+  "explore_cube_tab_prices_label": "Shops & Prices",
+  "explore_cube_tab_ratings_label": "Ratings",
+  "explore_cube_tab_reviews_label": "Reviews",
+  "explore_cube_tabs_aria": "Cube sections",
+  "explore_cube_trim_list_aria": "Available trims",
+  "explore_cube_trim_open_aria": "Open {name}",
+  "explore_cube_trim_section_title": "Select Trim",
+  "explore_cube_wca_state_text": [
+    {
+      "declarations": [
+        "input isWcaLegal"
+      ],
+      "match": {
+        "isWcaLegal=*": "WCA-legal",
+        "isWcaLegal=false": "not WCA-legal",
+        "isWcaLegal=true": "WCA-legal"
+      },
+      "selectors": [
+        "isWcaLegal"
+      ]
+    }
+  ],
+  "explore_cubes_compare_prefix_text": "Compare",
+  "explore_cubes_compare_suffix_text": "Cubes",
+  "explore_cubes_empty_body_text": "We couldn't find any cubes matching your search or filters; try adjusting them or resetting to see everything. If the cube you're looking for isn't listed, consider submitting it to help grow our database.",
+  "explore_cubes_empty_title": "No cubes found",
+  "explore_cubes_filter_base_label": "Base",
+  "explore_cubes_filter_brand_label": "Brand:",
+  "explore_cubes_filter_limited_label": "Limited",
+  "explore_cubes_filter_magnetic_label": "Magnetic",
+  "explore_cubes_filter_modded_label": "Modded",
+  "explore_cubes_filter_release_year_label": "Release Year:",
+  "explore_cubes_filter_smart_label": "Smart",
+  "explore_cubes_filter_stickered_label": "Stickered",
+  "explore_cubes_filter_sub_type_label": "Sub Type:",
+  "explore_cubes_filter_trim_label": "Trim",
+  "explore_cubes_filter_type_label": "Type:",
+  "explore_cubes_filter_wca_label": "WCA Legal",
+  "explore_cubes_intro_text": "Browse all your favorite cubes by type, brand, or rating.",
+  "explore_cubes_items_per_page_label": "Cubes per page",
+  "explore_cubes_meta_title": "Explore Cubes - CubeIndex",
+  "explore_cubes_search_placeholder": "Search Cubes",
+  "explore_cubes_title_h1": "Explore Cubes",
+  "explore_landing_title_h1": "What would you like to explore?",
+  "explore_popover_achievements_description": "Browse achievements, and track community unlock progress.",
+  "explore_popover_achievements_title": "Achievements",
+  "explore_popover_card_cta": "Explore",
+  "explore_popover_cubes_description": "Browse thousands of cubes by brand, type, and community rating.",
+  "explore_popover_cubes_title": "Cubes",
+  "explore_popover_heading_text": "Explore Database",
+  "explore_popover_keyboard_hint_text": "Use arrow keys to navigate options",
+  "explore_popover_menu_aria": "Explore Menu",
+  "explore_popover_missing_cube_description": "Submit models that are not in the catalog and help keep CubeIndex updated.",
+  "explore_popover_missing_cube_title": "Missing a cube?",
+  "explore_popover_submit_cta": "Submit",
+  "explore_popover_submit_cube_cta": "Submit a cube",
+  "explore_popover_users_description": "Explore user profiles, discover top solvers, and see community activity.",
+  "explore_popover_users_title": "Users",
+  "explore_popover_vendors_description": "Find trusted cube shops and compare prices from top vendors worldwide.",
+  "explore_popover_vendors_title": "Vendors",
+  "explore_popover_view_all_aria": "View all explore options",
+  "explore_popover_view_all_label": "View all",
+  "explore_price_beta_label": "Beta",
+  "explore_price_chart_aria": "Line chart of price history",
+  "explore_price_chart_empty_body_text": "Come back later as we gather more price points.",
+  "explore_price_chart_empty_title": "Not enough data yet",
+  "explore_price_empty_body_text": "We'll display shops and prices as soon as we track them.",
+  "explore_price_empty_title": "No vendor information available",
+  "explore_price_history_heading_label": "Price history",
+  "explore_price_meta_description": "Historical price tracking across vendors for this cube.",
+  "explore_price_meta_title": "{name} - Price Tracking",
+  "explore_price_status_in_stock_label": "In stock",
+  "explore_price_status_out_of_stock_label": "Out of stock",
+  "explore_price_tooltip_missing_text": "{label}: -",
+  "explore_price_vendor_open_aria": "Open {name} in a new tab",
+  "explore_price_vendors_heading_label": "Available at",
+  "explore_price_visit_store_cta": "Visit store",
+  "explore_ratings_meta_title": "{name} - Ratings",
+  "explore_review_action_primary_cta": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Edit",
+        "status=draft": "Publish"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_action_success_text": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Edited",
+        "status=draft": "Published"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_body_label": "Main review",
+  "explore_review_body_min_length_text": "Min. {minLength} characters",
+  "explore_review_error_body_length_text": "Review must be at least {minLength} characters long",
+  "explore_review_error_save_draft_text": "Failed to save draft",
+  "explore_review_error_save_review_text": "Failed to save review",
+  "explore_review_error_set_ratings_text": "Failed to set ratings",
+  "explore_review_error_title_length_text": "Title can not be longer than {maxLength} characters",
+  "explore_review_helpful_cta": "Helpful",
+  "explore_review_intro_text": "Write a helpful review. Keep it specific: feel, performance, and who it's for.",
+  "explore_review_meta_title": "{name} - Review",
+  "explore_review_rating_hint_text": "Rate each category from 0.5 to 5 stars.",
+  "explore_review_rating_title": "Rating",
+  "explore_review_save_draft_cta": "Save draft",
+  "explore_review_section_title": "Review",
+  "explore_review_status_label": [
+    {
+      "declarations": [
+        "input status"
+      ],
+      "match": {
+        "status=*": "Review",
+        "status=draft": "Draft",
+        "status=published": "Published"
+      },
+      "selectors": [
+        "status"
+      ]
+    }
+  ],
+  "explore_review_title_h1": "Review of the {name}",
+  "explore_review_title_label": "Title",
+  "explore_reviews_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} review",
+        "countPlural=other": "{count} reviews"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_reviews_empty_hint_text": "Be the first to share your experience with this cube.",
+  "explore_reviews_empty_text": "No reviews yet.",
+  "explore_reviews_heading_label": "Community reviews",
+  "explore_reviews_meta_title": "{name} - Reviews",
+  "explore_reviews_open_full_aria": "Open full review",
+  "explore_users_empty_body_text": "We couldn't find any users matching your search or filters. Try adjusting them or resetting to see everything.",
+  "explore_users_empty_description_text": "We couldn't find any users matching your search or filters. Try adjusting them or resetting to see everything.",
+  "explore_users_empty_title": "No users found",
+  "explore_users_empty_title_h2": "No users found",
+  "explore_users_heading_h1": "Explore Users",
+  "explore_users_items_per_page_label": "Users per page",
+  "explore_users_meta_title": "Explore Users - CubeIndex",
+  "explore_users_page_title_text": "Explore Users - CubeIndex",
+  "explore_users_reset_filters_aria": "Reset filters",
+  "explore_users_reset_filters_cta": "Reset",
+  "explore_users_search_placeholder": "Search Users",
+  "explore_users_search_placeholder_label": "Search Users",
+  "explore_users_sort_achievements_label": "Achievements",
+  "explore_users_sort_cubes_label": "Cubes",
+  "explore_users_sort_followers_label": "Followers",
+  "explore_users_sort_name_label": "Name",
+  "explore_users_sort_recent_label": "Recent",
+  "explore_users_title_h1": "Explore Users",
+  "explore_vendors_buyer_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} user purchased here",
+        "countPlural=other": "{count} users purchased here"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "explore_vendors_default_currency_label": "Default currency",
+  "explore_vendors_empty_body_text": "We couldn't find any vendors matching your search or filters. Try adjusting them or resetting to see everything.",
+  "explore_vendors_empty_title": "No vendors found",
+  "explore_vendors_intro_text": "Find the best shops and trusted vendors in the cubing world.",
+  "explore_vendors_items_per_page_label": "Vendors per page",
+  "explore_vendors_logo_alt": "{name} logo",
+  "explore_vendors_logo_placeholder_aria": "{name} placeholder logo",
+  "explore_vendors_meta_title": "Explore Vendors - CubeIndex",
+  "explore_vendors_search_placeholder": "Search Vendors",
+  "explore_vendors_sponsored_label": "Sponsored",
+  "explore_vendors_title_h1": "Explore Vendors",
+  "explore_vendors_verified_label": "Verified",
+  "footer_achievements_label": "Achievements",
+  "footer_brand_catch_phrase_text": "Track, explore and share your speedcube collection.",
+  "footer_brand_description_text": "Track, explore and share your speedcube collection.",
+  "footer_brand_logo_alt": "CubeIndex logo",
+  "footer_brand_name_text": "CubeIndex",
+  "footer_connect_heading_text": "Connect",
+  "footer_copyright_text": "© {startYear} - {endYear} CubeIndex. All rights reserved.",
+  "footer_home_label": "Home",
+  "footer_layout_region_label": "Footer",
+  "footer_legal_copyright_text": "{startYear} - {currentYear} {brandName}. All rights reserved.",
+  "footer_legal_heading_text": "Legal",
+  "footer_legal_privacy_label": "Privacy Policy",
+  "footer_legal_section_title": "Legal",
+  "footer_legal_sitemap_label": "Sitemap",
+  "footer_legal_terms_label": "Terms of Service",
+  "footer_nav_achievements_label": "Achievements",
+  "footer_nav_explore_label": "Explore",
+  "footer_nav_home_label": "Home",
+  "footer_nav_report_label": "Report",
+  "footer_nav_section_title": "Navigation",
+  "footer_navigation_heading_text": "Navigation",
+  "footer_privacy_label": "Privacy Policy",
+  "footer_region_aria": "Footer",
+  "footer_report_label": "Report",
+  "footer_sitemap_label": "Sitemap",
+  "footer_social_discord_label": "Discord",
+  "footer_social_email_label": "Email",
+  "footer_social_github_label": "GitHub",
+  "footer_social_section_title": "Connect",
+  "footer_social_twitter_label": "Twitter",
+  "footer_social_youtube_label": "Youtube",
+  "footer_terms_label": "Terms of Service",
+  "home_cta_description_text": "Join the CubeIndex community and start tracking your collection, unlocking achievements, and connecting with cubers worldwide.",
+  "home_cta_primary_cta": "Get Started",
+  "home_cta_secondary_cta": "Explore Database",
+  "home_cta_title_h2": "Ready to level up your cube game?",
+  "home_features_list_aria": "Key benefits",
+  "home_features_title_h2": "Why CubeIndex",
+  "home_hero_lead_text": "Track your cubes, unlock achievements, and explore the world's largest cube database.",
+  "home_hero_primary_cta": "Get Started",
+  "home_hero_scroll_aria": "Scroll to content",
+  "home_hero_scroll_label": "Scroll",
+  "home_hero_secondary_cta": "Explore Database",
+  "home_hero_title_h1": "Build Your Ultimate Cube Collection",
+  "home_meta_title": "CubeIndex",
+  "home_partner_algarchive_description_text": "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
+  "home_partner_algarchive_discord_cta": "Join Discord",
+  "home_partner_algarchive_name_text": "AlgArchive",
+  "home_partner_algarchive_site_cta": "Visit Site",
+  "home_partner_cubingpanda_description_text": "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
+  "home_partner_cubingpanda_discord_cta": "Join Discord",
+  "home_partner_cubingpanda_name_text": "CubingPanda",
+  "home_partners_title_h2": "Our Partners",
+  "home_section_achievements_description": "Celebrate milestones as you collect, rate, and explore. Unlock achievements for completing challenges and growing your collection.",
+  "home_section_achievements_eyebrow": "Achievements",
+  "home_section_achievements_image_alt": "Illustration of achievement badges and progress",
+  "home_section_achievements_title": "Earn Achievements",
+  "home_section_collection_description": "Catalog your entire puzzle collection. Track conditions and personal notes, then share with friends to showcase and brag!",
+  "home_section_collection_eyebrow": "Collection",
+  "home_section_collection_image_alt": "Illustration of a personal collection dashboard with categorized cubes",
+  "home_section_collection_title": "Add and Manage Your Rubik's Cube Collection",
+  "home_section_community_description": "Discover inspiring collections from across the community.",
+  "home_section_community_eyebrow": "Community",
+  "home_section_community_image_alt": "Illustration of community profiles and shared collections",
+  "home_section_community_title": "See Other People's Cube Collection",
+  "home_section_pricing_description": "Know where to buy. View vendor pricing side-by-side, check availability, and jump straight to the best deal.",
+  "home_section_pricing_eyebrow": "Pricing",
+  "home_section_pricing_image_alt": "Illustration showing price comparison cards across multiple stores",
+  "home_section_pricing_title": "Compare Prices Between Shops",
+  "home_section_ratings_description": "Share your experience. Leave ratings and feedback so others can find their perfect main — your opinion makes the database better for everybody.",
+  "home_section_ratings_eyebrow": "Ratings",
+  "home_section_ratings_image_alt": "Illustration of rating stars and feedback cards",
+  "home_section_ratings_title": "Rate Cubes",
+  "home_stats_achievements_aria": "Unlockable achievements: {unlocked} out of {total}",
+  "home_stats_achievements_description_text": "Earnable today based on your collection & activity.",
+  "home_stats_achievements_label": "Unlockable Achievements",
+  "home_stats_cubes_aria": "Total cubes logged: {count}",
+  "home_stats_cubes_description_text": "Cataloged across brands, types, and generations.",
+  "home_stats_cubes_label": "Cubes Logged",
+  "home_stats_list_aria": "Key statistics",
+  "home_stats_title_h2": "CubeIndex in Numbers",
+  "home_stats_users_aria": "Registered users: {count}",
+  "home_stats_users_description_text": "A growing community of cubers worldwide.",
+  "home_stats_users_label": "Registered Users",
+  "home_tiles_achievements_description_text": "Earn badges for milestones and rare finds. Show them off on your profile.",
+  "home_tiles_achievements_title_text": "Unlock Achievements",
+  "home_tiles_collection_description_text": "Log every cube with notes and versions. Keep your stash organized and easy to browse.",
+  "home_tiles_collection_title_text": "Track Your Collection",
+  "home_tiles_community_description_text": "Follow collectors, share finds, and see how your shelf stacks up worldwide.",
+  "home_tiles_community_title_text": "Discover the Community",
+  "home_tiles_explore_description_text": "Search the largest cube database. From 2×2 to big cubes and rare mods, it’s all here.",
+  "home_tiles_explore_title_text": "Explore Every Puzzle",
+  "home_tiles_notifications_description_text": "Get updates on releases, alerts, and community news—always right on time.",
+  "home_tiles_notifications_title_text": "Stay Notified",
+  "home_tiles_pricing_description_text": "Compare vendors, view price history, and get instant alerts on drops and restocks.",
+  "home_tiles_pricing_title_text": "Follow Price Trends",
+  "layout_card_close_aria": "Close",
+  "legal_layout_history_link_label": "View change history on GitHub",
+  "legal_layout_last_updated_text": "Last updated: {date}",
+  "misc_add_to_collection_add_aria": "Add to Collection",
+  "misc_add_to_collection_edit_aria": "Edit in Collection",
+  "misc_add_to_collection_edit_cta": "Edit",
+  "misc_add_to_collection_full_cta": "Add to Collection",
+  "misc_add_to_collection_short_cta": "Add",
+  "misc_client_error_toast_action_label": "Report",
+  "misc_client_error_toast_description": "If you think it is a bug, click to report the bug",
+  "misc_client_error_toast_text": "A client error occurred:\n{message}",
+  "misc_filter_sidebar_title": "Filters",
+  "misc_follow_button_follow_cta": "Follow",
+  "misc_follow_button_unfollow_cta": "Unfollow",
+  "misc_in_construction_description_text": "We're currently working hard to finish this part of the site. Check back soon for something awesome!",
+  "misc_in_construction_return_home_cta": "Return Home",
+  "misc_in_construction_title_h1": "Page in Construction",
+  "misc_items_per_page_label": "Items per page",
+  "misc_pagination_next_aria": "Next page",
+  "misc_pagination_next_label": "Next",
+  "misc_pagination_page_text": "Page {currentPage} of {totalPages}",
+  "misc_pagination_previous_aria": "Previous page",
+  "misc_pagination_previous_label": "Previous",
+  "misc_rate_cube_button_aria": "Rate this Cube",
+  "misc_rate_cube_button_full_cta": "Rate this Cube",
+  "misc_rate_cube_button_short_cta": "Rate",
+  "misc_scroll_to_top_aria": "Scroll to top",
+  "misc_scroll_to_top_label": "Top",
+  "misc_search_bar_clear_aria": "Clear",
+  "misc_search_bar_toggle_filters_aria": "Toggle Filters",
+  "misc_share_button_copied_text": "Link copied to clipboard",
+  "misc_share_button_copy_prompt_text": "Copy this link:",
+  "misc_share_button_label": "Share",
+  "misc_share_button_text": "Check this out!",
+  "misc_sort_selector_ascending_label": "Ascending",
+  "misc_sort_selector_descending_label": "Descending",
+  "misc_sort_selector_label": "Sort",
+  "misc_sort_selector_toggle_aria": "Toggle sort direction",
+  "misc_tag_feature_status_aria": "Feature status: {label}",
+  "misc_youtube_video_title_text": "YouTube video",
+  "nav_auth_login_cta": "Login",
+  "nav_auth_logout_cta": "Log out",
+  "nav_bottom_explore_aria": "Explore",
+  "nav_bottom_home_aria": "Home",
+  "nav_bottom_home_label": "Home",
+  "nav_bottom_login_aria": "Login",
+  "nav_bottom_notifications_aria": "Notifications",
+  "nav_bottom_profile_aria": "Profile",
+  "nav_brand_home_aria": "CubeIndex Home",
+  "nav_brand_logo_alt": "CubeIndex Logo",
+  "nav_brand_name_text": "CubeIndex",
+  "nav_email_verify_aria": "Verify your email",
+  "nav_explore_card_achievements_text": "Browse achievements, and track community unlock progress.",
+  "nav_explore_card_achievements_title": "Achievements",
+  "nav_explore_card_cta_label": "Explore",
+  "nav_explore_card_cubes_text": "Browse thousands of cubes by brand, type, and community rating.",
+  "nav_explore_card_cubes_title": "Cubes",
+  "nav_explore_card_users_text": "Explore user profiles, discover top solvers, and see community activity.",
+  "nav_explore_card_users_title": "Users",
+  "nav_explore_card_vendors_text": "Find trusted cube shops and compare prices from top vendors worldwide.",
+  "nav_explore_card_vendors_title": "Vendors",
+  "nav_explore_keyboard_hint_text": "Use arrow keys to navigate options",
+  "nav_explore_menu_aria": "Explore Menu",
+  "nav_explore_submit_cta": "Submit a cube",
+  "nav_explore_submit_prompt_text": "Submit models that are not in the catalog and help keep CubeIndex updated.",
+  "nav_explore_submit_prompt_title": "Missing a cube?",
+  "nav_explore_submit_short_cta": "Submit",
+  "nav_explore_title_text": "Explore Database",
+  "nav_explore_view_all_aria": "View all explore options",
+  "nav_explore_view_all_label": "View all",
+  "nav_locale_language_label": "Language",
+  "nav_main_awards_label": "Awards",
+  "nav_main_explore_label": "Explore",
+  "nav_main_home_aria": "CubeIndex Home",
+  "nav_main_home_label": "Home",
+  "nav_main_language_label": "Language",
+  "nav_main_notifications_label": "Notifications",
+  "nav_notifications_unread_aria": "Unread notifications",
+  "nav_notifications_verify_email_aria": "Verify your email",
+  "nav_profile_menu_profile_label": "Profile",
+  "nav_profile_menu_settings_label": "Settings",
+  "nav_profile_menu_signout_cta": "Sign Out",
+  "nav_profile_menu_staff_dashboard_label": "Staff Dashboard",
+  "nav_profile_menu_user_label": "User menu",
+  "nav_profile_menu_userbar_label": "Userbar",
+  "nav_profile_menu_userbar_tag_label": "New",
+  "nav_staff_dashboard_label": "Staff Dashboard",
+  "nav_user_avatar_alt": "User avatar",
+  "nav_user_logout_cta": "Log out",
+  "nav_user_menu_aria": "User menu",
+  "nav_user_profile_label": "Profile",
+  "nav_user_settings_label": "Settings",
+  "nav_user_userbar_label": "Userbar",
+  "nav_user_userbar_tag_text": "New",
+  "notifications_empty_text": "You have no notifications yet.",
+  "notifications_link_default_label": "Open link",
+  "notifications_mark_all_cta": "Mark all as read",
+  "notifications_mark_all_success_text": "All notifications marked as read.",
+  "notifications_mark_read_aria": "Mark notification as read",
+  "notifications_mark_read_cta": "Mark read",
+  "notifications_mark_read_error_text": "Failed to mark notifications as read.",
+  "notifications_mark_read_title": "Mark as read",
+  "notifications_read_label": "Read",
+  "notifications_refresh_aria": "Refresh",
+  "notifications_refresh_cta": "Refresh",
+  "notifications_resend_cta": "Resend email",
+  "notifications_resend_failed_text": "Failed to resend verification email.",
+  "notifications_resend_network_error_text": "Network error while resending email.",
+  "notifications_resend_success_text": "Verification email sent. Check your inbox.",
+  "notifications_title_h1": "Notifications",
+  "notifications_unread_aria": "Unread",
+  "notifications_unread_badge_text": "{count} unread",
+  "notifications_update_failed_text": "Failed to update notifications",
+  "notifications_verify_description_text": "Please verify your email to unlock all features.",
+  "notifications_verify_title_text": "Email not verified",
+  "privacy_last_updated_text": "September 14, 2025",
+  "privacy_section_changes_content_html": "We may update this Privacy Policy from time to time. Changes will be\nposted here with the updated date.",
+  "privacy_section_changes_title": "Changes to This Policy",
+  "privacy_section_children_content_html": "CubeIndex is not intended for children under 13. We do not knowingly collect personal data from children under 13. If you believe a child under 13 has provided personal data, please contact us at\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a>.",
+  "privacy_section_children_title": "Children's Privacy",
+  "privacy_section_collect_content_html": "<ul>\n  <li><strong>Account Information:</strong> Email address, username, profile picture.</li>\n  <li><strong>Usage Data:</strong> Interactions with the site (pages viewed, cubes added, etc.).</li>\n  <li><strong>Device Information:</strong> IP address, browser type, and operating system (used for analytics).</li>\n</ul>",
+  "privacy_section_collect_title": "Information We Collect",
+  "privacy_section_contact_content_html": "For questions or concerns, email us at\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a>.",
+  "privacy_section_contact_title": "Contact",
+  "privacy_section_intro_content_html": "We at CubeIndex value your privacy. This Privacy Policy describes how we collect, use, and protect your information when you use the CubeIndex service (\"the Service\").",
+  "privacy_section_intro_title": "Introduction",
+  "privacy_section_rights_content_html": "<p>You can:</p>\n<ul>\n  <li>Access or update your profile at any time</li>\n  <li>Request deletion of your account and data by emailing <a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a></li>\n  <li>Note: Deleted content may remain in system backups for a limited time</li>\n  <li>Opt out of analytics tracking (coming soon)</li>\n</ul>",
+  "privacy_section_rights_title": "Your Rights",
+  "privacy_section_security_content_html": "We use secure infrastructure (e.g., Supabase Auth, HTTPS) and follow\nbest practices to protect your data.",
+  "privacy_section_security_title": "Data Security",
+  "privacy_section_sharing_content_html": "<p>We do not sell or share your personal information with third parties, except:</p>\n<ul>\n  <li>To comply with legal obligations</li>\n  <li>With third-party tools that power our service (e.g., Supabase, Netlify)</li>\n  <li>When linking to or embedding third-party vendor content or services, which have their own policies</li>\n</ul>",
+  "privacy_section_sharing_title": "Sharing Your Data",
+  "privacy_section_use_content_html": "<p>We use your data to:</p>\n<ul>\n  <li>Operate and personalize your experience on CubeIndex</li>\n  <li>Provide features like collections, profiles, and achievements</li>\n  <li>Improve platform performance, usability, and content moderation</li>\n  <li>Send occasional service-related emails (e.g., login links or updates)</li>\n</ul>",
+  "privacy_section_use_title": "How We Use Your Information",
+  "privacy_title": "Privacy Policy",
+  "rating_auth_required_text": "You must be logged in to perform this action.",
+  "rating_by_label": "by",
+  "rating_cancel_cta": "Cancel",
+  "rating_char_meter_aria": "Characters: {used}/{max}",
+  "rating_char_meter_over_aria": "Characters: {used}/{max} (over limit)",
+  "rating_char_meter_title_text": "{used}/{max}",
+  "rating_comment_label": "Comment",
+  "rating_comment_optional_text": "Optional · Max {max}",
+  "rating_comment_placeholder": "Share your thoughts about turning feel, speed, control, magnet strength, etc.",
+  "rating_comment_show_less_aria": "Show less of comment",
+  "rating_comment_show_more_aria": "Show more of comment",
+  "rating_comment_too_long_text": "Comment is too long by {excess} characters.",
+  "rating_cube_image_alt_text": "{series} {model} {versionName}",
+  "rating_delete_cancel_cta": "Cancel",
+  "rating_delete_confirm_cta": "Yes, Delete",
+  "rating_delete_confirm_description": "Do you really want to delete this rating?",
+  "rating_delete_confirm_text": "Are you sure ?",
+  "rating_delete_confirm_title": "Are you sure?",
+  "rating_delete_cta": "Delete",
+  "rating_delete_loading_text": "Deleting...",
+  "rating_delete_success_text": "Deleted!",
+  "rating_dialog_close_aria": "Close",
+  "rating_dialog_title_h2": "Rate this Cube",
+  "rating_edit_cta": "Edit",
+  "rating_helpful_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} user finds this helpful:",
+        "countPlural=other": "{count} users find this helpful:"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "rating_helpful_cta": "Helpful",
+  "rating_hint_text": "Click a star to set your rating.",
+  "rating_label": "Your rating",
+  "rating_report_cta": "Report",
+  "rating_report_label_text": "{name}'s comment on the {series} {model} {versionName}",
+  "rating_select_required_text": "Please select a rating.",
+  "rating_show_less_label": "Show less",
+  "rating_show_more_label": "Show more",
+  "rating_submit_cta": "Rate Cube",
+  "rating_submit_failed_text": "Unable to submit rating. Please try again.",
+  "rating_submit_loading_text": "Submitting…",
+  "rating_submit_missing_rating_title": "Please select a rating",
+  "rating_submit_over_limit_title": "Comment too long",
+  "rating_submit_success_text": "Rated!",
+  "rating_unexpected_error_text": "Unexpected error. Please try again.",
+  "rating_user_menu_aria": "User Menu",
+  "report_auth_required_text": "You must be signed in to submit. Please log in to continue.",
+  "report_bug_actual_label": "Actual Behavior",
+  "report_bug_actual_placeholder": "What actually happened?",
+  "report_bug_additional_context_label": "Additional context",
+  "report_bug_additional_context_placeholder": "Anything else? (optional)",
+  "report_bug_browser_label": "Browser",
+  "report_bug_browser_placeholder": "e.g. Chrome 126",
+  "report_bug_device_desktop_label": "Desktop",
+  "report_bug_device_label": "Device Type",
+  "report_bug_device_laptop_label": "Laptop",
+  "report_bug_device_phone_label": "Smartphone",
+  "report_bug_device_smartphone_label": "Smartphone",
+  "report_bug_device_tablet_label": "Tablet",
+  "report_bug_device_type_label": "Device Type",
+  "report_bug_error_prefix_text": "Error message: {message}",
+  "report_bug_expected_label": "Expected Behavior",
+  "report_bug_expected_placeholder": "What did you expect to happen?",
+  "report_bug_extra_label": "Additional context",
+  "report_bug_extra_placeholder": "Anything else? (optional)",
+  "report_bug_heading_h2": "Report a Bug",
+  "report_bug_image_alt_text": "Attached screenshot",
+  "report_bug_image_label": "Screenshot / Image URL",
+  "report_bug_image_placeholder": "https://...",
+  "report_bug_os_label": "Operating System",
+  "report_bug_os_placeholder": "e.g. Windows 11, Android 14",
+  "report_bug_screenshot_alt": "Attached screenshot",
+  "report_bug_screenshot_label": "Screenshot / Image URL",
+  "report_bug_screenshot_placeholder": "https://...",
+  "report_bug_steps_label": "Steps to Reproduce",
+  "report_bug_steps_placeholder": "1. Go to…\n2. Click on…\n3. ...",
+  "report_bug_submit_cta": "Send Report",
+  "report_bug_submit_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Send Report",
+        "state=idle": "Send Report",
+        "state=loading": "Reporting…",
+        "state=success": "Reported!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "report_bug_submit_loading_text": "Reporting…",
+  "report_bug_submit_success_text": "Reported!",
+  "report_bug_title_h2": "Report a Bug",
+  "report_bug_title_helper_text": "Max 80 characters",
+  "report_bug_title_label": "Title",
+  "report_dialog_auth_required_text": "You must be logged in to perform this action.",
+  "report_dialog_bug_template_text": "Describe the bug\nA clear and concise description of what the bug is.\n\nTo Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Scroll down to '....'\n4. See error\n\nExpected behavior\nA clear and concise description of what you expected to happen.\n\nDesktop (please complete the following information):\n - OS: [e.g. iOS]\n - Browser [e.g. chrome, safari]\n\nSmartphone (please complete the following information):\n - Device: [e.g. iPhone6]\n - OS: [e.g. iOS8.1]\n - Browser [e.g. stock browser, safari]\n\nAdditional context\nAdd any other context about the problem here.",
+  "report_dialog_cancel_cta": "Cancel",
+  "report_dialog_close_aria": "Close",
+  "report_dialog_comment_label": "Comment",
+  "report_dialog_comment_required_text": "Please provide a comment.",
+  "report_dialog_image_label": "Image URL",
+  "report_dialog_image_placeholder": "https://example.com/screenshot.png",
+  "report_dialog_optional_label": "Optional",
+  "report_dialog_reporting_text": "You are reporting {label}",
+  "report_dialog_required_label": "Required",
+  "report_dialog_submit_cta": "Send Report",
+  "report_dialog_submit_failed_text": "Unable to send report.",
+  "report_dialog_submit_loading_text": "Reporting...",
+  "report_dialog_submit_success_text": "Reported!",
+  "report_dialog_title_h2": "Report",
+  "report_dialog_title_label": "Title",
+  "report_dialog_title_required_text": "Please provide a title.",
+  "report_dialog_unexpected_error_text": "Unexpected error. Please try again.",
+  "report_feature_additional_context_label": "Additional Context",
+  "report_feature_description_helper_text": "Explain what the feature does",
+  "report_feature_description_label": "Description",
+  "report_feature_extra_label": "Additional Context",
+  "report_feature_heading_h2": "Suggest a Feature",
+  "report_feature_priority_high_label": "High",
+  "report_feature_priority_label": "Priority",
+  "report_feature_priority_low_label": "Low",
+  "report_feature_priority_medium_label": "Medium",
+  "report_feature_submit_cta": "Send Suggestion",
+  "report_feature_submit_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Send Suggestion",
+        "state=idle": "Send Suggestion",
+        "state=loading": "Sending…",
+        "state=success": "Sent!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "report_feature_submit_loading_text": "Sending…",
+  "report_feature_submit_success_text": "Sent!",
+  "report_feature_title_h2": "Suggest a Feature",
+  "report_feature_title_helper_text": "Be specific and concise",
+  "report_feature_title_label": "Feature Title",
+  "report_feature_use_case_helper_text": "How would you use it?",
+  "report_feature_use_case_label": "Use Case",
+  "report_feedback_subtitle_text": "Help us improve CubeIndex by reporting bugs or suggesting features.",
+  "report_feedback_title_h1": "Feedback & Reports",
+  "report_form_error_message_text": "Error message: {error}",
+  "report_page_intro_text": "Help us improve CubeIndex by reporting bugs or suggesting features.",
+  "report_page_title_h1": "Feedback & Reports",
+  "report_signin_required_text": "You must be signed in to submit. Please log in to continue.",
+  "report_submit_signin_title": "Sign in to submit",
+  "report_tabs_aria_label": "Select report type",
+  "report_tabs_bug_label": "Report a Bug",
+  "report_tabs_feature_label": "Suggest a Feature",
+  "report_tabs_select_label_aria": "Select report type",
+  "staff_cube_card_accept_cta": "Accept",
+  "staff_cube_card_edit_cta": "Edit",
+  "staff_cube_card_reason_label": "Reason:",
+  "staff_cube_card_reject_cta": "Reject",
+  "staff_cube_card_rejected_by_text": "Rejected By: {name}",
+  "staff_cube_card_verified_by_text": "Verified By: {name}",
+  "staff_cube_card_view_cta": "See Cube",
+  "staff_manage_status_cancel_cta": "Cancel",
+  "staff_manage_status_other_reason_label": "Other reason",
+  "staff_manage_status_reason_duplicate_label": "Already in the database",
+  "staff_manage_status_reason_invalid_trim_label": "Not a valid trim",
+  "staff_manage_status_reason_label": "Reason",
+  "staff_manage_status_reason_not_twisty_label": "Not a twisty puzzle",
+  "staff_manage_status_reason_other_label": "Other...",
+  "staff_manage_status_submit_cta": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=*": "Update",
+        "reason=Accept": "Accept",
+        "reason=Reject": "Reject"
+      },
+      "selectors": [
+        "reason"
+      ]
+    }
+  ],
+  "staff_manage_status_submit_loading_text": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=*": "Updating...",
+        "reason=Accept": "Accepting...",
+        "reason=Reject": "Rejecting..."
+      },
+      "selectors": [
+        "reason"
+      ]
+    }
+  ],
+  "staff_manage_status_submit_success_text": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=*": "Updated!",
+        "reason=Accept": "Accepted!",
+        "reason=Reject": "Rejected!"
+      },
+      "selectors": [
+        "reason"
+      ]
+    }
+  ],
+  "staff_manage_status_title_text": [
+    {
+      "declarations": [
+        "input cubeName",
+        "input reason",
+        "input username"
+      ],
+      "match": {
+        "reason=*": "You are updating: {cubeName} as {username}",
+        "reason=Accept": "You are accepting: {cubeName} as {username}",
+        "reason=Reject": "You are rejecting: {cubeName} as {username}"
+      },
+      "selectors": [
+        "reason"
+      ]
+    }
+  ],
+  "status_construction_body_text": "We're currently working hard to finish this part of the site. Check back soon for something awesome!",
+  "status_construction_title_h1": "Page in Construction",
+  "submit_autofill_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Autofill",
+        "state=error": "An error occured!",
+        "state=idle": "Autofill",
+        "state=loading": "Loading...",
+        "state=starting": "Starting autofill service...",
+        "state=success": "Success!"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "submit_autofill_cancel_cta": "Cancel",
+  "submit_autofill_description_line_one": "Paste the exact product page for this cube from a shop like",
+  "submit_autofill_description_line_three": "We will scan it and fill what we can.",
+  "submit_autofill_description_line_two": "SpeedCubeShop, DailyPuzzles, or a manufacturer store.",
+  "submit_autofill_link_helper_text": "Use a page with clear specs and the exact model you are submitting—no shortened links.",
+  "submit_autofill_link_label": "Store product link",
+  "submit_autofill_link_placeholder": "https://www.speedcubeshop.com/products/...",
+  "submit_autofill_missing_link_text": "Add a product link before sending.",
+  "submit_autofill_overwrite_warning_text": "This will overwrite your current data.",
+  "submit_autofill_process_failed_text": "We could not process that link right now.",
+  "submit_autofill_requesting_text": "Requesting autofill...",
+  "submit_autofill_send_cta": "Send link",
+  "submit_autofill_success_text": "Link processed.",
+  "submit_autofill_title": "Autofill Service",
+  "submit_autofill_unexpected_error_text": "Something went wrong while contacting the autofill service.",
+  "submit_autofill_warmup_text": "Warming up the autofill service. It can take up to a minute to be ready.",
+  "submit_checklist_item_one_text": "Confirm the model name, release date, and specs against manufacturer documentation.",
+  "submit_checklist_item_three_text": "Explain relationships to existing cubes when submitting mods, trims or limited editions.",
+  "submit_checklist_item_two_text": "Upload imagery that is free to share and clearly shows the retail product.",
+  "submit_checklist_title": "Submission checklist",
+  "submit_duplicate_error_text": "This cube already exists in our database.",
+  "submit_error_title_text": "Please fix the highlighted fields",
+  "submit_error_unknown_text": "Unknown error",
+  "submit_feature_ball_core_helper_text": "Includes a magnetic core-ball assembly.",
+  "submit_feature_ball_core_label": "Ball core",
+  "submit_feature_discontinued_helper_text": "The manufacturer no longer produces this cube.",
+  "submit_feature_discontinued_label": "Discontinued",
+  "submit_feature_maglev_helper_text": "Magnetic levitation tensioning system.",
+  "submit_feature_maglev_label": "MagLev",
+  "submit_feature_magnetic_helper_text": "Factory-installed magnets for layer alignment.",
+  "submit_feature_magnetic_label": "Magnetic",
+  "submit_feature_modded_helper_text": "Community or premium mod rather than stock hardware.",
+  "submit_feature_modded_label": "Modded",
+  "submit_feature_smart_helper_text": "Bluetooth or app-connected tracking features.",
+  "submit_feature_smart_label": "Smart",
+  "submit_feature_stickered_helper_text": "Ships with factory stickers instead of tiles or primary plastic.",
+  "submit_feature_stickered_label": "Stickered",
+  "submit_feature_wca_legal_helper_text": "Approved for use in official competitions.",
+  "submit_feature_wca_legal_label": "WCA legal",
+  "submit_features_intro_text": "Mark every hardware capability that ships with this cube.",
+  "submit_features_title": "Feature profile",
+  "submit_field_brand_helper_text": "Missing a manufacturer? Let the team know through the cube report button or Discord and we will add it for you.",
+  "submit_field_brand_label": "Brand",
+  "submit_field_image_url_helper_text": "Use an official product or press image.",
+  "submit_field_image_url_label": "Image URL",
+  "submit_field_image_url_placeholder": "https://...",
+  "submit_field_model_label": "Model",
+  "submit_field_model_placeholder": "Maglev",
+  "submit_field_related_model_helper_text": "Only approved cubes appear here. Select the base model this release is derived from.",
+  "submit_field_related_model_label": "Related model link",
+  "submit_field_release_date_label": "Release date",
+  "submit_field_series_label": "Series",
+  "submit_field_series_placeholder": "GAN356",
+  "submit_field_size_label": "Size (mm)",
+  "submit_field_size_placeholder": "W x H x D",
+  "submit_field_subtype_auto_label": "Handle Automatically",
+  "submit_field_subtype_label": "Sub-type",
+  "submit_field_surface_finish_label": "Surface finish",
+  "submit_field_type_helper_text": "Need another cube type? Let the team know through the cube report button or Discord and we will add it for you.",
+  "submit_field_type_label": "Cube type",
+  "submit_field_version_name_label": "Edition name",
+  "submit_field_version_name_placeholder": "UV / 10 Year Edition",
+  "submit_field_version_type_base_label": "Base",
+  "submit_field_version_type_label": "Edition type",
+  "submit_field_version_type_limited_label": "Limited Edition",
+  "submit_field_version_type_trim_label": "Trim",
+  "submit_field_weight_label": "Weight (g)",
+  "submit_form_error_text": "Please fix the highlighted fields and try again.",
+  "submit_help_discord_label": "Discord",
+  "submit_help_prompt_text": "Need direct help? Contact us on ",
+  "submit_identity_intro_text": "Tell us how the manufacturer refers to this cube.",
+  "submit_identity_title": "Cube identity",
+  "submit_media_specs_intro_text": "Share reference imagery and key physical attributes.",
+  "submit_media_specs_title": "Media & specs",
+  "submit_next_steps_item_one_text": "Our reviewers check your submission for accuracy and completeness.",
+  "submit_next_steps_item_two_text": "Approved cubes go live on CubeIndex with credit to your profile.",
+  "submit_next_steps_title": "What happens next?",
+  "submit_page_intro_text": "Provide accurate manufacturer details so the CubeIndex team can review and publish your cube quickly. Double-check specs before you send them.",
+  "submit_page_title_h1": "Submit a Cube",
+  "submit_server_error_text": "An error occurred while submitting the cube",
+  "submit_slug_error_text": "Unable to derive a slug from the provided model details.",
+  "submit_submit_cta": "Submit cube",
+  "submit_submit_helper_text": "It may take up to a week for your submission to be approved.",
+  "submit_success_message_html": "Cube submitted for review! Track its status on <a class=\"link\" href=\"/user/submissions\">your submissions page</a>.",
+  "tos_last_updated_text": "September 14, 2025",
+  "tos_section_acceptance_content_html": "By accessing or using CubeIndex (“the Service”), you agree to be bound by these\nTerms of Service (“Terms”). If you do not agree, do not use the Service.",
+  "tos_section_acceptance_title": "Acceptance of Terms",
+  "tos_section_accounts_content_html": "<ul>\n  <li>You are responsible for all activity under your account.</li>\n  <li>You must keep your login credentials secure.</li>\n  <li>You agree to provide and maintain an <strong>accurate and valid email address</strong>.</li>\n  <li>\n    Account deletion <strong>from within the app is not yet available</strong>. You may request deletion by emailing\n    <a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a>.\n  </li>\n  <li>\n    There is currently <strong>no policy on inactive accounts</strong>. If this changes, we will update these Terms and notify you.\n  </li>\n</ul>",
+  "tos_section_accounts_title": "Accounts & Responsibility",
+  "tos_section_api_content_html": "<strong>Limited, low-volume scraping</strong> for personal, non-commercial use is allowed provided it:\n<ul>\n  <li>is infrequent and does not degrade performance;</li>\n  <li>obeys robots directives and rate limits;</li>\n  <li>targets public pages only;</li>\n  <li>does not attempt to bulk export;</li>\n  <li>stops immediately if requested.</li>\n</ul>",
+  "tos_section_api_title": "API, Data Access, & Scraping",
+  "tos_section_changes_content_html": "We may update these Terms from time to time. Changes will be posted on this page with the “Last updated” date.\n<strong>Material changes</strong> may be notified in the Service or by email. Continued use after changes\nmeans acceptance of the revised Terms.",
+  "tos_section_changes_title": "Changes to Terms",
+  "tos_section_contact_content_html": "Questions about these Terms? Contact us at\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a>.",
+  "tos_section_contact_title": "Contact",
+  "tos_section_content_license_content_html": "You retain ownership of the content you submit (e.g., reviews, images, comments).\nBy submitting content, you grant CubeIndex a worldwide, non-exclusive, royalty-free\nlicense to use, host, reproduce, modify (for formatting/display), publicly display,\nand distribute your content within the Service and in materials that promote the\nService. This license ends when your content is removed, except for necessary backups.",
+  "tos_section_content_license_title": "User Content & License to CubeIndex",
+  "tos_section_description_content_html": "CubeIndex provides a database for speedcubing products and tools for managing cube\ncollections, viewing product information, and participating in community features\nsuch as profiles and achievements. The Service is offered for\n<strong>personal, non-commercial use</strong> unless we give you prior written permission.",
+  "tos_section_description_title": "Description of Service",
+  "tos_section_eligibility_content_html": "You must be at least <strong>13 years old</strong> to use CubeIndex. We do not knowingly\ncollect personal data from children under 13. If you believe a child under 13 has provided\npersonal data, please contact us at\n<a href=\"mailto:thecubeindex@gmail.com\">thecubeindex@gmail.com</a>.",
+  "tos_section_eligibility_title": "Eligibility & Age",
+  "tos_section_governing_content_html": "These Terms are governed by the laws of the <strong>European Union</strong> and the Member State\nwhere CubeIndex is established. Disputes will first be resolved amicably within 30 days; otherwise,\narbitration or local courts may apply depending on applicable law.",
+  "tos_section_governing_title": "Governing Law & Dispute Resolution",
+  "tos_section_guidelines_content_html": "<ul>\n  <li>No harassment, hate speech, or threats.</li>\n  <li>No spam, scams, deceptive practices, or mass unsolicited messaging.</li>\n  <li>No illegal content, malware, or attempts to gain unauthorized access.</li>\n  <li>No sexually explicit or pornographic content.</li>\n  <li>Respect intellectual property; do not upload copyrighted materials without permission.</li>\n</ul>",
+  "tos_section_guidelines_title": "Community Guidelines",
+  "tos_section_indemnification_content_html": "You agree to indemnify and hold CubeIndex harmless from claims, damages, and expenses\narising out of your violation of these Terms or infringement of third-party rights.",
+  "tos_section_indemnification_title": "Indemnification",
+  "tos_section_liability_content_html": "CubeIndex <strong>accepts liability to the extent required by law</strong>, including for negligence or breach of obligations.\nHowever, CubeIndex will not be responsible for <em>indirect or consequential losses</em>\nwhere exclusion is permitted by law.",
+  "tos_section_liability_title": "Liability",
+  "tos_section_moderation_content_html": "CubeIndex may, at its sole discretion, <strong>remove or restrict any user content without prior notice</strong>\nif we believe it violates these Terms or applicable law, or to protect users or the Service.",
+  "tos_section_moderation_title": "Content Moderation",
+  "tos_section_open_source_content_html": "The CubeIndex software is open source and made available under the\n<strong>Apache License, Version 2.0</strong>. See\n<a href=\"https://www.apache.org/licenses/LICENSE-2.0\" target=\"_blank\" rel=\"noopener\">apache.org/licenses/LICENSE-2.0</a>.\n<br /><br />\n<strong>Trademarks & hosted service:</strong> CubeIndex trademarks, logos, brand assets,\nand hosted service configuration are not granted under Apache 2.0.",
+  "tos_section_open_source_title": "Open-Source License & CubeIndex IP",
+  "tos_section_privacy_content_html": "Your use of the Service is also subject to our\n<a href=\"/privacy\">Privacy Policy</a>, which explains how we handle your data.",
+  "tos_section_privacy_title": "Privacy",
+  "tos_section_quality_content_html": "We aim to operate CubeIndex with <strong>reasonable skill and care</strong>, but the Service may\nbe interrupted, delayed, or experience errors (e.g., maintenance, updates, or network issues).",
+  "tos_section_quality_title": "Service Quality & Our Responsibilities",
+  "tos_section_security_abuse_content_html": "<ul>\n  <li>Impersonating others or misrepresenting your identity or affiliation.</li>\n  <li>Interfering with or overloading the Service (e.g., DDoS, abusive rate-limiting circumvention).</li>\n  <li>Reverse engineering or probing to bypass security or access controls, except as permitted by law.</li>\n</ul>",
+  "tos_section_security_abuse_title": "Prohibited Security Abuse",
+  "tos_section_termination_content_html": "We may suspend or terminate your access to CubeIndex at our discretion, without prior notice,\nif we believe you have violated these Terms or applicable law. Some provisions (e.g., IP, licenses, liability)\nsurvive termination.",
+  "tos_section_termination_title": "Termination & Enforcement",
+  "tos_section_third_party_content_html": "The Service may display links to third-party vendors or websites (e.g., stores with cube pricing).\n<strong>Those services have their own terms and policies</strong>, and CubeIndex is not responsible for them.",
+  "tos_section_third_party_title": "Third-Party Links & Vendors",
+  "tos_title": "Terms of Service",
+  "user_avatar_alt": "Avatar",
+  "user_badge_role_admin_label": "Admin",
+  "user_badge_role_community_manager_label": "Community Manager",
+  "user_badge_role_database_manager_label": "Database Manager",
+  "user_badge_role_lead_developer_label": "Lead Developer",
+  "user_badge_role_moderator_label": "Moderator",
+  "user_card_achievement_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "input countFormatted",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{countFormatted} achievement",
+        "countPlural=other": "{countFormatted} achievements"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_card_achievement_count_title_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} achievement",
+        "countPlural=other": "{count} achievements"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_card_cube_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "input countFormatted",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{countFormatted} cube",
+        "countPlural=other": "{countFormatted} cubes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_card_generic_user_label": "user",
+  "user_card_profile_aria_text": "View {name}’s profile",
+  "user_card_profile_unavailable_aria_text": "{name} (profile not available)",
+  "user_card_profile_with_counts_aria_text": "View {name}’s profile, {cubeCount}, {achievementCount}",
+  "user_card_unknown_user_label": "Unknown User",
+  "user_overview_achievements_label": "Achievements",
+  "user_overview_average_note_text": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "—",
+        "state=data": "Based on recent ratings",
+        "state=empty": "—"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_overview_average_rating_label": "Average Rating",
+  "user_overview_average_rating_title": "Average: {value}",
+  "user_overview_bio_title_h2": "Bio",
+  "user_overview_empty_value_text": "—",
+  "user_overview_meta_title": "{displayName}'s Profile - CubeIndex",
+  "user_overview_ratings_label": "Ratings",
+  "user_overview_ratings_summary_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "count=0, countPlural=other": "No ratings yet",
+        "countPlural=one": "1 rating given",
+        "countPlural=other": "{count} ratings given"
+      },
+      "selectors": [
+        "count",
+        "countPlural"
+      ]
+    }
+  ],
+  "user_overview_stats_title_h2": "Stats",
+  "user_overview_total_cubes_label": "Total Cubes",
+  "user_overview_unknown_label": "Unknown",
+  "user_profile_banner_alt_text": "{username}'s banner",
+  "user_profile_followers_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} cube",
+        "countPlural=other": "{count} cubes"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_profile_followers_title": "View followers",
+  "user_profile_following_count_text": "{count} Following",
+  "user_profile_following_title": "View following",
+  "user_profile_member_since_label": "Member since:",
+  "user_profile_menu_aria_label": "User Menu",
+  "user_profile_private_description_text": "You do not have permission to view this user's profile.",
+  "user_profile_private_title_h1": "This profile is private",
+  "user_profile_report_cta": "Report",
+  "user_profile_report_label_text": "{username}'s account",
+  "user_profile_settings_aria_label": "User Settings",
+  "user_profile_settings_cta": "Settings",
+  "user_profile_social_discord_label": "Discord",
+  "user_profile_social_logo_alt_text": "{label} logo",
+  "user_profile_social_reddit_label": "Reddit",
+  "user_profile_social_twitter_label": "Twitter/X",
+  "user_profile_social_wca_label": "WCA",
+  "user_profile_social_website_label": "Website",
+  "user_profile_social_youtube_label": "YouTube",
+  "user_profile_socials_title": "Socials",
+  "user_profile_tab_achievements_label": "Achievements",
+  "user_profile_tab_cubes_label": "Cubes",
+  "user_profile_tab_overview_label": "Overview",
+  "user_profile_tab_ratings_label": "Ratings",
+  "user_profile_tab_reviews_label": "Reviews",
+  "user_profile_tab_social_label": "Social",
+  "user_profile_tab_stats_label": "Stats",
+  "user_profile_tab_submissions_label": "Submissions",
+  "user_ratings_empty_description_text": "We couldn't find any ratings matching your filter. Try adjusting it or resetting to see everything.",
+  "user_ratings_empty_state_text": "No user ratings yet. Be the first to rate this cube!",
+  "user_ratings_empty_title_h2": "No ratings found",
+  "user_ratings_filter_range_text": "You are only showing ratings between {minRating} and {maxRating} stars.",
+  "user_ratings_filter_reset_label": "See all",
+  "user_ratings_heading_text": "User Ratings",
+  "user_ratings_reset_filters_aria": "Reset filters",
+  "user_ratings_reset_filters_cta": "Reset",
+  "user_ratings_search_placeholder": "Search Ratings",
+  "user_ratings_star_filter_label": "{rating} star",
+  "user_ratings_total_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Follower",
+        "countPlural=other": "{count} Followers"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_reviews_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "match": {
+        "countPlural=one": "{count} review",
+        "countPlural=other": "{count} reviews"
+      },
+      "selectors": [
+        "countPlural"
+      ]
+    }
+  ],
+  "user_reviews_empty_description_text": "This user hasn't published any reviews yet.",
+  "user_reviews_empty_title_h2": "No reviews yet",
+  "user_reviews_heading_h1": "{name}'s reviews",
+  "user_reviews_last_update_title": "Last update",
+  "user_reviews_open_full_review_aria": "Open full review",
+  "user_reviews_page_title_text": "{name}'s Reviews - CubeIndex",
+  "user_reviews_read_cta": "Read",
+  "user_reviews_read_more_cta": "Read more",
+  "user_settings_about_action_discord_label": "Discord",
+  "user_settings_about_action_github_label": "GitHub",
+  "user_settings_about_action_report_label": "Report an issue",
+  "user_settings_about_action_support_label": "Support",
+  "user_settings_about_badge_open_source": "Open source",
+  "user_settings_about_footer_text": "CubeIndex is built by cubers for cubers. If something feels off, please report it so we can fix it quickly.",
+  "user_settings_about_intro_text": "CubeIndex helps cubers track collections, explore detailed cube data, and follow price history across stores.",
+  "user_settings_about_links_community_title": "Community",
+  "user_settings_about_links_email_label": "Email",
+  "user_settings_about_links_title": "Links",
+  "user_settings_about_links_x_label": "X (Twitter)",
+  "user_settings_about_links_youtube_label": "YouTube",
+  "user_settings_about_open_source_links_prefix_text": "Browse the code, open issues, or submit pull requests on ",
+  "user_settings_about_open_source_text": "CubeIndex is released under the Apache License 2.0. Contributions are welcome, from small fixes to new features.",
+  "user_settings_about_open_source_title": "Open source",
+  "user_settings_about_privacy_footer_text": "We regularly ship updates to improve stability, performance, and accessibility.",
+  "user_settings_about_privacy_links_conjunction_text": " and ",
+  "user_settings_about_privacy_links_prefix_text": "Read the ",
+  "user_settings_about_privacy_text": "You control who can see your profile. Switch your profile to private anytime in the Profile tab.",
+  "user_settings_about_privacy_title": "Privacy",
+  "user_settings_about_title": "About CubeIndex",
+  "user_settings_appearance_dark_label": "Dark:",
+  "user_settings_appearance_intro_text": "Choose a theme you like. You can also follow your system.",
+  "user_settings_appearance_light_label": "Light:",
+  "user_settings_appearance_system_toggle_label": "Use system theme",
+  "user_settings_appearance_title": "Appearance",
+  "user_settings_auth_required_text": "Must be logged in!",
+  "user_settings_avatar_helper_text": "Supported: JPG, PNG, WebP, AVIF. Max size 2MB.",
+  "user_settings_avatar_processing_error_text": "Avatar processing failed: {error}",
+  "user_settings_avatar_size_error_text": "File too large. Max 2MB.",
+  "user_settings_avatar_title": "Avatar",
+  "user_settings_avatar_type_error_text": "Unsupported image type. Use JPG, PNG, WebP, GIF, or AVIF.",
+  "user_settings_avatar_upload_error_text": "Avatar upload failed: {error}",
+  "user_settings_avatar_upload_label": "Upload new avatar",
+  "user_settings_banner_current_alt": "Current banner",
+  "user_settings_banner_helper_text": "Supported: JPG, PNG, WebP, GIF, AVIF. Max size 5MB.",
+  "user_settings_banner_preview_alt": "Banner preview",
+  "user_settings_banner_processing_error_text": "Banner processing failed: {error}",
+  "user_settings_banner_title": "Banner",
+  "user_settings_banner_type_error_text": "Unsupported image type. Use JPG, PNG, WebP, or AVIF.",
+  "user_settings_banner_upload_error_text": "Banner upload failed: {error}",
+  "user_settings_banner_upload_label": "Upload new banner",
+  "user_settings_current_password_required_text": "The current password is required",
+  "user_settings_display_name_length_error_text": "The display name must have more than 3 characters",
+  "user_settings_form_error_text": "There are errors in your submission. Please review the highlighted fields and try again.",
+  "user_settings_intro_text": "Manage your profile, links, security, and theme.",
+  "user_settings_markdown_basics_title": "Markdown basics",
+  "user_settings_markdown_bold_label": "Bold/Italic:",
+  "user_settings_markdown_code_hint_text": "or fenced blocks with three backticks",
+  "user_settings_markdown_code_label": "Code:",
+  "user_settings_markdown_heading_label": "Headings:",
+  "user_settings_markdown_links_label": "Links:",
+  "user_settings_markdown_lists_hint_text": "use one line per item",
+  "user_settings_markdown_lists_label": "Lists:",
+  "user_settings_markdown_paragraphs_text": "Paragraphs: leave a blank line between them",
+  "user_settings_meta_title": "{section} Settings - CubeIndex",
+  "user_settings_new_password_length_error_text": "The new password must have more than 8 characters",
+  "user_settings_new_password_required_text": "The new password is required",
+  "user_settings_password_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Update Password",
+        "state=idle": "Update Password",
+        "state=updating": "Updating..."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_settings_password_incorrect_error_text": "The provided password is incorect",
+  "user_settings_password_success_text": "Password edited successfully!",
+  "user_settings_privacy_title": "Profile Privacy",
+  "user_settings_privacy_toggle_label": "Make my profile private (only visible to me)",
+  "user_settings_profile_bio_label": "Bio",
+  "user_settings_profile_bio_placeholder": "Tell us something cool... Markdown is supported",
+  "user_settings_profile_bio_preview_label": "Live Preview",
+  "user_settings_profile_display_name_label": "Display Name",
+  "user_settings_profile_intro_text": "Update your public profile details. Your bio supports Markdown formatting (bold, italics, links, lists, and code). See quick tips below.",
+  "user_settings_profile_success_text": "Profile edited successfully!",
+  "user_settings_profile_title": "Profile Information",
+  "user_settings_save_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Save Changes",
+        "state=idle": "Save Changes",
+        "state=saving": "Saving..."
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "user_settings_security_current_password_label": "Current Password",
+  "user_settings_security_intro_text": "Change your password. Keep it unique and strong.",
+  "user_settings_security_new_password_label": "New Password",
+  "user_settings_security_title": "Account Security",
+  "user_settings_social_discord_label": "Discord",
+  "user_settings_social_discord_placeholder": "123456789012345678",
+  "user_settings_social_intro_text": "Share where people can find you online.",
+  "user_settings_social_reddit_label": "Reddit",
+  "user_settings_social_reddit_placeholder": "cubeindex",
+  "user_settings_social_success_text": "Social links edited successfully!",
+  "user_settings_social_title": "Social Links",
+  "user_settings_social_wca_label": "WCA ID",
+  "user_settings_social_wca_placeholder": "2023EXAM01",
+  "user_settings_social_website_label": "Personal Website",
+  "user_settings_social_website_placeholder": "https://cubeindex.com",
+  "user_settings_social_x_label": "Twitter/X",
+  "user_settings_social_x_placeholder": "thecubeindex",
+  "user_settings_social_youtube_label": "YouTube",
+  "user_settings_social_youtube_placeholder": "@cubeindex",
+  "user_settings_tab_about_label": "About",
+  "user_settings_tab_appearance_label": "Appearance",
+  "user_settings_tab_profile_label": "Profile",
+  "user_settings_tab_security_label": "Security",
+  "user_settings_tab_social_label": "Social Links",
+  "user_settings_tabs_aria_label": "Sections",
+  "user_settings_title_h1": "User Settings",
+  "user_signout_confirm_cancel_cta": "Cancel",
+  "user_signout_confirm_description_text": "Are you sure you want to sign out?",
+  "user_signout_confirm_signout_cta": "Sign Out",
+  "user_signout_confirm_title_h2": "Confirm Sign Out",
+  "user_submissions_empty_all_cta": "Submit your first cube",
+  "user_submissions_empty_all_description_text": "Start with our guided form and we will keep you posted as moderators review your submission.",
+  "user_submissions_empty_all_title_text": "You have not submitted any cubes yet.",
+  "user_submissions_empty_filter_description_text": "Try another status or submit a new cube.",
+  "user_submissions_empty_filter_title_text": "No cubes match that filter yet.",
+  "user_submissions_filter_all_label": "All",
+  "user_submissions_filter_approved_label": "Approved",
+  "user_submissions_filter_pending_label": "Pending",
+  "user_submissions_filter_rejected_label": "Rejected",
+  "user_submissions_intro_text": "Track every cube you have sent to the catalog and keep an eye on moderator decisions.",
+  "user_submissions_list_title": "Submitted cubes",
+  "user_submissions_meta_title": "My Submissions - CubeIndex",
+  "user_submissions_submit_cta": "Submit a cube",
+  "user_submissions_title_h1": "My submissions",
+  "userbar_beta_tag_label": "Beta",
+  "userbar_intro_text": "Share this slim banner in forums, profiles, and signatures. It updates automatically as your stats change.",
+  "userbar_page_title_h1": "Userbar",
+  "userbar_preview_download_cta": "Download PNG",
+  "userbar_preview_error_title_text": "Preview failed",
+  "userbar_preview_image_alt_text": "{displayName} - CubeIndex userbar",
+  "userbar_preview_loading_text": "Generating preview…",
+  "userbar_preview_open_image_cta": "Open image",
+  "userbar_preview_refresh_cta": "Refresh preview",
+  "userbar_preview_retry_cta": "Try again",
+  "userbar_preview_size_label": "Size:",
+  "userbar_preview_title": "Preview",
+  "userbar_snippet_copied_toast_text": "Copied {snippet}!",
+  "userbar_snippet_copy_aria_text": "Copy {snippet}",
+  "userbar_snippet_copy_button_label": [
+    {
+      "declarations": [
+        "input state"
+      ],
+      "match": {
+        "state=*": "Copy",
+        "state=copied": "Copied",
+        "state=copy": "Copy"
+      },
+      "selectors": [
+        "state"
+      ]
+    }
+  ],
+  "userbar_snippet_copy_error_text": "Copy failed — you can select and copy manually.",
+  "userbar_snippet_profile_alt_text": "{displayName}'s CubeIndex profile",
+  "userbar_snippet_tab_bbcode_label": "BBCode",
+  "userbar_snippet_tab_direct_url_label": "Direct URL",
+  "userbar_snippet_tab_html_label": "HTML",
+  "userbar_snippet_tab_markdown_label": "Markdown",
+  "userbar_snippet_title": "Embed Snippets",
+  "userbar_snippet_userbar_alt_text": "{displayName}'s CubeIndex userbar"
+}

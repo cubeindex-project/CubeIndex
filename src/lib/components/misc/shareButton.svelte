@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   let {
     url,
-    text = "Check this out!",
-    label = "Share",
+    text = m.misc_share_button_text(),
+    label = m.misc_share_button_label(),
     btnClass = "btn btn-accent",
   }: {
     url: string;
@@ -28,12 +30,12 @@
 
     try {
       await navigator.clipboard.writeText(url);
-      alert("Link copied to clipboard");
+      alert(m.misc_share_button_copied_text());
     } catch (err) {
       new Error(
         `Copy to clipboard failed: ${err instanceof Error ? err.message : err}`
       );
-      prompt("Copy this link:", url);
+      prompt(m.misc_share_button_copy_prompt_text(), url);
     }
   }
 </script>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import { getContext } from "svelte";
@@ -83,13 +84,17 @@
       onsubmit={changeStatus}
     >
       <h2 class="card-title">
-        You are {reason.toLowerCase()}ing: {cube_name} as {username}
+        {m.staff_manage_status_title_text({
+          reason,
+          cubeName: cube_name,
+          username,
+        })}
       </h2>
 
       {#if reason !== "Accept"}
         <div class="mt-4">
           <label class="label flex flex-col items-start">
-            <span class="label-text">Reason</span>
+            <span class="label-text">{m.staff_manage_status_reason_label()}</span>
             <select
               name="brand"
               bind:value={note}
@@ -97,16 +102,22 @@
               required
             >
               <option value="Not a twisty puzzle" selected>
-                Not a twisty puzzle
+                {m.staff_manage_status_reason_not_twisty_label()}
               </option>
               <option value="Already in the database">
-                Already in the database
+                {m.staff_manage_status_reason_duplicate_label()}
               </option>
-              <option value="Not a valid trim">Not a valid trim</option>
-              <option value="___other">Other...</option>
+              <option value="Not a valid trim">
+                {m.staff_manage_status_reason_invalid_trim_label()}
+              </option>
+              <option value="___other">
+                {m.staff_manage_status_reason_other_label()}
+              </option>
             </select>
             {#if note === "___other"}
-              <span class="label-text">Other reason</span>
+              <span class="label-text">
+                {m.staff_manage_status_other_reason_label()}
+              </span>
               <textarea
                 bind:value={otherNote}
                 class="textarea textarea-bordered rounded-2xl w-full h-32 mt-3"
@@ -129,7 +140,7 @@
           onclick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {m.staff_manage_status_cancel_cta()}
         </button>
         <button
           type="submit"
@@ -137,11 +148,13 @@
           disabled={isSubmitting || showSuccess}
         >
           {#if isSubmitting}
-            <span class="loading loading-spinner"></span>{reason}ing...
+            <span class="loading loading-spinner"></span>
+            {m.staff_manage_status_submit_loading_text({ reason })}
           {:else if showSuccess}
-            <i class="fa-solid fa-check mr-2"></i>{reason}ed!
+            <i class="fa-solid fa-check mr-2"></i>
+            {m.staff_manage_status_submit_success_text({ reason })}
           {:else}
-            {reason}
+            {m.staff_manage_status_submit_cta({ reason })}
           {/if}
         </button>
       </div>

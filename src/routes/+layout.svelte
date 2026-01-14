@@ -1,12 +1,16 @@
 <script lang="ts">
   // Components and style
   import "../app.css";
-  import Navbar from "$lib/components/layout/navbar.svelte";
   import { Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
+  import { setContext } from "svelte";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
+  import Banner from "$lib/components/layout/banner.svelte";
+  import Footer from "$lib/components/layout/footer.svelte";
+  import Navbar from "$lib/components/layout/navbar.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data, children } = $props();
 
@@ -15,6 +19,7 @@
   import { onMount } from "svelte";
 
   let { session, supabase, profile, umamiTag } = $derived(data);
+
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) {
@@ -23,17 +28,13 @@
     });
     return () => data.subscription.unsubscribe();
   });
-
-  import { setContext } from "svelte";
+  
   setContext("user", data.user);
   setContext("session", data.session);
-
-  import Banner from "$lib/components/layout/banner.svelte";
-  import Footer from "$lib/components/layout/footer.svelte";
 </script>
 
 <svelte:head>
-  <title>CubeIndex</title>
+  <title>{m.app_brand_name_text()}</title>
 
   {#if umamiTag}
     <script

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { getContext } from "svelte";
   import { fade, scale } from "svelte/transition";
 
@@ -26,30 +27,7 @@
   let imageUrl = $state("");
 
   if (reportType === "website")
-    comment = `Describe the bug
-A clear and concise description of what the bug is.
-
-To Reproduce
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-Expected behavior
-A clear and concise description of what you expected to happen.
-
-Desktop (please complete the following information):
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
-
-Smartphone (please complete the following information):
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
-
-Additional context
-Add any other context about the problem here.`;
+    comment = m.report_dialog_bug_template_text();
 
   // a11y: focus handling + esc/Tab
   let dialogEl: HTMLFormElement | null = null;
@@ -78,9 +56,9 @@ Add any other context about the problem here.`;
   }
 
   function validate(): string | null {
-    if (!isConnected) return "You must be logged in to perform this action.";
-    if (!title.trim()) return "Please provide a title.";
-    if (!comment.trim()) return "Please provide a comment.";
+    if (!isConnected) return m.report_dialog_auth_required_text();
+    if (!title.trim()) return m.report_dialog_title_required_text();
+    if (!comment.trim()) return m.report_dialog_comment_required_text();
     return null;
   }
 
@@ -121,10 +99,10 @@ Add any other context about the problem here.`;
         showSuccess = true;
         setTimeout(onCancel, 900);
       } else {
-        throw new Error(data.error || "Unable to send report.");
+        throw new Error(data.error || m.report_dialog_submit_failed_text());
       }
     } catch (err: any) {
-      formMessage = err.message ?? "Unexpected error. Please try again.";
+      formMessage = err.message ?? m.report_dialog_unexpected_error_text();
     } finally {
       isSubmitting = false;
     }
@@ -149,16 +127,18 @@ Add any other context about the problem here.`;
       <!-- Header -->
       <div class="flex items-start gap-3">
         <div class="flex-1">
-          <h2 id="report-title" class="card-title leading-tight">Report</h2>
+          <h2 id="report-title" class="card-title leading-tight">
+            {m.report_dialog_title_h2()}
+          </h2>
           <p id="report-desc" class="text-sm opacity-80">
-            You are reporting {reporLabel}
+            {m.report_dialog_reporting_text({ label: reporLabel })}
           </p>
         </div>
         <button
           type="button"
           class="btn btn-ghost btn-sm rounded-xl"
           onclick={onCancel}
-          aria-label="Close"
+          aria-label={m.report_dialog_close_aria()}
         >
           ✕
         </button>
@@ -168,8 +148,10 @@ Add any other context about the problem here.`;
       <div class="space-y-4">
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Title</span>
-            <span class="label-text-alt opacity-70">Required</span>
+            <span class="label-text">{m.report_dialog_title_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.report_dialog_required_label()}
+            </span>
           </div>
           <input
             bind:value={title}
@@ -180,8 +162,10 @@ Add any other context about the problem here.`;
 
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Comment</span>
-            <span class="label-text-alt opacity-70">Required</span>
+            <span class="label-text">{m.report_dialog_comment_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.report_dialog_required_label()}
+            </span>
           </div>
           <textarea
             bind:value={comment}
@@ -193,14 +177,16 @@ Add any other context about the problem here.`;
 
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Image URL</span>
-            <span class="label-text-alt opacity-70">Optional</span>
+            <span class="label-text">{m.report_dialog_image_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.report_dialog_optional_label()}
+            </span>
           </div>
           <input
             bind:value={imageUrl}
             type="url"
             class="input input-bordered rounded-xl w-full"
-            placeholder="https://example.com/screenshot.png"
+            placeholder={m.report_dialog_image_placeholder()}
           />
         </label>
       </div>
@@ -209,7 +195,7 @@ Add any other context about the problem here.`;
       <div class="min-h-5 text-sm text-error" aria-live="polite" aria-atomic="true">
         {formMessage}
         {#if !isConnected}
-          You must be logged in to perform this action.
+          {m.report_dialog_auth_required_text()}
         {/if}
       </div>
 
@@ -221,7 +207,7 @@ Add any other context about the problem here.`;
           onclick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {m.report_dialog_cancel_cta()}
         </button>
         <button
           class="btn btn-primary rounded-xl"
@@ -230,12 +216,12 @@ Add any other context about the problem here.`;
         >
           {#if isSubmitting}
             <span class="loading loading-spinner"></span>
-            <span class="ml-2">Reporting...</span>
+            <span class="ml-2">{m.report_dialog_submit_loading_text()}</span>
           {:else if showSuccess}
             <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
-            Reported!
+            {m.report_dialog_submit_success_text()}
           {:else}
-            Send Report
+            {m.report_dialog_submit_cta()}
           {/if}
         </button>
       </div>

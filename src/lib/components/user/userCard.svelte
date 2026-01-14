@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import type { Profiles } from "../dbTableTypes";
   import Avatar from "./avatar.svelte";
   import Badge from "./badge.svelte";
@@ -33,15 +34,40 @@
   });
   const fmt = (n: number) => nf.format(n);
 
-  // 2. Tiny plural helper
-  const plural = (n: number, s: string) => (n === 1 ? s : `${s}s`);
-
-  // 3. Accessible label
-  const ariaLabel =
-    `View ${profile?.display_name ?? "user"}’s profile` +
-    (showCount
-      ? `, ${fmt(profile.user_cubes_count)} ${plural(profile.user_cubes_count, "cube")}, ${fmt(profile.user_achievements_count)} ${plural(profile.user_achievements_count, "achievement")}`
-      : "");
+  const cubeCountText = $derived(
+    m.user_card_cube_count_text({
+      count: profile.user_cubes_count,
+      countFormatted: fmt(profile.user_cubes_count),
+    })
+  );
+  const achievementCountText = $derived(
+    m.user_card_achievement_count_text({
+      count: profile.user_achievements_count,
+      countFormatted: fmt(profile.user_achievements_count),
+    })
+  );
+  const cubeCountTitle = $derived(
+    m.user_card_cube_count_text({
+      count: profile.user_cubes_count,
+    })
+  );
+  const achievementCountTitle = $derived(
+    m.user_card_achievement_count_title_text({
+      count: profile.user_achievements_count,
+    })
+  );
+  const nameForAria = $derived(
+    profile?.display_name ?? m.user_card_generic_user_label()
+  );
+  const ariaLabel = $derived(
+    showCount
+      ? m.user_card_profile_with_counts_aria_text({
+          name: nameForAria,
+          cubeCount: cubeCountText,
+          achievementCount: achievementCountText,
+        })
+      : m.user_card_profile_aria_text({ name: nameForAria })
+  );
 </script>
 
 <article
@@ -75,20 +101,18 @@
             >
               <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
               <span
-                title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
+                title={cubeCountTitle}
               >
-                {fmt(profile.user_cubes_count)}
-                {plural(profile.user_cubes_count, "cube")}
+                {cubeCountText}
               </span>
 
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
               <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
               <span
-                title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
+                title={achievementCountTitle}
               >
-                {fmt(profile.user_achievements_count)}
-                {plural(profile.user_achievements_count, "achievement")}
+                {achievementCountText}
               </span>
             </span>
           {/if}
@@ -108,7 +132,9 @@
     <!-- Disabled state when there’s no username -->
     <div
       role="group"
-      aria-label={`${profile?.display_name ?? "User"} (profile not available)`}
+      aria-label={m.user_card_profile_unavailable_aria_text({
+        name: profile?.display_name ?? m.user_card_generic_user_label(),
+      })}
       class={`flex items-center gap-4 px-4 ${compact ? "py-3" : "py-4"} opacity-70`}
     >
       <Avatar
@@ -121,7 +147,7 @@
           <span
             class={`font-semibold truncate ${compact ? "text-sm" : "text-base"}`}
           >
-            {profile?.display_name ?? "Unknown User"}
+            {profile?.display_name ?? m.user_card_unknown_user_label()}
             <Badge {profile} textSize={compact ? "xs" : "xs"} />
           </span>
 
@@ -130,12 +156,10 @@
               class="text-xs/5 text-base-content/60 flex items-center gap-2 truncate"
             >
               <i class="fa-solid fa-cube" aria-hidden="true"></i>
-              {fmt(profile.user_cubes_count)}
-              {plural(profile.user_cubes_count, "cube")}
+              {cubeCountText}
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
               <i class="fa-solid fa-medal" aria-hidden="true"></i>
-              {fmt(profile.user_achievements_count)}
-              {plural(profile.user_achievements_count, "achievement")}
+              {achievementCountText}
             </span>
           {/if}
         </div>

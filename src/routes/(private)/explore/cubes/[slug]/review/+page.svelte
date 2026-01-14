@@ -1,6 +1,7 @@
 <script lang="ts">
   import StarRating from "$lib/components/rating/starRating.svelte";
   import type { RatingsPayload } from "../../../../../(api)/api/reviews/ratings/+server";
+  import { m } from "$lib/paraglide/messages";
 
   type Snapshot = {
     title: string;
@@ -56,9 +57,7 @@
   let published = $state(false);
 
   let status = $state(data.review.status);
-  const prettyStatus = $derived(
-    status.charAt(0).toUpperCase() + status.slice(1),
-  );
+  const statusLabel = $derived(m.explore_review_status_label({ status }));
 
   const statusBadgeClass = (() => {
     if (status === "draft") return "badge-ghost";
@@ -84,16 +83,26 @@
     const ratingsResponseData = await ratingsResponse.json();
 
     if (!ratingsResponse.ok) {
-      throw new Error(ratingsResponseData.error ?? "Failed to set ratings");
+      throw new Error(
+        ratingsResponseData.error ?? m.explore_review_error_set_ratings_text(),
+      );
     }
   }
 
   function check() {
     if (title.trim().length > titleMaxLength)
-      throw new Error("Title can not be longer than 80 characters");
+      throw new Error(
+        m.explore_review_error_title_length_text({
+          maxLength: titleMaxLength,
+        }),
+      );
 
     if (review.trim().length < reviewMinLength)
-      throw new Error("Review must be at least 1000 characters long");
+      throw new Error(
+        m.explore_review_error_body_length_text({
+          minLength: reviewMinLength,
+        }),
+      );
   }
 
   async function saveDraft() {
@@ -108,7 +117,9 @@
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new Error(responseData.error ?? "Failed to save draft");
+      throw new Error(
+        responseData.error ?? m.explore_review_error_save_draft_text(),
+      );
     }
 
     await setRatings();
@@ -129,7 +140,9 @@
     const responseData = await response.json();
 
     if (!response.ok) {
-      throw new Error(responseData.error ?? "Failed to save review");
+      throw new Error(
+        responseData.error ?? m.explore_review_error_save_review_text(),
+      );
     }
 
     await setRatings();
@@ -150,20 +163,21 @@
   >
     <div class="space-y-1">
       <h1 class="text-2xl font-semibold tracking-tight">
-        Review of the {data.cubeName}
+        {m.explore_review_title_h1({ name: data.cubeName })}
       </h1>
       <p class="text-sm opacity-70">
-        Write a helpful review. Keep it specific: feel, performance, and who
-        it’s for.
+        {m.explore_review_intro_text()}
       </p>
     </div>
 
     <div class="flex items-center gap-2">
       <span class="badge {statusBadgeClass} whitespace-nowrap">
-        {prettyStatus}
+        {statusLabel}
       </span>
       {#if isDirty}
-        <span class="badge badge-warning">Unsaved</span>
+        <span class="badge badge-warning">
+          {m.common_status_unsaved_label()}
+        </span>
       {/if}
     </div>
   </header>
@@ -172,10 +186,12 @@
     <div class="flex flex-col md:flex-row">
       <div class="card-body space-y-5 flex-1">
         <div class="space-y-3">
-          <h3 class="font-bold text-xl">Review</h3>
+          <h3 class="font-bold text-xl">{m.explore_review_section_title()}</h3>
           <label class="fieldset">
             <div class="label">
-              <span class="label-text font-medium">Title</span>
+              <span class="label-text font-medium">
+                {m.explore_review_title_label()}
+              </span>
               <span class="label-text-alt opacity-70">
                 {title.length}/{titleMaxLength}
               </span>
@@ -191,9 +207,13 @@
 
           <label class="fieldset">
             <div class="label">
-              <span class="label-text font-medium">Main review</span>
+              <span class="label-text font-medium">
+                {m.explore_review_body_label()}
+              </span>
               <span class="label-text-alt opacity-70">
-                Min. {reviewMinLength} characters
+                {m.explore_review_body_min_length_text({
+                  minLength: reviewMinLength,
+                })}
               </span>
             </div>
 
@@ -208,9 +228,9 @@
 
       <div class="card-body space-y-4 flex-1">
         <div class="space-y-1">
-          <h3 class="font-bold text-xl">Rating</h3>
+          <h3 class="font-bold text-xl">{m.explore_review_rating_title()}</h3>
           <p class="text-sm opacity-70">
-            Rate each category from 0.5 to 5 stars.
+            {m.explore_review_rating_hint_text()}
           </p>
         </div>
 
@@ -234,7 +254,7 @@
           disabled={!isDirty}
           onclick={() => saveDraft()}
         >
-          Save draft
+          {m.explore_review_save_draft_cta()}
         </button>
       {/if}
 
@@ -247,9 +267,9 @@
       >
         {#if published}
           <i class="fa-solid fa-check"></i>
-          {status === "draft" ? "Published" : "Edited"}
+          {m.explore_review_action_success_text({ status })}
         {:else}
-          {status === "draft" ? "Publish" : "Edit"}
+          {m.explore_review_action_primary_cta({ status })}
         {/if}
       </button>
     </div>

@@ -1,12 +1,13 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
 
   function showToast(message: string) {
-    toast.error("A client error occurred:\n" + message, {
-      description: "If you think it is a bug, click to report the bug",
+    toast.error(m.misc_client_error_toast_text({ message }), {
+      description: m.misc_client_error_toast_description(),
       action: {
-        label: "Report",
+        label: m.misc_client_error_toast_action_label(),
         onClick: () => {
           const url = `/report?error=${encodeURIComponent(message)}`;
           window.location.href = url;

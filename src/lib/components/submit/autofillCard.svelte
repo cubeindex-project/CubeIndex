@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import type { AutofillResult } from "../../../routes/(api)/api/submit/autocomplete/+server";
   import { cleanLink } from "../helper_functions/linkCleaner";
   import Card from "../layout/card.svelte";
@@ -31,7 +32,7 @@
     const sanitizedUrl = cleanLink(variables.storeUrl);
 
     if (!sanitizedUrl) {
-      variables.errorMessage = "Add a product link before sending.";
+      variables.errorMessage = m.submit_autofill_missing_link_text();
       variables.loading = false;
       return;
     }
@@ -47,7 +48,7 @@
 
       if (!response.ok) {
         variables.errorMessage =
-          data.error || "We could not process that link right now.";
+          data.error || m.submit_autofill_process_failed_text();
         return;
       }
 
@@ -55,36 +56,37 @@
       variables.success = true;
     } catch {
       variables.errorMessage =
-        "Something went wrong while contacting the autofill service.";
+        m.submit_autofill_unexpected_error_text();
     } finally {
       variables.loading = false;
     }
   }
 </script>
 
-<Card title="Autofill Service" {onCancel}>
+<Card title={m.submit_autofill_title()} {onCancel}>
   <div class="flex items-start gap-3">
     <p class="text-sm text-base-content/70">
-      Paste the exact product page for this cube from a shop like<br />
-      SpeedCubeShop, DailyPuzzles, or a manufacturer store.<br /> We will scan it
-      and fill what we can.
+      {m.submit_autofill_description_line_one()}
+      <br />
+      {m.submit_autofill_description_line_two()}
+      <br />
+      {m.submit_autofill_description_line_three()}
     </p>
   </div>
 
   <form class="space-y-4 pt-4" onsubmit={requestAutofill}>
     <label class="flex flex-col gap-2 text-sm font-medium text-base-content/80">
-      Store product link
+      {m.submit_autofill_link_label()}
       <input
         type="url"
-        placeholder="https://www.speedcubeshop.com/products/..."
+        placeholder={m.submit_autofill_link_placeholder()}
         class="input input-md w-full"
         bind:value={variables.storeUrl}
         autocomplete="off"
         required
       />
       <span class="text-xs text-base-content/60">
-        Use a page with clear specs and the exact model you are submitting—no
-        shortened links.
+        {m.submit_autofill_link_helper_text()}
       </span>
     </label>
 
@@ -97,19 +99,19 @@
         >
           {#if variables.loading}
             <i class="fa-solid fa-spinner fa-spin"></i>
-            <span>Requesting autofill...</span>
+            <span>{m.submit_autofill_requesting_text()}</span>
           {:else}
-            <span>Send link</span>
+            <span>{m.submit_autofill_send_cta()}</span>
           {/if}
         </button>
         <button type="button" class="btn btn-ghost" onclick={onCancel}>
-          Cancel
+          {m.submit_autofill_cancel_cta()}
         </button>
       </div>
       {#if variables.success}
         <div class="alert alert-success text-sm">
           <i class="fa-solid fa-bolt"></i>
-          <span> Link processed. </span>
+          <span>{m.submit_autofill_success_text()}</span>
         </div>
       {:else if variables.errorMessage}
         <div class="alert alert-error text-sm">
@@ -119,7 +121,7 @@
       {:else if dirty}
         <div class="alert alert-warning text-sm">
           <i class="fa-solid fa-exclamation-triangle"></i>
-          <span>This will overwrite your current data.</span>
+          <span>{m.submit_autofill_overwrite_warning_text()}</span>
         </div>
       {/if}
     </div>

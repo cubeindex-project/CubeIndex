@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   /**
    * A content section in a legal document page.
    */
@@ -23,7 +25,7 @@
     <article class="prose prose-zinc dark:prose-invert max-w-none">
       <h1 class="mb-2">{title}</h1>
       <p class="!mt-0 text-sm">
-        Last updated: {lastUpdated}
+        {m.legal_layout_last_updated_text({ date: lastUpdated })}
         {#if historyURL}
           ·
           <a
@@ -31,7 +33,7 @@
             target="_blank"
             rel="noopener"
             class="link link-hover"
-            >View change history on GitHub</a
+            >{m.legal_layout_history_link_label()}</a
           >
         {/if}
       </p>

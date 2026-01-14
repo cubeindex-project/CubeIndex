@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { m } from "$lib/paraglide/messages";
     import Fuse from "fuse.js";
 
     export interface SearchCube {
@@ -36,19 +37,19 @@
 
 <input
   type="text"
-  placeholder="Search cubes…"
+  placeholder={m.cube_search_placeholder()}
   bind:value={search}
   {disabled}
   class="input w-full mb-2"
-  aria-label="Search cubes"
+  aria-label={m.cube_search_aria()}
 />
 
 <!-- filtered results list -->
 <ul class="border rounded max-h-40 overflow-auto">
   {#if disabled}
-    <li class="p-2 italic">Disabled</li>
+    <li class="p-2 italic">{m.cube_search_disabled_text()}</li>
     {:else if searchCubes.length === 0}
-      <li class="p-2 italic">No matches</li>
+      <li class="p-2 italic">{m.cube_search_no_matches_text()}</li>
   {:else}
     {#each searchCubes as c (c.value)}
       <button

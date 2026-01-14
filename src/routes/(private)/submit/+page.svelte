@@ -11,6 +11,7 @@
     sizePattern,
   } from "$lib/components/validation/cubeForm.js";
   import { onMount } from "svelte";
+  import { m } from "$lib/paraglide/messages";
 
   let { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
@@ -29,7 +30,7 @@
     dataType: "json",
     resetForm: false,
     onError({ result }) {
-      $message = result.error.message || "Unknown error";
+      $message = result.error.message || m.submit_error_unknown_text();
     },
   });
 
@@ -59,6 +60,14 @@
     errorMessage: "",
     loading: false,
     success: false,
+  });
+  let wakingUp = $state(false);
+  const autofillButtonState = $derived.by(() => {
+    if (wakingUp) return "starting";
+    if (autofillCardData.success) return "success";
+    if (autofillCardData.errorMessage) return "error";
+    if (autofillCardData.loading) return "loading";
+    return "idle";
   });
   $effect(() => {
     const { success, errorMessage } = autofillCardData;
@@ -104,8 +113,6 @@
     };
   }
 
-  let wakingUp = $state(false);
-
   onMount(async () => {
     wakingUp = true;
     await fetch("/api/submit/warmup");
@@ -122,11 +129,10 @@
       <h1
         class="text-4xl font-clash font-semibold text-base-content items-center flex gap-2"
       >
-        Submit a Cube
+        {m.submit_page_title_h1()}
       </h1>
       <p class="max-w-2xl text-base-content/70">
-        Provide accurate manufacturer details so the CubeIndex team can review
-        and publish your cube quickly. Double-check specs before you send them.
+        {m.submit_page_intro_text()}
       </p>
     </header>
 
@@ -148,10 +154,10 @@
                     id="cube-identity"
                     class="text-xl font-semibold text-base-content"
                   >
-                    Cube identity
+                    {m.submit_identity_title()}
                   </h2>
                   <p class="text-sm text-base-content/70">
-                    Tell us how the manufacturer refers to this cube.
+                    {m.submit_identity_intro_text()}
                   </p>
                 </div>
                 <div class="flex flex-col items-end align-center">
@@ -165,21 +171,17 @@
                     type="button"
                     disabled={wakingUp}
                   >
-                    {#if wakingUp}
+                    {#if autofillButtonState === "starting" ||
+                      autofillButtonState === "loading"}
                       <i class="fa-solid fa-spinner fa-spin"></i>
-                      Starting autofill service...
-                    {:else if autofillCardData.success}
-                      Success!
-                    {:else if autofillCardData.errorMessage}
+                    {:else if autofillButtonState === "error"}
                       <i class="fa-solid fa-exclamation-triangle"></i>
-                      An error occured!
-                    {:else if autofillCardData.loading}
-                      <i class="fa-solid fa-spinner fa-spin"></i>
-                      Loading...
-                    {:else}
+                    {:else if autofillButtonState === "idle"}
                       <i class="fa-solid fa-bolt"></i>
-                      Autofill
                     {/if}
+                    {m.submit_autofill_button_label({
+                      state: autofillButtonState,
+                    })}
                   </button>
                   {#if wakingUp}
                     <p
@@ -188,8 +190,7 @@
                     >
                       <i class="fa-solid fa-clock mt-0.5"></i>
                       <span>
-                        Warming up the autofill service. It can take up to a
-                        minute to be ready.
+                        {m.submit_autofill_warmup_text()}
                       </span>
                     </p>
                   {/if}
@@ -199,11 +200,11 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  Series
+                  {m.submit_field_series_label()}
                   <input
                     name="series"
                     type="text"
-                    placeholder="GAN356"
+                    placeholder={m.submit_field_series_placeholder()}
                     bind:value={$form.series}
                     {...$constraints.series}
                     class="input input-lg w-full"
@@ -215,11 +216,14 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Model <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_model_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="model"
                     type="text"
-                    placeholder="Maglev"
+                    placeholder={m.submit_field_model_placeholder()}
                     bind:value={$form.model}
                     {...$constraints.model}
                     class="input input-lg w-full"
@@ -235,7 +239,10 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Edition type <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_version_type_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <select
                     name="cubeVersion"
                     bind:value={$form.versionType}
@@ -243,9 +250,15 @@
                     class="select select-lg w-full"
                     required
                   >
-                    <option value="Base">Base</option>
-                    <option value="Trim">Trim</option>
-                    <option value="Limited">Limited Edition</option>
+                    <option value="Base">
+                      {m.submit_field_version_type_base_label()}
+                    </option>
+                    <option value="Trim">
+                      {m.submit_field_version_type_trim_label()}
+                    </option>
+                    <option value="Limited">
+                      {m.submit_field_version_type_limited_label()}
+                    </option>
                   </select>
                   {#if $errors.versionType}
                     <span class="text-xs text-error">{$errors.versionType}</span
@@ -255,11 +268,14 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Edition name <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_version_name_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="version"
                     type="text"
-                    placeholder="UV / 10 Year Edition"
+                    placeholder={m.submit_field_version_name_placeholder()}
                     bind:value={$form.versionName}
                     {...$constraints.versionName}
                     class="input input-lg w-full"
@@ -277,7 +293,10 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Brand <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_brand_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <select
                     name="brand"
                     bind:value={$form.brand}
@@ -293,14 +312,16 @@
                     <span class="text-xs text-error">{$errors.brand}</span>
                   {/if}
                   <span class="text-xs text-base-content/60">
-                    Missing a manufacturer? Let the team know through the cube
-                    report button or Discord and we will add it for you.
+                    {m.submit_field_brand_helper_text()}
                   </span>
                 </label>
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Cube type <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_type_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <select
                     name="type"
                     bind:value={$form.type}
@@ -316,8 +337,7 @@
                     <span class="text-xs text-error">{$errors.type}</span>
                   {/if}
                   <span class="text-xs text-base-content/60">
-                    Need another cube type? Let the team know through the cube
-                    report button or Discord and we will add it for you.
+                    {m.submit_field_type_helper_text()}
                   </span>
                 </label>
               </div>
@@ -325,7 +345,7 @@
               <div
                 class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
               >
-                Sub-type
+                {m.submit_field_subtype_label()}
                 <select
                   name="subType"
                   bind:value={$form.sub_type}
@@ -333,7 +353,9 @@
                   class="select select-lg w-full"
                   required
                 >
-                  <option value="auto">Handle Automatically</option>
+                  <option value="auto">
+                    {m.submit_field_subtype_auto_label()}
+                  </option>
                   {#each subTypes as subType (subType)}
                     <option>{subType}</option>
                   {/each}
@@ -345,14 +367,13 @@
 
               <div class="space-y-3">
                 <p class="text-sm font-medium text-base-content">
-                  Related model link
+                  {m.submit_field_related_model_label()}
                 </p>
                 <div
                   class="rounded-xl border border-base-200 bg-base-200/40 p-4"
                 >
                   <p class="mb-2 text-xs text-base-content/60">
-                    Only approved cubes appear here. Select the base model this
-                    release is derived from.
+                    {m.submit_field_related_model_helper_text()}
                   </p>
                   <SearchCubes
                     cubes={allCubes}
@@ -381,17 +402,20 @@
                   id="cube-specs"
                   class="text-xl font-semibold text-base-content"
                 >
-                  Media &amp; specs
+                  {m.submit_media_specs_title()}
                 </h2>
                 <p class="text-sm text-base-content/70">
-                  Share reference imagery and key physical attributes.
+                  {m.submit_media_specs_intro_text()}
                 </p>
               </div>
               <div class="grid gap-6 md:grid-cols-2">
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Release date <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_release_date_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="releaseDate"
                     type="date"
@@ -408,22 +432,25 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Image URL <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_image_url_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="imageUrl"
                     type="url"
                     bind:value={$form.imageUrl}
                     {...$constraints.imageUrl}
                     class="input input-lg w-full"
-                    placeholder="https://..."
+                    placeholder={m.submit_field_image_url_placeholder()}
                     required
                   />
                   {#if $errors.imageUrl}
                     <span class="text-xs text-error">{$errors.imageUrl}</span>
                   {/if}
-                  <span class="text-xs text-base-content/60"
-                    >Use an official product or press image.</span
-                  >
+                  <span class="text-xs text-base-content/60">
+                    {m.submit_field_image_url_helper_text()}
+                  </span>
                 </label>
               </div>
 
@@ -431,7 +458,10 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Surface finish <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_surface_finish_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <select
                     name="surfaceFinish"
                     bind:value={$form.surfaceFinish}
@@ -452,7 +482,10 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Weight (g) <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_weight_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="weight"
                     type="number"
@@ -470,11 +503,14 @@
                 <label
                   class="flex flex-col gap-2 text-sm font-medium text-base-content/80"
                 >
-                  <span>Size (mm) <span class="text-error">*</span></span>
+                  <span>
+                    {m.submit_field_size_label()}
+                    <span class="text-error">*</span>
+                  </span>
                   <input
                     name="size"
                     type="text"
-                    placeholder="W x H x D"
+                    placeholder={m.submit_field_size_placeholder()}
                     bind:value={$form.size}
                     {...$constraints.size}
                     class="input input-lg w-full"
@@ -493,10 +529,10 @@
                   id="cube-features"
                   class="text-xl font-semibold text-base-content"
                 >
-                  Feature profile
+                  {m.submit_features_title()}
                 </h2>
                 <p class="text-sm text-base-content/70">
-                  Mark every hardware capability that ships with this cube.
+                  {m.submit_features_intro_text()}
                 </p>
               </div>
               <div class="grid gap-4 sm:grid-cols-2">
@@ -512,10 +548,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >WCA legal</span
+                      >{m.submit_feature_wca_legal_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Approved for use in official competitions.</span
+                      >{m.submit_feature_wca_legal_helper_text()}</span
                     >
                   </span>
                   {#if $errors.features?.wcaLegal}
@@ -536,10 +572,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Magnetic</span
+                      >{m.submit_feature_magnetic_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Factory-installed magnets for layer alignment.</span
+                      >{m.submit_feature_magnetic_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -555,10 +591,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Smart</span
+                      >{m.submit_feature_smart_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Bluetooth or app-connected tracking features.</span
+                      >{m.submit_feature_smart_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -574,10 +610,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Modded</span
+                      >{m.submit_feature_modded_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Community or premium mod rather than stock hardware.</span
+                      >{m.submit_feature_modded_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -593,10 +629,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >MagLev</span
+                      >{m.submit_feature_maglev_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Magnetic levitation tensioning system.</span
+                      >{m.submit_feature_maglev_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -612,10 +648,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Ball core</span
+                      >{m.submit_feature_ball_core_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Includes a magnetic core-ball assembly.</span
+                      >{m.submit_feature_ball_core_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -631,11 +667,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Stickered</span
+                      >{m.submit_feature_stickered_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >Ships with factory stickers instead of tiles or primary
-                      plastic.</span
+                      >{m.submit_feature_stickered_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -651,10 +686,10 @@
                   />
                   <span>
                     <span class="block font-medium text-base-content"
-                      >Discontinued</span
+                      >{m.submit_feature_discontinued_label()}</span
                     >
                     <span class="text-xs text-base-content/70"
-                      >The manufacturer no longer produces this cube.</span
+                      >{m.submit_feature_discontinued_helper_text()}</span
                     >
                   </span>
                 </label>
@@ -663,10 +698,10 @@
 
             <div class="flex flex-col gap-3">
               <button type="submit" class="btn btn-primary btn-lg w-full"
-                >Submit cube</button
+                >{m.submit_submit_cta()}</button
               >
               <p class="text-center text-xs text-base-content/60">
-                It may take up to a week for your submission to be approved.
+                {m.submit_submit_helper_text()}
               </p>
             </div>
 
@@ -680,7 +715,7 @@
               <div class="alert alert-error" role="alert" aria-live="assertive">
                 <div>
                   <h2 class="text-sm font-semibold uppercase tracking-wide">
-                    Please fix the highlighted fields
+                    {m.submit_error_title_text()}
                   </h2>
                   <ul class="mt-2 list-disc space-y-1 pl-4 text-sm">
                     {#each $allErrors as error (error)}
@@ -703,28 +738,25 @@
         <div class="card border border-base-200 bg-base-100/80 shadow-sm">
           <div class="card-body space-y-4">
             <h2 class="text-lg font-semibold text-base-content">
-              Submission checklist
+              {m.submit_checklist_title()}
             </h2>
             <ul class="space-y-3 text-sm text-base-content/70">
               <li class="flex items-start gap-3">
                 <i class="fa-solid fa-circle-check text-primary mt-1"></i>
                 <span>
-                  Confirm the model name, release date, and specs against
-                  manufacturer documentation.
+                  {m.submit_checklist_item_one_text()}
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <i class="fa-solid fa-circle-check text-primary mt-1"></i>
                 <span>
-                  Upload imagery that is free to share and clearly shows the
-                  retail product.
+                  {m.submit_checklist_item_two_text()}
                 </span>
               </li>
               <li class="flex items-start gap-3">
                 <i class="fa-solid fa-circle-check text-primary mt-1"></i>
                 <span>
-                  Explain relationships to existing cubes when submitting mods,
-                  trims or limited editions.
+                  {m.submit_checklist_item_three_text()}
                 </span>
               </li>
             </ul>
@@ -736,29 +768,24 @@
         >
           <div class="card-body space-y-4">
             <h2 class="text-lg font-semibold text-base-content">
-              What happens next?
+              {m.submit_next_steps_title()}
             </h2>
             <ol class="space-y-3 text-sm text-base-content/70">
               <li class="flex gap-3">
                 <span class="badge badge-sm badge-outline mt-0.5">1</span>
-                <span
-                  >Our reviewers check your submission for accuracy and
-                  completeness.</span
-                >
+                <span>{m.submit_next_steps_item_one_text()}</span>
               </li>
               <li class="flex gap-3">
                 <span class="badge badge-sm badge-outline mt-0.5">2</span>
-                <span
-                  >Approved cubes go live on CubeIndex with credit to your
-                  profile.</span
-                >
+                <span>{m.submit_next_steps_item_two_text()}</span>
               </li>
             </ol>
             <div
               class="rounded-xl bg-base-200/60 px-4 py-3 text-sm text-base-content/70"
             >
-              Need direct help? Contact us on <a href="/discord" class="link"
-                >Discord</a
+              {m.submit_help_prompt_text()}
+              <a href="/discord" class="link"
+                >{m.submit_help_discord_label()}</a
               >.
             </div>
           </div>

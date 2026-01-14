@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
   import { fade, scale } from "svelte/transition";
   import StarRating from "./starRating.svelte";
@@ -25,11 +26,27 @@
   const ringClass = $derived(
     over ? "text-error" : near ? "text-warning" : "text-accent"
   );
+  const charMeterLabel = $derived(
+    over
+      ? m.rating_char_meter_over_aria({ used, max: MAX })
+      : m.rating_char_meter_aria({ used, max: MAX })
+  );
+  const charMeterTitle = $derived(
+    m.rating_char_meter_title_text({ used, max: MAX })
+  );
+  const submitTitle = $derived(
+    !rating
+      ? m.rating_submit_missing_rating_title()
+      : over
+        ? m.rating_submit_over_limit_title()
+        : ""
+  );
 
   function validate(): string | null {
-    if (!isConnected) return "You must be logged in to perform this action.";
-    if (!rating || rating < 1) return "Please select a rating.";
-    if (over) return `Comment is too long by ${used - MAX} characters.`;
+    if (!isConnected) return m.rating_auth_required_text();
+    if (!rating || rating < 1) return m.rating_select_required_text();
+    if (over)
+      return m.rating_comment_too_long_text({ excess: used - MAX });
     return null;
   }
 
@@ -91,11 +108,11 @@
         setTimeout(onCancel, 900); // fixed: pass function, don't invoke immediately
       } else {
         throw new Error(
-          data?.error || "Unable to submit rating. Please try again."
+          data?.error || m.rating_submit_failed_text()
         );
       }
     } catch (err: any) {
-      formMessage = err?.message ?? "Unexpected error. Please try again.";
+      formMessage = err?.message ?? m.rating_unexpected_error_text();
     } finally {
       isSubmitting = false;
     }
@@ -123,7 +140,7 @@
         <div class="flex items-start gap-3">
           <div class="flex-1">
             <h2 id="rate-cube-title" class="card-title leading-tight">
-              Rate this Cube
+              {m.rating_dialog_title_h2()}
             </h2>
             <p id="rate-cube-desc" class="text-sm opacity-80">
               {cube.series}
@@ -135,7 +152,7 @@
             type="button"
             class="btn btn-ghost btn-sm rounded-xl"
             onclick={onCancel}
-            aria-label="Close"
+            aria-label={m.rating_dialog_close_aria()}
           >
             ✕
           </button>
@@ -144,24 +161,26 @@
         <!-- Rating control -->
         <div class="space-y-2">
           <div class="label">
-            <span class="label-text">Your rating</span>
+            <span class="label-text">{m.rating_label()}</span>
             <span class="label-text-alt opacity-70">{rating || 0}/5</span>
           </div>
           <StarRating readOnly={false} bind:rating />
-          <p class="text-xs opacity-70">Click a star to set your rating.</p>
+          <p class="text-xs opacity-70">{m.rating_hint_text()}</p>
         </div>
 
         <!-- Comment -->
         <div class="relative">
           <div class="label">
-            <span class="label-text">Comment</span>
-            <span class="label-text-alt opacity-70">Optional · Max {MAX}</span>
+            <span class="label-text">{m.rating_comment_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.rating_comment_optional_text({ max: MAX })}
+            </span>
           </div>
 
           <textarea
             bind:value={comment}
             rows="4"
-            placeholder="Share your thoughts about turning feel, speed, control, magnet strength, etc."
+            placeholder={m.rating_comment_placeholder()}
             class="textarea textarea-bordered rounded-2xl w-full resize-y pr-12"
             aria-describedby="char-meter"
             maxlength={MAX + 100}
@@ -175,8 +194,8 @@
               class="radial-progress {ringClass} select-none"
               style="--value:{pct}; --size:1.75rem; --thickness:3px"
               aria-live="polite"
-              aria-label={`Characters: ${used}/${MAX}${over ? " (over limit)" : ""}`}
-              title={`${used}/${MAX}`}
+              aria-label={charMeterLabel}
+              title={charMeterTitle}
             >
               {#if near || over}{remaining}{/if}
             </div>
@@ -191,7 +210,7 @@
         >
           {formMessage}
           {#if !isConnected}
-            You must be logged in to perform this action.
+            {m.rating_auth_required_text()}
           {/if}
         </div>
 
@@ -203,27 +222,23 @@
             onclick={onCancel}
             disabled={isSubmitting}
           >
-            Cancel
+            {m.rating_cancel_cta()}
           </button>
           <button
             class="btn btn-primary rounded-xl"
             type="submit"
             disabled={isSubmitting || !isConnected || !rating || over}
             aria-disabled={isSubmitting || !isConnected || !rating || over}
-            title={!rating
-              ? "Please select a rating"
-              : over
-                ? "Comment too long"
-                : ""}
+            title={submitTitle}
           >
             {#if isSubmitting}
               <span class="loading loading-spinner"></span>
-              <span class="ml-2">Submitting…</span>
+              <span class="ml-2">{m.rating_submit_loading_text()}</span>
             {:else if showSuccess}
               <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
-              Rated!
+              {m.rating_submit_success_text()}
             {:else}
-              Rate Cube
+              {m.rating_submit_cta()}
             {/if}
           </button>
         </div>

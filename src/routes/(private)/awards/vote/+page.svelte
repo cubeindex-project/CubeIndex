@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import type { AwardsEvent } from "$lib/components/dbTableTypes";
 
   let { data } = $props();
@@ -33,17 +34,20 @@
 
   const formatCountdown = (targetMs: number) => {
     const diffMs = targetMs - nowMs;
-    if (!Number.isFinite(diffMs) || diffMs <= 0) return "0s";
+    if (!Number.isFinite(diffMs) || diffMs <= 0)
+      return m.awards_vote_countdown_zero_short_text();
     const totalSeconds = Math.floor(diffMs / 1000);
     const days = Math.floor(totalSeconds / 86400);
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
     const parts = [
-      days > 0 ? `${days}d` : null,
-      `${hours}h`,
-      `${minutes}m`,
-      `${seconds}s`,
+      days > 0
+        ? m.awards_vote_countdown_day_short_text({ count: days })
+        : null,
+      m.awards_vote_countdown_hour_short_text({ count: hours }),
+      m.awards_vote_countdown_minute_short_text({ count: minutes }),
+      m.awards_vote_countdown_second_short_text({ count: seconds }),
     ].filter(Boolean);
     return parts.join(" ");
   };
@@ -60,43 +64,45 @@
   });
 
   const hasEvent = $derived(Boolean(event));
-  const eventTitle = $derived.by(() => event?.title ?? "CubeIndex Awards");
+  const eventTitle = $derived.by(
+    () => event?.title ?? m.awards_vote_event_title_default_text(),
+  );
+  const emptyDescriptionState = $derived.by(() => {
+    if (eventPhase === "upcoming" && startDateLabel) return "upcoming";
+    if (hasEvent) return "scheduled";
+    return "none";
+  });
 </script>
 
 <svelte:head>
-  <title>Awards Voting - CubeIndex</title>
+  <title>{m.awards_vote_meta_title()}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
   {#if eventPhase !== "live"}
     <div class="min-h-screen bg-base-100">
       <div class="mx-auto max-w-4xl space-y-8 px-4 py-16 text-center">
         <p class="text-xs uppercase tracking-[0.25em] text-base-content/60">
-          Awards voting
+          {m.awards_vote_kicker_label()}
         </p>
         <div class="space-y-3">
           <h1 class="text-3xl font-clash font-bold md:text-4xl">
-            {#if hasEvent}
-              No awards event is live right now
-            {:else}
-              No awards events are scheduled
-            {/if}
+            {m.awards_vote_empty_title_text({ hasEvent })}
           </h1>
           <p class="text-base-content/70">
-            {#if eventPhase === "upcoming" && startDateLabel}
-              Voting opens for {eventTitle} on {startDateLabel}. Check back once
-              the event begins.
-            {:else if hasEvent}
-              Check back soon for the next CubeIndex Awards event.
-            {:else}
-              We haven't scheduled the next CubeIndex Awards yet. Stay tuned.
-            {/if}
+            {m.awards_vote_empty_description_text({
+              state: emptyDescriptionState,
+              eventTitle,
+              startDateLabel,
+            })}
           </p>
         </div>
         {#if eventPhase === "upcoming" && startCountdown && hasEvent}
           <div
             class="mx-auto flex max-w-sm flex-col items-center gap-2 rounded-2xl border border-base-200 bg-base-200/50 px-6 py-5 shadow-sm"
           >
-            <span class="text-xs text-base-content/60">Starts in</span>
+            <span class="text-xs text-base-content/60">
+              {m.awards_vote_countdown_start_label()}
+            </span>
             <span class="text-2xl font-semibold">{startCountdown}</span>
             <span class="text-sm text-base-content/60">{startDateLabel}</span>
           </div>
@@ -104,15 +110,21 @@
           <div
             class="mx-auto flex max-w-sm flex-col items-center gap-2 rounded-2xl border border-base-200 bg-base-200/50 px-6 py-5 shadow-sm"
           >
-            <span class="text-xs text-base-content/60">Status</span>
-            <span class="text-2xl font-semibold">No events planned</span>
+            <span class="text-xs text-base-content/60">
+              {m.awards_vote_empty_status_label()}
+            </span>
+            <span class="text-2xl font-semibold">
+              {m.awards_vote_empty_status_title_text()}
+            </span>
             <span class="text-sm text-base-content/60">
-              We’ll announce the next awards timeline soon.
+              {m.awards_vote_empty_status_description_text()}
             </span>
           </div>
         {/if}
         <div class="flex flex-wrap justify-center gap-3">
-          <a class="btn btn-primary" href="/awards">Awards overview</a>
+          <a class="btn btn-primary" href="/awards">
+            {m.awards_vote_empty_action_overview_cta()}
+          </a>
         </div>
       </div>
     </div>
@@ -127,22 +139,23 @@
               <p
                 class="text-xs uppercase tracking-[0.25em] text-base-content/60"
               >
-                Awards voting
+                {m.awards_vote_kicker_label()}
               </p>
               <div class="space-y-1">
                 <h1 class="text-3xl font-clash font-bold md:text-4xl">
                   {event.title}
                 </h1>
                 <p class="text-sm text-base-content/70 max-w-3xl">
-                  Review each category and jump into the ballot to cast your
-                  picks.
+                  {m.awards_vote_live_intro_text()}
                 </p>
               </div>
             </div>
             <div
               class="rounded-2xl border border-base-300 bg-base-100 px-4 py-3 text-right shadow-sm"
             >
-              <p class="text-xs text-base-content/60">Voting closes in</p>
+              <p class="text-xs text-base-content/60">
+                {m.awards_vote_closing_label()}
+              </p>
               <p class="text-lg font-semibold">{countdownLabel}</p>
             </div>
           </div>
@@ -151,16 +164,20 @@
         <section class="space-y-4">
           <div class="flex flex-wrap items-end justify-between gap-3">
             <div class="space-y-1">
-              <h2 class="text-xl font-semibold">Categories</h2>
+              <h2 class="text-xl font-semibold">
+                {m.awards_vote_categories_title()}
+              </h2>
               <p class="text-sm text-base-content/70">
-                Choose a category to view nominees and submit your vote.
+                {m.awards_vote_categories_hint_text()}
               </p>
             </div>
             {#if categories.length > 0}
               <span
                 class="badge badge-lg border-base-300 bg-base-100 shadow-sm"
               >
-                {categories.length} open
+                {m.awards_vote_categories_open_badge_text({
+                  count: categories.length,
+                })}
               </span>
             {/if}
           </div>

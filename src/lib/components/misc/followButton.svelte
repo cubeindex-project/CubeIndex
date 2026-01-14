@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   const { user_id, isFollowing }: { user_id: string; isFollowing: boolean } =
     $props();
 
@@ -46,11 +48,11 @@
 {#if isFollowing}
   <button class="btn btn-primary" onclick={() => follow(user_id)}>
     <i class="fa-solid fa-user-plus"></i>
-    <span>Follow</span>
+    <span>{m.misc_follow_button_follow_cta()}</span>
   </button>
 {:else}
   <button class="btn btn-primary" onclick={() => unfollow(user_id)}>
     <i class="fa-solid fa-user-minus"></i>
-    <span>Unfollow</span>
+    <span>{m.misc_follow_button_unfollow_cta()}</span>
   </button>
 {/if}

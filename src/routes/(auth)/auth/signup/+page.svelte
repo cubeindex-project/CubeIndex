@@ -3,6 +3,7 @@
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
   import { Turnstile } from "svelte-turnstile";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
+  import { m } from "$lib/paraglide/messages";
 
   let { data } = $props();
 
@@ -34,7 +35,7 @@
 
   let showPassword = $state(false);
   let pwScore: 0 | 1 | 2 | 3 | 4 = $state(0);
-  let pwLabel = $state("Very weak");
+  let pwLabel = $state("very_weak");
   let pwSuggestions: string[] = $state([]);
 
   $effect(() => {
@@ -45,10 +46,46 @@
   });
 
   const steps = [
-    { key: "account", label: "Account" },
-    { key: "profile", label: "Profile" },
-    { key: "survey", label: "Preferences" },
-    { key: "done", label: "Done" },
+    { key: "account", label: m.auth_signup_step_account_label() },
+    { key: "profile", label: m.auth_signup_step_profile_label() },
+    { key: "survey", label: m.auth_signup_step_preferences_label() },
+    { key: "done", label: m.auth_signup_step_done_label() },
+  ] as const;
+
+  const discoveryOptions = [
+    { value: "friend", label: m.auth_signup_discover_option_friend_label() },
+    { value: "discord", label: m.auth_signup_discover_option_discord_label() },
+    { value: "reddit", label: m.auth_signup_discover_option_reddit_label() },
+    { value: "youtube", label: m.auth_signup_discover_option_youtube_label() },
+    { value: "search", label: m.auth_signup_discover_option_search_label() },
+    { value: "other", label: m.auth_signup_discover_option_other_label() },
+  ] as const;
+
+  const interestOptions = [
+    {
+      value: "price_tracking",
+      label: m.auth_signup_interest_price_tracking_label(),
+    },
+    {
+      value: "collection_management",
+      label: m.auth_signup_interest_collection_management_label(),
+    },
+    {
+      value: "ratings_reviews",
+      label: m.auth_signup_interest_ratings_reviews_label(),
+    },
+    {
+      value: "shop_compare",
+      label: m.auth_signup_interest_shop_compare_label(),
+    },
+    {
+      value: "alerts_discord",
+      label: m.auth_signup_interest_discord_alerts_label(),
+    },
+    {
+      value: "achievements",
+      label: m.auth_signup_interest_achievements_label(),
+    },
   ] as const;
 
   const isActive = (k: string) => step === k;
@@ -58,7 +95,7 @@
 </script>
 
 <svelte:head>
-  <title>Signup - CubeIndex</title>
+  <title>{m.auth_signup_meta_title()}</title>
 </svelte:head>
   <section class="min-h-screen">
     <div class="grid grid-cols-1 md:grid-cols-2 min-h-screen">
@@ -67,9 +104,11 @@
         class="h-full flex flex-col justify-center px-6 sm:px-12 py-10 bg-base-200 border-base-300 md:border-r border-y"
       >
         <div class="w-full max-w-md mx-auto">
-          <h1 class="text-3xl font-clash font-bold mb-2">Join CubeIndex</h1>
+          <h1 class="text-3xl font-clash font-bold mb-2">
+            {m.auth_signup_title_h1()}
+          </h1>
           <p class="text-sm mb-6">
-            Create a free account to start tracking your collection
+            {m.auth_signup_intro_text()}
           </p>
 
           <!-- Stepper -->
@@ -97,7 +136,7 @@
               <!-- Email -->
               <div>
                 <label class="block text-sm font-medium">
-                  Email
+                  {m.auth_signup_email_label()}
                   <input
                     name="email"
                     type="email"
@@ -116,7 +155,7 @@
               <!-- Password + Meter -->
               <div>
                 <label class="block text-sm font-medium">
-                  Password
+                  {m.auth_signup_password_label()}
                   <div class="flex items-center gap-2">
                     <input
                       name="password"
@@ -158,12 +197,18 @@
                       class:!bg-success={pwScore >= 3}
                     ></div>
                   </div>
-                  <div class="mt-1 text-xs opacity-80">{pwLabel}</div>
+                  <div class="mt-1 text-xs opacity-80">
+                    {m.auth_password_strength_label({ label: pwLabel })}
+                  </div>
                   {#if pwSuggestions.length}
                     <ul
                       class="mt-1 text-xs opacity-70 list-disc ml-5 space-y-0.5"
                     >
-                      {#each pwSuggestions.slice(0, 3) as s}<li>{s}</li>{/each}
+                      {#each pwSuggestions.slice(0, 3) as s}
+                        <li>
+                          {m.auth_password_suggestion_text({ suggestion: s })}
+                        </li>
+                      {/each}
                     </ul>
                   {/if}
                 </div>
@@ -172,7 +217,7 @@
               <!-- Confirm Password -->
               <div>
                 <label class="block text-sm font-medium">
-                  Confirm Password
+                  {m.auth_signup_confirm_password_label()}
                   <input
                     name="confirmPassword"
                     type="password"
@@ -195,13 +240,16 @@
                   class="checkbox bg-base-300 mt-0.5"
                 />
                 <div class="text-sm select-none">
-                  I accept the
+                  {m.auth_signup_tos_accept_prefix_text()}
+                  {" "}
                   <a href="/tos" target="_blank" class="link link-primary"
-                    >Terms of Service</a
+                    >{m.auth_signup_terms_of_service_label()}</a
                   >
-                  and
+                  {" "}
+                  {m.auth_signup_tos_accept_conjunction_text()}
+                  {" "}
                   <a href="/privacy" target="_blank" class="link link-primary"
-                    >Privacy Policy</a
+                    >{m.auth_signup_privacy_policy_label()}</a
                   >
                 </div>
               </div>
@@ -215,7 +263,7 @@
                 type="submit"
                 class="btn btn-lg sm:btn-xl w-full btn-primary"
               >
-                Continue
+                {m.auth_signup_continue_cta()}
               </button>
 
               <div>
@@ -230,14 +278,14 @@
                 {/if}
               </div>
 
-              <div class="divider">or</div>
+              <div class="divider">{m.auth_signup_or_divider_text()}</div>
 
               <a
                 href="/auth/discord"
                 class="btn btn-lg sm:btn-xl bg-[#5865F2] text-white w-full"
               >
                 <i class="fa-brands fa-discord text-2xl"></i>
-                Sign Up with Discord
+                {m.auth_signup_discord_cta()}
               </a>
             </form>
           {/if}
@@ -253,7 +301,7 @@
             >
               <div>
                 <label class="block text-sm font-medium">
-                  Display Name
+                  {m.auth_signup_display_name_label()}
                   <input
                     name="display_name"
                     type="text"
@@ -271,7 +319,7 @@
 
               <div>
                 <label class="block text-sm font-medium">
-                  Username
+                  {m.auth_signup_username_label()}
                   <input
                     name="username"
                     type="text"
@@ -289,7 +337,7 @@
 
               <div>
                 <label class="block text-sm font-medium">
-                  Profile Picture
+                  {m.auth_signup_profile_picture_label()}
                   <input
                     name="avatar"
                     type="file"
@@ -313,8 +361,10 @@
 
               <button
                 type="submit"
-                class="btn btn-lg sm:btn-xl w-full btn-primary">Continue</button
+                class="btn btn-lg sm:btn-xl w-full btn-primary"
               >
+                {m.auth_signup_continue_cta()}
+              </button>
             </form>
           {/if}
 
@@ -328,7 +378,7 @@
             >
               <div>
                 <label class="block text-sm font-medium">
-                  How did you discover CubeIndex?
+                  {m.auth_signup_discover_label()}
 
                   <select
                     name="discovered_via"
@@ -336,13 +386,12 @@
                     class="select w-full"
                     required
                   >
-                    <option value="" disabled selected>Select one</option>
-                    <option value="friend">Friend</option>
-                    <option value="discord">Discord</option>
-                    <option value="reddit">Reddit</option>
-                    <option value="youtube">YouTube</option>
-                    <option value="search">Search Engine</option>
-                    <option value="other">Other</option>
+                    <option value="" disabled selected>
+                      {m.auth_signup_discover_placeholder_label()}
+                    </option>
+                    {#each discoveryOptions as option}
+                      <option value={option.value}>{option.label}</option>
+                    {/each}
                   </select>
                 </label>
                 {#if $surveyErrors.discovered_via}
@@ -354,20 +403,20 @@
 
               <div>
                 <label class="block text-sm font-medium">
-                  What features interest you the most?
+                  {m.auth_signup_interest_label()}
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {#each [["price_tracking", "Price tracking"], ["collection_management", "Collection management"], ["ratings_reviews", "Ratings & reviews"], ["shop_compare", "Shop compare"], ["alerts_discord", "Discord alerts"], ["achievements", "Achievements"]] as [val, label]}
+                    {#each interestOptions as option}
                       <label
                         class="flex gap-2 items-center p-2 rounded-lg border border-base-300"
                       >
                         <input
                           type="checkbox"
                           name="interested_features"
-                          value={val}
+                          value={option.value}
                           bind:group={$survey.interested_features}
                           class="checkbox"
                         />
-                        <span>{label}</span>
+                        <span>{option.label}</span>
                       </label>
                     {/each}
                   </div>
@@ -381,13 +430,13 @@
 
               <div>
                 <label class="block text-sm font-medium">
-                  Anything else?
+                  {m.auth_signup_other_label()}
                   <textarea
                     name="other_text"
                     bind:value={$survey.other_text}
                     class="textarea w-full"
                     rows="3"
-                    placeholder="Optional"
+                    placeholder={m.auth_signup_other_placeholder()}
                   ></textarea>
                 </label>
                 {#if $surveyErrors.other_text}
@@ -407,30 +456,32 @@
                 type="submit"
                 class="btn btn-lg sm:btn-xl w-full btn-primary"
               >
-                Finish
+                {m.auth_signup_finish_cta()}
               </button>
             </form>
           {/if}
 
           {#if step === "done"}
             <div class="text-center space-y-3">
-              <h2 class="text-2xl font-bold">You're all set!</h2>
+              <h2 class="text-2xl font-bold">
+                {m.auth_signup_complete_title_h2()}
+              </h2>
               <p class="opacity-80">
-                Check your email to verify your account. Once verified, you can
-                start tracking your collection, compare shops, and get
-                price-drop alerts on Discord.
+                {m.auth_signup_complete_body_text()}
               </p>
-              <a href="/explore" class="btn btn-primary mt-2"
-                >Start Collecting!</a
-              >
+              <a href="/explore" class="btn btn-primary mt-2">
+                {m.auth_signup_complete_cta()}
+              </a>
             </div>
           {/if}
 
           <!-- Existing login hint -->
           <p class="text-sm text-center mt-6">
-            Already have an account?
-            <a href="/auth/login" class="link link-primary link-hover">Log in</a
-            >
+            {m.auth_signup_existing_prompt_text()}
+            {" "}
+            <a href="/auth/login" class="link link-primary link-hover">
+              {m.auth_signup_existing_cta()}
+            </a>
           </p>
         </div>
       </div>
@@ -459,11 +510,10 @@
             <h2
               class="text-2xl sm:text-3xl font-clash font-extrabold tracking-tight"
             >
-              All your cubes, in one place
+              {m.auth_signup_marketing_title_h2()}
             </h2>
             <p class="mt-2 text-sm opacity-80">
-              Track your collection, rate cubes, unlock achievements, and get
-              price updates.
+              {m.auth_signup_marketing_intro_text()}
             </p>
           </div>
 
@@ -473,9 +523,11 @@
                 ><i class="fa-solid fa-cubes"></i></span
               >
               <div>
-                <div class="font-semibold">Collection management</div>
+                <div class="font-semibold">
+                  {m.auth_signup_marketing_collection_title()}
+                </div>
                 <div class="opacity-70">
-                  Add cubes, set condition and status, and mark mains.
+                  {m.auth_signup_marketing_collection_text()}
                 </div>
               </div>
             </li>
@@ -484,9 +536,11 @@
                 ><i class="fa-solid fa-star"></i></span
               >
               <div>
-                <div class="font-semibold">Ratings & reviews</div>
+                <div class="font-semibold">
+                  {m.auth_signup_marketing_ratings_title()}
+                </div>
                 <div class="opacity-70">
-                  Share your experience and see what others think.
+                  {m.auth_signup_marketing_ratings_text()}
                 </div>
               </div>
             </li>
@@ -495,9 +549,11 @@
                 ><i class="fa-solid fa-trophy"></i></span
               >
               <div>
-                <div class="font-semibold">Achievements</div>
+                <div class="font-semibold">
+                  {m.auth_signup_marketing_achievements_title()}
+                </div>
                 <div class="opacity-70">
-                  Unlock badges as you grow your collection.
+                  {m.auth_signup_marketing_achievements_text()}
                 </div>
               </div>
             </li>

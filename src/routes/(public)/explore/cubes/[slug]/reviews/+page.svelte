@@ -3,13 +3,16 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import type { PageData } from "./$types";
+  import { m } from "$lib/paraglide/messages";
 
   let { data }: { data: PageData } = $props();
   let { cube, reviews } = $derived(data);
 
   const MAX_SUMMARY_CHARS = 180;
 
-  const pageTitle = $derived(`${cube.name} - Reviews`);
+  const pageTitle = $derived(
+    m.explore_reviews_meta_title({ name: cube.name }),
+  );
 
   const reviewCount = $derived(reviews.length);
 </script>
@@ -23,19 +26,21 @@
     class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
   >
     <div class="space-y-1">
-      <h2 class="text-lg font-semibold">Community reviews</h2>
+      <h2 class="text-lg font-semibold">
+        {m.explore_reviews_heading_label()}
+      </h2>
       {#if reviewCount > 0}
         <p class="text-sm opacity-70">
-          {reviewCount} review{reviewCount === 1 ? "" : "s"}
+          {m.explore_reviews_count_text({ count: reviewCount })}
         </p>
       {:else}
-        <p class="text-sm opacity-70">No reviews yet.</p>
+        <p class="text-sm opacity-70">{m.explore_reviews_empty_text()}</p>
       {/if}
     </div>
 
     <a class="btn btn-primary btn-sm" href="/explore/cubes/{cube.slug}/review">
       <i class="fa-solid fa-pen-to-square mr-2"></i>
-      Write a review
+      {m.common_action_write_review_cta()}
     </a>
   </header>
 
@@ -88,7 +93,7 @@
                 <div
                   class="mt-0.5 flex flex-wrap items-center gap-2 text-xs opacity-70"
                 >
-                  <span title="Last update">
+                  <span title={m.common_meta_last_update_label()}>
                     {formatDate(review.updated_at ?? review.created_at)}
                   </span>
                 </div>
@@ -100,10 +105,10 @@
                 href="/explore/cubes/{cube.slug}/reviews/{review.id}"
                 class="btn btn-sm btn-primary btn-outline"
                 data-sveltekit-noscroll
-                aria-label="Open full review"
+                aria-label={m.explore_reviews_open_full_aria()}
               >
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                <span>Read</span>
+                <span>{m.common_action_read_label()}</span>
               </a>
             </div>
           </header>
@@ -124,7 +129,7 @@
                   class="link link-primary text-sm"
                   data-sveltekit-noscroll
                 >
-                  Read more
+                  {m.common_action_read_more_label()}
                 </a>
               </div>
             {/if}
@@ -157,9 +162,9 @@
       class="rounded-xl border border-dashed border-base-300 p-8 text-center"
     >
       <i class="fa-solid fa-comment-dots text-3xl mb-3"></i>
-      <p class="font-medium">No reviews yet</p>
+      <p class="font-medium">{m.explore_reviews_empty_text()}</p>
       <p class="text-sm text-base-content/70">
-        Be the first to share your experience with this cube.
+        {m.explore_reviews_empty_hint_text()}
       </p>
     </section>
   {/if}

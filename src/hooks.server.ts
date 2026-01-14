@@ -8,6 +8,7 @@ import {
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
 import { logError } from "$lib/server/logError";
+import { paraglideMiddleware } from "$lib/paraglide/server";
 
 const context: Handle = async ({ event, resolve }) => {
   event.locals.reqId = randomUUID();
@@ -45,7 +46,7 @@ const supabase: Handle = async ({ event, resolve }) => {
           });
         },
       },
-    }
+    },
   );
   /**
    * Unlike `supabase.auth.getSession()`, which returns the session _without_
@@ -115,7 +116,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
       500,
       "An error occurred while fetching your profile",
       event.locals.log,
-      err
+      err,
     );
 
   const profile = profiles?.[0];
@@ -134,7 +135,26 @@ const authGuard: Handle = async ({ event, resolve }) => {
   return resolve(event);
 };
 
-export const handle: Handle = sequence(context, supabase, authGuard);
+// creating a handle to use the paraglide middleware
+const paraglideHandle: Handle = ({ event, resolve }) =>
+  paraglideMiddleware(
+    event.request,
+    ({ request: localizedRequest, locale }) => {
+      event.request = localizedRequest;
+      return resolve(event, {
+        transformPageChunk: ({ html }) => {
+          return html.replace("%lang%", locale);
+        },
+      });
+    },
+  );
+
+export const handle: Handle = sequence(
+  context,
+  paraglideHandle,
+  supabase,
+  authGuard,
+);
 
 export const handleError: HandleServerError = ({ error: err, event }) => {
   const fallbackLogger = createLogger({

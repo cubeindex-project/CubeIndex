@@ -7,6 +7,7 @@
   } from "$lib/components/dbTableTypes.js";
   import type { AwardsPartner } from "$lib/content/awardsPartners";
   import YoutubeVideoCard from "$lib/components/misc/youtubeVideoCard.svelte";
+  import { m } from "$lib/paraglide/messages";
 
   const { data } = $props();
   const event: AwardsEvent | null = data.current_event;
@@ -87,7 +88,9 @@
 
   const countdownLabel = $derived.by(() => {
     if (!countdownTarget) return "";
-    return eventStatus === "upcoming" ? "Starts in" : "Ends in";
+    return m.awards_landing_countdown_label({
+      state: eventStatus === "upcoming" ? "upcoming" : "live",
+    });
   });
 
   const countdownParts = $derived.by(() => {
@@ -99,10 +102,30 @@
   const countdownSegments = $derived.by(() => {
     if (!countdownParts) return [];
     return [
-      { label: "Days", value: countdownParts.days },
-      { label: "Hours", value: countdownParts.hours },
-      { label: "Minutes", value: countdownParts.minutes },
-      { label: "Seconds", value: countdownParts.seconds },
+      {
+        label: m.awards_landing_countdown_days_label({
+          count: countdownParts.days,
+        }),
+        value: countdownParts.days,
+      },
+      {
+        label: m.awards_landing_countdown_hours_label({
+          count: countdownParts.hours,
+        }),
+        value: countdownParts.hours,
+      },
+      {
+        label: m.awards_landing_countdown_minutes_label({
+          count: countdownParts.minutes,
+        }),
+        value: countdownParts.minutes,
+      },
+      {
+        label: m.awards_landing_countdown_seconds_label({
+          count: countdownParts.seconds,
+        }),
+        value: countdownParts.seconds,
+      },
     ];
   });
 
@@ -146,7 +169,9 @@
   };
 
   const hasEvent = $derived(Boolean(event));
-  const heroTitle = $derived.by(() => event?.title ?? "CubeIndex Awards");
+  const heroTitle = $derived.by(
+    () => event?.title ?? m.awards_landing_event_title_default_text(),
+  );
 
   onMount(() => {
     const timer = setInterval(() => {
@@ -160,7 +185,7 @@
 </script>
 
 <svelte:head>
-  <title>CubeIndex Awards</title>
+  <title>{m.awards_landing_meta_title()}</title>
 </svelte:head>
 
 <section class={`${ui.section} ${ui.hero}`}>
@@ -182,18 +207,17 @@
       <div class="gap-3 flex flex-col items-center">
         <img
           src="/images/CubeIndex_Awards_Logo.webp"
-          alt="CubeIndex Awards logo"
+          alt={m.awards_landing_logo_alt_text()}
           class="mx-auto h-32 w-auto rounded-2xl"
           loading="lazy"
         />
         {#if logoDesigner}
           <p class="text-xs italic text-base-content/70">
-            Logo designed by <a
-              href="/user/{logoDesigner.username}"
-              class="link"
-            >
+            {m.awards_landing_logo_credit_prefix_text()}
+            <a href="/user/{logoDesigner.username}" class="link">
               {logoDesigner.display_name}
-            </a>.
+            </a
+            >.
           </p>
         {/if}
       </div>
@@ -201,19 +225,17 @@
         <i class="fa-solid fa-award text-primary"></i>
         {heroTitle}
       </span>
-      <h1 class={ui.h1}>Celebrate the Cubes that Redefined the Season</h1>
+      <h1 class={ui.h1}>{m.awards_landing_hero_title_h1()}</h1>
       <p class={ui.lead}>
-        The CubeIndex Awards honor the most innovative, beloved, and collectible
-        puzzles of the year. Nominate your favorites, and vote with the
-        community.
+        {m.awards_landing_hero_lead_text()}
       </p>
       <p class="text-sm text-base-content/70">
-        See the release trailer on Youtube.
+        {m.awards_landing_trailer_prompt_text()}
         <button
           class="link link-primary"
           onclick={() => (showVideo = !showVideo)}
         >
-          More info
+          {m.awards_landing_trailer_cta()}
         </button>
       </p>
 
@@ -221,10 +243,10 @@
         <div class={ui.countdownCard}>
           <span class={`${ui.countdownLabel} text-base-content/70`}>
             <i class="fa-regular fa-circle-xmark"></i>
-            No awards events are scheduled right now
+            {m.awards_landing_empty_title_text()}
           </span>
           <p class="text-sm text-base-content/70">
-            Check back soon to see the next CubeIndex Awards timeline.
+            {m.awards_landing_empty_description_text()}
           </p>
         </div>
       {:else if countdownSegments.length}
@@ -254,10 +276,10 @@
       {#if eventStatus === "live"}
         <div class={ui.ctas}>
           <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl">
-            Nominate a Cube
+            {m.awards_landing_cta_nominate()}
           </a>
           <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl">
-            View Categories
+            {m.awards_landing_cta_categories()}
           </a>
         </div>
       {/if}
@@ -271,9 +293,9 @@
       <div class="text-center max-w-3xl mx-auto space-y-4">
         <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-handshake text-primary"></i>
-          Partners
+          {m.awards_landing_partners_kicker_label()}
         </p>
-        <h2 class={ui.h2}>Partners</h2>
+        <h2 class={ui.h2}>{m.awards_landing_partners_title_h2()}</h2>
       </div>
 
       <div class={ui.partnerGrid}>
@@ -312,7 +334,7 @@
                 target="_blank"
                 rel="noreferrer"
               >
-                Learn more
+                {m.awards_landing_partners_learn_more_cta()}
                 <i class="fa-solid fa-arrow-up-right-from-square text-[0.75em]"
                 ></i>
               </a>
@@ -330,9 +352,13 @@
       <div class="text-center max-w-3xl mx-auto space-y-4">
         <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-list-check text-secondary"></i>
-          Categories
+          {m.awards_landing_categories_kicker_label()}
         </p>
-        <h2 class={ui.h2}>Nominate Across {categories.length} Categories</h2>
+        <h2 class={ui.h2}>
+          {m.awards_landing_categories_title_text({
+            count: categories.length,
+          })}
+        </h2>
       </div>
 
       <div class="mt-12 grid gap-6 md:grid-cols-2">
@@ -357,12 +383,11 @@
       <div class="text-center max-w-3xl mx-auto space-y-4">
         <p class={`${ui.pill} justify-center ring-base-200/70 bg-base-100/70`}>
           <i class="fa-solid fa-clock-rotate-left text-secondary"></i>
-          Previous years
+          {m.awards_landing_previous_kicker_label()}
         </p>
-        <h2 class={ui.h2}>Explore past CubeIndex Awards</h2>
+        <h2 class={ui.h2}>{m.awards_landing_previous_title_h2()}</h2>
         <p class="text-base-content/70">
-          Revisit winners, finalists, and standout community moments from
-          earlier seasons.
+          {m.awards_landing_previous_intro_text()}
         </p>
       </div>
 
@@ -382,7 +407,7 @@
                 <h3 class="text-2xl font-bold">{summary.event.year}</h3>
               </div>
               <span class="badge badge-outline border-base-200 bg-base-100">
-                View
+                {m.awards_landing_previous_view_label()}
               </span>
             </div>
             {#if summary.range}
@@ -400,7 +425,7 @@
 <!-- Placeholder link: to change -->
 {#if showVideo}
   <YoutubeVideoCard
-    title="The CubeIndex Awards Trailer"
+    title={m.awards_landing_trailer_title_text()}
     videoUrl="https://www.youtube.com/embed/XwcnE7LAbC8?si=1lLuqwX_9qi3O7HG"
     onCancel={() => {
       showVideo = false;

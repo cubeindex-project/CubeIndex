@@ -2,7 +2,7 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
 
   let { data } = $props();
-  let { cube, features = [], submittedBy, verifiedBy } = $derived(data);
+  let { cube, submittedBy, verifiedBy } = $derived(data);
 
   const allFeatureBadges = [
     { label: "Smart", key: "smart", icon: "fa-microchip" },
@@ -15,7 +15,7 @@
   ] as const;
 
   const presentFeatures = $derived.by(() =>
-    allFeatureBadges.filter((b) => features.includes(b.key)),
+    allFeatureBadges.filter((badge) => Boolean(cube[badge.key])),
   );
 </script>
 
@@ -37,7 +37,7 @@
       >,
       <span class="font-medium">{cube.smart ? "smart" : "non‑smart"}</span>, and
       <span class="font-medium"
-        >{cube.wca ? "WCA‑legal" : "not WCA‑legal"}</span
+        >{cube.wca_legal ? "WCA‑legal" : "not WCA‑legal"}</span
       >. Currently
       <span class="font-medium"
         >{cube.discontinued ? "discontinued" : "available"}</span

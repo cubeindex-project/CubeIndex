@@ -16,7 +16,6 @@
     sameSeries,
     relatedCube,
     cubeTrims,
-    features,
     alreadyAdded,
     isCubeSubmitter,
     userCubeDetail,

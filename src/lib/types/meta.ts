@@ -12,6 +12,7 @@ export interface Meta {
   twitterImage?: string;
   twitterCard?: string;
   googleSiteVerification?: string;
+  jsonLd?: object;
 }
 
 /** Fully resolved metadata used to render head tags. */

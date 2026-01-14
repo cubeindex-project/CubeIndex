@@ -28,5 +28,8 @@ export const load = (async ({ locals: { supabase, log }, parent, params }) => {
   return {
     cube,
     reviews: reviewRaw as DetailedUserCubeReviewWithProfile[],
+    meta: {
+      title: `${cube.name} - Reviews`
+    }
   };
 }) satisfies PageServerLoad;

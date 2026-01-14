@@ -88,7 +88,7 @@ export const load = (async ({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  const title = `${cube.name} - CubeIndex`
+  const title = `${cube.name} - CubeIndex`;
   const description =
     `The ${cube.name} is a ${cube.type} twisty puzzle` +
     (cube.release_date ? ` released on ${formatDate(cube.release_date)}` : "") +
@@ -99,7 +99,7 @@ export const load = (async ({
     (cube.rating_count > 0 && cube.rating != null
       ? `It holds an average rating of ${cube.rating}/5 from ${cube.rating_count} rating${cube.rating_count === 1 ? "" : "s"}.`
       : `It has no ratings yet, be the first to rate it on CubeIndex.`);
-  const image = `/api/og/cube/${cube.slug}`
+  const image = `/api/og/cube/${cube.slug}`;
 
   return {
     cube,
@@ -119,7 +119,30 @@ export const load = (async ({
       ogDescription: description,
       twitterDescription: description,
       image,
-      twitterImage: image, 
+      twitterImage: image,
+      jsonLd: {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        name: cube.name,
+        description,
+        image: [cube.image_url],
+        brand: {
+          "@type": "Brand",
+          name: cube.brand,
+        },
+        aggregateRating: cube.rating ? {
+          "@type": "AggregateRating",
+          ratingValue: cube.rating,
+          reviewCount: cube.rating_count,
+        } : {},
+        offers: cube.low_price
+          ? {
+              "@type": "AggregateOffer",
+              lowPrice: cube.low_price,
+              priceCurrency: "USD",
+            }
+          : {},
+      },
     },
   };
 }) satisfies LayoutServerLoad;

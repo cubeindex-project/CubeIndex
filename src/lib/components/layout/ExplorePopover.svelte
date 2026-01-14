@@ -18,24 +18,36 @@
     {
       href: "cubes",
       icon: "🧊",
+      title: m.explore_popover_cubes_title(),
+      description:
+        m.explore_popover_cubes_description(),
       title: m.nav_explore_card_cubes_title(),
       description: m.nav_explore_card_cubes_text(),
     },
     {
       href: "vendors",
       icon: "🏬",
+      title: m.explore_popover_vendors_title(),
+      description:
+        m.explore_popover_vendors_description(),
       title: m.nav_explore_card_vendors_title(),
       description: m.nav_explore_card_vendors_text(),
     },
     {
       href: "users",
       icon: "🧍",
+      title: m.explore_popover_users_title(),
+      description:
+        m.explore_popover_users_description(),
       title: m.nav_explore_card_users_title(),
       description: m.nav_explore_card_users_text(),
     },
     {
       href: "achievements",
       icon: "🏅",
+      title: m.explore_popover_achievements_title(),
+      description:
+        m.explore_popover_achievements_description(),
       title: m.nav_explore_card_achievements_title(),
       description: m.nav_explore_card_achievements_text(),
     },
@@ -44,17 +56,22 @@
 
 <div
   role="menu"
+  aria-label={m.explore_popover_menu_aria()}
   aria-label={m.nav_explore_menu_aria()}
   {id}
   class="w-[90vw] max-w-3xl rounded-2xl border border-base-300 bg-base-100 p-4 md:p-5 shadow-xl"
 >
   <div class="mb-3 flex items-baseline justify-between">
     <h2 class="text-sm font-semibold tracking-wide text-base-content/80">
+      {m.explore_popover_heading_text()}
       {m.nav_explore_title_text()}
     </h2>
     <a
       href="/explore"
       class="text-xs text-base-content/60 hover:text-primary transition inline-flex items-center gap-1"
+      aria-label={m.explore_popover_view_all_aria()}
+    >
+      {m.explore_popover_view_all_label()}
       aria-label={m.nav_explore_view_all_aria()}
     >
       {m.nav_explore_view_all_label()}
@@ -85,6 +102,7 @@
             <span
               class="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-primary"
             >
+              {m.explore_popover_card_cta()}
               {m.nav_explore_card_cta_label()}
               <i
                 class="fa-solid fa-arrow-right translate-x-0 group-hover:translate-x-0.5 transition-transform"
@@ -100,6 +118,10 @@
   >
     <div class="min-w-0">
       <p class="text-sm font-semibold text-base-content">
+        {m.explore_popover_missing_cube_title()}
+      </p>
+      <p class="text-xs text-base-content/70">
+        {m.explore_popover_missing_cube_description()}
         {m.nav_explore_submit_prompt_title()}
       </p>
       <p class="text-xs text-base-content/70">
@@ -108,6 +130,11 @@
     </div>
     <a class="btn btn-primary btn-sm" href="/submit">
       <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+      <span class="hidden sm:inline">{m.explore_popover_submit_cube_cta()}</span>
+      <span class="sm:hidden">{m.explore_popover_submit_cta()}</span>
+    </a>
+  </div>
+  <p class="sr-only">{m.explore_popover_keyboard_hint_text()}</p>
       <span class="hidden sm:inline">{m.nav_explore_submit_cta()}</span>
       <span class="sm:hidden">{m.nav_explore_submit_short_cta()}</span>
     </a>

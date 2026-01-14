@@ -1,5 +1,66 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+  "explore_users_empty_description_text": "We couldn't find any users matching your search or filters. Try adjusting them or resetting to see everything.",
+  "explore_users_empty_title_h2": "No users found",
+  "explore_users_heading_h1": "Explore Users",
+  "explore_users_items_per_page_label": "Users per page",
+  "explore_users_page_title_text": "Explore Users - CubeIndex",
+  "explore_users_reset_filters_aria": "Reset filters",
+  "explore_users_reset_filters_cta": "Reset",
+  "explore_users_search_placeholder_label": "Search Users",
+  "explore_users_sort_achievements_label": "Achievements",
+  "explore_users_sort_cubes_label": "Cubes",
+  "explore_users_sort_followers_label": "Followers",
+  "explore_users_sort_name_label": "Name",
+  "explore_users_sort_recent_label": "Recent",
+  "nav_auth_login_cta": "Login",
+  "nav_auth_logout_cta": "Log out",
+  "nav_brand_logo_alt": "CubeIndex logo",
+  "nav_main_awards_label": "Awards",
+  "nav_main_explore_label": "Explore",
+  "nav_main_home_aria": "CubeIndex Home",
+  "nav_main_language_label": "Language",
+  "nav_main_notifications_label": "Notifications",
+  "nav_notifications_unread_aria": "Unread notifications",
+  "nav_notifications_verify_email_aria": "Verify your email",
+  "nav_profile_menu_profile_label": "Profile",
+  "nav_profile_menu_settings_label": "Settings",
+  "nav_profile_menu_signout_cta": "Sign Out",
+  "nav_profile_menu_staff_dashboard_label": "Staff Dashboard",
+  "nav_profile_menu_user_label": "User menu",
+  "nav_profile_menu_userbar_label": "Userbar",
+  "nav_profile_menu_userbar_tag_label": "New",
+  "report_auth_required_text": "You must be signed in to submit. Please log in to continue.",
+  "report_bug_actual_label": "Actual Behavior",
+  "report_bug_actual_placeholder": "What actually happened?",
+  "report_bug_additional_context_label": "Additional context",
+  "report_bug_additional_context_placeholder": "Anything else? (optional)",
+  "report_bug_browser_label": "Browser",
+  "report_bug_browser_placeholder": "e.g. Chrome 126",
+  "report_bug_device_desktop_label": "Desktop",
+  "report_bug_device_label": "Device Type",
+  "report_bug_device_laptop_label": "Laptop",
+  "report_bug_device_smartphone_label": "Smartphone",
+  "report_bug_device_tablet_label": "Tablet",
+  "report_bug_expected_label": "Expected Behavior",
+  "report_bug_expected_placeholder": "What did you expect to happen?",
+  "report_bug_heading_h2": "Report a Bug",
+  "report_bug_os_label": "Operating System",
+  "report_bug_os_placeholder": "e.g. Windows 11, Android 14",
+  "report_bug_screenshot_alt": "Attached screenshot",
+  "report_bug_screenshot_label": "Screenshot / Image URL",
+  "report_bug_screenshot_placeholder": "https://...",
+  "report_bug_steps_label": "Steps to Reproduce",
+  "report_bug_steps_placeholder": "1. Go to…\n2. Click on…\n3. ...",
+  "report_bug_submit_cta": "Send Report",
+  "report_bug_submit_loading_text": "Reporting…",
+  "report_bug_submit_success_text": "Reported!",
+  "report_bug_title_helper_text": "Max 80 characters",
+  "report_bug_title_label": "Title",
+  "report_feature_additional_context_label": "Additional Context",
+  "report_feature_description_helper_text": "Explain what the feature does",
+  "report_feature_description_label": "Description",
+  "report_feature_heading_h2": "Suggest a Feature",
   "app_brand_name_text": "CubeIndex",
   "app_home_return_cta": "Return Home",
   "auth_login_discord_cta": "Sign In with Discord",
@@ -1050,6 +1111,9 @@
   "report_feature_priority_label": "Priority",
   "report_feature_priority_low_label": "Low",
   "report_feature_priority_medium_label": "Medium",
+  "report_feature_submit_cta": "Send Suggestion",
+  "report_feature_submit_loading_text": "Sending…",
+  "report_feature_submit_success_text": "Sent!",
   "report_feature_submit_label": [
     {
       "declarations": [
@@ -1071,6 +1135,419 @@
   "report_feature_title_label": "Feature Title",
   "report_feature_use_case_helper_text": "How would you use it?",
   "report_feature_use_case_label": "Use Case",
+  "report_feedback_subtitle_text": "Help us improve CubeIndex by reporting bugs or suggesting features.",
+  "report_feedback_title_h1": "Feedback & Reports",
+  "report_form_error_message_text": "Error message: {error}",
+  "report_submit_signin_title": "Sign in to submit",
+  "report_tabs_bug_label": "Report a Bug",
+  "report_tabs_feature_label": "Suggest a Feature",
+  "report_tabs_select_label_aria": "Select report type",
+  "user_reviews_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} review",
+        "countPlural=other": "{count} reviews"
+      }
+    }
+  ],
+  "user_reviews_empty_description_text": "This user hasn't published any reviews yet.",
+  "user_reviews_empty_title_h2": "No reviews yet",
+  "user_reviews_heading_h1": "{name}'s reviews",
+  "user_reviews_last_update_title": "Last update",
+  "user_reviews_open_full_review_aria": "Open full review",
+  "user_reviews_page_title_text": "{name}'s Reviews - CubeIndex",
+  "user_reviews_read_cta": "Read",
+  "user_reviews_read_more_cta": "Read more",
+  "banner_awards_cta": "Enter the awards",
+  "banner_awards_heading_text": "Celebrating the boldest cubes of the season.",
+  "banner_awards_hide_aria": "Hide the CubeIndex Awards banner",
+  "cube_add_acquired_on_label": "Acquired on",
+  "cube_add_add_cta": "Add Cube",
+  "cube_add_add_title": "Add to Collection",
+  "cube_add_added_text": "Added!",
+  "cube_add_adding_text": "Adding…",
+  "cube_add_auth_required_text": "You must be logged in to perform this action.",
+  "cube_add_bought_from_label": "Bought From",
+  "cube_add_bought_from_none_label": "None",
+  "cube_add_cancel_cta": "Cancel",
+  "cube_add_close_aria": "Close",
+  "cube_add_condition_label": "Condition",
+  "cube_add_edit_cta": "Edit Cube",
+  "cube_add_edit_title": "Edit Cube",
+  "cube_add_edited_text": "Edited!",
+  "cube_add_editing_text": "Editing…",
+  "cube_add_main_helper_text": "Shows as your primary",
+  "cube_add_main_label": "Main Cube",
+  "cube_add_main_toggle_aria": "Set as main cube",
+  "cube_add_notes_label": "Notes",
+  "cube_add_notes_placeholder": "Lubed with..., setup..., special mod..., etc.",
+  "cube_add_optional_label": "Optional",
+  "cube_add_purchase_price_label": "Purchase Price",
+  "cube_add_purchase_price_placeholder": "0.00",
+  "cube_add_quantity_decrease_aria": "Decrease quantity",
+  "cube_add_quantity_increase_aria": "Increase quantity",
+  "cube_add_quantity_label": "Quantity",
+  "cube_add_quantity_locked_text": "Locked for wishlist",
+  "cube_add_status_label": "Status",
+  "cube_add_submit_failed_text": "Unable to add the cube. Please try again.",
+  "cube_add_unexpected_error_text": "Unexpected error. Please try again.",
+  "cube_add_validation_acquired_future_text": "Acquired date cannot be in the future.",
+  "cube_add_validation_condition_required_text": "Please choose a condition.",
+  "cube_add_validation_price_invalid_text": "Price must be a valid number greater than or equal to 0.",
+  "cube_add_validation_price_too_high_text": "Price seems too high. Please double-check.",
+  "cube_add_validation_quantity_range_text": "Quantity must be between {min} and {max}.",
+  "cube_add_validation_status_required_text": "Please choose a status.",
+  "cube_card_average_price_title": "Average price",
+  "cube_card_image_alt_text": "{series} {model} {versionName}",
+  "cube_card_new_label": "NEW",
+  "cube_card_popularity_title": "Popularity",
+  "cube_card_view_details_aria": "View Cube Details",
+  "cube_card_view_details_cta": "View Details",
+  "cube_condition_broken_label": "Broken",
+  "cube_condition_fair_label": "Fair",
+  "cube_condition_good_label": "Good",
+  "cube_condition_new_in_box_label": "New in box",
+  "cube_condition_new_label": "New",
+  "cube_condition_poor_label": "Poor",
+  "cube_condition_worn_label": "Worn",
+  "cube_search_aria": "Search cubes",
+  "cube_search_disabled_text": "Disabled",
+  "cube_search_no_matches_text": "No matches",
+  "cube_search_placeholder": "Search cubes…",
+  "cube_status_borrowed_label": "Borrowed",
+  "cube_status_loaned_label": "Loaned",
+  "cube_status_lost_label": "Lost",
+  "cube_status_owned_label": "Owned",
+  "cube_status_wishlist_label": "Wishlist",
+  "cube_submission_moderator_note_label": "Moderator note",
+  "cube_submission_status_approved_label": "Approved",
+  "cube_submission_status_approved_text": "Great news! Your cube is live on CubeIndex.",
+  "cube_submission_status_pending_label": "Pending",
+  "cube_submission_status_pending_text": "Our moderators are reviewing this submission.",
+  "cube_submission_status_rejected_label": "Rejected",
+  "cube_submission_status_rejected_text": "There was an issue with the submission. Check the moderator note for next steps.",
+  "cube_submission_status_title": "Submission status",
+  "cube_submission_submitted_label": "Submitted:",
+  "cube_submission_verified_label": "Verified:",
+  "cube_submission_view_details_aria": "View Cube Details",
+  "cube_submission_view_details_cta": "View Details",
+  "cube_user_card_acquired_date_label": "Acquired Date",
+  "cube_user_card_acquired_on_title": "Acquired on",
+  "cube_user_card_bought_from_label": "Bought From",
+  "cube_user_card_bought_from_none_label": "None",
+  "cube_user_card_bought_from_title": "Bought from",
+  "cube_user_card_condition_label": "Condition",
+  "cube_user_card_condition_title": "Condition",
+  "cube_user_card_main_label": "Main",
+  "cube_user_card_main_title": "Main cube",
+  "cube_user_card_main_toggle_label": "Set as main cube",
+  "cube_user_card_notes_label": "Notes",
+  "cube_user_card_notes_placeholder": "Any special notes...",
+  "cube_user_card_price_invalid_text": "Price must be a valid number greater than or equal to 0.",
+  "cube_user_card_price_too_high_text": "Price seems too high. Please double-check.",
+  "cube_user_card_purchase_price_label": "Purchase Price",
+  "cube_user_card_purchase_price_placeholder": "0.00",
+  "cube_user_card_purchase_price_title": "Purchase price",
+  "cube_user_card_quantity_label": "Quantity",
+  "cube_user_card_quantity_title": "Quantity",
+  "cube_user_card_rating_title": "Your rating",
+  "cube_user_card_remove_aria": "Remove from collection",
+  "cube_user_card_remove_cta": "Remove",
+  "cube_user_card_save_cta": "Save",
+  "cube_user_card_save_loading_text": "Editing...",
+  "cube_user_card_save_success_text": "Edited!",
+  "cube_user_card_status_label": "Status",
+  "cube_user_card_status_title": "Status",
+  "cube_user_card_view_details_aria": "View Cube Details",
+  "cube_user_card_view_details_cta": "View Details",
+  "cube_version_base_label": "Base",
+  "cube_version_limited_label": "Limited Edition",
+  "cube_version_trim_label": "Trim",
+  "explore_popover_achievements_description": "Browse achievements, and track community unlock progress.",
+  "explore_popover_achievements_title": "Achievements",
+  "explore_popover_card_cta": "Explore",
+  "explore_popover_cubes_description": "Browse thousands of cubes by brand, type, and community rating.",
+  "explore_popover_cubes_title": "Cubes",
+  "explore_popover_heading_text": "Explore Database",
+  "explore_popover_keyboard_hint_text": "Use arrow keys to navigate options",
+  "explore_popover_menu_aria": "Explore Menu",
+  "explore_popover_missing_cube_description": "Submit models that are not in the catalog and help keep CubeIndex updated.",
+  "explore_popover_missing_cube_title": "Missing a cube?",
+  "explore_popover_submit_cta": "Submit",
+  "explore_popover_submit_cube_cta": "Submit a cube",
+  "explore_popover_users_description": "Explore user profiles, discover top solvers, and see community activity.",
+  "explore_popover_users_title": "Users",
+  "explore_popover_vendors_description": "Find trusted cube shops and compare prices from top vendors worldwide.",
+  "explore_popover_vendors_title": "Vendors",
+  "explore_popover_view_all_aria": "View all explore options",
+  "explore_popover_view_all_label": "View all",
+  "footer_achievements_label": "Achievements",
+  "footer_brand_description_text": "Track, explore and share your speedcube collection.",
+  "footer_brand_name_text": "CubeIndex",
+  "footer_connect_heading_text": "Connect",
+  "footer_copyright_text": "© {startYear} - {endYear} CubeIndex. All rights reserved.",
+  "footer_home_label": "Home",
+  "footer_legal_heading_text": "Legal",
+  "footer_navigation_heading_text": "Navigation",
+  "footer_privacy_label": "Privacy Policy",
+  "footer_region_aria": "Footer",
+  "footer_report_label": "Report",
+  "footer_sitemap_label": "Sitemap",
+  "footer_social_discord_label": "Discord",
+  "footer_social_email_label": "Email",
+  "footer_social_github_label": "GitHub",
+  "footer_social_twitter_label": "Twitter",
+  "footer_social_youtube_label": "Youtube",
+  "footer_terms_label": "Terms of Service",
+  "layout_card_close_aria": "Close",
+  "legal_layout_history_link_label": "View change history on GitHub",
+  "legal_layout_last_updated_text": "Last updated: {date}",
+  "misc_add_to_collection_add_aria": "Add to Collection",
+  "misc_add_to_collection_edit_aria": "Edit in Collection",
+  "misc_add_to_collection_edit_cta": "Edit",
+  "misc_add_to_collection_full_cta": "Add to Collection",
+  "misc_add_to_collection_short_cta": "Add",
+  "misc_client_error_toast_action_label": "Report",
+  "misc_client_error_toast_description": "If you think it is a bug, click to report the bug",
+  "misc_client_error_toast_text": "A client error occurred:\n{message}",
+  "misc_filter_sidebar_title": "Filters",
+  "misc_follow_button_follow_cta": "Follow",
+  "misc_follow_button_unfollow_cta": "Unfollow",
+  "misc_in_construction_description_text": "We're currently working hard to finish this part of the site. Check back soon for something awesome!",
+  "misc_in_construction_return_home_cta": "Return Home",
+  "misc_in_construction_title_h1": "Page in Construction",
+  "misc_items_per_page_label": "Items per page",
+  "misc_pagination_next_aria": "Next page",
+  "misc_pagination_next_label": "Next",
+  "misc_pagination_page_text": "Page {currentPage} of {totalPages}",
+  "misc_pagination_previous_aria": "Previous page",
+  "misc_pagination_previous_label": "Previous",
+  "misc_rate_cube_button_aria": "Rate this Cube",
+  "misc_rate_cube_button_full_cta": "Rate this Cube",
+  "misc_rate_cube_button_short_cta": "Rate",
+  "misc_scroll_to_top_aria": "Scroll to top",
+  "misc_scroll_to_top_label": "Top",
+  "misc_search_bar_clear_aria": "Clear",
+  "misc_search_bar_toggle_filters_aria": "Toggle Filters",
+  "misc_share_button_copied_text": "Link copied to clipboard",
+  "misc_share_button_copy_prompt_text": "Copy this link:",
+  "misc_share_button_label": "Share",
+  "misc_share_button_text": "Check this out!",
+  "misc_sort_selector_ascending_label": "Ascending",
+  "misc_sort_selector_descending_label": "Descending",
+  "misc_sort_selector_label": "Sort",
+  "misc_sort_selector_toggle_aria": "Toggle sort direction",
+  "misc_tag_feature_status_aria": "Feature status: {label}",
+  "misc_youtube_video_title_text": "YouTube video",
+  "nav_bottom_explore_aria": "Explore",
+  "nav_bottom_home_aria": "Home",
+  "nav_bottom_home_label": "Home",
+  "nav_bottom_login_aria": "Login",
+  "nav_bottom_notifications_aria": "Notifications",
+  "nav_bottom_profile_aria": "Profile",
+  "nav_brand_name_text": "CubeIndex",
+  "nav_user_avatar_alt": "User avatar",
+  "rating_auth_required_text": "You must be logged in to perform this action.",
+  "rating_by_label": "by",
+  "rating_cancel_cta": "Cancel",
+  "rating_char_meter_aria": "Characters: {used}/{max}",
+  "rating_char_meter_over_aria": "Characters: {used}/{max} (over limit)",
+  "rating_char_meter_title_text": "{used}/{max}",
+  "rating_comment_label": "Comment",
+  "rating_comment_optional_text": "Optional · Max {max}",
+  "rating_comment_placeholder": "Share your thoughts about turning feel, speed, control, magnet strength, etc.",
+  "rating_comment_show_less_aria": "Show less of comment",
+  "rating_comment_show_more_aria": "Show more of comment",
+  "rating_comment_too_long_text": "Comment is too long by {excess} characters.",
+  "rating_delete_cancel_cta": "Cancel",
+  "rating_delete_confirm_cta": "Yes, Delete",
+  "rating_delete_confirm_description": "Do you really want to delete this rating?",
+  "rating_delete_confirm_text": "Are you sure ?",
+  "rating_delete_confirm_title": "Are you sure?",
+  "rating_delete_cta": "Delete",
+  "rating_delete_loading_text": "Deleting...",
+  "rating_delete_success_text": "Deleted!",
+  "rating_dialog_close_aria": "Close",
+  "rating_dialog_title_h2": "Rate this Cube",
+  "rating_edit_cta": "Edit",
+  "rating_helpful_cta": "Helpful",
+  "rating_hint_text": "Click a star to set your rating.",
+  "rating_label": "Your rating",
+  "rating_report_cta": "Report",
+  "rating_report_label_text": "{name}'s comment on the {series} {model} {versionName}",
+  "rating_select_required_text": "Please select a rating.",
+  "rating_show_less_label": "Show less",
+  "rating_show_more_label": "Show more",
+  "rating_submit_cta": "Rate Cube",
+  "rating_submit_failed_text": "Unable to submit rating. Please try again.",
+  "rating_submit_loading_text": "Submitting…",
+  "rating_submit_missing_rating_title": "Please select a rating",
+  "rating_submit_over_limit_title": "Comment too long",
+  "rating_submit_success_text": "Rated!",
+  "rating_unexpected_error_text": "Unexpected error. Please try again.",
+  "rating_user_menu_aria": "User Menu",
+  "report_dialog_auth_required_text": "You must be logged in to perform this action.",
+  "report_dialog_bug_template_text": "Describe the bug\nA clear and concise description of what the bug is.\n\nTo Reproduce\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Scroll down to '....'\n4. See error\n\nExpected behavior\nA clear and concise description of what you expected to happen.\n\nDesktop (please complete the following information):\n - OS: [e.g. iOS]\n - Browser [e.g. chrome, safari]\n\nSmartphone (please complete the following information):\n - Device: [e.g. iPhone6]\n - OS: [e.g. iOS8.1]\n - Browser [e.g. stock browser, safari]\n\nAdditional context\nAdd any other context about the problem here.",
+  "report_dialog_cancel_cta": "Cancel",
+  "report_dialog_close_aria": "Close",
+  "report_dialog_comment_label": "Comment",
+  "report_dialog_comment_required_text": "Please provide a comment.",
+  "report_dialog_image_label": "Image URL",
+  "report_dialog_image_placeholder": "https://example.com/screenshot.png",
+  "report_dialog_optional_label": "Optional",
+  "report_dialog_reporting_text": "You are reporting {label}",
+  "report_dialog_required_label": "Required",
+  "report_dialog_submit_cta": "Send Report",
+  "report_dialog_submit_failed_text": "Unable to send report.",
+  "report_dialog_submit_loading_text": "Reporting...",
+  "report_dialog_submit_success_text": "Reported!",
+  "report_dialog_title_h2": "Report",
+  "report_dialog_title_label": "Title",
+  "report_dialog_title_required_text": "Please provide a title.",
+  "report_dialog_unexpected_error_text": "Unexpected error. Please try again.",
+  "staff_cube_card_accept_cta": "Accept",
+  "staff_cube_card_edit_cta": "Edit",
+  "staff_cube_card_reason_label": "Reason:",
+  "staff_cube_card_reject_cta": "Reject",
+  "staff_cube_card_rejected_by_text": "Rejected By: {name}",
+  "staff_cube_card_verified_by_text": "Verified By: {name}",
+  "staff_cube_card_view_cta": "See Cube",
+  "staff_manage_status_cancel_cta": "Cancel",
+  "staff_manage_status_other_reason_label": "Other reason",
+  "staff_manage_status_reason_duplicate_label": "Already in the database",
+  "staff_manage_status_reason_invalid_trim_label": "Not a valid trim",
+  "staff_manage_status_reason_label": "Reason",
+  "staff_manage_status_reason_not_twisty_label": "Not a twisty puzzle",
+  "staff_manage_status_reason_other_label": "Other...",
+  "staff_manage_status_title_text": [
+    {
+      "declarations": [
+        "input reason",
+        "input cubeName",
+        "input username"
+      ],
+      "match": {
+        "reason=Accept": "You are accepting: {cubeName} as {username}",
+        "reason=Reject": "You are rejecting: {cubeName} as {username}",
+        "reason=*": "You are updating: {cubeName} as {username}"
+      }
+    }
+  ],
+  "staff_manage_status_submit_cta": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=Accept": "Accept",
+        "reason=Reject": "Reject",
+        "reason=*": "Update"
+      }
+    }
+  ],
+  "staff_manage_status_submit_loading_text": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=Accept": "Accepting...",
+        "reason=Reject": "Rejecting...",
+        "reason=*": "Updating..."
+      }
+    }
+  ],
+  "staff_manage_status_submit_success_text": [
+    {
+      "declarations": [
+        "input reason"
+      ],
+      "match": {
+        "reason=Accept": "Accepted!",
+        "reason=Reject": "Rejected!",
+        "reason=*": "Updated!"
+      }
+    }
+  ],
+  "submit_autofill_cancel_cta": "Cancel",
+  "submit_autofill_description_line_one": "Paste the exact product page for this cube from a shop like",
+  "submit_autofill_description_line_three": "We will scan it and fill what we can.",
+  "submit_autofill_description_line_two": "SpeedCubeShop, DailyPuzzles, or a manufacturer store.",
+  "submit_autofill_link_helper_text": "Use a page with clear specs and the exact model you are submitting—no shortened links.",
+  "submit_autofill_link_label": "Store product link",
+  "submit_autofill_link_placeholder": "https://www.speedcubeshop.com/products/...",
+  "submit_autofill_missing_link_text": "Add a product link before sending.",
+  "submit_autofill_overwrite_warning_text": "This will overwrite your current data.",
+  "submit_autofill_process_failed_text": "We could not process that link right now.",
+  "submit_autofill_requesting_text": "Requesting autofill...",
+  "submit_autofill_send_cta": "Send link",
+  "submit_autofill_success_text": "Link processed.",
+  "submit_autofill_title": "Autofill Service",
+  "submit_autofill_unexpected_error_text": "Something went wrong while contacting the autofill service.",
+  "user_avatar_alt": "Avatar",
+  "user_badge_role_admin_label": "Admin",
+  "user_badge_role_community_manager_label": "Community Manager",
+  "user_badge_role_database_manager_label": "Database Manager",
+  "user_badge_role_lead_developer_label": "Lead Developer",
+  "user_badge_role_moderator_label": "Moderator",
+  "user_card_generic_user_label": "user",
+  "user_card_profile_aria_text": "View {name}’s profile",
+  "user_card_profile_unavailable_aria_text": "{name} (profile not available)",
+  "user_card_profile_with_counts_aria_text": "View {name}’s profile, {cubeCount}, {achievementCount}",
+  "user_card_unknown_user_label": "Unknown User",
+  "user_signout_confirm_cancel_cta": "Cancel",
+  "user_signout_confirm_description_text": "Are you sure you want to sign out?",
+  "user_signout_confirm_signout_cta": "Sign Out",
+  "user_signout_confirm_title_h2": "Confirm Sign Out",
+  "user_ratings_empty_description_text": "We couldn't find any ratings matching your filter. Try adjusting it or resetting to see everything.",
+  "user_ratings_empty_state_text": "No user ratings yet. Be the first to rate this cube!",
+  "user_ratings_empty_title_h2": "No ratings found",
+  "user_ratings_filter_range_text": "You are only showing ratings between {minRating} and {maxRating} stars.",
+  "user_ratings_filter_reset_label": "See all",
+  "user_ratings_heading_text": "User Ratings",
+  "user_ratings_reset_filters_aria": "Reset filters",
+  "user_ratings_reset_filters_cta": "Reset",
+  "user_ratings_search_placeholder": "Search Ratings",
+  "user_ratings_star_filter_label": "{rating} star",
+  "rating_helpful_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} user finds this helpful:",
+        "countPlural=other": "{count} users find this helpful:"
+      }
+    }
+  ],
+  "user_card_cube_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "input countFormatted",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{countFormatted} cube",
+        "countPlural=other": "{countFormatted} cubes"
+      }
+    }
+  ],
+  "user_card_cube_count_title_text": [
   "report_page_intro_text": "Help us improve CubeIndex by reporting bugs or suggesting features.",
   "report_page_title_h1": "Feedback & Reports",
   "report_signin_required_text": "You must be signed in to submit. Please log in to continue.",
@@ -1256,6 +1733,63 @@
         "input count",
         "local countPlural = count: plural"
       ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} cube",
+        "countPlural=other": "{count} cubes"
+      }
+    }
+  ],
+  "user_card_achievement_count_text": [
+    {
+      "declarations": [
+        "input count",
+        "input countFormatted",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{countFormatted} achievement",
+        "countPlural=other": "{countFormatted} achievements"
+      }
+    }
+  ],
+  "user_card_achievement_count_title_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} achievement",
+        "countPlural=other": "{count} achievements"
+      }
+    }
+  ],
+  "user_ratings_total_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} total rating",
+        "countPlural=other": "{count} total ratings"
+      }
+    }
+  ],
+  "rating_cube_image_alt_text": "{series} {model} {versionName}"
+}
       "match": {
         "countPlural=one": "{count} Follower",
         "countPlural=other": "{count} Followers"

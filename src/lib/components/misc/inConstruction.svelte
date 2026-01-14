@@ -12,6 +12,14 @@
       🚧
     </div>
     <h1 class="text-4xl text-warning sm:text-5xl font-bold mt-4">
+      {m.misc_in_construction_title_h1()}
+    </h1>
+    <p class="mt-4 text-lg max-w-xl">
+      {m.misc_in_construction_description_text()}
+    </p>
+
+    <a href="/" class="btn btn-warning btn-lg mt-6">
+      🏠 {m.misc_in_construction_return_home_cta()}
       {m.status_construction_title_h1()}
     </h1>
     <p class="mt-4 text-lg max-w-xl">

@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   let {
     itemsPerPage = $bindable(),
     options = [6, 12, 24, 48, 96],
-    label = "Items per page",
+    label = m.misc_items_per_page_label(),
     onchange = () => {},
   }: {
     /** Currently selected number of items shown on each page */

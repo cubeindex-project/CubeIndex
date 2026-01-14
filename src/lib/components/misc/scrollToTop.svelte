@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { onMount } from "svelte";
 
   /**
@@ -34,9 +35,9 @@
   class="fixed bottom-20 right-6 z-50 btn btn-primary btn-circle shadow-lg transition-opacity duration-200"
   class:opacity-0={!show}
   class:pointer-events-none={!show}
-  aria-label="Scroll to top"
+  aria-label={m.misc_scroll_to_top_aria()}
   onclick={scrollToTop}
 >
   <i class="fa-solid fa-arrow-up"></i>
-  <span class="sr-only">Top</span>
+  <span class="sr-only">{m.misc_scroll_to_top_label()}</span>
 </button>

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
+
   let {
     placeholderLabel = "",
     showFilter,
@@ -18,7 +20,7 @@
   {#if showFilter}
     <button
       class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
-      aria-label="Toggle Filters"
+      aria-label={m.misc_search_bar_toggle_filters_aria()}
       onclick={filterAction}
       type="button"
       style="border-top-right-radius:0; border-bottom-right-radius:0;"
@@ -41,7 +43,7 @@
         type="button"
         class="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer"
         onclick={() => (searchTerm = "")}
-        aria-label="Clear"
+        aria-label={m.misc_search_bar_clear_aria()}
       >
         <i class="fa-solid fa-xmark"></i>
       </button>

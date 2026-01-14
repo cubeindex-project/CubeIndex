@@ -27,6 +27,8 @@
   let sortField: string = $state("cubes"); // Field to sort by
   let sortOrder: "asc" | "desc" = $state("desc"); // Sort direction
   const sortFields: SortFieldOption[] = [
+    { value: "date", label: m.explore_users_sort_recent_label() },
+    { value: "name", label: m.explore_users_sort_name_label() },
     { value: "date", label: m.common_sort_recent_label() },
     { value: "name", label: m.common_sort_name_label() },
     { value: "cubes", label: m.explore_users_sort_cubes_label() },
@@ -96,17 +98,20 @@
 </script>
 
 <svelte:head>
+  <title>{m.explore_users_page_title_text()}</title>
   <title>{m.explore_users_meta_title()}</title>
 </svelte:head>
   <section class="min-h-screen px-6 py-16">
     <div class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-clash font-bold mb-10 text-center">
+        {m.explore_users_heading_h1()}
         {m.explore_users_title_h1()}
       </h1>
 
       <SearchBar
         bind:searchTerm
         showFilter={false}
+        placeholderLabel={m.explore_users_search_placeholder_label()}
         placeholderLabel={m.explore_users_search_placeholder()}
       />
 
@@ -139,6 +144,10 @@
           >
             <i class="fa-solid fa-users fa-3x mb-4"></i>
             <h2 class="text-2xl font-semibold mb-2">
+              {m.explore_users_empty_title_h2()}
+            </h2>
+            <p class="mb-6 text-center max-w-xs">
+              {m.explore_users_empty_description_text()}
               {m.explore_users_empty_title()}
             </h2>
             <p class="mb-6 text-center max-w-xs">
@@ -147,6 +156,10 @@
             <button
               onclick={() => (searchTerm = "")}
               class="btn btn-outline flex items-center"
+              aria-label={m.explore_users_reset_filters_aria()}
+            >
+              <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+              {m.explore_users_reset_filters_cta()}
               aria-label={m.common_action_reset_filters_aria()}
             >
               <i class="fa-solid fa-arrow-rotate-left mr-2"></i>

@@ -1,4 +1,5 @@
 ﻿<script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import type { DetailedCube } from "../dbTableTypes";
@@ -16,6 +17,13 @@
   let { cube, top, rating, content, bottom, showMeta = true }: Props = $props();
 
   const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`;
+  const imageAlt = $derived(
+    m.cube_card_image_alt_text({
+      series: cube.series,
+      model: cube.model,
+      versionName: cube.version_name ?? "",
+    })
+  );
 
   const compactNF = new Intl.NumberFormat(undefined, {
     notation: "compact",
@@ -44,7 +52,7 @@
     <img
       data-hero-key={`cube-image-${cube.id}`}
       src={preloadImage}
-      alt="{cube.series} {cube.model} {cube.version_name}"
+      alt={imageAlt}
       class="w-full h-48 object-cover"
       loading="eager"
       fetchpriority="high"
@@ -75,13 +83,13 @@
     {#if showMeta && ((cube.popularity ?? 0) > 0 || (cube.avg_price ?? 0) > 0)}
       <div class="mt-3 flex items-center gap-4 text-xs text-base-content/70">
         {#if (cube.popularity ?? 0) > 0}
-          <span title="Popularity">
+          <span title={m.cube_card_popularity_title()}>
             <i class="fa-solid fa-users mr-1" aria-hidden="true"></i>
             {fmtCompact(cube.popularity!)}
           </span>
         {/if}
         {#if (cube.avg_price ?? 0) > 0}
-          <span title="Average price">
+          <span title={m.cube_card_average_price_title()}>
             <i class="fa-solid fa-tag mr-1" aria-hidden="true"></i>
             {formatCurrency(cube.avg_price!)}
           </span>

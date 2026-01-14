@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { fade, scale } from "svelte/transition";
 
   const { children, onCancel, title } = $props();
@@ -22,7 +23,7 @@
           type="button"
           class="btn btn-ghost btn-sm rounded-xl"
           onclick={onCancel}
-          aria-label="Close"
+          aria-label={m.layout_card_close_aria()}
         >
           ✕
         </button>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import { getContext, onMount } from "svelte";
   import { fade, scale } from "svelte/transition";
   import NumberFlow, { continuous } from "@number-flow/svelte";
@@ -60,19 +61,20 @@
 
   // simple client checks
   function validate(): string | null {
-    if (!status) return "Please choose a status.";
-    if (!condition) return "Please choose a condition.";
+    if (!status) return m.cube_add_validation_status_required_text();
+    if (!condition) return m.cube_add_validation_condition_required_text();
     if (!quantity || quantity < 1 || quantity > 999)
-      return "Quantity must be between 1 and 999.";
+      return m.cube_add_validation_quantity_range_text({ min: 1, max: 999 });
     if (purchase_price !== null) {
       if (!Number.isFinite(purchase_price) || purchase_price < 0)
-        return "Price must be a valid number greater than or equal to 0.";
+        return m.cube_add_validation_price_invalid_text();
       if (purchase_price > 100000)
-        return "Price seems too high. Please double-check.";
+        return m.cube_add_validation_price_too_high_text();
     }
     if (acquired_at) {
       const today = new Date().toISOString().slice(0, 10);
-      if (acquired_at > today) return "Acquired date cannot be in the future.";
+      if (acquired_at > today)
+        return m.cube_add_validation_acquired_future_text();
     }
     return null;
   }
@@ -140,7 +142,7 @@
       return;
     }
     if (!isConnected) {
-      formMessage = "You must be logged in to perform this action.";
+      formMessage = m.cube_add_auth_required_text();
       return;
     }
 
@@ -172,11 +174,11 @@
         setTimeout(onCancel, 900);
       } else {
         throw new Error(
-          data?.error || "Unable to add the cube. Please try again.",
+          data?.error || m.cube_add_submit_failed_text(),
         );
       }
     } catch (err: any) {
-      formMessage = err?.message ?? "Unexpected error. Please try again.";
+      formMessage = err?.message ?? m.cube_add_unexpected_error_text();
     } finally {
       isSubmitting = false;
     }
@@ -222,7 +224,9 @@
       <div class="flex items-start gap-3">
         <div class="flex-1">
           <h2 id="add-cube-title" class="card-title leading-tight">
-            {alreadyAdded ? "Edit Cube" : "Add to Collection"}
+            {alreadyAdded
+              ? m.cube_add_edit_title()
+              : m.cube_add_add_title()}
           </h2>
           <p id="add-cube-desc" class="text-sm opacity-80">
             {cube.series}
@@ -234,7 +238,7 @@
           type="button"
           class="btn btn-ghost btn-sm rounded-xl"
           onclick={onCancel}
-          aria-label="Close"
+          aria-label={m.cube_add_close_aria()}
         >
           ✕
         </button>
@@ -245,10 +249,10 @@
         <!-- Quantity -->
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Quantity</span>
+            <span class="label-text">{m.cube_add_quantity_label()}</span>
             {#if status === "Wishlist"}
               <span class="label-text-alt opacity-70">
-                Locked for wishlist
+                {m.cube_add_quantity_locked_text()}
               </span>
             {/if}
           </div>
@@ -258,7 +262,7 @@
               type="button"
               disabled={!canDec}
               aria-disabled={!canDec}
-              aria-label="Decrease quantity"
+              aria-label={m.cube_add_quantity_decrease_aria()}
               onclick={dec}
               onmousedown={(e) => e.preventDefault()}
             >
@@ -276,7 +280,7 @@
               type="button"
               disabled={!canInc}
               aria-disabled={!canInc}
-              aria-label="Increase quantity"
+              aria-label={m.cube_add_quantity_increase_aria()}
               onclick={inc}
               onmousedown={(e) => e.preventDefault()}
             >
@@ -288,9 +292,9 @@
         <!-- Main cube -->
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Main Cube</span>
+            <span class="label-text">{m.cube_add_main_label()}</span>
             <span class="label-text-alt opacity-70">
-              Shows as your primary
+              {m.cube_add_main_helper_text()}
             </span>
           </div>
           <div class="join">
@@ -299,55 +303,63 @@
               name="main"
               bind:checked={main}
               class="toggle join-item bg-base-100"
-              aria-label="Set as main cube"
+              aria-label={m.cube_add_main_toggle_aria()}
             />
           </div>
         </label>
 
         <!-- Condition -->
         <label class="form-control md:col-span-1">
-          <div class="label"><span class="label-text">Condition</span></div>
+          <div class="label">
+            <span class="label-text">{m.cube_add_condition_label()}</span>
+          </div>
           <select
             name="condition"
             bind:value={condition}
             class="select select-bordered rounded-xl w-full"
             required
           >
-            <option value="New in box">New in box</option>
-            <option value="New">New</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Worn">Worn</option>
-            <option value="Poor">Poor</option>
-            <option value="Broken">Broken</option>
+            <option value="New in box">
+              {m.cube_condition_new_in_box_label()}
+            </option>
+            <option value="New">{m.cube_condition_new_label()}</option>
+            <option value="Good">{m.cube_condition_good_label()}</option>
+            <option value="Fair">{m.cube_condition_fair_label()}</option>
+            <option value="Worn">{m.cube_condition_worn_label()}</option>
+            <option value="Poor">{m.cube_condition_poor_label()}</option>
+            <option value="Broken">{m.cube_condition_broken_label()}</option>
           </select>
         </label>
 
         <!-- Status -->
         <label class="form-control md:col-span-1">
-          <div class="label"><span class="label-text">Status</span></div>
+          <div class="label">
+            <span class="label-text">{m.cube_add_status_label()}</span>
+          </div>
           <select
             name="status"
             bind:value={status}
             class="select select-bordered rounded-xl w-full"
             required
           >
-            <option value="Owned">Owned</option>
-            <option value="Wishlist">Wishlist</option>
-            <option value="Loaned">Loaned</option>
-            <option value="Borrowed">Borrowed</option>
-            <option value="Lost">Lost</option>
+            <option value="Owned">{m.cube_status_owned_label()}</option>
+            <option value="Wishlist">{m.cube_status_wishlist_label()}</option>
+            <option value="Loaned">{m.cube_status_loaned_label()}</option>
+            <option value="Borrowed">{m.cube_status_borrowed_label()}</option>
+            <option value="Lost">{m.cube_status_lost_label()}</option>
           </select>
         </label>
 
         <label class="form-control">
-          <div class="label"><span class="label-text">Bought From</span></div>
+          <div class="label">
+            <span class="label-text">{m.cube_add_bought_from_label()}</span>
+          </div>
           <select
             name="bought_from"
             bind:value={bought_from}
             class="select select-bordered rounded-xl w-full"
           >
-            <option value={null}>None</option>
+            <option value={null}>{m.cube_add_bought_from_none_label()}</option>
             {#each vendors as vendor (vendor.slug)}
               <option value={vendor.slug}>{vendor.name}</option>
             {/each}
@@ -356,8 +368,10 @@
 
         <label class="form-control">
           <div class="label">
-            <span class="label-text">Purchase Price</span>
-            <span class="label-text-alt opacity-70">Optional</span>
+            <span class="label-text">{m.cube_add_purchase_price_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.cube_add_optional_label()}
+            </span>
           </div>
           <label class="input flex items-center gap-2 rounded-xl">
             <span aria-hidden="true">$</span>
@@ -369,7 +383,7 @@
               min="0"
               max="100000"
               step="0.01"
-              placeholder="0.00"
+              placeholder={m.cube_add_purchase_price_placeholder()}
               inputmode="decimal"
             />
           </label>
@@ -378,12 +392,14 @@
         <!-- Notes (full width on md) -->
         <label class="form-control md:col-span-2">
           <div class="label">
-            <span class="label-text">Notes</span>
-            <span class="label-text-alt opacity-70">Optional</span>
+            <span class="label-text">{m.cube_add_notes_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.cube_add_optional_label()}
+            </span>
           </div>
           <textarea
             name="notes"
-            placeholder="Lubed with..., setup..., special mod..., etc."
+            placeholder={m.cube_add_notes_placeholder()}
             bind:value={notes}
             class="textarea textarea-bordered rounded-2xl w-full min-h-24"
             maxlength="2000"
@@ -393,8 +409,10 @@
         <!-- Acquired date -->
         <label class="form-control md:col-span-1">
           <div class="label">
-            <span class="label-text">Acquired on</span>
-            <span class="label-text-alt opacity-70">Optional</span>
+            <span class="label-text">{m.cube_add_acquired_on_label()}</span>
+            <span class="label-text-alt opacity-70">
+              {m.cube_add_optional_label()}
+            </span>
           </div>
           <input
             name="acquiredAt"
@@ -415,7 +433,7 @@
         >
           {formMessage}
           {#if !isConnected}
-            You must be logged in to perform this action.
+            {m.cube_add_auth_required_text()}
           {/if}
         </div>
 
@@ -426,7 +444,7 @@
             onclick={onCancel}
             disabled={isSubmitting}
           >
-            Cancel
+            {m.cube_add_cancel_cta()}
           </button>
           <button
             class="btn btn-primary rounded-xl"
@@ -435,12 +453,18 @@
           >
             {#if isSubmitting}
               <span class="loading loading-spinner"></span>
-              <span class="ml-2">{alreadyAdded ? "Editing…" : "Adding…"}</span>
+              <span class="ml-2">
+                {alreadyAdded
+                  ? m.cube_add_editing_text()
+                  : m.cube_add_adding_text()}
+              </span>
             {:else if showSuccess}
               <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
-              {alreadyAdded ? "Edited!" : "Added!"}
+              {alreadyAdded
+                ? m.cube_add_edited_text()
+                : m.cube_add_added_text()}
             {:else}
-              {alreadyAdded ? "Edit Cube" : "Add Cube"}
+              {alreadyAdded ? m.cube_add_edit_cta() : m.cube_add_add_cta()}
             {/if}
           </button>
         </div>

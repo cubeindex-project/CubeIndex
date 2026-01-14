@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
@@ -87,6 +88,13 @@
   // local state for toggling
   let showFull = $state(false);
   const maxCommentLength = 300;
+  const imageAlt = $derived(
+    m.rating_cube_image_alt_text({
+      series: cube.series,
+      model: cube.model,
+      versionName: cube.version_name ?? "",
+    })
+  );
 
   onMount(async () => {
     const { data: helpful, error: helpErr } = await supabase
@@ -107,7 +115,7 @@
     <div class="flex flex-row items-center gap-4 mb-4">
       <img
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,fl_lossy,q_auto,h_96/{cube.image_url}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={imageAlt}
         class="size-24 object-cover rounded-2xl"
       />
       <a href="/explore/cubes/{cube.slug}">
@@ -131,7 +139,7 @@
 
     <div class="flex flex-row justify-between items-center flex-1 w-full">
       <span class="text-sm justify-start flex gap-1 flex-1">
-        by
+        {m.rating_by_label()}
         <a href="/user/{user_rating.profile.username}" class="underline">
           {user_rating.profile.display_name}
         </a>
@@ -147,7 +155,7 @@
               class="btn"
               popovertarget={popoverId}
               style="anchor-name:--anchor-{popoverId}"
-              aria-label="User Menu"
+              aria-label={m.rating_user_menu_aria()}
             >
               <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
@@ -163,7 +171,7 @@
                   onclick={toggleEditRating}
                 >
                   <i class="fa-solid fa-pencil"></i>
-                  Edit
+                  {m.rating_edit_cta()}
                 </button>
                 <div>
                   {#if !confDeleteRating}
@@ -172,7 +180,7 @@
                       onclick={toggleDelRating}
                     >
                       <i class="fa-solid fa-trash sm:mr-2"></i>
-                      Delete
+                      {m.rating_delete_cta()}
                     </button>
                   {:else}
                     <button
@@ -184,13 +192,13 @@
                     >
                       {#if loading}
                         <span class="loading loading-spinner"></span>
-                        Deleting...
+                        {m.rating_delete_loading_text()}
                       {:else if success}
                         <i class="fa-solid fa-check"></i>
-                        Deleted!
+                        {m.rating_delete_success_text()}
                       {:else}
                         <i class="fa-solid fa-trash sm:mr-2"></i>
-                        Are you sure ?
+                        {m.rating_delete_confirm_text()}
                       {/if}
                     </button>
                   {/if}
@@ -212,10 +220,10 @@
           class="link-primary link-hover cursor-pointer"
           onclick={() => (showFull = !showFull)}
           aria-label={showFull
-            ? "Show less of comment"
-            : "Show more of comment"}
+            ? m.rating_comment_show_less_aria()
+            : m.rating_comment_show_more_aria()}
         >
-          {showFull ? "Show less" : "Show more"}
+          {showFull ? m.rating_show_less_label() : m.rating_show_more_label()}
         </button>
       {/if}
     </p>
@@ -223,11 +231,7 @@
 
   {#if helpful_ratings.length > 0}
     <p class="mt-5">
-      {helpful_ratings.length} user{helpful_ratings.length === 1 ? "" : "s"} find{helpful_ratings.length ===
-      1
-        ? ""
-        : "s"}
-      this helpful
+      {m.rating_helpful_count_text({ count: helpful_ratings.length })}
     </p>
   {/if}
 
@@ -238,7 +242,7 @@
         onclick={setRatingHelpful}
       >
         <i class="fa-solid fa-thumbs-up"></i>
-        <span>Helpful</span>
+        <span>{m.rating_helpful_cta()}</span>
       </button>
       <div class="divider-vertical mx-3 divider-primary"></div>
       <button
@@ -246,7 +250,7 @@
         onclick={toggleOpenReport}
       >
         <i class="fa-solid fa-flag"></i>
-        <span>Report</span>
+        <span>{m.rating_report_cta()}</span>
       </button>
     </div>
   {/if}
@@ -266,6 +270,11 @@
     onCancel={() => (openReport = !openReport)}
     reportType="cube-rating"
     reported={user_rating.id}
-    reporLabel="{user_rating.profile.display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+    reporLabel={m.rating_report_label_text({
+      name: user_rating.profile.display_name,
+      series: cube.series,
+      model: cube.model,
+      versionName: cube.version_name ?? "",
+    })}
   />
 {/if}

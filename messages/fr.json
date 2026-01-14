@@ -1,5 +1,24 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
+  "nav": {
+    "awards": "Récompenses",
+    "explore": "Explorer",
+    "home_aria": "Accueil CubeIndex",
+    "language": "Langue",
+    "login": "Connexion",
+    "logo_alt": "Logo CubeIndex",
+    "log_out": "Se déconnecter",
+    "notifications": "Notifications",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "sign_out": "Se déconnecter",
+    "staff_dashboard": "Tableau de bord du staff",
+    "unread_notifications": "Notifications non lues",
+    "user_menu": "Menu utilisateur",
+    "userbar": "Barre utilisateur",
+    "userbar_tag": "Nouveau",
+    "verify_email": "Vérifiez votre e-mail"
+  }
   "app_brand_name_text": "CubeIndex",
   "app_home_return_cta": "Retour à l'accueil",
   "auth_login_discord_cta": "Se connecter avec Discord",

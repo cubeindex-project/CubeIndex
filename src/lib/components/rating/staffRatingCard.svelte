@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
@@ -91,7 +92,7 @@
     <StarRating readOnly={true} rating={user_rating.rating ?? 0} />
 
     <span class="text-sm">
-      by
+      {m.rating_by_label()}
       <a href="/user/{user_rating.user_id.username}" class="underline">
         {user_rating.user_id.display_name}
       </a>
@@ -105,7 +106,7 @@
         {#if !confDeleteRating}
           <button class="btn btn-error" onclick={toggleDelRating}>
             <i class="fa-solid fa-trash sm:mr-2"></i>
-            <span class="hidden sm:block">Delete</span>
+            <span class="hidden sm:block">{m.rating_delete_cta()}</span>
           </button>
         {:else}
           <button
@@ -118,13 +119,13 @@
             <span class="hidden sm:block">
               {#if loading}
                 <span class="loading loading-spinner"></span>
-                Deleting...
+                {m.rating_delete_loading_text()}
               {:else if success}
                 <i class="fa-solid fa-check"></i>
-                Deleted!
+                {m.rating_delete_success_text()}
               {:else}
                 <i class="fa-solid fa-trash sm:mr-2"></i>
-                Are you sure ?
+                {m.rating_delete_confirm_text()}
               {/if}
             </span>
           </button>
@@ -142,10 +143,10 @@
           class="link-primary link-hover cursor-pointer"
           onclick={() => (showFull = !showFull)}
           aria-label={showFull
-            ? "Show less of comment"
-            : "Show more of comment"}
+            ? m.rating_comment_show_less_aria()
+            : m.rating_comment_show_more_aria()}
         >
-          {showFull ? "Show less" : "Show more"}
+          {showFull ? m.rating_show_less_label() : m.rating_show_more_label()}
         </button>
       {/if}
     </p>
@@ -153,11 +154,7 @@
 
   {#if helpful_ratings.length > 0}
     <p class="mt-5">
-      {helpful_ratings.length} user{helpful_ratings.length === 1 ? "" : "s"} find{helpful_ratings.length ===
-      1
-        ? ""
-        : "s"}
-      this helpful :
+      {m.rating_helpful_count_text({ count: helpful_ratings.length })}
     </p>
     {#each helpful_ratings as hr}
       <a href="/user/{hr.user_id.username}">{hr.user_id.display_name}</a>

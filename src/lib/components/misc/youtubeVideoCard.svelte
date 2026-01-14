@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { m } from "$lib/paraglide/messages";
   import Card from "../layout/card.svelte";
-  const { title = "YouTube video", videoUrl, onCancel } = $props();
+  const { title = m.misc_youtube_video_title_text(), videoUrl, onCancel } =
+    $props();
 </script>
 
 <Card {onCancel} {title}>

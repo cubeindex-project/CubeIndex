@@ -51,7 +51,7 @@
   <title>{meta.title}</title>
   <meta name="description" content={meta.description} />
   {@html `<script type="application/ld+json">
-    ${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}
+    ${JSON.stringify(meta.jsonLd)?.replace(/</g, "\\u003c")}
   </script>`}
 
   <meta property="og:title" content={ogTitle} />

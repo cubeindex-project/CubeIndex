@@ -20,15 +20,6 @@
       </a>
       <button type="button" onclick={onCancel} class="btn btn-secondary btn-lg">
         {m.user_signout_confirm_cancel_cta()}
-      {m.auth_signout_title_h2()}
-    </h2>
-    <p class="text-lg">{m.auth_signout_prompt_text()}</p>
-    <div class="flex justify-center gap-6 mt-6">
-      <a type="button" href="/auth/logout" class="btn btn-primary btn-lg">
-        {m.auth_signout_confirm_cta()}
-      </a>
-      <button type="button" onclick={onCancel} class="btn btn-secondary btn-lg">
-        {m.auth_signout_cancel_cta()}
       </button>
     </div>
   </div>

@@ -15,7 +15,6 @@
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
   const user = getContext<User | null>("user");
-  const activeLocale = $derived($locale);
 
   let activeLocale = $state(getLocale());
 
@@ -67,7 +66,7 @@
   });
 
   interface NavLink {
-    name: () => string;
+    name: string;
     href: string;
     icon?: string;
     emphasis?: boolean;
@@ -143,7 +142,6 @@
     ];
     if (p.role !== "User") {
       items.push({
-        label: m.nav_profile_menu_staff_dashboard_label(),
         label: m.nav_staff_dashboard_label(),
         href: "/staff/dashboard",
       });
@@ -203,13 +201,6 @@
     if (exploreCloseTimer) clearTimeout(exploreCloseTimer);
     exploreCloseTimer = setTimeout(() => (exploreOpen = false), delay);
   }
-
-  function handleLocaleChange(event: Event) {
-    const value = (event.currentTarget as HTMLSelectElement | null)?.value;
-    if (value && supportedLocales.includes(value as SupportedLocale)) {
-      setAppLocale(value as SupportedLocale);
-    }
-  }
 </script>
 
 <header
@@ -225,7 +216,6 @@
       href="/"
       class="flex items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 hover:opacity-90 transition"
       aria-label={m.nav_main_home_aria()}
-      aria-label={m.nav_brand_home_aria()}
     >
       <img
         src="/images/CubeIndex_Logo.webp"
@@ -238,7 +228,6 @@
       <span
         class="font-clash text-3xl font-bold inline-flex items-center gap-2"
       >
-        {m.nav_brand_name_text()}
         {m.app_brand_name_text()}
       </span>
     </a>
@@ -299,7 +288,7 @@
               }`}
             >
               <i class={`fa-solid ${link.icon} text-xs opacity-80`}></i>
-              <span class="font-medium">{link.name()}</span>
+              <span class="font-medium">{link.name}</span>
             </a>
           {/if}
         {/each}
@@ -340,7 +329,6 @@
                   }}
                   class="w-full cursor-pointer text-left block px-4 py-2 text-sm"
                 >
-                  {m.nav_profile_menu_signout_cta()}
                   {m.nav_user_logout_cta()}
                 </button>
               </li>
@@ -365,7 +353,6 @@
                   <span
                     class="indicator-item size-2 rounded-full bg-error"
                     aria-label={m.nav_notifications_verify_email_aria()}
-                    aria-label={m.nav_email_verify_aria()}
                   ></span>
                   <span
                     class="indicator-item size-2 rounded-full bg-error"
@@ -393,20 +380,6 @@
       </nav>
 
       <div class="flex items-center">
-        <label class="sr-only" for="locale-select">
-          {m.nav_main_language_label()}
-        </label>
-        <select
-          id="locale-select"
-          class="select select-bordered select-sm max-w-[7rem]"
-          value={activeLocale}
-          onchange={handleLocaleChange}
-          aria-label={m.nav_main_language_label()}
-        >
-          {#each supportedLocales as languageTag}
-          {m.nav_locale_language_label()}
-        </label>
-
         <select
           id="locale-select"
           class="select"
@@ -431,7 +404,6 @@
             aria-expanded={mobileUserMenuOpen}
             aria-controls="mobile-user-menu"
             aria-label={m.nav_profile_menu_user_label()}
-            aria-label={m.nav_user_menu_aria()}
             onclick={() => {
               mobileUserMenuOpen = !mobileUserMenuOpen;
               isOpen = false;
@@ -460,7 +432,6 @@
               class="absolute right-0 mt-3 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-lg"
               role="menu"
               aria-label={m.nav_profile_menu_user_label()}
-              aria-label={m.nav_user_menu_aria()}
               id="mobile-user-menu"
               tabindex="-1"
             >
@@ -480,7 +451,6 @@
                   onclick={() => (mobileUserMenuOpen = false)}
                 >
                   <span>{m.nav_profile_menu_settings_label()}</span>
-                  <span>{m.nav_user_settings_label()}</span>
                   <i class="fa-solid fa-gear text-xs opacity-70"></i>
                 </a>
                 {#if profile.role !== "User"}
@@ -490,7 +460,6 @@
                     onclick={() => (mobileUserMenuOpen = false)}
                   >
                     <span>{m.nav_profile_menu_staff_dashboard_label()}</span>
-                    <span>{m.nav_staff_dashboard_label()}</span>
                     <i class="fa-solid fa-gauge-high text-xs opacity-70"></i>
                   </a>
                 {/if}
@@ -503,7 +472,6 @@
                   }}
                 >
                   <span>{m.nav_auth_logout_cta()}</span>
-                  <span>{m.nav_user_logout_cta()}</span>
                   <i
                     class="fa-solid fa-arrow-right-from-bracket text-xs opacity-70"
                   ></i>

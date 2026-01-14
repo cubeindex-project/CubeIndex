@@ -47,7 +47,7 @@
     })
   );
   const cubeCountTitle = $derived(
-    m.user_card_cube_count_title_text({
+    m.user_card_cube_count_text({
       count: profile.user_cubes_count,
     })
   );

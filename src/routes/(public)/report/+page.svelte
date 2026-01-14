@@ -43,7 +43,6 @@
     const url = new URL(window.location.href);
     const err = url.searchParams.get("error");
     if (err) {
-      bug.extra = m.report_form_error_message_text({ error: err });
       bug.extra = m.report_bug_error_prefix_text({ message: err });
     }
   });
@@ -136,10 +135,6 @@
               {m.report_feedback_title_h1()}
             </h1>
             <p class="text-base-content/70 mt-2">
-              {m.report_feedback_subtitle_text()}
-              {m.report_page_title_h1()}
-            </h1>
-            <p class="text-base-content/70 mt-2">
               {m.report_page_intro_text()}
             </p>
           </header>
@@ -148,7 +143,6 @@
             class="tabs tabs-boxed w-full"
             role="tablist"
             aria-label={m.report_tabs_select_label_aria()}
-            aria-label={m.report_tabs_aria_label()}
           >
             <button
               class="tab grow"
@@ -177,7 +171,6 @@
           {#if !isConnected}
             <div class="alert alert-warning mt-2">
               <span>{m.report_auth_required_text()}</span>
-              <span>{m.report_signin_required_text()}</span>
             </div>
           {/if}
 
@@ -191,7 +184,6 @@
               autocomplete="off"
             >
               <h2 class="text-3xl font-clash mb-2 text-center">
-                {m.report_bug_heading_h2()}
                 {m.report_bug_title_h2()}
               </h2>
               <fieldset class="contents" disabled={isSubmitting}>
@@ -215,7 +207,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="flex flex-col gap-1">
                     <span class="font-semibold">
-                      {m.report_bug_device_label()}
                       {m.report_bug_device_type_label()}
                     </span>
                     <select
@@ -232,7 +223,6 @@
                         {m.report_bug_device_tablet_label()}
                       </option>
                       <option value="Smartphone">
-                        {m.report_bug_device_smartphone_label()}
                         {m.report_bug_device_phone_label()}
                       </option>
                     </select>
@@ -259,14 +249,12 @@
                   </label>
                   <label class="flex flex-col gap-1">
                     <span class="font-semibold">
-                      {m.report_bug_screenshot_label()}
                       {m.report_bug_image_label()}
                     </span>
                     <input
                       bind:value={bug.imageUrl}
                       type="url"
                       placeholder={m.report_bug_screenshot_placeholder()}
-                      placeholder={m.report_bug_image_placeholder()}
                       class="input input-bordered rounded-xl"
                       inputmode="url"
                       pattern="https?://.+"
@@ -276,7 +264,6 @@
                         <img
                           src={bug.imageUrl}
                           alt={m.report_bug_screenshot_alt()}
-                          alt={m.report_bug_image_alt_text()}
                           class="rounded-box border max-h-48 object-contain"
                           referrerpolicy="no-referrer"
                         />
@@ -287,7 +274,6 @@
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    {m.report_bug_steps_label()}{" "}
                     {m.report_bug_steps_label()}
                     <span class="text-red-500">*</span>
                   </span>
@@ -327,7 +313,6 @@
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    {m.report_bug_additional_context_label()}
                     {m.report_bug_extra_label()}
                   </span>
                   <textarea
@@ -335,7 +320,6 @@
                     class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
                     maxlength="250"
                     placeholder={m.report_bug_additional_context_placeholder()}
-                    placeholder={m.report_bug_extra_placeholder()}
                   ></textarea>
                 </label>
                 <div class="flex justify-end gap-2">
@@ -347,12 +331,6 @@
                   >
                     {#if isSubmitting}
                       <span class="loading loading-spinner"></span>
-                      {m.report_bug_submit_loading_text()}
-                    {:else if showSuccess}
-                      <i class="fa-solid fa-check"></i>
-                      {m.report_bug_submit_success_text()}
-                    {:else}
-                      {m.report_bug_submit_cta()}
                     {:else if showSuccess}
                       <i class="fa-solid fa-check"></i>
                     {/if}
@@ -381,13 +359,11 @@
               autocomplete="off"
             >
               <h2 class="text-3xl font-clash mb-2 text-center">
-                {m.report_feature_heading_h2()}
                 {m.report_feature_title_h2()}
               </h2>
               <fieldset class="contents" disabled={isSubmitting}>
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    {m.report_feature_title_label()}{" "}
                     {m.report_feature_title_label()}
                     <span class="text-red-500">*</span>
                   </span>
@@ -404,7 +380,6 @@
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    {m.report_feature_description_label()}{" "}
                     {m.report_feature_description_label()}
                     <span class="text-red-500">*</span>
                   </span>
@@ -455,7 +430,6 @@
 
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">
-                    {m.report_feature_additional_context_label()}
                     {m.report_feature_extra_label()}
                   </span>
                   <textarea
@@ -474,12 +448,6 @@
                   >
                     {#if isSubmitting}
                       <span class="loading loading-spinner"></span>
-                      {m.report_feature_submit_loading_text()}
-                    {:else if showSuccess}
-                      <i class="fa-solid fa-check"></i>
-                      {m.report_feature_submit_success_text()}
-                    {:else}
-                      {m.report_feature_submit_cta()}
                     {:else if showSuccess}
                       <i class="fa-solid fa-check"></i>
                     {/if}

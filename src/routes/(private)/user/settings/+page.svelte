@@ -9,15 +9,13 @@
   // Props & initial state
   let { data }: { data: PageData } = $props();
 
-  const { form, errors, enhance, message, delayed, isTainted } = superForm(
-    data.profileForm,
-    {
+  const { form, errors, enhance, message, delayed, isTainted, tainted } =
+    superForm(data.profileForm, {
       invalidateAll: "pessimistic",
       delayMs: 500,
       timeoutMs: 8000,
       clearOnSubmit: "errors-and-message",
-    },
-  );
+    });
 
   const {
     form: socialForm,
@@ -26,6 +24,7 @@
     message: socialMessage,
     delayed: socialDelayed,
     isTainted: socialIsTainted,
+    tainted: socialTainted,
   } = superForm(data.socialForm, {
     invalidateAll: "pessimistic",
     delayMs: 500,
@@ -40,6 +39,7 @@
     message: passwordMessage,
     delayed: passwordDelayed,
     isTainted: passwordIsTainted,
+    tainted: passwordTainted,
   } = superForm(data.passwordForm, {
     invalidateAll: "pessimistic",
     delayMs: 500,
@@ -270,9 +270,9 @@
     }
   });
 
-  let dirty: boolean = $derived(isTainted());
-  let socialDirty: boolean = $derived(socialIsTainted());
-  let passwordDirty: boolean = $derived(passwordIsTainted());
+  let dirty: boolean = $derived(isTainted($tainted));
+  let socialDirty: boolean = $derived(socialIsTainted($socialTainted));
+  let passwordDirty: boolean = $derived(passwordIsTainted($passwordTainted));
 </script>
 
 <section class="px-4 py-8 min-h-screen">

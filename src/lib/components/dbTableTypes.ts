@@ -625,3 +625,26 @@ export interface DetailedProfiles {
   // COALESCE(..., 0::double precision)
   user_avg_rating_count: number;
 }
+
+export interface MarketplaceListing {
+  id: number; // bigint identity
+  created_at: string; // timestamptz ISO string
+  updated_at: string; // timestamptz ISO string
+
+  seller_id: string; // uuid (profiles.user_id)
+
+  cube: string; // text (likely cube slug or id stored as text)
+  condition: UserCubeCondition;
+
+  price: number; // double precision
+  currency: string; // default 'USD'
+
+  location_country: string; // text
+  location_region: string | null; // text nullable
+
+  description: string | null; // text nullable
+  contact_details: string; // text
+  image_url: string | null; // text nullable
+
+  status: string; // text default 'active'
+}

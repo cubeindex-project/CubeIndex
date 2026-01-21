@@ -12,11 +12,7 @@ export const load = (async ({ setHeaders, parent }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    return clientLogError(
-      "Unable to load achievements",
-      clientLogger,
-      err
-    );
+    return clientLogError("Unable to load achievements", clientLogger, err);
   }
 
   let currentUserAchi = [];
@@ -31,7 +27,7 @@ export const load = (async ({ setHeaders, parent }) => {
       return clientLogError(
         "Unable to load awarded achievements",
         clientLogger,
-        cuaErr
+        cuaErr,
       );
     }
 
@@ -46,7 +42,9 @@ export const load = (async ({ setHeaders, parent }) => {
     achievements,
     currentUserAchi,
     meta: {
-      title: "Achievements - CubeIndex"
-    }
+      title: "Achievements - CubeIndex",
+      description:
+        "Browse achievements on CubeIndex. Discover available ones, read their requirements, and see which milestones you can unlock next.",
+    },
   };
 }) satisfies PageLoad;

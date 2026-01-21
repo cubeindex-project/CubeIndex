@@ -1,5 +1,5 @@
 import { error, fail, redirect } from "@sveltejs/kit";
-import type { Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import { z } from "zod/v4";
 import { setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
@@ -12,14 +12,16 @@ const schema = z.object({
   "cf-turnstile-response": z.string().nonempty("Please complete the Captcha"),
 });
 
-export const load = async () => {
+export const load = (async () => {
   return {
     form: await superValidate(zod4(schema)),
     meta: {
-      title: "Login - CubeIndex"
-    }
+      title: "Login - CubeIndex",
+      description:
+        "Sign in to CubeIndex to manage your collection, track your progress, and take part in community features like ratings and achievements.",
+    },
   };
-};
+}) satisfies PageServerLoad;
 
 export const actions: Actions = {
   default: async ({ request, locals: { supabase } }) => {
@@ -28,14 +30,14 @@ export const actions: Actions = {
 
     const { success } = await validateTurnstileToken(
       form.data["cf-turnstile-response"],
-      TURNSTILE_SECRET_KEY
+      TURNSTILE_SECRET_KEY,
     );
 
     if (!success) {
       return setError(
         form,
         "cf-turnstile-response",
-        "Invalid turnstile, please try again"
+        "Invalid turnstile, please try again",
       );
     }
 

@@ -1,7 +1,7 @@
 <script lang="ts">
   // Import the necessary components
   import CubeCard from "$lib/components/cube/cubeCard.svelte";
-  import type { Cube } from "$lib/components/dbTableTypes.js";
+  import type { Cube, DetailedCube } from "$lib/components/dbTableTypes.js";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
@@ -12,23 +12,10 @@
   import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
 
-  // Extend Cube type with metadata for filtering and sorting
-  type CubeWithMeta = Cube & {
-    year: number; // Release year extracted from date
-    name: string; // Combined name for search
-    wca_legal: boolean; // WCA legal feature flag
-    magnetic: boolean; // Magnetic feature flag
-    modded: boolean; // Modded feature flag
-    stickered: boolean; // Stickered feature flag
-    smart: boolean; // Smart feature flag
-    popularity: number; // Popularity count from user data
-    avg_price: number; // Average price
-  };
-
   const { data } = $props();
   const { user } = data;
 
-  const cubes: CubeWithMeta[] = $state(data.cubes);
+  const cubes = $derived(data.cubes);
 
   let userCubes: any[] = $state([]);
 
@@ -212,7 +199,7 @@
     const base = filteredCubes.slice();
     const query = $params.q.trim();
 
-    const compare = (a: CubeWithMeta, b: CubeWithMeta) => {
+    const compare = (a: DetailedCube, b: DetailedCube) => {
       let av: any;
       let bv: any;
 
@@ -556,8 +543,6 @@
                   add={true}
                   rate={true}
                   details={true}
-                  badges={true}
-                  image={true}
                   {alreadyAdded}
                   {userCubeDetail}
                 />

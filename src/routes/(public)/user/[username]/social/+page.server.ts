@@ -56,7 +56,8 @@ export const load = (async ({ parent, locals: { supabase, log, user } }) => {
     followers,
     isFollowing: currentFollowingUser.length !== 1,
     meta: {
-        title: `${profile.display_name}'s Socials - CubeIndex`
-    }
+      title: `${profile.display_name}'s Socials - CubeIndex`,
+      noindex: true,
+    },
   };
 }) satisfies PageServerLoad;

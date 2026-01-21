@@ -20,5 +20,12 @@ export const load = (async ({ setHeaders }) => {
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  return { profiles, meta: { title: "Explore Users - CubeIndex" } };
+  return {
+    profiles,
+    meta: {
+      title: "Explore Users - CubeIndex",
+      description:
+        "Discover cubers on CubeIndex. Browse profiles, search by username, and explore collections, reviews, and activity to find people to follow and learn from.",
+    },
+  };
 }) satisfies PageLoad;

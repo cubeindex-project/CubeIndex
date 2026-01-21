@@ -28,6 +28,9 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
 
   return {
     user_achievements,
-    meta: { title: `${profile.display_name}'s Achievements - CubeIndex` },
+    meta: {
+      title: `${profile.display_name}'s Achievements - CubeIndex`,
+      description: `See ${profile.display_name}'s achievements on CubeIndex.`,
+    },
   };
 }) satisfies PageServerLoad;

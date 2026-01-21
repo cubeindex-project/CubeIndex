@@ -72,6 +72,9 @@ export const load = (async ({ locals }) => {
     types,
     surfaces,
     subTypes,
+    meta: {
+      title: "New Submission - CubeIndex"
+    }
   };
 }) satisfies PageServerLoad;
 

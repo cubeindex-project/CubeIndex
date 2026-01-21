@@ -18,5 +18,10 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
     cube,
     vendor_links: vendorRes.data ?? [],
     per_vendor_history: per_vendor_history as PriceHistoryRow[],
+    meta: {
+      title: `${cube.name} - Prices`,
+      description:
+        "Compare prices for this cube across stores. View the latest listings, track price changes over time, and find the best deal in your currency.",
+    },
   };
 }) satisfies PageServerLoad;

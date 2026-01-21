@@ -57,7 +57,7 @@ export const load = (async ({ locals }) => {
     submissions,
     meta: {
       title: "My Submissions - CubeIndex",
-	  noindex: true
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

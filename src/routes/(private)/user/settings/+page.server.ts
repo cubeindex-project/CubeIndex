@@ -62,7 +62,7 @@ export const load = (async ({ locals, url }) => {
       private_profile: profile.private,
     },
     zod4(profileSchema),
-    { errors: false }
+    { errors: false },
   );
 
   const socialForm = await superValidate(profile.socials, zod4(socialSchema), {
@@ -71,11 +71,18 @@ export const load = (async ({ locals, url }) => {
 
   const passwordForm = await superValidate(zod4(passwordSchema));
 
-  const tab = url.search.slice(5)
+  const tab = url.search.slice(5);
 
-  return { profile, profileForm, socialForm, passwordForm, meta: {
-    title: `${tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex`
-  } };
+  return {
+    profile,
+    profileForm,
+    socialForm,
+    passwordForm,
+    meta: {
+      title: `${tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex`,
+      noindex: true,
+    },
+  };
 }) satisfies PageServerLoad;
 
 /** @satisfies {Actions} */
@@ -138,7 +145,7 @@ export const actions: Actions = {
               ...form,
               message: "Avatar upload failed: " + upErr.message,
             },
-          })
+          }),
         );
 
       // 3) Get a URL: public bucket -> getPublicUrl; private -> createSignedUrl
@@ -184,7 +191,7 @@ export const actions: Actions = {
               ...form,
               message: "Banner upload failed: " + upErr.message,
             },
-          })
+          }),
         );
 
       const { data: pub } = locals.supabase.storage
@@ -249,12 +256,7 @@ export const actions: Actions = {
       .eq("user_id", locals.user?.id);
 
     if (err) {
-      return logError(
-        500,
-        "Failed to update social links",
-        locals.log,
-        err
-      );
+      return logError(500, "Failed to update social links", locals.log, err);
     }
 
     // 4) Success: redirect back or return success data
@@ -278,7 +280,7 @@ export const actions: Actions = {
         current_id: locals.user?.id,
         current_plain_password: data.currentPassword,
         new_plain_password: data.newPassword,
-      }
+      },
     );
 
     if (err) {
@@ -289,7 +291,7 @@ export const actions: Actions = {
       return setError(
         form,
         "currentPassword",
-        "The provided password is incorect"
+        "The provided password is incorect",
       );
 
     return message(form, "Password edited successfully!");

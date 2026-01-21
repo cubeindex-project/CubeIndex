@@ -89,6 +89,8 @@ export const load = (async ({ locals: { supabase, log } }) => {
     partners: AWARDS_PARTNERS,
     meta: {
       title: "CubeIndex Awards",
+      description:
+        "Browse the CubeIndex Awards. Explore categories, nominees, and past winners to see which cubes and creators the community has recognized.",
     },
   };
 }) satisfies PageServerLoad;

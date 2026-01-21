@@ -26,6 +26,9 @@ export const load = (async ({ parent, locals: { log } }) => {
 
   return {
     reviews: reviewsRaw as UserReviewWithCube[],
-    meta: { title: `${profile.display_name}'s Reviews - CubeIndex` },
+    meta: {
+      title: `${profile.display_name}'s Reviews - CubeIndex`,
+      description: `View ${profile.display_name}'s reviews on CubeIndex. Read their detailed feedback on cubes they have tried, including what they liked, what they did not, and any setup notes they shared.`,
+    },
   };
 }) satisfies PageServerLoad;

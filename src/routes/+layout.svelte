@@ -50,9 +50,11 @@
 <svelte:head>
   <title>{meta.title}</title>
   <meta name="description" content={meta.description} />
-  {@html `<script type="application/ld+json">
-    ${JSON.stringify(meta.jsonLd)?.replace(/</g, "\\u003c")}
-  </script>`}
+  <link rel="canonical" href={meta.canonical} />
+
+  {#if meta.jsonLd}
+    {@html `<script type="application/ld+json">${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`}
+  {/if}
 
   <meta property="og:title" content={ogTitle} />
   <meta property="og:site_name" content={meta.siteName} />

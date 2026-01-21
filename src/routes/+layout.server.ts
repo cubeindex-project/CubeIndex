@@ -44,7 +44,7 @@ export const load: LayoutServerLoad = async ({
     meta: {
       title: "CubeIndex",
       description:
-        "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers. 🧩",
+        "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers.",
       ogTitle: "CubeIndex - Speedcubing Database & Collection Tracker",
       siteName: "CubeIndex",
       image: "/images/og/cubeindex-og.png",
@@ -53,8 +53,17 @@ export const load: LayoutServerLoad = async ({
       twitterCard: "summary_large_image",
       googleSiteVerification: "LeqQ-VZhIWm9luPXxKl2DWIb48Udb94UIZclWUjOevE",
       noindex: false,
-      jsonLd: undefined,
-      canonical: url.href
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        url: url.origin,
+        logo: url.origin + "/images/CubeIndex_Logo.webp",
+        name: "CubeIndex",
+        description:
+          "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers.",
+        email: "thecubeindex@gmail.com",
+      },
+      canonical: url.href,
     } as Meta,
   };
 };

@@ -62,10 +62,10 @@
   <meta property="og:description" content={ogDescription} />
   <meta property="og:url" content={meta.url} />
 
-  <meta property="twitter:title" content={twitterTitle} />
-  <meta property="twitter:image" content={twitterImage} />
-  <meta property="twitter:description" content={twitterDescription} />
-  <meta property="twitter:card" content={meta.twitterCard} />
+  <meta name="twitter:title" content={twitterTitle} />
+  <meta name="twitter:image" content={twitterImage} />
+  <meta name="twitter:description" content={twitterDescription} />
+  <meta name="twitter:card" content={meta.twitterCard} />
 
   <meta name="google-site-verification" content={meta.googleSiteVerification} />
 

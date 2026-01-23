@@ -95,5 +95,6 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
     reviewCategories,
     reviewRatings,
     categoryRatings,
+    meta: { noindex: true },
   };
 }) satisfies PageServerLoad;

@@ -24,5 +24,6 @@ export const load: PageServerLoad = async ({ locals }) => {
   return {
     username: profile.username,
     display_name: profile.display_name ?? profile.username,
+    meta: { title: "Userbar - CubeIndex", noindex: true },
   };
 };

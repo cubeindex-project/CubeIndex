@@ -27,6 +27,10 @@ export const load = (async ({ setHeaders }) => {
 
   return {
     vendors: sortedVendors,
-    meta: { title: "Explore Vendors - CubeIndex" },
+    meta: {
+      title: "Explore Vendors - CubeIndex",
+      description:
+        "Browse vendors on CubeIndex. See each vendor’s location, default currency, and how many users have purchased from them.",
+    },
   };
 }) satisfies PageLoad;

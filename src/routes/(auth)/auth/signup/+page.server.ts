@@ -24,6 +24,11 @@ export const load: PageServerLoad = async ({ url }) => {
     accountForm: await superValidate(zod4(accountSchema)),
     profileForm: await superValidate(zod4(profileSchema)),
     surveyForm: await superValidate(zod4(surveySchema)),
+    meta: {
+      title: "Signup - CubeIndex",
+      description:
+        "Create a CubeIndex account to build your collection, track progress, and join the community with ratings, reviews, and achievements.",
+    },
   };
 };
 
@@ -34,14 +39,14 @@ export const actions: Actions = {
 
     const { success } = await validateTurnstileToken(
       form.data["cf-turnstile-response"],
-      TURNSTILE_SECRET_KEY
+      TURNSTILE_SECRET_KEY,
     );
 
     if (!success) {
       return setError(
         form,
         "cf-turnstile-response",
-        "Invalid turnstile, please try again"
+        "Invalid turnstile, please try again",
       );
     }
 
@@ -59,9 +64,6 @@ export const actions: Actions = {
         ...form,
         message: "Please verify your email to continue with your signup.",
       },
-      meta: {
-        title: "Signup - CubeIndex"
-      }
     };
   },
 
@@ -83,7 +85,7 @@ export const actions: Actions = {
               userErr?.message ?? "No user found."
             }`,
           },
-        })
+        }),
       );
     }
 
@@ -124,7 +126,7 @@ export const actions: Actions = {
               ...form,
               message: "Avatar upload failed: " + upErr.message,
             },
-          })
+          }),
         );
 
       // 3) Get a URL: public bucket -> getPublicUrl; private -> createSignedUrl
@@ -155,7 +157,7 @@ export const actions: Actions = {
             message:
               "An account with this email already exists. Please log in or use a different email address.",
           },
-        })
+        }),
       );
     }
 
@@ -169,7 +171,7 @@ export const actions: Actions = {
             ...form,
             errors: { username: ["This username is already taken."] },
           },
-        })
+        }),
       );
     }
 
@@ -177,7 +179,7 @@ export const actions: Actions = {
       return withFiles(
         fail(400, {
           profileForm: { ...form, message: upsertError.message },
-        })
+        }),
       );
     }
 
@@ -200,7 +202,7 @@ export const actions: Actions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     // Next: survey step

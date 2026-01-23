@@ -22,6 +22,9 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
 
   return {
     user_cube_ratings,
-    meta: { title: `${profile.display_name}'s Ratings - CubeIndex` },
+    meta: {
+      title: `${profile.display_name}'s Ratings - CubeIndex`,
+      description: `View ${profile.display_name}'s ratings on CubeIndex. See which cubes they have scored and how their ratings compare across different puzzles.`,
+    },
   };
 }) satisfies PageServerLoad;

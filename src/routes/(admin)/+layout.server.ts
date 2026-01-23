@@ -17,10 +17,10 @@ export const load = (async ({ locals: { supabase, user, log } }) => {
       "An error occurred while retrieving your profile",
       log,
       err,
-      false
+      false,
     );
 
   if (profile.role === "User") redirect(303, "/");
 
-  return { profile, user };
+  return { profile, user, meta: { noindex: true } };
 }) satisfies LayoutServerLoad;

@@ -14,6 +14,7 @@ export interface Meta {
   googleSiteVerification?: string;
   jsonLd?: object;
   noindex?: boolean;
+  canonical?: string;
 }
 
 /** Fully resolved metadata used to render head tags. */

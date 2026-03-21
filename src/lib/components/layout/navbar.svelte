@@ -174,6 +174,19 @@
     return () => window.removeEventListener("scroll", onScroll);
   });
 
+  // Close mobile user menu when clicking outside
+  let mobileUserMenuRef = $state<HTMLDivElement | null>(null);
+  $effect(() => {
+    if (!mobileUserMenuOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (mobileUserMenuRef && !mobileUserMenuRef.contains(event.target as Node)) {
+        mobileUserMenuOpen = false;
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  });
+
   // Ensure navbar shows when menus open/close
   $effect(() => {
     if (isOpen || exploreOpen) hideNav = false;
@@ -364,7 +377,7 @@
       </nav>
 
       {#if profile}
-        <div class="relative md:hidden">
+        <div class="relative md:hidden" bind:this={mobileUserMenuRef}>
           <button
             type="button"
             class="btn btn-ghost btn-circle size-12 overflow-hidden border border-base-300"

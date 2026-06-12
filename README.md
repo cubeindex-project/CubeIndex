@@ -15,7 +15,7 @@
 </p>
 
 <details>
-<summary>📸 See Screenshots</summary>
+<summary>See Screenshots</summary>
 <br/>
 <div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
   <img src=".github/images/cubeindex_home.png" alt="Home" style="max-width:48%;height:auto;border-radius:8px;" />
@@ -26,69 +26,49 @@
 
 ---
 
-### 🚀 Tech & Deploy
+### Tech & Deploy
 
 **Built with:** SvelteKit · Tailwind · Supabase · TypeScript  
-**Live:** [thecubeindex.com](https://thecubeindex.com)  
-**Beta:** [beta.thecubeindex.com](https://beta.thecubeindex.com)
+**Live:** [thecubeindex.com](https://thecubeindex.com)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
 
 ---
 
-### ⚡ Quick Start
+### Contribute
 
 ```bash
 git clone https://github.com/cubeindex-project/CubeIndex.git
 cd CubeIndex
 npm install
 cp .env.example .env
+npx supabase db start
 npm run dev
 ```
 
-👉 Visit localhost:5173
-(Optional: set up Supabase CLI + Docker if working with the database)
+Then visit localhost:5173
 
 #### Environment
 
-- `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_ANON_KEY`: Frontend Supabase access
-- `DATABASE_URL`: Postgres connection (server-side)
-- `PUBLIC_SITE_URL`: Absolute base URL
-- `PUBLIC_DEPLOYMENT_CHANNEL`: Build-time deployment channel (`production` or `beta`) toggles the Beta UI label
+- `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Frontend Supabase access
 - `LOG_LEVEL`: Server-side Pino log level (`debug`, `info`, `warn`, etc.)
-- `PUBLIC_UMAMI_SRC` / `PUBLIC_UMAMI_WEBSITE_ID`: Analytics (optional)
+- `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`: For Cloudflare's turnstile service
+- `AUTOFILL_SERVICE_URL`: The autofill service URL for the cube submission page
 
 ---
 
-🤝 Contribute
+### Community
 
-- Branch off developer
-
-- Use clear commit names (fix: login bug)
-
-- Open PRs with context
-
-- Join us on Discord
-
-```bash
-git checkout -b feat/my-feature
-git commit -m "feat: add feature"
-git push origin feat/my-feature
-```
+[Discord](https://thecubeindex.com/discord)
 
 ---
 
-🌍 Community
-
-💬 [Discord](https://cubeindexbeta.netlify.app/discord) · 🐞 [GitHub Issues](https://github.com/cubeindex-project/CubeIndex/issues)
-
----
-
-⭐ Extras
+### Extras
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Saterz/CubeIndex&type=Date)](https://www.star-history.com/#Saterz/CubeIndex&Date)
 
 ---
 
-📄 Licensed under Apache 2.0  
-Thanks for helping build CubeIndex! 🧊
+### License
+
+This project is under the Apache 2.0 license

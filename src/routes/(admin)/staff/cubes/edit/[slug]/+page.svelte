@@ -5,12 +5,14 @@
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient.js";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   // Destructure props passed to the component
   let { data } = $props();
@@ -54,7 +56,7 @@
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
     const profile = profiles?.find(
-      (p: { username: string }) => p.username === user
+      (p: { username: string }) => p.username === user,
     );
     return profile ? `/user/${profile.id}` : "#";
   }
@@ -110,11 +112,7 @@
       .select("*")
       .neq("status", "Rejected");
     if (cubesErr) {
-      return clientLogError(
-        "Unable to load cubes",
-        clientLogger,
-        cubesErr
-      );
+      return clientLogError("Unable to load cubes", clientLogger, cubesErr);
     }
 
     cubes = data;
@@ -125,11 +123,7 @@
       .order("name", { ascending: true });
 
     if (brandsErr) {
-      return clientLogError(
-        "Unable to load brands",
-        clientLogger,
-        brandsErr
-      );
+      return clientLogError("Unable to load brands", clientLogger, brandsErr);
     }
 
     allBrands = brands;
@@ -583,7 +577,7 @@
                         aria-label="Remove Vendor Link"
                         onclick={() => {
                           $form.vendorLinks = $form.vendorLinks.filter(
-                            (_, idx) => idx !== i
+                            (_, idx) => idx !== i,
                           );
                         }}
                       >

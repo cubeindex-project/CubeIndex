@@ -1,8 +1,7 @@
 import type { PageServerLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
 import { logError } from "$lib/server/logError";
 
-export const load = (async ({ parent, locals: { log } }) => {
+export const load = (async ({ parent, locals: { log, supabase } }) => {
   const { profile } = await parent();
 
   const [

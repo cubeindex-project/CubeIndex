@@ -1,7 +1,9 @@
-import { supabase } from "$lib/supabaseClient";
 import type { PageLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
+import { page } from "$app/state";
+
+const supabase = page.data.supabase;
 
 export const load = (async ({ setHeaders, parent }) => {
   const { user } = await parent();

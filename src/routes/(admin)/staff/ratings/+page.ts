@@ -1,5 +1,7 @@
 import type { PageLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
+import { page } from "$app/state";
+
+const supabase = page.data.supabase;
 
 export const load = (async () => {
   const { data: user_cube_ratings, error: urErr } = await supabase

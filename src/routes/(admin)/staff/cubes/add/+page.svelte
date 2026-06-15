@@ -2,11 +2,13 @@
   import { superForm } from "sveltekit-superforms";
   import { blur } from "svelte/transition";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient.js";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
@@ -20,7 +22,7 @@
   $effect(() => {
     const _ = search;
     searchCubes = allCubes.filter((c) =>
-      c.label.toLowerCase().includes(search.toLowerCase())
+      c.label.toLowerCase().includes(search.toLowerCase()),
     );
   });
 
@@ -34,7 +36,7 @@
         // Handle server validation errors gracefully
         $message = result.error.message || "Unknown error";
       },
-    }
+    },
   );
 
   let cubes: Cube[] = $state([]);
@@ -53,8 +55,8 @@
           .map((c) => ({
             label: `${c.series} ${c.model} ${c.version_name}`,
             value: c.slug,
-          }))
-      )
+          })),
+      ),
     ).sort();
   });
 
@@ -64,11 +66,7 @@
       .select("*")
       .neq("status", "Rejected");
     if (cubesErr) {
-      return clientLogError(
-        "Unable to load cubes",
-        clientLogger,
-        cubesErr
-      );
+      return clientLogError("Unable to load cubes", clientLogger, cubesErr);
     }
     cubes = data;
   });

@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   let staff_logs: any[] = $state([]);
 
@@ -53,7 +55,7 @@
    */
   function diff<T extends Record<string, any>>(
     oldData: T | null,
-    newData: T | null
+    newData: T | null,
   ): Partial<{ [K in keyof T]: { from: T[K] | null; to: T[K] | null } }> {
     const result: Partial<{
       [K in keyof T]: { from: T[K] | null; to: T[K] | null };
@@ -127,7 +129,7 @@
         log.staff_id.display_name.toLowerCase().includes(debouncedSearch) ||
         log.action.toLowerCase().includes(debouncedSearch) ||
         log.created_at.toLowerCase().includes(debouncedSearch) ||
-        log.target_table.toLowerCase().includes(debouncedSearch)
+        log.target_table.toLowerCase().includes(debouncedSearch),
     );
   });
 

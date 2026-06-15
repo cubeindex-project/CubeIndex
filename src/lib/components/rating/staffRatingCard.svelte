@@ -2,7 +2,9 @@
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   const { user_rating, cube } = $props();
 

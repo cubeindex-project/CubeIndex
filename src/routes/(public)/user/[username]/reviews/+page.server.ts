@@ -1,5 +1,4 @@
 import type { PageServerLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
 import type {
   DetailedCube,
   DetailedUserCubeReview,
@@ -10,7 +9,7 @@ interface UserReviewWithCube extends DetailedUserCubeReview {
   cube_model: Pick<DetailedCube, "slug" | "name" | "image_url">;
 }
 
-export const load = (async ({ parent, locals: { log } }) => {
+export const load = (async ({ parent, locals: { log, supabase } }) => {
   const { profile } = await parent();
 
   const { data: reviewsRaw, error: reviewErr } = await supabase

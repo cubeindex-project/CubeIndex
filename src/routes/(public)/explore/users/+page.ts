@@ -1,9 +1,10 @@
 import type { PageLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 
-export const load = (async ({ setHeaders }) => {
+export const load = (async ({ setHeaders, parent }) => {
+  const { supabase } = await parent();
+
   const { data, error: err } = await supabase
     .from("v_detailed_profiles")
     .select("*")

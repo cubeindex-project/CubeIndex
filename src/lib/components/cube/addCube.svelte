@@ -2,10 +2,12 @@
   import { getContext, onMount } from "svelte";
   import { fade, scale } from "svelte/transition";
   import NumberFlow, { continuous } from "@number-flow/svelte";
-  import { supabase } from "$lib/supabaseClient";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import type { UserCubeCondition, UserCubeStatus } from "../dbTableTypes";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   let {
     onCancel,

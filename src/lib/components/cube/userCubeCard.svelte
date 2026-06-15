@@ -3,9 +3,11 @@
   import type { DetailedCube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
-  import { supabase } from "$lib/supabaseClient";
   import { clientLogger } from "$lib/logger/client";
   import { clientLogError } from "$lib/logger/clientLogError";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   /**
    * Combines a user's cube ownership details with minimal vendor info
@@ -54,7 +56,7 @@
     user_details.purchase_price === null ||
       user_details.purchase_price === undefined
       ? null
-      : Number(user_details.purchase_price)
+      : Number(user_details.purchase_price),
   );
 
   let vendors: { slug: string; name: string }[] = $state([]);
@@ -73,7 +75,7 @@
       clientLogError(
         "An error occurred while fetching vendors",
         clientLogger,
-        err
+        err,
       );
     }
   }
@@ -191,7 +193,10 @@
     <div class="mt-4">
       <div class="flex flex-wrap gap-2 items-center">
         {#if user_rating > 0}
-          <div class="badge badge-warning badge-lg gap-1 text-black" title="Your rating">
+          <div
+            class="badge badge-warning badge-lg gap-1 text-black"
+            title="Your rating"
+          >
             <i class="fa-solid fa-star"></i>
             {user_rating}
           </div>
@@ -315,7 +320,9 @@
 
         <label class="form-control">
           <span class="label-text font-semibold">Purchase Price</span>
-          <label class="input input-bordered flex items-center gap-2 rounded-xl">
+          <label
+            class="input input-bordered flex items-center gap-2 rounded-xl"
+          >
             <span aria-hidden="true">$</span>
             <input
               id="purchase_price"
@@ -407,10 +414,4 @@
   {/if}
 {/snippet}
 
-<CubeCardSkeleton
-  {cube}
-  rating={false}
-  {top}
-  {content}
-  {bottom}
-/>
+<CubeCardSkeleton {cube} rating={false} {top} {content} {bottom} />

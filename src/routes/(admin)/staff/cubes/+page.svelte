@@ -1,7 +1,6 @@
 <script lang="ts">
   import StaffCubeCard from "$lib/components/staff/staffCubeCard.svelte";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient";
   import { blur } from "svelte/transition";
   import type { Cube } from "$lib/components/dbTableTypes.js";
   import Pagination from "$lib/components/misc/pagination.svelte";
@@ -9,6 +8,9 @@
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   type CubeWithMeta = Cube & {
     _year: number;
@@ -54,7 +56,7 @@
         return clientLogError(
           "An error occurred while fetching vendors",
           clientLogger,
-          error
+          error,
         );
       if (data.length === 0) {
         break;
@@ -112,16 +114,16 @@
     const Types = Array.from(new Set(cubes.map((c: Cube) => c.type))).sort();
     const Brands = Array.from(new Set(cubes.map((c: Cube) => c.brand))).sort();
     const Years = Array.from(
-      new Set(cubes.map((c: Cube) => new Date(c.release_date!).getFullYear()))
+      new Set(cubes.map((c: Cube) => new Date(c.release_date!).getFullYear())),
     ).sort((a, b) => b - a);
     const SubType = Array.from(
-      new Set(cubes.map((c: Cube) => c.sub_type ?? ""))
+      new Set(cubes.map((c: Cube) => c.sub_type ?? "")),
     ).sort();
     const CubeTypes = Array.from(
-      new Set(cubes.map((c: Cube) => c.version_type))
+      new Set(cubes.map((c: Cube) => c.version_type)),
     ).sort();
     const CubeStatus = Array.from(
-      new Set(cubes.map((c: Cube) => c.status))
+      new Set(cubes.map((c: Cube) => c.status)),
     ).sort();
 
     allBrands = Brands;
@@ -157,7 +159,7 @@
         (stickered === undefined || c._stickered === stickered) &&
         (smart === undefined || c._smart === smart) &&
         // Search
-        c._name.includes(searchTerm.toLowerCase())
+        c._name.includes(searchTerm.toLowerCase()),
     );
   });
 

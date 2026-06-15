@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { supabase } from "$lib/supabaseClient.js";
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   let showPassword = $state(false);
   let password = $state("");

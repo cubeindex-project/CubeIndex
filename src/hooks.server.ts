@@ -46,7 +46,7 @@ const supabase: Handle = async ({ event, resolve }) => {
           cookiesToSet.forEach(({ name, value, options }) =>
             event.cookies.set(name, value, { ...options, path: "/" }),
           );
-          if (Object.keys(headers).length > 0) {
+          if (headers && Object.keys(headers).length > 0) {
             event.setHeaders(headers);
           }
         },

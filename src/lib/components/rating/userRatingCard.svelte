@@ -2,14 +2,16 @@
   import StarRating from "./starRating.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import { onMount } from "svelte";
-  import { supabase } from "$lib/supabaseClient";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   const { user_rating, cube, isAuthor, showCubeDetails } = $props();
 
   let popoverId = $state(
-    `popover-${user_rating.username}-${user_rating.cube_slug}`
+    `popover-${user_rating.username}-${user_rating.cube_slug}`,
   );
 
   let helpful_ratings: any[] = $state([]);
@@ -266,6 +268,7 @@
     onCancel={() => (openReport = !openReport)}
     reportType="cube-rating"
     reported={user_rating.id}
-    reporLabel="{user_rating.profile.display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+    reporLabel="{user_rating.profile
+      .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}

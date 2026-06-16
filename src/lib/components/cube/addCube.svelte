@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { onMount } from "svelte";
   import { fade, scale } from "svelte/transition";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
@@ -8,6 +8,7 @@
   import { page } from "$app/state";
 
   const supabase = page.data.supabase;
+  const user = $derived(page.data.user);
 
   let {
     onCancel,
@@ -25,8 +26,7 @@
     },
   } = $props();
 
-  const userCtx = getContext<any>("user");
-  let isConnected = $derived(Boolean(userCtx?.id ?? userCtx)); // robust truthiness
+  let isConnected = $derived(Boolean(user));
 
   // UI state
   let isSubmitting = $state(false);

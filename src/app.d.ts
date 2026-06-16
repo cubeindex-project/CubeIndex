@@ -20,7 +20,6 @@ declare global {
     interface PageData {
       session: Session | null;
       meta?: Meta;
-      supabase: SupabaseClient<Database>;
     }
     // interface PageState {}
     // interface Platform {}

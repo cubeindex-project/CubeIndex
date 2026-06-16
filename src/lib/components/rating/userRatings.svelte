@@ -3,13 +3,14 @@
   import Pagination from "../misc/pagination.svelte";
   import type { DetailedCube } from "../dbTableTypes";
   import SearchBar from "../misc/searchBar.svelte";
-  import { getContext } from "svelte";
-  import type { User } from "@supabase/supabase-js";
+  import { page } from "$app/state";
 
-  const { user_cube_ratings, cube }: { user_cube_ratings: any[]; cube: DetailedCube } =
-    $props();
+  const {
+    user_cube_ratings,
+    cube,
+  }: { user_cube_ratings: any[]; cube: DetailedCube } = $props();
 
-  let user = getContext<User>("user");
+  const user = $derived(page.data.user);
 
   let searchTerm: string = $state("");
 
@@ -18,7 +19,7 @@
   let total = user_cube_ratings.length;
   let stats = ratings.map((r) => {
     const count = user_cube_ratings.filter(
-      (u: { rating: number }) => u.rating >= r && u.rating < r + 1
+      (u: { rating: number }) => u.rating >= r && u.rating < r + 1,
     ).length;
     const pct = total > 0 ? ((count / total) * 100).toFixed(1) : 0;
     return { rating: r, count, pct };
@@ -36,7 +37,7 @@
           (ur.rating >= filterRating && ur.rating < filterRating + 1)) &&
         (ur.comment.includes(searchTerm.toLowerCase()) ||
           ur.display_name.includes(searchTerm.toLowerCase()) ||
-          ur.created_at.includes(searchTerm.toLowerCase()))
+          ur.created_at.includes(searchTerm.toLowerCase())),
     );
 
     return filtered.sort((a, b) => b.rating - a.rating);

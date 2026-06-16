@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
-  import { getContext } from "svelte";
   import { page } from "$app/state";
 
   const supabase = page.data.supabase;
@@ -25,8 +24,7 @@
   let formMessage: string = $state("");
   let username: string = $state("");
 
-  const getUser = getContext<{ id: string }>("user");
-  const user = getUser;
+  const user = $derived(page.data.user);
 
   onMount(async () => {
     const { data: profile, error } = await supabase

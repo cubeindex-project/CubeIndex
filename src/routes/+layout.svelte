@@ -26,10 +26,6 @@
     return () => data.subscription.unsubscribe();
   });
 
-  import { setContext } from "svelte";
-  setContext("user", data.user);
-  setContext("session", data.session);
-
   import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/footer.svelte";
 

@@ -1,17 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import NumberFlow from "@number-flow/svelte";
-  import type {
-    AwardsCategory,
-    AwardsEvent,
-  } from "$lib/components/dbTableTypes.js";
+  import type { Tables } from "$lib/types/database.types";
   import type { AwardsPartner } from "$lib/content/awardsPartners";
   import YoutubeVideoCard from "$lib/components/misc/youtubeVideoCard.svelte";
 
   const { data } = $props();
-  const event: AwardsEvent | null = data.current_event;
-  const categories: AwardsCategory[] = data.awards_category ?? [];
-  const previousEvents: AwardsEvent[] = data.previous_events ?? [];
+  const event: Tables<"awards_event"> | null = data.current_event;
+  const categories: Tables<"awards_category">[] = data.awards_category ?? [];
+  const previousEvents: Tables<"awards_event">[] = data.previous_events ?? [];
   const logoDesigner = data.logoDesigner;
   const partners: AwardsPartner[] = data.partners ?? [];
 
@@ -32,7 +29,7 @@
   let mounted = $state(false);
   let now = $state(new Date());
 
-  const formatEventRange = (eventItem: AwardsEvent) => {
+  const formatEventRange = (eventItem: Tables<"awards_event">) => {
     const startDate = new Date(eventItem.start_at);
     const endDate = new Date(eventItem.end_at);
 
@@ -51,7 +48,7 @@
   };
 
   type PreviousEventSummary = {
-    event: AwardsEvent;
+    event: Tables<"awards_event">;
     range: string;
   };
 

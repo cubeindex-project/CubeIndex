@@ -2,16 +2,16 @@
   import { superForm } from "sveltekit-superforms";
   import { blur } from "svelte/transition";
   import { onMount } from "svelte";
-  import type { Cube } from "$lib/components/dbTableTypes.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types.js";
 
   const supabase = page.data.supabase;
 
   const { data } = $props();
-  const { brands, types, surfaces, subTypes } = data;
+  const { brands, types, surfaces, subTypes } = $derived(data);
 
   let search = $state("");
   let searchCubes: {
@@ -27,19 +27,18 @@
   });
 
   // Initialize form handling with options for JSON data and custom error handling
-  const { form, allErrors, errors, constraints, message, enhance } = superForm(
-    data.form,
-    {
+  const { form, allErrors, errors, message, enhance } = $derived(
+    superForm(data.form, {
       dataType: "json",
       resetForm: false,
       onError({ result }) {
         // Handle server validation errors gracefully
         $message = result.error.message || "Unknown error";
       },
-    },
+    }),
   );
 
-  let cubes: Cube[] = $state([]);
+  let cubes: Tables<"cube_models">[] = $state([]);
   let allCubes: {
     label: string;
     value: string;
@@ -188,7 +187,7 @@
               class="select select-lg w-full"
               required
             >
-              {#if subTypes.length === 0}
+              {#if !subTypes}
                 <option>Loading...</option>
               {/if}
               <option value="auto">Handle Automatically</option>

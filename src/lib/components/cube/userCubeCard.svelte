@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { DetailedCube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { clientLogger } from "$lib/logger/client";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
 
   const supabase = page.data.supabase;
 
@@ -13,7 +13,7 @@
    * Combines a user's cube ownership details with minimal vendor info
    * used for display in the card.
    */
-  interface LocalUserCubesType extends UserCubes {
+  interface LocalUserCubesType extends Tables<"user_cubes"> {
     vendor: { name: string };
   }
 
@@ -24,7 +24,7 @@
     user_rating,
   }: {
     mode?: "view" | "edit";
-    cube: DetailedCube;
+    cube: Tables<"v_detailed_cube_models">;
     user_details: LocalUserCubesType;
     user_rating: number;
   } = $props();

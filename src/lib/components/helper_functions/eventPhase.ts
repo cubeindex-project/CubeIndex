@@ -1,8 +1,10 @@
-import type { AwardsEvent } from "../dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
 type EventPhase = "upcoming" | "live" | "past" | "unknown";
 
-export const getEventPhase = (event: Pick<AwardsEvent, "start_at" | "end_at">): EventPhase => {
+export const getEventPhase = (
+  event: Pick<Tables<"awards_event">, "start_at" | "end_at">,
+): EventPhase => {
   const startMs = new Date(event.start_at).getTime();
   const endMs = new Date(event.end_at).getTime();
   const nowMs = Date.now();

@@ -1,13 +1,9 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type { Cube } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
-type SubmissionCube = Cube & {
-  verified_at: string | null;
-  submitted_by_id: string;
-  verified_by_id: string | null;
-};
+type SubmissionCube = Tables<"cube_models">;
 
 export const load = (async ({ locals }) => {
   const { supabase, user, log } = locals;

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Notifications } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import { toast } from "svelte-sonner";
 
   // Page state
-  let notifications: Notifications[] = $state([]);
+  let notifications: Tables<"notifications">[] = $state([]);
   let loading = $state(true);
   let loadError: string | null = $state(null);
   let markingAll = $state(false);

@@ -1,10 +1,7 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import type {
-  CubeSurfaceFinishes,
-  CubeVersionType,
-} from "$lib/components/dbTableTypes";
 import { AUTOFILL_SERVICE_URL } from "$env/static/private";
+import type { Enums, Tables } from "$lib/types/database.types";
 
 export interface AutofillResult {
   brand?: string;
@@ -13,8 +10,8 @@ export interface AutofillResult {
   discontinued?: boolean;
   release_date?: string;
   weight?: number;
-  version_type?: CubeVersionType;
-  surface_finish?: CubeSurfaceFinishes;
+  version_type?: Enums<"cube_version_type">;
+  surface_finish?: Enums<"cube_surface_finishes">;
   size?: string;
   magnetic?: boolean;
   maglev?: boolean;

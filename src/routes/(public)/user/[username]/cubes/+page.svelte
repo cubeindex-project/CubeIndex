@@ -5,14 +5,14 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
-  import type { Cube, UserCubes, Vendors } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
 
   let { data }: { data: PageData } = $props();
   const { profile, user } = data;
 
-  export interface CubeAndDetails extends UserCubes {
-    cube_model: Cube;
-    vendor: Vendors;
+  export interface CubeAndDetails extends Tables<"user_cubes"> {
+    cube_model: Tables<"cube_models">;
+    vendor: Tables<"vendors">;
   }
 
   const user_cubes: CubeAndDetails[] = $derived(data.user_cubes ?? []);

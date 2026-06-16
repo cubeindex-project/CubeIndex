@@ -70,8 +70,8 @@ export const load = (async ({ locals }) => {
     cubes,
     brands,
     types,
-    surfaces,
-    subTypes,
+    surfaces: (surfaces as string[] | null) ?? [],
+    subTypes: (subTypes as string[] | null) ?? [],
     meta: {
       title: "New Submission - CubeIndex"
     }

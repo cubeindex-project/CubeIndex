@@ -1,9 +1,9 @@
 <script lang="ts">
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
-  import type { Cube } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 
-  type CubeWithMeta = Cube & {
+  type CubeWithMeta = Tables<"cube_models"> & {
     year: number; // Release year extracted from date
     name: string; // Combined name for search
     wca_legal: boolean; // WCA legal feature flag

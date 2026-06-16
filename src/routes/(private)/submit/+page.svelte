@@ -1,6 +1,6 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
-  import type { DetailedCube } from "$lib/components/dbTableTypes.js";
+  import type { Tables } from "$lib/types/database.types";
   import SearchCubes, {
     type SearchCube,
   } from "$lib/components/cube/searchCubes.svelte";
@@ -14,7 +14,7 @@
 
   let { data } = $props();
   const { brands, types, surfaces, subTypes } = data;
-  const cubes: DetailedCube[] = $derived(data.cubes);
+  const cubes: Tables<"v_detailed_cube_models">[] = $derived(data.cubes);
 
   const {
     form,

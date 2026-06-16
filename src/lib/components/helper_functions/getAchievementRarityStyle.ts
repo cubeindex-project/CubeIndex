@@ -1,4 +1,4 @@
-import type { AchievementRarity } from "$lib/components/dbTableTypes";
+import type { Enums } from "$lib/types/database.types";
 
 /** Tailwind utility classes describing how to render an achievement rarity. */
 interface AchievementRarityPalette {
@@ -11,7 +11,7 @@ interface AchievementRarityPalette {
 }
 
 const ACHIEVEMENT_RARITY_STYLES: Record<
-  AchievementRarity,
+  Enums<"badge-rarity">,
   AchievementRarityPalette
 > = {
   Special: {
@@ -38,14 +38,14 @@ const ACHIEVEMENT_RARITY_STYLES: Record<
     badge: "bg-yellow-400",
     badgeText: "text-neutral-900",
   },
-  Exotic: {
-    bg: "bg-teal-400",
-    text: "text-neutral-900",
-    dot: "bg-teal-300",
-    bar: "bg-teal-400",
-    badge: "bg-teal-400",
-    badgeText: "text-neutral-900",
-  },
+  // Exotic: {
+  //   bg: "bg-teal-400",
+  //   text: "text-neutral-900",
+  //   dot: "bg-teal-300",
+  //   bar: "bg-teal-400",
+  //   badge: "bg-teal-400",
+  //   badgeText: "text-neutral-900",
+  // },
   Epic: {
     bg: "bg-purple-600",
     text: "text-white",
@@ -62,14 +62,14 @@ const ACHIEVEMENT_RARITY_STYLES: Record<
     badge: "bg-blue-600",
     badgeText: "text-white",
   },
-  Uncommon: {
-    bg: "bg-green-600",
-    text: "text-white",
-    dot: "bg-green-400",
-    bar: "bg-green-600",
-    badge: "bg-green-600",
-    badgeText: "text-white",
-  },
+  // Uncommon: {
+  //   bg: "bg-green-600",
+  //   text: "text-white",
+  //   dot: "bg-green-400",
+  //   bar: "bg-green-600",
+  //   badge: "bg-green-600",
+  //   badgeText: "text-white",
+  // },
   Common: {
     bg: "bg-neutral-700",
     text: "text-white",
@@ -86,7 +86,7 @@ const ACHIEVEMENT_RARITY_STYLES: Record<
  * @param rarity - The rarity string from the database or undefined
  */
 export function getAchievementRarityStyle(
-  rarity?: AchievementRarity,
+  rarity?: Enums<"badge-rarity">,
 ): AchievementRarityPalette {
   const key = rarity ?? "Common";
   return ACHIEVEMENT_RARITY_STYLES[key] ?? ACHIEVEMENT_RARITY_STYLES.Common;

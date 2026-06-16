@@ -1,19 +1,15 @@
 <script lang="ts">
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
-  import type {
-    AwardsEvent,
-    AwardsCategory,
-    DetailedCube,
-  } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
 
-  interface NomineeCube extends DetailedCube {
+  interface NomineeCube extends Tables<"v_detailed_cube_models"> {
     nominee_id: number;
   }
 
   let { data } = $props();
 
-  const event: AwardsEvent = data.current_event;
-  const category: AwardsCategory = data.awards_category;
+  const event: Tables<"awards_event"> = data.current_event;
+  const category: Tables<"awards_category"> = data.awards_category;
   const nominees: NomineeCube[] = data.awards_nominee;
   let userVote = $state(data.user_vote);
 

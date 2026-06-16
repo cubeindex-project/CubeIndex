@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type { UserStats } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
 export const load = (async ({ params, locals }) => {
   const { supabase, log } = locals;
@@ -31,7 +31,7 @@ export const load = (async ({ params, locals }) => {
     return logError(500, "Failed to fetch user stats", log, statsErr);
   }
 
-  const stats: UserStats = data || {};
+  const stats: Tables<"v_user_stats"> = data || ({} as Tables<"v_user_stats">);
 
   return {
     profile,

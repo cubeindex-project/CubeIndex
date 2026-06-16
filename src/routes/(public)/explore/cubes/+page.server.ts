@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type { DetailedCube } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
 export const load: PageServerLoad = async ({
   locals: { supabase, log },
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({
     return logError(500, "Failed to load cubes", log, err);
   }
 
-  const cubes: DetailedCube[] = data;
+  const cubes: Tables<"v_detailed_cube_models">[] = data;
 
   // Cache aggressively on the edge, allow stale while revalidating
   setHeaders({

@@ -1,4 +1,3 @@
-import { supabase } from "$lib/supabaseClient";
 import { type Actions, fail, redirect } from "@sveltejs/kit";
 import { slugify } from "$lib/components/helper_functions/slugify.svelte.js";
 import { getSubTypes } from "$lib/components/helper_functions/subType.svelte.js";
@@ -11,7 +10,10 @@ import { cubeSchema } from "$lib/components/validation/cubeForm.js";
 import { logError } from "$lib/server/logError";
 import { createLogger } from "$lib/server/logger";
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({
+  params,
+  locals: { supabase },
+}) => {
   const { slug } = params;
   const log = createLogger({ scope: "staff-cube-edit-load", slug });
 
@@ -66,7 +68,7 @@ export const load: PageServerLoad = async ({ params }) => {
       500,
       "Failed to load cubes from the same series",
       log,
-      ssErr
+      ssErr,
     );
   }
 
@@ -134,7 +136,7 @@ export const load: PageServerLoad = async ({ params }) => {
       vendorLinks: vendor_links,
     },
     zod4(cubeSchema),
-    { errors: false }
+    { errors: false },
   );
 
   const { data: profiles, error: profilesError } = await supabase
@@ -179,7 +181,7 @@ export const actions: Actions = {
             ? data.versionName.trim()
             : ""
           : ""
-      }`
+      }`,
     );
 
     if (data.type === "___other") {
@@ -212,7 +214,7 @@ export const actions: Actions = {
         data.sub_type === "auto"
           ? getSubTypes(
               (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                null
+                null,
             )
           : data.sub_type,
       release_date: data.releaseDate.trim(),
@@ -241,7 +243,12 @@ export const actions: Actions = {
       .eq("id", data.id);
 
     if (updateErr) {
-      return logError(500, "Failed to update cube information", locals.log, updateErr);
+      return logError(
+        500,
+        "Failed to update cube information",
+        locals.log,
+        updateErr,
+      );
     }
 
     const { error: upsertVenErr } = await locals.supabase
@@ -256,11 +263,16 @@ export const actions: Actions = {
         401,
         "You do not have permission to update vendor links for this cube.",
         locals.log,
-        upsertVenErr
+        upsertVenErr,
       );
     }
     if (upsertVenErr) {
-      return logError(500, "Failed to update vendor links", locals.log, upsertVenErr);
+      return logError(
+        500,
+        "Failed to update vendor links",
+        locals.log,
+        upsertVenErr,
+      );
     }
 
     const features = data.features;
@@ -279,7 +291,7 @@ export const actions: Actions = {
         500,
         "Failed to load existing cube features",
         locals.log,
-        rowsErr
+        rowsErr,
       );
     }
 
@@ -305,7 +317,7 @@ export const actions: Actions = {
           500,
           "Failed to add cube features",
           locals.log,
-          featUpErr
+          featUpErr,
         );
       }
     }
@@ -317,7 +329,7 @@ export const actions: Actions = {
         .eq("cube", slug)
         .in(
           "feature",
-          toRemove.map((code) => code)
+          toRemove.map((code) => code),
         );
 
       if (featUpErr) {
@@ -325,7 +337,7 @@ export const actions: Actions = {
           500,
           "Failed to remove cube features",
           locals.log,
-          featUpErr
+          featUpErr,
         );
       }
     }

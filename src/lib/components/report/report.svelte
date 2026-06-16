@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { page } from "$app/state";
   import { fade, scale } from "svelte/transition";
 
   let {
@@ -14,8 +14,8 @@
     reporLabel: string;
   } = $props();
 
-  const userCtx = getContext<any>("user");
-  let isConnected = $derived(Boolean(userCtx?.id ?? userCtx));
+  const user = $derived(page.data.user);
+  let isConnected = $derived(Boolean(user));
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
@@ -60,7 +60,7 @@ Add any other context about the problem here.`;
     }
     if (e.key === "Tab" && dialogEl) {
       const focusables = dialogEl.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])',
       );
       const list = Array.from(focusables);
       if (!list.length) return;
@@ -206,7 +206,11 @@ Add any other context about the problem here.`;
       </div>
 
       <!-- Status / errors -->
-      <div class="min-h-5 text-sm text-error" aria-live="polite" aria-atomic="true">
+      <div
+        class="min-h-5 text-sm text-error"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {formMessage}
         {#if !isConnected}
           You must be logged in to perform this action.

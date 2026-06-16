@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { supabase } from "$lib/supabaseClient.js";
   import { Turnstile } from "svelte-turnstile";
   import { superForm } from "sveltekit-superforms";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   const { data } = $props();
 

@@ -1,7 +1,7 @@
 import type { PageLoad } from "./$types";
-import { supabase } from "$lib/supabaseClient";
 
-export const load = (async () => {
+export const load = (async ({ parent }) => {
+  const { supabase } = await parent();
   const { data: user_cube_ratings, error: urErr } = await supabase
     .from("user_cube_ratings")
     .select("*, cube_slug(*), user_id(*)");

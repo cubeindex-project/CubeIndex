@@ -1,10 +1,9 @@
-import { supabase } from "$lib/supabaseClient";
 import type { PageLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 
 export const load = (async ({ setHeaders, parent }) => {
-  const { user } = await parent();
+  const { user, supabase } = await parent();
 
   const { data: achievements, error: err } = await supabase
     .from("v_achievement_rarity")

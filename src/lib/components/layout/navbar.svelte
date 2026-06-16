@@ -1,18 +1,19 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { onMount } from "svelte";
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
-  import type { User } from "@supabase/supabase-js";
+  import { page } from "$app/state";
 
   let { profile } = $props();
+
+  const user = $derived(page.data.user);
 
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
-  const user = getContext<User | null>("user");
 
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {
@@ -179,7 +180,10 @@
   $effect(() => {
     if (!mobileUserMenuOpen) return;
     function handleClickOutside(event: MouseEvent) {
-      if (mobileUserMenuRef && !mobileUserMenuRef.contains(event.target as Node)) {
+      if (
+        mobileUserMenuRef &&
+        !mobileUserMenuRef.contains(event.target as Node)
+      ) {
         mobileUserMenuOpen = false;
       }
     }

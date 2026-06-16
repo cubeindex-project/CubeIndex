@@ -9,7 +9,7 @@ import {
 } from "$env/static/public";
 import type { LayoutLoad } from "./$types";
 
-export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+export const load = (async ({ data, depends, fetch }) => {
   /**
    * Declare a dependency so the layout can be invalidated, for example, on
    * session refresh.
@@ -46,5 +46,5 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return { supabase, session };
-};
+  return { ...data, supabase, session };
+}) satisfies LayoutLoad;

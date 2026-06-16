@@ -38,6 +38,7 @@ export const load: LayoutServerLoad = async ({
 
   return {
     profile,
+    user,
     session,
     cookies: cookies.getAll(),
     umamiTag,

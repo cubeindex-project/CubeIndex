@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { supabase } from "$lib/supabaseClient";
   import { onMount } from "svelte";
+  import { page } from "$app/state";
+
+  const supabase = page.data.supabase;
 
   let staff_logs: any[] = $state([]);
 
@@ -37,7 +39,7 @@
 
   let logs: LogEntry[] = $derived(staff_logs);
   let debouncedSearch = $state("");
-  let page = $state(1);
+  let currentPage = $state(1);
   let pageSize = $state(50);
 
   let filtered: LogEntry[] = $state([]);
@@ -53,7 +55,7 @@
    */
   function diff<T extends Record<string, any>>(
     oldData: T | null,
-    newData: T | null
+    newData: T | null,
   ): Partial<{ [K in keyof T]: { from: T[K] | null; to: T[K] | null } }> {
     const result: Partial<{
       [K in keyof T]: { from: T[K] | null; to: T[K] | null };
@@ -103,7 +105,7 @@
   // Debounce the search input to improve performance
   const onSearchInput = debounce((val: string) => {
     debouncedSearch = val.toLowerCase();
-    page = 1;
+    currentPage = 1;
   }, 300);
 
   function formatDate(dateString: string): string {
@@ -127,7 +129,7 @@
         log.staff_id.display_name.toLowerCase().includes(debouncedSearch) ||
         log.action.toLowerCase().includes(debouncedSearch) ||
         log.created_at.toLowerCase().includes(debouncedSearch) ||
-        log.target_table.toLowerCase().includes(debouncedSearch)
+        log.target_table.toLowerCase().includes(debouncedSearch),
     );
   });
 
@@ -135,25 +137,28 @@
   $effect(() => {
     totalPages = Math.ceil(filtered.length / pageSize) || 1;
     {
-      if (page > totalPages) page = totalPages;
-      if (page < 1) page = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
     }
   });
 
   $effect(() => {
-    paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+    paginated = filtered.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize,
+    );
   });
 
   function prevPage() {
-    if (page > 1) page -= 1;
+    if (currentPage > 1) currentPage -= 1;
   }
 
   function nextPage() {
-    if (page < totalPages) page += 1;
+    if (currentPage < totalPages) currentPage += 1;
   }
 
   function goToPage(p: number) {
-    page = p;
+    currentPage = p;
   }
 </script>
 
@@ -282,15 +287,17 @@
     <button
       class="join-item btn btn-sm"
       onclick={prevPage}
-      disabled={page === 1}
+      disabled={currentPage === 1}
     >
       «
     </button>
 
     {#each Array(totalPages) as _, i}
-      {#if i < 2 || i >= totalPages - 2 || (i >= page - 2 && i <= page + 1)}
+      {#if i < 2 || i >= totalPages - 2 || (i >= currentPage - 2 && i <= currentPage + 1)}
         <button
-          class="join-item btn btn-sm {page === i + 1 ? 'btn-active' : ''}"
+          class="join-item btn btn-sm {currentPage === i + 1
+            ? 'btn-active'
+            : ''}"
           onclick={() => goToPage(i + 1)}
         >
           {i + 1}
@@ -303,7 +310,7 @@
     <button
       class="join-item btn btn-sm"
       onclick={nextPage}
-      disabled={page === totalPages}
+      disabled={currentPage === totalPages}
     >
       »
     </button>

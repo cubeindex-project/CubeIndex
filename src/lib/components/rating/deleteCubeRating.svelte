@@ -1,8 +1,12 @@
 <script lang="ts">
   import { blur } from "svelte/transition";
 
-  let { cube_slug, onCancel }: { cube_slug: string; onCancel: () => void } =
-    $props();
+  interface Props {
+    cube_slug: string;
+    onCancel: () => void;
+  }
+
+  let { cube_slug, onCancel }: Props = $props();
 
   let loading = $state(false);
   let success = $state(false);

@@ -4,7 +4,11 @@
    * Renders the same cards previously shown on /explore.
    * Client-only UI with accessible fallbacks handled by parent trigger.
    */
-  let { id = "explore-popover" } = $props<{ id?: string }>();
+  interface Props {
+    id?: string;
+  }
+
+  let { id = "explore-popover" }: Props = $props();
   interface ExploreCard {
     href: string;
     icon: string;

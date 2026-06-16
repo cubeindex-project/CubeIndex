@@ -1,13 +1,12 @@
 <script lang="ts">
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
-  import type { PageData } from "./$types";
   import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import type { Tables } from "$lib/types/database.types";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   const { profile, user } = data;
 
   export interface CubeAndDetails extends Tables<"user_cubes"> {

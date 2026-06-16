@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import StaffRatingCard from "$lib/components/rating/staffRatingCard.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
 
@@ -24,7 +23,7 @@
     };
   };
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   let { user_cube_ratings }: { user_cube_ratings: StaffRating[] | null } = data;
 
   let searchTerm: string = $state("");

@@ -1,5 +1,10 @@
 <script lang="ts">
-  const { label, gradient }: { label: string; gradient: string } = $props();
+  interface Props {
+    label: string;
+    gradient: string;
+  }
+
+  const { label, gradient }: Props = $props();
 </script>
 
 <span

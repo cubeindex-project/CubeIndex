@@ -3,17 +3,19 @@
   import Avatar from "./avatar.svelte";
   import Badge from "./badge.svelte";
 
+  interface Props {
+    profile: Tables<"v_detailed_profiles">;
+    showCount?: boolean;
+    compact?: boolean; // tighter padding + smaller avatar/text
+    showArrow?: boolean; // hide the chevron if you need a quieter list
+  }
+
   const {
     profile,
     showCount = true,
     compact = false,
     showArrow = true,
-  }: {
-    profile: Tables<"v_detailed_profiles">;
-    showCount?: boolean;
-    compact?: boolean; // tighter padding + smaller avatar/text
-    showArrow?: boolean; // hide the chevron if you need a quieter list
-  } = $props();
+  }: Props = $props();
 
   const href = $derived(
     profile.username ? `/user/${profile.username}` : undefined,

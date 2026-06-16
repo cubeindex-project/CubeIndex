@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import Markdown from "$lib/components/misc/markdown.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
 
   const profile = $derived(data.profile);
   const main_cubes = $derived(data.main_cubes);

@@ -14,6 +14,15 @@
    * A compact sort selector with a field dropdown and a toggle for direction,
    * matching the profile cubes page UX (select + up/down icon button).
    */
+  interface Props {
+    sortField: string;
+    sortOrder: "asc" | "desc";
+    fields: SortFieldOption[];
+    useronchange?: () => void;
+    id?: string;
+    label?: string;
+  }
+
   let {
     /** The current sort field value. */
     sortField = $bindable("name"),
@@ -27,14 +36,7 @@
     id = "sortBy",
     /** Optional label text. */
     label = "Sort",
-  }: {
-    sortField: string;
-    sortOrder: "asc" | "desc";
-    fields: SortFieldOption[];
-    useronchange?: () => void;
-    id?: string;
-    label?: string;
-  } = $props();
+  }: Props = $props();
 
   function toggleDir() {
     sortOrder = sortOrder === "desc" ? "asc" : "desc";

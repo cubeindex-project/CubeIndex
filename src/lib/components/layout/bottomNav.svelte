@@ -3,7 +3,11 @@
   import type { Tables } from "$lib/types/database.types";
   import { onMount } from "svelte";
 
-  let { profile }: { profile: Tables<"profiles"> | null } = $props();
+  interface Props {
+    profile: Tables<"profiles"> | null;
+  }
+
+  let { profile }: Props = $props();
 
   const pathname = $derived(page.url.pathname);
   const isEmailVerified = $derived(profile?.verified ?? false);

@@ -1,8 +1,13 @@
 <script lang="ts">
+  interface Props {
+    currentPage: number;
+    totalPages: number;
+  }
+
   let {
     currentPage = $bindable(),
     totalPages,
-  }: { currentPage: number; totalPages: number } = $props();
+  }: Props = $props();
 
   function goToPreviousPage() {
     if (currentPage > 1) {

@@ -1,15 +1,17 @@
 <script lang="ts">
+  interface Props {
+    url: string;
+    text?: string;
+    label?: string;
+    btnClass?: string;
+  }
+
   let {
     url,
     text = "Check this out!",
     label = "Share",
     btnClass = "btn btn-accent",
-  }: {
-    url: string;
-    text?: string;
-    label?: string;
-    btnClass?: string;
-  } = $props();
+  }: Props = $props();
 
   async function shareCurrent() {
     if (!url) url = window.location.href;

@@ -5,13 +5,12 @@
   import type { Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
 
-  const {
-    user_cube_ratings,
-    cube,
-  }: {
+  interface Props {
     user_cube_ratings: Tables<"user_cube_ratings">[];
     cube: Tables<"v_detailed_cube_models">;
-  } = $props();
+  }
+
+  const { user_cube_ratings, cube }: Props = $props();
 
   const user = $derived(page.data.user);
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import type { Enums } from "$lib/types/database.types";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
   import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
@@ -7,7 +6,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   const { user_achievements = [], profile } = data;
 
   // Search, filters, sort, pagination

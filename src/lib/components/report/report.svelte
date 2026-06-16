@@ -2,17 +2,19 @@
   import { page } from "$app/state";
   import { fade, scale } from "svelte/transition";
 
+  interface Props {
+    onCancel: () => void;
+    reportType: "user" | "cube" | "cube-rating" | "website";
+    reported: string;
+    reporLabel: string;
+  }
+
   let {
     onCancel,
     reportType,
     reported,
     reporLabel,
-  }: {
-    onCancel: () => void;
-    reportType: "user" | "cube" | "cube-rating" | "website";
-    reported: string;
-    reporLabel: string;
-  } = $props();
+  }: Props = $props();
 
   const user = $derived(page.data.user);
   let isConnected = $derived(Boolean(user));

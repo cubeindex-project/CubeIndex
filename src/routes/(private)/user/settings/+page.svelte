@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
   import { queryParameters } from "sveltekit-search-params";
@@ -7,7 +6,7 @@
   import Markdown from "$lib/components/misc/markdown.svelte";
 
   // Props & initial state
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
 
   const { form, errors, enhance, message, delayed, isTainted, tainted } =
     superForm(data.profileForm, {

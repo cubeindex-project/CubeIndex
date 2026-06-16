@@ -27,6 +27,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/svelte": "^5.2.4",
     "@types/culori": "^4.0.0",
+    "@types/node": "^25.9.3",
     "eslint": "^9.18.0",
     "eslint-plugin-svelte": "^3.0.0",
     "globals": "^16.0.0",

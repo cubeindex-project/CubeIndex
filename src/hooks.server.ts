@@ -5,7 +5,7 @@ import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_PUBLISHABLE_KEY,
 } from "$env/static/public";
-import { randomUUID } from "node:crypto";
+import { randomUUID } from "crypto";
 import { createLogger } from "$lib/server/logger";
 import { logError } from "$lib/server/logError";
 
@@ -36,7 +36,10 @@ const supabase: Handle = async ({ event, resolve }) => {
         getAll() {
           return event.cookies.getAll();
         },
-        setAll(cookiesToSet, headers) {
+        setAll(
+          cookiesToSet: Array<{ name: string; value: string; options: any }>,
+          headers: any,
+        ) {
           /**
            * Note: You have to add the `path` variable to the
            * set and remove method due to sveltekit's cookie API

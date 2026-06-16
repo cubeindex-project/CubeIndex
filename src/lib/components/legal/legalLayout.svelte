@@ -4,6 +4,13 @@
    */
   type Section = { title: string; content: string };
 
+  interface Props {
+    title: string;
+    lastUpdated: string;
+    sections: Section[];
+    historyURL?: string;
+  }
+
   /**
    * Props for the legal layout wrapper.
    * - title: The page title (e.g., Terms of Service, Privacy Policy)
@@ -11,17 +18,7 @@
    * - sections: Structured content blocks for the document
    * - historyURL: Optional URL to the document's source/history on GitHub
    */
-  let {
-    title,
-    lastUpdated,
-    sections,
-    historyURL,
-  }: {
-    title: string;
-    lastUpdated: string;
-    sections: Section[];
-    historyURL?: string;
-  } = $props();
+  let { title, lastUpdated, sections, historyURL }: Props = $props();
 </script>
 
 <section class="min-h-screen px-6 py-24">

@@ -2,12 +2,7 @@
   import { blur } from "svelte/transition";
   import type { Snippet } from "svelte";
 
-  let {
-    showFilters,
-    asideClass = "",
-    wrapperClass = "top-7",
-    children,
-  }: {
+  interface Props {
     /** Whether the sidebar should be displayed */
     showFilters: boolean;
     /** Additional classes for the <aside> wrapper */
@@ -16,7 +11,14 @@
     wrapperClass?: string;
     /** Slot rendering function for filter contents */
     children: Snippet;
-  } = $props();
+  }
+
+  let {
+    showFilters,
+    asideClass = "",
+    wrapperClass = "top-7",
+    children,
+  }: Props = $props();
 </script>
 
 {#if showFilters}

@@ -12,7 +12,7 @@
   let markingIds = $state<Set<string>>(new Set());
 
   const { data } = $props();
-  const { user, profile } = data;
+  const { user, profile } = $derived(data);
 
   // Email verification/resend state
   const isVerified = $derived(profile?.verified ?? false);

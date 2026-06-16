@@ -7,13 +7,15 @@
 
   const user = page.data.user;
 
+  interface Props {
+    user_cube_ratings: Tables<"user_cube_ratings">[];
+    cube: Tables<"v_detailed_cube_models">;
+  }
+
   const {
     user_cube_ratings,
     cube,
-  }: {
-    user_cube_ratings: Tables<"user_cube_ratings">[];
-    cube: Tables<"v_detailed_cube_models">;
-  } = $props();
+  }: Props = $props();
 
   let searchTerm: string = $state("");
 

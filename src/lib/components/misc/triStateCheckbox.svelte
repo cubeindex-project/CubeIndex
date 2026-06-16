@@ -1,13 +1,15 @@
 <script lang="ts">
+  interface Props {
+    value: boolean | null | undefined;
+    label: string;
+    onchange?: () => void;
+  }
+
   let {
     value = $bindable(),
     label,
     onchange = () => {},
-  }: {
-    value: boolean | null | undefined;
-    label: string;
-    onchange?: () => void;
-  } = $props();
+  }: Props = $props();
   let box: HTMLInputElement;
 
   function cycle() {

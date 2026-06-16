@@ -6,17 +6,19 @@
 
   const supabase = page.data.supabase;
 
+  interface Props {
+    reason: "Accept" | "Reject";
+    onCancel: () => void;
+    cube_id: number;
+    cube_name: string;
+  }
+
   let {
     reason,
     onCancel,
     cube_id,
     cube_name,
-  }: {
-    reason: "Accept" | "Reject";
-    onCancel: () => void;
-    cube_id: number;
-    cube_name: string;
-  } = $props();
+  }: Props = $props();
 
   let note: string = $state("");
   let otherNote: string = $state("");

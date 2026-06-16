@@ -1,17 +1,19 @@
 <script lang="ts">
+  interface Props {
+    placeholderLabel?: string;
+    showFilter: boolean;
+    filterAction?: () => void;
+    searchTerm: string;
+    oninput?: () => void;
+  }
+
   let {
     placeholderLabel = "",
     showFilter,
     filterAction = () => {},
     searchTerm = $bindable(),
     oninput = () => {},
-  }: {
-    placeholderLabel?: string;
-    showFilter: boolean;
-    filterAction?: () => void;
-    searchTerm: string;
-    oninput?: () => void;
-  } = $props();
+  }: Props = $props();
 </script>
 
 <div class="flex items-center mb-6">

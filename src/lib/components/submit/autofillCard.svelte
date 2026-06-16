@@ -3,12 +3,7 @@
   import { cleanLink } from "../helper_functions/linkCleaner";
   import Card from "../layout/card.svelte";
 
-  let {
-    onCancel,
-    applyData,
-    variables = $bindable(),
-    dirty,
-  } = $props<{
+  interface Props {
     onCancel: () => void;
     applyData: (data: AutofillResult) => void;
     variables: {
@@ -18,7 +13,14 @@
       success: boolean;
     };
     dirty: boolean;
-  }>();
+  }
+
+  let {
+    onCancel,
+    applyData,
+    variables = $bindable(),
+    dirty,
+  }: Props = $props();
 
   async function requestAutofill(e: SubmitEvent) {
     e.preventDefault();

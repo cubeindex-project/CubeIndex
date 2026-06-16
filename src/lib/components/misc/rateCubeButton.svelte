@@ -1,6 +1,10 @@
 <script lang="ts">
-  const { onClick, addClass }: { onClick: () => void; addClass?: string } =
-    $props();
+  interface Props {
+    onClick: () => void;
+    addClass?: string;
+  }
+
+  const { onClick, addClass }: Props = $props();
 </script>
 
 <button

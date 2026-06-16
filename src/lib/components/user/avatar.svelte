@@ -6,11 +6,17 @@
     "display_name" | "profile_picture"
   >;
 
+  interface Props {
+    profile: ProfileAvatar;
+    imgSize: string;
+    textSize: string;
+  }
+
   const {
     profile,
     imgSize,
     textSize,
-  }: { profile: ProfileAvatar; imgSize: string; textSize: string } = $props();
+  }: Props = $props();
 </script>
 
 {#if profile.profile_picture}

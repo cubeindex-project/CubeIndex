@@ -2,10 +2,12 @@
   import { page } from "$app/state";
   import Tag from "$lib/components/misc/tag.svelte";
 
-  // Svelte 5 runes flavor
-  const { data } = $props<{
+  interface Props {
     data: { username: string; display_name: string };
-  }>();
+  }
+
+  // Svelte 5 runes flavor
+  const { data }: Props = $props();
 
   const username = data.username;
   const displayName = data.display_name;

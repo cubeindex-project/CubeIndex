@@ -3,10 +3,8 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
-  import type { PageData } from "./$types";
-  import type { Tables } from "$lib/types/database.types";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   const { profile, user, followers, following, isFollowing } = data;
 
   // Tabs

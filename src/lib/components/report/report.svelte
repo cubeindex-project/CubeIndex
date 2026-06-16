@@ -2,17 +2,19 @@
   import { getContext } from "svelte";
   import { fade, scale } from "svelte/transition";
 
+  interface Props {
+    onCancel: () => void;
+    reportType: "user" | "cube" | "cube-rating" | "website";
+    reported: string;
+    reporLabel: string;
+  }
+
   let {
     onCancel,
     reportType,
     reported,
     reporLabel,
-  }: {
-    onCancel: () => void;
-    reportType: "user" | "cube" | "cube-rating" | "website";
-    reported: string;
-    reporLabel: string;
-  } = $props();
+  }: Props = $props();
 
   const userCtx = getContext<any>("user");
   let isConnected = $derived(Boolean(userCtx?.id ?? userCtx));

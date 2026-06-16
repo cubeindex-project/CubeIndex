@@ -1,6 +1,10 @@
 <script lang="ts">
-  const { user_id, isFollowing }: { user_id: string; isFollowing: boolean } =
-    $props();
+  interface Props {
+    user_id: string;
+    isFollowing: boolean;
+  }
+
+  const { user_id, isFollowing }: Props = $props();
 
   async function follow(following_id: string) {
     const payload: { following_id: string } = { following_id };

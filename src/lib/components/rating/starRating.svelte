@@ -3,13 +3,15 @@
 
 <script lang="ts">
   import Star from "./Star.svelte";
+  interface Props {
+    readOnly: boolean;
+    rating: number;
+  }
+
   let {
     readOnly = false,
     rating = $bindable(0.0),
-  }: {
-    readOnly: boolean;
-    rating: number;
-  } = $props();
+  }: Props = $props();
 
   let fills: number[] = $state([]);
 

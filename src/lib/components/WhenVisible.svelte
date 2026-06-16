@@ -2,6 +2,14 @@
   import { inView, type InViewOptions } from "$lib/actions/inView";
   import type { Snippet } from "svelte";
 
+  interface Props {
+    once?: boolean;
+    root?: Element | null;
+    rootMargin?: string;
+    threshold?: number | number[];
+    children: Snippet;
+  }
+
   /** Whether to keep content visible after first entry */
   const {
     once = true,
@@ -9,13 +17,7 @@
     rootMargin = "0px",
     threshold = 0,
     children,
-  }: {
-    once?: boolean;
-    root?: Element | null;
-    rootMargin?: string;
-    threshold?: number | number[];
-    children: Snippet;
-  } = $props();
+  }: Props = $props();
 
   let show = $state(false);
 

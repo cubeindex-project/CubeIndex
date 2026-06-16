@@ -4,9 +4,8 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  import type { PageData } from "./$types";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   let { user_cube_ratings = [], user, profile } = data;
 
   // Pagination

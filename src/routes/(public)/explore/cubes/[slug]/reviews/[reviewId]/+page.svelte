@@ -2,9 +2,8 @@
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
-  import type { PageData } from "./$types";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   let { cube, review } = $derived(data);
 
   const reviewText = $derived(review.review.trim());

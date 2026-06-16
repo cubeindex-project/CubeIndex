@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
   import type { Tables } from "$lib/types/database.types";
 
-  const { data } = $props<{ data: PageData }>();
+  const { data } = $props();
   let submissions: Tables<"cube_models">[] = $derived(data.submissions ?? []);
 
   type FilterKey = "all" | "pending" | "approved" | "rejected";

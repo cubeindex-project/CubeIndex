@@ -6,15 +6,13 @@
     value: string;
   }
 
-  let {
-    cubes,
-    outputVar = $bindable(),
-    disabled,
-  }: {
+  interface Props {
     cubes: SearchCube[];
     outputVar: string | undefined;
     disabled?: boolean;
-  } = $props();
+  }
+
+  let { cubes, outputVar = $bindable(), disabled }: Props = $props();
 
   const fuse = $derived.by(
     () =>

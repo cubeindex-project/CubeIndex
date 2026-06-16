@@ -3,11 +3,11 @@
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import type { Tables } from "$lib/types/database.types";
 
-  let {
-    cube,
-  }: {
+  interface Props {
     cube: Tables<"v_detailed_cube_models">;
-  } = $props();
+  }
+
+  let { cube }: Props = $props();
 
   const statusCopy: Record<string, string> = {
     Approved: "Great news! Your cube is live on CubeIndex.",

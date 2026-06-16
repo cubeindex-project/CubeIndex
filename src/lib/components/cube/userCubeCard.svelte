@@ -17,17 +17,14 @@
     vendor: { name: string };
   }
 
-  let {
-    mode = "view",
-    cube,
-    user_details,
-    user_rating,
-  }: {
+  interface Props {
     mode?: "view" | "edit";
     cube: Tables<"v_detailed_cube_models">;
     user_details: LocalUserCubesType;
     user_rating: number;
-  } = $props();
+  }
+
+  let { mode = "view", cube, user_details, user_rating }: Props = $props();
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);

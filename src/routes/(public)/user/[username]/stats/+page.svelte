@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type { PageData } from "./$types";
   import type { Chart as ChartJS } from "chart.js";
 
-  const { data }: { data: PageData } = $props();
+  const { data } = $props();
   const { profile, stats } = $derived(data);
 
   const hasData = $derived(stats.cube_count > 0);

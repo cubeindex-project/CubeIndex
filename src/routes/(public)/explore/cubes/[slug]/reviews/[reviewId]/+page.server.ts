@@ -4,7 +4,10 @@ import { error } from "@sveltejs/kit";
 import type { Tables } from "$lib/types/database.types";
 
 interface DetailedUserCubeReviewWithProfile extends Tables<"v_detailed_user_cube_reviews"> {
-  profile: Pick<Tables<"profiles">, "username" | "display_name" | "profile_picture">;
+  profile: Pick<
+    Tables<"profiles">,
+    "username" | "display_name" | "profile_picture"
+  >;
 }
 
 export const load = (async ({

@@ -4,9 +4,7 @@
  * @param opts
  * @returns Cleaned URL string
  */
-export function cleanLink(
-  link: string,
-): string {
+export function cleanLink(link: string): string {
   let url: URL;
 
   // 1) Parse or extract URL
@@ -18,7 +16,7 @@ export function cleanLink(
       if (match) {
         url = new URL(match[0]);
       } else {
-        console.warn('cleanLink: no valid URL found in:', link);
+        console.warn("cleanLink: no valid URL found in:", link);
         return link;
       }
     } else {
@@ -28,19 +26,19 @@ export function cleanLink(
 
   // 2) Unwrap known redirectors
   const { host, pathname, searchParams } = url;
-  if (host === 'l.facebook.com' && searchParams.has('u')) {
-    url = new URL(decodeURIComponent(searchParams.get('u')!));
-  } else if (host === 'href.li') {
-    const qs = url.href.split('?')[1] ?? '';
+  if (host === "l.facebook.com" && searchParams.has("u")) {
+    url = new URL(decodeURIComponent(searchParams.get("u")!));
+  } else if (host === "href.li") {
+    const qs = url.href.split("?")[1] ?? "";
     url = new URL(qs);
   } else if (
-    host === 'www.google.com' &&
-    pathname === '/url' &&
-    searchParams.has('url')
+    host === "www.google.com" &&
+    pathname === "/url" &&
+    searchParams.has("url")
   ) {
-    url = new URL(searchParams.get('url')!);
-  } else if (host === 'cts.businesswire.com' && searchParams.has('url')) {
-    url = new URL(searchParams.get('url')!);
+    url = new URL(searchParams.get("url")!);
+  } else if (host === "cts.businesswire.com" && searchParams.has("url")) {
+    url = new URL(searchParams.get("url")!);
   }
 
   // Start building the cleaned URL
@@ -49,8 +47,8 @@ export function cleanLink(
   // 3) Preserve safe parameters
   const keepParams: Record<string, boolean> = {
     q: true,
-    id: host.includes('play.google.com') && searchParams.has('id'),
-    ID: host.includes('macys.com') && searchParams.has('ID')
+    id: host.includes("play.google.com") && searchParams.has("id"),
+    ID: host.includes("macys.com") && searchParams.has("ID"),
   };
   for (const [key, keep] of Object.entries(keepParams)) {
     if (keep && searchParams.has(key)) {

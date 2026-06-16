@@ -22,7 +22,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "An error occurred",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (!title || !comment)
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "Please make sure you filled all the required fields",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   const { error: err } = await locals.supabase.from("reports").insert([
@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: err.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   return json({ success: true });

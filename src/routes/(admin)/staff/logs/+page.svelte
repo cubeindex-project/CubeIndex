@@ -143,7 +143,10 @@
   });
 
   $effect(() => {
-    paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    paginated = filtered.slice(
+      (currentPage - 1) * pageSize,
+      currentPage * pageSize,
+    );
   });
 
   function prevPage() {
@@ -292,7 +295,9 @@
     {#each Array(totalPages) as _, i}
       {#if i < 2 || i >= totalPages - 2 || (i >= currentPage - 2 && i <= currentPage + 1)}
         <button
-          class="join-item btn btn-sm {currentPage === i + 1 ? 'btn-active' : ''}"
+          class="join-item btn btn-sm {currentPage === i + 1
+            ? 'btn-active'
+            : ''}"
           onclick={() => goToPage(i + 1)}
         >
           {i + 1}

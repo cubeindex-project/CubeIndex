@@ -18,7 +18,9 @@
         throw new Error(`Failed to follow user: ${data.error}`);
       }
     } catch (err: any) {
-      throw new Error(`Network error while trying to follow user: ${err.message}`);
+      throw new Error(
+        `Network error while trying to follow user: ${err.message}`,
+      );
     }
   }
 

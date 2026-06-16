@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({
       {
         error: "Failed to verify the current event",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({
       {
         error: "This event is not currently active",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -64,7 +64,7 @@ export const POST: RequestHandler = async ({
       {
         error: "Failed to verify the event category",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -73,7 +73,7 @@ export const POST: RequestHandler = async ({
       {
         error: "This category is not part of the event",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -86,13 +86,13 @@ export const POST: RequestHandler = async ({
   if (cnErr) {
     log.error(
       { err: cnErr },
-      "Failed to verify if the nominee is part of the category"
+      "Failed to verify if the nominee is part of the category",
     );
     return json(
       {
         error: "Failed to verify if the nominee is part of the category",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -101,7 +101,7 @@ export const POST: RequestHandler = async ({
       {
         error: "The nominee is not part of the category",
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -114,20 +114,20 @@ export const POST: RequestHandler = async ({
   if (auvcErr) {
     log.error(
       { err: auvcErr },
-      "Failed to verify if you have already voted for this category"
+      "Failed to verify if you have already voted for this category",
     );
     return json(
       {
         error: "Failed to verify if you have already voted for this category",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   if (awards_user_vote_count && awards_user_vote_count >= 1) {
     return json(
       { error: "You have already voted for this category" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -140,7 +140,7 @@ export const POST: RequestHandler = async ({
   if (auvErr?.code === "23505") {
     return json(
       { error: "You have already voted for this cube in this category" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -150,7 +150,7 @@ export const POST: RequestHandler = async ({
       {
         error: "Failed to insert user vote",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

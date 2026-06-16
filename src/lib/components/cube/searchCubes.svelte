@@ -1,10 +1,10 @@
 <script lang="ts">
-    import Fuse from "fuse.js";
+  import Fuse from "fuse.js";
 
-    export interface SearchCube {
-      label: string;
-      value: string;
-    }
+  export interface SearchCube {
+    label: string;
+    value: string;
+  }
 
   let {
     cubes,
@@ -16,16 +16,14 @@
     disabled?: boolean;
   } = $props();
 
-
-
-    const fuse = $derived.by(
-      () =>
-        new Fuse(cubes, {
-          keys: ["label"],
-          threshold: 0.4,
-          ignoreLocation: true,
-        })
-    );
+  const fuse = $derived.by(
+    () =>
+      new Fuse(cubes, {
+        keys: ["label"],
+        threshold: 0.4,
+        ignoreLocation: true,
+      }),
+  );
 
   let search = $state("");
   let searchCubes: {
@@ -47,8 +45,8 @@
 <ul class="border rounded max-h-40 overflow-auto">
   {#if disabled}
     <li class="p-2 italic">Disabled</li>
-    {:else if searchCubes.length === 0}
-      <li class="p-2 italic">No matches</li>
+  {:else if searchCubes.length === 0}
+    <li class="p-2 italic">No matches</li>
   {:else}
     {#each searchCubes as c (c.value)}
       <button

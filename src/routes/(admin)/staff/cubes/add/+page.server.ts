@@ -51,7 +51,7 @@ export const actions: Actions = {
     const slug = slugify(
       `${data.series ? data.series : ""} ${data.model} ${
         data.versionName ? data.versionName : ""
-      }`
+      }`,
     );
 
     if (data.type === "___other") {
@@ -84,7 +84,7 @@ export const actions: Actions = {
         data.sub_type === "auto"
           ? getSubTypes(
               (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                null
+                null,
             )
           : data.sub_type,
       release_date: data.releaseDate.trim(),
@@ -127,7 +127,7 @@ export const actions: Actions = {
         500,
         "Failed to load existing cube features",
         locals.log,
-        rowsErr
+        rowsErr,
       );
     }
 
@@ -153,7 +153,7 @@ export const actions: Actions = {
           500,
           "Failed to add cube features",
           locals.log,
-          featUpErr
+          featUpErr,
         );
       }
     }
@@ -165,7 +165,7 @@ export const actions: Actions = {
         .eq("cube", slug)
         .in(
           "feature",
-          toRemove.map((code) => code)
+          toRemove.map((code) => code),
         );
 
       if (featUpErr) {
@@ -173,7 +173,7 @@ export const actions: Actions = {
           500,
           "Failed to remove cube features",
           locals.log,
-          featUpErr
+          featUpErr,
         );
       }
     }

@@ -37,9 +37,9 @@
       new Set(
         user_cube_ratings
           .map((r) => r.cube_model?.type as string)
-          .filter(Boolean)
-      )
-    ).sort()
+          .filter(Boolean),
+      ),
+    ).sort(),
   );
 
   const filteredRatings = $derived.by(() => {
@@ -94,7 +94,7 @@
   });
 
   const totalPages = $derived.by(() =>
-    Math.max(1, Math.ceil(sortedRatings.length / itemsPerPage))
+    Math.max(1, Math.ceil(sortedRatings.length / itemsPerPage)),
   );
 
   function resetFilters() {
@@ -226,8 +226,8 @@
               <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
               <h2 class="text-2xl font-semibold mb-2">No ratings found</h2>
               <p class="mb-6 text-center max-w-xs">
-                We couldn't find any ratings matching your search or filters. Try
-                adjusting them or resetting to see everything.
+                We couldn't find any ratings matching your search or filters.
+                Try adjusting them or resetting to see everything.
               </p>
               <button
                 onclick={() => {

@@ -252,10 +252,7 @@
             </a>
           {:else}
             {#if user?.id && user.id !== profile.user_id}
-              <FollowButton
-                user_id={profile.user_id}
-                isFollowing={following}
-              />
+              <FollowButton user_id={profile.user_id} isFollowing={following} />
             {/if}
             <button class="btn btn-error" onclick={toggleOpenReport}>
               <i class="fa-solid fa-flag"></i>

@@ -3,7 +3,11 @@ import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
 
-export const load = (async ({ locals: { user, log, supabase }, params, url }) => {
+export const load = (async ({
+  locals: { user, log, supabase },
+  params,
+  url,
+}) => {
   const { username } = params;
 
   // 1) Profile

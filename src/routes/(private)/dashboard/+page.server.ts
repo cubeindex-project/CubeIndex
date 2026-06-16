@@ -100,7 +100,7 @@ export const load = (async ({ locals }) => {
     },
     meta: {
       title: "Dashboard - CubeIndex",
-      noindex: true
-    }
+      noindex: true,
+    },
   };
 }) satisfies PageServerLoad;

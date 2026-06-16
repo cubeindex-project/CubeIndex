@@ -38,8 +38,7 @@
       href: "achievements",
       icon: "🏅",
       title: "Achievements",
-      description:
-        "Browse achievements, and track community unlock progress.",
+      description: "Browse achievements, and track community unlock progress.",
     },
   ];
 </script>
@@ -101,11 +100,10 @@
     class="mt-4 flex items-center justify-between gap-3 rounded-xl border border-base-300 bg-base-200/70 px-4 py-3"
   >
     <div class="min-w-0">
-      <p class="text-sm font-semibold text-base-content">
-        Missing a cube?
-      </p>
+      <p class="text-sm font-semibold text-base-content">Missing a cube?</p>
       <p class="text-xs text-base-content/70">
-        Submit models that are not in the catalog and help keep CubeIndex updated.
+        Submit models that are not in the catalog and help keep CubeIndex
+        updated.
       </p>
     </div>
     <a class="btn btn-primary btn-sm" href="/submit">

@@ -29,12 +29,14 @@
     let list = Array.isArray(reports) ? [...reports] : [];
 
     if (typeFilter !== "all") {
-      list = list.filter((r: { report_type: string }) => r.report_type === typeFilter);
+      list = list.filter(
+        (r: { report_type: string }) => r.report_type === typeFilter,
+      );
     }
 
     if (statusFilter !== "all") {
       list = list.filter((r: { resolved: boolean }) =>
-        statusFilter === "open" ? !r.resolved : r.resolved
+        statusFilter === "open" ? !r.resolved : r.resolved,
       );
     }
 
@@ -108,7 +110,7 @@
     profile: { username: string };
   } {
     let user_cube_rating = user_cube_ratings.find(
-      (ucr: { id: number }) => ucr.id === Number(reported)
+      (ucr: { id: number }) => ucr.id === Number(reported),
     );
     return (user_cube_rating = {
       ...user_cube_rating,
@@ -123,7 +125,9 @@
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div class="min-w-[16rem]">
       <h1 class="text-3xl font-semibold">User Reports</h1>
-      <p class="text-sm opacity-70">Monitor and resolve user bug reports and feature requests</p>
+      <p class="text-sm opacity-70">
+        Monitor and resolve user bug reports and feature requests
+      </p>
     </div>
     <div class="stats shadow">
       <div class="stat">
@@ -160,7 +164,11 @@
 
         <label class="form-control">
           <div class="label"><span class="label-text">Type</span></div>
-          <select class="select select-bordered" bind:value={typeFilter} aria-label="Filter by type">
+          <select
+            class="select select-bordered"
+            bind:value={typeFilter}
+            aria-label="Filter by type"
+          >
             <option value="all">All</option>
             <option value="website">Website</option>
             <option value="user">User</option>
@@ -171,7 +179,11 @@
 
         <label class="form-control">
           <div class="label"><span class="label-text">Status</span></div>
-          <select class="select select-bordered" bind:value={statusFilter} aria-label="Filter by status">
+          <select
+            class="select select-bordered"
+            bind:value={statusFilter}
+            aria-label="Filter by status"
+          >
             <option value="all">All</option>
             <option value="open">Open</option>
             <option value="resolved">Resolved</option>
@@ -180,7 +192,11 @@
 
         <label class="form-control">
           <div class="label"><span class="label-text">Sort</span></div>
-          <select class="select select-bordered" bind:value={sortOrder} aria-label="Sort by date">
+          <select
+            class="select select-bordered"
+            bind:value={sortOrder}
+            aria-label="Sort by date"
+          >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
           </select>
@@ -191,7 +207,11 @@
         <div class="text-xs opacity-70">
           Use filters to narrow down reports. Click a cell to view full content.
         </div>
-        <button class="btn btn-ghost btn-sm" onclick={resetFilters} aria-label="Reset filters">
+        <button
+          class="btn btn-ghost btn-sm"
+          onclick={resetFilters}
+          aria-label="Reset filters"
+        >
           Reset
         </button>
       </div>
@@ -284,15 +304,22 @@
                       role="dialog"
                       aria-modal="true"
                     >
-                      <div class="bg-base-100 rounded-xl shadow-xl max-w-md w-full">
+                      <div
+                        class="bg-base-100 rounded-xl shadow-xl max-w-md w-full"
+                      >
                         <div class="p-6 border-b border-base-200">
                           <h3 class="text-lg font-semibold">Title</h3>
                         </div>
                         <div class="p-6">
-                          <p class="whitespace-pre-wrap break-words">{r.title}</p>
+                          <p class="whitespace-pre-wrap break-words">
+                            {r.title}
+                          </p>
                         </div>
                         <div class="p-4 border-t border-base-200 text-right">
-                          <button class="btn btn-secondary" onclick={() => toggleTitle(i)}>
+                          <button
+                            class="btn btn-secondary"
+                            onclick={() => toggleTitle(i)}
+                          >
                             Close
                           </button>
                         </div>
@@ -319,15 +346,22 @@
                       role="dialog"
                       aria-modal="true"
                     >
-                      <div class="bg-base-100 rounded-xl shadow-xl max-w-md w-full">
+                      <div
+                        class="bg-base-100 rounded-xl shadow-xl max-w-md w-full"
+                      >
                         <div class="p-6 border-b border-base-200">
                           <h3 class="text-lg font-semibold">Comment</h3>
                         </div>
                         <div class="p-6">
-                          <p class="whitespace-pre-wrap break-words">{r.comment}</p>
+                          <p class="whitespace-pre-wrap break-words">
+                            {r.comment}
+                          </p>
                         </div>
                         <div class="p-4 border-t border-base-200 text-right">
-                          <button class="btn btn-secondary" onclick={() => toggleCom(i)}>
+                          <button
+                            class="btn btn-secondary"
+                            onclick={() => toggleCom(i)}
+                          >
                             Close
                           </button>
                         </div>
@@ -358,9 +392,13 @@
                         role="dialog"
                         aria-modal="true"
                       >
-                        <div class="bg-base-100 rounded-xl shadow-xl max-w-3xl w-full">
+                        <div
+                          class="bg-base-100 rounded-xl shadow-xl max-w-3xl w-full"
+                        >
                           <div class="p-6 border-b border-base-200">
-                            <h3 class="text-lg font-semibold">Reported Image</h3>
+                            <h3 class="text-lg font-semibold">
+                              Reported Image
+                            </h3>
                           </div>
                           <div class="p-6">
                             <img
@@ -370,7 +408,10 @@
                             />
                           </div>
                           <div class="p-4 border-t border-base-200 text-right">
-                            <button class="btn btn-secondary" onclick={() => toggleImg(i)}>
+                            <button
+                              class="btn btn-secondary"
+                              onclick={() => toggleImg(i)}
+                            >
                               Close
                             </button>
                           </div>

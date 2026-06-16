@@ -12,9 +12,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     notes: string;
   } = await request.json();
 
-  const user_id = locals.user?.id
+  const user_id = locals.user?.id;
 
-  if (!user_id) return json({ success: false, error: "You are not logged in!" }, { status: 500 });
+  if (!user_id)
+    return json(
+      { success: false, error: "You are not logged in!" },
+      { status: 500 },
+    );
 
   const payload: {
     status: string;

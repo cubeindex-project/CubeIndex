@@ -5,8 +5,7 @@ import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
 const isProduction =
   (NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() === "production";
 
-const level =
-  env.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
+const level = env.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
 
 const baseBindings: Record<string, string> = { app: "cubeindex" };
 const currentEnv = NODE_ENV ?? process.env.NODE_ENV;
@@ -34,15 +33,15 @@ const baseOptions: LoggerOptions = {
 const options: LoggerOptions = isProduction
   ? baseOptions
   : {
-    ...baseOptions,
-    transport: {
-      target: "pino-pretty",
-      options: {
-        colorize: true,
-        translateTime: "SYS:standard",
+      ...baseOptions,
+      transport: {
+        target: "pino-pretty",
+        options: {
+          colorize: true,
+          translateTime: "SYS:standard",
+        },
       },
-    },
-  };
+    };
 
 export const logger = pino(options);
 export type AppLogger = typeof logger;

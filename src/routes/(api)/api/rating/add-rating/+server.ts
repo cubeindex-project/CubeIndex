@@ -28,13 +28,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         success: false,
         error: "You must be logged in to perform this action!",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (err)
     return json(
       { success: false, error: "An error occurred: " + err.message },
-      { status: 500 }
+      { status: 500 },
     );
 
   return json({ success: true });

@@ -49,13 +49,13 @@
   $effect(() => {
     const _ = user_cubes;
     allTypes = Array.from(
-      new Set(user_cubes.map((c) => c.cube_model.type).filter(Boolean))
+      new Set(user_cubes.map((c) => c.cube_model.type).filter(Boolean)),
     ).sort();
     allConditions = Array.from(
-      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean))
+      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
     ).sort();
     allStatuses = Array.from(
-      new Set(user_cubes.map((uc) => uc.status).filter(Boolean))
+      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
     ).sort();
   });
 
@@ -90,7 +90,7 @@
       }
       if (sortBy === "type") {
         return (a.cube_model?.type ?? "").localeCompare(
-          b.cube_model?.type ?? ""
+          b.cube_model?.type ?? "",
         );
       }
       if (sortBy === "rating") {
@@ -272,7 +272,7 @@
               cube={row.cube_model}
               user_details={row}
               user_rating={user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug
+                (ucr) => ucr.cube_slug === row.cube_model?.slug,
               )?.rating ?? 0}
             />
           {:else}

@@ -6,7 +6,7 @@
 
   let { data }: { data: PageData } = $props();
   let { cube, review } = $derived(data);
-  
+
   const reviewText = $derived(review.review.trim());
 
   const ratingsEntries = $derived.by(() =>

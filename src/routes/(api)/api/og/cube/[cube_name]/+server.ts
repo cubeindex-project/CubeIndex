@@ -17,7 +17,7 @@ export const GET = async ({ params, locals }) => {
   if (cErr)
     return new Response(
       "An error occurred while fetching the cube: " + cErr.message,
-      { status: 404 }
+      { status: 404 },
     );
 
   const [
@@ -42,18 +42,18 @@ export const GET = async ({ params, locals }) => {
   if (urErr)
     return new Response(
       "An error occurred while fetching user ratings count: " + urErr.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (cvlErr)
     return new Response(
       "An error occurred while fetching the cube vendors count: " +
         cvlErr.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (ucErr)
     return new Response(
       "An error occurred while fetching the user cubes count: " + ucErr.message,
-      { status: 404 }
+      { status: 404 },
     );
 
   // Load local font
@@ -61,13 +61,13 @@ export const GET = async ({ params, locals }) => {
     process.cwd(),
     "static",
     "fonts",
-    "ClashDisplay-Semibold.ttf"
+    "ClashDisplay-Semibold.ttf",
   );
   const notoSymbFontPath = join(
     process.cwd(),
     "static",
     "fonts",
-    "NotoSansSymbols2-Regular.ttf"
+    "NotoSansSymbols2-Regular.ttf",
   );
   const clashFontData = readFileSync(clashFontPath);
   const notoSymbFontData = readFileSync(notoSymbFontPath);
@@ -396,7 +396,7 @@ export const GET = async ({ params, locals }) => {
           style: "normal",
         },
       ],
-    }
+    },
   );
 
   // 3. Convert SVG to PNG

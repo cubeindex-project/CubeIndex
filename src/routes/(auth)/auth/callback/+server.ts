@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
       500,
       "Authorization code is missing.",
       log,
-      new Error("Authorization code not provided")
+      new Error("Authorization code not provided"),
     );
   }
 
@@ -23,7 +23,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
   const { user } = data;
   if (!user) {
-    return logError(500, "User data is missing.", log, new Error("User not returned after authentication"));
+    return logError(
+      500,
+      "User data is missing.",
+      log,
+      new Error("User not returned after authentication"),
+    );
   }
 
   // Check if a profile already exists for this user
@@ -41,12 +46,10 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
   const userId = data.user?.id;
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .insert({
-      user_id: userId,
-      verified: true,
-    });
+  const { error: profileError } = await supabase.from("profiles").insert({
+    user_id: userId,
+    verified: true,
+  });
 
   if (profileError) {
     return logError(500, "Failed to create profile", log, profileError);

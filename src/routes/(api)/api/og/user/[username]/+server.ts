@@ -17,7 +17,7 @@ export const GET = async ({ params, locals }) => {
   if (err)
     return new Response(
       "An error occurred while fetching the profile: " + err.message,
-      { status: 404 }
+      { status: 404 },
     );
 
   const [
@@ -52,31 +52,31 @@ export const GET = async ({ params, locals }) => {
   if (ecErr)
     return new Response(
       "An error occurred while fetching the user cubes count: " + ecErr.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (userAchieveError)
     return new Response(
       "An error occurred while fetching the user achievements count: " +
         userAchieveError.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (urErr)
     return new Response(
       "An error occurred while fetching the user ratings count: " +
         urErr.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (followingErr)
     return new Response(
       "An error occurred while fetching the user following count: " +
         followingErr.message,
-      { status: 404 }
+      { status: 404 },
     );
   if (followedErr)
     return new Response(
       "An error occurred while fetching the user followers count: " +
         followedErr.message,
-      { status: 404 }
+      { status: 404 },
     );
 
   // Load local font
@@ -84,13 +84,13 @@ export const GET = async ({ params, locals }) => {
     process.cwd(),
     "static",
     "fonts",
-    "ClashDisplay-Semibold.ttf"
+    "ClashDisplay-Semibold.ttf",
   );
   const notoSymbFontPath = join(
     process.cwd(),
     "static",
     "fonts",
-    "NotoSansSymbols2-Regular.ttf"
+    "NotoSansSymbols2-Regular.ttf",
   );
   const clashFontData = readFileSync(clashFontPath);
   const notoSymbFontData = readFileSync(notoSymbFontPath);
@@ -202,7 +202,7 @@ export const GET = async ({ params, locals }) => {
                     borderBottom: `1px solid ${CX.base300}`,
                     background: `linear-gradient(135deg, ${addAlpha(
                       CX.primary ?? "#FFF",
-                      0.12
+                      0.12,
                     )}, ${addAlpha(CX.accent ?? "#FFF", 0.12)})`,
                   },
                   children: {
@@ -297,27 +297,27 @@ export const GET = async ({ params, locals }) => {
               children: [
                 metricBlock(
                   userCubesCount ?? 0,
-                  plural(userCubesCount ?? 0, "cube", "cubes")
+                  plural(userCubesCount ?? 0, "cube", "cubes"),
                 ),
                 metricBlock(
                   userAchievementsCount ?? 0,
                   plural(
                     userAchievementsCount ?? 0,
                     "achievement",
-                    "achievements"
+                    "achievements",
                   ),
-                  CX.secondary
+                  CX.secondary,
                 ),
                 metricBlock(
                   userRatingsCount ?? 0,
                   plural(userRatingsCount ?? 0, "rating", "ratings"),
-                  CX.info
+                  CX.info,
                 ),
                 metricBlock(followingCount ?? 0, "following"),
                 metricBlock(
                   followersCount ?? 0,
                   plural(followersCount ?? 0, "follower", "followers"),
-                  CX.success
+                  CX.success,
                 ),
               ],
             },
@@ -372,7 +372,7 @@ export const GET = async ({ params, locals }) => {
           style: "normal",
         },
       ],
-    }
+    },
   );
 
   // Metric block helper

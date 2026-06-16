@@ -87,7 +87,7 @@ export const load = (async ({
     user_vote,
     meta: {
       title: `${awards_category.name} - Awards Ballot`,
-      noindex: true
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

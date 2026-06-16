@@ -33,7 +33,8 @@
         released on
         <span class="font-medium">{formatDate(cube.release_date)}</span>
       {/if}. It is
-      <span class="font-medium">{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
+      <span class="font-medium"
+        >{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
       >,
       <span class="font-medium">{cube.smart ? "smart" : "non‑smart"}</span>, and
       <span class="font-medium"

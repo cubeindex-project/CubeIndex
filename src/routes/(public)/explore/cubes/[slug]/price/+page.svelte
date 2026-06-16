@@ -10,10 +10,8 @@
   }
 
   let { data } = $props();
-  let {
-    vendor_links = [] as CubeVendorLinksWithVendor[],
-    per_vendor_history,
-  } = $derived(data);
+  let { vendor_links = [] as CubeVendorLinksWithVendor[], per_vendor_history } =
+    $derived(data);
 
   // Formatting helpers
   const nf = (currency?: string) =>

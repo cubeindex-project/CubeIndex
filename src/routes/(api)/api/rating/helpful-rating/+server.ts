@@ -22,7 +22,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "You must be logged in to perform this action!",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (selecErr)
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "Couldn't fetch rows from helpful_rating: " + selecErr.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (data.length) {
@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
           success: false,
           error: "An error occurred while deleting: " + err.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
   } else {
     const { error: err } = await locals.supabase
@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
           success: false,
           error: "An error occurred while inserting: " + err.message,
         },
-        { status: 500 }
+        { status: 500 },
       );
   }
 

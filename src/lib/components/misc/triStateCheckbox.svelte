@@ -21,7 +21,7 @@
       box.indeterminate = value === false;
       box.setAttribute(
         "aria-checked",
-        value === undefined ? "mixed" : value ? "true" : "false"
+        value === undefined ? "mixed" : value ? "true" : "false",
       );
     }
   });

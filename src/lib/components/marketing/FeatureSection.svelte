@@ -37,7 +37,8 @@
         <ul class="mt-4 grid gap-3 sm:grid-cols-2">
           {#each highlights as point}
             <li class="flex items-start gap-3">
-              <span class="badge badge-primary badge-sm mt-1" aria-hidden="true"></span>
+              <span class="badge badge-primary badge-sm mt-1" aria-hidden="true"
+              ></span>
               <span class="text-base-content/90">{point}</span>
             </li>
           {/each}
@@ -46,7 +47,9 @@
     </div>
 
     <div class:order-first={reverse} class="w-full">
-      <figure class="w-full overflow-hidden rounded-2xl border border-base-300 shadow">
+      <figure
+        class="w-full overflow-hidden rounded-2xl border border-base-300 shadow"
+      >
         <img
           src={imageSrc}
           alt={imageAlt}
@@ -65,4 +68,3 @@
     /* nothing critical; graceful degradation */
   }
 </style>
-

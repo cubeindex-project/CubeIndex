@@ -4,7 +4,10 @@ import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-type DetailedCubeExtended = Omit<Tables<"v_detailed_cube_models">, "verified_by_id"> & {
+type DetailedCubeExtended = Omit<
+  Tables<"v_detailed_cube_models">,
+  "verified_by_id"
+> & {
   verified_by_id: { display_name: string; username: string } | null;
   submitted_by: { display_name: string; username: string };
 };

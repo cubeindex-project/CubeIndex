@@ -14,7 +14,6 @@
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
-  let user = page.data.user;
 
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {

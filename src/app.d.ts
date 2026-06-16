@@ -1,5 +1,5 @@
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
-import type { Database } from "./database.types.ts"; // import generated types
+import type { Database } from "$lib/types/database.types.js"; // import generated types
 import type { AppLogger } from "$lib/server/logger";
 import type { Meta } from "$lib/types/meta";
 
@@ -20,7 +20,6 @@ declare global {
     interface PageData {
       session: Session | null;
       meta?: Meta;
-      supabase: SupabaseClient<Database>;
     }
     // interface PageState {}
     // interface Platform {}

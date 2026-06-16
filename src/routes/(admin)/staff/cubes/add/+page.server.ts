@@ -29,13 +29,15 @@ export const load: PageServerLoad = async ({ locals }) => {
     return logError(500, "Failed to load cube types", locals.log, typesError);
   }
 
-  const { data: surfaces } = await locals.supabase.rpc("get_types", {
+  const { data: surfacesData } = await locals.supabase.rpc("get_types", {
     enum_type: "cube_surface_finishes",
   });
+  const surfaces = (surfacesData as string[] | null) ?? [];
 
-  const { data: subTypes } = await locals.supabase.rpc("get_types", {
+  const { data: subTypesData } = await locals.supabase.rpc("get_types", {
     enum_type: "cubes_subtypes",
   });
+  const subTypes = (subTypesData as string[] | null) ?? [];
 
   return { form, brands, types, surfaces, subTypes };
 };

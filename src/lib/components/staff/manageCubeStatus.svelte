@@ -38,7 +38,7 @@
     if (error) {
       formMessage = error.message;
     } else {
-      username = profile.username;
+      username = profile.username ?? "";
     }
   });
 

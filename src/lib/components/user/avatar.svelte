@@ -1,7 +1,10 @@
 <script lang="ts">
-  import type { Profiles } from "../dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
 
-  type ProfileAvatar = Pick<Profiles, "display_name" | "profile_picture">;
+  type ProfileAvatar = Pick<
+    Tables<"profiles">,
+    "display_name" | "profile_picture"
+  >;
 
   const {
     profile,
@@ -21,7 +24,7 @@
   <div class="avatar avatar-placeholder">
     <div class="bg-base-300 rounded-2xl border-4 border-primary {imgSize}">
       <span class="uppercase font-clash {textSize}">
-        {profile.display_name.charAt(0)}
+        {profile.display_name?.charAt(0)}
       </span>
     </div>
   </div>

@@ -1,14 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type {
-  UserCubeReviewRating,
-  UserCubeReviewsCategory,
-} from "$lib/components/dbTableTypes";
-
-interface ReviewCategoryRating extends UserCubeReviewsCategory {
-  rating: number;
-}
 
 export const load = (async ({ locals: { supabase, user, log }, params }) => {
   if (!user) throw redirect(302, "/auth/login");
@@ -75,18 +67,13 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
     return logError(500, "Failed to fetch review ratings", log, ratingsErr);
 
   const reviewRatings = new Map<number, number>(
-    reviewRatingsRaw.map((entry: UserCubeReviewRating) => [
-      entry.category_id,
-      entry.rating,
-    ]),
+    reviewRatingsRaw.map((entry) => [entry.category_id, entry.rating]),
   );
 
-  const categoryRatings: ReviewCategoryRating[] = reviewCategories.map(
-    (category: UserCubeReviewsCategory) => ({
-      ...category,
-      rating: reviewRatings.get(category.id) ?? 0.5,
-    }),
-  );
+  const categoryRatings = reviewCategories.map((category) => ({
+    ...category,
+    rating: reviewRatings.get(category.id) ?? 0.5,
+  }));
 
   return {
     slug,

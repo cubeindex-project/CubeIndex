@@ -1,6 +1,11 @@
 import type { PageServerLoad } from "./$types";
-import type { PriceHistoryRow } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
+
+export interface PriceHistoryPoint {
+  date: string;
+  price: number;
+}
 
 export const load = (async ({ locals: { supabase, log }, parent }) => {
   const { cube, vendorRes } = await parent();
@@ -17,7 +22,10 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
   return {
     cube,
     vendor_links: vendorRes.data ?? [],
-    per_vendor_history: per_vendor_history as PriceHistoryRow[],
+    per_vendor_history: (per_vendor_history ?? []).map((row) => ({
+      vendor_name: row.vendor_name ?? "",
+      price_history: (row.price_history as any as PriceHistoryPoint[]) ?? [],
+    })),
     meta: {
       title: `${cube.name} - Prices`,
       description:

@@ -1,20 +1,16 @@
-import type {
-  CubeVendorLinks,
-  DetailedCube,
-  Vendors,
-} from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-type DetailedCubeExtended = Omit<DetailedCube, "verified_by_id"> & {
+type DetailedCubeExtended = Omit<Tables<"v_detailed_cube_models">, "verified_by_id"> & {
   verified_by_id: { display_name: string; username: string } | null;
   submitted_by: { display_name: string; username: string };
 };
 
-interface CubeVendorLinksWithVendor extends CubeVendorLinks {
-  vendor: Vendors;
+interface CubeVendorLinksWithVendor extends Tables<"cube_vendor_links"> {
+  vendor: Tables<"vendors">;
 }
 
 export const load = (async ({

@@ -5,10 +5,10 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  import type { DetailedProfiles } from "$lib/components/dbTableTypes.js";
+  import type { Tables } from "$lib/types/database.types";
 
   const { data } = $props();
-  const profiles: DetailedProfiles[] = data.profiles;
+  const profiles: Tables<"v_detailed_profiles">[] = data.profiles;
 
   let searchTerm: string = $state(""); // Text input for search bar
 

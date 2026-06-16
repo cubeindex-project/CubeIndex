@@ -1,4 +1,4 @@
-import type { UserFollowsRow } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 import type { PageServerLoad } from "./$types";
 
@@ -11,11 +11,11 @@ export const load = (async ({ parent, locals: { supabase, log, user } }) => {
   ] = await Promise.all([
     supabase
       .from("user_follows")
-      .select("following_id(*)")
+      .select("following_id:profiles!following_id(*)")
       .eq("follower_id", profile.user_id),
     supabase
       .from("user_follows")
-      .select("follower_id(*)")
+      .select("follower_id:profiles!follower_id(*)")
       .eq("following_id", profile.user_id),
   ]);
 
@@ -26,17 +26,15 @@ export const load = (async ({ parent, locals: { supabase, log, user } }) => {
     return logError(500, "Unable to load follower list", log, followedErr);
   }
 
-  const following = followingId.map((ingId) => {
-    const user = ingId.following_id;
-    return user;
-  });
+  const following = (followingId ?? [])
+    .map((ingId) => ingId.following_id)
+    .filter((user) => !!user);
 
-  const followers = followers_id.map((edId) => {
-    const user = edId.follower_id;
-    return user;
-  });
+  const followers = (followers_id ?? [])
+    .map((edId) => edId.follower_id)
+    .filter((user) => !!user);
 
-  let currentFollowingUser: UserFollowsRow[] = [];
+  let currentFollowingUser: Tables<"user_follows">[] = [];
 
   if (user?.id) {
     const { data, error: followErr } = await supabase

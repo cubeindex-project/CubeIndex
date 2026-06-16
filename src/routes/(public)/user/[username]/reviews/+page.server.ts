@@ -1,12 +1,9 @@
 import type { PageServerLoad } from "./$types";
-import type {
-  DetailedCube,
-  DetailedUserCubeReview,
-} from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 
-interface UserReviewWithCube extends DetailedUserCubeReview {
-  cube_model: Pick<DetailedCube, "slug" | "name" | "image_url">;
+interface UserReviewWithCube extends Tables<"v_detailed_user_cube_reviews"> {
+  cube_model: Pick<Tables<"v_detailed_cube_models">, "slug" | "name" | "image_url">;
 }
 
 export const load = (async ({ parent, locals: { log, supabase } }) => {

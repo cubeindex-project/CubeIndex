@@ -1,9 +1,9 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
   import { onMount } from "svelte";
-  import type { Profiles } from "../dbTableTypes";
 
-  let { profile }: { profile: Profiles | null } = $props();
+  let { profile }: { profile: Tables<"profiles"> | null } = $props();
 
   const pathname = $derived(page.url.pathname);
   const isEmailVerified = $derived(profile?.verified ?? false);

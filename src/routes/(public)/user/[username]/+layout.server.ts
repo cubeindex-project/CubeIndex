@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from "./$types";
-import type { DetailedProfiles } from "$lib/components/dbTableTypes.js";
+import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
 
@@ -17,7 +17,7 @@ export const load = (async ({ locals: { user, log, supabase }, params, url }) =>
     return logError(500, "Unable to load profile", log, err);
   }
 
-  const profile: DetailedProfiles | undefined = profileRaw;
+  const profile: Tables<"v_detailed_profiles"> | undefined = profileRaw;
 
   if (!profile) {
     return logError(

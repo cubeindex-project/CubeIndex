@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { AchievementRarity } from "$lib/components/dbTableTypes";
+  import type { Enums } from "$lib/types/database.types";
   import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
@@ -13,7 +13,7 @@
   const { achievements, currentUserAchi } = data;
 
   const rarityStyle = (rarity?: string) =>
-    getAchievementRarityStyle(rarity as AchievementRarity);
+    getAchievementRarityStyle(rarity as Enums<"badge-rarity">);
 
   function pct(n: number | null | undefined) {
     const v = Number.isFinite(n as number) ? Number(n) : 0;

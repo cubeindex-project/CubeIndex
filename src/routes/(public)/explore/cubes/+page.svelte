@@ -1,7 +1,6 @@
 <script lang="ts">
   // Import the necessary components
   import CubeCard from "$lib/components/cube/cubeCard.svelte";
-  import type { Cube, DetailedCube } from "$lib/components/dbTableTypes.js";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import TriStateCheckbox from "$lib/components/misc/triStateCheckbox.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
@@ -11,11 +10,12 @@
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
   import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
+  import type { Tables } from "$lib/types/database.types.js";
+
+  type DetailedCubes = Tables<"v_detailed_cube_models">;
 
   const { data } = $props();
-  const { user } = data;
-
-  const cubes = $derived(data.cubes);
+  const { user, cubes } = $derived(data);
 
   let userCubes: any[] = $state([]);
 
@@ -199,7 +199,7 @@
     const base = filteredCubes.slice();
     const query = $params.q.trim();
 
-    const compare = (a: DetailedCube, b: DetailedCube) => {
+    const compare = (a: DetailedCubes, b: DetailedCubes) => {
       let av: any;
       let bv: any;
 
@@ -217,8 +217,8 @@
           bv = b.avg_price ?? 0;
           break;
         case "name": {
-          const an = a.name;
-          const bn = b.name;
+          const an = a.name ?? "";
+          const bn = b.name ?? "";
           return $params.dir === "asc"
             ? an.localeCompare(bn, undefined, {
                 numeric: true,
@@ -232,8 +232,8 @@
               });
         }
         default:
-          av = new Date(a.verified_at ?? a.created_at).getTime();
-          bv = new Date(b.verified_at ?? b.created_at).getTime();
+          av = new Date(a.verified_at ?? a.created_at ?? 0).getTime();
+          bv = new Date(b.verified_at ?? b.created_at ?? 0).getTime();
       }
 
       if (av < bv) return $params.dir === "asc" ? -1 : 1;
@@ -528,9 +528,7 @@
         </div>
 
         <!-- Display paginated cubes -->
-        <div
-          class="grid [grid-template-columns:repeat(auto-fill,minmax(310px,1fr))] gap-8"
-        >
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(310px,1fr))] gap-8">
           {#if paginatedCubes.length > 0}
             {#each paginatedCubes as cube}
               {#key paginatedCubes}
@@ -540,9 +538,9 @@
                 {@const alreadyAdded = userCubeDetail !== undefined}
                 <CubeCard
                   {cube}
-                  add={true}
-                  rate={true}
-                  details={true}
+                  showAddButton={true}
+                  showRateButton={true}
+                  showDetailsButton={true}
                   {alreadyAdded}
                   {userCubeDetail}
                 />

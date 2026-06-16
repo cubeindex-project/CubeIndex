@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { logError } from "$lib/server/logError";
-import type { DetailedCube } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
 /**
  * Load data for the authenticated user dashboard.
@@ -96,7 +96,7 @@ export const load = (async ({ locals }) => {
       submissionsCount: submissionsCount ?? 0,
     },
     recent: {
-      submissions: recentSubmissions as DetailedCube[],
+      submissions: recentSubmissions as Tables<"v_detailed_cube_models">[],
     },
     meta: {
       title: "Dashboard - CubeIndex",

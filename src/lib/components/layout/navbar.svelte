@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { onMount } from "svelte";
   import ConfirmSignOut from "../user/confirmSignOut.svelte";
   import { blur } from "svelte/transition";
   import { themeChange } from "theme-change";
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
-  import type { User } from "@supabase/supabase-js";
+  import { page } from "$app/state";
 
   let { profile } = $props();
 
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
-  const user = getContext<User | null>("user");
+  let user = page.data.user;
 
   // Utility: close all mobile-only UI bits
   function closeMobileMenus() {
@@ -179,7 +179,10 @@
   $effect(() => {
     if (!mobileUserMenuOpen) return;
     function handleClickOutside(event: MouseEvent) {
-      if (mobileUserMenuRef && !mobileUserMenuRef.contains(event.target as Node)) {
+      if (
+        mobileUserMenuRef &&
+        !mobileUserMenuRef.contains(event.target as Node)
+      ) {
         mobileUserMenuOpen = false;
       }
     }
@@ -284,7 +287,7 @@
               href={link.href}
               class={`inline-flex items-center gap-2 text-sm transition px-3 py-1.5 rounded-full focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 ${
                 link.emphasis
-                  ? "bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
+                  ? "bg-linear-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
                   : "text-base-content/80 hover:text-base-content"
               }`}
             >

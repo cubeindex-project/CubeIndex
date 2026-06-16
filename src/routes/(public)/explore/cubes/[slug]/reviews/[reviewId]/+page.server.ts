@@ -1,13 +1,10 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 import { error } from "@sveltejs/kit";
-import type {
-  DetailedUserCubeReview,
-  Profiles,
-} from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
-interface DetailedUserCubeReviewWithProfile extends DetailedUserCubeReview {
-  profile: Pick<Profiles, "username" | "display_name" | "profile_picture">;
+interface DetailedUserCubeReviewWithProfile extends Tables<"v_detailed_user_cube_reviews"> {
+  profile: Pick<Tables<"profiles">, "username" | "display_name" | "profile_picture">;
 }
 
 export const load = (async ({

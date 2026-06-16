@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import type { AwardsCategory } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { AWARDS_PARTNERS } from "$lib/content/awardsPartners";
 
 export const load = (async ({ locals: { supabase, log } }) => {
@@ -41,7 +41,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
     current_event = null;
   }
 
-  let awards_category: AwardsCategory[] = [];
+  let awards_category: Tables<"awards_category">[] = [];
 
   if (current_event) {
     const { data, error: acErr } = await supabase

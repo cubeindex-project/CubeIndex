@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { AwardsEvent } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types.js";
 
   let { data } = $props();
-  const event: AwardsEvent = data.current_event ?? null;
+  const event: Tables<"awards_event"> = data.current_event;
   const categories = data.awards_category ?? [];
 
   const startTime = $derived.by(() =>

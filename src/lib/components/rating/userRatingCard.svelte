@@ -6,38 +6,41 @@
   import Report from "../report/report.svelte";
   import { page } from "$app/state";
 
-  const supabase = page.data.supabase;
+  const MAX_COMMENT_LENGTH = 300;
 
   const { user_rating, cube, isAuthor, showCubeDetails } = $props();
 
-  let popoverId = $state(
+  const supabase = page.data.supabase;
+  const popoverId = $derived(
     `popover-${user_rating.username}-${user_rating.cube_slug}`,
   );
 
+  let showFullComment = $state(false);
+
+  let loading = $state(false);
+  let success = $state(false);
+
   let helpful_ratings: any[] = $state([]);
 
-  let confDeleteRating = $state(false);
-  let editRating = $state(false);
-  let openReport = $state(false);
+  let isConfirmingDelete = $state(false);
+  let isEditingRating = $state(false);
+  let isReporting = $state(false);
 
-  function toggleDelRating() {
-    confDeleteRating = !confDeleteRating;
+  function toggleDeletingRating() {
+    isConfirmingDelete = !isConfirmingDelete;
   }
 
-  function toggleEditRating() {
-    editRating = !editRating;
+  function toggleEditingRating() {
+    isEditingRating = !isEditingRating;
   }
 
-  function toggleOpenReport() {
-    openReport = !openReport;
+  function toggleReporting() {
+    isReporting = !isReporting;
   }
 
   function onCancel() {
     location.reload();
   }
-
-  let loading = $state(false);
-  let success = $state(false);
 
   async function deleteRating() {
     loading = true;
@@ -80,15 +83,11 @@
   }
 
   $effect(() => {
-    const _ = confDeleteRating;
-    if (confDeleteRating) {
-      setTimeout(toggleDelRating, 2000);
+    const _ = isConfirmingDelete;
+    if (isConfirmingDelete) {
+      setTimeout(toggleDeletingRating, 2000);
     }
   });
-
-  // local state for toggling
-  let showFull = $state(false);
-  const maxCommentLength = 300;
 
   onMount(async () => {
     const { data: helpful, error: helpErr } = await supabase
@@ -162,16 +161,16 @@
               <div class="relative flex-col flex gap-1">
                 <button
                   class="btn-info btn btn-ghost"
-                  onclick={toggleEditRating}
+                  onclick={toggleEditingRating}
                 >
                   <i class="fa-solid fa-pencil"></i>
                   Edit
                 </button>
                 <div>
-                  {#if !confDeleteRating}
+                  {#if !isConfirmingDelete}
                     <button
                       class="btn btn-error btn-ghost"
-                      onclick={toggleDelRating}
+                      onclick={toggleDeletingRating}
                     >
                       <i class="fa-solid fa-trash sm:mr-2"></i>
                       Delete
@@ -206,18 +205,18 @@
   </div>
   {#if user_rating.comment}
     <p class="mt-2 text-sm leading-relaxed">
-      {user_rating.comment.length > maxCommentLength && !showFull
-        ? user_rating.comment.slice(0, maxCommentLength) + "…"
+      {user_rating.comment.length > MAX_COMMENT_LENGTH && !showFullComment
+        ? user_rating.comment.slice(0, MAX_COMMENT_LENGTH) + "…"
         : user_rating.comment}
-      {#if user_rating.comment.length > maxCommentLength}
+      {#if user_rating.comment.length > MAX_COMMENT_LENGTH}
         <button
           class="link-primary link-hover cursor-pointer"
-          onclick={() => (showFull = !showFull)}
-          aria-label={showFull
+          onclick={() => (showFullComment = !showFullComment)}
+          aria-label={showFullComment
             ? "Show less of comment"
             : "Show more of comment"}
         >
-          {showFull ? "Show less" : "Show more"}
+          {showFullComment ? "Show less" : "Show more"}
         </button>
       {/if}
     </p>
@@ -243,10 +242,7 @@
         <span>Helpful</span>
       </button>
       <div class="divider-vertical mx-3 divider-primary"></div>
-      <button
-        class="link link-error link-hover mt-3"
-        onclick={toggleOpenReport}
-      >
+      <button class="link link-error link-hover mt-3" onclick={toggleReporting}>
         <i class="fa-solid fa-flag"></i>
         <span>Report</span>
       </button>
@@ -254,18 +250,18 @@
   {/if}
 </div>
 
-{#if editRating}
+{#if isEditingRating}
   <RateCube
-    onCancel={() => (editRating = !editRating)}
+    onCancel={() => (isEditingRating = !isEditingRating)}
     {cube}
     rating={user_rating.rating}
     comment={user_rating.comment}
   />
 {/if}
 
-{#if openReport}
+{#if isReporting}
   <Report
-    onCancel={() => (openReport = !openReport)}
+    onCancel={() => (isReporting = !isReporting)}
     reportType="cube-rating"
     reported={user_rating.id}
     reporLabel="{user_rating.profile

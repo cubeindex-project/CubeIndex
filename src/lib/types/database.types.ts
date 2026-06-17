@@ -1,14 +1,77 @@
 import type { MergeDeep } from "type-fest";
 import type { Database as DatabaseGenerated } from "./database-generated.types";
+export { Constants } from "./database-generated.types";
+
+type PriceHistory = {
+  date: string;
+  price: number;
+};
+
+type ProfileSocials = {
+  x?: string;
+  wca?: string;
+  reddit?: string;
+  discord?: string;
+  website?: string;
+  youtube?: string;
+};
+
+interface DetailedProfile {
+  user_id: string;
+  socials: ProfileSocials;
+  created_at: string;
+}
 
 export type Database = MergeDeep<
   DatabaseGenerated,
   {
     public: {
+      Tables: {
+        profiles: {
+          Row: { socials: ProfileSocials };
+          Insert: { socials?: ProfileSocials };
+          Update: { socials?: ProfileSocials };
+        };
+      };
       Views: {
-        v_detailed_profiles: { Row: { id: number; user_id: string } };
+        v_detailed_profiles: {
+          Row: DetailedProfile;
+        };
         v_detailed_cube_models: {
-          Row: { id: number };
+          Row: DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"];
+        };
+        v_achievement_rarity: {
+          Row: DatabaseGenerated["public"]["Tables"]["achievements"]["Row"];
+        };
+        v_user_stats: {
+          Row: {
+            cubes_per_brand: Record<string, number> | null;
+            cubes_per_store: Record<string, number> | null;
+            cubes_over_time: Record<string, number> | null;
+            cubes_per_type: Record<string, number> | null;
+            cubes_per_condition: Record<string, number> | null;
+          };
+        };
+        v_detailed_user_cube_reviews: {
+          Row: Omit<
+            DatabaseGenerated["public"]["Tables"]["user_cube_reviews"]["Row"],
+            "ratings" | "helpful_count"
+          > & {
+            ratings: Record<string, number>;
+            helpful_count: number;
+          };
+        };
+        v_detailed_vendors: {
+          Row: DatabaseGenerated["public"]["Tables"]["vendors"]["Row"];
+        };
+        v_price_history: {
+          Row: { price_history: PriceHistory };
+        };
+        v_notifications_for_user: {
+          Row: {
+            id: number;
+            created_at: string;
+          };
         };
       };
     };

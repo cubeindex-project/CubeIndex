@@ -1,11 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 import { error } from "@sveltejs/kit";
-import type { Tables } from "$lib/types/database.types";
-
-interface DetailedUserCubeReviewWithProfile extends Tables<"v_detailed_user_cube_reviews"> {
-  profile: Pick<Tables<"profiles">, "username" | "display_name" | "profile_picture">;
-}
 
 export const load = (async ({
   locals: { supabase, log, user },
@@ -15,12 +10,14 @@ export const load = (async ({
   const { cube } = await parent();
   const { reviewId, slug } = params;
 
-  const { data: reviewRaw, error: rErr } = await supabase
+  const reviewIdNumber = Number(reviewId);
+
+  const { data: review, error: rErr } = await supabase
     .from("v_detailed_user_cube_reviews")
     .select(
       "id, title, review, created_at, updated_at, ratings, helpful_count, profile:user_id(username, display_name, profile_picture)",
     )
-    .eq("id", reviewId)
+    .eq("id", reviewIdNumber)
     .eq("cube", slug)
     .eq("status", "published")
     .maybeSingle();
@@ -29,7 +26,7 @@ export const load = (async ({
     return logError(500, `Failed to load cube review ${reviewId}`, log, rErr);
   }
 
-  if (!reviewRaw) throw error(404, "Review not found for this cube");
+  if (!review) throw error(404, "Review not found for this cube");
 
   let isHelpful = false;
 
@@ -38,7 +35,7 @@ export const load = (async ({
       .from("helpful_review")
       .select("*", { head: true, count: "exact" })
       .eq("user_id", user.id)
-      .eq("review_id", reviewId);
+      .eq("review_id", reviewIdNumber);
 
     if (error) {
       return logError(
@@ -54,7 +51,7 @@ export const load = (async ({
 
   return {
     cube,
-    review: reviewRaw as DetailedUserCubeReviewWithProfile,
+    review,
     isHelpful,
   };
 }) satisfies PageServerLoad;

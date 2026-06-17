@@ -4,15 +4,13 @@
   import Avatar from "$lib/components/user/avatar.svelte";
 
   let { data } = $props();
-  let { cube, review } = $derived(data);
-  
-  const reviewText = $derived(review.review.trim());
+  let { cube, review, isHelpful } = $derived(data);
+
+  const reviewText = $derived(review.review?.trim() ?? "");
 
   const ratingsEntries = $derived.by(() =>
     Object.entries(review.ratings).sort(([a], [b]) => a.localeCompare(b)),
   );
-
-  let isHelpful = $state(data.isHelpful);
   let helpfulCount = $derived(review.helpful_count);
   let isSubmitting = $state(false);
   let helpfulError = $state("");
@@ -84,9 +82,9 @@
           <div class="flex flex-wrap items-center gap-2">
             <a
               class="link link-hover font-semibold truncate"
-              href="/user/{review.profile?.username}"
+              href="/user/{review.profile.username}"
             >
-              {review.profile?.display_name}
+              {review.profile.display_name}
             </a>
           </div>
 

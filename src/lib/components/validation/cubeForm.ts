@@ -1,4 +1,5 @@
 import z from "zod/v4";
+import { Constants } from "$lib/types/database.types";
 
 export const releaseDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 export const sizePattern =
@@ -58,7 +59,9 @@ export const cubeSchema = z
     otherBrand: z.string().trim().default(""),
     type: z.string().trim().min(1, "Type is required"),
     otherType: z.string().trim().default(""),
-    sub_type: z.string().trim().min(1, "Sub Type is required").default("auto"),
+    sub_type: z
+      .enum(["auto", ...Constants.public.Enums.cubes_subtypes])
+      .default("auto"),
     relatedTo: z.string().trim().optional(),
     releaseDate: z
       .string()
@@ -68,7 +71,7 @@ export const cubeSchema = z
         message: "Release date must be YYYY-MM-DD",
       }),
     imageUrl: z.url("Image URL must be valid"),
-    surfaceFinish: z.string().trim().min(1, "Surface finish is required"),
+    surfaceFinish: z.enum([...Constants.public.Enums.cube_surface_finishes]),
     weight: z.coerce.number().min(0, "Weight must be >= 0"),
     size: z.coerce
       .string()

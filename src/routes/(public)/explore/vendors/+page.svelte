@@ -126,12 +126,6 @@
                     </span>
                   {/if}
                 </div>
-
-                {#if vendor.description}
-                  <p class="mt-1 line-clamp-2 text-sm text-base-content/70">
-                    {vendor.description}
-                  </p>
-                {/if}
               </div>
             </header>
 

@@ -2,26 +2,30 @@
   import StarRating from "$lib/components/rating/starRating.svelte";
   import type { RatingsPayload } from "../../../../../(api)/api/reviews/ratings/+server";
 
+  const TITLE_MAX_LENGTH = 80;
+  const REVIEW_MIN_LENGTH = 1000;
+
   type Snapshot = {
     title: string;
-    review: string;
-    ratings: Array<[number, number]>; // [categoryId, rating]
+    reviewContent: string;
+    ratings: Array<[number, number]>;
   };
 
   const { data } = $props();
+  const { review, categoryRatings, reviewCategories } = $derived(data);
 
-  let categoryRatings = $state(data.categoryRatings);
-
-  let title = $state(data.review.title ?? "");
-  let review = $state(data.review.review ?? "");
-
-  const titleMaxLength = 80;
-  const reviewMinLength = 1000;
+  // The svelte-ignore is a temporary fix, this page will be refactored with superForms
+  // svelte-ignore state_referenced_locally
+  let title = $state(review.title);
+  // svelte-ignore state_referenced_locally
+  let reviewContent = $state(review.review);
+  // svelte-ignore state_referenced_locally
+  let status = $state(review.status);
 
   function keyOf(s: Snapshot) {
     return JSON.stringify({
       title: s.title.trim(),
-      review: s.review.trim(),
+      review: s.reviewContent.trim(),
       ratings: [...s.ratings].sort((a, b) => a[0] - b[0]),
     });
   }
@@ -29,16 +33,19 @@
   const currentKey = $derived(
     keyOf({
       title,
-      review,
+      reviewContent,
       ratings: categoryRatings.map((c) => [c.id, c.rating]),
     }),
   );
 
   let baselineKey = $state(
     keyOf({
-      title: data.review.title ?? "",
-      review: data.review.review ?? "",
-      ratings: data.reviewCategories.map((c) => [
+      // svelte-ignore state_referenced_locally
+      title: review.title,
+      // svelte-ignore state_referenced_locally
+      reviewContent: review.review,
+      // svelte-ignore state_referenced_locally
+      ratings: reviewCategories.map((c) => [
         c.id,
         data.reviewRatings.get(c.id) ?? 0,
       ]),
@@ -51,11 +58,9 @@
     baselineKey = currentKey;
   }
 
-  const canPublish = $derived(review.trim().length >= reviewMinLength);
+  const canPublish = $derived(reviewContent.trim().length >= REVIEW_MIN_LENGTH);
 
   let published = $state(false);
-
-  let status = $state(data.review.status);
   const prettyStatus = $derived(
     status.charAt(0).toUpperCase() + status.slice(1),
   );
@@ -89,10 +94,10 @@
   }
 
   function check() {
-    if (title.trim().length > titleMaxLength)
+    if (title.trim().length > TITLE_MAX_LENGTH)
       throw new Error("Title can not be longer than 80 characters");
 
-    if (review.trim().length < reviewMinLength)
+    if (reviewContent.trim().length < REVIEW_MIN_LENGTH)
       throw new Error("Review must be at least 1000 characters long");
   }
 
@@ -177,7 +182,7 @@
             <div class="label">
               <span class="label-text font-medium">Title</span>
               <span class="label-text-alt opacity-70">
-                {title.length}/{titleMaxLength}
+                {title.length}/{TITLE_MAX_LENGTH}
               </span>
             </div>
 
@@ -185,7 +190,7 @@
               class="input w-full"
               bind:value={title}
               autocomplete="off"
-              maxlength={titleMaxLength}
+              maxlength={TITLE_MAX_LENGTH}
             />
           </label>
 
@@ -193,14 +198,14 @@
             <div class="label">
               <span class="label-text font-medium">Main review</span>
               <span class="label-text-alt opacity-70">
-                Min. {reviewMinLength} characters
+                Min. {REVIEW_MIN_LENGTH} characters
               </span>
             </div>
 
             <textarea
               class="textarea min-h-45 w-full leading-relaxed"
               autocomplete="off"
-              bind:value={review}
+              bind:value={reviewContent}
             ></textarea>
           </label>
         </div>

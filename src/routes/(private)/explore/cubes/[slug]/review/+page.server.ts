@@ -1,9 +1,10 @@
-import { redirect } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals: { supabase, user, log }, params }) => {
   if (!user) throw redirect(302, "/auth/login");
+
   const slug = params.slug;
 
   const { data: cube, error: cubeErr } = await supabase
@@ -16,7 +17,7 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
     return logError(500, "Failed to fetch cube name", log, cubeErr);
   }
 
-  const cubeName = cube.name;
+  if (!cube) throw error(404, "Cube not found");
 
   const { data: existingReview, error: erErr } = await supabase
     .from("user_cube_reviews")
@@ -30,7 +31,7 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
 
   let review = existingReview;
 
-  if (!existingReview) {
+  if (!review) {
     const { data: createdReview, error: crErr } = await supabase
       .from("user_cube_reviews")
       .insert({
@@ -77,7 +78,7 @@ export const load = (async ({ locals: { supabase, user, log }, params }) => {
 
   return {
     slug,
-    cubeName,
+    cubeName: cube.name,
     review,
     reviewCategories,
     reviewRatings,

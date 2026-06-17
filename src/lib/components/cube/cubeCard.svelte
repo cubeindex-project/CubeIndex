@@ -12,7 +12,7 @@
     showAddButton: boolean;
     showDetailsButton: boolean;
     alreadyAdded: boolean;
-    userCubeDetail: Tables<"user_cubes">;
+    userCubeDetail?: Tables<"user_cubes">;
   }
 
   let {

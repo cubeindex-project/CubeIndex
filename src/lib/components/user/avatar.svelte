@@ -1,22 +1,13 @@
 <script lang="ts">
   import type { Tables } from "$lib/types/database.types";
 
-  type ProfileAvatar = Pick<
-    Tables<"profiles">,
-    "display_name" | "profile_picture"
-  >;
-
   interface Props {
-    profile: ProfileAvatar;
+    profile: Pick<Tables<"profiles">, "display_name" | "profile_picture">;
     imgSize: string;
     textSize: string;
   }
 
-  const {
-    profile,
-    imgSize,
-    textSize,
-  }: Props = $props();
+  const { profile, imgSize, textSize }: Props = $props();
 </script>
 
 {#if profile.profile_picture}

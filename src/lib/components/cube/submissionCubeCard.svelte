@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-  import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
+  import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import type { Tables } from "$lib/types/database.types";
 

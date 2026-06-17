@@ -9,12 +9,7 @@
     reporLabel: string;
   }
 
-  let {
-    onCancel,
-    reportType,
-    reported,
-    reporLabel,
-  }: Props = $props();
+  let { onCancel, reportType, reported, reporLabel }: Props = $props();
 
   const user = $derived(page.data.user);
   let isConnected = $derived(Boolean(user));
@@ -27,6 +22,7 @@
   let comment = $state("");
   let imageUrl = $state("");
 
+  // svelte-ignore state_referenced_locally
   if (reportType === "website")
     comment = `Describe the bug
 A clear and concise description of what the bug is.
@@ -142,7 +138,7 @@ Add any other context about the problem here.`;
   <form
     aria-labelledby="report-title"
     aria-describedby="report-desc"
-    class="card w-full max-w-xl mx-3 shadow-2xl rounded-3xl ring-1 ring-base-300/60 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80"
+    class="card w-full max-w-xl mx-3 shadow-2xl rounded-3xl ring-1 ring-base-300/60 bg-base-100/90 backdrop-blur supports-backdrop-filter:bg-base-100/80"
     onsubmit={sendReport}
     transition:scale={{ duration: 150, start: 0.95 }}
     bind:this={dialogEl}

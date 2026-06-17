@@ -3,8 +3,6 @@
   import { blur } from "svelte/transition";
   import { page } from "$app/state";
 
-  const supabase = page.data.supabase;
-
   interface Props {
     reason: "Accept" | "Reject";
     onCancel: () => void;
@@ -12,12 +10,10 @@
     cube_name: string;
   }
 
-  let {
-    reason,
-    onCancel,
-    cube_id,
-    cube_name,
-  }: Props = $props();
+  let { reason, onCancel, cube_id, cube_name }: Props = $props();
+
+  const supabase = page.data.supabase;
+  const user = $derived(page.data.user);
 
   let note: string = $state("");
   let otherNote: string = $state("");
@@ -25,8 +21,6 @@
   let showSuccess: boolean = $state(false);
   let formMessage: string = $state("");
   let username: string = $state("");
-
-  const user = $derived(page.data.user);
 
   onMount(async () => {
     const { data: profile, error } = await supabase

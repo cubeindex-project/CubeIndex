@@ -21,7 +21,7 @@
 
   let show = $state(false);
 
-  const options: InViewOptions = {
+  const options: InViewOptions = $derived({
     root,
     rootMargin,
     threshold,
@@ -32,7 +32,7 @@
     onLeave: () => {
       if (!once) show = false;
     },
-  };
+  });
 </script>
 
 <div use:inView={options}>

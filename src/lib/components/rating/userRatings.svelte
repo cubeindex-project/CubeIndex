@@ -32,8 +32,7 @@
       (ur) =>
         (filterRating === undefined ||
           (ur.rating >= filterRating && ur.rating < filterRating + 1)) &&
-        (ur.comment.includes(searchTerm.toLowerCase()) ||
-          ur.display_name.includes(searchTerm.toLowerCase()) ||
+        (ur.comment?.includes(searchTerm.toLowerCase()) ||
           ur.created_at.includes(searchTerm.toLowerCase())),
     );
 

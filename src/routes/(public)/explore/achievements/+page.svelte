@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Enums } from "$lib/types/database.types";
   import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
@@ -10,27 +9,11 @@
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   const { data } = $props();
-  const { achievements, currentUserAchi } = data;
-
-  const rarityStyle = (rarity?: string) =>
-    getAchievementRarityStyle(rarity as Enums<"badge-rarity">);
-
-  function pct(n: number | null | undefined) {
-    const v = Number.isFinite(n as number) ? Number(n) : 0;
-    return Math.max(0, Math.min(100, v));
-  }
+  const { achievements, currentUserAchievements } = $derived(data);
 
   let showFilters = $state(false);
 
   let allRarities: string[] = $state([]);
-
-  function calcAll() {
-    const Rarities = Array.from(
-      new Set(achievements.map((c) => c.rarity)),
-    ).sort();
-
-    allRarities = Rarities;
-  }
 
   let selectedRarity: string = $state("All");
   let hidden: boolean | undefined = $state(undefined);
@@ -93,8 +76,8 @@
     return arr;
   });
 
-  let itemsPerPage: number = $state(6); // Items shown per page
-  let currentPage: number = $state(1); // Current pagination page
+  let itemsPerPage = $state(6);
+  let currentPage = $state(1);
 
   const paginatedAchi = $derived.by(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -104,8 +87,27 @@
 
   // Calculate total pages for pagination
   const totalPages = $derived(
-    Math.max(Math.ceil(sortedAchi.length / itemsPerPage)),
+    Math.max(Math.ceil(sortedAchi.length / itemsPerPage), 1),
   );
+
+  function pct(n: number | null | undefined) {
+    const v = Number.isFinite(n as number) ? Number(n) : 0;
+    return Math.max(0, Math.min(100, v));
+  }
+
+  function calcAll() {
+    const Rarities = Array.from(
+      new Set(achievements.map((c) => c.rarity)),
+    ).sort();
+
+    allRarities = Rarities;
+  }
+
+  function resetFilters() {
+    selectedRarity = "All";
+    hidden = undefined;
+    obtainable = undefined;
+  }
 
   $effect(() => {
     const _ = sortedAchi;
@@ -116,12 +118,6 @@
     const _ = sortedAchi;
     calcAll();
   });
-
-  function resetFilters() {
-    selectedRarity = "All";
-    hidden = undefined;
-    obtainable = undefined;
-  }
 </script>
 
 {#snippet filterContents()}
@@ -199,7 +195,7 @@
         >
           {#each paginatedAchi as achievement (achievement.name)}
             {#key achievement.name}
-              {@const isUnlocked = currentUserAchi.find(
+              {@const isUnlocked = currentUserAchievements.find(
                 (cua) => cua.achievement_slug === achievement.slug,
               )}
               {@const value = pct(achievement.rarity_percent)}
@@ -216,7 +212,9 @@
                 <!-- Rarity Accent Bar -->
                 <div
                   class={"absolute left-0 top-0 h-full w-1.5 " +
-                    rarityStyle(isHidden ? "Unknown" : achievement.rarity).bar}
+                    getAchievementRarityStyle(
+                      isHidden ? undefined : achievement.rarity,
+                    ).bar}
                 ></div>
 
                 <!-- Card Body -->
@@ -281,9 +279,10 @@
                     {:else}
                       <span
                         class={"inline-flex flex-shrink-0 items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm ring-1 ring-black/5 select-none " +
-                          rarityStyle(achievement.rarity).badge +
+                          getAchievementRarityStyle(achievement.rarity).badge +
                           " " +
-                          rarityStyle(achievement.rarity).badgeText}
+                          getAchievementRarityStyle(achievement.rarity)
+                            .badgeText}
                         title={`Rarity: ${achievement.rarity}`}
                       >
                         {achievement.rarity}
@@ -356,7 +355,9 @@
                               fill="none"
                               stroke-width="6"
                               stroke-linecap="round"
-                              class={rarityStyle(achievement.rarity).bar +
+                              class={getAchievementRarityStyle(
+                                achievement.rarity,
+                              ).bar +
                                 " [stroke:currentColor] [paint-order:stroke] " +
                                 (isUnlocked
                                   ? "drop-shadow-[0_0_6px_rgba(0,0,0,0.2)]"
@@ -391,7 +392,8 @@
                               <!-- filled -->
                               <div
                                 class={"h-full " +
-                                  rarityStyle(achievement.rarity).bar +
+                                  getAchievementRarityStyle(achievement.rarity)
+                                    .bar +
                                   " transition-[width] duration-700 ease-out"}
                                 style={`width:${value}%;`}
                               ></div>

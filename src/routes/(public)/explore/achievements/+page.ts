@@ -1,6 +1,7 @@
 import type { PageLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
+import type { Tables } from "$lib/types/database.types";
 
 export const load = (async ({ setHeaders, parent }) => {
   const { user, supabase } = await parent();
@@ -14,13 +15,13 @@ export const load = (async ({ setHeaders, parent }) => {
     return clientLogError("Unable to load achievements", clientLogger, err);
   }
 
-  let currentUserAchi = [];
+  let currentUserAchievements: Tables<"user_achievements">[] = [];
 
   if (user) {
     const { data, error: cuaErr } = await supabase
       .from("user_achievements")
       .select("*")
-      .eq("user_id", user?.id);
+      .eq("user_id", user.id);
 
     if (cuaErr) {
       return clientLogError(
@@ -30,7 +31,7 @@ export const load = (async ({ setHeaders, parent }) => {
       );
     }
 
-    currentUserAchi = data;
+    currentUserAchievements = data;
   }
 
   setHeaders({
@@ -39,7 +40,7 @@ export const load = (async ({ setHeaders, parent }) => {
 
   return {
     achievements,
-    currentUserAchi,
+    currentUserAchievements,
     meta: {
       title: "Achievements - CubeIndex",
       description:

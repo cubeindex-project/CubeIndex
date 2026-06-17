@@ -5,7 +5,7 @@ import { clientLogger } from "$lib/logger/client";
 export const load = (async ({ setHeaders, parent }) => {
   const { supabase } = await parent();
 
-  const { data, error: err } = await supabase
+  const { data: profiles, error: err } = await supabase
     .from("v_detailed_profiles")
     .select("*")
     .eq("onboarded", true)
@@ -14,8 +14,6 @@ export const load = (async ({ setHeaders, parent }) => {
   if (err) {
     return clientLogError("Unable to load user profiles", clientLogger, err);
   }
-
-  const profiles = data ?? [];
 
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",

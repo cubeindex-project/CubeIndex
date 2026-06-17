@@ -4,10 +4,7 @@
   type EventPhase = "upcoming" | "live" | "past" | "unknown";
 
   const { data }: PageProps = $props();
-  const event = data.event;
-  const eventPhase = data.eventPhase;
-  const categories = data.categories;
-  const winners = data.winners;
+  const { event, eventPhase, categories, winners } = $derived(data);
 
   const phaseCopy: Record<
     EventPhase,
@@ -45,7 +42,7 @@
       timeStyle: "short",
     }).format(new Date(value));
 
-  const resultLocked = eventPhase !== "past";
+  const resultLocked = $derived(eventPhase !== "past");
 </script>
 
 <section class="relative isolate overflow-hidden bg-base-100">
@@ -162,7 +159,7 @@
                   </span>
                 </div>
 
-                {#if eventPhase === "past" && winner}
+                {#if eventPhase === "past" && winner && winner.cube}
                   <div
                     class="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-base-100 p-5 shadow-md"
                   >

@@ -1,18 +1,12 @@
 <script lang="ts">
-  import type {
-    CubeVendorLinks,
-    DetailedCube,
-  } from "$lib/components/dbTableTypes";
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
   import Tag from "$lib/components/misc/tag.svelte";
+  import type { Tables } from "$lib/types/database.types.js";
 
   let { data } = $props();
-  let {
-    vendor_links = [] as CubeVendorLinks[],
-    per_vendor_history,
-  } = $derived(data);
+  let { vendor_links, per_vendor_history } = $derived(data);
 
   // Formatting helpers
   const nf = (currency?: string) =>
@@ -105,7 +99,7 @@
   });
 
   // Vendor pill status
-  function getVendorStatus(shop: CubeVendorLinks) {
+  function getVendorStatus(shop: Tables<"cube_vendor_links">) {
     if (shop.available) {
       return {
         text: "In stock",

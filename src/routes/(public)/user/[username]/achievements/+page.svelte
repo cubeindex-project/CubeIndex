@@ -1,14 +1,13 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
-  import type { AchievementRarity } from "$lib/components/dbTableTypes";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import type { Enums } from "$lib/types/database.types.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
-  let { data }: { data: PageData } = $props();
-  const { user_achievements = [], profile } = data;
+  let { data } = $props();
+  const { user_achievements = [], profile } = $derived(data);
 
   // Search, filters, sort, pagination
   let searchTerm: string = $state("");
@@ -31,18 +30,18 @@
   const total = $derived(user_achievements.length);
 
   function styleFor(rarity?: string) {
-    return getAchievementRarityStyle(rarity as AchievementRarity);
+    return getAchievementRarityStyle(rarity as Enums<"badge-rarity">);
   }
 
-  type RarityKey = Exclude<AchievementRarity, "Unknown">;
+  type RarityKey = Enums<"badge-rarity">;
   const rarityWeight: Record<RarityKey, number> = {
     Special: 7,
     Mythic: 6,
     Legendary: 5,
-    Exotic: 4,
+    // Exotic: 4,
     Epic: 3,
     Rare: 2,
-    Uncommon: 1.5,
+    // Uncommon: 1.5,
     Common: 1,
   };
 
@@ -83,7 +82,7 @@
   });
 
   const totalPages = $derived.by(() =>
-    Math.max(1, Math.ceil(sorted.length / itemsPerPage))
+    Math.max(1, Math.ceil(sorted.length / itemsPerPage)),
   );
   const paginated = $derived.by(() => {
     const page = Math.min(Math.max(1, currentPage), totalPages);
@@ -210,8 +209,8 @@
               <i class="fa-solid fa-trophy fa-3x mb-4"></i>
               <h2 class="text-2xl font-semibold mb-2">No achievements found</h2>
               <p class="mb-6 text-center max-w-xs">
-                We couldn't find any achievements matching your search or filters.
-                Try adjusting them or resetting to see everything.
+                We couldn't find any achievements matching your search or
+                filters. Try adjusting them or resetting to see everything.
               </p>
               <button
                 onclick={() => (searchTerm = "")}

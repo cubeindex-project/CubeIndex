@@ -1,21 +1,7 @@
-import type {
-  CubeVendorLinks,
-  DetailedCube,
-  Vendors,
-} from "$lib/components/dbTableTypes";
 import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
-
-type DetailedCubeExtended = Omit<DetailedCube, "verified_by_id"> & {
-  verified_by_id: { display_name: string; username: string } | null;
-  submitted_by: { display_name: string; username: string };
-};
-
-interface CubeVendorLinksWithVendor extends CubeVendorLinks {
-  vendor: Vendors;
-}
 
 export const load = (async ({
   locals: { supabase, log, user },
@@ -25,10 +11,10 @@ export const load = (async ({
 }) => {
   const slug = params.slug;
 
-  const { data, error: cubeErr } = await supabase
+  const { data: cube, error: cubeErr } = await supabase
     .from("v_detailed_cube_models")
     .select(
-      "*,verified_by_id(display_name, username),submitted_by:submitted_by_id(display_name, username)",
+      "*,verifier:profiles!verified_by_id(display_name, username),submitter:profiles!submitted_by_id(display_name, username)",
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -36,40 +22,44 @@ export const load = (async ({
   if (cubeErr) {
     log.error(
       { err: cubeErr },
-      "An error occured while fetching the cube data",
+      "An error occurred while fetching the cube data",
     );
-    throw error(500, "An error occured while fetching the cube data");
+    throw error(500, "An error occurred while fetching the cube data");
   }
-
-  const cube: DetailedCubeExtended = data;
 
   if (!cube) {
     throw error(404, "Cube not found");
   }
 
   const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
-    supabase
-      .from("cube_models")
-      .select("slug, series, model, version_name, image_url")
-      .eq("series", cube.series)
-      .eq("version_type", "Base")
-      .neq("model", cube.model)
-      .eq("status", "Approved")
-      .order("model", { ascending: true })
-      .limit(12),
-    supabase
-      .from("cube_models")
-      .select("slug, series, model, version_name, image_url")
-      .eq("slug", cube.related_to)
-      .eq("status", "Approved")
-      .maybeSingle(),
-    supabase
-      .from("cube_models")
-      .select("slug, series, model, version_name, image_url")
-      .eq("related_to", cube.slug)
-      .eq("status", "Approved")
-      .order("model", { ascending: true })
-      .limit(24),
+    cube.series
+      ? supabase
+          .from("cube_models")
+          .select("slug, series, model, version_name, image_url")
+          .eq("series", cube.series)
+          .eq("version_type", "Base")
+          .neq("model", cube.model ?? "")
+          .eq("status", "Approved")
+          .order("model", { ascending: true })
+          .limit(12)
+      : Promise.resolve({ data: null, error: null }),
+    cube.related_to
+      ? supabase
+          .from("cube_models")
+          .select("slug, series, model, version_name, image_url")
+          .eq("slug", cube.related_to)
+          .eq("status", "Approved")
+          .maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+    cube.slug
+      ? supabase
+          .from("cube_models")
+          .select("slug, series, model, version_name, image_url")
+          .eq("related_to", cube.slug)
+          .eq("status", "Approved")
+          .order("model", { ascending: true })
+          .limit(24)
+      : Promise.resolve({ data: null, error: null }),
   ]);
 
   let alreadyAdded = false;
@@ -94,16 +84,14 @@ export const load = (async ({
 
   const isCubeSubmitter = user?.id === cube.submitted_by_id;
 
-  const vendorRes = await supabase
+  const { data: cube_vendor_links, error: cvrErr } = await supabase
     .from("cube_vendor_links")
     .select("*, vendor:vendor_name(*)")
     .eq("cube_slug", slug);
 
-  if (vendorRes.error) {
-    return logError(500, "Unable to load vendor links", log, vendorRes.error);
+  if (cvrErr) {
+    return logError(500, "Unable to load vendor links", log, cvrErr);
   }
-
-  const cube_vendor_links: CubeVendorLinksWithVendor[] = vendorRes.data;
 
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
@@ -136,9 +124,9 @@ export const load = (async ({
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,
     cubeTrims: trimsRes.data ?? [],
-    verifiedBy: cube.verified_by_id,
-    submittedBy: cube.submitted_by,
-    vendorRes,
+    verifier: cube.verifier,
+    submitter: cube.submitter,
+    cube_vendor_links,
     meta: {
       title,
       ogTitle: title,
@@ -161,7 +149,7 @@ export const load = (async ({
         },
         category: cube.type,
         aggregateRating:
-          cube.rating_count > 0
+          cube.rating_count && cube.rating_count > 0
             ? {
                 "@type": "AggregateRating",
                 ratingValue: cube.rating,
@@ -169,10 +157,10 @@ export const load = (async ({
               }
             : undefined,
         offers:
-          vendorRes.data.length > 0
+          cube_vendor_links.length > 0
             ? {
                 "@type": "AggregateOffer",
-                offerCount: vendorRes.data.length,
+                offerCount: cube_vendor_links.length,
                 lowPrice: cube.low_price,
                 priceCurrency: "USD",
                 offers,

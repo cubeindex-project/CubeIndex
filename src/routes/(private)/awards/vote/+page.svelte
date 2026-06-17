@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { AwardsEvent } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types.js";
 
   let { data } = $props();
-  const event: AwardsEvent = data.current_event ?? null;
-  const categories = data.awards_category ?? [];
+  const event = $derived(data.current_event);
+  const categories = $derived(data.awards_category);
 
   const startTime = $derived.by(() =>
     event?.start_at ? new Date(event.start_at).getTime() : Number.NaN,
@@ -125,7 +125,7 @@
             </p>
             <div class="space-y-1">
               <h1 class="text-3xl font-clash font-bold md:text-4xl">
-                {event.title}
+                {event?.title}
               </h1>
               <p class="text-sm text-base-content/70 max-w-3xl">
                 Review each category and jump into the ballot to cast your

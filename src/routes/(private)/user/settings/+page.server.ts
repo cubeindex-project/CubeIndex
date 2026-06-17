@@ -6,10 +6,11 @@ import {
 } from "sveltekit-superforms";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
-import { fail } from "@sveltejs/kit";
+import { fail, redirect } from "@sveltejs/kit";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 import { logError } from "$lib/server/logError";
+import type { TablesUpdate } from "$lib/types/database.types";
 
 const profileSchema = z.object({
   // Accept a file upload for the avatar; optional
@@ -40,25 +41,25 @@ const passwordSchema = z.object({
     .min(8, "The new password must have more than 8 characters"),
 });
 
-export const load = (async ({ locals, url }) => {
-  const { user } = await locals.safeGetSession();
+export const load = (async ({ locals: { user, supabase, log }, url }) => {
+  if (!user) redirect(302, "/auth/login");
 
-  const { data: profile, error: err } = await locals.supabase
+  const { data: profile, error: err } = await supabase
     .from("profiles")
     .select("*")
     .eq("user_id", user?.id)
     .single();
 
   if (err) {
-    return logError(500, "Unable to load profile settings", locals.log, err);
+    return logError(500, "Unable to load profile settings", log, err);
   }
 
   const profileForm = await superValidate(
     {
       profile_picture: profile.profile_picture,
       banner: profile.banner,
-      display_name: profile.display_name,
-      bio: profile.bio,
+      display_name: profile.display_name ?? "",
+      bio: profile.bio ?? "",
       private_profile: profile.private,
     },
     zod4(profileSchema),
@@ -87,9 +88,16 @@ export const load = (async ({ locals, url }) => {
 
 /** @satisfies {Actions} */
 export const actions: Actions = {
-  profile: async ({ request, locals, fetch }) => {
+  profile: async ({ request, locals: { user, supabase, log }, fetch }) => {
     // 1) Parse form data
     const form = await superValidate(request, zod4(profileSchema));
+
+    if (!user)
+      return fail(401, {
+        form,
+        message: "Unauthorized",
+      });
+
     const data = form.data;
 
     if (!form.valid)
@@ -127,12 +135,12 @@ export const actions: Actions = {
       }
       const processed = new Uint8Array(await resp.arrayBuffer());
 
-      if (!locals.user)
+      if (!user)
         return fail(400, { profileForm: form, message: "Must be logged in!" });
 
       // 2) Upload normalized bytes to Storage with a fixed path & content type
-      const path = `${locals.user.id}/avatar.webp`;
-      const { error: upErr } = await locals.supabase.storage
+      const path = `${user.id}/avatar.webp`;
+      const { error: upErr } = await supabase.storage
         .from("avatars")
         .upload(path, processed, {
           contentType: "image/webp", // fixed, known good
@@ -149,9 +157,7 @@ export const actions: Actions = {
         );
 
       // 3) Get a URL: public bucket -> getPublicUrl; private -> createSignedUrl
-      const { data } = locals.supabase.storage
-        .from("avatars")
-        .getPublicUrl(path);
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
       avatarUrl = `${data.publicUrl}`;
     }
 
@@ -174,11 +180,11 @@ export const actions: Actions = {
       }
       const processed = new Uint8Array(await resp.arrayBuffer());
 
-      if (!locals.user)
+      if (!user)
         return fail(400, { profileForm: form, message: "Must be logged in!" });
 
-      const path = `${locals.user.id}/banner.webp`;
-      const { error: upErr } = await locals.supabase.storage
+      const path = `${user.id}/banner.webp`;
+      const { error: upErr } = await supabase.storage
         .from("banners")
         .upload(path, processed, {
           contentType: "image/webp",
@@ -194,14 +200,12 @@ export const actions: Actions = {
           }),
         );
 
-      const { data: pub } = locals.supabase.storage
-        .from("banners")
-        .getPublicUrl(path);
+      const { data: pub } = supabase.storage.from("banners").getPublicUrl(path);
       bannerUrl = `${pub.publicUrl}`;
     }
 
     // 3) Update the profile row (do not overwrite avatar if not changed)
-    const updatePayload: Record<string, unknown> = {
+    const updatePayload: TablesUpdate<"profiles"> = {
       display_name: data.display_name,
       bio: data.bio,
       private: data.private_profile,
@@ -217,21 +221,28 @@ export const actions: Actions = {
       updatePayload.banner = data.banner;
     }
 
-    const { error: err } = await locals.supabase
+    const { error: err } = await supabase
       .from("profiles")
       .update(updatePayload)
-      .eq("user_id", locals.user?.id);
+      .eq("user_id", user?.id);
 
     if (err) {
-      return logError(500, "Failed to update profile", locals.log, err);
+      return logError(500, "Failed to update profile", log, err);
     }
 
     // 4) Success: redirect back or return success data
     return message(form, "Profile edited successfully!");
   },
 
-  socials: async ({ request, locals }) => {
+  socials: async ({ request, locals: { supabase, log, user } }) => {
     const form = await superValidate(request, zod4(socialSchema));
+
+    if (!user)
+      return fail(401, {
+        form,
+        message: "Unauthorized",
+      });
+
     const data = form.data;
 
     if (!form.valid)
@@ -241,7 +252,7 @@ export const actions: Actions = {
           "There are errors in your submission. Please review the highlighted fields and try again.",
       });
 
-    const { error: err } = await locals.supabase
+    const { error: err } = await supabase
       .from("profiles")
       .update({
         socials: {
@@ -253,18 +264,25 @@ export const actions: Actions = {
           reddit: data.reddit,
         },
       })
-      .eq("user_id", locals.user?.id);
+      .eq("user_id", user?.id);
 
     if (err) {
-      return logError(500, "Failed to update social links", locals.log, err);
+      return logError(500, "Failed to update social links", log, err);
     }
 
     // 4) Success: redirect back or return success data
     return message(form, "Social links edited successfully!");
   },
 
-  password: async ({ request, locals }) => {
+  password: async ({ request, locals: { supabase, log, user } }) => {
     const form = await superValidate(request, zod4(passwordSchema));
+
+    if (!user)
+      return fail(401, {
+        form,
+        message: "Unauthorized",
+      });
+
     const data = form.data;
 
     if (!form.valid)
@@ -274,17 +292,17 @@ export const actions: Actions = {
           "There are errors in your submission. Please review the highlighted fields and try again.",
       });
 
-    const { data: passUpdateData, error: err } = await locals.supabase.rpc(
+    const { data: passUpdateData, error: err } = await supabase.rpc(
       "update_password",
       {
-        current_id: locals.user?.id,
+        current_id: user?.id,
         current_plain_password: data.currentPassword,
         new_plain_password: data.newPassword,
       },
     );
 
     if (err) {
-      return logError(500, "Failed to update password", locals.log, err);
+      return logError(500, "Failed to update password", log, err);
     }
 
     if (passUpdateData === "incorrect")

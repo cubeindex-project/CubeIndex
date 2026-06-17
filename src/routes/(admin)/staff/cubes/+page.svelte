@@ -2,17 +2,19 @@
   import StaffCubeCard from "$lib/components/staff/staffCubeCard.svelte";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
-  import type { Cube } from "$lib/components/dbTableTypes.js";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
 
   const supabase = page.data.supabase;
 
-  type CubeWithMeta = Cube & {
+  type Cube = Tables<"cube_models">;
+
+  type CubeWithMeta = Tables<"cube_models"> & {
     _year: number;
     _name: string;
     _wcaLegal: boolean;
@@ -207,7 +209,7 @@
     <!-- Search Bar + Toggle -->
     <div class="flex items-center mb-6">
       <button
-        class="flex-shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
+        class="shrink-0 h-12.5 px-4 rounded-l-xl cursor-pointer bg-base-200 border border-base-300 border-r-0 transition flex items-center"
         aria-label="Toggle Filters"
         onclick={() => (showFilters = !showFilters)}
         type="button"

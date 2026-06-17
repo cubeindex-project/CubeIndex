@@ -1,20 +1,22 @@
+import type { TablesInsert } from "$lib/types/database.types";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ locals, request }) => {
-  const {
-    title,
-    reported,
-    report_type,
-    comment,
-    image_url,
-  }: {
-    title: string;
-    reported: string;
-    comment: string;
-    report_type: string;
-    image_url: string;
-  } = await request.json();
+export const POST: RequestHandler = async ({
+  locals: { user, supabase },
+  request,
+}) => {
+  if (!user)
+    return json(
+      {
+        success: false,
+        error: "Unauthorized",
+      },
+      { status: 401 },
+    );
+
+  const { title, reported, report_type, comment, image_url } =
+    await request.json();
 
   if (!report_type || !reported)
     return json(
@@ -22,7 +24,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "An error occurred",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (!title || !comment)
@@ -31,19 +33,19 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: "Please make sure you filled all the required fields",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
-  const { error: err } = await locals.supabase.from("reports").insert([
-    {
-      title,
-      reporter: locals.user?.id,
-      reported,
-      report_type,
-      comment,
-      image_url,
-    },
-  ]);
+  const payload: TablesInsert<"reports"> = {
+    title,
+    reporter: user.id,
+    reported,
+    report_type,
+    comment,
+    image_url,
+  };
+
+  const { error: err } = await supabase.from("reports").insert([payload]);
 
   if (err)
     return json(
@@ -51,7 +53,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         success: false,
         error: err.message,
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   return json({ success: true });

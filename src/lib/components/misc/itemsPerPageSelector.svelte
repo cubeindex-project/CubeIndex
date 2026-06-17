@@ -1,10 +1,5 @@
 <script lang="ts">
-  let {
-    itemsPerPage = $bindable(),
-    options = [6, 12, 24, 48, 96],
-    label = "Items per page",
-    onchange = () => {},
-  }: {
+  interface Props {
     /** Currently selected number of items shown on each page */
     itemsPerPage: number;
     /** Available item counts to choose from */
@@ -12,7 +7,14 @@
     /** Label displayed next to the selector */
     label?: string;
     onchange?: () => void;
-  } = $props();
+  }
+
+  let {
+    itemsPerPage = $bindable(),
+    options = [6, 12, 24, 48, 96],
+    label = "Items per page",
+    onchange = () => {},
+  }: Props = $props();
 </script>
 
 <div class="flex items-center">

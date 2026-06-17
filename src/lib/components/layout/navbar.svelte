@@ -288,7 +288,7 @@
               href={link.href}
               class={`inline-flex items-center gap-2 text-sm transition px-3 py-1.5 rounded-full focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 ${
                 link.emphasis
-                  ? "bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
+                  ? "bg-linear-to-r from-amber-400 via-orange-400 to-amber-500 text-black shadow-sm hover:shadow-md"
                   : "text-base-content/80 hover:text-base-content"
               }`}
             >

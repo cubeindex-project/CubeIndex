@@ -1,7 +1,8 @@
+<!-- todo: This page needs to be refactored urgently -->
+
 <script lang="ts">
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
-  import type { Cube } from "$lib/components/dbTableTypes.js";
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
@@ -11,12 +12,14 @@
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types.js";
 
   const supabase = page.data.supabase;
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
+  let { cube, profiles, cubeTrims, relatedCube, sameSeries, vendors, types } =
+    $derived(data);
 
   // Initialize form handling with options for JSON data and custom error handling
   const {
@@ -28,17 +31,16 @@
     enhance,
     isTainted,
     tainted,
-  } = superForm(data.form, {
-    dataType: "json",
-    resetForm: false,
-    onError({ result }) {
-      // Handle server validation errors gracefully
-      $message = result.error.message || "Unknown error";
-    },
-  });
-
-  // Store the cube being edited
-  const cube: Cube = $state(data.cube);
+  } = $derived(
+    superForm(data.form, {
+      dataType: "json",
+      resetForm: false,
+      onError({ result }) {
+        // Handle server validation errors gracefully
+        $message = result.error.message || "Unknown error";
+      },
+    }),
+  );
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);
@@ -55,9 +57,7 @@
 
   // Utility to get user profile URL from username or return # if not found
   function idOfUser(user: string) {
-    const profile = profiles?.find(
-      (p: { username: string }) => p.username === user,
-    );
+    const profile = profiles?.find((p) => p.username === user);
     return profile ? `/user/${profile.id}` : "#";
   }
 
@@ -86,7 +86,7 @@
     { label: "Ball Core", key: () => $form.features.ballCore },
   ];
 
-  let cubes: Cube[] = $state([]);
+  let cubes: Tables<"cube_models">[] = $state([]);
   let allSubTypes: string[] = $state([]);
   let allSurfaces: string[] = $state([]);
   let allBrands: { name: string }[] = $state([]);
@@ -132,13 +132,13 @@
       enum_type: "cubes_subtypes",
     });
 
-    allSubTypes = SubTypes;
+    allSubTypes = (SubTypes as string[] | null) ?? [];
 
     let { data: surfaces } = await supabase.rpc("get_types", {
       enum_type: "cube_surface_finishes",
     });
 
-    allSurfaces = surfaces;
+    allSurfaces = (surfaces as string[] | null) ?? [];
   });
 </script>
 
@@ -850,31 +850,31 @@
             <div class="flex items-center gap-2">
               <span>Added:</span>
               <span class="font-medium">
-                {formatDate(cube.created_at)}
+                {cube.created_at ? formatDate(cube.created_at) : "—"}
               </span>
             </div>
             <div class="flex items-center gap-2">
               <span>Last Updated:</span>
               <span class="font-medium">
-                {formatDate(cube.updated_at)}
+                {cube.updated_at ? formatDate(cube.updated_at) : "—"}
               </span>
             </div>
             <div class="flex items-center gap-2">
               <span>Verified by:</span>
               <a
                 class="font-medium underline"
-                href={idOfUser(cube.verified_by)}
+                href={idOfUser(cube.verified_by_id ?? "")}
               >
-                {cube.verified_by || "Unknown"}
+                {cube.verified_by_id || "Unknown"}
               </a>
             </div>
             <div class="flex items-center gap-2">
               <span>Submitted by:</span>
               <a
                 class="font-medium underline"
-                href={idOfUser(cube.submitted_by)}
+                href={idOfUser(cube.submitted_by_id ?? "")}
               >
-                {cube.submitted_by || "Unknown"}
+                {cube.submitted_by_id || "Unknown"}
               </a>
             </div>
           </div>
@@ -906,7 +906,7 @@
           </div>
         </div>
       {/if}
-      {#if relatedCube && ($form.versionType !== "Base" || $form.features.modded === true)}
+      <!-- {#if relatedCube && ($form.versionType !== "Base" || $form.features.modded === true)}
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
@@ -932,7 +932,7 @@
             </a>
           </div>
         </div>
-      {/if}
+      {/if} -->
       {#if sameSeries && sameSeries.length > 0 && cube.series !== ""}
         <div class="mb-8">
           <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -973,7 +973,7 @@
 {#if openModNotes}
   <ManageCubeStatus
     cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
-    cube_id={cube.id}
+    cube_id={cube.id ?? 0}
     {reason}
     onCancel={() => (openModNotes = false)}
   />

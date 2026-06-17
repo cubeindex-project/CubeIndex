@@ -21,12 +21,12 @@
     userCubeDetail,
   } = $derived(data);
 
-  let openAddCard = $state(false);
-  let openReport = $state(false);
-  let openRateCard = $state(false);
+  let isAddingCube = $state(false);
+  let isReportingCube = $state(false);
+  let isRatingCube = $state(false);
 
-  function toggleOpenReport() {
-    openReport = !openReport;
+  function toggleReporting() {
+    isReportingCube = !isReportingCube;
   }
 
   // Derive the active tab from the URL so it stays in sync on navigation
@@ -160,7 +160,7 @@
         <AddToCollectionButton
           {alreadyAdded}
           onClick={() => {
-            openAddCard = !openAddCard;
+            isAddingCube = !isAddingCube;
           }}
           addClass="join-item"
         />
@@ -177,7 +177,7 @@
       {/if}
       {#if cube.status === "Approved"}
         <RateCubeButton
-          onClick={() => (openRateCard = !openRateCard)}
+          onClick={() => (isRatingCube = !isRatingCube)}
           addClass="join-item"
         />
       {:else}
@@ -253,13 +253,12 @@
         >
       </header>
 
-      <!-- Mobile: smooth horizontal scroll; ≥md: grid -->
       <ul
         class="flex gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory pr-1 md:grid md:grid-cols-2 md:sm:grid-cols-3 md:lg:grid-cols-4 md:xl:grid-cols-6 md:gap-4 md:overflow-visible md:snap-none"
         aria-label="Available trims"
       >
-        {#each cubeTrims ?? [] as trim (trim.id)}
-          <li class="min-w-[9.5rem] snap-start md:min-w-0">
+        {#each cubeTrims as trim (trim.slug)}
+          <li class="min-w-38 snap-start md:min-w-0">
             <a
               href="/explore/cubes/{trim.slug}"
               class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
@@ -400,7 +399,7 @@
   {/if}
 
   <div class="mt-4">
-    <button onclick={toggleOpenReport} class="btn btn-error">
+    <button onclick={toggleReporting} class="btn btn-error">
       🚩 Report incorrect/missing data
     </button>
   </div>
@@ -410,39 +409,30 @@
   </a>
 </section>
 
-{#if openReport}
+{#if isReportingCube}
   <Report
-    onCancel={() => (openReport = !openReport)}
+    onCancel={() => (isReportingCube = !isReportingCube)}
     reportType="cube"
     reported={cube.slug}
     reporLabel="the {cube.series} {cube.model} {cube.version_name}"
   />
 {/if}
 
-{#if openAddCard}
+{#if isAddingCube}
   <AddCube
     onCancel={() => {
-      openAddCard = !openAddCard;
+      isAddingCube = false;
     }}
     {cube}
     {alreadyAdded}
-    defaultData={{
-      quantity: userCubeDetail?.quantity,
-      condition: userCubeDetail?.condition,
-      main: userCubeDetail?.main,
-      status: userCubeDetail?.status,
-      bought_from: userCubeDetail?.bought_from,
-      notes: userCubeDetail?.notes,
-      acquired_at: userCubeDetail?.acquired_at,
-      purchase_price: userCubeDetail?.purchase_price ?? null,
-    }}
+    defaultData={userCubeDetail ?? undefined}
   />
 {/if}
 
-{#if openRateCard}
+{#if isRatingCube}
   <RateCube
     onCancel={() => {
-      openRateCard = !openRateCard;
+      isRatingCube = false;
     }}
     {cube}
   />

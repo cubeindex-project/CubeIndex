@@ -1,31 +1,38 @@
 <script lang="ts">
   import AddCube from "./addCube.svelte";
   import RateCube from "../rating/rateCube.svelte";
-  import type { DetailedCube } from "../dbTableTypes";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
   import RateCubeButton from "../misc/rateCubeButton.svelte";
+  import type { Tables } from "$lib/types/database.types";
+
+  interface Props {
+    cube: Tables<"v_detailed_cube_models">;
+    showRateButton: boolean;
+    showAddButton: boolean;
+    showDetailsButton: boolean;
+    alreadyAdded: boolean;
+    userCubeDetail?: Tables<"user_cubes">;
+  }
 
   let {
     cube,
-    rate,
-    add,
-    details,
+    showRateButton,
+    showAddButton,
+    showDetailsButton,
     alreadyAdded,
     userCubeDetail,
-  }: {
-    cube: DetailedCube;
-    rate: boolean;
-    add: boolean;
-    details: boolean;
-    alreadyAdded: boolean;
-    userCubeDetail: any;
-  } = $props();
+  }: Props = $props();
 
   let openAddCard = $state(false);
   let openRateCard = $state(false);
 
-  function isNewCube(addedDateString: Date | null): boolean {
+  /**
+   * Checks if a cube is recently verified (within the last 7 days).
+   * @param addedDateString The ISO date string of verification.
+   * @returns True if the cube was verified less than 7 days ago.
+   */
+  function isNewCube(addedDateString: string | null): boolean {
     if (!addedDateString) return false;
 
     const addedDate = new Date(addedDateString);
@@ -42,7 +49,7 @@
   <div class="flex justify-end">
     {#if isNewCube(cube.verified_at)}
       <div
-        class="absolute top-4 right-[-32px] transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
+        class="absolute top-4 -right-8 transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
       >
         NEW
       </div>
@@ -52,7 +59,7 @@
 
 {#snippet content()}
   <div class="mt-4 flex gap-2">
-    {#if add}
+    {#if showAddButton}
       <AddToCollectionButton
         onClick={() => {
           openAddCard = !openAddCard;
@@ -61,7 +68,7 @@
         addClass="flex-1"
       />
     {/if}
-    {#if rate}
+    {#if showRateButton}
       <RateCubeButton
         onClick={() => {
           openRateCard = !openRateCard;
@@ -73,7 +80,7 @@
 {/snippet}
 
 {#snippet bottom()}
-  {#if details}
+  {#if showDetailsButton}
     <a
       href="/explore/cubes/{cube.slug}"
       class="btn btn-primary mt-4"
@@ -90,18 +97,11 @@
 {#if openAddCard}
   <AddCube
     onCancel={() => {
-      openAddCard = !openAddCard;
+      openAddCard = false;
     }}
     {cube}
     {alreadyAdded}
-    defaultData={{
-      quantity: userCubeDetail?.quantity,
-      condition: userCubeDetail?.condition,
-      main: userCubeDetail?.main,
-      status: userCubeDetail?.status,
-      notes: userCubeDetail?.notes,
-      acquired_at: userCubeDetail?.acquired_at,
-    }}
+    defaultData={userCubeDetail}
   />
 {/if}
 {#if openRateCard}

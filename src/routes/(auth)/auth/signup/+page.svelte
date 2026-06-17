@@ -12,23 +12,27 @@
     errors: accountErrors,
     enhance: enhanceAccount,
     message: accountMessage,
-  } = superForm(data.accountForm, { resetForm: false });
+  } = $derived(superForm(data.accountForm, { resetForm: false }));
 
   const {
     form: profile,
     errors: profileErrors,
     enhance: enhanceProfile,
     message: profileMessage,
-  } = superForm(data.profileForm, {
-    resetForm: false,
-  });
+  } = $derived(
+    superForm(data.profileForm, {
+      resetForm: false,
+    }),
+  );
 
   const {
     form: survey,
     errors: surveyErrors,
     enhance: enhanceSurvey,
     message: surveyMessage,
-  } = superForm(data.surveyForm, { dataType: "json", resetForm: false });
+  } = $derived(
+    superForm(data.surveyForm, { dataType: "json", resetForm: false }),
+  );
 
   const step = $derived(data.step);
 

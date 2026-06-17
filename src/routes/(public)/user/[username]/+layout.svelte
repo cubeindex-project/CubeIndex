@@ -8,11 +8,7 @@
   import FollowButton from "$lib/components/misc/followButton.svelte";
 
   const { data, children } = $props();
-  let user = $derived(data.user);
-  let profile = $derived(data.profile);
-  let following = $derived(data.following);
-  let meta = $derived(data.meta);
-  let stats = $derived(data.stats);
+  const { user, profile, isFollowing, meta, stats } = $derived(data);
 
   interface socialObject {
     label?: string;
@@ -81,7 +77,7 @@
     openReport = !openReport;
   }
 
-  const formattedJoinDate = $derived(formatDate(profile?.created_at));
+  const formattedJoinDate = $derived(formatDate(profile.created_at ?? ""));
   let activeTab = $state("Overview");
 
   const tabs = [
@@ -186,10 +182,7 @@
 
               {#if user?.id && user.id !== profile.user_id}
                 <div class="mt-2 sm:hidden block">
-                  <FollowButton
-                    user_id={profile.user_id}
-                    isFollowing={following}
-                  />
+                  <FollowButton user_id={profile.user_id} {isFollowing} />
                 </div>
               {/if}
             </div>
@@ -252,10 +245,7 @@
             </a>
           {:else}
             {#if user?.id && user.id !== profile.user_id}
-              <FollowButton
-                user_id={profile.user_id}
-                isFollowing={following}
-              />
+              <FollowButton user_id={profile.user_id} {isFollowing} />
             {/if}
             <button class="btn btn-error" onclick={toggleOpenReport}>
               <i class="fa-solid fa-flag"></i>

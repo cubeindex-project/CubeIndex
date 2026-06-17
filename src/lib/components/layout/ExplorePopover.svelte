@@ -1,16 +1,16 @@
 <script lang="ts">
-  /**
-   * Popover content for Explore menu.
-   * Renders the same cards previously shown on /explore.
-   * Client-only UI with accessible fallbacks handled by parent trigger.
-   */
-  let { id = "explore-popover" } = $props<{ id?: string }>();
   interface ExploreCard {
     href: string;
     icon: string;
     title: string;
     description: string;
   }
+
+  interface Props {
+    id?: string;
+  }
+
+  let { id = "explore-popover" }: Props = $props();
 
   const cards: ReadonlyArray<ExploreCard> = [
     {
@@ -38,8 +38,7 @@
       href: "achievements",
       icon: "🏅",
       title: "Achievements",
-      description:
-        "Browse achievements, and track community unlock progress.",
+      description: "Browse achievements, and track community unlock progress.",
     },
   ];
 </script>
@@ -71,7 +70,7 @@
         class="relative group rounded-xl p-4 bg-base-200 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-transform duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 overflow-hidden"
       >
         <div
-          class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-primary/10 to-secondary/10"
+          class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-linear-to-br from-primary/10 to-secondary/10"
           aria-hidden="true"
         ></div>
         <div class="flex items-start gap-3">
@@ -101,11 +100,10 @@
     class="mt-4 flex items-center justify-between gap-3 rounded-xl border border-base-300 bg-base-200/70 px-4 py-3"
   >
     <div class="min-w-0">
-      <p class="text-sm font-semibold text-base-content">
-        Missing a cube?
-      </p>
+      <p class="text-sm font-semibold text-base-content">Missing a cube?</p>
       <p class="text-xs text-base-content/70">
-        Submit models that are not in the catalog and help keep CubeIndex updated.
+        Submit models that are not in the catalog and help keep CubeIndex
+        updated.
       </p>
     </div>
     <a class="btn btn-primary btn-sm" href="/submit">

@@ -1,26 +1,24 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import type { AwardsCategory } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 import { AWARDS_PARTNERS } from "$lib/content/awardsPartners";
 
 export const load = (async ({ locals: { supabase, log } }) => {
   const now = new Date().toISOString();
 
-  const res = await supabase
+  let { data: currentEvent, error: ceErr } = await supabase
     .from("awards_event")
     .select("*")
     .lte("start_at", now)
     .gte("end_at", now)
     .maybeSingle();
-  let current_event = res.data;
-  const currentErr = res.error;
 
-  if (currentErr) {
-    log.error({ err: currentErr }, "Failed to fetch current event");
+  if (ceErr) {
+    log.error({ err: ceErr }, "Failed to fetch current event");
     throw error(500, "Failed to fetch current event");
   }
 
-  if (!current_event) {
+  if (!currentEvent) {
     const { data: next_event, error: nextErr } = await supabase
       .from("awards_event")
       .select("*")
@@ -34,20 +32,20 @@ export const load = (async ({ locals: { supabase, log } }) => {
       throw error(500, "Failed to fetch next event");
     }
 
-    current_event = next_event;
+    currentEvent = next_event;
   }
 
-  if (!current_event) {
-    current_event = null;
+  if (!currentEvent) {
+    currentEvent = null;
   }
 
-  let awards_category: AwardsCategory[] = [];
+  let awards_category: Tables<"awards_category">[] = [];
 
-  if (current_event) {
+  if (currentEvent) {
     const { data, error: acErr } = await supabase
       .from("awards_category")
       .select("*")
-      .eq("event_id", current_event.id);
+      .eq("event_id", currentEvent.id);
 
     if (acErr) {
       log.error({ err: acErr }, "Failed to fetch the current event categories");
@@ -82,7 +80,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
   }
 
   return {
-    current_event,
+    currentEvent,
     awards_category,
     previous_events,
     logoDesigner,

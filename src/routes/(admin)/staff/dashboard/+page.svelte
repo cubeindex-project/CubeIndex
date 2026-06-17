@@ -1,6 +1,6 @@
-<script>
-  const { data } = $props();
-  const { profile } = data;
+<script lang="ts">
+  let { data } = $props();
+  const profile = $derived(data.profile);
 
   const roleData = [
     {
@@ -123,7 +123,9 @@
     },
   ];
 
-  const currentRole = roleData.find((r) => r.role === profile.role);
+  const currentRole = $derived(
+    profile ? roleData.find((r) => r.role === profile.role) : undefined,
+  );
 </script>
 
 <section class="min-h-screen px-4 py-12">
@@ -141,7 +143,7 @@
       <h1
         class="text-4xl font-black text-primary font-clash mb-2 tracking-tight"
       >
-        {profile.role} Control Panel
+        {profile?.role} Control Panel
       </h1>
       <p class="text-base font-medium">
         Welcome, trusted staff member. You help keep CubeIndex <span
@@ -161,7 +163,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-semibold mb-2 text-primary">
-            The <span class="lowercase">{profile.role}</span> role:
+            The <span class="lowercase">{profile?.role}</span> role:
           </h2>
           <p class="text-sm leading-relaxed mb-2">
             {currentRole.description}

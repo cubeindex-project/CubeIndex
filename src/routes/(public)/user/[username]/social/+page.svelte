@@ -3,11 +3,9 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
-  import type { PageData } from "./$types";
-  import type { Profiles } from "$lib/components/dbTableTypes";
 
-  let { data }: { data: PageData } = $props();
-  const { profile, user, followers, following, isFollowing } = data;
+  let { data } = $props();
+  const { profile, user, followers, following, isFollowing } = $derived(data);
 
   // Tabs
   let tab: "following" | "followers" = $state("following");
@@ -25,10 +23,7 @@
   const followingCount = $derived(following.length);
   const followersCount = $derived(followers.length);
 
-  // @ts-expect-error
-  const sourceList: Profiles[] = $derived(
-    tab === "following" ? following : followers
-  );
+  const sourceList = $derived(tab === "following" ? following : followers);
 
   const filtered = $derived.by(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -46,7 +41,7 @@
   });
 
   const totalPages = $derived.by(() =>
-    Math.max(1, Math.ceil(filtered.length / itemsPerPage))
+    Math.max(1, Math.ceil(filtered.length / itemsPerPage)),
   );
 
   const paginated = $derived.by(() => {

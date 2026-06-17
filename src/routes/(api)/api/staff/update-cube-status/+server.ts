@@ -1,37 +1,30 @@
+import type { TablesUpdate } from "$lib/types/database.types";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ request, locals }) => {
-  const {
-    cube_id,
+export const POST: RequestHandler = async ({
+  request,
+  locals: { user, supabase },
+}) => {
+  const { cube_id, status, notes } = await request.json();
+
+  if (!user)
+    return json(
+      { success: false, error: "You are not logged in!" },
+      { status: 401 },
+    );
+
+  const payload: TablesUpdate<"cube_models"> = {
     status,
     notes,
-  }: {
-    cube_id: string;
-    status: string;
-    notes: string;
-  } = await request.json();
-
-  const user_id = locals.user?.id
-
-  if (!user_id) return json({ success: false, error: "You are not logged in!" }, { status: 500 });
-
-  const payload: {
-    status: string;
-    notes: string;
-    verified_by_id: string;
-    verified_at: string | null;
-  } = {
-    status,
-    notes,
-    verified_by_id: user_id,
+    verified_by_id: user.id,
     verified_at: null,
   };
   if (status === "Approved" || status === "Rejected") {
     payload.verified_at = new Date().toISOString();
   }
 
-  const { error } = await locals.supabase
+  const { error } = await supabase
     .from("cube_models")
     .update(payload)
     .eq("id", cube_id);

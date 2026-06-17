@@ -7,71 +7,79 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { logError } from "$lib/server/logError";
+import type { TablesInsert } from "$lib/types/database.types";
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async ({
+  locals: { supabase, user, log },
+}) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
 
-  const { data: brands, error: brandsErr } = await locals.supabase
+  const { data: brands, error: brandsErr } = await supabase
     .from("brands")
     .select("name")
     .order("name", { ascending: true });
 
   if (brandsErr) {
-    return logError(500, "Failed to load brands", locals.log, brandsErr);
+    return logError(500, "Failed to load brands", log, brandsErr);
   }
 
-  const { data: types, error: typesError } = await locals.supabase
+  const { data: types, error: typesError } = await supabase
     .from("cube_types")
     .select("name")
     .order("name", { ascending: true });
 
   if (typesError) {
-    return logError(500, "Failed to load cube types", locals.log, typesError);
+    return logError(500, "Failed to load cube types", log, typesError);
   }
 
-  const { data: surfaces } = await locals.supabase.rpc("get_types", {
+  const { data: surfacesData } = await supabase.rpc("get_types", {
     enum_type: "cube_surface_finishes",
   });
+  const surfaces = (surfacesData as string[] | null) ?? [];
 
-  const { data: subTypes } = await locals.supabase.rpc("get_types", {
+  const { data: subTypesData } = await supabase.rpc("get_types", {
     enum_type: "cubes_subtypes",
   });
+  const subTypes = (subTypesData as string[] | null) ?? [];
 
   return { form, brands, types, surfaces, subTypes };
 };
 
 export const actions: Actions = {
-  default: async ({ request, locals }) => {
+  default: async ({ request, locals: { user, supabase, log } }) => {
     const form = await superValidate(request, zod4(cubeSchema));
+
+    if (!user)
+      return logError(401, "Unauthorized", log, new Error("Unauthorized"));
 
     const data = form.data;
 
     const slug = slugify(
       `${data.series ? data.series : ""} ${data.model} ${
         data.versionName ? data.versionName : ""
-      }`
+      }`,
     );
 
     if (data.type === "___other") {
-      const { error: err } = await locals.supabase
+      const { error: err } = await supabase
         .from("cube_types")
-        .insert([{ name: data.otherType, added_by_id: locals.user?.id }]);
+        .insert([{ name: data.otherType, added_by_id: user?.id }]);
 
       if (err) {
-        return logError(500, "Failed to add new cube type", locals.log, err);
+        return logError(500, "Failed to add new cube type", log, err);
       }
     }
     if (data.brand === "___other") {
-      const { error: brandErr } = await locals.supabase
+      const { error: brandErr } = await supabase
         .from("brands")
-        .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
+        .insert([{ name: data.otherBrand, added_by_id: user.id }]);
 
       if (brandErr) {
-        return logError(500, "Failed to add new brand", locals.log, brandErr);
+        return logError(500, "Failed to add new brand", log, brandErr);
       }
     }
 
-    const payload = {
+    const payload: TablesInsert<"cube_models"> = {
       slug,
       series: data.series?.trim(),
       model: data.model.trim(),
@@ -82,7 +90,7 @@ export const actions: Actions = {
         data.sub_type === "auto"
           ? getSubTypes(
               (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                null
+                null,
             )
           : data.sub_type,
       release_date: data.releaseDate.trim(),
@@ -92,7 +100,7 @@ export const actions: Actions = {
       size: data.size,
       version_type: data.versionType,
       related_to: data.relatedTo,
-      submitted_by_id: locals.user?.id,
+      submitted_by_id: user?.id,
       discontinued: data.discontinued,
       status: "Pending",
       verified_by_id: null,
@@ -101,12 +109,12 @@ export const actions: Actions = {
       created_at: new Date().toISOString(),
     };
 
-    const { error: insertErr } = await locals.supabase
+    const { error: insertErr } = await supabase
       .from("cube_models")
       .insert(payload);
 
     if (insertErr) {
-      return logError(500, "Failed to create cube", locals.log, insertErr);
+      return logError(500, "Failed to create cube", log, insertErr);
     }
 
     const features = data.features;
@@ -115,7 +123,7 @@ export const actions: Actions = {
     const normalizeKey = (key: string) =>
       key.replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`);
 
-    const { data: existingRows, error: rowsErr } = await locals.supabase
+    const { data: existingRows, error: rowsErr } = await supabase
       .from("cubes_model_features")
       .select("*")
       .eq("cube", slug);
@@ -124,8 +132,8 @@ export const actions: Actions = {
       return logError(
         500,
         "Failed to load existing cube features",
-        locals.log,
-        rowsErr
+        log,
+        rowsErr,
       );
     }
 
@@ -142,37 +150,27 @@ export const actions: Actions = {
         cube: slug,
         feature: code,
       }));
-      const { error: featUpErr } = await locals.supabase
+      const { error: featUpErr } = await supabase
         .from("cubes_model_features")
         .upsert(insertPayload);
 
       if (featUpErr) {
-        return logError(
-          500,
-          "Failed to add cube features",
-          locals.log,
-          featUpErr
-        );
+        return logError(500, "Failed to add cube features", log, featUpErr);
       }
     }
 
     if (toRemove.length) {
-      const { error: featUpErr } = await locals.supabase
+      const { error: featUpErr } = await supabase
         .from("cubes_model_features")
         .delete()
         .eq("cube", slug)
         .in(
           "feature",
-          toRemove.map((code) => code)
+          toRemove.map((code) => code),
         );
 
       if (featUpErr) {
-        return logError(
-          500,
-          "Failed to remove cube features",
-          locals.log,
-          featUpErr
-        );
+        return logError(500, "Failed to remove cube features", log, featUpErr);
       }
     }
 

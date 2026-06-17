@@ -1,23 +1,23 @@
 ﻿<script lang="ts">
-  import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
-  import type { DetailedCube } from "../dbTableTypes";
+  import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
   import { formatDate } from "../helper_functions/formatDate.svelte";
+  import type { Tables } from "$lib/types/database.types";
 
-  let {
-    cube,
-  }: {
-    cube: DetailedCube;
-  } = $props();
+  interface Props {
+    cube: Tables<"v_detailed_cube_models">;
+  }
 
-  const statusCopy: Partial<Record<string, string>> = {
+  let { cube }: Props = $props();
+
+  const statusCopy: Record<string, string> = {
     Approved: "Great news! Your cube is live on CubeIndex.",
     Pending: "Our moderators are reviewing this submission.",
     Rejected:
       "There was an issue with the submission. Check the moderator note for next steps.",
   };
 
-  const noteText = cube.notes?.trim();
-  const hasNote = Boolean(noteText);
+  const noteText = $derived(cube.notes?.trim());
+  const hasNote = $derived(Boolean(noteText));
 </script>
 
 {#snippet top()}
@@ -39,20 +39,26 @@
       class="rounded-2xl bg-base-300/50 border border-base-300 p-4 flex flex-col gap-2"
     >
       <p class="text-sm font-semibold text-base-content">Submission status</p>
-      {#if statusCopy[cube.status]}
+      {#if cube.status}
         <p class="text-sm text-base-content/70">{statusCopy[cube.status]}</p>
       {/if}
       <div class="text-xs text-base-content/60 flex flex-wrap gap-x-4 gap-y-2">
         <span>
           <span class="font-medium text-base-content/80">Submitted:</span>
-          <time datetime={cube.created_at.toString()} class="ml-1 text-base-content">
-            {formatDate(cube.created_at)}
+          <time
+            datetime={cube.created_at?.toString()}
+            class="ml-1 text-base-content"
+          >
+            {cube.created_at ? formatDate(cube.created_at) : "—"}
           </time>
         </span>
         {#if cube.verified_at}
           <span>
             <span class="font-medium text-base-content/80">Verified:</span>
-            <time datetime={cube.verified_at.toString()} class="ml-1 text-base-content">
+            <time
+              datetime={cube.verified_at.toString()}
+              class="ml-1 text-base-content"
+            >
               {formatDate(cube.verified_at)}
             </time>
           </span>

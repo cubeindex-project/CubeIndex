@@ -1,69 +1,7 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
-  import type { Cube } from "$lib/components/dbTableTypes";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import type { Tables } from "$lib/types/database.types.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
-
-  type CubeWithMeta = Cube & {
-    year: number; // Release year extracted from date
-    name: string; // Combined name for search
-    wca_legal: boolean; // WCA legal feature flag
-    magnetic: boolean; // Magnetic feature flag
-    modded: boolean; // Modded feature flag
-    stickered: boolean; // Stickered feature flag
-    smart: boolean; // Smart feature flag
-    popularity: number; // Popularity count from user data
-    avg_price: number; // Average price
-  };
-
-  const { data } = $props();
-
-  let cubes: CubeWithMeta[] = $derived(data.cubes);
-  let options: { label: string; value: string }[] = $state([]);
-
-  $effect(() => {
-    options = cubes.map((c) => ({
-      label: `${c.series} ${c.model} ${c.version_name}`,
-      value: c.slug,
-    }));
-  });
-
-  let cube1: CubeWithMeta | null = $state(null);
-  let cube2: CubeWithMeta | null = $state(null);
-
-  let cube1Value: string = $state("");
-  let cube2Value: string = $state("");
-
-  function swapSelections() {
-    const a = cube1Value;
-    cube1Value = cube2Value;
-    cube2Value = a;
-  }
-
-  function clearSelection(which: 1 | 2 | "both" = "both") {
-    if (which === 1 || which === "both") {
-      cube1Value = "";
-    }
-    if (which === 2 || which === "both") {
-      cube2Value = "";
-    }
-  }
-
-  $effect(() => {
-    const _ = cube1Value;
-    cube1 = cubes.find((c) => c.slug === cube1Value) ?? null;
-  });
-
-  $effect(() => {
-    const _ = cube2Value;
-    cube2 = cubes.find((c) => c.slug === cube2Value) ?? null;
-  });
-
-  function boolYesNo(v: boolean) {
-    return v ? "Yes" : "No";
-  }
-  function formatFloat(n: number) {
-    return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
-  }
 
   type Field = {
     label: string;
@@ -71,6 +9,9 @@
     format?: (value: any) => string;
     boolean?: boolean;
   };
+
+  const { data } = $props();
+  const { cubes } = $derived(data);
 
   const fields: Field[] = [
     { label: "Version Type", key: "version_type" },
@@ -100,9 +41,39 @@
     { label: "Size (mm3)", key: "size", format: formatFloat },
   ];
 
-  function getValue(c: CubeWithMeta | null, f: Field) {
+  let options: { label: string; value: string }[] = $state([]);
+
+  let cube1: Tables<"v_detailed_cube_models"> | null = $state(null);
+  let cube2: Tables<"v_detailed_cube_models"> | null = $state(null);
+
+  let cube1Value: string = $state("");
+  let cube2Value: string = $state("");
+
+  function swapSelections() {
+    const a = cube1Value;
+    cube1Value = cube2Value;
+    cube2Value = a;
+  }
+
+  function clearSelection(which: 1 | 2 | "both" = "both") {
+    if (which === 1 || which === "both") {
+      cube1Value = "";
+    }
+    if (which === 2 || which === "both") {
+      cube2Value = "";
+    }
+  }
+
+  function boolYesNo(v: boolean) {
+    return v ? "Yes" : "No";
+  }
+  function formatFloat(n: number) {
+    return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
+  }
+
+  function getValue(c: Tables<"v_detailed_cube_models">, f: Field) {
     if (!c) return "-";
-    const raw = c[f.key as keyof CubeWithMeta];
+    const raw = c[f.key as keyof Tables<"v_detailed_cube_models">];
     return f.format ? f.format(raw) : (raw ?? "-");
   }
 
@@ -112,6 +83,23 @@
     const b = getValue(cube2, f);
     return String(a) !== String(b);
   }
+
+  $effect(() => {
+    options = cubes.map((c) => ({
+      label: `${c.series} ${c.model} ${c.version_name}`,
+      value: c.slug,
+    }));
+  });
+
+  $effect(() => {
+    const _ = cube1Value;
+    cube1 = cubes.find((c) => c.slug === cube1Value) ?? null;
+  });
+
+  $effect(() => {
+    const _ = cube2Value;
+    cube2 = cubes.find((c) => c.slug === cube2Value) ?? null;
+  });
 </script>
 
 <section class="min-h-screen px-4 py-12">
@@ -253,7 +241,7 @@
               <td class="py-3 px-4 text-center">
                 {#if cube1}
                   {#if field.boolean}
-                    {#if cube1[field.key as keyof CubeWithMeta]}
+                    {#if cube1[field.key as keyof Tables<"v_detailed_cube_models">]}
                       <span class="badge badge-success">Yes</span>
                     {:else}
                       <span class="badge badge-ghost">No</span>
@@ -268,7 +256,7 @@
               <td class="py-3 px-4 text-center">
                 {#if cube2}
                   {#if field.boolean}
-                    {#if cube2[field.key as keyof CubeWithMeta]}
+                    {#if cube2[field.key as keyof Tables<"v_detailed_cube_models">]}
                       <span class="badge badge-success">Yes</span>
                     {:else}
                       <span class="badge badge-ghost">No</span>

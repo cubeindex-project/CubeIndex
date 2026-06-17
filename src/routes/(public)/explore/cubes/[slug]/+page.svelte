@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 
   let { data } = $props();
-  let { cube, submittedBy, verifiedBy } = $derived(data);
+  let { cube, submitter, verifier } = $derived(data);
 
   const allFeatureBadges = [
     { label: "Smart", key: "smart", icon: "fa-microchip" },
@@ -33,7 +33,8 @@
         released on
         <span class="font-medium">{formatDate(cube.release_date)}</span>
       {/if}. It is
-      <span class="font-medium">{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
+      <span class="font-medium"
+        >{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
       >,
       <span class="font-medium">{cube.smart ? "smart" : "non‑smart"}</span>, and
       <span class="font-medium"
@@ -128,21 +129,29 @@
           <div class="font-medium">{cube.id}</div>
         </div>
       </div>
-      <div class="flex items-center gap-3">
-        <i class="fa-regular fa-circle-check opacity-70"></i>
-        <div>
-          <div class="text-xs opacity-70">Verified By</div>
-          <a class="font-medium link" href="/user/{verifiedBy?.username}">
-            {verifiedBy?.display_name || "Unknown"}
-          </a>
+      {#if verifier}
+        <div class="flex items-center gap-3">
+          <i class="fa-regular fa-circle-check opacity-70"></i>
+          <div>
+            <div class="text-xs opacity-70">Verified By</div>
+            <a
+              class="font-medium link"
+              href={verifier.username ? `/user/${verifier.username}` : "#"}
+            >
+              {verifier.display_name ?? "Unknown"}
+            </a>
+          </div>
         </div>
-      </div>
+      {/if}
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-user opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Submitted By</div>
-          <a class="font-medium link" href="/user/{submittedBy?.username}">
-            {submittedBy?.display_name || "Unknown"}
+          <a
+            class="font-medium link"
+            href={submitter.username ? `/user/${submitter.username}` : "#"}
+          >
+            {submitter.display_name || "Unknown"}
           </a>
         </div>
       </div>

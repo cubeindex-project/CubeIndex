@@ -1,6 +1,5 @@
 <script lang="ts">
   import { superForm } from "sveltekit-superforms";
-  import type { DetailedCube } from "$lib/components/dbTableTypes.js";
   import SearchCubes, {
     type SearchCube,
   } from "$lib/components/cube/searchCubes.svelte";
@@ -13,8 +12,7 @@
   import { onMount } from "svelte";
 
   let { data } = $props();
-  const { brands, types, surfaces, subTypes } = data;
-  const cubes: DetailedCube[] = $derived(data.cubes);
+  const { cubes, brands, types, surfaces, subTypes } = $derived(data);
 
   const {
     form,
@@ -25,13 +23,15 @@
     enhance,
     isTainted,
     tainted,
-  } = superForm(data.form, {
-    dataType: "json",
-    resetForm: false,
-    onError({ result }) {
-      $message = result.error.message || "Unknown error";
-    },
-  });
+  } = $derived(
+    superForm(data.form, {
+      dataType: "json",
+      resetForm: false,
+      onError({ result }) {
+        $message = result.error.message || "Unknown error";
+      },
+    }),
+  );
 
   const dirty = $derived(isTainted($tainted));
 
@@ -40,7 +40,7 @@
       cubes.map((cube) => [
         cube.slug,
         {
-          label: cube.name,
+          label: cube.name ?? "",
           value: cube.slug,
         },
       ]),

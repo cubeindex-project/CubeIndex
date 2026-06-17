@@ -7,7 +7,7 @@
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
-  import type { ResolvedMeta } from "$lib/types/meta";
+  import type { ResolvedMeta } from "$lib/types/meta.types";
   import { page } from "$app/state";
 
   let { data, children } = $props();
@@ -16,7 +16,7 @@
   import { invalidate } from "$app/navigation";
   import { onMount } from "svelte";
 
-  let { session, supabase, profile, umamiTag } = $derived(data);
+  let { session, supabase, profile, isDevelopmentEnvironment } = $derived(data);
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) {
@@ -26,25 +26,52 @@
     return () => data.subscription.unsubscribe();
   });
 
-  import { setContext } from "svelte";
-  setContext("user", data.user);
-  setContext("session", data.session);
-
   import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/footer.svelte";
 
-  const meta: ResolvedMeta = $derived.by(() => ({
-    ...data.meta,
-    ...(page.data.meta ?? {}),
-  }));
+  const meta: ResolvedMeta = $derived.by(() => {
+    const pageMeta = page.data.meta;
 
-  const ogTitle = $derived(meta.ogTitle ?? meta.title);
-  const ogDescription = $derived(meta.ogDescription ?? meta.description);
-  const twitterTitle = $derived(meta.twitterTitle ?? meta.title);
-  const twitterDescription = $derived(
-    meta.twitterDescription ?? meta.description,
-  );
-  const twitterImage = $derived(meta.twitterImage ?? meta.image);
+    const title = pageMeta?.title ?? "CubeIndex";
+    const description =
+      pageMeta?.description ??
+      "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers.";
+    const image =
+      pageMeta?.image ?? page.url.origin + "/images/og/cubeindex-og.png";
+
+    return {
+      title,
+      description,
+      ogTitle:
+        pageMeta?.ogTitle ??
+        "CubeIndex - Speedcubing Database & Collection Tracker",
+      ogDescription: pageMeta?.ogDescription ?? description,
+      siteName: pageMeta?.siteName ?? "CubeIndex",
+      image,
+      url: pageMeta?.url ?? page.url.href,
+      twitterTitle: pageMeta?.twitterTitle ?? title,
+      twitterDescription: pageMeta?.twitterDescription ?? description,
+      twitterImage:
+        pageMeta?.twitterImage ??
+        page.url.origin + "/images/og/cubeindex-twitter-og.png",
+      twitterCard: pageMeta?.twitterCard ?? "summary_large_image",
+      googleSiteVerification:
+        pageMeta?.googleSiteVerification ??
+        "LeqQ-VZhIWm9luPXxKl2DWIb48Udb94UIZclWUjOevE",
+      jsonLd: pageMeta?.jsonLd ?? {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        url: page.url.origin,
+        logo: page.url.origin + "/images/CubeIndex_Logo.webp",
+        name: "CubeIndex",
+        description:
+          "Discover, track, and rate your speedcubes. CubeIndex is the all-in-one database for cubers.",
+        email: "thecubeindex@gmail.com",
+      },
+      noindex: pageMeta?.noindex ?? false,
+      canonical: pageMeta?.canonical ?? page.url.href,
+    };
+  });
 </script>
 
 <svelte:head>
@@ -56,15 +83,15 @@
     {@html `<script type="application/ld+json">${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`}
   {/if}
 
-  <meta property="og:title" content={ogTitle} />
+  <meta property="og:title" content={meta.ogTitle} />
   <meta property="og:site_name" content={meta.siteName} />
   <meta property="og:image" content={meta.image} />
-  <meta property="og:description" content={ogDescription} />
+  <meta property="og:description" content={meta.ogDescription} />
   <meta property="og:url" content={meta.url} />
 
-  <meta name="twitter:title" content={twitterTitle} />
-  <meta name="twitter:image" content={twitterImage} />
-  <meta name="twitter:description" content={twitterDescription} />
+  <meta name="twitter:title" content={meta.twitterTitle} />
+  <meta name="twitter:image" content={meta.twitterImage} />
+  <meta name="twitter:description" content={meta.twitterDescription} />
   <meta name="twitter:card" content={meta.twitterCard} />
 
   <meta name="google-site-verification" content={meta.googleSiteVerification} />
@@ -73,7 +100,7 @@
     <meta name="robots" content="noindex" />
   {/if}
 
-  {#if umamiTag}
+  {#if isDevelopmentEnvironment}
     <script
       defer
       src="https://cloud.umami.is/script.js"

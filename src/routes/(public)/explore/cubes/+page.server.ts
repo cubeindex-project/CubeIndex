@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type { DetailedCube } from "$lib/components/dbTableTypes";
+import type { Tables } from "$lib/types/database.types";
 
 export const load: PageServerLoad = async ({
   locals: { supabase, log },
@@ -16,16 +16,16 @@ export const load: PageServerLoad = async ({
     return logError(500, "Failed to load cubes", log, err);
   }
 
-  const cubes: DetailedCube[] = data;
+  const cubes: Tables<"v_detailed_cube_models">[] = data;
 
   // Cache aggressively on the edge, allow stale while revalidating
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  const items = cubes
+  const jsonLDItems = cubes
     .slice()
-    .sort((a, b) => a.popularity - b.popularity)
+    .sort((a, b) => (a.popularity ?? 0) - (b.popularity ?? 0))
     .slice(0, 50)
     .map((cube, index) => ({
       "@type": "ListItem",
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        itemListElement: items,
+        itemListElement: jsonLDItems,
       },
     },
   };

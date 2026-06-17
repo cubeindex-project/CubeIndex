@@ -1,10 +1,9 @@
 <script lang="ts">
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import type { PageData } from "./$types";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   let { cube, reviews } = $derived(data);
 
   const MAX_SUMMARY_CHARS = 180;

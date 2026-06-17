@@ -1,37 +1,45 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { DetailedCube, UserCubes } from "../dbTableTypes";
   import { formatDate } from "../helper_functions/formatDate.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { clientLogger } from "$lib/logger/client";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
+
+  interface LocalUserCubesType extends Tables<"user_cubes"> {
+    vendor: { name: string } | null;
+  }
+
+  interface Props {
+    mode?: "view" | "edit";
+    cube: Tables<"v_detailed_cube_models">;
+    user_details: LocalUserCubesType;
+    user_rating: number;
+  }
+
+  let { mode = "view", cube, user_details, user_rating }: Props = $props();
 
   const supabase = page.data.supabase;
 
-  /**
-   * Combines a user's cube ownership details with minimal vendor info
-   * used for display in the card.
-   */
-  interface LocalUserCubesType extends UserCubes {
-    vendor: { name: string };
-  }
-
-  let {
-    mode = "view",
-    cube,
-    user_details,
-    user_rating,
-  }: {
-    mode?: "view" | "edit";
-    cube: DetailedCube;
-    user_details: LocalUserCubesType;
-    user_rating: number;
-  } = $props();
+  const slug = $derived(user_details.cube);
 
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state("");
+  let vendors: { slug: string; name: string }[] = $state([]);
+
+  // svelte-ignore state_referenced_locally
+  let form = $state({
+    quantity: user_details.quantity,
+    condition: user_details.condition,
+    main: user_details.main,
+    status: user_details.status,
+    bought_from: user_details.bought_from,
+    notes: user_details.notes,
+    acquired_at: user_details.acquired_at,
+    purchase_price: user_details.purchase_price,
+  });
 
   const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -43,23 +51,6 @@
   $effect(() => {
     if (showSuccess) location.reload();
   });
-
-  let slug = $state(user_details.cube);
-  let quantity = $state(user_details.quantity);
-  let condition = $state(user_details.condition);
-  let main = $state(user_details.main);
-  let status = $state(user_details.status);
-  let bought_from = $state(user_details.bought_from);
-  let notes = $state(user_details.notes);
-  let acquired_at = $state(user_details.acquired_at);
-  let purchase_price = $state<number | null>(
-    user_details.purchase_price === null ||
-      user_details.purchase_price === undefined
-      ? null
-      : Number(user_details.purchase_price),
-  );
-
-  let vendors: { slug: string; name: string }[] = $state([]);
 
   async function getVendors() {
     try {
@@ -80,20 +71,18 @@
     }
   }
 
-  onMount(getVendors);
-
-  async function update() {
+  async function updateUserCube() {
     isSubmitting = true;
     formMessage = "";
 
-    if (purchase_price !== null) {
-      if (!Number.isFinite(purchase_price) || purchase_price < 0) {
+    if (form.purchase_price !== null) {
+      if (!Number.isFinite(form.purchase_price) || form.purchase_price < 0) {
         formMessage =
           "Price must be a valid number greater than or equal to 0.";
         isSubmitting = false;
         return;
       }
-      if (purchase_price > 100000) {
+      if (form.purchase_price > 100000) {
         formMessage = "Price seems too high. Please double-check.";
         isSubmitting = false;
         return;
@@ -102,14 +91,14 @@
 
     const payload = {
       cube: slug,
-      quantity,
-      main,
-      condition,
-      status,
-      bought_from,
-      notes,
-      acquired_at,
-      purchase_price,
+      quantity: form.quantity,
+      main: form.main,
+      condition: form.condition,
+      status: form.status,
+      bought_from: form.bought_from,
+      notes: form.status,
+      acquired_at: form.acquired_at,
+      purchase_price: form.purchase_price,
     };
 
     try {
@@ -132,7 +121,7 @@
     }
   }
 
-  async function remove() {
+  async function removeUserCube() {
     formMessage = "";
     const payload = {
       slug,
@@ -155,6 +144,8 @@
       formMessage = err.message;
     }
   }
+
+  onMount(getVendors);
 </script>
 
 {#snippet top()}
@@ -179,7 +170,7 @@
     <div class="absolute right-3 top-3">
       <button
         class="btn btn-error btn-sm"
-        onclick={remove}
+        onclick={removeUserCube}
         aria-label="Remove from collection"
       >
         <i class="fa-solid fa-trash"></i>
@@ -216,7 +207,7 @@
           </div>
         {/if}
 
-        {#if user_details.bought_from}
+        {#if user_details.vendor}
           <div class="badge badge-lg gap-1 bg-base-300" title="Bought from">
             <i class="fa-solid fa-store"></i>
             {user_details.vendor.name}
@@ -249,7 +240,7 @@
       class="mt-4 flex gap-2"
       onsubmit={(e) => {
         e.preventDefault();
-        update();
+        updateUserCube();
       }}
     >
       <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -261,7 +252,7 @@
             type="number"
             min="1"
             max="999"
-            bind:value={quantity}
+            bind:value={form.quantity}
             class="input input-bordered w-full"
             required
           />
@@ -272,7 +263,7 @@
           <select
             id="status"
             name="status"
-            bind:value={status}
+            bind:value={form.status}
             class="select select-bordered w-full"
             required
           >
@@ -289,7 +280,7 @@
           <select
             id="condition"
             name="condition"
-            bind:value={condition}
+            bind:value={form.condition}
             class="select select-bordered w-full"
             required
           >
@@ -308,7 +299,7 @@
           <select
             id="bought_from"
             name="bought_from"
-            bind:value={bought_from}
+            bind:value={form.bought_from}
             class="select select-bordered w-full"
           >
             <option value={null}>None</option>
@@ -332,7 +323,7 @@
               max="100000"
               step="0.01"
               placeholder="0.00"
-              bind:value={purchase_price}
+              bind:value={form.purchase_price}
               class="grow"
               inputmode="decimal"
             />
@@ -345,7 +336,7 @@
             id="notes"
             name="notes"
             placeholder="Any special notes..."
-            bind:value={notes}
+            bind:value={form.notes}
             class="textarea textarea-bordered rounded-2xl w-full max-h-50"
           ></textarea>
         </label>
@@ -356,7 +347,7 @@
             id="acquiredAt"
             name="acquiredAt"
             type="date"
-            bind:value={acquired_at}
+            bind:value={form.acquired_at}
             class="input input-bordered w-full"
           />
         </label>
@@ -367,7 +358,7 @@
             name="main"
             type="checkbox"
             class="checkbox"
-            bind:checked={main}
+            bind:checked={form.main}
           />
           <span class="label-text">Set as main cube</span>
         </label>
@@ -389,7 +380,7 @@
   {:else}
     <button
       class="btn btn-primary mt-4 items-center"
-      onclick={update}
+      onclick={updateUserCube}
       disabled={isSubmitting || showSuccess}
       aria-live="polite"
     >

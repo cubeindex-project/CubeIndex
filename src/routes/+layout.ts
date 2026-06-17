@@ -8,6 +8,8 @@ import {
   PUBLIC_SUPABASE_URL,
 } from "$env/static/public";
 import type { LayoutLoad } from "./$types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "$lib/types/database.types";
 
 export const load = (async ({ data, depends, fetch }) => {
   /**
@@ -16,7 +18,7 @@ export const load = (async ({ data, depends, fetch }) => {
    */
   depends("supabase:auth");
 
-  const supabase = isBrowser()
+  const supabase: SupabaseClient<Database> = isBrowser()
     ? createBrowserClient(
         PUBLIC_SUPABASE_URL,
         PUBLIC_SUPABASE_PUBLISHABLE_KEY,

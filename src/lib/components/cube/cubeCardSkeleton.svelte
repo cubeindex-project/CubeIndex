@@ -1,11 +1,11 @@
 ﻿<script lang="ts">
+  import type { Tables } from "$lib/types/database.types";
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
-  import type { DetailedCube } from "../dbTableTypes";
   import type { Snippet } from "svelte";
 
   interface Props {
-    cube: DetailedCube;
+    cube: Tables<"v_detailed_cube_models">;
     rating: boolean;
     top?: Snippet<[]>;
     content: Snippet<[]>;
@@ -15,7 +15,9 @@
 
   let { cube, top, rating, content, bottom, showMeta = true }: Props = $props();
 
-  const preloadImage = `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`;
+  const preloadImage = $derived(
+    `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`,
+  );
 
   const compactNF = new Intl.NumberFormat(undefined, {
     notation: "compact",

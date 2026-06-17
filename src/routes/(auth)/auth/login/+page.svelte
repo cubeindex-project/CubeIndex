@@ -9,13 +9,15 @@
   const { data } = $props();
 
   const { form, errors, delayed, enhance, message, isTainted, tainted } =
-    superForm(data.form, {
-      onError({ result }) {
-        $message = result.error.message || "Unknown error";
-      },
-      delayMs: 500,
-      timeoutMs: 8000,
-    });
+    $derived(
+      superForm(data.form, {
+        onError({ result }) {
+          $message = result.error.message || "Unknown error";
+        },
+        delayMs: 500,
+        timeoutMs: 8000,
+      }),
+    );
 
   let showPassword = $state(false);
   let resetError: string = $state("");

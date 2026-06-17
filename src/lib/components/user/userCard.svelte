@@ -1,15 +1,13 @@
 <script lang="ts">
-  import type { Profiles } from "../dbTableTypes";
+  import type { Tables } from "$lib/types/database.types";
   import Avatar from "./avatar.svelte";
   import Badge from "./badge.svelte";
 
-  interface extendedProfile extends Profiles {
-    user_cubes_count: number;
-    user_achievements_count: number;
-    user_following_count: number;
-    user_follower_count: number;
-    user_cube_ratings_count: number;
-    user_avg_rating_count: number;
+  interface Props {
+    profile: Tables<"v_detailed_profiles">;
+    showCount?: boolean;
+    compact?: boolean; // tighter padding + smaller avatar/text
+    showArrow?: boolean; // hide the chevron if you need a quieter list
   }
 
   const {
@@ -17,14 +15,11 @@
     showCount = true,
     compact = false,
     showArrow = true,
-  }: {
-    profile: extendedProfile;
-    showCount?: boolean;
-    compact?: boolean; // tighter padding + smaller avatar/text
-    showArrow?: boolean; // hide the chevron if you need a quieter list
-  } = $props();
+  }: Props = $props();
 
-  const href = profile?.username ? `/user/${profile.username}` : undefined;
+  const href = $derived(
+    profile.username ? `/user/${profile.username}` : undefined,
+  );
 
   // 1. Compact formatting for large numbers
   const nf = new Intl.NumberFormat(undefined, {
@@ -35,13 +30,6 @@
 
   // 2. Tiny plural helper
   const plural = (n: number, s: string) => (n === 1 ? s : `${s}s`);
-
-  // 3. Accessible label
-  const ariaLabel =
-    `View ${profile?.display_name ?? "user"}’s profile` +
-    (showCount
-      ? `, ${fmt(profile.user_cubes_count)} ${plural(profile.user_cubes_count, "cube")}, ${fmt(profile.user_achievements_count)} ${plural(profile.user_achievements_count, "achievement")}`
-      : "");
 </script>
 
 <article
@@ -52,7 +40,6 @@
   {#if href}
     <a
       {href}
-      aria-label={ariaLabel}
       class={`group flex items-center gap-4 transition px-4 ${compact ? "py-3" : "py-4"}`}
     >
       <Avatar
@@ -73,23 +60,27 @@
             <span
               class={`text-xs/5 text-base-content/70 flex items-center gap-2 truncate`}
             >
-              <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
-              <span
-                title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
-              >
-                {fmt(profile.user_cubes_count)}
-                {plural(profile.user_cubes_count, "cube")}
-              </span>
+              {#if profile.user_cubes_count}
+                <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
+                <span
+                  title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
+                >
+                  {fmt(profile.user_cubes_count)}
+                  {plural(profile.user_cubes_count, "cube")}
+                </span>
+              {/if}
 
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
-              <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
-              <span
-                title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
-              >
-                {fmt(profile.user_achievements_count)}
-                {plural(profile.user_achievements_count, "achievement")}
-              </span>
+              {#if profile.user_achievements_count}
+                <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
+                <span
+                  title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
+                >
+                  {fmt(profile.user_achievements_count)}
+                  {plural(profile.user_achievements_count, "achievement")}
+                </span>
+              {/if}
             </span>
           {/if}
         </div>
@@ -129,13 +120,17 @@
             <span
               class="text-xs/5 text-base-content/60 flex items-center gap-2 truncate"
             >
-              <i class="fa-solid fa-cube" aria-hidden="true"></i>
-              {fmt(profile.user_cubes_count)}
-              {plural(profile.user_cubes_count, "cube")}
+              {#if profile.user_cubes_count}
+                <i class="fa-solid fa-cube" aria-hidden="true"></i>
+                {fmt(profile.user_cubes_count)}
+                {plural(profile.user_cubes_count, "cube")}
+              {/if}
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
-              <i class="fa-solid fa-medal" aria-hidden="true"></i>
-              {fmt(profile.user_achievements_count)}
-              {plural(profile.user_achievements_count, "achievement")}
+              {#if profile.user_achievements_count}
+                <i class="fa-solid fa-medal" aria-hidden="true"></i>
+                {fmt(profile.user_achievements_count)}
+                {plural(profile.user_achievements_count, "achievement")}
+              {/if}
             </span>
           {/if}
         </div>

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   const { data } = $props();
 
-  const { profile, stats, recent } = data;
+  const { profile, stats, recent } = $derived(data);
 
-  const cards = [
+  const cards = $derived([
     {
       label: "Collection",
       value: stats.cubesCount,
@@ -37,7 +37,7 @@
       icon: "fa-paper-plane",
       href: "/user/submissions",
     },
-  ];
+  ]);
 
   const submissionStatusBadge = (status: string) => {
     const normalized = status.toLowerCase();

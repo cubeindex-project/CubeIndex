@@ -6,7 +6,11 @@
 
   const plugins = [gfmPlugin()];
 
-  const { text }: { text: string } = $props();
+  interface Props {
+    text: string;
+  }
+
+  const { text }: Props = $props();
 </script>
 
 <Markdown md={DOMPurify.sanitize(text)} {plugins} />

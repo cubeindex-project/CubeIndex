@@ -5,17 +5,16 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  import type { DetailedProfiles } from "$lib/components/dbTableTypes.js";
 
   const { data } = $props();
-  const profiles: DetailedProfiles[] = data.profiles;
+  const { profiles } = $derived(data);
 
   let searchTerm: string = $state(""); // Text input for search bar
 
   const filteredUsers = $derived.by(() => {
     return profiles.filter((p) => {
-      const lowerDisplayName = p.display_name.toLowerCase();
-      const lowerUserName = p.display_name.toLowerCase();
+      const lowerDisplayName = p.display_name?.toLowerCase() ?? "";
+      const lowerUserName = p.display_name?.toLowerCase() ?? "";
       return (
         lowerDisplayName.includes(searchTerm.toLowerCase()) ||
         lowerUserName.includes(searchTerm.toLowerCase())

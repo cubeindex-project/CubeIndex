@@ -5,10 +5,10 @@ import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner.js";
-import type { Cube } from "$lib/components/dbTableTypes.js";
 import { cubeSchema } from "$lib/components/validation/cubeForm.js";
 import { logError } from "$lib/server/logError";
 import { createLogger } from "$lib/server/logger";
+import type { Tables } from "$lib/types/database.types.js";
 
 export const load: PageServerLoad = async ({
   params,
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({
   const { slug } = params;
   const log = createLogger({ scope: "staff-cube-edit-load", slug });
 
-  let cube: Cube = {} as Cube;
+  let cube: Tables<"cube_models"> = {} as Tables<"cube_models">;
 
   const { data, error: cErr } = await supabase
     .from("cube_models")
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({
     return logError(500, "Failed to load cube trims", log, ctErr);
   }
 
-  let relatedCube = [];
+  let relatedCube: Tables<"cube_models"> | null = null;
 
   if (cube.related_to) {
     const { data, error: rcErr } = await supabase
@@ -59,7 +59,7 @@ export const load: PageServerLoad = async ({
   const { data: sameSeries, error: ssErr } = await supabase
     .from("cube_models")
     .select("*")
-    .eq("series", cube.series)
+    .eq("series", cube.series ?? "")
     .eq("version_type", "Base")
     .neq("model", cube.model);
 
@@ -110,19 +110,19 @@ export const load: PageServerLoad = async ({
   const form = await superValidate(
     {
       id: cube.id,
-      series: cube.series,
+      series: cube.series ?? undefined,
       model: cube.model,
-      versionName: cube.version_name,
+      versionName: cube.version_name ?? undefined,
       brand: cube.brand,
       type: cube.type,
       sub_type: cube.sub_type ?? "auto",
-      releaseDate: cube.release_date,
+      releaseDate: cube.release_date ?? undefined,
       imageUrl: cube.image_url,
-      surfaceFinish: cube.surface_finish,
+      surfaceFinish: cube.surface_finish ?? undefined,
       weight: cube.weight,
-      size: cube.size,
+      size: cube.size ?? undefined,
       versionType: cube.version_type,
-      relatedTo: cube.related_to,
+      relatedTo: cube.related_to ?? undefined,
       discontinued: cube.discontinued,
       features: {
         wcaLegal: features.some((f) => f.feature === "wca_legal"),
@@ -165,6 +165,13 @@ export const actions: Actions = {
   default: async ({ request, locals }) => {
     const form = await superValidate(request, zod4(cubeSchema));
 
+    if (!locals.user) {
+      return fail(401, {
+        form,
+        message: "User is not logged-in",
+      });
+    }
+
     const data = form.data;
 
     if (!form.valid)
@@ -196,7 +203,7 @@ export const actions: Actions = {
     if (data.brand === "___other") {
       const { error: brandErr } = await locals.supabase
         .from("brands")
-        .insert([{ name: data.otherBrand, added_by_id: locals.user?.id }]);
+        .insert([{ name: data.otherBrand, added_by_id: locals.user.id }]);
 
       if (brandErr) {
         return logError(500, "Failed to add new brand", locals.log, brandErr);
@@ -210,16 +217,16 @@ export const actions: Actions = {
       version_name: data.versionType === "Base" ? "" : data.versionName?.trim(),
       brand: data.brand !== "___other" ? data.brand?.trim() : data.otherBrand,
       type: data.type !== "___other" ? data.type?.trim() : data.otherType,
-      sub_type:
-        data.sub_type === "auto"
-          ? getSubTypes(
-              (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
-                null,
-            )
-          : data.sub_type,
+      sub_type: (data.sub_type === "auto"
+        ? getSubTypes(
+            (data.type !== "___other" ? data.type?.trim() : data.otherType) ??
+              null,
+          )
+        : data.sub_type) as Tables<"cube_models">["sub_type"],
       release_date: data.releaseDate.trim(),
       image_url: cleanLink(data.imageUrl),
-      surface_finish: data.surfaceFinish?.trim(),
+      surface_finish:
+        data.surfaceFinish?.trim() as Tables<"cube_models">["surface_finish"],
       weight: data.weight,
       size: data.size,
       version_type: data.versionType,
@@ -236,6 +243,13 @@ export const actions: Actions = {
       available: vendorLink.available,
       price: vendorLink.price,
     }));
+
+    if (!data.id) {
+      return fail(400, {
+        form,
+        message: "Missing cube ID",
+      });
+    }
 
     const { error: updateErr } = await locals.supabase
       .from("cube_models")

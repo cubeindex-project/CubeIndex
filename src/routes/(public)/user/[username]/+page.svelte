@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import Markdown from "$lib/components/misc/markdown.svelte";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
 
   const profile = $derived(data.profile);
   const main_cubes = $derived(data.main_cubes);
@@ -84,11 +83,7 @@
         ...user_achievements.map((a, index) => ({
           type: "achievement" as const,
           item: a,
-          ts: a.awarded_at
-            ? new Date(a.awarded_at).getTime()
-            : a.created_at
-              ? new Date(a.created_at).getTime()
-              : 0,
+          ts: new Date(a.awarded_at).getTime(),
           key: `achievement:${index}`,
         })),
       ] satisfies ActivityItem[]
@@ -131,7 +126,7 @@
         <h2 class="text-xl font-semibold mb-2">Bio</h2>
 
         <div
-          class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
+          class="card bg-base-200! p-4 rounded-2xl max-h-96 overflow-auto markdown-body text-base-content!"
         >
           <Markdown text={profile.bio} />
         </div>
@@ -327,11 +322,7 @@
                     Unlocked achievement {ach.achievement.name}
                   </a>
                   <div class="text-xs text-base-content/70 mt-1">
-                    {ach.awarded_at
-                      ? formatDate(ach.awarded_at)
-                      : ach.created_at
-                        ? formatDate(ach.created_at)
-                        : "—"}
+                    {formatDate(ach.awarded_at)}
                   </div>
                 </div>
               </li>

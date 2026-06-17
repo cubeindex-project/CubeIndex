@@ -1,26 +1,24 @@
 <script lang="ts">
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
-  import type {
-    AwardsEvent,
-    AwardsCategory,
-    DetailedCube,
-  } from "$lib/components/dbTableTypes";
+  import type { Tables } from "$lib/types/database.types.js";
 
-  interface NomineeCube extends DetailedCube {
+  interface NomineeCube extends Tables<"v_detailed_cube_models"> {
     nominee_id: number;
   }
 
   let { data } = $props();
+  const {
+    current_event: event,
+    awards_category: category,
+    awards_nominee: nominees,
+  } = $derived(data);
+  let userVote = $derived(data.user_vote);
 
-  const event: AwardsEvent = data.current_event;
-  const category: AwardsCategory = data.awards_category;
-  const nominees: NomineeCube[] = data.awards_nominee;
-  let userVote = $state(data.user_vote);
+  // svelte-ignore state_referenced_locally
+  let selectedNomineeId: number | null = $state(data.user_vote);
 
-  let selectedNomineeId: number | null = $derived(userVote);
-
-  const endTime = new Date(event.end_at).getTime();
-  const startTime = new Date(event.start_at).getTime();
+  const endTime = $derived(new Date(event?.end_at ?? "").getTime());
+  const startTime = $derived(new Date(event?.start_at ?? "").getTime());
   let nowMs = $state(Date.now());
   type EventPhase = "unknown" | "upcoming" | "live" | "past";
   const eventPhase: EventPhase = $derived.by(() => {
@@ -31,7 +29,7 @@
     if (nowMs <= endTime) return "live";
     return "past";
   });
-  const votingEnabled = $derived(() => eventPhase === "live");
+  const votingEnabled = $derived(eventPhase === "live");
   const formatDateTime = (value: number) => {
     if (!Number.isFinite(value)) return "";
     return new Intl.DateTimeFormat(undefined, {
@@ -94,7 +92,7 @@
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        event_id: event.id,
+        event_id: event?.id,
         category_id: category.id,
         nominee_id: selectedNomineeId,
       }),
@@ -132,7 +130,7 @@
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-3">
           <p class="text-xs uppercase tracking-[0.25em] text-base-content/60">
-            {event.title}
+            {event?.title}
           </p>
           <div class="space-y-1">
             <h1 class="text-3xl font-clash font-bold md:text-4xl">

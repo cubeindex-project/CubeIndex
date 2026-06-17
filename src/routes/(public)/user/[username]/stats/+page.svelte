@@ -1,12 +1,9 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type { PageData } from "./$types";
   import type { Chart as ChartJS } from "chart.js";
 
-  const { data }: { data: PageData } = $props();
+  const { data } = $props();
   const { profile, stats } = $derived(data);
-
-  const hasData = $derived(stats.cube_count > 0);
 
   let brandCanvas: HTMLCanvasElement | null = $state(null);
   let storesCanvas: HTMLCanvasElement | null = $state(null);
@@ -29,7 +26,7 @@
   }
 
   onMount(async () => {
-    if (!hasData) return;
+    if (!stats || Object.keys(stats).length === 0) return;
 
     const { Chart } = await import("chart.js/auto");
 
@@ -142,21 +139,7 @@
     </div>
   </header>
 
-  {#if !hasData}
-    <section
-      class="rounded-2xl border border-dashed border-base-300 bg-base-200/60 p-10 text-center"
-    >
-      <div
-        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
-      >
-        <i class="fa-solid fa-chart-simple fa-2x"></i>
-      </div>
-      <h2 class="text-xl font-semibold">No cubes to show yet</h2>
-      <p class="text-sm text-base-content/70">
-        Add cubes to your collection to unlock rich stats and insights.
-      </p>
-    </section>
-  {:else}
+  {#if stats && Object.keys(stats).length > 0}
     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       <div class="stat bg-base-200 rounded-2xl border border-base-300/40">
         <div class="stat-title">Total cubes</div>
@@ -281,6 +264,20 @@
           {/if}
         </div>
       </article>
+    </section>
+  {:else}
+    <section
+      class="rounded-2xl border border-dashed border-base-300 bg-base-200/60 p-10 text-center"
+    >
+      <div
+        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
+      >
+        <i class="fa-solid fa-chart-simple fa-2x"></i>
+      </div>
+      <h2 class="text-xl font-semibold">No cubes to show yet</h2>
+      <p class="text-sm text-base-content/70">
+        Add cubes to your collection to unlock rich stats and insights.
+      </p>
     </section>
   {/if}
 </section>

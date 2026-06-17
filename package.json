@@ -53,6 +53,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
+    "@types/node": "^25.9.3",
     "chart.js": "^4.5.0",
     "culori": "^4.0.2",
     "daisyui": "^5.0.43",
@@ -68,6 +69,7 @@
     "svelte-sonner": "^1.0.1",
     "sveltekit-top-loader": "^0.1.0",
     "theme-change": "^2.5.0",
+    "type-fest": "^5.7.0",
     "valibot": "^1.2.0"
   },
   "overrides": {}

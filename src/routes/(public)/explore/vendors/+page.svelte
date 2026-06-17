@@ -1,11 +1,10 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol";
 
-  let { data }: { data: PageData } = $props();
+  let { data } = $props();
   const { vendors } = $derived(data);
 
   let searchTerm: string = $state("");
@@ -127,12 +126,6 @@
                     </span>
                   {/if}
                 </div>
-
-                {#if vendor.description}
-                  <p class="mt-1 line-clamp-2 text-sm text-base-content/70">
-                    {vendor.description}
-                  </p>
-                {/if}
               </div>
             </header>
 

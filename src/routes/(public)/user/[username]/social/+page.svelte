@@ -5,7 +5,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
 
   let { data } = $props();
-  const { profile, user, followers, following, isFollowing } = data;
+  const { profile, user, followers, following, isFollowing } = $derived(data);
 
   // Tabs
   let tab: "following" | "followers" = $state("following");

@@ -1,13 +1,13 @@
 <script lang="ts">
-  import type { Enums } from "$lib/types/database.types";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import type { Enums } from "$lib/types/database.types.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { getAchievementRarityStyle } from "$lib/components/helper_functions/getAchievementRarityStyle";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   let { data } = $props();
-  const { user_achievements = [], profile } = data;
+  const { user_achievements = [], profile } = $derived(data);
 
   // Search, filters, sort, pagination
   let searchTerm: string = $state("");

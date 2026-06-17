@@ -7,6 +7,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { logError } from "$lib/server/logError";
+import type { TablesInsert } from "$lib/types/database.types";
 
 export const load = (async ({ locals }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
@@ -73,8 +74,8 @@ export const load = (async ({ locals }) => {
     surfaces: (surfaces as string[] | null) ?? [],
     subTypes: (subTypes as string[] | null) ?? [],
     meta: {
-      title: "New Submission - CubeIndex"
-    }
+      title: "New Submission - CubeIndex",
+    },
   };
 }) satisfies PageServerLoad;
 
@@ -102,9 +103,9 @@ export const actions: Actions = {
       throw error(500, "Failed to fetch your profile");
     }
 
-    const hasAccess: boolean = Boolean(profile.beta_flags?.submit_cubes);
+    // const hasAccess: boolean = Boolean(profile.beta_flags?.submit_cubes);
 
-    if (!hasAccess) throw error(401, "Unauthorized");
+    // if (!hasAccess) throw error(401, "Unauthorized");
 
     const form = await superValidate(request, zod4(cubeSchema));
 
@@ -139,7 +140,7 @@ export const actions: Actions = {
 
     const now = new Date().toISOString();
 
-    const payload = {
+    const payload: TablesInsert<"cube_models"> = {
       slug,
       series: data.series && data.series.length > 0 ? data.series : null,
       model: data.model,
@@ -162,7 +163,7 @@ export const actions: Actions = {
       notes: "",
       updated_at: now,
       created_at: now,
-    } satisfies Record<string, unknown>;
+    };
 
     const { error: insertErr } = await supabase
       .from("cube_models")

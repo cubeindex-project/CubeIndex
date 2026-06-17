@@ -68,6 +68,7 @@
     "svelte-sonner": "^1.0.1",
     "sveltekit-top-loader": "^0.1.0",
     "theme-change": "^2.5.0",
+    "type-fest": "^5.7.0",
     "valibot": "^1.2.0"
   },
   "overrides": {}

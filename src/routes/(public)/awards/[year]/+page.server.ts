@@ -4,7 +4,9 @@ import { getEventPhase } from "$lib/components/helper_functions/eventPhase";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals: { supabase, log }, params }) => {
-  const year = params.year;
+  const year = Number(params.year);
+
+  if (Number.isNaN(year) || year < 0) throw error(404, "Event not found");
 
   const { data: event, error: eventErr } = await supabase
     .from("awards_event")
@@ -47,7 +49,7 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     .select("id, slug, name, image_url")
     .in(
       "slug",
-      winnerNominees.map((w) => w.nominee_slug),
+      winnerNominees.map((w) => w.nominee_slug).filter((slug): slug is string => slug !== null),
     );
 
   if (winnerCubesErr) {

@@ -1,16 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import NumberFlow from "@number-flow/svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "$lib/types/database.types.js";
   import type { AwardsPartner } from "$lib/content/awardsPartners";
   import YoutubeVideoCard from "$lib/components/misc/youtubeVideoCard.svelte";
 
   const { data } = $props();
-  const event: Tables<"awards_event"> | null = data.current_event;
-  const categories: Tables<"awards_category">[] = data.awards_category ?? [];
-  const previousEvents: Tables<"awards_event">[] = data.previous_events ?? [];
-  const logoDesigner = data.logoDesigner;
-  const partners: AwardsPartner[] = data.partners ?? [];
+  const {
+    currentEvent,
+    awards_category: categories,
+    previous_events,
+    logoDesigner,
+    partners,
+  } = $derived(data);
 
   const formatDuration = (targetMs: number) => {
     if (!Number.isFinite(targetMs)) {
@@ -52,17 +54,21 @@
     range: string;
   };
 
-  const previousEventSummaries: PreviousEventSummary[] = previousEvents.map(
-    (eventItem) => ({
+  const previousEventSummaries = $derived(
+    (previous_events ?? []).map((eventItem: Tables<"awards_event">) => ({
       event: eventItem,
       range: formatEventRange(eventItem),
-    }),
+    }))
   );
 
   type EventPhase = "upcoming" | "live" | "past" | "none";
 
-  const startAt = $derived(event?.start_at ? new Date(event.start_at) : null);
-  const endAt = $derived(event?.end_at ? new Date(event.end_at) : null);
+  const startAt = $derived(
+    currentEvent?.start_at ? new Date(currentEvent.start_at) : null,
+  );
+  const endAt = $derived(
+    currentEvent?.end_at ? new Date(currentEvent.end_at) : null,
+  );
 
   const eventStatus: EventPhase = $derived.by(() => {
     if (!startAt || !endAt) return "none";
@@ -142,8 +148,10 @@
     partnerGrid: "mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
   };
 
-  const hasEvent = $derived(Boolean(event));
-  const heroTitle = $derived.by(() => event?.title ?? "CubeIndex Awards");
+  const hasEvent = $derived(Boolean(currentEvent));
+  const heroTitle = $derived.by(
+    () => currentEvent?.title ?? "CubeIndex Awards",
+  );
 
   onMount(() => {
     const timer = setInterval(() => {

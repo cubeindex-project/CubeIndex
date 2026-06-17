@@ -23,9 +23,9 @@ export const load: PageServerLoad = async ({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
 
-  const items = cubes
+  const jsonLDItems = cubes
     .slice()
-    .sort((a, b) => a.popularity - b.popularity)
+    .sort((a, b) => (a.popularity ?? 0) - (b.popularity ?? 0))
     .slice(0, 50)
     .map((cube, index) => ({
       "@type": "ListItem",
@@ -44,7 +44,7 @@ export const load: PageServerLoad = async ({
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        itemListElement: items,
+        itemListElement: jsonLDItems,
       },
     },
   };

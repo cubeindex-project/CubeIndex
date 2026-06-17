@@ -4,18 +4,9 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
-  import type { Tables } from "$lib/types/database.types";
 
   let { data } = $props();
-  const { profile, user } = data;
-
-  export interface CubeAndDetails extends Tables<"user_cubes"> {
-    cube_model: Tables<"cube_models">;
-    vendor: Tables<"vendors">;
-  }
-
-  const user_cubes: CubeAndDetails[] = $derived(data.user_cubes ?? []);
-  const user_cube_ratings: any[] = $derived(data.user_cube_ratings ?? []);
+  const { profile, user, user_cube_ratings, user_cubes } = $derived(data);
 
   const total = $derived(user_cubes.length);
 
@@ -48,13 +39,17 @@
   $effect(() => {
     const _ = user_cubes;
     allTypes = Array.from(
-      new Set(user_cubes.map((c) => c.cube_model.type).filter(Boolean))
+      new Set(
+        user_cubes
+          .map((c) => c.cube_model?.type)
+          .filter((t): t is string => !!t),
+      ),
     ).sort();
     allConditions = Array.from(
-      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean))
+      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
     ).sort();
     allStatuses = Array.from(
-      new Set(user_cubes.map((uc) => uc.status).filter(Boolean))
+      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
     ).sort();
   });
 
@@ -74,7 +69,7 @@
 
   const sortedCubes = $derived.by(() => {
     const arr = [...filteredCubes];
-    const cmp = (a: CubeAndDetails, b: CubeAndDetails) => {
+    arr.sort((a, b) => {
       if (sortBy === "recent") {
         const ad = a.acquired_at ? new Date(a.acquired_at).getTime() : 0;
         const bd = b.acquired_at ? new Date(b.acquired_at).getTime() : 0;
@@ -89,7 +84,7 @@
       }
       if (sortBy === "type") {
         return (a.cube_model?.type ?? "").localeCompare(
-          b.cube_model?.type ?? ""
+          b.cube_model?.type ?? "",
         );
       }
       if (sortBy === "rating") {
@@ -102,8 +97,7 @@
         return br - ar; // default desc
       }
       return 0;
-    };
-    arr.sort(cmp);
+    });
     if (sortDir === "asc") arr.reverse();
     return arr;
   });
@@ -271,7 +265,7 @@
               cube={row.cube_model}
               user_details={row}
               user_rating={user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug
+                (ucr) => ucr.cube_slug === row.cube_model?.slug,
               )?.rating ?? 0}
             />
           {:else}

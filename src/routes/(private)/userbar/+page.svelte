@@ -2,19 +2,14 @@
   import { page } from "$app/state";
   import Tag from "$lib/components/misc/tag.svelte";
 
-  interface Props {
-    data: { username: string; display_name: string };
-  }
-
-  // Svelte 5 runes flavor
-  const { data }: Props = $props();
-
-  const username = data.username;
-  const displayName = data.display_name;
+  const { data } = $props();
+  const { username, displayName } = $derived(data);
 
   // Use a relative URL so SSR doesn't need window.origin
   const origin = page.url.origin;
-  const directUrl = `${origin}/api/og/userbar/${encodeURIComponent(username)}`;
+  const directUrl = $derived(
+    `${origin}/api/og/userbar/${encodeURIComponent(username ?? "")}`,
+  );
   let cacheBust = $state(0);
   let bustSeed = 0;
   const previewUrl = $derived(
@@ -24,14 +19,19 @@
   let previewError = $state(false);
 
   // Embedding snippets
-  const markdown = `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${displayName}&apos;s CubeIndex profile")`;
-  const html = `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" /></a>`;
-  const bbcode = `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`;
-
-  let copied = $state<null | string>(null);
-  let active = $state<"Markdown" | "HTML" | "BBCode" | "Direct URL">(
-    "Markdown",
+  const markdown = $derived(
+    `[![${displayName}&apos;s CubeIndex userbar](${directUrl})](${origin}/user/${username} "${displayName}&apos;s CubeIndex profile")`,
   );
+  const html = $derived(
+    `<a href="${origin}/user/${username}"><img src="${directUrl}" alt="${displayName}'s CubeIndex profile" width="350" height="19" /></a>`,
+  );
+  const bbcode = $derived(
+    `[url=${origin}/user/${username}][img]${directUrl}[/img][/url]`,
+  );
+
+  let copied: string | null = $state(null);
+  let active: "Markdown" | "HTML" | "BBCode" | "Direct URL" =
+    $state("Markdown");
 
   function handleLoad() {
     previewLoaded = true;

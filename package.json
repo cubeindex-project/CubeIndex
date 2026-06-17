@@ -53,6 +53,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
+    "@types/node": "^25.9.3",
     "chart.js": "^4.5.0",
     "culori": "^4.0.2",
     "daisyui": "^5.0.43",

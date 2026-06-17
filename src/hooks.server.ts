@@ -36,7 +36,10 @@ const supabase: Handle = async ({ event, resolve }) => {
         getAll() {
           return event.cookies.getAll();
         },
-        setAll(cookiesToSet, headers) {
+        setAll(
+          cookiesToSet: { name: string; value: string; options: any }[],
+          headers: any,
+        ) {
           /**
            * Note: You have to add the `path` variable to the
            * set and remove method due to sveltekit's cookie API

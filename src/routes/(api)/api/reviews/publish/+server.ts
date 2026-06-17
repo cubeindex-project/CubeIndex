@@ -1,3 +1,4 @@
+import type { TablesUpdate } from "$lib/types/database.types";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
@@ -24,7 +25,7 @@ export const POST: RequestHandler = async ({
       { status: 400 },
     );
 
-  const payload = {
+  const payload: TablesUpdate<"user_cube_reviews"> = {
     user_id: user.id,
     cube: slug,
     title,

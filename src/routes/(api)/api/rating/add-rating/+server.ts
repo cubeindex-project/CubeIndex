@@ -12,12 +12,19 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     comment: string;
   } = await request.json();
 
+  if (!locals.user) {
+    return json(
+      { success: false, error: "You must be logged in to perform this action!" },
+      { status: 401 }
+    );
+  }
+
   if (comment.length > 500)
     return json({ success: false, error: "Comment too long" }, { status: 400 });
 
   const { error: err } = await locals.supabase
     .from("user_cube_ratings")
-    .upsert([{ user_id: locals.user?.id, cube_slug, rating, comment }]);
+    .upsert([{ user_id: locals.user.id, cube_slug, rating, comment }]);
 
   if (
     err?.message ===

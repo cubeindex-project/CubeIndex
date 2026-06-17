@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-
-  let { data } = $props();
-  let { profile, reviews } = $derived(data);
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
 
   const MAX_SUMMARY_CHARS = 200;
 
-  const pageTitle = $derived(`${profile.display_name}'s Reviews - CubeIndex`);
-  const reviewCount = $derived(reviews.length);
+  let { data } = $props();
+  let { profile, userReviews } = $derived(data);
+
+  const reviewCount = $derived(userReviews.length);
 
   function getSummary(review: string) {
     const raw = review.trim();
@@ -34,11 +33,11 @@
   </header>
 
   <div class="flex flex-col lg:flex-row gap-8">
-    {#if reviewCount > 0}
+    {#if userReviews && userReviews.length > 0}
       <ul class="flex flex-col gap-4">
-        {#each reviews as review (review.id)}
-          {@const summary = getSummary(review.review)}
-          {@const cubeImage = review.cube_model?.image_url}
+        {#each userReviews as userReview (userReview.id)}
+          {@const summary = getSummary(userReview.review)}
+          {@const cubeImage = userReview.cube_model?.image_url}
 
           <li>
             <article class="rounded-2xl border border-base-300 bg-base-200 p-5">
@@ -49,7 +48,7 @@
                   {#if cubeImage}
                     <img
                       src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_128/${cubeImage}`}
-                      alt={review.cube_model.name}
+                      alt={userReview.cube_model?.name ?? ""}
                       class="size-12 rounded-xl object-cover"
                       loading="lazy"
                     />
@@ -65,15 +64,15 @@
                     <div class="flex flex-wrap items-center gap-2">
                       <a
                         class="link link-hover font-semibold truncate"
-                        href="/explore/cubes/{review.cube}"
+                        href="/explore/cubes/{userReview.cube}"
                       >
-                        {review.cube_model.name}
+                        {userReview.cube_model.name}
                       </a>
 
-                      {#if review.helpful_count > 0}
+                      {#if userReview.helpful_count && userReview.helpful_count > 0}
                         <span class="badge badge-ghost badge-sm tabular-nums">
                           <i class="fa-regular fa-thumbs-up mr-1"></i>
-                          {review.helpful_count}
+                          {userReview.helpful_count}
                         </span>
                       {/if}
                     </div>
@@ -82,7 +81,9 @@
                       class="mt-0.5 flex flex-wrap items-center gap-2 text-xs opacity-70"
                     >
                       <span title="Last update">
-                        {formatDate(review.updated_at ?? review.created_at)}
+                        {formatDate(
+                          userReview.updated_at ?? userReview.created_at,
+                        )}
                       </span>
                     </div>
                   </div>
@@ -90,7 +91,7 @@
 
                 <div class="flex items-center gap-2">
                   <a
-                    href="/explore/cubes/{review.cube}/reviews/{review.id}"
+                    href="/explore/cubes/{userReview.cube}/reviews/{userReview.id}"
                     class="btn btn-sm btn-primary btn-outline"
                     aria-label="Open full review"
                   >
@@ -102,17 +103,17 @@
 
               <section class="mt-4">
                 <h3 class="text-base font-semibold leading-snug">
-                  {review.title}
+                  {userReview.title}
                 </h3>
 
                 <p class="mt-2 text-sm opacity-80 leading-relaxed">
                   {summary}
                 </p>
 
-                {#if review.review.length > MAX_SUMMARY_CHARS}
+                {#if userReview.review.length > MAX_SUMMARY_CHARS}
                   <div class="mt-2">
                     <a
-                      href="/explore/cubes/{review.cube}/reviews/{review.id}"
+                      href="/explore/cubes/{userReview.cube}/reviews/{userReview.id}"
                       class="link link-primary text-sm"
                     >
                       Read more

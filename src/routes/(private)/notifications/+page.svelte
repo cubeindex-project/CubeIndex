@@ -1,15 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import type { Tables } from "$lib/types/database.types";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import type { Tables } from "$lib/types/database.types.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { toast } from "svelte-sonner";
 
-  // Page state
-  let notifications: Tables<"notifications">[] = $state([]);
+  let notifications: Tables<"v_notifications_for_user">[] = $state([]);
   let loading = $state(true);
   let loadError: string | null = $state(null);
   let markingAll = $state(false);
-  let markingIds = $state<Set<string>>(new Set());
+  let markingIds = $state(new Set());
 
   const { data } = $props();
   const { user, profile } = $derived(data);
@@ -58,15 +57,15 @@
   onMount(getMessages);
 
   const unreadCount = $derived(
-    (notifications ?? []).filter((n) => !n.read).length
+    (notifications ?? []).filter((n) => !n.read).length,
   );
 
-  async function markNotificationsAsRead(ids: string[]) {
+  async function markNotificationsAsRead(ids: number[]) {
     if (!ids.length) return;
     try {
       // Update local state optimistically
       notifications = notifications.map((n) =>
-        ids.includes(n.id) ? { ...n, read: true } : n
+        ids.includes(n.id) ? { ...n, read: true } : n,
       );
       ids.forEach((id) => markingIds.add(id));
       const res = await fetch("/api/notifications/mark-read", {
@@ -91,7 +90,7 @@
       toast.error("Failed to mark notifications as read.");
       // Revert local state if update fails
       notifications = notifications.map((n) =>
-        ids.includes(n.id) ? { ...n, read: false } : n
+        ids.includes(n.id) ? { ...n, read: false } : n,
       );
       throw e;
     } finally {
@@ -99,7 +98,7 @@
     }
   }
 
-  async function markOneAsRead(id: string) {
+  async function markOneAsRead(id: number) {
     if (!id) return;
     if (markingIds.has(id)) return;
     await markNotificationsAsRead([id]);
@@ -123,11 +122,15 @@
 
 <section class="min-h-screen px-4 py-12">
   <div class="max-w-2xl mx-auto">
-    <div class="flex items-start sm:items-center justify-between mb-6 gap-3 flex-wrap">
+    <div
+      class="flex items-start sm:items-center justify-between mb-6 gap-3 flex-wrap"
+    >
       <div class="flex items-center gap-2">
         <h1 class="text-3xl sm:text-4xl font-clash font-bold">Notifications</h1>
         {#if unreadCount > 0}
-          <span class="badge badge-info badge-sm sm:badge-md">{unreadCount} unread</span>
+          <span class="badge badge-info badge-sm sm:badge-md"
+            >{unreadCount} unread</span
+          >
         {/if}
       </div>
       <div class="flex items-center gap-2 flex-wrap w-full sm:w-fit">
@@ -143,7 +146,11 @@
             Mark all as read
           </button>
         {/if}
-        <button class="btn btn-sm w-full sm:w-auto" onclick={getMessages} aria-label="Refresh">
+        <button
+          class="btn btn-sm w-full sm:w-auto"
+          onclick={getMessages}
+          aria-label="Refresh"
+        >
           <i class="fa-solid fa-rotate"></i>
           <span class="ml-2">Refresh</span>
         </button>
@@ -202,7 +209,9 @@
               >
                 <div class="flex gap-3">
                   <!-- Icon -->
-                  <div class="shrink-0 size-10 rounded-full grid place-items-center bg-primary/10 text-primary">
+                  <div
+                    class="shrink-0 size-10 rounded-full grid place-items-center bg-primary/10 text-primary"
+                  >
                     {#if n.icon}
                       <i class="{n.icon} text-lg"></i>
                     {:else}
@@ -217,10 +226,15 @@
                         {n.message}
                       </p>
                       {#if !n.read}
-                        <span class="mt-1 size-2 rounded-full bg-info" aria-label="Unread"></span>
+                        <span
+                          class="mt-1 size-2 rounded-full bg-info"
+                          aria-label="Unread"
+                        ></span>
                       {/if}
                     </div>
-                    <div class="mt-2 flex items-center gap-3 text-xs text-base-content/70">
+                    <div
+                      class="mt-2 flex items-center gap-3 text-xs text-base-content/70"
+                    >
                       <span>{formatDate(n.created_at)}</span>
                       {#if n.link}
                         <a
@@ -245,7 +259,9 @@
                           title="Mark as read"
                         >
                           {#if markingIds.has(n.id)}
-                            <span class="loading loading-spinner loading-xs mr-2"></span>
+                            <span
+                              class="loading loading-spinner loading-xs mr-2"
+                            ></span>
                           {/if}
                           Mark read
                         </button>
@@ -268,12 +284,16 @@
                     title="Mark as read"
                   >
                     {#if markingIds.has(n.id)}
-                      <span class="loading loading-spinner loading-xs mr-2"></span>
+                      <span class="loading loading-spinner loading-xs mr-2"
+                      ></span>
                     {/if}
                     Mark read
                   </button>
                 {:else}
-                  <button class="btn btn-primary h-full rounded-l-none rounded-r-xl px-4 md:px-6 whitespace-nowrap" disabled>
+                  <button
+                    class="btn btn-primary h-full rounded-l-none rounded-r-xl px-4 md:px-6 whitespace-nowrap"
+                    disabled
+                  >
                     <i class="fa-solid fa-check mr-2"></i>
                     Read
                   </button>

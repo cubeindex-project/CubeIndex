@@ -1,13 +1,15 @@
 import type { LayoutServerLoad } from "./$types";
-import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
 
-export const load = (async ({ locals: { user, log, supabase }, params, url }) => {
+export const load = (async ({
+  locals: { user, log, supabase },
+  params,
+  url,
+}) => {
   const { username } = params;
 
-  // 1) Profile
-  const { data: profileRaw, error: err } = await supabase
+  const { data: profile, error: err } = await supabase
     .from("v_detailed_profiles")
     .select("*")
     .eq("username", username)
@@ -16,8 +18,6 @@ export const load = (async ({ locals: { user, log, supabase }, params, url }) =>
   if (err) {
     return logError(500, "Unable to load profile", log, err);
   }
-
-  const profile: Tables<"v_detailed_profiles"> | undefined = profileRaw;
 
   if (!profile) {
     return logError(
@@ -28,9 +28,9 @@ export const load = (async ({ locals: { user, log, supabase }, params, url }) =>
     );
   }
 
-  let following: boolean = false;
+  let isFollowing = false;
 
-  if (user?.id) {
+  if (user && user.id && profile.user_id) {
     const { data, error: followErr } = await supabase
       .from("user_follows")
       .select("*")
@@ -41,7 +41,7 @@ export const load = (async ({ locals: { user, log, supabase }, params, url }) =>
       return logError(500, "Unable to check follow status", log, followErr);
     }
 
-    following = data.length !== 1;
+    isFollowing = data.length !== 1;
   }
 
   const title = `${profile.display_name}'s Profile - CubeIndex`;
@@ -50,7 +50,7 @@ export const load = (async ({ locals: { user, log, supabase }, params, url }) =>
 
   return {
     profile,
-    following,
+    isFollowing,
     stats: {
       cubesCount: profile.user_cubes_count,
       achievementsCount: profile.user_achievements_count,

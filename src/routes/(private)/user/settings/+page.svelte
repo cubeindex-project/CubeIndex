@@ -9,12 +9,14 @@
   let { data } = $props();
 
   const { form, errors, enhance, message, delayed, isTainted, tainted } =
-    superForm(data.profileForm, {
-      invalidateAll: "pessimistic",
-      delayMs: 500,
-      timeoutMs: 8000,
-      clearOnSubmit: "errors-and-message",
-    });
+    $derived(
+      superForm(data.profileForm, {
+        invalidateAll: "pessimistic",
+        delayMs: 500,
+        timeoutMs: 8000,
+        clearOnSubmit: "errors-and-message",
+      }),
+    );
 
   const {
     form: socialForm,
@@ -24,12 +26,14 @@
     delayed: socialDelayed,
     isTainted: socialIsTainted,
     tainted: socialTainted,
-  } = superForm(data.socialForm, {
-    invalidateAll: "pessimistic",
-    delayMs: 500,
-    timeoutMs: 8000,
-    clearOnSubmit: "errors-and-message",
-  });
+  } = $derived(
+    superForm(data.socialForm, {
+      invalidateAll: "pessimistic",
+      delayMs: 500,
+      timeoutMs: 8000,
+      clearOnSubmit: "errors-and-message",
+    }),
+  );
 
   const {
     form: passwordForm,
@@ -39,13 +43,15 @@
     delayed: passwordDelayed,
     isTainted: passwordIsTainted,
     tainted: passwordTainted,
-  } = superForm(data.passwordForm, {
-    invalidateAll: "pessimistic",
-    delayMs: 500,
-    timeoutMs: 8000,
-    clearOnSubmit: "errors-and-message",
-    resetForm: true,
-  });
+  } = $derived(
+    superForm(data.passwordForm, {
+      invalidateAll: "pessimistic",
+      delayMs: 500,
+      timeoutMs: 8000,
+      clearOnSubmit: "errors-and-message",
+      resetForm: true,
+    }),
+  );
 
   const params = queryParameters();
 

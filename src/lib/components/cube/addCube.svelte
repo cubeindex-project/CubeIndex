@@ -11,7 +11,7 @@
     onCancel: () => void;
     cube: Pick<Tables<"v_detailed_cube_models">, "slug" | "name">;
     alreadyAdded: boolean;
-    defaultData: Pick<
+    defaultData?: Pick<
       Tables<"user_cubes">,
       | "quantity"
       | "condition"
@@ -27,18 +27,15 @@
   const MIN_QUANTITY = 1;
   const MAX_QUANTITY = 999;
   const DEFAULT_DATA = {
-    quantity: 1 as Tables<"user_cubes">["quantity"],
-    condition: "New in box" as Tables<"user_cubes">["condition"],
-    main: false as Tables<"user_cubes">["main"],
-    status: "Owned" as Tables<"user_cubes">["status"],
-    bought_from: null as Tables<"user_cubes">["bought_from"],
-    notes: "" as Tables<"user_cubes">["notes"],
-    acquired_at: "" as Tables<"user_cubes">["acquired_at"],
-    purchase_price: null as Tables<"user_cubes">["purchase_price"],
+    quantity: 1,
+    condition: "New in box",
+    main: false,
+    status: "Owned",
+    bought_from: null,
+    notes: "",
+    acquired_at: "",
+    purchase_price: null,
   } satisfies Props["defaultData"];
-
-  const supabase = page.data.supabase;
-  const user = $derived(page.data.user);
 
   let {
     onCancel,
@@ -46,6 +43,9 @@
     alreadyAdded,
     defaultData = DEFAULT_DATA,
   }: Props = $props();
+
+  const supabase = page.data.supabase;
+  const user = $derived(page.data.user);
 
   let isConnected = $derived(Boolean(user));
 

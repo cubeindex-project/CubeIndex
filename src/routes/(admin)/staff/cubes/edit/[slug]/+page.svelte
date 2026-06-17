@@ -18,7 +18,8 @@
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { profiles, cubeTrims, relatedCube, sameSeries, vendors, types } = data;
+  let { cube, profiles, cubeTrims, relatedCube, sameSeries, vendors, types } =
+    $derived(data);
 
   // Initialize form handling with options for JSON data and custom error handling
   const {
@@ -30,17 +31,16 @@
     enhance,
     isTainted,
     tainted,
-  } = superForm(data.form, {
-    dataType: "json",
-    resetForm: false,
-    onError({ result }) {
-      // Handle server validation errors gracefully
-      $message = result.error.message || "Unknown error";
-    },
-  });
-
-  // Store the cube being edited
-  const cube: Tables<"v_detailed_cube_models"> = $state(data.cube);
+  } = $derived(
+    superForm(data.form, {
+      dataType: "json",
+      resetForm: false,
+      onError({ result }) {
+        // Handle server validation errors gracefully
+        $message = result.error.message || "Unknown error";
+      },
+    }),
+  );
 
   // UI toggle for expanding preview or edit mode
   let expanded: boolean = $state(false);

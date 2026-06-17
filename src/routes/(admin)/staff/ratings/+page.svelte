@@ -24,7 +24,7 @@
   };
 
   let { data } = $props();
-  let { user_cube_ratings }: { user_cube_ratings: StaffRating[] | null } = data;
+  let { user_cube_ratings } = $derived(data);
 
   let searchTerm: string = $state("");
   let ratingFilter: RatingFilter = $state("all");
@@ -113,7 +113,7 @@
 
     const total = user_cube_ratings.reduce(
       (sum: number, rating: StaffRating) => sum + (rating.rating ?? 0),
-      0
+      0,
     );
 
     return total / user_cube_ratings.length;
@@ -127,7 +127,7 @@
     const seen = new Set(
       user_cube_ratings
         .map((rating: StaffRating) => rating.cube_slug?.slug)
-        .filter((slug): slug is string => typeof slug === "string")
+        .filter((slug): slug is string => typeof slug === "string"),
     );
 
     return seen.size;
@@ -136,7 +136,9 @@
   const hasRatings = $derived(totalRatings > 0);
 
   const hasActiveFilters = $derived(
-    normalizedSearch.length > 0 || ratingFilter !== "all" || sortOrder !== "newest"
+    normalizedSearch.length > 0 ||
+      ratingFilter !== "all" ||
+      sortOrder !== "newest",
   );
 
   function resetFilters() {
@@ -180,7 +182,9 @@
           placeholderLabel="Search by user, cube, or comment"
         />
 
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div
+          class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between"
+        >
           <div class="flex flex-col gap-4 sm:flex-row">
             <label class="form-control w-full sm:w-56">
               <span class="label-text">Rating filter</span>
@@ -225,9 +229,14 @@
           {/if}
         </div>
 
-        <div class="flex items-center justify-between text-sm text-base-content/60">
+        <div
+          class="flex items-center justify-between text-sm text-base-content/60"
+        >
           <span>
-            Showing {matchingRatings} of {totalRatings} rating{totalRatings === 1 ? "" : "s"}
+            Showing {matchingRatings} of {totalRatings} rating{totalRatings ===
+            1
+              ? ""
+              : "s"}
           </span>
         </div>
       </div>
@@ -239,12 +248,14 @@
           {/each}
         </div>
       {:else}
-        <div class="col-span-full flex flex-col items-center justify-center py-20">
+        <div
+          class="col-span-full flex flex-col items-center justify-center py-20"
+        >
           <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
           <h2 class="text-2xl font-semibold mb-2">No ratings found</h2>
           <p class="mb-6 text-center max-w-xs">
-            We couldn't find any ratings matching your filter. Try adjusting it or
-            resetting to see everything.
+            We couldn't find any ratings matching your filter. Try adjusting it
+            or resetting to see everything.
           </p>
           <button
             class="btn btn-outline flex items-center"
@@ -258,7 +269,9 @@
         </div>
       {/if}
     {:else}
-      <div class="rounded-xl bg-base-200 border border-base-300 p-10 text-center">
+      <div
+        class="rounded-xl bg-base-200 border border-base-300 p-10 text-center"
+      >
         <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
         <h2 class="text-2xl font-semibold mb-2">No ratings yet</h2>
         <p class="text-base-content/70">

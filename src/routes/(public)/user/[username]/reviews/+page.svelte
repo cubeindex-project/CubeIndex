@@ -126,7 +126,7 @@
         {/each}
       </ul>
     {:else}
-      <div class="flex flex-col items-center justify-center py-20">
+      <div class="flex flex-col items-center justify-center py-20 w-full">
         <i class="fa-solid fa-comment-dots fa-3x mb-4"></i>
         <h2 class="text-2xl font-semibold mb-2">No reviews yet</h2>
         <p class="mb-6 text-center max-w-xs text-base-content/70">

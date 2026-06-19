@@ -1,8 +1,8 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
-export const load = (async ({ params, locals }) => {
-  const { supabase, log } = locals;
+export const load = (async ({ params, locals: { supabase, log }, parent }) => {
+  const { meta } = await parent();
   const { username } = params;
 
   const { data: profile, error: profileErr } = await supabase
@@ -34,6 +34,7 @@ export const load = (async ({ params, locals }) => {
     profile,
     stats,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Statistics - CubeIndex`,
       noindex: true,
     },

@@ -1,9 +1,8 @@
 import type { PageServerLoad } from "./$types";
-import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ parent, locals: { log, supabase } }) => {
-  const { profile } = await parent();
+  const { profile, meta } = await parent();
 
   const { data: userReviews, error: reviewErr } = await supabase
     .from("v_detailed_user_cube_reviews")
@@ -19,6 +18,7 @@ export const load = (async ({ parent, locals: { log, supabase } }) => {
   return {
     userReviews,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Reviews - CubeIndex`,
       noindex: true,
     },

@@ -3,7 +3,7 @@ import { logError } from "$lib/server/logError";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log, user } }) => {
-  const { profile } = await parent();
+  const { profile, meta } = await parent();
 
   const [
     { data: followingId, error: followingErr },
@@ -54,6 +54,7 @@ export const load = (async ({ parent, locals: { supabase, log, user } }) => {
     followers,
     isFollowing: currentFollowingUser.length !== 1,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Socials - CubeIndex`,
       noindex: true,
     },

@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
-  const { profile } = await parent();
+  const { profile, meta } = await parent();
 
   const [
     { data: user_cubes, error: userCubesError },
@@ -30,6 +30,9 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   return {
     user_cubes,
     user_cube_ratings,
-    meta: { title: `${profile.display_name}'s Cube Collection - CubeIndex` },
+    meta: {
+      ...meta,
+      title: `${profile.display_name}'s Cube Collection - CubeIndex`,
+    },
   };
 }) satisfies PageServerLoad;

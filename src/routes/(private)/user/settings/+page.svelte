@@ -308,7 +308,6 @@
               aria-current={tab === it.id ? "page" : undefined}
               tabindex={tab === it.id ? 0 : -1}
               onclick={() => {
-                tab = it.id;
                 $params.tab = it.id;
               }}
             >

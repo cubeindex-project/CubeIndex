@@ -281,7 +281,7 @@
               </p>
               <button
                 onclick={() => {
-                  resetFilters;
+                  resetFilters();
                   searchTerm = "";
                 }}
                 class="btn btn-outline flex items-center"

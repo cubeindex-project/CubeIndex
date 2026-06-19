@@ -28,7 +28,7 @@ export const load = (async ({
     );
   }
 
-  const canViewProfile = profile.private && user?.id !== profile.user_id;
+  const canViewProfile = !profile.private || user?.id === profile.user_id;
 
   let isFollowing = false;
 

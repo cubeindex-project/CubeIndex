@@ -290,7 +290,7 @@
     </div>
   </div>
 
-  {#if !canViewProfile}
+  {#if canViewProfile}
     <div
       class="flex sm:justify-center bg-base-200 w-full p-5 gap-10 overflow-scroll md:overflow-hidden"
     >

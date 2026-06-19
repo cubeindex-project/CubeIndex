@@ -1,379 +1,318 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
-  import Markdown from "$lib/components/misc/markdown.svelte";
+  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
+  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
+  import Pagination from "$lib/components/misc/pagination.svelte";
+  import SortSelector from "$lib/components/misc/sortSelector.svelte";
+  import SearchBar from "$lib/components/misc/searchBar.svelte";
 
   let { data } = $props();
+  const { profile, user, user_cube_ratings, user_cubes } = $derived(data);
 
-  const profile = $derived(data.profile);
-  const main_cubes = $derived(data.main_cubes);
-  const user_cubes = $derived(data.user_cubes);
-  const user_achievements = $derived(data.user_achievements);
-  const user_cube_ratings = $derived(data.user_cube_ratings);
+  const total = $derived(user_cubes.length);
 
-  const totalCubes = $derived(user_cubes.length);
-  const totalAchievements = $derived(user_achievements.length);
-  const totalRatings = $derived(user_cube_ratings.length);
+  // Filtering and pagination
+  let searchTerm: string = $state("");
+  let selectedType: string = $state("All");
+  let selectedStatus: string = $state("All");
+  let selectedCondition: string = $state("All");
+  let currentPage: number = $state(1);
+  let itemsPerPage: number = $state(9);
+  let allTypes: string[] = $state([]);
+  let allStatuses: string[] = $state([]);
+  let allConditions: string[] = $state([]);
+  let showFilters = $state(false);
 
-  const averageRating = $derived(
-    totalRatings
-      ? user_cube_ratings.map((r) => r.rating ?? 0).reduce((a, b) => a + b, 0) /
-          totalRatings
-      : 0,
-  );
+  let edit = $state(false);
 
-  const averageDisplay = $derived(
-    totalRatings ? averageRating.toFixed(1) : "—",
-  );
-  const avgRounded = $derived(Math.round(averageRating)); // for star fill
+  // Sorting
+  type SortKey = "recent" | "name" | "rating" | "type";
+  let sortBy: SortKey = $state("recent");
+  let sortDir: "asc" | "desc" = $state("desc");
 
-  // Helpers
-  function cubeTitle(c: any) {
-    const series = c?.cube_model?.series ?? c?.series ?? "";
-    const model = c?.cube_model?.model ?? c?.model ?? "";
-    const version = c?.cube_model?.version_name ?? c?.version_name ?? "";
-    return `${series} ${model} ${version}`.trim();
+  const sortFields = [
+    { value: "recent", label: "Recent" },
+    { value: "name", label: "Name" },
+    { value: "rating", label: "Rating" },
+    { value: "type", label: "Type" },
+  ];
+
+  $effect(() => {
+    const _ = user_cubes;
+    allTypes = Array.from(
+      new Set(
+        user_cubes
+          .map((c) => c.cube_model?.type)
+          .filter((t): t is string => !!t),
+      ),
+    ).sort();
+    allConditions = Array.from(
+      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
+    ).sort();
+    allStatuses = Array.from(
+      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
+    ).sort();
+  });
+
+  const filteredCubes = $derived.by(() => {
+    const term = searchTerm.trim().toLowerCase();
+    return user_cubes.filter((uc) => {
+      const c = uc.cube_model ?? {};
+      const name =
+        `${c.series ?? ""} ${c.model ?? ""} ${c.version_name ?? ""}`.toLowerCase();
+      const typeOk = selectedType === "All" || c.type === selectedType;
+      const conditionOk =
+        selectedCondition === "All" || uc.condition === selectedCondition;
+      const statusOk = selectedStatus === "All" || uc.status === selectedStatus;
+      return name.includes(term) && typeOk && statusOk && conditionOk;
+    });
+  });
+
+  const sortedCubes = $derived.by(() => {
+    const arr = [...filteredCubes];
+    arr.sort((a, b) => {
+      if (sortBy === "recent") {
+        const ad = a.acquired_at ? new Date(a.acquired_at).getTime() : 0;
+        const bd = b.acquired_at ? new Date(b.acquired_at).getTime() : 0;
+        return bd - ad; // default desc
+      }
+      if (sortBy === "name") {
+        const an =
+          `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
+        const bn =
+          `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
+        return an.localeCompare(bn);
+      }
+      if (sortBy === "type") {
+        return (a.cube_model?.type ?? "").localeCompare(
+          b.cube_model?.type ?? "",
+        );
+      }
+      if (sortBy === "rating") {
+        const ar =
+          user_cube_ratings.find((r) => r.cube_slug === a.cube_model?.slug)
+            ?.rating ?? 0;
+        const br =
+          user_cube_ratings.find((r) => r.cube_slug === b.cube_model?.slug)
+            ?.rating ?? 0;
+        return br - ar; // default desc
+      }
+      return 0;
+    });
+    if (sortDir === "asc") arr.reverse();
+    return arr;
+  });
+
+  const totalPages = $derived.by(() => {
+    const per = +itemsPerPage || 9;
+    return Math.max(1, Math.ceil(filteredCubes.length / per));
+  });
+
+  const paginatedCubes = $derived.by(() => {
+    const per = +itemsPerPage || 9;
+    const pages = Math.max(1, Math.ceil(sortedCubes.length / per));
+    const page = Math.min(Math.max(1, currentPage), pages);
+    const start = (page - 1) * per;
+    const end = start + per;
+    return sortedCubes.slice(start, end);
+  });
+
+  function resetFilters() {
+    selectedType = "All";
+    selectedStatus = "All";
+    selectedCondition = "All";
   }
 
-  // Derived previews/overviews
-  /**
-   * Unified activity feed items.
-   */
-  interface ActivityItemBase {
-    /** Milliseconds since epoch for sorting and display. */
-    ts: number;
-    /** Unique key for keyed each blocks. */
-    key: string;
-  }
-
-  interface RatingActivity extends ActivityItemBase {
-    type: "rating";
-    item: (typeof user_cube_ratings)[number];
-  }
-
-  interface CubeActivity extends ActivityItemBase {
-    type: "cube";
-    item: (typeof user_cubes)[number];
-  }
-
-  interface AchievementActivity extends ActivityItemBase {
-    type: "achievement";
-    item: (typeof user_achievements)[number];
-  }
-
-  type ActivityItem = RatingActivity | CubeActivity | AchievementActivity;
-
-  const activityItems = $derived(
-    (
-      [
-        // Ratings
-        ...user_cube_ratings.map((r) => ({
-          type: "rating" as const,
-          item: r,
-          ts: r.created_at ? new Date(r.created_at).getTime() : 0,
-          key: `rating:${r.cube_slug}:${r.created_at}`,
-        })),
-        // Cubes added/acquired
-        ...user_cubes.map((c) => ({
-          type: "cube" as const,
-          item: c,
-          ts: c.acquired_at ? new Date(c.acquired_at).getTime() : 0,
-          key: `cube:${c.cube}:${c.acquired_at}`,
-        })),
-        // Achievements
-        ...user_achievements.map((a, index) => ({
-          type: "achievement" as const,
-          item: a,
-          ts: new Date(a.awarded_at).getTime(),
-          key: `achievement:${index}`,
-        })),
-      ] satisfies ActivityItem[]
-    )
-      .sort((a, b) => b.ts - a.ts)
-      .slice(0, 12),
-  );
-
-  const typeCounts = $derived(
-    Object.entries(
-      user_cubes.reduce((acc: Record<string, number>, uc: any) => {
-        const t = uc?.cube_model?.type ?? "Unknown";
-        acc[t] = (acc[t] ?? 0) + 1;
-        return acc;
-      }, {}),
-    )
-      .map(([type, count]) => ({ type, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 6),
-  );
-
-  const statusCounts = $derived(
-    Object.entries(
-      user_cubes.reduce((acc: Record<string, number>, uc: any) => {
-        const s = uc?.status ?? "Unknown";
-        acc[s] = (acc[s] ?? 0) + 1;
-        return acc;
-      }, {}),
-    ).map(([status, count]) => ({ status, count })),
-  );
+  $effect(() => {
+    const _ = filteredCubes;
+    currentPage = 1;
+  });
 </script>
 
-<div
-  class="min-h-screen lg:mx-24 p-6 grid gap-6 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
->
-  <div class="col-span-1 flex flex-col gap-6">
-    <!-- Bio Card -->
-    {#if profile.bio}
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Bio</h2>
-
-        <div
-          class="card bg-base-200! p-4 rounded-2xl max-h-96 overflow-auto markdown-body text-base-content!"
-        >
-          <Markdown text={profile.bio} />
-        </div>
-      </div>
-    {/if}
-
-    <!-- Stats Card -->
+<section class="relative max-w-6xl mx-auto mt-12 px-4">
+  <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
     <div>
-      <h2 class="text-xl font-semibold mb-4">Stats</h2>
-      <div class="stats stats-vertical bg-base-200 rounded-2xl gap-2 w-full">
-        <!-- Total Cubes -->
-        <div class="stat">
-          <div class="stat-figure text-primary">
-            <i class="fa-solid fa-cube text-2xl"></i>
-          </div>
-          <div class="stat-title">Total Cubes</div>
-          <div class="stat-value">{totalCubes}</div>
-        </div>
-
-        <!-- Total Achievements -->
-        <div class="stat">
-          <div class="stat-figure text-secondary">
-            <i class="fa-solid fa-trophy text-2xl"></i>
-          </div>
-          <div class="stat-title">Achievements</div>
-          <div class="stat-value">{totalAchievements}</div>
-        </div>
-
-        <!-- Total Ratings -->
-        <div class="stat">
-          <div class="stat-figure text-info">
-            <i class="fa-solid fa-clipboard-check text-2xl"></i>
-          </div>
-          <div class="stat-title">Ratings</div>
-          <div class="stat-value">{totalRatings}</div>
-          <div class="stat-desc">
-            {#if totalRatings === 0}
-              No ratings yet
-            {:else if totalRatings === 1}
-              1 rating given
-            {:else}
-              {totalRatings} ratings given
-            {/if}
-          </div>
-        </div>
-
-        <!-- Average Rating -->
-        <div class="stat">
-          <div class="stat-figure text-warning">
-            <i class="fa-solid fa-star text-2xl"></i>
-          </div>
-          <div class="stat-title">Average Rating</div>
-          <div class="stat-value flex items-center gap-2">
-            {averageDisplay}
-            <div class="rating rating-sm" title={`Average: ${averageDisplay}`}>
-              {#each [1, 2, 3, 4, 5] as n}
-                <input
-                  type="radio"
-                  class="mask mask-star-2 bg-warning"
-                  disabled
-                  checked={avgRounded >= n && totalRatings > 0}
-                />
-              {/each}
-            </div>
-          </div>
-          <div class="stat-desc">
-            {totalRatings > 0 ? "Based on recent ratings" : "—"}
-          </div>
-        </div>
-      </div>
+      <h1 class="text-2xl font-extrabold tracking-tight">
+        {profile.display_name}'s Cube Collection
+      </h1>
+      <p class="text-sm text-base-content/70">{total} cubes</p>
     </div>
-  </div>
 
-  <!-- Main Cubes -->
-  <div class="col-span-full lg:col-span-2 flex flex-col gap-6">
-    {#if main_cubes.length > 0}
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Main Cubes</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {#each main_cubes as mc, i ("main:" + i)}
-            <a class="group block" href="/explore/cubes/{mc.cube}">
-              <article
-                class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-sm transition hover:shadow-md"
-              >
-                <img
-                  src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_400/{mc
-                    .cube_model.image_url}"
-                  alt={cubeTitle(mc)}
-                  class="w-full h-40 object-cover"
-                  loading="lazy"
-                />
-                <div class="p-4">
-                  <h3 class="font-semibold truncate">{cubeTitle(mc)}</h3>
-                  <p class="text-sm text-base-content/70 truncate">
-                    {mc.cube_model.type} ・ {mc.cube_model.brand}
-                  </p>
-                  {#if mc.acquired_at}
-                    <div class="mt-1 text-xs text-base-content/60">
-                      Acquired {formatDate(mc.acquired_at)}
-                    </div>
-                  {/if}
-                </div>
-              </article>
-            </a>
+    {#if user?.id === profile.user_id && user_cubes.length > 0}
+      <div class="flex items-center gap-2">
+        <!-- Sort controls -->
+        <SortSelector
+          bind:sortField={sortBy}
+          bind:sortOrder={sortDir}
+          fields={sortFields}
+        />
+
+        <div class="divider divider-horizontal m-0"></div>
+
+        <button
+          class="btn btn-outline {edit ? 'btn-error' : ''} btn-sm"
+          onclick={() => {
+            edit = !edit;
+          }}
+          type="button"
+        >
+          {#if edit}
+            <i class="fa-solid fa-xmark"></i>
+            Cancel
           {:else}
-            This user hasn't set any cubes as their main
-          {/each}
-        </div>
+            <i class="fa-solid fa-pencil"></i>
+            Edit
+          {/if}
+        </button>
       </div>
     {/if}
+  </header>
 
-    <!-- Activity -->
-    <div class="col-span-full lg:col-span-2">
-      <h2 class="text-xl font-semibold mb-2">Activity</h2>
-      <div class="bg-base-200 rounded-2xl border border-base-300 p-4">
-        <ul class="space-y-3">
-          {#each activityItems as a (a.key)}
-            {#if a.type === "rating"}
-              {@const r = a.item}
-              <li class="flex items-center gap-3">
-                <a href="/explore/cubes/{r.cube_slug}" class="shrink-0">
-                  <img
-                    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_72,h_72,c_fill/{r
-                      .cube_model.image_url}"
-                    alt={cubeTitle(r.cube_model)}
-                    class="rounded-xl border border-base-300"
-                    width="72"
-                    height="72"
-                    loading="lazy"
-                  />
-                </a>
-                <div class="min-w-0 flex-1">
-                  <a
-                    class="font-medium block truncate"
-                    href="/explore/cubes/{r.cube_slug}"
-                  >
-                    Rated {cubeTitle(r.cube_model)}
-                  </a>
-                  <div class="mt-1">
-                    <div class="rating rating-xs" title={`Rated ${r.rating}`}>
-                      {#each [1, 2, 3, 4, 5] as n}
-                        <input
-                          type="radio"
-                          class="mask mask-star-2 bg-warning"
-                          disabled
-                          checked={r.rating >= n}
-                        />
-                      {/each}
-                    </div>
-                  </div>
-                  <div class="text-xs text-base-content/70 mt-1">
-                    {formatDate(r.created_at)}
-                  </div>
-                </div>
-              </li>
-            {:else if a.type === "cube"}
-              {@const c = a.item}
-              <li class="flex items-center gap-3">
-                <a href="/explore/cubes/{c.cube}" class="shrink-0">
-                  <img
-                    src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_72,h_72,c_fill/{c
-                      .cube_model.image_url}"
-                    alt={cubeTitle(c)}
-                    class="rounded-xl border border-base-300"
-                    width="72"
-                    height="72"
-                    loading="lazy"
-                  />
-                </a>
-                <div class="min-w-0 flex-1">
-                  <a
-                    class="font-medium block truncate"
-                    href="/explore/cubes/{c.cube}"
-                  >
-                    Added {cubeTitle(c)} to collection
-                  </a>
-                  <div class="text-xs text-base-content/70 mt-1">
-                    {c.acquired_at ? formatDate(c.acquired_at) : "—"}
-                  </div>
-                </div>
-              </li>
-            {:else}
-              {@const ach = a.item}
-              <li class="flex items-center gap-3">
-                <div class="shrink-0 text-2xl select-none" aria-hidden="true">
-                  {ach.achievement.icon}
-                </div>
-                <div class="min-w-0 flex-1">
-                  <a
-                    class="font-medium block truncate"
-                    href="/user/{profile.username}/achievements"
-                  >
-                    Unlocked achievement {ach.achievement.name}
-                  </a>
-                  <div class="text-xs text-base-content/70 mt-1">
-                    {formatDate(ach.awarded_at)}
-                  </div>
-                </div>
-              </li>
-            {/if}
+  <SearchBar
+    showFilter={true}
+    bind:searchTerm
+    placeholderLabel="Search cubes"
+    filterAction={() => (showFilters = !showFilters)}
+  />
+
+  <div class="flex flex-col lg:flex-row gap-8">
+    <FilterSidebar {showFilters}>
+      <div>
+        <label class="form-control w-full">
+          <span class="label-text text-sm">Type</span>
+          <select
+            bind:value={selectedType}
+            class="select select-bordered w-full"
+          >
+            <option>All</option>
+            {#each allTypes as t}
+              <option>{t}</option>
+            {/each}
+          </select>
+        </label>
+      </div>
+      <div>
+        <label class="form-control w-full">
+          <span class="label-text text-sm">Condition</span>
+          <select
+            bind:value={selectedCondition}
+            class="select select-bordered w-full"
+          >
+            <option>All</option>
+            {#each allConditions as c}
+              <option>{c}</option>
+            {/each}
+          </select>
+        </label>
+      </div>
+      <div>
+        <label class="form-control w-full">
+          <span class="label-text text-sm">Status</span>
+          <select
+            bind:value={selectedStatus}
+            class="select select-bordered w-full"
+          >
+            <option>All</option>
+            {#each allStatuses as s}
+              <option>{s}</option>
+            {/each}
+          </select>
+        </label>
+      </div>
+      <div>
+        <button
+          class="btn btn-outline w-full mt-2"
+          onclick={resetFilters}
+          type="button"
+        >
+          <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+          Reset Filters
+        </button>
+      </div>
+    </FilterSidebar>
+
+    <div class="flex-1">
+      <div
+        class="flex flex-row items-start sm:items-center justify-between mb-4 gap-4"
+      >
+        <div class="flex items-center gap-2">
+          <label class="text-sm" for="itemsPerPage">Per page</label>
+          <select
+            id="itemsPerPage"
+            bind:value={itemsPerPage}
+            class="select select-bordered"
+            style="width:auto"
+            onchange={() => (itemsPerPage = +itemsPerPage)}
+          >
+            <option value={6}>6</option>
+            <option value={9}>9</option>
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={48}>48</option>
+            <option value={96}>96</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-10">
+        <Pagination bind:currentPage {totalPages} />
+      </div>
+
+      {#if user_cubes && user_cubes.length > 0}
+        <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+          {#each paginatedCubes as row (row.cube_model?.slug)}
+            <UserCubeCard
+              mode={edit ? "edit" : "view"}
+              cube={row.cube_model}
+              user_details={row}
+              user_rating={user_cube_ratings.find(
+                (ucr) => ucr.cube_slug === row.cube_model?.slug,
+              )?.rating ?? 0}
+            />
           {:else}
-            <li class="text-sm opacity-70">No recent activity.</li>
+            <!-- No results state -->
+            <div
+              class="col-span-full flex flex-col items-center justify-center py-20"
+            >
+              <i class="fa-solid fa-cube fa-3x mb-4"></i>
+              <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
+              <p class="mb-6 text-center max-w-xs">
+                We couldn't find any cubes matching your search or filters. Try
+                adjusting them or resetting to see everything.
+              </p>
+              <button
+                onclick={() => {
+                  resetFilters;
+                  searchTerm = "";
+                }}
+                class="btn btn-outline flex items-center"
+                aria-label="Reset filters"
+              >
+                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                Reset
+              </button>
+            </div>
           {/each}
         </ul>
-      </div>
-    </div>
-  </div>
+      {:else}
+        <div
+          class="col-span-full flex flex-col items-center justify-center py-20"
+        >
+          <i class="fa-solid fa-cube fa-3x mb-4"></i>
+          <h2 class="text-2xl font-semibold mb-2">
+            This user doesn't have any cube in their collection.
+          </h2>
+          {#if user?.id === profile.user_id}
+            <a href="/explore/cubes" class="btn btn-primary mt-3">
+              Browse cubes
+              <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          {/if}
+        </div>
+      {/if}
 
-  <!-- Collection Overview -->
-  <div class="xl:col-span-1 flex flex-col gap-6">
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Collection Overview</h2>
-      <div class="bg-base-200 rounded-2xl border border-base-300 p-4">
-        <div>
-          <h3 class="font-semibold mb-2 text-sm text-base-content/70">
-            Top Types
-          </h3>
-          <div class="flex flex-wrap gap-2">
-            {#each typeCounts as t (t.type)}
-              <span class="badge badge-ghost">
-                {t.type}
-                <span class="ml-1 text-xs opacity-70">x{t.count}</span>
-              </span>
-            {/each}
-            {#if typeCounts.length === 0}
-              <span class="text-sm opacity-70">No types yet.</span>
-            {/if}
-          </div>
-        </div>
-        <div class="divider my-3"></div>
-        <div>
-          <h3 class="font-semibold mb-2 text-sm text-base-content/70">
-            By Status
-          </h3>
-          <div class="flex flex-wrap gap-2">
-            {#each statusCounts as s (s.status)}
-              <span class="badge badge-outline">
-                {s.status}
-                <span class="ml-1 text-xs opacity-70">x{s.count}</span>
-              </span>
-            {/each}
-            {#if statusCounts.length === 0}
-              <span class="text-sm opacity-70">No cubes yet.</span>
-            {/if}
-          </div>
-        </div>
+      <div class="mt-10">
+        <Pagination bind:currentPage {totalPages} />
       </div>
     </div>
   </div>
-</div>
+</section>

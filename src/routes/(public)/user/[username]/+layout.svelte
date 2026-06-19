@@ -7,8 +7,19 @@
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import FollowButton from "$lib/components/misc/followButton.svelte";
 
-  const { data, children } = $props();
-  const { user, profile, isFollowing, meta, stats } = $derived(data);
+  type ProfileTabsTitle =
+    | "Collection"
+    | "Statistics"
+    | "Achievements"
+    | "Ratings"
+    | "Reviews"
+    | "Social"
+    | "Submissions";
+
+  interface ProfileTabs {
+    link: string;
+    title: ProfileTabsTitle;
+  }
 
   interface socialObject {
     label?: string;
@@ -21,6 +32,9 @@
   interface socialsListObject {
     [key: string]: socialObject;
   }
+
+  const { data, children } = $props();
+  const { user, profile, isFollowing, stats } = $derived(data);
 
   const socialsMap: socialsListObject = {
     website: { icon: "fa-solid fa-globe", bg: "bg-blue-600", href: (v) => v },
@@ -78,24 +92,20 @@
   }
 
   const formattedJoinDate = $derived(formatDate(profile.created_at ?? ""));
-  let activeTab = $state("Overview");
+  let activeTab: ProfileTabsTitle = $state("Collection");
 
-  const tabs = [
+  const tabs: ProfileTabs[] = [
     {
-      link: "",
-      title: "Overview",
+      link: "/",
+      title: "Collection",
     },
     {
-      link: "/cubes",
-      title: "Cubes",
+      link: "/stats",
+      title: "Statistics",
     },
     {
       link: "/achievements",
       title: "Achievements",
-    },
-    {
-      link: "/stats",
-      title: "Stats",
     },
     {
       link: "/ratings",
@@ -115,14 +125,28 @@
   $effect(() => {
     const path = page.url.pathname;
     const base = `/user/${profile.username}`;
-    if (path === base) activeTab = "Overview";
-    else if (path.startsWith(`${base}/cubes`)) activeTab = "Cubes";
-    else if (path.startsWith(`${base}/achievements`))
-      activeTab = "Achievements";
-    else if (path.startsWith(`${base}/stats`)) activeTab = "Stats";
-    else if (path.startsWith(`${base}/ratings`)) activeTab = "Ratings";
-    else if (path.startsWith(`${base}/reviews`)) activeTab = "Reviews";
-    else if (path.startsWith(`${base}/social`)) activeTab = "Social";
+    switch (path) {
+      case base:
+        activeTab = "Collection";
+        break;
+      case `${base}/achievements`:
+        activeTab = "Achievements";
+        break;
+      case `${base}/stats`:
+        activeTab = "Statistics";
+        break;
+      case `${base}/ratings`:
+        activeTab = "Ratings";
+        break;
+      case `${base}/reviews`:
+        activeTab = "Reviews";
+        break;
+      case `${base}/social`:
+        activeTab = "Social";
+        break;
+      default:
+        activeTab = "Collection";
+    }
   });
 </script>
 
@@ -141,7 +165,7 @@
       </div>
     {:else}
       <div
-        class="relative w-full h-44 sm:h-56 bg-gradient-to-tr from-primary via-secondary to-neutral"
+        class="relative w-full h-44 sm:h-56 bg-linear-to-tr from-primary via-secondary to-neutral"
       ></div>
     {/if}
 
@@ -149,7 +173,7 @@
       <div class="flex justify-center lg:justify-between items-center mx-auto">
         <div class="flex flex-col sm:flex-row w-full">
           <div
-            class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 relative"
+            class="flex flex-col items-center sm:items-start min-w-30 -mt-15 sm:-mt-32 relative"
           >
             <Avatar
               {profile}

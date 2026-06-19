@@ -30,7 +30,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     user_achievements,
     meta: {
       title: `${profile.display_name}'s Achievements - CubeIndex`,
-      description: `See ${profile.display_name}'s achievements on CubeIndex.`,
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

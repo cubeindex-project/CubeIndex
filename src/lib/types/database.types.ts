@@ -19,6 +19,7 @@ type ProfileSocials = {
 interface DetailedProfile {
   user_id: string;
   role: DatabaseGenerated["public"]["Enums"]["users_roles"];
+  private: boolean;
   socials: ProfileSocials;
   user_achievements_count: number;
   user_avg_rating_count: number;

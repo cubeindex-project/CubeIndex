@@ -258,12 +258,15 @@
         </div>
       </div>
 
-      <!-- Info & Socials right -->
+      {#if profile.bio}
+        <div class="mt-4">
+          {profile.bio}
+        </div>
+      {/if}
+
       <div class="flex-1 w-full">
-        <!-- Socials Section -->
         {#if socialsList.length}
           <div class="mt-4">
-            <h4 class="text-lg font-bold mb-2">Socials</h4>
             <div class="flex flex-wrap gap-3">
               {#each socialsList as { href, icon, bg, isImg, label }}
                 <a

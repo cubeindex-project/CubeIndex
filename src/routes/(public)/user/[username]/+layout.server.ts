@@ -28,6 +28,8 @@ export const load = (async ({
     );
   }
 
+  const canViewProfile = profile.private && user?.id !== profile.user_id;
+
   let isFollowing = false;
 
   if (user && user.id && profile.user_id) {
@@ -50,6 +52,7 @@ export const load = (async ({
 
   return {
     profile,
+    canViewProfile,
     isFollowing,
     stats: {
       cubesCount: profile.user_cubes_count,

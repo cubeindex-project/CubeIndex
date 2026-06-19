@@ -6,7 +6,7 @@
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   let { data } = $props();
-  let { user_cube_ratings = [], user, profile } = $derived(data);
+  let { user_cube_ratings, user, profile } = $derived(data);
 
   // Pagination
   let currentPage: number = $state(1);

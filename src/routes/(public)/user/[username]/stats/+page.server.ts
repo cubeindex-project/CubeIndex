@@ -2,22 +2,18 @@ import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ params, locals: { supabase, log }, parent }) => {
-  const { meta } = await parent();
-  const { username } = params;
+  const { profile, meta, canViewProfile } = await parent();
 
-  const { data: profile, error: profileErr } = await supabase
-    .from("profiles")
-    .select("user_id, username, display_name")
-    .eq("username", username)
-    .single();
-
-  if (profileErr || !profile) {
-    return logError(
-      404,
-      "User not found",
-      log,
-      profileErr ?? new Error("Profile not found"),
-    );
+  if (!canViewProfile) {
+    return {
+      profile,
+      stats: null,
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Statistics - CubeIndex`,
+        noindex: true,
+      },
+    };
   }
 
   const { data: stats, error: statsErr } = await supabase

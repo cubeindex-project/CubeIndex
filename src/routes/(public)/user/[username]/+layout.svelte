@@ -35,7 +35,7 @@
   }
 
   const { data, children } = $props();
-  const { user, profile, isFollowing, stats } = $derived(data);
+  const { user, profile, isFollowing, canViewProfile, stats } = $derived(data);
 
   const socialsMap: socialsListObject = {
     website: { icon: "fa-solid fa-globe", bg: "bg-blue-600", href: (v) => v },
@@ -290,7 +290,7 @@
     </div>
   </div>
 
-  {#if !profile.private || user?.id === profile.user_id}
+  {#if !canViewProfile}
     <div
       class="flex sm:justify-center bg-base-200 w-full p-5 gap-10 overflow-scroll md:overflow-hidden"
     >

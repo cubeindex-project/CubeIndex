@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Badge from "$lib/components/user/badge.svelte";
+  import Badge from "$lib/components/user/roleBadge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { page } from "$app/state";
@@ -151,15 +151,17 @@
   });
 </script>
 
-<section class="min-h-screen px-0 py-12 pt-0">
+<section class="min-h-screen pb-12">
   <div class="bg-base-200">
     <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
-      <div class="flex justify-center lg:justify-between items-center mx-auto">
-        <div class="flex flex-col sm:flex-row w-full">
+      <div
+        class="flex flex-col sm:flex-row justify-between items-center mx-auto"
+      >
+        <div class="flex flex-col md:flex-row justify-between">
           <div
-            class="flex flex-col items-center sm:items-start min-w-30 -mt-15 sm:-mt-32 relative"
+            class="flex justify-center sm:justify-normal items-center sm:items-start -mt-15 sm:-mt-32 relative"
           >
             <Avatar
               {profile}
@@ -168,121 +170,91 @@
             />
           </div>
 
-          <div class="flex flex-row justify-between">
-            <div class="mt-3 sm:ml-3">
-              <h2
-                class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight gap-2"
-              >
-                <div class="flex flex-col">
-                  <span class="font-extrabold font-clash text-3xl sm:text-4xl"
-                    >{profile.display_name}</span
-                  >
-                  <span>@{profile.username}</span>
-                </div>
-                <!-- Badge Section -->
-                <span class="flex flex-row gap-2">
-                  <Badge {profile} textSize="sm" />
+          <div class="flex flex-col mt-3 sm:ml-3">
+            <h2 class="flex gap-3">
+              <div class="flex flex-col">
+                <span class="font-extrabold font-clash text-3xl sm:text-4xl">
+                  {profile.display_name}
                 </span>
-              </h2>
+              </div>
+              <span class="flex items-center">
+                <Badge {profile} textSize="sm" showRoleName={true} />
+              </span>
+            </h2>
 
-              <p class="gap-1 mt-2">
-                <span class="font-semibold">Member since:</span>
-                <span class="font-mono">{formattedJoinDate}</span>
-              </p>
+            <p>
+              Member since: <span class="font-mono">{formattedJoinDate}</span>
+            </p>
 
-              {#if user?.id && user.id !== profile.user_id}
-                <div class="mt-2 sm:hidden block">
-                  <FollowButton user_id={profile.user_id} {isFollowing} />
-                </div>
-              {/if}
-            </div>
+            <div class="flex flex-wrap gap-1 items-center">
+              <a href="/user/{profile.username}/social">
+                <i class="fa-solid fa-users text-xs opacity-70"></i>
+                <span class="text-sm">
+                  {stats.followersCount}
+                  <span class="opacity-70"> followers </span>
+                </span>
+              </a>
 
-            <div class="mt-6">
-              <button
-                class="btn block md:hidden"
-                popovertarget="popover-1"
-                style="anchor-name:--anchor-1"
-                aria-label="User Menu"
-              >
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-              </button>
-              <ul
-                class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
-                popover
-                id="popover-1"
-                style="position-anchor:--anchor-1"
-              >
-                <div class="flex items-center">
-                  <ShareButton
-                    url={page.url.href}
-                    btnClass="btn btn-ghost w-full"
-                  />
-                </div>
-                {#if user?.id === profile.user_id}
-                  <a
-                    href="/user/settings"
-                    class="flex items-center gap-2 p-2 btn btn-ghost"
-                    aria-label="User Settings"
-                    title="User Settings"
-                  >
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                  </a>
-                {:else}
-                  <button
-                    class="flex items-center gap-2 p-2 btn btn-ghost w-full"
-                    onclick={toggleOpenReport}
-                  >
-                    <i class="fa-solid fa-flag"></i>
-                    <span>Report</span>
-                  </button>
-                {/if}
-              </ul>
+              <span class="mx-1 opacity-60" aria-hidden="true">•</span>
+
+              <a href="/user/{profile.username}/social">
+                <span class="text-sm">
+                  {stats.followingCount}
+                  <span class="opacity-70"> following </span>
+                </span>
+              </a>
             </div>
           </div>
         </div>
-        <div class="items-center justify-between gap-4 hidden md:flex">
-          <ShareButton url={page.url.href} btnClass="btn btn-accent" />
-          {#if user?.id === profile.user_id}
-            <a
-              href="/user/settings"
-              class="btn btn-primary ml-4"
-              aria-label="User Settings"
-              title="User Settings"
-            >
-              <i class="fa-solid fa-gear"></i>
-              <span>Settings</span>
-            </a>
-          {:else}
-            {#if user?.id && user.id !== profile.user_id}
-              <FollowButton user_id={profile.user_id} {isFollowing} />
-            {/if}
-            <button class="btn btn-error" onclick={toggleOpenReport}>
-              <i class="fa-solid fa-flag"></i>
-              <span>Report</span>
-            </button>
+
+        <div
+          class="flex justify-between items-center gap-4 w-full sm:w-auto mt-3 sm:mt-0"
+        >
+          {#if user?.id && user.id !== profile.user_id}
+            <FollowButton user_id={profile.user_id} {isFollowing} />
           {/if}
-        </div>
-      </div>
-      <!-- Follow stats row -->
-      <div class="mt-4">
-        <div class="flex flex-wrap gap-3 items-center">
-          <a
-            href="/user/{profile.username}/social"
-            class="btn btn-ghost btn-sm"
-            title="View following"
-          >
-            <i class="fa-solid fa-user-plus"></i>
-            <span class="ml-1">{stats.followingCount ?? 0} Following</span>
-          </a>
-          <a
-            href="/user/{profile.username}/social"
-            class="btn btn-ghost btn-sm"
-            title="View followers"
-          >
-            <i class="fa-solid fa-users"></i>
-            <span class="ml-1">{stats.followersCount ?? 0} Followers</span>
-          </a>
+          <div>
+            <button
+              class="btn block"
+              popovertarget="popover-1"
+              style="anchor-name:--anchor-1"
+              aria-label="User Menu"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <ul
+              class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
+              popover
+              id="popover-1"
+              style="position-anchor:--anchor-1"
+            >
+              <div class="flex items-center">
+                <ShareButton
+                  url={page.url.href}
+                  btnClass="btn btn-ghost w-full"
+                />
+              </div>
+              {#if user?.id === profile.user_id}
+                <a
+                  href="/user/settings"
+                  class="flex items-center gap-2 p-2 btn btn-ghost"
+                  aria-label="User Settings"
+                  title="User Settings"
+                >
+                  <i class="fa-solid fa-gear"></i>
+                  <span>Settings</span>
+                </a>
+              {:else}
+                <button
+                  class="flex items-center gap-2 p-2 btn btn-ghost w-full"
+                  onclick={toggleOpenReport}
+                >
+                  <i class="fa-solid fa-flag"></i>
+                  <span>Report</span>
+                </button>
+              {/if}
+            </ul>
+          </div>
         </div>
       </div>
 

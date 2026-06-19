@@ -152,7 +152,7 @@
 </script>
 
 <section class="min-h-screen pb-12">
-  <div class="bg-base-200">
+  <div class="bg-base-200 pb-4">
     <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
@@ -290,39 +290,38 @@
     </div>
   </div>
 
-  <div
-    class="flex sm:justify-center bg-base-200 w-full p-5 pt-10 gap-10 overflow-scroll md:overflow-hidden"
-  >
-    {#each tabs as tab}
-      <a
-        href="/user/{profile.username}{tab.link}"
-        class="hover:text-primary border-0 {activeTab === tab.title
-          ? 'border-b-4'
-          : ''} border-primary"
-        onclick={() => {
-          activeTab = tab.title;
-        }}
-        data-sveltekit-noscroll
-      >
-        {tab.title}
-      </a>
-    {/each}
-    {#if user?.id === profile.user_id}
-      <a
-        href="/user/submissions"
-        class="hover:text-primary border-0 {activeTab === 'Submissions'
-          ? 'border-b-4'
-          : ''} border-primary"
-        onclick={() => {
-          activeTab = "Submissions";
-        }}
-      >
-        Submissions
-      </a>
-    {/if}
-  </div>
-
   {#if !profile.private || user?.id === profile.user_id}
+    <div
+      class="flex sm:justify-center bg-base-200 w-full p-5 gap-10 overflow-scroll md:overflow-hidden"
+    >
+      {#each tabs as tab}
+        <a
+          href="/user/{profile.username}{tab.link}"
+          class="hover:text-primary border-0 {activeTab === tab.title
+            ? 'border-b-4'
+            : ''} border-primary"
+          onclick={() => {
+            activeTab = tab.title;
+          }}
+          data-sveltekit-noscroll
+        >
+          {tab.title}
+        </a>
+      {/each}
+      {#if user?.id === profile.user_id}
+        <a
+          href="/user/submissions"
+          class="hover:text-primary border-0 {activeTab === 'Submissions'
+            ? 'border-b-4'
+            : ''} border-primary"
+          onclick={() => {
+            activeTab = "Submissions";
+          }}
+        >
+          Submissions
+        </a>
+      {/if}
+    </div>
     {@render children()}
   {:else}
     <section class="px-4 py-12 flex items-center justify-center">

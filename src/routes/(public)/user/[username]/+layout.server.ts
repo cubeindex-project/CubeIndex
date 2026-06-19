@@ -69,6 +69,7 @@ export const load = (async ({
       twitterDescription: description,
       image,
       twitterImage: image,
+      noindex: profile.private,
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "ProfilePage",

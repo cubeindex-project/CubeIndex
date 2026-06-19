@@ -6,6 +6,7 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import FollowButton from "$lib/components/misc/followButton.svelte";
+  import UserBanner from "$lib/components/layout/userBanner.svelte";
 
   type ProfileTabsTitle =
     | "Collection"
@@ -152,22 +153,7 @@
 
 <section class="min-h-screen px-0 py-12 pt-0">
   <div class="bg-base-200">
-    <!-- Banner full width -->
-    {#if profile.banner}
-      <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
-        <img
-          src={profile.banner}
-          alt="{profile.username}'s banner"
-          fetchpriority="high"
-          class="w-full h-full object-cover object-center"
-        />
-        <div class="absolute inset-0 pointer-events-none"></div>
-      </div>
-    {:else}
-      <div
-        class="relative w-full h-44 sm:h-56 bg-linear-to-tr from-primary via-secondary to-neutral"
-      ></div>
-    {/if}
+    <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
       <div class="flex justify-center lg:justify-between items-center mx-auto">

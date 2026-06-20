@@ -156,24 +156,22 @@
     <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
-      <div
-        class="flex flex-col sm:flex-row justify-between items-center mx-auto"
-      >
-        <div class="flex flex-col md:flex-row justify-between">
+      <div class="flex justify-between items-center mx-auto">
+        <div class="flex justify-between mt-1 sm:mt-0">
           <div
-            class="flex justify-center sm:justify-normal items-center sm:items-start -mt-15 sm:-mt-32 relative"
+            class="flex justify-center sm:justify-normal items-center sm:items-start mt-0 sm:-mt-32 relative"
           >
             <Avatar
               {profile}
-              imgSize="size-55 sm:size-64"
+              imgSize="size-25 sm:size-64"
               textSize="text-9xl"
             />
           </div>
 
-          <div class="flex flex-col mt-3 sm:ml-3">
+          <div class="flex flex-col mt-3 ml-3">
             <h2 class="flex gap-3">
               <div class="flex flex-col">
-                <span class="font-extrabold font-clash text-3xl sm:text-4xl">
+                <span class="font-extrabold font-clash text-xl sm:text-4xl">
                   {profile.display_name}
                 </span>
               </div>
@@ -182,7 +180,7 @@
               </span>
             </h2>
 
-            <p>
+            <p class="text-sm sm:text-lg">
               Member since: <span class="font-mono">{formattedJoinDate}</span>
             </p>
 
@@ -207,9 +205,7 @@
           </div>
         </div>
 
-        <div
-          class="flex justify-between items-center gap-4 w-full sm:w-auto mt-3 sm:mt-0"
-        >
+        <div class="flex justify-between items-center gap-4 mt-3 sm:mt-0">
           {#if user?.id && user.id !== profile.user_id}
             <FollowButton user_id={profile.user_id} {isFollowing} />
           {/if}

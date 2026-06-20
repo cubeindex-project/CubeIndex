@@ -54,27 +54,23 @@
           <span
             class={`text-xs/5 text-base-content/70 flex items-center gap-2 truncate`}
           >
-            {#if profile.user_cubes_count}
-              <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
-              <span
-                title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
-              >
-                {fmt(profile.user_cubes_count)}
-                {plural(profile.user_cubes_count, "cube")}
-              </span>
-            {/if}
+            <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
+            <span
+              title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
+            >
+              {fmt(profile.user_cubes_count)}
+              {plural(profile.user_cubes_count, "cube")}
+            </span>
 
             <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
-            {#if profile.user_achievements_count}
-              <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
-              <span
-                title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
-              >
-                {fmt(profile.user_achievements_count)}
-                {plural(profile.user_achievements_count, "achievement")}
-              </span>
-            {/if}
+            <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
+            <span
+              title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
+            >
+              {fmt(profile.user_achievements_count)}
+              {plural(profile.user_achievements_count, "achievement")}
+            </span>
           </span>
         {/if}
       </div>

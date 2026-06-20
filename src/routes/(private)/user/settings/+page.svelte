@@ -58,9 +58,9 @@
     resetForm: true,
   });
 
-  const params = queryParameters();
+  const params = queryParameters({ tab: true }, { pushHistory: false });
 
-  let tab: SettingTabsId = $derived($params.tab ?? "profile");
+  let tab = $derived(($params.tab ?? "profile") as SettingTabsId);
 
   const tabs: TabItem[] = [
     { id: "profile", label: "Profile", icon: "fa-solid fa-user" },

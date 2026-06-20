@@ -187,7 +187,7 @@
             </p>
 
             <div class="flex flex-wrap gap-1 items-center">
-              <a href="/user/{profile.username}/social">
+              <a href="/user/{profile.username}/social?tab=followers">
                 <i class="fa-solid fa-users text-xs opacity-70"></i>
                 <span class="text-sm">
                   {stats.followersCount}
@@ -197,7 +197,7 @@
 
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
-              <a href="/user/{profile.username}/social">
+              <a href="/user/{profile.username}/social?tab=following">
                 <span class="text-sm">
                   {stats.followingCount}
                   <span class="opacity-70"> following </span>

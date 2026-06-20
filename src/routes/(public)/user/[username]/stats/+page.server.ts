@@ -1,23 +1,19 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
-export const load = (async ({ params, locals }) => {
-  const { supabase, log } = locals;
-  const { username } = params;
+export const load = (async ({ params, locals: { supabase, log }, parent }) => {
+  const { profile, meta, canViewProfile } = await parent();
 
-  const { data: profile, error: profileErr } = await supabase
-    .from("profiles")
-    .select("user_id, username, display_name")
-    .eq("username", username)
-    .single();
-
-  if (profileErr || !profile) {
-    return logError(
-      404,
-      "User not found",
-      log,
-      profileErr ?? new Error("Profile not found"),
-    );
+  if (!canViewProfile) {
+    return {
+      profile,
+      stats: null,
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Statistics - CubeIndex`,
+        noindex: true,
+      },
+    };
   }
 
   const { data: stats, error: statsErr } = await supabase
@@ -34,8 +30,9 @@ export const load = (async ({ params, locals }) => {
     profile,
     stats,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Statistics - CubeIndex`,
-      description: `View ${profile.display_name}'s collection stats on CubeIndex. Explore an overview of their cubes, categories, and collection breakdown to see what they own at a glance.`,
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

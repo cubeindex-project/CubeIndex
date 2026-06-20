@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Tables } from "$lib/types/database.types";
   import Avatar from "./avatar.svelte";
-  import Badge from "./badge.svelte";
+  import Badge from "./roleBadge.svelte";
 
   interface Props {
     profile: Tables<"v_detailed_profiles">;
@@ -36,107 +36,67 @@
   class="rounded-xl border border-base-300 bg-base-200/70 shadow-sm backdrop-blur-[1px]
          transition hover:border-base-300/80 hover:shadow-md"
 >
-  <!-- When username is missing, render a non-link container but keep the same layout -->
-  {#if href}
-    <a
-      {href}
-      class={`group flex items-center gap-4 transition px-4 ${compact ? "py-3" : "py-4"}`}
-    >
-      <Avatar
-        {profile}
-        imgSize={compact ? "size-10 sm:size-10" : "size-14 sm:size-14"}
-        textSize={compact ? "text-lg" : "text-2xl"}
-      />
-      <div class="min-w-0 flex-1">
-        <div class="flex flex-col gap-0.5">
-          <span
-            class={`font-semibold truncate ${compact ? "text-sm" : "text-base"}`}
-          >
-            {profile.display_name}
-            <Badge {profile} textSize={compact ? "xs" : "xs"} />
-          </span>
-
-          {#if showCount}
-            <span
-              class={`text-xs/5 text-base-content/70 flex items-center gap-2 truncate`}
-            >
-              {#if profile.user_cubes_count}
-                <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
-                <span
-                  title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
-                >
-                  {fmt(profile.user_cubes_count)}
-                  {plural(profile.user_cubes_count, "cube")}
-                </span>
-              {/if}
-
-              <span class="mx-1 opacity-60" aria-hidden="true">•</span>
-
-              {#if profile.user_achievements_count}
-                <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
-                <span
-                  title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
-                >
-                  {fmt(profile.user_achievements_count)}
-                  {plural(profile.user_achievements_count, "achievement")}
-                </span>
-              {/if}
-            </span>
-          {/if}
-        </div>
-      </div>
-
-      {#if showArrow}
+  <a
+    {href}
+    class={`group flex items-center gap-4 transition px-4 ${compact ? "py-3" : "py-4"}`}
+  >
+    <Avatar
+      {profile}
+      imgSize={compact ? "size-10 sm:size-10" : "size-14 sm:size-14"}
+      textSize={compact ? "text-lg" : "text-2xl"}
+    />
+    <div class="min-w-0 flex-1">
+      <div class="flex flex-col gap-0.5">
         <span
-          class="ml-2 text-primary transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
-          aria-hidden="true"
+          class={`font-semibold truncate ${compact ? "text-sm" : "text-base"}`}
         >
-          <i class="fa-solid fa-arrow-right"></i>
+          {profile.display_name}
+          <Badge
+            {profile}
+            textSize={compact ? "xs" : "xs"}
+            showRoleName={false}
+          />
         </span>
-      {/if}
-    </a>
-  {:else}
-    <!-- Disabled state when there’s no username -->
-    <div
-      role="group"
-      aria-label={`${profile?.display_name ?? "User"} (profile not available)`}
-      class={`flex items-center gap-4 px-4 ${compact ? "py-3" : "py-4"} opacity-70`}
-    >
-      <Avatar
-        {profile}
-        imgSize={compact ? "size-10 sm:size-10" : "size-14 sm:size-14"}
-        textSize={compact ? "text-lg" : "text-2xl"}
-      />
-      <div class="min-w-0 flex-1">
-        <div class="flex flex-col gap-0.5">
-          <span
-            class={`font-semibold truncate ${compact ? "text-sm" : "text-base"}`}
-          >
-            {profile?.display_name ?? "Unknown User"}
-            <Badge {profile} textSize={compact ? "xs" : "xs"} />
-          </span>
 
-          {#if showCount}
-            <span
-              class="text-xs/5 text-base-content/60 flex items-center gap-2 truncate"
-            >
-              {#if profile.user_cubes_count}
-                <i class="fa-solid fa-cube" aria-hidden="true"></i>
+        {#if showCount}
+          <span
+            class={`text-xs/5 text-base-content/70 flex items-center gap-2 truncate`}
+          >
+            {#if profile.user_cubes_count}
+              <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
+              <span
+                title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
+              >
                 {fmt(profile.user_cubes_count)}
                 {plural(profile.user_cubes_count, "cube")}
-              {/if}
-              <span class="mx-1 opacity-60" aria-hidden="true">•</span>
-              {#if profile.user_achievements_count}
-                <i class="fa-solid fa-medal" aria-hidden="true"></i>
+              </span>
+            {/if}
+
+            <span class="mx-1 opacity-60" aria-hidden="true">•</span>
+
+            {#if profile.user_achievements_count}
+              <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
+              <span
+                title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
+              >
                 {fmt(profile.user_achievements_count)}
                 {plural(profile.user_achievements_count, "achievement")}
-              {/if}
-            </span>
-          {/if}
-        </div>
+              </span>
+            {/if}
+          </span>
+        {/if}
       </div>
     </div>
-  {/if}
+
+    {#if showArrow}
+      <span
+        class="ml-2 text-primary transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+        aria-hidden="true"
+      >
+        <i class="fa-solid fa-arrow-right"></i>
+      </span>
+    {/if}
+  </a>
 </article>
 
 <style>

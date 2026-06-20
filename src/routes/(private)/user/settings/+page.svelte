@@ -3,21 +3,29 @@
   import { superForm } from "sveltekit-superforms";
   import { queryParameters } from "sveltekit-search-params";
   import Avatar from "$lib/components/user/avatar.svelte";
-  import Markdown from "$lib/components/misc/markdown.svelte";
+
+  type SettingTabsId =
+    | "profile"
+    | "social"
+    | "security"
+    | "appearance"
+    | "about";
+
+  type TabItem = { id: SettingTabsId; label: string; icon: string };
 
   // Props & initial state
   let { data } = $props();
 
+  // svelte-ignore state_referenced_locally
   const { form, errors, enhance, message, delayed, isTainted, tainted } =
-    $derived(
-      superForm(data.profileForm, {
-        invalidateAll: "pessimistic",
-        delayMs: 500,
-        timeoutMs: 8000,
-        clearOnSubmit: "errors-and-message",
-      }),
-    );
+    superForm(data.profileForm, {
+      invalidateAll: "pessimistic",
+      delayMs: 500,
+      timeoutMs: 8000,
+      clearOnSubmit: "errors-and-message",
+    });
 
+  // svelte-ignore state_referenced_locally
   const {
     form: socialForm,
     errors: socialErrors,
@@ -26,15 +34,14 @@
     delayed: socialDelayed,
     isTainted: socialIsTainted,
     tainted: socialTainted,
-  } = $derived(
-    superForm(data.socialForm, {
-      invalidateAll: "pessimistic",
-      delayMs: 500,
-      timeoutMs: 8000,
-      clearOnSubmit: "errors-and-message",
-    }),
-  );
+  } = superForm(data.socialForm, {
+    invalidateAll: "pessimistic",
+    delayMs: 500,
+    timeoutMs: 8000,
+    clearOnSubmit: "errors-and-message",
+  });
 
+  // svelte-ignore state_referenced_locally
   const {
     form: passwordForm,
     errors: passwordErrors,
@@ -43,24 +50,17 @@
     delayed: passwordDelayed,
     isTainted: passwordIsTainted,
     tainted: passwordTainted,
-  } = $derived(
-    superForm(data.passwordForm, {
-      invalidateAll: "pessimistic",
-      delayMs: 500,
-      timeoutMs: 8000,
-      clearOnSubmit: "errors-and-message",
-      resetForm: true,
-    }),
-  );
+  } = superForm(data.passwordForm, {
+    invalidateAll: "pessimistic",
+    delayMs: 500,
+    timeoutMs: 8000,
+    clearOnSubmit: "errors-and-message",
+    resetForm: true,
+  });
 
-  const params = queryParameters();
+  const params = queryParameters({ tab: true }, { pushHistory: false });
 
-  // Tabs: 'profile' | 'social' | 'security'
-  let tab: "profile" | "social" | "security" | "appearance" | "about" =
-    $derived($params.tab ?? "profile");
-
-  type TabId = "profile" | "social" | "security" | "appearance" | "about";
-  type TabItem = { id: TabId; label: string; icon: string };
+  let tab = $derived(($params.tab ?? "profile") as SettingTabsId);
 
   const tabs: TabItem[] = [
     { id: "profile", label: "Profile", icon: "fa-solid fa-user" },
@@ -308,16 +308,13 @@
               aria-current={tab === it.id ? "page" : undefined}
               tabindex={tab === it.id ? 0 : -1}
               onclick={() => {
-                tab = it.id;
                 $params.tab = it.id;
               }}
             >
               <i
                 class={`${it.icon} text-base opacity-70 group-hover:opacity-100`}
               ></i>
-              <span class="truncate max-w-[10rem] sm:max-w-none"
-                >{it.label}</span
-              >
+              <span class="truncate max-w-40 sm:max-w-none">{it.label}</span>
             </button>
           {/each}
         </div>
@@ -364,52 +361,16 @@
                 <fieldset class="fieldset">
                   <legend class="block text-sm font-semibold">Bio</legend>
                   <div class="flex flex-col sm:flex-row gap-4">
-                    <textarea
+                    <input
                       bind:value={$form.bio}
                       name="bio"
                       placeholder="Tell us something cool... Markdown is supported"
-                      class="textarea textarea-bordered w-full flex-1"
-                      rows="6"
-                    ></textarea>
-                    <div class="flex-1">
-                      <div class="text-xs opacity-60 mb-1">Live Preview</div>
-                      <div
-                        class="card !bg-base-200 p-4 rounded-2xl max-h-96 overflow-auto markdown-body !text-base-content"
-                      >
-                        <Markdown text={$form.bio} />
-                      </div>
-                    </div>
+                      class="input input-bordered w-full flex-1"
+                    />
                   </div>
                   {#if $errors.bio}
                     <p class="text-error">{$errors.bio}</p>
                   {/if}
-                  <div class="mt-3">
-                    <div class="text-xs opacity-70 font-semibold mb-1">
-                      Markdown basics
-                    </div>
-                    <ul
-                      class="list-disc list-inside text-xs opacity-70 space-y-1"
-                    >
-                      <li>
-                        Headings: <code># Title</code>,
-                        <code>## Section</code>
-                      </li>
-                      <li>
-                        Bold/Italic: <code>**bold**</code>,
-                        <code>*italic*</code>
-                      </li>
-                      <li>
-                        Links: <code>[text](https://example.com)</code>
-                      </li>
-                      <li>
-                        Lists: <code>- item</code> (use one line per item)
-                      </li>
-                      <li>
-                        Code: <code>`inline`</code> or fenced blocks with three backticks
-                      </li>
-                      <li>Paragraphs: leave a blank line between them</li>
-                    </ul>
-                  </div>
                 </fieldset>
 
                 <!-- Avatar -->
@@ -473,7 +434,7 @@
                           />
                         {:else}
                           <div
-                            class="w-full h-full bg-gradient-to-tr from-primary via-secondary to-neutral"
+                            class="w-full h-full bg-linear-to-tr from-primary via-secondary to-neutral"
                           ></div>
                         {/if}
                       </div>

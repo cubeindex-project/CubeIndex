@@ -2,7 +2,18 @@ import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
-  const { profile } = await parent();
+  const { profile, meta, canViewProfile } = await parent();
+
+  if (!canViewProfile) {
+    return {
+      user_achievements: [],
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Achievements - CubeIndex`,
+        noindex: true,
+      },
+    };
+  }
 
   const { data, error: userAchieveError } = await supabase
     .from("user_achievements")
@@ -29,8 +40,9 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   return {
     user_achievements,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Achievements - CubeIndex`,
-      description: `See ${profile.display_name}'s achievements on CubeIndex.`,
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

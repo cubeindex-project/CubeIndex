@@ -122,7 +122,7 @@
           const setFromSystem = () => apply(mql.matches ? "dark" : "light");
           setFromSystem();
           // Keep in sync with OS changes
-          mql.addEventListener("change", setFromSystem());
+          mql.addEventListener("change", setFromSystem);
         } else if (mode === "manual") {
           const t = localStorage.getItem("theme") || "light";
           apply(t);

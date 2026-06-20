@@ -3,12 +3,20 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
+  import { queryParameters } from "sveltekit-search-params";
+
+  type SocialTabs = "following" | "followers";
 
   let { data } = $props();
   const { profile, user, followers, following, isFollowing } = $derived(data);
 
+  const params = queryParameters({ tab: true }, { pushHistory: false });
+
   // Tabs
-  let tab: "following" | "followers" = $state("following");
+  const tab = $derived(($params.tab ?? "followers") as SocialTabs);
+
+  const isFollowingTab = $derived(tab === "following");
+  const isFollowersTab = $derived(tab === "followers");
 
   // Search & Filters
   let searchTerm: string = $state("");
@@ -23,7 +31,7 @@
   const followingCount = $derived(following.length);
   const followersCount = $derived(followers.length);
 
-  const sourceList = $derived(tab === "following" ? following : followers);
+  const sourceList = $derived(isFollowingTab ? following : followers);
 
   const filtered = $derived.by(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -64,7 +72,7 @@
         {profile.display_name}'s Social
       </h1>
       <p class="text-sm text-base-content/70">
-        {followingCount} following ・ {followersCount} followers
+        {followersCount} followers ・ {followingCount} following
       </p>
     </div>
 
@@ -72,21 +80,21 @@
       <div class="join">
         <button
           type="button"
-          class="btn btn-sm join-item {tab === 'following'
-            ? 'btn-active'
-            : 'btn-ghost'}"
-          onclick={() => (tab = "following")}
-        >
-          Following
-        </button>
-        <button
-          type="button"
           class="btn btn-sm join-item {tab === 'followers'
             ? 'btn-active'
             : 'btn-ghost'}"
-          onclick={() => (tab = "followers")}
+          onclick={() => ($params.tab = "followers")}
         >
           Followers
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm join-item {isFollowingTab
+            ? 'btn-active'
+            : 'btn-ghost'}"
+          onclick={() => ($params.tab = "following")}
+        >
+          Following
         </button>
       </div>
 
@@ -144,18 +152,18 @@
             <div
               class="col-span-full flex flex-col items-center justify-center py-20"
             >
-              {#if tab === "following"}
+              {#if isFollowingTab}
                 <i class="fa-solid fa-user fa-3x mb-4"></i>
               {:else}
                 <i class="fa-solid fa-users fa-3x mb-4"></i>
               {/if}
               <h2 class="text-2xl font-semibold mb-2">
-                No {tab === "followers"
+                No {isFollowersTab
                   ? `users following ${profile.display_name}`
                   : `users ${profile.display_name} follows`} found
               </h2>
               <p class="mb-6 text-center max-w-xs">
-                We couldn't find any {tab === "followers"
+                We couldn't find any {isFollowersTab
                   ? `users following ${profile.display_name}`
                   : `users ${profile.display_name} follows`} matching your search
                 or filters. Try adjusting them or resetting to see everything.
@@ -182,14 +190,14 @@
           class="w-full flex flex-col items-center justify-center py-20 text-center"
         >
           <div class="text-5xl mb-4">
-            {#if tab === "following"}
+            {#if isFollowingTab}
               <i class="fa-solid fa-user"></i>
             {:else}
               <i class="fa-solid fa-users"></i>
             {/if}
           </div>
           <h2 class="text-2xl font-semibold mb-2">
-            {#if tab === "following"}
+            {#if isFollowingTab}
               {#if profile.user_id === user?.id}
                 Not following anyone yet
               {:else}
@@ -202,7 +210,7 @@
             {/if}
           </h2>
           <p class="text-base opacity-80 mb-4">
-            {#if tab === "following"}
+            {#if isFollowingTab}
               {#if profile.user_id === user?.id}
                 When you follow someone, you'll see them here.
               {:else}
@@ -215,11 +223,11 @@
               here.
             {/if}
           </p>
-          {#if tab === "following" && profile.user_id === user?.id}
+          {#if isFollowingTab && profile.user_id === user?.id}
             <a href="/explore/users" class="btn btn-primary">
               Find users to follow
             </a>
-          {:else if tab === "followers" && profile.user_id !== user?.id}
+          {:else if isFollowersTab && profile.user_id !== user?.id}
             <FollowButton user_id={profile.user_id} {isFollowing} />
           {/if}
         </div>

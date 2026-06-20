@@ -2,7 +2,18 @@ import { logError } from "$lib/server/logError";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
-  const { profile } = await parent();
+  const { profile, meta, canViewProfile } = await parent();
+
+  if (!canViewProfile) {
+    return {
+      user_cube_ratings: [],
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Ratings - CubeIndex`,
+        noindex: true,
+      },
+    };
+  }
 
   const { data: user_cube_ratings, error: urErr } = await supabase
     .from("user_cube_ratings")
@@ -23,8 +34,9 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   return {
     user_cube_ratings,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Ratings - CubeIndex`,
-      description: `View ${profile.display_name}'s ratings on CubeIndex. See which cubes they have scored and how their ratings compare across different puzzles.`,
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

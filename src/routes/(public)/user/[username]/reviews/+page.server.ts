@@ -1,9 +1,19 @@
 import type { PageServerLoad } from "./$types";
-import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 
 export const load = (async ({ parent, locals: { log, supabase } }) => {
-  const { profile } = await parent();
+  const { profile, meta, canViewProfile } = await parent();
+
+  if (!canViewProfile) {
+    return {
+      userReviews: [],
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Reviews - CubeIndex`,
+        noindex: true,
+      },
+    };
+  }
 
   const { data: userReviews, error: reviewErr } = await supabase
     .from("v_detailed_user_cube_reviews")
@@ -19,8 +29,9 @@ export const load = (async ({ parent, locals: { log, supabase } }) => {
   return {
     userReviews,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Reviews - CubeIndex`,
-      description: `View ${profile.display_name}'s reviews on CubeIndex. Read their detailed feedback on cubes they have tried, including what they liked, what they did not, and any setup notes they shared.`,
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

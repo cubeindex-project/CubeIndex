@@ -1,14 +1,26 @@
 <script lang="ts">
-  import Badge from "$lib/components/user/badge.svelte";
+  import Badge from "$lib/components/user/roleBadge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { page } from "$app/state";
   import Avatar from "$lib/components/user/avatar.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import FollowButton from "$lib/components/misc/followButton.svelte";
+  import UserBanner from "$lib/components/layout/userBanner.svelte";
 
-  const { data, children } = $props();
-  const { user, profile, isFollowing, meta, stats } = $derived(data);
+  type ProfileTabsTitle =
+    | "Collection"
+    | "Statistics"
+    | "Achievements"
+    | "Ratings"
+    | "Reviews"
+    | "Social"
+    | "Submissions";
+
+  interface ProfileTabs {
+    link: string;
+    title: ProfileTabsTitle;
+  }
 
   interface socialObject {
     label?: string;
@@ -21,6 +33,9 @@
   interface socialsListObject {
     [key: string]: socialObject;
   }
+
+  const { data, children } = $props();
+  const { user, profile, isFollowing, canViewProfile, stats } = $derived(data);
 
   const socialsMap: socialsListObject = {
     website: { icon: "fa-solid fa-globe", bg: "bg-blue-600", href: (v) => v },
@@ -78,24 +93,20 @@
   }
 
   const formattedJoinDate = $derived(formatDate(profile.created_at ?? ""));
-  let activeTab = $state("Overview");
+  let activeTab: ProfileTabsTitle = $state("Collection");
 
-  const tabs = [
+  const tabs: ProfileTabs[] = [
     {
-      link: "",
-      title: "Overview",
+      link: "/",
+      title: "Collection",
     },
     {
-      link: "/cubes",
-      title: "Cubes",
+      link: "/stats",
+      title: "Statistics",
     },
     {
       link: "/achievements",
       title: "Achievements",
-    },
-    {
-      link: "/stats",
-      title: "Stats",
     },
     {
       link: "/ratings",
@@ -115,173 +126,143 @@
   $effect(() => {
     const path = page.url.pathname;
     const base = `/user/${profile.username}`;
-    if (path === base) activeTab = "Overview";
-    else if (path.startsWith(`${base}/cubes`)) activeTab = "Cubes";
-    else if (path.startsWith(`${base}/achievements`))
-      activeTab = "Achievements";
-    else if (path.startsWith(`${base}/stats`)) activeTab = "Stats";
-    else if (path.startsWith(`${base}/ratings`)) activeTab = "Ratings";
-    else if (path.startsWith(`${base}/reviews`)) activeTab = "Reviews";
-    else if (path.startsWith(`${base}/social`)) activeTab = "Social";
+    switch (path) {
+      case base:
+        activeTab = "Collection";
+        break;
+      case `${base}/achievements`:
+        activeTab = "Achievements";
+        break;
+      case `${base}/stats`:
+        activeTab = "Statistics";
+        break;
+      case `${base}/ratings`:
+        activeTab = "Ratings";
+        break;
+      case `${base}/reviews`:
+        activeTab = "Reviews";
+        break;
+      case `${base}/social`:
+        activeTab = "Social";
+        break;
+      default:
+        activeTab = "Collection";
+    }
   });
 </script>
 
-<section class="min-h-screen px-0 py-12 pt-0">
-  <div class="bg-base-200">
-    <!-- Banner full width -->
-    {#if profile.banner}
-      <div class="relative h-48 w-full sm:h-72 md:h-80 overflow-hidden">
-        <img
-          src={profile.banner}
-          alt="{profile.username}'s banner"
-          fetchpriority="high"
-          class="w-full h-full object-cover object-center"
-        />
-        <div class="absolute inset-0 pointer-events-none"></div>
-      </div>
-    {:else}
-      <div
-        class="relative w-full h-44 sm:h-56 bg-gradient-to-tr from-primary via-secondary to-neutral"
-      ></div>
-    {/if}
+<section class="min-h-screen pb-12">
+  <div class="bg-base-200 pb-4">
+    <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
-      <div class="flex justify-center lg:justify-between items-center mx-auto">
-        <div class="flex flex-col sm:flex-row w-full">
+      <div class="flex justify-between items-center mx-auto">
+        <div class="flex justify-between mt-1 sm:mt-0">
           <div
-            class="flex flex-col items-center sm:items-start min-w-[120px] -mt-15 sm:-mt-32 relative"
+            class="flex justify-center sm:justify-normal items-center sm:items-start mt-0 sm:-mt-32 relative"
           >
             <Avatar
               {profile}
-              imgSize="size-55 sm:size-64"
+              imgSize="size-25 sm:size-64"
               textSize="text-9xl"
             />
           </div>
 
-          <div class="flex flex-row justify-between">
-            <div class="mt-3 sm:ml-3">
-              <h2
-                class="lg:flex-row flex flex-col break-all lg:items-center items-start tracking-tight gap-2"
-              >
-                <div class="flex flex-col">
-                  <span class="font-extrabold font-clash text-3xl sm:text-4xl"
-                    >{profile.display_name}</span
-                  >
-                  <span>@{profile.username}</span>
-                </div>
-                <!-- Badge Section -->
-                <span class="flex flex-row gap-2">
-                  <Badge {profile} textSize="sm" />
+          <div class="flex flex-col mt-3 ml-3">
+            <h2 class="flex gap-3">
+              <div class="flex flex-col">
+                <span class="font-extrabold font-clash text-xl sm:text-4xl">
+                  {profile.display_name}
                 </span>
-              </h2>
+              </div>
+              <span class="flex items-center">
+                <Badge {profile} textSize="sm" showRoleName={true} />
+              </span>
+            </h2>
 
-              <p class="gap-1 mt-2">
-                <span class="font-semibold">Member since:</span>
-                <span class="font-mono">{formattedJoinDate}</span>
-              </p>
+            <p class="text-sm sm:text-lg">
+              Member since: <span class="font-mono">{formattedJoinDate}</span>
+            </p>
 
-              {#if user?.id && user.id !== profile.user_id}
-                <div class="mt-2 sm:hidden block">
-                  <FollowButton user_id={profile.user_id} {isFollowing} />
-                </div>
-              {/if}
-            </div>
+            <div class="flex flex-wrap gap-1 items-center">
+              <a href="/user/{profile.username}/social?tab=followers">
+                <i class="fa-solid fa-users text-xs opacity-70"></i>
+                <span class="text-sm">
+                  {stats.followersCount}
+                  <span class="opacity-70"> followers </span>
+                </span>
+              </a>
 
-            <div class="mt-6">
-              <button
-                class="btn block md:hidden"
-                popovertarget="popover-1"
-                style="anchor-name:--anchor-1"
-                aria-label="User Menu"
-              >
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-              </button>
-              <ul
-                class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
-                popover
-                id="popover-1"
-                style="position-anchor:--anchor-1"
-              >
-                <div class="flex items-center">
-                  <ShareButton
-                    url={page.url.href}
-                    btnClass="btn btn-ghost w-full"
-                  />
-                </div>
-                {#if user?.id === profile.user_id}
-                  <a
-                    href="/user/settings"
-                    class="flex items-center gap-2 p-2 btn btn-ghost"
-                    aria-label="User Settings"
-                    title="User Settings"
-                  >
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                  </a>
-                {:else}
-                  <button
-                    class="flex items-center gap-2 p-2 btn btn-ghost w-full"
-                    onclick={toggleOpenReport}
-                  >
-                    <i class="fa-solid fa-flag"></i>
-                    <span>Report</span>
-                  </button>
-                {/if}
-              </ul>
+              <span class="mx-1 opacity-60" aria-hidden="true">•</span>
+
+              <a href="/user/{profile.username}/social?tab=following">
+                <span class="text-sm">
+                  {stats.followingCount}
+                  <span class="opacity-70"> following </span>
+                </span>
+              </a>
             </div>
           </div>
         </div>
-        <div class="items-center justify-between gap-4 hidden md:flex">
-          <ShareButton url={page.url.href} btnClass="btn btn-accent" />
-          {#if user?.id === profile.user_id}
-            <a
-              href="/user/settings"
-              class="btn btn-primary ml-4"
-              aria-label="User Settings"
-              title="User Settings"
-            >
-              <i class="fa-solid fa-gear"></i>
-              <span>Settings</span>
-            </a>
-          {:else}
-            {#if user?.id && user.id !== profile.user_id}
-              <FollowButton user_id={profile.user_id} {isFollowing} />
-            {/if}
-            <button class="btn btn-error" onclick={toggleOpenReport}>
-              <i class="fa-solid fa-flag"></i>
-              <span>Report</span>
-            </button>
+
+        <div class="flex justify-between items-center gap-4 mt-3 sm:mt-0">
+          {#if user?.id && user.id !== profile.user_id}
+            <FollowButton user_id={profile.user_id} {isFollowing} />
           {/if}
-        </div>
-      </div>
-      <!-- Follow stats row -->
-      <div class="mt-4">
-        <div class="flex flex-wrap gap-3 items-center">
-          <a
-            href="/user/{profile.username}/social"
-            class="btn btn-ghost btn-sm"
-            title="View following"
-          >
-            <i class="fa-solid fa-user-plus"></i>
-            <span class="ml-1">{stats.followingCount ?? 0} Following</span>
-          </a>
-          <a
-            href="/user/{profile.username}/social"
-            class="btn btn-ghost btn-sm"
-            title="View followers"
-          >
-            <i class="fa-solid fa-users"></i>
-            <span class="ml-1">{stats.followersCount ?? 0} Followers</span>
-          </a>
+          <div>
+            <button
+              class="btn block"
+              popovertarget="popover-1"
+              style="anchor-name:--anchor-1"
+              aria-label="User Menu"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <ul
+              class="dropdown dropdown-end menu w-auto rounded-box bg-base-100 shadow-sm mt-2"
+              popover
+              id="popover-1"
+              style="position-anchor:--anchor-1"
+            >
+              <div class="flex items-center">
+                <ShareButton
+                  url={page.url.href}
+                  btnClass="btn btn-ghost w-full"
+                />
+              </div>
+              {#if user?.id === profile.user_id}
+                <a
+                  href="/user/settings"
+                  class="flex items-center gap-2 p-2 btn btn-ghost"
+                  aria-label="User Settings"
+                  title="User Settings"
+                >
+                  <i class="fa-solid fa-gear"></i>
+                  <span>Settings</span>
+                </a>
+              {:else}
+                <button
+                  class="flex items-center gap-2 p-2 btn btn-ghost w-full"
+                  onclick={toggleOpenReport}
+                >
+                  <i class="fa-solid fa-flag"></i>
+                  <span>Report</span>
+                </button>
+              {/if}
+            </ul>
+          </div>
         </div>
       </div>
 
-      <!-- Info & Socials right -->
+      {#if profile.bio}
+        <div class="mt-4">
+          {profile.bio}
+        </div>
+      {/if}
+
       <div class="flex-1 w-full">
-        <!-- Socials Section -->
         {#if socialsList.length}
           <div class="mt-4">
-            <h4 class="text-lg font-bold mb-2">Socials</h4>
             <div class="flex flex-wrap gap-3">
               {#each socialsList as { href, icon, bg, isImg, label }}
                 <a
@@ -305,39 +286,38 @@
     </div>
   </div>
 
-  <div
-    class="flex sm:justify-center bg-base-200 w-full p-5 pt-10 gap-10 overflow-scroll md:overflow-hidden"
-  >
-    {#each tabs as tab}
-      <a
-        href="/user/{profile.username}{tab.link}"
-        class="hover:text-primary border-0 {activeTab === tab.title
-          ? 'border-b-4'
-          : ''} border-primary"
-        onclick={() => {
-          activeTab = tab.title;
-        }}
-        data-sveltekit-noscroll
-      >
-        {tab.title}
-      </a>
-    {/each}
-    {#if user?.id === profile.user_id}
-      <a
-        href="/user/submissions"
-        class="hover:text-primary border-0 {activeTab === 'Submissions'
-          ? 'border-b-4'
-          : ''} border-primary"
-        onclick={() => {
-          activeTab = "Submissions";
-        }}
-      >
-        Submissions
-      </a>
-    {/if}
-  </div>
-
-  {#if !profile.private || user?.id === profile.user_id}
+  {#if canViewProfile}
+    <div
+      class="flex sm:justify-center bg-base-200 w-full p-5 gap-10 overflow-scroll md:overflow-hidden"
+    >
+      {#each tabs as tab}
+        <a
+          href="/user/{profile.username}{tab.link}"
+          class="hover:text-primary border-0 {activeTab === tab.title
+            ? 'border-b-4'
+            : ''} border-primary"
+          onclick={() => {
+            activeTab = tab.title;
+          }}
+          data-sveltekit-noscroll
+        >
+          {tab.title}
+        </a>
+      {/each}
+      {#if user?.id === profile.user_id}
+        <a
+          href="/user/submissions"
+          class="hover:text-primary border-0 {activeTab === 'Submissions'
+            ? 'border-b-4'
+            : ''} border-primary"
+          onclick={() => {
+            activeTab = "Submissions";
+          }}
+        >
+          Submissions
+        </a>
+      {/if}
+    </div>
     {@render children()}
   {:else}
     <section class="px-4 py-12 flex items-center justify-center">

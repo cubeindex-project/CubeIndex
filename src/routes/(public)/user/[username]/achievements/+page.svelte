@@ -7,7 +7,7 @@
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
 
   let { data } = $props();
-  const { user_achievements = [], profile } = $derived(data);
+  const { user_achievements, profile } = $derived(data);
 
   // Search, filters, sort, pagination
   let searchTerm: string = $state("");

@@ -1,9 +1,21 @@
-import type { Tables } from "$lib/types/database.types";
 import { logError } from "$lib/server/logError";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log, user } }) => {
-  const { profile } = await parent();
+  const { profile, meta, canViewProfile, isFollowing } = await parent();
+
+  if (!canViewProfile) {
+    return {
+      following: [],
+      followers: [],
+      isFollowing,
+      meta: {
+        ...meta,
+        title: `${profile.display_name}'s Socials - CubeIndex`,
+        noindex: true,
+      },
+    };
+  }
 
   const [
     { data: followingId, error: followingErr },
@@ -34,26 +46,12 @@ export const load = (async ({ parent, locals: { supabase, log, user } }) => {
     .map((edId) => edId.follower_id)
     .filter((user) => !!user);
 
-  let currentFollowingUser: Tables<"user_follows">[] = [];
-
-  if (user?.id) {
-    const { data, error: followErr } = await supabase
-      .from("user_follows")
-      .select("*")
-      .eq("follower_id", user.id)
-      .eq("following_id", profile.user_id);
-
-    if (followErr) {
-      return logError(500, "Unable to check follow status", log, followErr);
-    }
-    currentFollowingUser = data;
-  }
-
   return {
     following,
     followers,
-    isFollowing: currentFollowingUser.length !== 1,
+    isFollowing,
     meta: {
+      ...meta,
       title: `${profile.display_name}'s Socials - CubeIndex`,
       noindex: true,
     },

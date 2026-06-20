@@ -72,15 +72,13 @@ export const load = (async ({ locals: { user, supabase, log }, url }) => {
 
   const passwordForm = await superValidate(zod4(passwordSchema));
 
-  const tab = url.search.slice(5);
-
   return {
     profile,
     profileForm,
     socialForm,
     passwordForm,
     meta: {
-      title: `${tab.charAt(0).toUpperCase() + tab.slice(1)} Settings - CubeIndex`,
+      title: "Settings - CubeIndex",
       noindex: true,
     },
   };

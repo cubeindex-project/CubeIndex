@@ -134,7 +134,7 @@
                   class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-4 shadow-sm transition hover:shadow-md"
                 >
                   <div class="flex items-center gap-4">
-                    <Avatar profile={f} imgSize="size-16" textSize="text-2xl" />
+                    <Avatar profile={f} imageWidth="w-16" />
                     <div class="min-w-0">
                       <div class="flex items-center gap-2">
                         <h3 class="font-semibold truncate">{f.display_name}</h3>

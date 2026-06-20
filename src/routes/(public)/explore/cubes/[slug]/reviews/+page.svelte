@@ -57,8 +57,7 @@
                   display_name: review.profile.display_name,
                   profile_picture: review.profile.profile_picture,
                 }}
-                imgSize="size-12"
-                textSize="text-lg"
+                imageWidth="w-12"
               />
 
               <div class="min-w-0">

@@ -56,8 +56,7 @@
           display_name: profile.display_name || profile.username,
           profile_picture: profile.profile_picture ?? null,
         }}
-        imgSize="w-16 h-16"
-        textSize="text-xl"
+        imageWidth="w-24"
       />
       <div>
         <div class="flex items-center gap-3">

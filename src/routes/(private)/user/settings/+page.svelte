@@ -385,8 +385,7 @@
                           ($form.profile_picture as string | null) ??
                           null,
                       }}
-                      imgSize="size-24 sm:size-32"
-                      textSize="text-5xl"
+                      imageWidth="w-24 sm:w-32"
                     />
                     <div class="flex-1 space-y-2">
                       <label

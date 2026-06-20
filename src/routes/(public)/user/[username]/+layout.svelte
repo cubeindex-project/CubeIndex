@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Badge from "$lib/components/user/roleBadge.svelte";
+  import RoleBadge from "$lib/components/user/roleBadge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
   import { page } from "$app/state";
@@ -156,19 +156,15 @@
     <UserBanner {profile} />
 
     <div class="mx-5 lg:mx-24">
-      <div class="flex justify-between items-center mx-auto">
+      <div class="flex flex-wrap justify-between items-center mx-auto">
         <div class="flex justify-between mt-1 sm:mt-0">
           <div
-            class="flex justify-center sm:justify-normal items-center sm:items-start mt-0 sm:-mt-32 relative"
+            class="flex justify-center sm:justify-normal items-center sm:items-start -mt-5 sm:-mt-32 relative"
           >
-            <Avatar
-              {profile}
-              imgSize="size-25 sm:size-64"
-              textSize="text-9xl"
-            />
+            <Avatar {profile} imageWidth="w-25 sm:w-64" />
           </div>
 
-          <div class="flex flex-col mt-3 ml-3">
+          <div class="flex flex-col ml-3 sm:mt-3">
             <h2 class="flex gap-3">
               <div class="flex flex-col">
                 <span class="font-extrabold font-clash text-xl sm:text-4xl">
@@ -176,7 +172,7 @@
                 </span>
               </div>
               <span class="flex items-center">
-                <Badge {profile} textSize="sm" showRoleName={true} />
+                <RoleBadge {profile} textSize="sm" showRoleName={true} />
               </span>
             </h2>
 
@@ -205,7 +201,7 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center gap-4 mt-3 sm:mt-0">
+        <div class="flex justify-between items-center gap-4 mt-3 md:mt-0">
           {#if user?.id && user.id !== profile.user_id}
             <FollowButton user_id={profile.user_id} {isFollowing} />
           {/if}

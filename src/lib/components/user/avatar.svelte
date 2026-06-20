@@ -1,26 +1,41 @@
 <script lang="ts">
   import type { Tables } from "$lib/types/database.types";
+  import { onMount } from "svelte";
 
   interface Props {
     profile: Pick<Tables<"profiles">, "display_name" | "profile_picture">;
-    imgSize: string;
-    textSize: string;
+    imageWidth?: string;
   }
 
-  const { profile, imgSize, textSize }: Props = $props();
+  const { profile, imageWidth = "w-12" }: Props = $props();
+
+  let image: HTMLImageElement | null = $state(null);
+  // svelte-ignore state_referenced_locally
+  let imageLoaded = $state(Boolean(profile.profile_picture));
+
+  onMount(() => {
+    window.addEventListener("load", (event) => {
+      imageLoaded = image?.complete ?? false;
+    });
+  });
 </script>
 
-{#if profile.profile_picture}
-  <img
-    src={profile.profile_picture}
-    alt="Avatar"
-    class="rounded-2xl border-4 border-primary bg-black {imgSize} object-cover"
-    loading="eager"
-  />
+{#if imageLoaded}
+  <div class="avatar">
+    <div class="{imageWidth} rounded-2xl">
+      <img
+        bind:this={image}
+        src={profile.profile_picture}
+        alt="{profile.display_name}'s Avatar"
+        loading="eager"
+        onerror={() => (imageLoaded = false)}
+      />
+    </div>
+  </div>
 {:else}
   <div class="avatar avatar-placeholder">
-    <div class="bg-base-300 rounded-2xl border-4 border-primary {imgSize}">
-      <span class="uppercase font-clash {textSize}">
+    <div class="bg-neutral text-neutral-content {imageWidth} rounded-2xl">
+      <span class="uppercase font-clash text-3xl">
         {profile.display_name?.charAt(0)}
       </span>
     </div>

@@ -4,42 +4,36 @@
   interface Props {
     showRoleName: boolean;
     profile: Pick<Tables<"profiles">, "role">;
-    textSize: string;
+    textSize?: string;
   }
 
   const { showRoleName, profile, textSize }: Props = $props();
 
-  const roles = [
-    { role: "Admin", bgColor: "bg-red-600", icon: "fa-shield-halved" },
-    {
-      role: "Moderator",
-      bgColor: "bg-green-600",
-      icon: "fa-shield-halved",
-    },
-    { role: "Lead Developer", bgColor: "bg-blue-600", icon: "fa-computer" },
-    {
-      role: "Community Manager",
-      bgColor: "bg-purple-600",
-      icon: "fa-people-group",
-    },
-    {
-      role: "Database Manager",
-      bgColor: "bg-orange-600",
-      icon: "fa-database",
-    },
-  ];
+  const ROLE_MAP = {
+    Admin: { bg: "bg-red-600", icon: "fa-shield-halved" },
+    Moderator: { bg: "bg-green-600", icon: "fa-shield-halved" },
+    "Lead Developer": { bg: "bg-blue-600", icon: "fa-computer" },
+    "Community Manager": { bg: "bg-purple-600", icon: "fa-people-group" },
+    "Database Manager": { bg: "bg-orange-600", icon: "fa-database" },
+  } as const;
 
-  const currentRole = $derived(roles.find((r) => r.role === profile.role));
+  const roleInfo = $derived(
+    profile.role && profile.role in ROLE_MAP
+      ? ROLE_MAP[profile.role as keyof typeof ROLE_MAP]
+      : null,
+  );
 </script>
 
-{#if currentRole}
+{#if roleInfo && profile.role}
   <span
-    class="text-nowrap inline-flex items-center px-2 py-1 rounded {currentRole.bgColor} text-{textSize} font-semibold text-base-content"
-    title={currentRole.role}
+    class="text-nowrap inline-flex items-center px-2 py-1 rounded {roleInfo.bg} text-{textSize} font-semibold text-base-content tooltip {showRoleName
+      ? 'sm:before:hidden sm:after:hidden'
+      : ''}"
+    data-tip={profile.role}
   >
-    <i class="fa-solid {currentRole.icon}"></i>
+    <i class="fa-solid {roleInfo.icon}"></i>
     {#if showRoleName}
-      <span class="ml-1">{currentRole.role}</span>
+      <span class="ml-1 hidden sm:inline">{profile.role}</span>
     {/if}
   </span>
 {/if}

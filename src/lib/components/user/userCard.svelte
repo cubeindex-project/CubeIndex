@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Tables } from "$lib/types/database.types";
   import Avatar from "./avatar.svelte";
-  import Badge from "./roleBadge.svelte";
+  import RoleBadge from "./roleBadge.svelte";
 
   interface Props {
     profile: Tables<"v_detailed_profiles">;
@@ -40,22 +40,14 @@
     {href}
     class={`group flex items-center gap-4 transition px-4 ${compact ? "py-3" : "py-4"}`}
   >
-    <Avatar
-      {profile}
-      imgSize={compact ? "size-10 sm:size-10" : "size-14 sm:size-14"}
-      textSize={compact ? "text-lg" : "text-2xl"}
-    />
+    <Avatar {profile} imageWidth="w-15" />
     <div class="min-w-0 flex-1">
       <div class="flex flex-col gap-0.5">
         <span
-          class={`font-semibold truncate ${compact ? "text-sm" : "text-base"}`}
+          class="font-semibold truncate {compact ? 'text-sm' : 'text-base'}"
         >
           {profile.display_name}
-          <Badge
-            {profile}
-            textSize={compact ? "xs" : "xs"}
-            showRoleName={false}
-          />
+          <RoleBadge {profile} showRoleName={false} />
         </span>
 
         {#if showCount}

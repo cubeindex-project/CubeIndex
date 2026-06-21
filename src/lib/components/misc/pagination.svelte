@@ -4,10 +4,7 @@
     totalPages: number;
   }
 
-  let {
-    currentPage = $bindable(),
-    totalPages,
-  }: Props = $props();
+  let { currentPage = $bindable(), totalPages }: Props = $props();
 
   function goToPreviousPage() {
     if (currentPage > 1) {

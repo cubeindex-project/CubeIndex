@@ -15,12 +15,7 @@
     dirty: boolean;
   }
 
-  let {
-    onCancel,
-    applyData,
-    variables = $bindable(),
-    dirty,
-  }: Props = $props();
+  let { onCancel, applyData, variables = $bindable(), dirty }: Props = $props();
 
   async function requestAutofill(e: SubmitEvent) {
     e.preventDefault();

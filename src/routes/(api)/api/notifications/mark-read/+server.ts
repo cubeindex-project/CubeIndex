@@ -23,7 +23,7 @@ export const POST: RequestHandler = async ({
   } catch {
     return json(
       { success: false, error: "Invalid JSON body" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -31,14 +31,12 @@ export const POST: RequestHandler = async ({
   const raw = Array.isArray(body.ids) ? body.ids : body.id ? [body.id] : [];
 
   // Validate: keep only non-empty strings
-  const ids = raw.filter(
-    (v) => typeof v === "number"
-  );
+  const ids = raw.filter((v) => typeof v === "number");
 
   if (ids.length === 0) {
     return json(
       { success: false, error: "Provide 'id' or 'ids' as string(s)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

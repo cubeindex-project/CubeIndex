@@ -14,8 +14,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   if (!locals.user) {
     return json(
-      { success: false, error: "You must be logged in to perform this action!" },
-      { status: 401 }
+      {
+        success: false,
+        error: "You must be logged in to perform this action!",
+      },
+      { status: 401 },
     );
   }
 
@@ -35,13 +38,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         success: false,
         error: "You must be logged in to perform this action!",
       },
-      { status: 500 }
+      { status: 500 },
     );
 
   if (err)
     return json(
       { success: false, error: "An error occurred: " + err.message },
-      { status: 500 }
+      { status: 500 },
     );
 
   return json({ success: true });

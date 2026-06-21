@@ -5,11 +5,7 @@
     onchange?: () => void;
   }
 
-  let {
-    value = $bindable(),
-    label,
-    onchange = () => {},
-  }: Props = $props();
+  let { value = $bindable(), label, onchange = () => {} }: Props = $props();
   let box: HTMLInputElement;
 
   function cycle() {
@@ -23,7 +19,7 @@
       box.indeterminate = value === false;
       box.setAttribute(
         "aria-checked",
-        value === undefined ? "mixed" : value ? "true" : "false"
+        value === undefined ? "mixed" : value ? "true" : "false",
       );
     }
   });

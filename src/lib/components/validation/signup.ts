@@ -61,7 +61,7 @@ export const surveySchema = z.object({
         "shop_compare",
         "alerts_discord",
         "achievements",
-      ])
+      ]),
     )
     .min(1, "Select at least one feature that interests you"),
   other_text: z.string().trim().max(500).optional(),

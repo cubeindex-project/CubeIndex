@@ -46,7 +46,7 @@
 <div class="flex items-center gap-2">
   <label class="text-sm" for={id}>{label}</label>
   <select
-    id={id}
+    {id}
     class="select select-bordered"
     bind:value={sortField}
     onchange={useronchange}

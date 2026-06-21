@@ -57,6 +57,7 @@ The core functionality lives in the `src/` folder.
 ## Configuration
 
 When adding new configuration options, update all relevant places:
+
 1. Environment variables in `.env.example`
 2. Documentation in README.md
 

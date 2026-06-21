@@ -23,7 +23,12 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (ucrErr) {
-    return logError(500, "Unable to load user cube ratings", locals.log, ucrErr);
+    return logError(
+      500,
+      "Unable to load user cube ratings",
+      locals.log,
+      ucrErr,
+    );
   }
 
   return { reports, profiles, user_cube_ratings };

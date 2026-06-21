@@ -49,7 +49,9 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     .select("id, slug, name, image_url")
     .in(
       "slug",
-      winnerNominees.map((w) => w.nominee_slug).filter((slug): slug is string => slug !== null),
+      winnerNominees
+        .map((w) => w.nominee_slug)
+        .filter((slug): slug is string => slug !== null),
     );
 
   if (winnerCubesErr) {

@@ -36,7 +36,7 @@ export function inView(node: Element, options: InViewOptions = {}) {
       root: currentOptions.root ?? null,
       rootMargin: currentOptions.rootMargin,
       threshold: currentOptions.threshold ?? 0,
-    }
+    },
   );
 
   observer.observe(node);
@@ -68,7 +68,7 @@ export function inView(node: Element, options: InViewOptions = {}) {
           root: currentOptions.root ?? null,
           rootMargin: currentOptions.rootMargin,
           threshold: currentOptions.threshold ?? 0,
-        }
+        },
       );
       observer.observe(node);
     },

@@ -17,7 +17,7 @@ export async function validateTurnstileToken(token: string, secret: string) {
         response: token,
         secret: secret,
       }),
-    }
+    },
   );
 
   const data: TokenValidateResponse = await response.json();

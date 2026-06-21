@@ -2,14 +2,14 @@
  Your npm package didn't work so I copied the code, srry bro 🙏 -->
 
 <script>
-  let {id, readOnly, fillPercentage} = $props();
+  let { id, readOnly, fillPercentage } = $props();
 </script>
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width=30
+  width="30"
   viewBox="0 -10 187.673 179.503"
-  height=30
+  height="30"
 >
   {#if fillPercentage < 1 && fillPercentage > 0}
     <defs>
@@ -20,10 +20,7 @@
         x2="100%"
         y2="0%"
       >
-        <stop
-          offset="0%"
-          style="stop-color:#F9ED4F;stop-opacity:1"
-        />
+        <stop offset="0%" style="stop-color:#F9ED4F;stop-opacity:1" />
         <stop
           offset="{fillPercentage * 100}%"
           style="stop-color:#F9ED4F;stop-opacity:1"
@@ -37,9 +34,7 @@
   {/if}
   <path
     opacity={readOnly ? 0.7 : 1}
-    stroke={fillPercentage > 0
-      ? "#BB8511"
-      : "#000"}
+    stroke={fillPercentage > 0 ? "#BB8511" : "#000"}
     fill={fillPercentage === 1
       ? "#F9ED4F"
       : fillPercentage === 0

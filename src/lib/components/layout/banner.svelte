@@ -47,7 +47,11 @@
       </h1>
 
       <div class="flex items-center gap-3 justify-end">
-        <a href="/awards" onclick={hideBanner} class="btn btn-accent btn-md w-full md:w-fit">
+        <a
+          href="/awards"
+          onclick={hideBanner}
+          class="btn btn-accent btn-md w-full md:w-fit"
+        >
           Enter the awards
         </a>
 

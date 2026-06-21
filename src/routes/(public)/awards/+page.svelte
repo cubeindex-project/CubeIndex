@@ -58,7 +58,7 @@
     (previous_events ?? []).map((eventItem: Tables<"awards_event">) => ({
       event: eventItem,
       range: formatEventRange(eventItem),
-    }))
+    })),
   );
 
   type EventPhase = "upcoming" | "live" | "past" | "none";

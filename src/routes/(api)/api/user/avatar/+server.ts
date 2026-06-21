@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ request }) => {
     if (file.size > MAX_BYTES[type]) {
       return bad(
         413,
-        `File too large. Max ${Math.round(MAX_BYTES[type] / 1024 / 1024)} MB.`
+        `File too large. Max ${Math.round(MAX_BYTES[type] / 1024 / 1024)} MB.`,
       );
     }
 

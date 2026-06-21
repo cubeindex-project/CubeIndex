@@ -6,20 +6,31 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const { supabase, log } = locals;
   const code = url.searchParams.get("code");
   if (!code) {
-    return logError(400, "Verification link is invalid", log, new Error("Missing code parameter"));
+    return logError(
+      400,
+      "Verification link is invalid",
+      log,
+      new Error("Missing code parameter"),
+    );
   }
 
   // 1) Exchange the code for a session (sets cookies via the server client)
   //    For @supabase/auth-helpers-sveltekit this accepts a plain string `code`.
   //    If you use the client directly from supabase-js, it’s `{ code }`.
-  const { data, error: authErr } = await supabase.auth.exchangeCodeForSession(code);
+  const { data, error: authErr } =
+    await supabase.auth.exchangeCodeForSession(code);
   if (authErr) {
     return logError(500, "Verification failed", log, authErr);
   }
 
   const user = data?.user;
   if (!user?.id) {
-    return logError(500, "Verification failed", log, new Error("User missing after verification"));
+    return logError(
+      500,
+      "Verification failed",
+      log,
+      new Error("User missing after verification"),
+    );
   }
 
   // 2) Do we already have a profile?

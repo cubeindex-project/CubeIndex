@@ -11,13 +11,13 @@ export const load = (async ({ locals: { user, supabase, log } }) => {
     .eq("user_id", user.id)
     .single();
 
-  if (err) 
-      logError(
-        Number(err.code),
-        "An error occurred while retrieving your profile",
-        log,
-        err
-      );
+  if (err)
+    logError(
+      Number(err.code),
+      "An error occurred while retrieving your profile",
+      log,
+      err,
+    );
 
   if (profile.role !== "Admin" && profile.role !== "Database Manager")
     redirect(303, "/staff/dashboard");

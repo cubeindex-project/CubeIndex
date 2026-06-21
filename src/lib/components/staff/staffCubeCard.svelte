@@ -95,13 +95,7 @@
 
 {#snippet bottom()}{/snippet}
 
-<CubeCardSkeleton
-  {cube}
-  rating={false}
-  {top}
-  {content}
-  {bottom}
-/>
+<CubeCardSkeleton {cube} rating={false} {top} {content} {bottom} />
 
 {#if openModNotes}
   <ManageCubeStatus

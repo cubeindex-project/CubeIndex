@@ -1,10 +1,10 @@
 /** @type {import('prettier').Config} */
 const config = {
-  plugins: ['prettier-plugin-svelte'],
+  plugins: ["prettier-plugin-svelte"],
   overrides: [
     {
-      files: '*.svelte',
-      options: { parser: 'svelte' },
+      files: "*.svelte",
+      options: { parser: "svelte" },
     },
   ],
 };

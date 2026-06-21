@@ -1,7 +1,16 @@
 // src/lib/security/passwordStrength.ts
 // Small, dependency-free heuristic (scores 0-4)
 const COMMON = new Set([
-  "password","123456","qwerty","111111","123123","letmein","abc123","iloveyou","admin","welcome"
+  "password",
+  "123456",
+  "qwerty",
+  "111111",
+  "123123",
+  "letmein",
+  "abc123",
+  "iloveyou",
+  "admin",
+  "welcome",
 ]);
 
 export type Strength = {
@@ -15,7 +24,11 @@ export function passwordStrength(pw: string): Strength {
   let score = 0 as Strength["score"];
 
   if (!pw || pw.length < 4) {
-    return { score: 0, label: "Very weak", suggestions: ["Use a longer password"] };
+    return {
+      score: 0,
+      label: "Very weak",
+      suggestions: ["Use a longer password"],
+    };
   }
 
   // Base score from length
@@ -27,7 +40,9 @@ export function passwordStrength(pw: string): Strength {
   const hasUpper = /[A-Z]/.test(pw);
   const hasDigit = /\d/.test(pw);
   const hasSymbol = /[^A-Za-z0-9]/.test(pw);
-  const variety = [hasLower, hasUpper, hasDigit, hasSymbol].filter(Boolean).length;
+  const variety = [hasLower, hasUpper, hasDigit, hasSymbol].filter(
+    Boolean,
+  ).length;
   if (variety >= 2) score++;
   if (variety >= 3) score++;
 

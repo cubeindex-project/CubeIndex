@@ -10,29 +10,29 @@ import type { BrowserLogger } from "./client";
  * @param statusCode Optional HTTP status code for SvelteKit's `error` helper.
  */
 export function clientLogError(
-	errorMsg: string | undefined,
-	log: BrowserLogger,
-	err: unknown
+  errorMsg: string | undefined,
+  log: BrowserLogger,
+  err: unknown,
 ): never;
 export function clientLogError(
-	errorMsg: string | undefined,
-	log: BrowserLogger,
-	err: unknown,
-	shouldThrow: false,
-	statusCode?: number
+  errorMsg: string | undefined,
+  log: BrowserLogger,
+  err: unknown,
+  shouldThrow: false,
+  statusCode?: number,
 ): void;
 export function clientLogError(
-	errorMsg: string | undefined,
-	log: BrowserLogger,
-	err: unknown,
-	shouldThrow: boolean = true,
-	statusCode?: number
+  errorMsg: string | undefined,
+  log: BrowserLogger,
+  err: unknown,
+  shouldThrow: boolean = true,
+  statusCode?: number,
 ): void | never {
-	const message = errorMsg ?? "An unexpected error occurred";
-	log.error({ error: err }, message);
-	if (!shouldThrow) return;
-	if (typeof statusCode === "number") {
-		throw error(statusCode, message);
-	}
-	throw new Error(message);
+  const message = errorMsg ?? "An unexpected error occurred";
+  log.error({ error: err }, message);
+  if (!shouldThrow) return;
+  if (typeof statusCode === "number") {
+    throw error(statusCode, message);
+  }
+  throw new Error(message);
 }

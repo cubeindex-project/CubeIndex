@@ -8,10 +8,7 @@
     rating: number;
   }
 
-  let {
-    readOnly = false,
-    rating = $bindable(0.0),
-  }: Props = $props();
+  let { readOnly = false, rating = $bindable(0.0) }: Props = $props();
 
   let fills: number[] = $state([]);
 

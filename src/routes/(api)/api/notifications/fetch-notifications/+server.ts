@@ -15,8 +15,11 @@ export const GET: RequestHandler = async ({ locals: { supabase, user } }) => {
 
   if (error) {
     return json(
-      { success: false, error: `Failed to load notifications: ${error.message}` },
-      { status: 500 }
+      {
+        success: false,
+        error: `Failed to load notifications: ${error.message}`,
+      },
+      { status: 500 },
     );
   }
 

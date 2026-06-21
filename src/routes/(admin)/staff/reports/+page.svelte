@@ -110,11 +110,19 @@
     profile: { username: string };
   } {
     const ucrId = typeof reported === "number" ? reported : Number(reported);
-    const ucr = user_cube_ratings.find((item: { id: number }) => item.id === ucrId);
-    const profile = ucr ? profiles.find((p) => p.user_id === ucr.user_id) : undefined;
-    const username = profile && typeof profile === "object" && "username" in profile && typeof profile.username === "string"
-      ? profile.username
-      : "Unknown";
+    const ucr = user_cube_ratings.find(
+      (item: { id: number }) => item.id === ucrId,
+    );
+    const profile = ucr
+      ? profiles.find((p) => p.user_id === ucr.user_id)
+      : undefined;
+    const username =
+      profile &&
+      typeof profile === "object" &&
+      "username" in profile &&
+      typeof profile.username === "string"
+        ? profile.username
+        : "Unknown";
 
     return {
       cube_slug: ucr?.cube_slug ?? "",
@@ -259,7 +267,7 @@
                     href="/user/{getUser(r.reporter)?.username ?? ''}"
                     class="link link-primary link-hover"
                   >
-                    {getUser(r.reporter)?.username ?? 'Unknown'}
+                    {getUser(r.reporter)?.username ?? "Unknown"}
                   </a>
                 </td>
                 <td>
@@ -268,7 +276,7 @@
                       href="/user/{getUser(r.reported)?.id ?? ''}"
                       class="link link-primary link-hover"
                     >
-                      {getUser(r.reported)?.username ?? 'Unknown'}'s Account
+                      {getUser(r.reported)?.username ?? "Unknown"}'s Account
                     </a>
                   {:else if r.report_type === "website"}
                     <a href={r.reported} class="link link-primary link-hover">

@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
   if (following_id === locals.user?.id)
     return json(
       { success: false, error: "You can't follow yourself!" },
-      { status: 500 }
+      { status: 500 },
     );
 
   const { error: err } = await locals.supabase.from("user_follows").insert([
@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
   if (err)
     return json(
       { success: false, error: "An error occurred: " + err.message },
-      { status: 500 }
+      { status: 500 },
     );
 
   return json({ success: true });

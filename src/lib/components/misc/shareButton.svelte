@@ -21,7 +21,7 @@
       } catch (err) {
         console.warn(
           "Sharing link was canceled or failed.",
-          err instanceof Error ? err.message : err
+          err instanceof Error ? err.message : err,
         );
       }
 
@@ -33,7 +33,7 @@
       alert("Link copied to clipboard");
     } catch (err) {
       new Error(
-        `Copy to clipboard failed: ${err instanceof Error ? err.message : err}`
+        `Copy to clipboard failed: ${err instanceof Error ? err.message : err}`,
       );
       prompt("Copy this link:", url);
     }

@@ -10,28 +10,28 @@ import type { AppLogger } from "./logger";
  * @param shouldThrow When false, logs without throwing.
  */
 export function logError(
-	errorCode: number,
-	errorMsg: string | undefined,
-	log: AppLogger,
-	err: unknown
+  errorCode: number,
+  errorMsg: string | undefined,
+  log: AppLogger,
+  err: unknown,
 ): never;
 export function logError(
-	errorCode: number,
-	errorMsg: string | undefined,
-	log: AppLogger,
-	err: unknown,
-	shouldThrow: false
+  errorCode: number,
+  errorMsg: string | undefined,
+  log: AppLogger,
+  err: unknown,
+  shouldThrow: false,
 ): void;
 export function logError(
-	errorCode: number,
-	errorMsg: string | undefined,
-	log: AppLogger,
-	err: unknown,
-	shouldThrow: boolean = true
+  errorCode: number,
+  errorMsg: string | undefined,
+  log: AppLogger,
+  err: unknown,
+  shouldThrow: boolean = true,
 ): void | never {
-	const message = errorMsg ?? "An unexpected error occurred";
-	log.error({ error: err }, message);
-	if (shouldThrow) {
-		throw error(errorCode, message);
-	}
+  const message = errorMsg ?? "An unexpected error occurred";
+  log.error({ error: err }, message);
+  if (shouldThrow) {
+    throw error(errorCode, message);
+  }
 }

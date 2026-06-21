@@ -11,7 +11,6 @@ export interface Meta {
   twitterDescription?: string;
   twitterImage?: string;
   twitterCard?: string;
-  googleSiteVerification?: string;
   jsonLd?: object;
   noindex?: boolean;
   canonical?: string;

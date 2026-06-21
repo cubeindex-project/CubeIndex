@@ -42,9 +42,7 @@
     return {
       title,
       description,
-      ogTitle:
-        pageMeta?.ogTitle ??
-        "CubeIndex - Speedcubing Database & Collection Tracker",
+      ogTitle: pageMeta?.ogTitle ?? title,
       ogDescription: pageMeta?.ogDescription ?? description,
       siteName: pageMeta?.siteName ?? "CubeIndex",
       image,
@@ -55,9 +53,6 @@
         pageMeta?.twitterImage ??
         page.url.origin + "/images/og/cubeindex-twitter-og.png",
       twitterCard: pageMeta?.twitterCard ?? "summary_large_image",
-      googleSiteVerification:
-        pageMeta?.googleSiteVerification ??
-        "LeqQ-VZhIWm9luPXxKl2DWIb48Udb94UIZclWUjOevE",
       jsonLd: pageMeta?.jsonLd ?? {
         "@context": "https://schema.org",
         "@type": "Organization",
@@ -93,8 +88,6 @@
   <meta name="twitter:image" content={meta.twitterImage} />
   <meta name="twitter:description" content={meta.twitterDescription} />
   <meta name="twitter:card" content={meta.twitterCard} />
-
-  <meta name="google-site-verification" content={meta.googleSiteVerification} />
 
   {#if meta.noindex}
     <meta name="robots" content="noindex" />

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
 

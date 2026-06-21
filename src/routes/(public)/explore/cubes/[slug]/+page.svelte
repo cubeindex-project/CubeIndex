@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
 
   let { data } = $props();
   let { cube, submitter, verifier } = $derived(data);

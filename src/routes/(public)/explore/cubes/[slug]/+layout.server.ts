@@ -1,4 +1,4 @@
-import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+import { formatDate } from "$lib/components/helper_functions/formatDate";
 import { logError } from "$lib/server/logError";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";

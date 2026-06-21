@@ -1,7 +1,7 @@
 <script lang="ts">
   import RoleBadge from "$lib/components/user/roleBadge.svelte";
   import Report from "$lib/components/report/report.svelte";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import { page } from "$app/state";
   import Avatar from "$lib/components/user/avatar.svelte";
   import ShareButton from "$lib/components/misc/shareButton.svelte";

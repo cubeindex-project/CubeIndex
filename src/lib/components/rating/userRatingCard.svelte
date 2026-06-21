@@ -1,6 +1,6 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
-  import { formatDate } from "../helper_functions/formatDate.svelte";
+  import { formatDate } from "../helper_functions/formatDate";
   import { onMount } from "svelte";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";

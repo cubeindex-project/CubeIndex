@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import type { Tables } from "$lib/types/database.types.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
 

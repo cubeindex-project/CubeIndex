@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
 
   const MAX_SUMMARY_CHARS = 200;
 

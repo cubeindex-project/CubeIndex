@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Tables } from "$lib/types/database.types.js";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import { toast } from "svelte-sonner";
 
   let notifications: Tables<"v_notifications_for_user">[] = $state([]);

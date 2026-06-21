@@ -129,11 +129,7 @@ export const load = (async ({
     cube_vendor_links,
     meta: {
       title,
-      ogTitle: title,
-      twitterTitle: title,
       description,
-      ogDescription: description,
-      twitterDescription: description,
       image,
       twitterImage: image,
       jsonLd: {

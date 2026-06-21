@@ -1,9 +1,9 @@
-import type { PageLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 
-export const load = (async ({ parent, params }) => {
-  const { supabase, cube } = await parent();
+export const load = (async ({ parent, params, locals: { supabase } }) => {
+  const { cube, meta } = await parent();
   const { slug } = params;
 
   const ratingsPromise = supabase
@@ -24,5 +24,10 @@ export const load = (async ({ parent, params }) => {
   return {
     cube,
     user_cube_ratings: ratingsRes.data ?? [],
+    meta: {
+      ...meta,
+      title: `${cube.name} - Ratings`,
+      noindex: true,
+    },
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

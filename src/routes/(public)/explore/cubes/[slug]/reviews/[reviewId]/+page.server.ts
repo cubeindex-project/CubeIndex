@@ -7,7 +7,7 @@ export const load = (async ({
   parent,
   params,
 }) => {
-  const { cube } = await parent();
+  const { cube, meta } = await parent();
   const { reviewId, slug } = params;
 
   const reviewIdNumber = Number(reviewId);
@@ -53,5 +53,30 @@ export const load = (async ({
     cube,
     review,
     isHelpful,
+    meta: {
+      ...meta,
+      title: `${cube.name}'s Review by ${review.profile.display_name} - CubeIndex`,
+      description: `Read ${review.profile.display_name}'s review: "${review.title}"`,
+      noindex: false,
+      jsonLd: {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        reviewBody: review.review,
+        name: review.title,
+        itemReviewed: {
+          "@type": "Product",
+          name: cube.name,
+          image: [cube.image_url],
+        },
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue:
+            Object.values(review.ratings).reduce((sum, val) => sum + val, 0) /
+            (Object.keys(review.ratings).length || 1),
+          bestRating: 5,
+          worstRating: 0,
+        },
+      },
+    },
   };
 }) satisfies PageServerLoad;

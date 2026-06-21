@@ -30,6 +30,36 @@ interface DetailedProfile {
   created_at: string;
 }
 
+interface DetailedCubeModels {
+  name: string;
+  brand: string;
+  created_at: string;
+  discontinued: boolean;
+  id: number;
+  image_url: string;
+  model: string;
+  notes: string | null;
+  rating: number | null;
+  related_to: string | null;
+  release_date: string | null;
+  series: string | null;
+  size: string | null;
+  slug: string;
+  status: DatabaseGenerated["public"]["Enums"]["submission_status"];
+  sub_type: DatabaseGenerated["public"]["Enums"]["cubes_subtypes"] | null;
+  submitted_by_id: string;
+  surface_finish:
+    | DatabaseGenerated["public"]["Enums"]["cube_surface_finishes"]
+    | null;
+  type: string;
+  updated_at: string;
+  verified_at: string | null;
+  verified_by_id: string | null;
+  version_name: string | null;
+  version_type: DatabaseGenerated["public"]["Enums"]["cube_version_type"];
+  weight: number;
+}
+
 export type Database = MergeDeep<
   DatabaseGenerated,
   {
@@ -46,7 +76,7 @@ export type Database = MergeDeep<
           Row: DetailedProfile;
         };
         v_detailed_cube_models: {
-          Row: DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"];
+          Row: DetailedCubeModels;
         };
         v_achievement_rarity: {
           Row: DatabaseGenerated["public"]["Tables"]["achievements"]["Row"];

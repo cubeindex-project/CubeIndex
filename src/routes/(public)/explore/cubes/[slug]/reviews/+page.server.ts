@@ -3,11 +3,14 @@ import { logError } from "$lib/server/logError";
 import type { Tables } from "$lib/types/database.types";
 
 interface DetailedUserCubeReviewWithProfile extends Tables<"v_detailed_user_cube_reviews"> {
-  profile: Pick<Tables<"profiles">, "username" | "display_name" | "profile_picture">;
+  profile: Pick<
+    Tables<"profiles">,
+    "username" | "display_name" | "profile_picture"
+  >;
 }
 
 export const load = (async ({ locals: { supabase, log }, parent, params }) => {
-  const { cube } = await parent();
+  const { cube, meta } = await parent();
   const { slug } = params;
 
   const { data: reviewRaw, error: rErr } = await supabase
@@ -26,9 +29,9 @@ export const load = (async ({ locals: { supabase, log }, parent, params }) => {
     cube,
     reviews: reviewRaw as DetailedUserCubeReviewWithProfile[],
     meta: {
+      ...meta,
       title: `${cube.name} - Reviews`,
-      description:
-        "Read and write reviews for this cube. See ratings by category (turning, corner cutting, stability, and feel), compare feedback from other cubers, and share your own setup and experience.",
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

@@ -62,11 +62,7 @@ export const load = (async ({
     },
     meta: {
       title,
-      ogTitle: title,
-      twitterTitle: title,
       description,
-      ogDescription: description,
-      twitterDescription: description,
       image,
       twitterImage: image,
       noindex: profile.private,

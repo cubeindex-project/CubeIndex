@@ -7,7 +7,7 @@ export interface PriceHistoryPoint {
 }
 
 export const load = (async ({ locals: { supabase, log }, parent }) => {
-  const { cube, cube_vendor_links } = await parent();
+  const { cube, cube_vendor_links, meta } = await parent();
 
   const { data: per_vendor_history, error: pvhErr } = await supabase
     .from("v_price_history")
@@ -26,9 +26,9 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
       price_history: (row.price_history as any as PriceHistoryPoint[]) ?? [],
     })),
     meta: {
+      ...meta,
       title: `${cube.name} - Prices`,
-      description:
-        "Compare prices for this cube across stores. View the latest listings, track price changes over time, and find the best deal in your currency.",
+      noindex: true,
     },
   };
 }) satisfies PageServerLoad;

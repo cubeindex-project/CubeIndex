@@ -1,6 +1,6 @@
 import { sequence } from "@sveltejs/kit/hooks";
 import { type Handle, redirect, type HandleServerError } from "@sveltejs/kit";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_PUBLISHABLE_KEY,
@@ -37,8 +37,12 @@ const supabase: Handle = async ({ event, resolve }) => {
           return event.cookies.getAll();
         },
         setAll(
-          cookiesToSet: { name: string; value: string; options: any }[],
-          headers: any,
+          cookiesToSet: {
+            name: string;
+            value: string;
+            options: CookieOptions;
+          }[],
+          headers?: Record<string, string>,
         ) {
           /**
            * Note: You have to add the `path` variable to the

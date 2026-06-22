@@ -11,13 +11,10 @@
   import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
   import type { Tables } from "$lib/types/database.types.js";
-
-  type DetailedCubes = Tables<"v_detailed_cube_models">;
+  import { resolve } from "$app/paths";
 
   const { data } = $props();
-  const { user, cubes } = $derived(data);
-
-  let userCubes: any[] = $state([]);
+  const { cubes, userCubes } = $derived(data);
 
   // Helper: tri-state codec (boolean | undefined)
   const tri = {
@@ -199,9 +196,12 @@
     const base = filteredCubes.slice();
     const query = $params.q.trim();
 
-    const compare = (a: DetailedCubes, b: DetailedCubes) => {
-      let av: any;
-      let bv: any;
+    const compare = (
+      a: Tables<"v_detailed_cube_models">,
+      b: Tables<"v_detailed_cube_models">,
+    ) => {
+      let av;
+      let bv;
 
       switch ($params.sort) {
         case "rating":
@@ -323,14 +323,15 @@
 
   // --- reset page ONLY on user-driven changes (and never on first run)
   $effect(() => {
-    const _ = filterKey;
-    if (!_hydrated) {
-      _hydrated = true; // first run after load/reload/back ⇒ do nothing
-      return;
-    }
-    if (_userChangedFilters) {
-      $params.page = 1; // jump back to first page
-      _userChangedFilters = false;
+    if (filterKey) {
+      if (!_hydrated) {
+        _hydrated = true; // first run after load/reload/back ⇒ do nothing
+        return;
+      }
+      if (_userChangedFilters) {
+        $params.page = 1; // jump back to first page
+        _userChangedFilters = false;
+      }
     }
   });
 
@@ -369,7 +370,7 @@
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allTypes as t}
+              {#each allTypes as t, index (index)}
                 <option>{t}</option>
               {/each}
             </select>
@@ -385,7 +386,7 @@
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allSubTypes as st}
+              {#each allSubTypes as st, index (index)}
                 <option>{st}</option>
               {/each}
             </select>
@@ -401,7 +402,7 @@
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allBrands as b}
+              {#each allBrands as b, index (index)}
                 <option>{b}</option>
               {/each}
             </select>
@@ -420,7 +421,7 @@
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allYears as year}
+              {#each allYears as year, index (index)}
                 <option value={year}>{year}</option>
               {/each}
             </select>
@@ -513,7 +514,7 @@
           <!-- Link to compare page -->
           <div>
             <a
-              href="/explore/cubes/compare"
+              href={resolve("/explore/cubes/compare")}
               class="btn bg-primary text-primary-content"
             >
               <i class="fa-solid fa-code-compare sm:mr-2"></i>
@@ -530,18 +531,17 @@
         <!-- Display paginated cubes -->
         <div class="grid grid-cols-[repeat(auto-fill,minmax(310px,1fr))] gap-8">
           {#if paginatedCubes.length > 0}
-            {#each paginatedCubes as cube}
+            {#each paginatedCubes as cube, index (index)}
               {#key paginatedCubes}
-                {@const userCubeDetail = userCubes.find(
-                  (uc) => uc.user_id === user?.id && uc.cube === cube.slug,
+                {@const userCubeDetail = userCubes?.find(
+                  (uc) => uc.cube === cube.slug,
                 )}
-                {@const alreadyAdded = userCubeDetail !== undefined}
                 <CubeCard
                   {cube}
                   showAddButton={true}
                   showRateButton={true}
                   showDetailsButton={true}
-                  {alreadyAdded}
+                  alreadyAdded={userCubeDetail !== undefined}
                   {userCubeDetail}
                 />
               {/key}
@@ -560,7 +560,10 @@
                 grow our database.
               </p>
               <div class="flex flex-col justify-center gap-4">
-                <a href="/submit" class="btn btn-primary flex items-center">
+                <a
+                  href={resolve("/submit")}
+                  class="btn btn-primary flex items-center"
+                >
                   <i class="fa-solid fa-plus mr-2"></i>
                   Submit a New Cube
                 </a>

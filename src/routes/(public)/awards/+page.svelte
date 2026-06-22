@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { onMount } from "svelte";
   import NumberFlow from "@number-flow/svelte";
   import type { Tables } from "$lib/types/database.types.js";
-  import type { AwardsPartner } from "$lib/content/awardsPartners";
   import YoutubeVideoCard from "$lib/components/misc/youtubeVideoCard.svelte";
 
   const { data } = $props();
@@ -28,7 +28,6 @@
     return { days, hours, minutes, seconds };
   };
 
-  let mounted = $state(false);
   let now = $state(new Date());
 
   const formatEventRange = (eventItem: Tables<"awards_event">) => {
@@ -47,11 +46,6 @@
     });
 
     return `${formatter.format(startDate)} - ${formatter.format(endDate)}`;
-  };
-
-  type PreviousEventSummary = {
-    event: Tables<"awards_event">;
-    range: string;
   };
 
   const previousEventSummaries = $derived(
@@ -157,7 +151,6 @@
     const timer = setInterval(() => {
       now = new Date();
     }, 1000);
-    mounted = true;
     return () => clearInterval(timer);
   });
 
@@ -190,7 +183,7 @@
         {#if logoDesigner}
           <p class="text-xs italic text-base-content/70">
             Logo designed by <a
-              href="/user/{logoDesigner.username}"
+              href={resolve("/user/{logoDesigner.username}")}
               class="link"
             >
               {logoDesigner.display_name}
@@ -254,7 +247,10 @@
 
       {#if eventStatus === "live"}
         <div class={ui.ctas}>
-          <a href="/awards/vote" class="btn btn-primary btn-lg sm:btn-xl">
+          <a
+            href={resolve("/awards/vote")}
+            class="btn btn-primary btn-lg sm:btn-xl"
+          >
             Nominate a Cube
           </a>
           <a href="#categories" class="btn btn-outline btn-lg sm:btn-xl">
@@ -371,7 +367,7 @@
         {#each previousEventSummaries as summary (summary.event.id)}
           <a
             class={`${ui.tileCard} border-base-200/70 hover:border-primary/60`}
-            href={`/awards/${summary.event.year}`}
+            href={resolve(`/awards/${summary.event.year}`)}
           >
             <div class="flex items-start justify-between gap-2">
               <div class="space-y-1 text-left">

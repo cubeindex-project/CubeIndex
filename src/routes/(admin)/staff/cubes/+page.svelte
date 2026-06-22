@@ -239,7 +239,7 @@
             >Type:
             <select
               bind:value={selectedType}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
@@ -255,7 +255,7 @@
             >Brand:
             <select
               bind:value={selectedBrand}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
@@ -271,7 +271,7 @@
             >WCA Legal:
             <select
               bind:value={WCALegal}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -286,7 +286,7 @@
             >Magnetic:
             <select
               bind:value={magnetic}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -301,7 +301,7 @@
             >Smart:
             <select
               bind:value={smart}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -316,7 +316,7 @@
             >Modded:
             <select
               bind:value={modded}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -331,7 +331,7 @@
             >Release Year:
             <select
               bind:value={selectedYear}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
@@ -347,7 +347,7 @@
             >Cube Type:
             <select
               bind:value={selectedCubeType}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
@@ -363,7 +363,7 @@
             >Cube Status:
             <select
               bind:value={selectedCubeStatus}
-              onselect={() => (currentPage = 1)}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>

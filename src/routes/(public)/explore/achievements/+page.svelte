@@ -110,7 +110,7 @@
       Rarity:
       <select
         bind:value={selectedRarity}
-        onselect={() => (currentPage = 1)}
+        onchange={() => (currentPage = 1)}
         class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
       >
         <option>All</option>

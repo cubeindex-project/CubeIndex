@@ -179,7 +179,7 @@
           <span class="label-text text-sm">Type</span>
           <select
             bind:value={selectedType}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
@@ -194,7 +194,7 @@
           <span class="label-text text-sm">Condition</span>
           <select
             bind:value={selectedCondition}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
@@ -209,7 +209,7 @@
           <span class="label-text text-sm">Status</span>
           <select
             bind:value={selectedStatus}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>

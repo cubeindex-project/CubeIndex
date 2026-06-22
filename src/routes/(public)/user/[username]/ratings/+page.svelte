@@ -157,7 +157,7 @@
           <span class="label-text text-sm">Type</span>
           <select
             bind:value={selectedType}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
@@ -172,7 +172,7 @@
           <span class="label-text text-sm">Rating</span>
           <select
             bind:value={selectedRating}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
@@ -189,7 +189,7 @@
             type="checkbox"
             class="checkbox"
             bind:checked={onlyWithComments}
-            onselect={() => (currentPage = 1)}
+            onchange={() => (currentPage = 1)}
           />
           <span class="label-text">Only with comments</span>
         </label>

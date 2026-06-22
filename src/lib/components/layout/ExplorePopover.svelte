@@ -68,7 +68,7 @@
     {#each cards as card (card.title)}
       <a
         role="menuitem"
-        href={resolve("/(public)/explore/cubes/[slug]", { slug: card.href })}
+        href={resolve(`/(public)/explore/${card.href}`)}
         class="relative group rounded-xl p-4 bg-base-200 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-transform duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 overflow-hidden"
       >
         <div

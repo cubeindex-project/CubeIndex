@@ -1,5 +1,14 @@
 <script lang="ts">
-  const cards = [
+  import { resolve } from "$app/paths";
+
+  interface ExploreCard {
+    href: "cubes" | "vendors" | "users" | "achievements";
+    icon: string;
+    title: string;
+    description: string;
+  }
+
+  const cards: ExploreCard[] = [
     {
       href: "cubes",
       icon: "🧊",
@@ -38,9 +47,9 @@
   </h1>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 max-w-5xl w-full">
-    {#each cards as card}
+    {#each cards as card, index (index)}
       <a
-        href={`/explore/${card.href}`}
+        href={resolve(`/(public)/explore/${card.href}`)}
         class="relative group rounded-2xl p-6 md:p-8 bg-base-200 border border-base-300 shadow-sm
                hover:shadow-md hover:-translate-y-0.5 active:translate-y-0
                transition-transform duration-200 ease-out

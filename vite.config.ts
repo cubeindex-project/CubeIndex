@@ -13,7 +13,7 @@ export default defineConfig(() => {
     },
     plugins: [devtoolsJson(), tailwindcss(), sveltekit()],
     test: {
-      workspace: [
+      projects: [
         {
           extends: "./vite.config.ts",
           plugins: [svelteTesting()],

@@ -1,6 +1,7 @@
 <!-- todo: This page needs to be refactored urgently -->
 
 <script lang="ts">
+  import { resolve } from "$app/paths";
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
@@ -13,12 +14,13 @@
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types.js";
+  import type { ResolvedPathname } from "$app/types";
 
   const supabase = page.data.supabase;
 
   // Destructure props passed to the component
   let { data } = $props();
-  let { cube, profiles, cubeTrims, relatedCube, sameSeries, vendors, types } =
+  let { cube, profiles, cubeTrims, sameSeries, vendors, types } =
     $derived(data);
 
   // Initialize form handling with options for JSON data and custom error handling
@@ -48,17 +50,14 @@
   let openModNotes = $state(false);
   let reason = $state<"Accept" | "Reject">("Accept");
 
-  let dirty: boolean = $state(false);
-
-  $effect(() => {
-    const _ = $tainted;
-    dirty = isTainted();
-  });
+  let dirty = $derived(isTainted($tainted));
 
   // Utility to get user profile URL from username or return # if not found
-  function idOfUser(user: string) {
+  function idOfUser(user: string): ResolvedPathname {
     const profile = profiles?.find((p) => p.username === user);
-    return profile ? `/user/${profile.id}` : "#";
+    return profile?.username
+      ? resolve("/(public)/user/[username]", { username: profile.username })
+      : "/";
   }
 
   function findBaseUrl(i: number): string {
@@ -93,18 +92,15 @@
   let allCubes: {
     label: string;
     value: string;
-  }[] = $state([]);
-
-  $effect(() => {
-    const _ = cubes;
-    allCubes = cubes
+  }[] = $derived(
+    cubes
       .filter((c) => c.version_type === "Base" && c.status === "Approved")
       .map((c) => ({
         label: `${c.series} ${c.model} ${c.version_name}`,
         value: c.slug,
       }))
-      .sort();
-  });
+      .sort(),
+  );
 
   onMount(async () => {
     const { data, error: cubesErr } = await supabase
@@ -235,7 +231,7 @@
                 required
               >
                 <option value="___other">+ Add Brand</option>
-                {#each allBrands as brand}
+                {#each allBrands as brand, index (index)}
                   <option>{brand.name}</option>
                 {/each}
               </select>
@@ -270,7 +266,7 @@
                 required
               >
                 <option value="___other">+ Create Type</option>
-                {#each types as type}
+                {#each types as type, index (index)}
                   <option value={type.name}>{type.name}</option>
                 {/each}
               </select>
@@ -305,7 +301,7 @@
                 required
               >
                 <option value="auto">Handle Automatically</option>
-                {#each allSubTypes as subType}
+                {#each allSubTypes as subType, index (index)}
                   <option value={subType}>{subType}</option>
                 {/each}
               </select>
@@ -353,7 +349,7 @@
                 class="select w-full"
                 required
               >
-                {#each allSurfaces as surface}
+                {#each allSurfaces as surface, index (index)}
                   <option value={surface}>{surface}</option>
                 {/each}
               </select>
@@ -510,16 +506,16 @@
                 </tr>
               </thead>
               <tbody>
-                {#each $form.vendorLinks as link, i}
+                {#each $form.vendorLinks as link, i (i)}
                   <tr>
                     <td>
                       <select
                         name="vendorLinks"
-                        bind:value={$form.vendorLinks[i].vendor_name}
+                        bind:value={link.vendor_name}
                         class="select w-full"
                         required
                       >
-                        {#each vendors as v}
+                        {#each vendors as v, index (index)}
                           <option value={v.name}>{v.name}</option>
                         {/each}
                       </select>
@@ -534,7 +530,7 @@
                         name="vendorLinks"
                         type="url"
                         class="input input-bordered w-full"
-                        bind:value={$form.vendorLinks[i].url}
+                        bind:value={link.url}
                         placeholder={findBaseUrl(i)}
                       />
                       {#if $errors.vendorLinks}
@@ -549,7 +545,7 @@
                         step="0.01"
                         class="input input-bordered w-full"
                         name="vendorLinks"
-                        bind:value={$form.vendorLinks[i].price}
+                        bind:value={link.price}
                       />
                       {#if $errors.vendorLinks}
                         <span class="text-error"
@@ -562,7 +558,7 @@
                         type="checkbox"
                         class="checkbox"
                         name="vendorLinks"
-                        bind:checked={$form.vendorLinks[i].available}
+                        bind:checked={link.available}
                       />
                       {#if $errors.vendorLinks}
                         <span class="text-error"
@@ -612,7 +608,7 @@
             </button>
             {#if $allErrors.length}
               <ul>
-                {#each $allErrors as error}
+                {#each $allErrors as error, index (index)}
                   <li class="text-error">
                     <b>{error.path}:</b>
                     {error.messages.join(". ")}
@@ -621,8 +617,8 @@
               </ul>
             {/if}
             {#if $message}
-              <span class="flex {'text-success'} justify-center p-4"
-                >{@html $message}</span
+              <span class="flex text-success justify-center p-4"
+                >{$message}</span
               >
             {/if}
           </div>
@@ -795,7 +791,7 @@
         <div
           class="bg-base-200 rounded-xl p-4 flex flex-col gap-2 border border-base-300"
         >
-          {#each statuses as status}
+          {#each statuses as status, index (index)}
             <div class="flex items-center justify-between">
               <span class="font-medium text-sm">{status.label}</span>
               <span class="text-xl">
@@ -816,7 +812,7 @@
             Available at:
           </h2>
           <div class="flex flex-wrap gap-3">
-            {#each $form.vendorLinks as shop}
+            {#each $form.vendorLinks as shop, index (index)}
               <a
                 href={shop.url}
                 target="_blank"
@@ -887,10 +883,10 @@
             Select Trim:
           </h2>
           <div class="flex gap-4">
-            {#each cubeTrims ?? [] as trim}
+            {#each cubeTrims ?? [] as trim, index (index)}
               <a
                 class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-                href="/staff/cubes/edit/{trim.slug}"
+                href={resolve("/staff/cubes/edit/{trim.slug}")}
               >
                 <img
                   src={trim.image_url}
@@ -940,10 +936,10 @@
             In the Same Series:
           </h2>
           <div class="flex flex-wrap gap-4">
-            {#each sameSeries as seriesCube}
+            {#each sameSeries as seriesCube, index (index)}
               <a
                 class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300 w-36"
-                href="/staff/cubes/edit/{seriesCube.slug}"
+                href={resolve("/staff/cubes/edit/{seriesCube.slug}")}
               >
                 <img
                   src={seriesCube.image_url}
@@ -963,7 +959,7 @@
         </div>
       {/if}
 
-      <a href="/staff/cubes" class="btn btn-lg btn-primary mt-6">
+      <a href={resolve("/staff/cubes")} class="btn btn-lg btn-primary mt-6">
         ← Back to Manage
       </a>
     </div>

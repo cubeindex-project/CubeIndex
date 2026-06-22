@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Tables } from "$lib/types/database.types.js";
+  import { resolve } from "$app/paths";
 
   let { data } = $props();
   const event = $derived(data.current_event);
@@ -108,7 +108,7 @@
         </div>
       {/if}
       <div class="flex flex-wrap justify-center gap-3">
-        <a class="btn btn-primary" href="/awards">Awards overview</a>
+        <a class="btn btn-primary" href={resolve("/awards")}>Awards overview</a>
       </div>
     </div>
   </div>
@@ -160,7 +160,7 @@
           {#each categories as category (category.id)}
             <a
               class="group rounded-2xl border border-base-200 bg-base-200 p-5 transition hover:border-primary/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/40"
-              href="/awards/vote/{category.slug}"
+              href={resolve("/awards/vote/{category.slug}")}
             >
               <div class="flex items-start justify-between gap-3">
                 <div class="space-y-2">

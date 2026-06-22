@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
+  import { resolve } from "$app/paths";
 
   // DVD‐logo bouncing cube state
   let cubeX = $state(50);
@@ -21,6 +22,9 @@
 
   onMount(() => {
     rafId = requestAnimationFrame(bounce);
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
   });
 </script>
 
@@ -46,10 +50,12 @@
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href="/" class="btn btn-lg btn-primary"> 🏠 Return Home </a>
+    <a href={resolve("/")} class="btn btn-lg btn-primary"> 🏠 Return Home </a>
     <a
       class="btn btn-lg btn-error"
-      href={`/report?error=${encodeURIComponent(page.error?.message || "")}`}
+      href={resolve(
+        `/report?error=${encodeURIComponent(page.error?.message || "")}`,
+      )}
     >
       🐞 Report the Bug
     </a>

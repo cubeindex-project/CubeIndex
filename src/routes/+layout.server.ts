@@ -6,7 +6,6 @@ import type { Tables } from "$lib/types/database.types";
 export const load: LayoutServerLoad = async ({
   locals: { safeGetSession, supabase, log },
   cookies,
-  url,
 }) => {
   const { session, user } = await safeGetSession();
 

@@ -1,6 +1,6 @@
 [build]
   publish = "build"
-  command = "pnpm run build"
+  command = "npm run build"
 
 [[_redirects]]
   from = "/sitemap.xml"

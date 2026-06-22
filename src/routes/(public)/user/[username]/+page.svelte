@@ -4,6 +4,7 @@
   import Pagination from "$lib/components/misc/pagination.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
+  import { resolve } from "$app/paths";
 
   let { data } = $props();
   const { profile, user, user_cube_ratings, user_cubes } = $derived(data);
@@ -17,9 +18,25 @@
   let selectedCondition: string = $state("All");
   let currentPage: number = $state(1);
   let itemsPerPage: number = $state(9);
-  let allTypes: string[] = $state([]);
-  let allStatuses: string[] = $state([]);
-  let allConditions: string[] = $state([]);
+  let allTypes: string[] = $derived(
+    Array.from(
+      new Set(
+        user_cubes
+          .map((c) => c.cube_model?.type)
+          .filter((t): t is string => !!t),
+      ),
+    ).sort(),
+  );
+  let allStatuses: string[] = $derived(
+    Array.from(
+      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
+    ).sort(),
+  );
+  let allConditions: string[] = $derived(
+    Array.from(
+      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
+    ).sort(),
+  );
   let showFilters = $state(false);
 
   let edit = $state(false);
@@ -35,23 +52,6 @@
     { value: "rating", label: "Rating" },
     { value: "type", label: "Type" },
   ];
-
-  $effect(() => {
-    const _ = user_cubes;
-    allTypes = Array.from(
-      new Set(
-        user_cubes
-          .map((c) => c.cube_model?.type)
-          .filter((t): t is string => !!t),
-      ),
-    ).sort();
-    allConditions = Array.from(
-      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
-    ).sort();
-    allStatuses = Array.from(
-      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
-    ).sort();
-  });
 
   const filteredCubes = $derived.by(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -121,11 +121,6 @@
     selectedStatus = "All";
     selectedCondition = "All";
   }
-
-  $effect(() => {
-    const _ = filteredCubes;
-    currentPage = 1;
-  });
 </script>
 
 <section class="relative max-w-6xl mx-auto mt-12 px-4">
@@ -171,7 +166,10 @@
     showFilter={true}
     bind:searchTerm
     placeholderLabel="Search cubes"
-    filterAction={() => (showFilters = !showFilters)}
+    filterAction={() => {
+      showFilters = !showFilters;
+      currentPage = 1;
+    }}
   />
 
   <div class="flex flex-col lg:flex-row gap-8">
@@ -181,10 +179,11 @@
           <span class="label-text text-sm">Type</span>
           <select
             bind:value={selectedType}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
-            {#each allTypes as t}
+            {#each allTypes as t, index (index)}
               <option>{t}</option>
             {/each}
           </select>
@@ -195,10 +194,11 @@
           <span class="label-text text-sm">Condition</span>
           <select
             bind:value={selectedCondition}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
-            {#each allConditions as c}
+            {#each allConditions as c, index (index)}
               <option>{c}</option>
             {/each}
           </select>
@@ -209,10 +209,11 @@
           <span class="label-text text-sm">Status</span>
           <select
             bind:value={selectedStatus}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
-            {#each allStatuses as s}
+            {#each allStatuses as s, index (index)}
               <option>{s}</option>
             {/each}
           </select>
@@ -302,7 +303,7 @@
             This user doesn't have any cube in their collection.
           </h2>
           {#if user?.id === profile.user_id}
-            <a href="/explore/cubes" class="btn btn-primary mt-3">
+            <a href={resolve("/explore/cubes")} class="btn btn-primary mt-3">
               Browse cubes
               <i class="fa-solid fa-arrow-right"></i>
             </a>

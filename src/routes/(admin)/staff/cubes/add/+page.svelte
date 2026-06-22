@@ -13,19 +13,6 @@
   const { data } = $props();
   const { brands, types, surfaces, subTypes } = $derived(data);
 
-  let search = $state("");
-  let searchCubes: {
-    label: string;
-    value: string;
-  }[] = $state([]);
-
-  $effect(() => {
-    const _ = search;
-    searchCubes = allCubes.filter((c) =>
-      c.label.toLowerCase().includes(search.toLowerCase()),
-    );
-  });
-
   // Initialize form handling with options for JSON data and custom error handling
   const { form, allErrors, errors, message, enhance } = $derived(
     superForm(data.form, {
@@ -42,12 +29,8 @@
   let allCubes: {
     label: string;
     value: string;
-  }[] = $state([]);
-
-  // Example: These could come from a load function or API
-  $effect(() => {
-    const _ = cubes;
-    allCubes = Array.from(
+  }[] = $derived(
+    Array.from(
       new Set(
         cubes
           .filter((c) => c.version_type === "Base" && c.status === "Approved")
@@ -56,8 +39,8 @@
             value: c.slug,
           })),
       ),
-    ).sort();
-  });
+    ).sort(),
+  );
 
   onMount(async () => {
     const { data, error: cubesErr } = await supabase
@@ -128,7 +111,7 @@
               required
             >
               <option value="___other">+ Add Brand</option>
-              {#each brands as b}
+              {#each brands as b, index (index)}
                 <option>{b.name}</option>
               {/each}
             </select>
@@ -158,7 +141,7 @@
               required
             >
               <option value="___other">+ Create Type</option>
-              {#each types as t}
+              {#each types as t, index (index)}
                 <option>{t.name}</option>
               {/each}
             </select>
@@ -191,7 +174,7 @@
                 <option>Loading...</option>
               {/if}
               <option value="auto">Handle Automatically</option>
-              {#each subTypes as subType}
+              {#each subTypes as subType, index (index)}
                 <option value={subType}>{subType}</option>
               {/each}
             </select>
@@ -234,7 +217,7 @@
               class="select select-lg w-full"
               required
             >
-              {#each surfaces as surface}
+              {#each surfaces as surface, index (index)}
                 <option>{surface}</option>
               {/each}
             </select>
@@ -383,7 +366,7 @@
     </form>
     {#if $allErrors.length}
       <ul>
-        {#each $allErrors as error}
+        {#each $allErrors as error, index (index)}
           <li class="text-error">
             <b>{error.path}:</b>
             {error.messages.join(". ")}
@@ -392,9 +375,7 @@
       </ul>
     {/if}
     {#if $message}
-      <span class="flex {'text-success'} justify-center p-4"
-        >{@html $message}</span
-      >
+      <span class="flex text-success justify-center p-4">{$message}</span>
     {/if}
   </div>
 </section>

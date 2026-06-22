@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { onMount } from "svelte";
   import FeatureSection from "$lib/components/marketing/FeatureSection.svelte";
@@ -274,10 +275,11 @@
         cube database.
       </p>
       <div class={ui.ctas}>
-        <a href="/auth/signup" class="btn btn-primary btn-lg sm:btn-xl"
-          >Get Started</a
+        <a
+          href={resolve("/auth/signup")}
+          class="btn btn-primary btn-lg sm:btn-xl">Get Started</a
         >
-        <a href="/explore" class="btn btn-outline btn-lg sm:btn-xl"
+        <a href={resolve("/explore")} class="btn btn-outline btn-lg sm:btn-xl"
           >Explore Database</a
         >
       </div>
@@ -555,7 +557,7 @@
     <h2 class={ui.h2}>Our Partners</h2>
 
     <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-      {#each partners as partner}
+      {#each partners as partner, index (index)}
         <div class={ui.partnerCard}>
           <div class={ui.partnerHeader}>
             <span class={ui.partnerEmoji}>{partner.emoji}</span>
@@ -565,11 +567,11 @@
           <p class="text-base-content/80">{partner.description}</p>
 
           <div class="flex gap-3 flex-wrap pt-1">
-            {#each partner.links as link}
+            {#each partner.links as link, index (index)}
               <a
                 href={link.url}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener noreferrer external"
                 class={`btn btn-sm ${link.color === "primary" ? "btn-primary" : link.color === "secondary" ? "btn-secondary" : "btn-neutral"}`}
               >
                 {link.label}
@@ -611,10 +613,10 @@
       achievements, and connecting with cubers worldwide.
     </p>
     <div class="flex justify-center gap-4 flex-wrap">
-      <a href="/auth/signup" class="btn btn-primary btn-lg sm:btn-xl"
+      <a href={resolve("/auth/signup")} class="btn btn-primary btn-lg sm:btn-xl"
         >Get Started</a
       >
-      <a href="/explore" class="btn btn-outline btn-lg sm:btn-xl"
+      <a href={resolve("/explore")} class="btn btn-outline btn-lg sm:btn-xl"
         >Explore Database</a
       >
     </div>

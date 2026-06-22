@@ -10,10 +10,9 @@
 
   let { readOnly = false, rating = $bindable(0.0) }: Props = $props();
 
-  let fills: number[] = $state([]);
+  let fills: number[] = $derived([]);
 
   $effect(() => {
-    const _ = rating;
     fills = Array.from({ length: 5 }, (_, i) =>
       Math.max(0, Math.min(1, rating - i)),
     );

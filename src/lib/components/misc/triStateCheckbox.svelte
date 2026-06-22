@@ -13,7 +13,6 @@
   }
 
   $effect(() => {
-    const _ = value;
     if (box) {
       box.checked = value === true;
       box.indeterminate = value === false;

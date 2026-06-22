@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
   import { page } from "$app/state";
 
@@ -99,7 +100,9 @@
           <div class="mt-1 text-xs opacity-80">{pwLabel}</div>
           {#if pwSuggestions.length}
             <ul class="mt-1 text-xs opacity-70 list-disc ml-5 space-y-0.5">
-              {#each pwSuggestions.slice(0, 3) as s}<li>{s}</li>{/each}
+              {#each pwSuggestions.slice(0, 3) as s, index (index)}<li>
+                  {s}
+                </li>{/each}
             </ul>
           {/if}
         </div>
@@ -143,7 +146,7 @@
 
     <p class="text-sm text-center text-gray-500 mt-6">
       Remembered it? <a
-        href="/auth/login"
+        href={resolve("/auth/login")}
         class="link link-primary link-hover ml-1">Back to Login</a
       >
     </p>

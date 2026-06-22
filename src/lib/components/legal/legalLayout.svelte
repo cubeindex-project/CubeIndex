@@ -1,4 +1,6 @@
 <script lang="ts">
+  import DOMPurify from "isomorphic-dompurify";
+
   /**
    * A content section in a legal document page.
    */
@@ -8,7 +10,7 @@
     title: string;
     lastUpdated: string;
     sections: Section[];
-    historyURL?: string;
+    historyURL: string;
   }
 
   /**
@@ -27,20 +29,19 @@
       <h1 class="mb-2">{title}</h1>
       <p class="!mt-0 text-sm">
         Last updated: {lastUpdated}
-        {#if historyURL}
-          ·
-          <a
-            href={historyURL}
-            target="_blank"
-            rel="noopener"
-            class="link link-hover">View change history on GitHub</a
-          >
-        {/if}
+        ·
+        <a
+          href={historyURL}
+          target="_blank"
+          rel="noopener external"
+          class="link link-hover">View change history on GitHub</a
+        >
       </p>
 
-      {#each sections as section, i}
+      {#each sections as section, i (i)}
         <h2>{i + 1}. {section.title}</h2>
-        <p>{@html section.content}</p>
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+        <p>{@html DOMPurify.sanitize(section.content)}</p>
       {/each}
     </article>
   </div>

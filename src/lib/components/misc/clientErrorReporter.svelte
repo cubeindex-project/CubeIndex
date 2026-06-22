@@ -21,7 +21,7 @@
       showToast(msg);
     };
     const handleRejection = (event: PromiseRejectionEvent) => {
-      const reason = event.reason as any;
+      const reason = event.reason;
       const msg = reason?.message ?? String(reason);
       showToast(msg);
     };

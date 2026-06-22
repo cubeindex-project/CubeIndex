@@ -41,7 +41,7 @@ const passwordSchema = z.object({
     .min(8, "The new password must have more than 8 characters"),
 });
 
-export const load = (async ({ locals: { user, supabase, log }, url }) => {
+export const load = (async ({ locals: { user, supabase, log } }) => {
   if (!user) redirect(302, "/auth/login");
 
   const { data: profile, error: err } = await supabase

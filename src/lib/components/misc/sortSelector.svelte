@@ -51,7 +51,7 @@
     bind:value={sortField}
     onchange={useronchange}
   >
-    {#each fields as f}
+    {#each fields as f, index (index)}
       <option value={f.value}>{f.label}</option>
     {/each}
   </select>

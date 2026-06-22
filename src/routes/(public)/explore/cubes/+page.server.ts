@@ -1,13 +1,13 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import type { Tables } from "$lib/types/database.types";
 
 export const load: PageServerLoad = async ({
-  locals: { supabase, log },
+  locals: { supabase, log, user },
   setHeaders,
   url,
+  untrack,
 }) => {
-  const { data, error: err } = await supabase
+  const { data: cubes, error: err } = await supabase
     .from("v_detailed_cube_models")
     .select("*")
     .eq("status", "Approved");
@@ -16,9 +16,21 @@ export const load: PageServerLoad = async ({
     return logError(500, "Failed to load cubes", log, err);
   }
 
-  const cubes: Tables<"v_detailed_cube_models">[] = data;
+  let userCubes;
 
-  // Cache aggressively on the edge, allow stale while revalidating
+  if (user) {
+    const { data, error: ucErr } = await supabase
+      .from("user_cubes")
+      .select("*")
+      .eq("user_id", user.id);
+
+    if (ucErr) {
+      return logError(500, "Failed to load user cubes cubes", log, err);
+    }
+
+    userCubes = data;
+  }
+
   setHeaders({
     "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
   });
@@ -30,17 +42,17 @@ export const load: PageServerLoad = async ({
     .map((cube, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      url: `${url.origin}/explore/cubes/${cube.slug}`,
+      url: untrack(() => `${url.origin}/explore/cubes/${cube.slug}`),
       name: cube.name,
     }));
 
   return {
     cubes,
+    userCubes,
     meta: {
       title: "Explore Cubes - CubeIndex",
       description:
         "Browse and compare speedcubes on CubeIndex. Filter by brand, size, and weight, check specs and pricing, and discover new cubes to add to your collection.",
-      canonical: url.origin + url.pathname,
       jsonLd: {
         "@context": "https://schema.org",
         "@type": "ItemList",

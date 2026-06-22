@@ -1,26 +1,35 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
-  import { formatDate } from "../helper_functions/formatDate.svelte";
+  import { formatDate } from "../helper_functions/formatDate";
   import { onMount } from "svelte";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
+  import { resolve } from "$app/paths";
 
   const MAX_COMMENT_LENGTH = 300;
 
-  const { user_rating, cube, isAuthor, showCubeDetails } = $props();
+  interface Props {
+    user_rating: Tables<"user_cube_ratings"> & {
+      profile: Pick<Tables<"profiles">, "username" | "display_name">;
+    };
+    cube: Tables<"v_detailed_cube_models">;
+    isAuthor: boolean;
+    showCubeDetails: boolean;
+  }
+
+  const { user_rating, cube, isAuthor, showCubeDetails }: Props = $props();
 
   const supabase = page.data.supabase;
-  const popoverId = $derived(
-    `popover-${user_rating.username}-${user_rating.cube_slug}`,
-  );
+  const popoverId = $derived(`popover-${user_rating.id}`);
 
   let showFullComment = $state(false);
 
   let loading = $state(false);
   let success = $state(false);
 
-  let helpful_ratings: any[] = $state([]);
+  let helpful_ratings: Tables<"helpful_rating">[] = $state([]);
 
   let isConfirmingDelete = $state(false);
   let isEditingRating = $state(false);
@@ -83,7 +92,6 @@
   }
 
   $effect(() => {
-    const _ = isConfirmingDelete;
     if (isConfirmingDelete) {
       setTimeout(toggleDeletingRating, 2000);
     }
@@ -111,7 +119,7 @@
         alt="{cube.series} {cube.model} {cube.version_name}"
         class="size-24 object-cover rounded-2xl"
       />
-      <a href="/explore/cubes/{cube.slug}">
+      <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
         <h2 class="text-xl font-bold mb-1">
           {cube.series}
           {cube.model}
@@ -133,9 +141,16 @@
     <div class="flex flex-row justify-between items-center flex-1 w-full">
       <span class="text-sm justify-start flex gap-1 flex-1">
         by
-        <a href="/user/{user_rating.profile.username}" class="underline">
-          {user_rating.profile.display_name}
-        </a>
+        {#if user_rating.profile.username && user_rating.profile.display_name}
+          <a
+            href={resolve("/(public)/user/[username]", {
+              username: user_rating.profile.username,
+            })}
+            class="underline"
+          >
+            {user_rating.profile.display_name}
+          </a>
+        {/if}
       </span>
 
       <div class="flex flex-row items-center flex-1 justify-end">
@@ -255,7 +270,7 @@
     onCancel={() => (isEditingRating = !isEditingRating)}
     {cube}
     rating={user_rating.rating}
-    comment={user_rating.comment}
+    comment={user_rating.comment ?? undefined}
   />
 {/if}
 
@@ -263,7 +278,7 @@
   <Report
     onCancel={() => (isReporting = !isReporting)}
     reportType="cube-rating"
-    reported={user_rating.id}
+    reported={String(user_rating.id)}
     reporLabel="{user_rating.profile
       .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
   />

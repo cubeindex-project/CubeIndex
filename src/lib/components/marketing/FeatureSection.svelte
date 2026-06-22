@@ -35,7 +35,7 @@
 
       {#if highlights && highlights.length}
         <ul class="mt-4 grid gap-3 sm:grid-cols-2">
-          {#each highlights as point}
+          {#each highlights as point, index (index)}
             <li class="flex items-start gap-3">
               <span class="badge badge-primary badge-sm mt-1" aria-hidden="true"
               ></span>

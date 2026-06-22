@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { resolve } from "$app/paths";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   const { data } = $props();
@@ -11,31 +12,39 @@
       label: "Collection",
       value: stats.cubesCount,
       icon: "fa-box-archive",
-      href: `/user/${profile.username}/cubes`,
+      href: resolve("/(public)/user/[username]", {
+        username: profile.username ?? "",
+      }),
     },
     {
       label: "Ratings",
       value: stats.ratingsCount,
       icon: "fa-star",
-      href: `/user/${profile.username}/ratings`,
+      href: resolve("/(public)/user/[username]/ratings", {
+        username: profile.username ?? "",
+      }),
     },
     {
       label: "Achievements",
       value: stats.achievementsCount,
       icon: "fa-trophy",
-      href: `/user/${profile.username}/achievements`,
+      href: resolve("/(public)/user/[username]/achievements", {
+        username: profile.username ?? "",
+      }),
     },
     {
       label: "Followers",
       value: stats.followersCount,
       icon: "fa-user-group",
-      href: `/user/${profile.username}/social`,
+      href: resolve('/(public)/user/[username]/social?tab="followers"', {
+        username: profile.username ?? "",
+      }),
     },
     {
       label: "Submissions",
       value: stats.submissionsCount,
       icon: "fa-paper-plane",
-      href: "/user/submissions",
+      href: resolve("/(private)/user/submissions"),
     },
   ]);
 
@@ -90,7 +99,7 @@
     {/each}
     <!-- Add a CTA card -->
     <a
-      href="/explore/cubes"
+      href={resolve("/explore/cubes")}
       class="card bg-primary text-primary-content shadow-md hover:shadow-lg transition"
     >
       <div class="card-body items-start">
@@ -109,12 +118,14 @@
       <div class="card-body">
         <div class="flex items-center justify-between gap-2">
           <h2 class="card-title">Recent Submissions</h2>
-          <a class="btn btn-xs" href="/user/submissions">View all</a>
+          <a class="btn btn-xs" href={resolve("/user/submissions")}>View all</a>
         </div>
         {#if recent.submissions.length === 0}
           <div class="text-sm opacity-70">
             Share cubes that are missing from the catalog and track their status
-            from here. <a class="link" href="/submit">Submit a cube</a> to get started.
+            from here. <a class="link" href={resolve("/submit")}
+              >Submit a cube</a
+            > to get started.
           </div>
         {:else}
           <ul class="divide-y divide-base-300">
@@ -137,7 +148,7 @@
                   <div class="flex items-center justify-between gap-2">
                     <a
                       class="font-medium hover:underline"
-                      href={`/explore/cubes/${submission.slug}`}
+                      href={resolve(`/explore/cubes/${submission.slug}`)}
                     >
                       {submission.name}
                     </a>
@@ -155,7 +166,7 @@
             {/each}
           </ul>
           <div class="pt-3 flex flex-wrap">
-            <a class="btn btn-ghost btn-sm" href="/submit"
+            <a class="btn btn-ghost btn-sm" href={resolve("/submit")}
               >Submit another cube</a
             >
           </div>
@@ -168,18 +179,27 @@
     <div class="card-body">
       <h2 class="card-title">Quick Actions</h2>
       <div class="flex flex-wrap gap-3">
-        <a class="btn btn-primary" href={`/user/${profile.username}`}>
+        <a class="btn btn-primary" href={resolve(`/user/${profile.username}`)}>
           View Profile
         </a>
-        <a class="btn" href={`/user/${profile.username}/cubes`}>
+        <a class="btn" href={resolve(`/user/${profile.username}/cubes`)}>
           Manage Collection
         </a>
-        <a class="btn" href="/user/submissions">My Submissions</a>
-        <a class="btn" href="/submit">Submit a Cube</a>
-        <a class="btn" href={`/user/${profile.username}/ratings`}>My Ratings</a>
-        <a class="btn" href="/achievements">Browse Achievements</a>
-        <a class="btn" href="/explore/users">Discover Users</a>
-        <a class="btn" href="/userbar">Userbar</a>
+        <a class="btn" href={resolve("/user/submissions")}>My Submissions</a>
+        <a class="btn" href={resolve("/submit")}>Submit a Cube</a>
+        <a
+          class="btn"
+          href={resolve("/(public)/user/[username]/ratings", {
+            username: profile.username ?? "",
+          })}
+        >
+          My Ratings
+        </a>
+        <a class="btn" href={resolve("/(public)/explore/achievements")}>
+          Browse Achievements
+        </a>
+        <a class="btn" href={resolve("/explore/users")}>Discover Users</a>
+        <a class="btn" href={resolve("/userbar")}>Userbar</a>
       </div>
     </div>
   </section>

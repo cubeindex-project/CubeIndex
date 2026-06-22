@@ -6,7 +6,9 @@
   import { page } from "$app/state";
 
   interface Props {
-    user_cube_ratings: Tables<"user_cube_ratings">[];
+    user_cube_ratings: (Tables<"user_cube_ratings"> & {
+      profile: Pick<Tables<"profiles">, "username" | "display_name">;
+    })[];
     cube: Tables<"v_detailed_cube_models">;
   }
 
@@ -50,11 +52,6 @@
 
   const totalPages = $derived(Math.ceil(filteredRatings.length / itemsPerPage));
 
-  $effect(() => {
-    const _ = filteredRatings;
-    currentPage = 1;
-  });
-
   function resetFilters() {
     filterRating = undefined;
     searchTerm = "";
@@ -75,10 +72,13 @@
         {user_cube_ratings.length} total ratings
       </p>
 
-      {#each stats as { rating, pct }}
+      {#each stats as { rating, pct }, index (index)}
         <div class="flex items-center mt-4">
           <button
-            onclick={() => (filterRating = rating)}
+            onclick={() => {
+              filterRating = rating;
+              currentPage = 1;
+            }}
             class="link link-primary link-hover"
           >
             {rating} star

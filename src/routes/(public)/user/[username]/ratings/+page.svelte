@@ -4,6 +4,7 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
+  import { resolve } from "$app/paths";
 
   let { data } = $props();
   let { user_cube_ratings, user, profile } = $derived(data);
@@ -63,7 +64,7 @@
 
   const sortedRatings = $derived.by(() => {
     const arr = [...filteredRatings];
-    const cmp = (a: any, b: any) => {
+    arr.sort((a, b) => {
       if (sortBy === "recent") {
         const ad = a.created_at ? new Date(a.created_at).getTime() : 0;
         const bd = b.created_at ? new Date(b.created_at).getTime() : 0;
@@ -80,8 +81,7 @@
         return an.localeCompare(bn);
       }
       return 0;
-    };
-    arr.sort(cmp);
+    });
     if (sortDir === "asc") arr.reverse();
     return arr;
   });
@@ -101,11 +101,6 @@
     selectedRating = "All";
     onlyWithComments = false;
   }
-
-  $effect(() => {
-    const _ = filteredRatings;
-    currentPage = 1;
-  });
 </script>
 
 <div class="relative max-w-6xl mx-auto mt-12 px-4">
@@ -149,7 +144,10 @@
     showFilter={true}
     bind:searchTerm
     placeholderLabel="Search by cube name"
-    filterAction={() => (showFilters = !showFilters)}
+    filterAction={() => {
+      showFilters = !showFilters;
+      currentPage = 1;
+    }}
   />
 
   <div class="flex flex-col lg:flex-row gap-8">
@@ -159,10 +157,11 @@
           <span class="label-text text-sm">Type</span>
           <select
             bind:value={selectedType}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
-            {#each allTypes as t}
+            {#each allTypes as t, index (index)}
               <option>{t}</option>
             {/each}
           </select>
@@ -173,6 +172,7 @@
           <span class="label-text text-sm">Rating</span>
           <select
             bind:value={selectedRating}
+            onchange={() => (currentPage = 1)}
             class="select select-bordered w-full"
           >
             <option>All</option>
@@ -189,6 +189,7 @@
             type="checkbox"
             class="checkbox"
             bind:checked={onlyWithComments}
+            onchange={() => (currentPage = 1)}
           />
           <span class="label-text">Only with comments</span>
         </label>
@@ -230,7 +231,7 @@
               </p>
               <button
                 onclick={() => {
-                  resetFilters;
+                  resetFilters();
                   searchTerm = "";
                 }}
                 class="btn btn-outline flex items-center"
@@ -255,7 +256,7 @@
             This user didn't rate any cube.
           </h2>
           {#if user?.id === profile.user_id}
-            <a href="/explore/cubes" class="btn btn-primary mt-3">
+            <a href={resolve("/explore/cubes")} class="btn btn-primary mt-3">
               Browse cubes to rate
               <i class="fa-solid fa-arrow-right"></i>
             </a>

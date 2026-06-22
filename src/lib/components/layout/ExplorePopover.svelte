@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
+
   interface ExploreCard {
-    href: string;
+    href: "cubes" | "vendors" | "users" | "achievements";
     icon: string;
     title: string;
     description: string;
@@ -54,7 +56,7 @@
       Explore Database
     </h2>
     <a
-      href="/explore"
+      href={resolve("/explore")}
       class="text-xs text-base-content/60 hover:text-primary transition inline-flex items-center gap-1"
       aria-label="View all explore options"
     >
@@ -63,10 +65,10 @@
     </a>
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-    {#each cards as card}
+    {#each cards as card (card.title)}
       <a
         role="menuitem"
-        href={`/explore/${card.href}`}
+        href={resolve(`/(public)/explore/${card.href}`)}
         class="relative group rounded-xl p-4 bg-base-200 border border-base-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-transform duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-base-100 overflow-hidden"
       >
         <div
@@ -106,7 +108,7 @@
         updated.
       </p>
     </div>
-    <a class="btn btn-primary btn-sm" href="/submit">
+    <a class="btn btn-primary btn-sm" href={resolve("/submit")}>
       <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
       <span class="hidden sm:inline">Submit a cube</span>
       <span class="sm:hidden">Submit</span>

@@ -13,7 +13,9 @@
 
   let showFilters = $state(false);
 
-  let allRarities: string[] = $state([]);
+  let allRarities: string[] = $derived(
+    Array.from(new Set(achievements.map((c) => c.rarity))).sort(),
+  );
 
   let selectedRarity: string = $state("All");
   let hidden: boolean | undefined = $state(undefined);
@@ -44,8 +46,8 @@
   const sortedAchi = $derived.by(() => {
     const arr = filteredAchi.slice();
     arr.sort((a, b) => {
-      let av: any;
-      let bv: any;
+      let av;
+      let bv;
       switch (sortField) {
         case "unlock-rate":
           av = a.rarity_percent ?? 0;
@@ -95,29 +97,11 @@
     return Math.max(0, Math.min(100, v));
   }
 
-  function calcAll() {
-    const Rarities = Array.from(
-      new Set(achievements.map((c) => c.rarity)),
-    ).sort();
-
-    allRarities = Rarities;
-  }
-
   function resetFilters() {
     selectedRarity = "All";
     hidden = undefined;
     obtainable = undefined;
   }
-
-  $effect(() => {
-    const _ = sortedAchi;
-    currentPage = 1;
-  });
-
-  $effect(() => {
-    const _ = sortedAchi;
-    calcAll();
-  });
 </script>
 
 {#snippet filterContents()}
@@ -126,17 +110,26 @@
       Rarity:
       <select
         bind:value={selectedRarity}
+        onchange={() => (currentPage = 1)}
         class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
       >
         <option>All</option>
-        {#each allRarities as r}
+        {#each allRarities as r, index (index)}
           <option>{r}</option>
         {/each}
       </select>
     </label>
   </div>
-  <TriStateCheckbox bind:value={obtainable} label="Obtainable" />
-  <TriStateCheckbox bind:value={hidden} label="Hidden" />
+  <TriStateCheckbox
+    bind:value={obtainable}
+    label="Obtainable"
+    onchange={() => (currentPage = 1)}
+  />
+  <TriStateCheckbox
+    bind:value={hidden}
+    label="Hidden"
+    onchange={() => (currentPage = 1)}
+  />
   <div>
     <button
       class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
@@ -398,7 +391,7 @@
                                 style={`width:${value}%;`}
                               ></div>
                               <!-- milestone ticks -->
-                              {#each [1, 5, 20, 50] as m}
+                              {#each [1, 5, 20, 50] as m, index (index)}
                                 <span
                                   class="pointer-events-none absolute top-0 h-full w-[2px] bg-base-100/70 opacity-70"
                                   style={`left: calc(${m}% - 1px);`}

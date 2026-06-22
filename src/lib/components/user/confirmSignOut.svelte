@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
+
   let { onCancel } = $props();
 </script>
 
@@ -11,7 +13,11 @@
     <h2 class="text-2xl font-clash font-bold mb-2">Confirm Sign Out</h2>
     <p class="text-lg">Are you sure you want to sign out?</p>
     <div class="flex justify-center gap-6 mt-6">
-      <a type="button" href="/auth/logout" class="btn btn-primary btn-lg">
+      <a
+        type="button"
+        href={resolve("/auth/logout")}
+        class="btn btn-primary btn-lg"
+      >
         Sign Out
       </a>
       <button type="button" onclick={onCancel} class="btn btn-secondary btn-lg">

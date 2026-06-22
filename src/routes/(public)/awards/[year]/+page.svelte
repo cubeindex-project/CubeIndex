@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import type { PageProps } from "./$types";
 
   type EventPhase = "upcoming" | "live" | "past" | "unknown";
@@ -174,7 +175,9 @@
                       <div class="flex flex-col gap-3">
                         <a
                           class="group/thumbnail relative block h-28 w-full max-w-sm overflow-hidden rounded-xl border border-primary/30 bg-base-100 shadow-sm ring-1 ring-primary/20"
-                          href="/explore/cubes/{winner.cube.slug}"
+                          href={resolve("/(public)/explore/cubes/[slug]", {
+                            slug: winner.cube.slug,
+                          })}
                         >
                           <img
                             data-hero-key={`cube-image-${winner.cube.id}`}
@@ -209,7 +212,7 @@
 
                       <a
                         class="btn btn-sm btn-primary w-full sm:w-auto shadow-sm"
-                        href={`/explore/cubes/${winner.cube.slug}`}
+                        href={resolve(`/explore/cubes/${winner.cube.slug}`)}
                         aria-label={`View details for ${winner.cube.name}`}
                       >
                         View details

@@ -1,8 +1,4 @@
-import type {
-  Enums,
-  TablesInsert,
-  TablesUpdate,
-} from "$lib/types/database.types";
+import type { Enums, TablesInsert } from "$lib/types/database.types";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

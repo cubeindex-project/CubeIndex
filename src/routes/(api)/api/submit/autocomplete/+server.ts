@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { AUTOFILL_SERVICE_URL } from "$env/static/private";
-import type { Enums, Tables } from "$lib/types/database.types";
+import type { Enums } from "$lib/types/database.types";
 
 export interface AutofillResult {
   brand?: string;

@@ -26,7 +26,7 @@
     style="width:auto"
     {onchange}
   >
-    {#each options as option}
+    {#each options as option, index (index)}
       <option value={option}>{option}</option>
     {/each}
   </select>

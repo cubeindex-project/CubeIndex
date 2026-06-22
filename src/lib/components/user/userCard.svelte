@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import Avatar from "./avatar.svelte";
   import RoleBadge from "./roleBadge.svelte";
@@ -18,7 +19,9 @@
   }: Props = $props();
 
   const href = $derived(
-    profile.username ? `/user/${profile.username}` : undefined,
+    profile.username
+      ? resolve("/(public)/user/[username]", { username: profile.username })
+      : undefined,
   );
 
   // 1. Compact formatting for large numbers
@@ -52,7 +55,7 @@
 
         {#if showCount}
           <span
-            class={`text-xs/5 text-base-content/70 flex items-center gap-2 truncate`}
+            class="text-xs/5 text-base-content/70 flex items-center gap-2 truncate"
           >
             <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
             <span

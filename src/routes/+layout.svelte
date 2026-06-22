@@ -9,6 +9,7 @@
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import { page } from "$app/state";
+  import DOMPurify from "isomorphic-dompurify";
 
   let { data, children } = $props();
 
@@ -64,7 +65,7 @@
         email: "thecubeindex@gmail.com",
       },
       noindex: pageMeta?.noindex ?? false,
-      canonical: pageMeta?.canonical ?? page.url.href,
+      canonical: page.url.href,
     };
   });
 </script>
@@ -75,7 +76,11 @@
   <link rel="canonical" href={meta.canonical} />
 
   {#if meta.jsonLd}
-    {@html `<script type="application/ld+json">${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`}
+    <!-- The weird syntax is to not make Svelte parser choke on the </script> which will create a ESLint error -->
+    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+    {@html DOMPurify.sanitize(
+      `<${`script type="application/ld+json">`}${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`,
+    )}
   {/if}
 
   <meta property="og:title" content={meta.ogTitle} />

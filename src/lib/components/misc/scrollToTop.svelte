@@ -17,7 +17,7 @@
   const scrollToTop = () => {
     try {
       window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (_) {
+    } catch {
       // Fallback for older browsers
       window.scrollTo(0, 0);
     }

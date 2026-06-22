@@ -6,12 +6,14 @@ import { AWARDS_PARTNERS } from "$lib/content/awardsPartners";
 export const load = (async ({ locals: { supabase, log } }) => {
   const now = new Date().toISOString();
 
-  let { data: currentEvent, error: ceErr } = await supabase
+  const { data: fetchedEvent, error: ceErr } = await supabase
     .from("awards_event")
     .select("*")
     .lte("start_at", now)
     .gte("end_at", now)
     .maybeSingle();
+
+  let currentEvent = fetchedEvent;
 
   if (ceErr) {
     log.error({ err: ceErr }, "Failed to fetch current event");

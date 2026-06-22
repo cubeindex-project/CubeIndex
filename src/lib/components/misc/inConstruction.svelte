@@ -1,3 +1,7 @@
+<script>
+  import { resolve } from "$app/paths";
+</script>
+
 <section
   class="min-h-screen flex flex-col items-center justify-center px-6 text-center relative stripe-bg overflow-hidden"
 >
@@ -15,7 +19,9 @@
       soon for something awesome!
     </p>
 
-    <a href="/" class="btn btn-warning btn-lg mt-6"> 🏠 Return Home </a>
+    <a href={resolve("/")} class="btn btn-warning btn-lg mt-6">
+      🏠 Return Home
+    </a>
   </div>
 </section>
 

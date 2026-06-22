@@ -21,10 +21,8 @@
       } else {
         throw new Error(`Failed to follow user: ${data.error}`);
       }
-    } catch (err: any) {
-      throw new Error(
-        `Network error while trying to follow user: ${err.message}`,
-      );
+    } catch (err) {
+      throw err instanceof Error ? err.message : "An unknown error occurred.";
     }
   }
 
@@ -43,8 +41,8 @@
       } else {
         new Error(`Failed to unfollow user: ${data.error}`);
       }
-    } catch (err: any) {
-      new Error(`Network error while trying to unfollow user: ${err.message}`);
+    } catch (err) {
+      throw err instanceof Error ? err.message : "An unknown error occurred";
     }
   }
 </script>

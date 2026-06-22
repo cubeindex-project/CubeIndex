@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
   import type { Tables } from "$lib/types/database.types.js";
 
@@ -110,7 +111,6 @@
     userVote = selectedNomineeId;
   }
   $effect(() => {
-    const _ = voting;
     if (!voting) return;
     const id = setTimeout(() => {
       voting = false;
@@ -195,7 +195,9 @@
                     {/if}
                   </button>
                   <a
-                    href="/explore/cubes/{nominee.slug}"
+                    href={resolve("/(public)/explore/cubes/[slug]", {
+                      slug: nominee.slug,
+                    })}
                     class="btn btn-ghost border border-base-300 flex-1 justify-center"
                     aria-label="View Cube Details"
                   >
@@ -228,7 +230,7 @@
               <p class="text-sm text-base-content/70">
                 Check back soon to vote once nominations are announced.
               </p>
-              <a class="btn btn-primary" href="/awards/vote">
+              <a class="btn btn-primary" href={resolve("/awards/vote")}>
                 Back to categories
               </a>
             </div>

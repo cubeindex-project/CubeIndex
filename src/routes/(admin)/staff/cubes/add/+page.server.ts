@@ -9,9 +9,7 @@ import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { logError } from "$lib/server/logError";
 import type { TablesInsert } from "$lib/types/database.types";
 
-export const load: PageServerLoad = async ({
-  locals: { supabase, user, log },
-}) => {
+export const load: PageServerLoad = async ({ locals: { supabase, log } }) => {
   const form = await superValidate(zod4(cubeSchema), { errors: false });
 
   const { data: brands, error: brandsErr } = await supabase

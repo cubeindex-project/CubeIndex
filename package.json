@@ -76,5 +76,11 @@
   "overrides": {
     "@tailwindcss/vite": "^4.1.8",
     "rollup": "4.61.1"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true,
+    "esbuild@0.21.5": true,
+    "sharp@0.34.5": true
   }
 }

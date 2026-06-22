@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { superForm } from "sveltekit-superforms";
   import SearchCubes, {
     type SearchCube,
@@ -672,7 +673,7 @@
 
             {#if $message}
               <div class="alert alert-success" role="status" aria-live="polite">
-                <span>{@html $message}</span>
+                <span>{$message}</span>
               </div>
             {/if}
 
@@ -757,8 +758,9 @@
             <div
               class="rounded-xl bg-base-200/60 px-4 py-3 text-sm text-base-content/70"
             >
-              Need direct help? Contact us on <a href="/discord" class="link"
-                >Discord</a
+              Need direct help? Contact us on <a
+                href={resolve("/discord")}
+                class="link">Discord</a
               >.
             </div>
           </div>

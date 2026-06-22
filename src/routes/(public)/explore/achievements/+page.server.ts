@@ -1,10 +1,10 @@
-import type { PageLoad } from "./$types";
+import type { PageServerLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 import type { Tables } from "$lib/types/database.types";
 
-export const load = (async ({ setHeaders, parent }) => {
-  const { user, supabase } = await parent();
+export const load = (async ({ setHeaders, parent, locals: { supabase } }) => {
+  const { user } = await parent();
 
   const { data: achievements, error: err } = await supabase
     .from("v_achievement_rarity")
@@ -47,4 +47,4 @@ export const load = (async ({ setHeaders, parent }) => {
         "Browse achievements on CubeIndex. Discover available ones, read their requirements, and see which milestones you can unlock next.",
     },
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

@@ -1,11 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { formatDate } from "../helper_functions/formatDate.svelte";
+  import { formatDate } from "../helper_functions/formatDate";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import { clientLogger } from "$lib/logger/client";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
+  import { resolve } from "$app/paths";
 
   interface LocalUserCubesType extends Tables<"user_cubes"> {
     vendor: { name: string } | null;
@@ -62,7 +63,7 @@
       if (error) throw new Error(error.message);
 
       vendors = data;
-    } catch (err: any) {
+    } catch (err) {
       clientLogError(
         "An error occurred while fetching vendors",
         clientLogger,
@@ -114,8 +115,9 @@
       } else {
         throw new Error(data.error);
       }
-    } catch (err: any) {
-      formMessage = err.message;
+    } catch (err) {
+      formMessage =
+        err instanceof Error ? err.message : "An unknown error occurred";
     } finally {
       isSubmitting = false;
     }
@@ -140,8 +142,9 @@
       } else {
         throw new Error(data.error);
       }
-    } catch (err: any) {
-      formMessage = err.message;
+    } catch (err) {
+      formMessage =
+        err instanceof Error ? err.message : "An unknown error occurred";
     }
   }
 
@@ -303,7 +306,7 @@
             class="select select-bordered w-full"
           >
             <option value={null}>None</option>
-            {#each vendors as vendor}
+            {#each vendors as vendor (vendor.slug)}
               <option value={vendor.slug}>{vendor.name}</option>
             {/each}
           </select>
@@ -370,7 +373,7 @@
 {#snippet bottom()}
   {#if mode === "view"}
     <a
-      href="/explore/cubes/{cube.slug}"
+      href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
       class="btn btn-primary mt-4"
       aria-label="View Cube Details"
     >

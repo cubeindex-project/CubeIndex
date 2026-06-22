@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { Turnstile } from "svelte-turnstile";
   import { superForm } from "sveltekit-superforms";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
@@ -156,7 +157,7 @@
       <!-- Sign Up with Discord Button -->
       <a
         type="button"
-        href="/auth/discord"
+        href={resolve("/auth/discord")}
         class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
       >
         <i class="fa-brands fa-discord text-2xl"></i>
@@ -166,7 +167,10 @@
 
     <p class="text-sm text-center text-gray-500 mt-6">
       Don't have an account?
-      <a href="/auth/signup" class="link link-primary link-hover ml-1">
+      <a
+        href={resolve("/auth/signup")}
+        class="link link-primary link-hover ml-1"
+      >
         Sign Up
       </a>
     </p>

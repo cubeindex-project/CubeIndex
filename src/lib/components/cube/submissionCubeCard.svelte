@@ -1,7 +1,8 @@
 ﻿<script lang="ts">
   import CubeCardSkeleton from "$lib/components/cube/cubeCardSkeleton.svelte";
-  import { formatDate } from "../helper_functions/formatDate.svelte";
+  import { formatDate } from "../helper_functions/formatDate";
   import type { Tables } from "$lib/types/database.types";
+  import { resolve } from "$app/paths";
 
   interface Props {
     cube: Tables<"v_detailed_cube_models">;
@@ -84,7 +85,7 @@
 
 {#snippet bottom()}
   <a
-    href="/explore/cubes/{cube.slug}"
+    href={resolve(`/(public)/explore/cubes/[slug]`, { slug: cube.slug })}
     class="btn btn-primary mt-4"
     aria-label="View Cube Details"
   >

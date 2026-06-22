@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/state";
+  import { SvelteSet } from "svelte/reactivity";
 
   const supabase = page.data.supabase;
 
-  let staff_logs: any[] = $state([]);
+  let staff_logs: LogEntry[] = $state([]);
 
   onMount(async () => {
     const BATCH = 500;
@@ -32,19 +33,32 @@
     created_at: string;
     action: string;
     details: string;
-    old_data: JSON;
-    new_data: JSON;
+    old_data: Record<string, unknown> | null;
+    new_data: Record<string, unknown> | null;
     staff_id: { display_name: string };
   }
 
-  let logs: LogEntry[] = $derived(staff_logs);
+  const logs: LogEntry[] = $derived(staff_logs);
   let debouncedSearch = $state("");
   let currentPage = $state(1);
   let pageSize = $state(50);
 
-  let filtered: LogEntry[] = $state([]);
-  let totalPages: number = $state(0);
-  let paginated: LogEntry[] = $state([]);
+  const filtered = $derived(
+    logs.filter(
+      (log) =>
+        log.staff_id.display_name.toLowerCase().includes(debouncedSearch) ||
+        log.action.toLowerCase().includes(debouncedSearch) ||
+        log.created_at.toLowerCase().includes(debouncedSearch) ||
+        log.target_table.toLowerCase().includes(debouncedSearch),
+    ),
+  );
+
+  const totalPages = $derived(Math.ceil(filtered.length / pageSize) || 1);
+  const activePage = $derived(Math.max(1, Math.min(currentPage, totalPages)));
+
+  const paginated = $derived(
+    filtered.slice((activePage - 1) * pageSize, activePage * pageSize),
+  );
 
   let showBifAf: boolean[] = $state([]);
   let showDiff: boolean[] = $state([]);
@@ -53,21 +67,19 @@
    * Returns a partial object mapping each changed key to an object
    * { from: oldValue, to: newValue }. If oldData is null, 'from' will be null.
    */
-  function diff<T extends Record<string, any>>(
-    oldData: T | null,
-    newData: T | null,
-  ): Partial<{ [K in keyof T]: { from: T[K] | null; to: T[K] | null } }> {
-    const result: Partial<{
-      [K in keyof T]: { from: T[K] | null; to: T[K] | null };
-    }> = {};
+  function diff(
+    oldData: Record<string, unknown> | null,
+    newData: Record<string, unknown> | null,
+  ): Record<string, { from: unknown; to: unknown }> {
+    const result: Record<string, { from: unknown; to: unknown }> = {};
 
     // 1) Gather every key that could possibly have changed:
-    const allKeys = new Set<string>();
+    const allKeys = new SvelteSet<string>();
     if (oldData) for (const k of Object.keys(oldData)) allKeys.add(k);
     if (newData) for (const k of Object.keys(newData)) allKeys.add(k);
 
     // 2) Compare each key’s old vs. new value (treat missing as null)
-    for (const key of Array.from(allKeys) as (keyof T)[]) {
+    for (const key of Array.from(allKeys)) {
       const oldValue = oldData ? oldData[key] : null;
       const newValue = newData ? newData[key] : null;
 
@@ -94,11 +106,11 @@
   }
 
   // Simple debounce utility
-  function debounce(fn: (...args: any[]) => void, delay = 300) {
+  function debounce(fn: (val: string) => void, delay = 300) {
     let timeout: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
+    return (val: string) => {
       clearTimeout(timeout);
-      timeout = setTimeout(() => fn(...args), delay);
+      timeout = setTimeout(() => fn(val), delay);
     };
   }
 
@@ -121,40 +133,12 @@
     }).format(date);
   }
 
-  // Reactive filtering
-  $effect(() => {
-    const _ = debouncedSearch;
-    filtered = logs.filter(
-      (log) =>
-        log.staff_id.display_name.toLowerCase().includes(debouncedSearch) ||
-        log.action.toLowerCase().includes(debouncedSearch) ||
-        log.created_at.toLowerCase().includes(debouncedSearch) ||
-        log.target_table.toLowerCase().includes(debouncedSearch),
-    );
-  });
-
-  // Pagination calculations
-  $effect(() => {
-    totalPages = Math.ceil(filtered.length / pageSize) || 1;
-    {
-      if (currentPage > totalPages) currentPage = totalPages;
-      if (currentPage < 1) currentPage = 1;
-    }
-  });
-
-  $effect(() => {
-    paginated = filtered.slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize,
-    );
-  });
-
   function prevPage() {
-    if (currentPage > 1) currentPage -= 1;
+    if (activePage > 1) currentPage = activePage - 1;
   }
 
   function nextPage() {
-    if (currentPage < totalPages) currentPage += 1;
+    if (activePage < totalPages) currentPage = activePage + 1;
   }
 
   function goToPage(p: number) {
@@ -222,8 +206,10 @@
                     class="absolute -translate-x-full z-50 bg-base-300/10 backdrop-blur-3xl rounded-2xl p-2"
                   >
                     <p class="font-bold">Changes:</p>
-                    {#each Object.entries(diff(log.old_data, log.new_data)) as [key, { from, to }]}
-                      {@html `${key}: ${JSON.stringify(from)} -> ${JSON.stringify(to)}\n`}
+                    {#each Object.entries(diff(log.old_data, log.new_data)) as [key, { from, to }], index (index)}
+                      <div>
+                        {key}: {JSON.stringify(from)} -> {JSON.stringify(to)}
+                      </div>
                     {/each}
                   </div>
                 {/if}
@@ -287,15 +273,15 @@
     <button
       class="join-item btn btn-sm"
       onclick={prevPage}
-      disabled={currentPage === 1}
+      disabled={activePage === 1}
     >
       «
     </button>
 
-    {#each Array(totalPages) as _, i}
-      {#if i < 2 || i >= totalPages - 2 || (i >= currentPage - 2 && i <= currentPage + 1)}
+    {#each [...Array(totalPages).keys()] as i (i)}
+      {#if i < 2 || i >= totalPages - 2 || (i >= activePage - 2 && i <= activePage + 1)}
         <button
-          class="join-item btn btn-sm {currentPage === i + 1
+          class="join-item btn btn-sm {activePage === i + 1
             ? 'btn-active'
             : ''}"
           onclick={() => goToPage(i + 1)}
@@ -310,7 +296,7 @@
     <button
       class="join-item btn btn-sm"
       onclick={nextPage}
-      disabled={currentPage === totalPages}
+      disabled={activePage === totalPages}
     >
       »
     </button>

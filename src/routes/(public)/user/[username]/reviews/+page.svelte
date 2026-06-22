@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte";
+  import { resolve } from "$app/paths";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
 
   const MAX_SUMMARY_CHARS = 200;
 
@@ -64,7 +65,9 @@
                     <div class="flex flex-wrap items-center gap-2">
                       <a
                         class="link link-hover font-semibold truncate"
-                        href="/explore/cubes/{userReview.cube}"
+                        href={resolve("/(public)/explore/cubes/[slug]", {
+                          slug: userReview.cube,
+                        })}
                       >
                         {userReview.cube_model.name}
                       </a>
@@ -91,7 +94,13 @@
 
                 <div class="flex items-center gap-2">
                   <a
-                    href="/explore/cubes/{userReview.cube}/reviews/{userReview.id}"
+                    href={resolve(
+                      "/(public)/explore/cubes/[slug]/reviews/[reviewId]",
+                      {
+                        slug: userReview.cube,
+                        reviewId: String(userReview.id),
+                      },
+                    )}
                     class="btn btn-sm btn-primary btn-outline"
                     aria-label="Open full review"
                   >
@@ -113,7 +122,13 @@
                 {#if userReview.review.length > MAX_SUMMARY_CHARS}
                   <div class="mt-2">
                     <a
-                      href="/explore/cubes/{userReview.cube}/reviews/{userReview.id}"
+                      href={resolve(
+                        "/(public)/explore/cubes/[slug]/reviews/[reviewId]",
+                        {
+                          slug: userReview.cube,
+                          reviewId: String(userReview.id),
+                        },
+                      )}
                       class="link link-primary text-sm"
                     >
                       Read more

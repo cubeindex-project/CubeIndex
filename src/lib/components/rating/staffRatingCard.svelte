@@ -1,14 +1,25 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
-  import { formatDate } from "../helper_functions/formatDate.svelte";
+  import { formatDate } from "../helper_functions/formatDate";
   import { onMount } from "svelte";
   import { page } from "$app/state";
+  import { resolve } from "$app/paths";
+  import type { Tables } from "$lib/types/database.types";
 
   const supabase = page.data.supabase;
 
-  const { user_rating, cube } = $props();
+  interface Props {
+    user_rating: Omit<Tables<"user_cube_ratings">, "user_id"> & {
+      user_id: Pick<Tables<"profiles">, "display_name" | "username">;
+    };
+    cube: Tables<"v_detailed_cube_models">;
+  }
 
-  let helpful_ratings: any[] = $state([]);
+  const { user_rating, cube }: Props = $props();
+
+  let helpful_ratings: (Omit<Tables<"helpful_rating">, "user_id"> & {
+    user_id: Pick<Tables<"profiles">, "display_name" | "username">;
+  })[] = $state([]);
 
   let confDeleteRating = $state(false);
 
@@ -41,7 +52,7 @@
         loading = false;
         success = true;
         setTimeout(() => {
-          onCancel;
+          onCancel();
           location.reload();
         }, 1000);
       } else {
@@ -52,7 +63,6 @@
   }
 
   $effect(() => {
-    const _ = confDeleteRating;
     if (confDeleteRating) {
       setTimeout(toggleDelRating, 2000);
     }
@@ -77,7 +87,7 @@
 </script>
 
 <div class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm">
-  <a href="/explore/cubes/{cube.slug}">
+  <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
     <h2 class="text-xl font-bold mb-1">
       {cube.series}
       {cube.model}
@@ -94,9 +104,16 @@
 
     <span class="text-sm">
       by
-      <a href="/user/{user_rating.user_id.username}" class="underline">
-        {user_rating.user_id.display_name}
-      </a>
+      {#if user_rating.user_id.display_name && user_rating.user_id.username}
+        <a
+          href={resolve("/(public)/user/[username]", {
+            username: user_rating.user_id.username,
+          })}
+          class="underline"
+        >
+          {user_rating.user_id.display_name}
+        </a>
+      {/if}
     </span>
 
     <span class="text-xs ml-auto">
@@ -161,8 +178,16 @@
         : "s"}
       this helpful :
     </p>
-    {#each helpful_ratings as hr}
-      <a href="/user/{hr.user_id.username}">{hr.user_id.display_name}</a>
+    {#each helpful_ratings as hr, index (index)}
+      {#if hr.user_id.display_name && hr.user_id.username}
+        <a
+          href={resolve("/(public)/user/[username]", {
+            username: hr.user_id.username,
+          })}
+        >
+          {hr.user_id.display_name}
+        </a>
+      {/if}
     {/each}
   {/if}
 </div>

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { Tables } from "$lib/types/database.types.js";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import { toast } from "svelte-sonner";
 
   let notifications: Tables<"v_notifications_for_user">[] = $state([]);
@@ -240,7 +240,7 @@
                         <a
                           href={n.link}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noopener noreferrer external"
                           class="link link-hover inline-flex items-center gap-1"
                         >
                           {`${n.link_text === "" ? "Open link" : n.link_text}`}

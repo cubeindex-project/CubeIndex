@@ -2,6 +2,7 @@
 <script lang="ts">
   import ManageCubeStatus from "./manageCubeStatus.svelte";
   import CubeCardSkeleton from "../cube/cubeCardSkeleton.svelte";
+  import { resolve } from "$app/paths";
 
   // single props destructure
   let { cube } = $props();
@@ -39,12 +40,20 @@
       </div>
 
       <div class="mt-4 flex gap-2">
-        <a href={`cubes/edit/${cube.slug}`} class="btn btn-info flex-1">
+        <a
+          href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+            slug: cube.slug,
+          })}
+          class="btn btn-info flex-1"
+        >
           <i class="fa-solid fa-pencil mr-2"></i>Edit
         </a>
       </div>
 
-      <a href={`/explore/cubes/${cube.slug}`} class="btn btn-primary mt-4">
+      <a
+        href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
+        class="btn btn-primary mt-4"
+      >
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
@@ -57,7 +66,12 @@
         >
           <i class="fa-solid fa-check mr-2"></i>Accept
         </button>
-        <a href={`cubes/edit/${cube.slug}`} class="btn btn-info flex-1">
+        <a
+          href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+            slug: cube.slug,
+          })}
+          class="btn btn-info flex-1"
+        >
           <i class="fa-solid fa-pencil mr-2"></i>Edit
         </a>
         <button
@@ -67,7 +81,10 @@
           <i class="fa-solid fa-xmark mr-2"></i>Reject
         </button>
       </div>
-      <a href={`/explore/cubes/${cube.slug}`} class="btn btn-primary mt-4">
+      <a
+        href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
+        class="btn btn-primary mt-4"
+      >
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>
@@ -86,7 +103,10 @@
         </div>
       </div>
 
-      <a href={`/explore/cubes/${cube.slug}`} class="btn btn-primary mt-4">
+      <a
+        href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
+        class="btn btn-primary mt-4"
+      >
         See Cube <i class="fa-solid fa-arrow-right"></i>
       </a>
     </div>

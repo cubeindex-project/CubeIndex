@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { formatDate } from "$lib/components/helper_functions/formatDate.svelte.js";
+  import { resolve } from "$app/paths";
+  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   let { data } = $props();
-  let { cube, review, isHelpful } = $derived(data);
+  let { review, isHelpful, cube } = $derived(data);
 
   const reviewText = $derived(review.review?.trim() ?? "");
 
@@ -55,7 +56,9 @@
     <div class="flex items-center justify-between gap-3">
       <a
         class="btn btn-ghost btn-sm"
-        href="/explore/cubes/{cube.slug}/reviews"
+        href={resolve("/(public)/explore/cubes/[slug]/reviews", {
+          slug: cube.slug,
+        })}
         data-sveltekit-noscroll
       >
         <i class="fa-solid fa-arrow-left mr-2"></i>
@@ -81,7 +84,9 @@
           <div class="flex flex-wrap items-center gap-2">
             <a
               class="link link-hover font-semibold truncate"
-              href="/user/{review.profile.username}"
+              href={resolve("/(public)/user/[username]", {
+                username: review.profile.username ?? "",
+              })}
             >
               {review.profile.display_name}
             </a>

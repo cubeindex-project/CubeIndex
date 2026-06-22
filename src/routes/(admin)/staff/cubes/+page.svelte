@@ -9,6 +9,8 @@
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
+  import { SvelteMap } from "svelte/reactivity";
+  import { resolve } from "$app/paths";
 
   const supabase = page.data.supabase;
 
@@ -31,7 +33,7 @@
     loading = true;
     const BATCH = 2000;
     let start = 0;
-    const featureMap = new Map<string, Set<string>>();
+    const featureMap = new SvelteMap<string, Set<string>>();
 
     const { data: features, error: featErr } = await supabase
       .from("cubes_model_features")
@@ -108,7 +110,6 @@
   let allTypes: string[] = $state([]);
   let allBrands: string[] = $state([]);
   let allYears: number[] = $state([]);
-  let allSubType: string[] = $state([]);
   let allCubeTypes: string[] = $state([]);
   let allCubeStatus: string[] = $state([]);
 
@@ -118,9 +119,6 @@
     const Years = Array.from(
       new Set(cubes.map((c: Cube) => new Date(c.release_date!).getFullYear())),
     ).sort((a, b) => b - a);
-    const SubType = Array.from(
-      new Set(cubes.map((c: Cube) => c.sub_type ?? "")),
-    ).sort();
     const CubeTypes = Array.from(
       new Set(cubes.map((c: Cube) => c.version_type)),
     ).sort();
@@ -131,13 +129,13 @@
     allBrands = Brands;
     allTypes = Types;
     allYears = Years;
-    allSubType = SubType;
     allCubeTypes = CubeTypes;
     allCubeStatus = CubeStatus;
   }
 
-  onMount(() => {
-    fetch();
+  onMount(async () => {
+    await fetch();
+    calcAll();
   });
 
   // 3) Reactive filtered list
@@ -186,16 +184,6 @@
     selectedCubeStatus = "All";
   }
 
-  $effect(() => {
-    const _ = filteredCubes;
-    currentPage = 1;
-  });
-
-  $effect(() => {
-    const _ = loading;
-    calcAll();
-  });
-
   let showFilters = $state(false);
 </script>
 
@@ -222,6 +210,7 @@
           type="text"
           placeholder="Search Your Cube"
           bind:value={searchTerm}
+          oninput={() => (currentPage = 1)}
           class="input w-full h-12.5 rounded-l-none border-base-300"
         />
         {#if searchTerm.length}
@@ -250,10 +239,11 @@
             >Type:
             <select
               bind:value={selectedType}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allTypes as t}
+              {#each allTypes as t, index (index)}
                 <option>{t}</option>
               {/each}
             </select>
@@ -265,10 +255,11 @@
             >Brand:
             <select
               bind:value={selectedBrand}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allBrands as b}
+              {#each allBrands as b, index (index)}
                 <option>{b}</option>
               {/each}
             </select></label
@@ -280,6 +271,7 @@
             >WCA Legal:
             <select
               bind:value={WCALegal}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -294,6 +286,7 @@
             >Magnetic:
             <select
               bind:value={magnetic}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -308,6 +301,7 @@
             >Smart:
             <select
               bind:value={smart}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -322,6 +316,7 @@
             >Modded:
             <select
               bind:value={modded}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option value={undefined}>All</option>
@@ -336,10 +331,11 @@
             >Release Year:
             <select
               bind:value={selectedYear}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allYears as year}
+              {#each allYears as year, index (index)}
                 <option value={year}>{year}</option>
               {/each}
             </select>
@@ -351,10 +347,11 @@
             >Cube Type:
             <select
               bind:value={selectedCubeType}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allCubeTypes as cubeType}
+              {#each allCubeTypes as cubeType, index (index)}
                 <option value={cubeType}>{cubeType}</option>
               {/each}
             </select>
@@ -366,10 +363,11 @@
             >Cube Status:
             <select
               bind:value={selectedCubeStatus}
+              onchange={() => (currentPage = 1)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
               <option>All</option>
-              {#each allCubeStatus as cubeStatus}
+              {#each allCubeStatus as cubeStatus, index (index)}
                 <option value={cubeStatus}>{cubeStatus}</option>
               {/each}
             </select>
@@ -396,7 +394,10 @@
           <ItemsPerPageSelector bind:itemsPerPage label="Cubes per page" />
 
           <div>
-            <a href="cubes/add" class="btn bg-primary text-primary-content">
+            <a
+              href={resolve("/(admin)/staff/cubes/add")}
+              class="btn bg-primary text-primary-content"
+            >
               <i class="fa-solid fa-plus mr-2"></i>
               Add Cube
             </a>
@@ -426,7 +427,7 @@
             transition:blur
           >
             {#if paginatedCubes.length > 0}
-              {#each paginatedCubes as cube}
+              {#each paginatedCubes as cube, index (index)}
                 {#key paginatedCubes}
                   <StaffCubeCard {cube} />
                 {/key}

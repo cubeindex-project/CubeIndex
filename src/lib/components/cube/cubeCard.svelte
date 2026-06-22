@@ -5,6 +5,7 @@
   import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
   import RateCubeButton from "../misc/rateCubeButton.svelte";
   import type { Tables } from "$lib/types/database.types";
+  import { resolve } from "$app/paths";
 
   interface Props {
     cube: Tables<"v_detailed_cube_models">;
@@ -82,7 +83,7 @@
 {#snippet bottom()}
   {#if showDetailsButton}
     <a
-      href="/explore/cubes/{cube.slug}"
+      href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
       class="btn btn-primary mt-4"
       aria-label="View Cube Details"
     >

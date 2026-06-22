@@ -38,13 +38,11 @@
     }),
   );
 
+  // svelte-ignore state_referenced_locally
   let baselineKey = $state(
     keyOf({
-      // svelte-ignore state_referenced_locally
       title: review.title,
-      // svelte-ignore state_referenced_locally
       reviewContent: review.review,
-      // svelte-ignore state_referenced_locally
       ratings: reviewCategories.map((c) => [
         c.id,
         data.reviewRatings.get(c.id) ?? 0,

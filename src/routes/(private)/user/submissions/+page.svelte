@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
 
   const { data } = $props();
@@ -38,7 +39,7 @@
       </p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
-      <a href="/submit" class="btn btn-primary btn-sm">
+      <a href={resolve("/submit")} class="btn btn-primary btn-sm">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Submit a cube</span>
       </a>
@@ -93,7 +94,7 @@
           review your submission.
         </p>
         <a
-          href="/submit"
+          href={resolve("/submit")}
           class="btn btn-primary mt-4 inline-flex items-center gap-2"
         >
           <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>

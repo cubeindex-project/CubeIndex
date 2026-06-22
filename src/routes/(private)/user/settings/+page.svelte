@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
   import { queryParameters } from "sveltekit-search-params";
@@ -224,6 +225,7 @@
   }
 
   // Initialize preference and apply theme
+  // svelte-ignore state_referenced_locally
   if (browser) {
     const mode = localStorage.getItem("themeMode");
     if (mode === "system") {
@@ -239,7 +241,6 @@
         applyTheme(saved);
       } else {
         // Default manual theme when nothing selected
-        // svelte-ignore state_referenced_locally
         applyTheme(selectedTheme);
       }
     }
@@ -880,7 +881,7 @@
 
                   <a
                     class="btn btn-sm btn-ghost"
-                    href="/discord"
+                    href={resolve("/discord")}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -888,7 +889,7 @@
                     Discord
                   </a>
 
-                  <a class="btn btn-sm btn-ghost" href="/report">
+                  <a class="btn btn-sm btn-ghost" href={resolve("/report")}>
                     <i class="fa-solid fa-bug"></i>
                     Report an issue
                   </a>
@@ -963,11 +964,12 @@
                         ></i>
                         <span>
                           Read the
-                          <a class="link link-primary" href="/privacy"
-                            >Privacy Policy</a
+                          <a
+                            class="link link-primary"
+                            href={resolve("/privacy")}>Privacy Policy</a
                           >
                           and
-                          <a class="link link-primary" href="/tos"
+                          <a class="link link-primary" href={resolve("/tos")}
                             >Terms of Service</a
                           >.
                         </span>
@@ -1046,7 +1048,7 @@
 
                           <a
                             class="link link-hover link-primary flex items-center gap-2"
-                            href="/discord"
+                            href={resolve("/discord")}
                             target="_blank"
                             rel="noreferrer"
                           >

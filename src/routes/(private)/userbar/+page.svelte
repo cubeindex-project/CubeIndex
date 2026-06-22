@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { page } from "$app/state";
   import Tag from "$lib/components/misc/tag.svelte";
 
   const { data } = $props();
-  const { username, displayName } = $derived(data);
+  const { profile } = $derived(data);
+
+  const username = $derived(profile?.username ?? null);
+  const displayName = $derived(profile?.display_name ?? null);
 
   // Use a relative URL so SSR doesn't need window.origin
   const origin = page.url.origin;
@@ -137,7 +141,13 @@
             </div>
           {/if}
         </div>
-        <a href={"/user/" + username} class="block" aria-busy={!previewLoaded}>
+        <a
+          href={resolve("/(public)/user/[username]", {
+            username: username ?? "",
+          })}
+          class="block"
+          aria-busy={!previewLoaded}
+        >
           <img
             src={previewUrl}
             alt={`${displayName} - CubeIndex userbar`}
@@ -160,7 +170,7 @@
       <a
         href={previewUrl}
         target="_blank"
-        rel="noopener"
+        rel="noopener external"
         class="link link-primary break-all"
       >
         Open image

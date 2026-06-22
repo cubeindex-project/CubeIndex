@@ -240,7 +240,7 @@
                         <a
                           href={n.link}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noopener noreferrer external"
                           class="link link-hover inline-flex items-center gap-1"
                         >
                           {`${n.link_text === "" ? "Open link" : n.link_text}`}

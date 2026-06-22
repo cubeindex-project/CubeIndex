@@ -1,7 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { logError } from "$lib/server/logError";
-import type { Tables } from "$lib/types/database.types";
 
 /**
  * Load data for the authenticated user dashboard.

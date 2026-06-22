@@ -35,8 +35,8 @@
   const sortedUsers = $derived.by(() => {
     const arr = filteredUsers.slice();
     arr.sort((a, b) => {
-      let av: any;
-      let bv: any;
+      let av;
+      let bv;
       switch (sortField) {
         case "cubes":
           av = a.user_cubes_count ?? 0;
@@ -51,8 +51,8 @@
           bv = b.user_follower_count ?? 0;
           break;
         case "name":
-          av = a.display_name;
-          bv = b.display_name;
+          av = a.display_name ?? "";
+          bv = b.display_name ?? "";
           return sortOrder === "asc"
             ? av.localeCompare(bv, undefined, {
                 numeric: true,
@@ -88,11 +88,6 @@
   const totalPages = $derived(
     Math.max(Math.ceil(sortedUsers.length / itemsPerPage), 1),
   );
-
-  $effect(() => {
-    const _ = sortedUsers;
-    currentPage = 1;
-  });
 </script>
 
 <section class="min-h-screen px-6 py-16">
@@ -105,6 +100,7 @@
       bind:searchTerm
       showFilter={false}
       placeholderLabel="Search Users"
+      oninput={() => (currentPage = 1)}
     />
 
     <!-- Controls: items per page & sorting -->
@@ -122,7 +118,7 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      {#each paginatedUsers as profile}
+      {#each paginatedUsers as profile, index (index)}
         {#key paginatedUsers}
           <UserCard {profile} />
         {/key}

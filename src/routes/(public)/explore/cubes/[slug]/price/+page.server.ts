@@ -1,11 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
-export interface PriceHistoryPoint {
-  date: string;
-  price: number;
-}
-
 export const load = (async ({ locals: { supabase, log }, parent }) => {
   const { cube, cube_vendor_links, meta } = await parent();
 
@@ -21,9 +16,9 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
   return {
     cube,
     vendor_links: cube_vendor_links,
-    per_vendor_history: (per_vendor_history ?? []).map((row) => ({
-      vendor_name: row.vendor_name ?? "",
-      price_history: (row.price_history as any as PriceHistoryPoint[]) ?? [],
+    per_vendor_history: per_vendor_history.map((row) => ({
+      vendor_name: row.vendor_name,
+      price_history: row.price_history,
     })),
     meta: {
       ...meta,

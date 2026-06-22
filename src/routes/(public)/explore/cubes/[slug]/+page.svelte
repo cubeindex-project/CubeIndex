@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { formatDate } from "$lib/components/helper_functions/formatDate.js";
 
   let { data } = $props();
@@ -136,7 +137,11 @@
             <div class="text-xs opacity-70">Verified By</div>
             <a
               class="font-medium link"
-              href={verifier.username ? `/user/${verifier.username}` : "#"}
+              href={verifier.username
+                ? resolve("/(public)/user/[username]", {
+                    username: verifier.username,
+                  })
+                : "#"}
             >
               {verifier.display_name ?? "Unknown"}
             </a>
@@ -149,7 +154,11 @@
           <div class="text-xs opacity-70">Submitted By</div>
           <a
             class="font-medium link"
-            href={submitter.username ? `/user/${submitter.username}` : "#"}
+            href={submitter.username
+              ? resolve("/(public)/user/[username]", {
+                  username: submitter.username,
+                })
+              : "#"}
           >
             {submitter.display_name || "Unknown"}
           </a>

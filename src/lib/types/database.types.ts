@@ -103,7 +103,7 @@ export type Database = MergeDeep<
           Row: DatabaseGenerated["public"]["Tables"]["vendors"]["Row"];
         };
         v_price_history: {
-          Row: { price_history: PriceHistory };
+          Row: { vendor_name: string; price_history: PriceHistory[] };
         };
         v_notifications_for_user: {
           Row: {

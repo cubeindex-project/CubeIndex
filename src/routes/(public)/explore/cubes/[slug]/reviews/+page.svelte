@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import StarRating from "$lib/components/rating/starRating.svelte";
   import Avatar from "$lib/components/user/avatar.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.js";
 
   let { data } = $props();
-  let { cube, reviews } = $derived(data);
+  let { reviews } = $derived(data);
 
   const MAX_SUMMARY_CHARS = 180;
 
@@ -26,7 +27,10 @@
       {/if}
     </div>
 
-    <a class="btn btn-primary btn-sm" href="/explore/cubes/{cube.slug}/review">
+    <a
+      class="btn btn-primary btn-sm"
+      href={resolve("/explore/cubes/{cube.slug}/review")}
+    >
       <i class="fa-solid fa-pen-to-square mr-2"></i>
       Write a review
     </a>
@@ -64,7 +68,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                   <a
                     class="link link-hover font-semibold truncate"
-                    href="/user/{review.profile?.username}"
+                    href={resolve("/user/{review.profile?.username}")}
                   >
                     {review.profile?.display_name}
                   </a>
@@ -89,7 +93,7 @@
 
             <div class="flex items-center gap-2">
               <a
-                href="/explore/cubes/{cube.slug}/reviews/{review.id}"
+                href={resolve("/explore/cubes/{cube.slug}/reviews/{review.id}")}
                 class="btn btn-sm btn-primary btn-outline"
                 data-sveltekit-noscroll
                 aria-label="Open full review"
@@ -112,7 +116,9 @@
             {#if review.review.length > MAX_SUMMARY_CHARS}
               <div class="mt-2">
                 <a
-                  href="/explore/cubes/{cube.slug}/reviews/{review.id}"
+                  href={resolve(
+                    "/explore/cubes/{cube.slug}/reviews/{review.id}",
+                  )}
                   class="link link-primary text-sm"
                   data-sveltekit-noscroll
                 >

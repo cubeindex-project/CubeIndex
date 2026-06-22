@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   const { data } = $props();
 
   const { reports, profiles, user_cube_ratings } = $derived(data);
@@ -42,7 +43,7 @@
 
     const q = query.trim().toLowerCase();
     if (q) {
-      list = list.filter((r: any) => {
+      list = list.filter((r) => {
         const reporter = getUser(r.reporter);
         const reporterName = reporter?.username?.toLowerCase?.() ?? "";
         const title = (r.title ?? "").toLowerCase();
@@ -59,7 +60,7 @@
       });
     }
 
-    list.sort((a: any, b: any) => {
+    list.sort((a, b) => {
       const aTime = new Date(a.created_at).getTime();
       const bTime = new Date(b.created_at).getTime();
       return sortOrder === "newest" ? bTime - aTime : aTime - bTime;
@@ -259,12 +260,14 @@
                 </td>
               </tr>
             {/if}
-            {#each visibleReports as r, i}
+            {#each visibleReports as r, i (i)}
               <tr>
                 <td class="text-sm opacity-70 font-mono">{r.id}</td>
                 <td>
                   <a
-                    href="/user/{getUser(r.reporter)?.username ?? ''}"
+                    href={resolve(
+                      "/user/{getUser(r.reporter)?.username ?? ''}",
+                    )}
                     class="link link-primary link-hover"
                   >
                     {getUser(r.reporter)?.username ?? "Unknown"}
@@ -273,7 +276,7 @@
                 <td>
                   {#if r.report_type === "user"}
                     <a
-                      href="/user/{getUser(r.reported)?.id ?? ''}"
+                      href={resolve("/user/{getUser(r.reported)?.id ?? ''}")}
                       class="link link-primary link-hover"
                     >
                       {getUser(r.reported)?.username ?? "Unknown"}'s Account
@@ -284,14 +287,16 @@
                     </a>
                   {:else if r.report_type === "cube"}
                     <a
-                      href="/explore/cubes/{r.reported}"
+                      href={resolve("/explore/cubes/{r.reported}")}
                       class="link link-primary link-hover"
                     >
                       {r.reported}
                     </a>
                   {:else if r.report_type === "cube-rating"}
                     <a
-                      href="/explore/cubes/{findRating(r.reported).cube_slug}"
+                      href={resolve(
+                        "/explore/cubes/{findRating(r.reported).cube_slug}",
+                      )}
                       class="link link-primary link-hover"
                     >
                       {findRating(r.reported).profile.username}'s Cube Rating

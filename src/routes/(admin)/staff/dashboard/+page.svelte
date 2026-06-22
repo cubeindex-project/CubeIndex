@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   let { data } = $props();
   const profile = $derived(data.profile);
 
@@ -80,43 +81,40 @@
 
   const tools = [
     {
-      href: "/staff/cubes",
+      href: resolve("/(admin)/staff/cubes"),
       icon: "🧊",
       label: "Manage Cubes",
       implemented: true,
     },
     {
-      href: "/staff/users",
       icon: "👤",
       label: "Manage Users",
       implemented: false,
     },
     {
-      href: "/staff/badges",
       icon: "🏅",
       label: "Assign Achievements",
       implemented: false,
     },
     {
-      href: "/staff/announcements",
       icon: "📣",
       label: "Manage Announcement",
       implemented: false,
     },
     {
-      href: "/staff/reports",
+      href: resolve("/(admin)/staff/reports"),
       icon: "🚩",
       label: "User Reports",
       implemented: true,
     },
     {
-      href: "/staff/ratings",
+      href: resolve("/(admin)/staff/ratings"),
       icon: "⭐",
       label: "Manage Ratings",
       implemented: true,
     },
     {
-      href: "/staff/logs",
+      href: resolve("/(admin)/staff/logs"),
       icon: "🗃️",
       label: "Staff Logs",
       implemented: true,
@@ -169,7 +167,7 @@
             {currentRole.description}
           </p>
           <ul class="space-y-1 text-sm list-inside list-disc pl-2">
-            {#each currentRole.items as item}
+            {#each currentRole.items as item, index (index)}
               <li>{item}</li>
             {/each}
           </ul>
@@ -188,7 +186,7 @@
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-        {#each tools as tool}
+        {#each tools as tool, index (index)}
           {#if tool.implemented}
             <a href={tool.href} class="card bg-base-300">
               <div class="card-body">

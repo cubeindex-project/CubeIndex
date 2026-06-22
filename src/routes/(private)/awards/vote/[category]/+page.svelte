@@ -195,7 +195,9 @@
                     {/if}
                   </button>
                   <a
-                    href={resolve("/explore/cubes/{nominee.slug}")}
+                    href={resolve("/(public)/explore/cubes/[slug]", {
+                      slug: nominee.slug,
+                    })}
                     class="btn btn-ghost border border-base-300 flex-1 justify-center"
                     aria-label="View Cube Details"
                   >

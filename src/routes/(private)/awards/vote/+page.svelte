@@ -160,7 +160,9 @@
           {#each categories as category (category.id)}
             <a
               class="group rounded-2xl border border-base-200 bg-base-200 p-5 transition hover:border-primary/50 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/40"
-              href={resolve("/awards/vote/{category.slug}")}
+              href={resolve("/(private)/awards/vote/[category]", {
+                category: category.slug,
+              })}
             >
               <div class="flex items-start justify-between gap-3">
                 <div class="space-y-2">

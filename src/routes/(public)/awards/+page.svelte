@@ -183,7 +183,9 @@
         {#if logoDesigner}
           <p class="text-xs italic text-base-content/70">
             Logo designed by <a
-              href={resolve("/user/{logoDesigner.username}")}
+              href={resolve("/(public)/user/[username]", {
+                username: logoDesigner.username ?? "",
+              })}
               class="link"
             >
               {logoDesigner.display_name}

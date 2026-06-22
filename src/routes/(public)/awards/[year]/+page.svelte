@@ -175,7 +175,9 @@
                       <div class="flex flex-col gap-3">
                         <a
                           class="group/thumbnail relative block h-28 w-full max-w-sm overflow-hidden rounded-xl border border-primary/30 bg-base-100 shadow-sm ring-1 ring-primary/20"
-                          href={resolve("/explore/cubes/{winner.cube.slug}")}
+                          href={resolve("/(public)/explore/cubes/[slug]", {
+                            slug: winner.cube.slug,
+                          })}
                         >
                           <img
                             data-hero-key={`cube-image-${winner.cube.id}`}

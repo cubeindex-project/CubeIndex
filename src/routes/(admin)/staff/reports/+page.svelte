@@ -265,9 +265,9 @@
                 <td class="text-sm opacity-70 font-mono">{r.id}</td>
                 <td>
                   <a
-                    href={resolve(
-                      "/user/{getUser(r.reporter)?.username ?? ''}",
-                    )}
+                    href={resolve("/(public)/user/[username]", {
+                      username: getUser(r.reporter)?.username ?? "",
+                    })}
                     class="link link-primary link-hover"
                   >
                     {getUser(r.reporter)?.username ?? "Unknown"}
@@ -276,7 +276,9 @@
                 <td>
                   {#if r.report_type === "user"}
                     <a
-                      href={resolve("/user/{getUser(r.reported)?.id ?? ''}")}
+                      href={resolve("/(public)/user/[username]", {
+                        username: getUser(r.reported)?.username ?? "",
+                      })}
                       class="link link-primary link-hover"
                     >
                       {getUser(r.reported)?.username ?? "Unknown"}'s Account
@@ -287,16 +289,18 @@
                     </a>
                   {:else if r.report_type === "cube"}
                     <a
-                      href={resolve("/explore/cubes/{r.reported}")}
+                      href={resolve("/(public)/explore/cubes/[slug]", {
+                        slug: r.reported,
+                      })}
                       class="link link-primary link-hover"
                     >
                       {r.reported}
                     </a>
                   {:else if r.report_type === "cube-rating"}
                     <a
-                      href={resolve(
-                        "/explore/cubes/{findRating(r.reported).cube_slug}",
-                      )}
+                      href={resolve("/(public)/explore/cubes/[slug]", {
+                        slug: findRating(r.reported).cube_slug,
+                      })}
                       class="link link-primary link-hover"
                     >
                       {findRating(r.reported).profile.username}'s Cube Rating

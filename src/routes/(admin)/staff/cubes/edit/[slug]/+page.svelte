@@ -886,7 +886,9 @@
             {#each cubeTrims ?? [] as trim, index (index)}
               <a
                 class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300"
-                href={resolve("/staff/cubes/edit/{trim.slug}")}
+                href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+                  slug: trim.slug,
+                })}
               >
                 <img
                   src={trim.image_url}
@@ -939,7 +941,9 @@
             {#each sameSeries as seriesCube, index (index)}
               <a
                 class="flex flex-col items-center border rounded-xl px-4 py-2 transition duration-200 focus:outline-none border-base-300 bg-base-200 hover:bg-base-300 w-36"
-                href={resolve("/staff/cubes/edit/{seriesCube.slug}")}
+                href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+                  slug: seriesCube.slug,
+                })}
               >
                 <img
                   src={seriesCube.image_url}

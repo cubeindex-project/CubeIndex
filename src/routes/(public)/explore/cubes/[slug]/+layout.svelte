@@ -263,7 +263,9 @@
         {#each cubeTrims as trim (trim.slug)}
           <li class="min-w-38 snap-start md:min-w-0">
             <a
-              href={resolve("/explore/cubes/{trim.slug}")}
+              href={resolve("/(public)/explore/cubes/[slug]", {
+                slug: trim.slug,
+              })}
               class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
               aria-label={"Open " + trim.version_name}
             >
@@ -308,7 +310,9 @@
 
       <div class="max-w-sm">
         <a
-          href={resolve("/explore/cubes/{relatedCube.slug}")}
+          href={resolve("/(public)/explore/cubes/[slug]", {
+            slug: relatedCube.slug,
+          })}
           class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
           aria-label={"Open " + (relatedCube.series + " " + relatedCube.model)}
         >
@@ -364,7 +368,9 @@
           {#each sameSeries as seriesCube (seriesCube.slug)}
             <li class="w-48 shrink-0 snap-start">
               <a
-                href={resolve("/explore/cubes/{seriesCube.slug}")}
+                href={resolve("/(public)/explore/cubes/[slug]", {
+                  slug: seriesCube.slug,
+                })}
                 class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
                 aria-label={"Open " +
                   (seriesCube.series + " " + seriesCube.model)}

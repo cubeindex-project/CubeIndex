@@ -19,7 +19,7 @@
     | "Submissions";
 
   interface ProfileTabs {
-    link: string;
+    link: "" | "/stats" | "/achievements" | "/ratings" | "/reviews" | "/social";
     title: ProfileTabsTitle;
   }
 
@@ -98,7 +98,7 @@
 
   const tabs: ProfileTabs[] = [
     {
-      link: "/",
+      link: "",
       title: "Collection",
     },
     {
@@ -183,7 +183,12 @@
 
             <div class="flex flex-wrap gap-1 items-center">
               <a
-                href={resolve("/user/{profile.username}/social?tab=followers")}
+                href={resolve(
+                  "/(public)/user/[username]/social?tab=followers",
+                  {
+                    username: profile.username ?? "",
+                  },
+                )}
               >
                 <i class="fa-solid fa-users text-xs opacity-70"></i>
                 <span class="text-sm">
@@ -293,7 +298,9 @@
     >
       {#each tabs as tab, index (index)}
         <a
-          href={resolve("/user/{profile.username}{tab.link}")}
+          href={resolve(`/(public)/user/[username]${tab.link}`, {
+            username: profile.username ?? "",
+          })}
           class="hover:text-primary border-0 {activeTab === tab.title
             ? 'border-b-4'
             : ''} border-primary"

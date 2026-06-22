@@ -28,3 +28,6 @@ src/lib/paraglide
 
 # VSCode
 .vscode
+
+# Zed
+.zed

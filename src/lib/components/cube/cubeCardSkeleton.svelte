@@ -1,4 +1,5 @@
 ﻿<script lang="ts">
+  import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
@@ -42,7 +43,7 @@
   class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col h-full"
 >
   {@render top?.()}
-  <a href="/explore/cubes/{cube.slug}">
+  <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
     <img
       data-hero-key={`cube-image-${cube.id}`}
       src={preloadImage}

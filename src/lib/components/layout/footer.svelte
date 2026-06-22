@@ -1,3 +1,8 @@
+<script lang="ts">
+  import { resolve } from "$app/paths";
+  import type { ResolvedPathname } from "$app/types";
+</script>
+
 <footer
   class="relative overflow-hidden bg-base-100 px-6 pt-12 h-full"
   aria-label="Footer"
@@ -24,7 +29,7 @@
     <div class="max-w-6xl mx-auto md:mt-[10%] grid grid-cols-1 md:grid-cols-4">
       <!-- Brand Info -->
       <div class="border-r border-base-200/60 bg-base-100/60 p-5">
-        <a href="/">
+        <a href={resolve("/")}>
           <div class="flex items-center gap-2 mb-4">
             <img
               src="/images/CubeIndex_Logo.webp"
@@ -50,12 +55,18 @@
           Navigation
         </h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/" class="link link-hover">Home</a></li>
-          <li><a href="/explore" class="link link-hover">Explore</a></li>
+          <li><a href={resolve("/")} class="link link-hover">Home</a></li>
           <li>
-            <a href="/achievements" class="link link-hover">Achievements</a>
+            <a href={resolve("/explore")} class="link link-hover">Explore</a>
           </li>
-          <li><a href="/report" class="link link-hover">Report</a></li>
+          <li>
+            <a href={resolve("/explore/achievements")} class="link link-hover">
+              Achievements
+            </a>
+          </li>
+          <li>
+            <a href={resolve("/report")} class="link link-hover">Report</a>
+          </li>
         </ul>
       </div>
 
@@ -69,7 +80,7 @@
         <ul class="space-y-2 text-sm">
           <li>
             <a
-              href="/discord"
+              href={resolve("/discord")}
               target="_blank"
               rel="noopener noreferrer"
               class="link link-hover">Discord</a
@@ -115,9 +126,24 @@
           Legal
         </h3>
         <ul class="space-y-2 text-sm">
-          <li><a href="/tos" class="link link-hover">Terms of Service</a></li>
-          <li><a href="/privacy" class="link link-hover">Privacy Policy</a></li>
-          <li><a href="/sitemap.xml" class="link link-hover">Sitemap</a></li>
+          <li>
+            <a href={resolve("/tos")} class="link link-hover">
+              Terms of Service
+            </a>
+          </li>
+          <li>
+            <a href={resolve("/privacy")} class="link link-hover">
+              Privacy Policy
+            </a>
+          </li>
+          <li>
+            <a
+              href={"/sitemap.xml" as ResolvedPathname}
+              class="link link-hover"
+            >
+              Sitemap
+            </a>
+          </li>
         </ul>
       </div>
     </div>

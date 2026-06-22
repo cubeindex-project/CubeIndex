@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
   import { onMount } from "svelte";
@@ -49,7 +50,7 @@
 <nav class="dock bg-base-100/80 backdrop-blur md:hidden z-50">
   <a
     class:dock-active={pathname === "/" || pathname === "/dashboard"}
-    href="/"
+    href={resolve("/")}
     aria-label="Home"
   >
     <i class="fa-solid fa-house"></i>
@@ -58,7 +59,7 @@
 
   <a
     class:dock-active={pathname.startsWith("/explore")}
-    href="/explore"
+    href={resolve("/explore")}
     aria-label="Explore"
   >
     <i class="fa-solid fa-compass"></i>
@@ -67,7 +68,7 @@
 
   <a
     class:dock-active={pathname === "/notifications"}
-    href="/notifications"
+    href={resolve("/notifications")}
     aria-label="Notifications"
     class="relative"
   >
@@ -95,7 +96,7 @@
   {#if profile}
     <a
       class:dock-active={pathname === `/user/${profile.username}`}
-      href={`/user/${profile.username}`}
+      href={resolve(`/user/${profile.username}`)}
       aria-label="Profile"
     >
       <i class="fa-solid fa-user"></i>
@@ -104,7 +105,7 @@
   {:else}
     <a
       class:dock-active={pathname === "/auth/login"}
-      href="/auth/login"
+      href={resolve("/auth/login")}
       aria-label="Login"
     >
       <i class="fa-solid fa-right-to-bracket"></i>

@@ -6,6 +6,8 @@
   import Tag from "../misc/tag.svelte";
   import ExplorePopover from "./ExplorePopover.svelte";
   import { page } from "$app/state";
+  import { resolve } from "$app/paths";
+  import type { ResolvedPathname } from "$app/types";
 
   let { profile } = $props();
 
@@ -14,12 +16,6 @@
   let isOpen = $state(false);
   let signOutConfirmation = $state(false);
   let mobileUserMenuOpen = $state(false);
-
-  // Utility: close all mobile-only UI bits
-  function closeMobileMenus() {
-    isOpen = false;
-    mobileUserMenuOpen = false;
-  }
 
   let hasUnread = $state(false);
   const isEmailVerified = $derived(profile?.verified ?? false);
@@ -62,19 +58,23 @@
 
   interface NavLink {
     name: string;
-    href: string;
+    href: ResolvedPathname;
     icon?: string;
     emphasis?: boolean;
     pc: boolean;
   }
 
   const navLinks: NavLink[] = [
-    { name: "Explore", href: "/explore", icon: "fa-compass", pc: false },
+    {
+      name: "Explore",
+      href: resolve("/explore"),
+      icon: "fa-compass",
+      pc: false,
+    },
     {
       name: "Awards",
-      href: "/awards",
+      href: resolve("/awards"),
       icon: "fa-award",
-      // emphasis: true,
       pc: true,
     },
   ];
@@ -113,7 +113,7 @@
    */
   interface ProfileMenuItem {
     label: string;
-    href: string;
+    href: ResolvedPathname;
     tag?: ProfileMenuItemTag;
   }
 
@@ -125,7 +125,10 @@
     role: string;
   }): ProfileMenuItem[] {
     const items: ProfileMenuItem[] = [
-      { label: "Profile", href: `/user/${p.username}` },
+      {
+        label: "Profile",
+        href: resolve(`/(public)/user/[username]`, { username: p.username }),
+      },
       { label: "Settings", href: "/user/settings" },
       {
         label: "Userbar",
@@ -218,7 +221,7 @@
   >
     <!-- Logo -->
     <a
-      href="/"
+      href={resolve("/")}
       class="flex items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 hover:opacity-90 transition"
       aria-label="CubeIndex Home"
     >
@@ -252,7 +255,7 @@
             tabindex="0"
           >
             <a
-              href="/explore"
+              href={resolve("/explore")}
               class="inline-flex items-center gap-1.5 text-sm text-base-content/80 hover:text-base-content transition focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30 rounded-lg px-3 py-1.5 hover:bg-base-200/60"
               id="explore-menu-button"
               aria-haspopup="menu"
@@ -342,7 +345,7 @@
 
           <div class="relative inline-block">
             <a
-              href="/notifications"
+              href={resolve("/notifications")}
               class="btn btn-ghost btn-circle btn-lg focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
               aria-label="Notifications"
               onclick={() => {
@@ -372,7 +375,7 @@
           </div>
         {:else}
           <a
-            href="/auth/login"
+            href={resolve("/auth/login")}
             class="rounded-xl bg-primary text-primary-content px-4 py-2 text-sm transition"
           >
             Login
@@ -430,7 +433,7 @@
               </div>
               <div class="flex flex-col px-2 py-1">
                 <a
-                  href="/user/settings"
+                  href={resolve("/user/settings")}
                   class="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
                   data-menu-focus-target
                   onclick={() => (mobileUserMenuOpen = false)}
@@ -440,7 +443,7 @@
                 </a>
                 {#if profile.role !== "User"}
                   <a
-                    href="/staff/dashboard"
+                    href={resolve("/staff/dashboard")}
                     class="flex items-center justify-between rounded-xl px-3 py-2 text-sm hover:bg-base-200 focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/30"
                     onclick={() => (mobileUserMenuOpen = false)}
                   >

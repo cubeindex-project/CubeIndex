@@ -3,8 +3,16 @@
   import { fade, scale } from "svelte/transition";
   import StarRating from "./starRating.svelte";
   import { page } from "$app/state";
+  import type { Tables } from "$lib/types/database.types";
 
-  let { onCancel, cube, rating = 0, comment = "" } = $props();
+  interface Props {
+    onCancel: () => void;
+    cube: Tables<"cube_models">;
+    rating?: number;
+    comment?: string;
+  }
+
+  let { onCancel, cube, rating = 0, comment = "" }: Props = $props();
 
   const user = $derived(page.data.user);
 
@@ -95,8 +103,11 @@
           data?.error || "Unable to submit rating. Please try again.",
         );
       }
-    } catch (err: any) {
-      formMessage = err?.message ?? "Unexpected error. Please try again.";
+    } catch (err) {
+      formMessage =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error. Please try again.";
     } finally {
       isSubmitting = false;
     }

@@ -48,6 +48,6 @@
 >
   <i class="fa-solid fa-share"></i>
   {#if label}
-    <span class={"ml-2"}>{label}</span>
+    <span class="ml-2">{label}</span>
   {/if}
 </button>

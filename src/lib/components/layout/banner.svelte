@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { onMount } from "svelte";
 
   const storageKey = "showCubeAwardsBanner";
@@ -48,7 +49,7 @@
 
       <div class="flex items-center gap-3 justify-end">
         <a
-          href="/awards"
+          href={resolve("/awards")}
           onclick={hideBanner}
           class="btn btn-accent btn-md w-full md:w-fit"
         >

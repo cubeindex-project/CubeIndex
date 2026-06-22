@@ -62,8 +62,9 @@
       } else {
         throw new Error(data.error);
       }
-    } catch (err: any) {
-      formMessage = err.message;
+    } catch (err) {
+      formMessage =
+        err instanceof Error ? err.message : "An unknown error occurred";
     } finally {
       isSubmitting = false;
     }

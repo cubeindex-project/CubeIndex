@@ -164,8 +164,11 @@
           data?.error || "Unable to add the cube. Please try again.",
         );
       }
-    } catch (err: any) {
-      formMessage = err?.message ?? "Unexpected error. Please try again.";
+    } catch (err) {
+      formMessage =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error. Please try again.";
     } finally {
       isSubmitting = false;
     }

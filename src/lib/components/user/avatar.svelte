@@ -14,7 +14,7 @@
   let imageLoaded = $state(Boolean(profile.profile_picture));
 
   onMount(() => {
-    window.addEventListener("load", (event) => {
+    window.addEventListener("load", () => {
       imageLoaded = image?.complete ?? false;
     });
   });

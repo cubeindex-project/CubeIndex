@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
-export const load = (async ({ params, locals: { supabase, log }, parent }) => {
+export const load = (async ({ locals: { supabase, log }, parent }) => {
   const { profile, meta, canViewProfile } = await parent();
 
   if (!canViewProfile) {

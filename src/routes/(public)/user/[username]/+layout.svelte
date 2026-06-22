@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import RoleBadge from "$lib/components/user/roleBadge.svelte";
   import Report from "$lib/components/report/report.svelte";
   import { formatDate } from "$lib/components/helper_functions/formatDate.js";
@@ -181,7 +182,9 @@
             </p>
 
             <div class="flex flex-wrap gap-1 items-center">
-              <a href="/user/{profile.username}/social?tab=followers">
+              <a
+                href={resolve("/user/{profile.username}/social?tab=followers")}
+              >
                 <i class="fa-solid fa-users text-xs opacity-70"></i>
                 <span class="text-sm">
                   {stats.followersCount}
@@ -191,7 +194,9 @@
 
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
-              <a href="/user/{profile.username}/social?tab=following">
+              <a
+                href={resolve("/user/{profile.username}/social?tab=following")}
+              >
                 <span class="text-sm">
                   {stats.followingCount}
                   <span class="opacity-70"> following </span>
@@ -228,7 +233,7 @@
               </div>
               {#if user?.id === profile.user_id}
                 <a
-                  href="/user/settings"
+                  href={resolve("/user/settings")}
                   class="flex items-center gap-2 p-2 btn btn-ghost"
                   aria-label="User Settings"
                   title="User Settings"
@@ -260,11 +265,11 @@
         {#if socialsList.length}
           <div class="mt-4">
             <div class="flex flex-wrap gap-3">
-              {#each socialsList as { href, icon, bg, isImg, label }}
+              {#each socialsList as { href, icon, bg, isImg, label }, index (index)}
                 <a
                   {href}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener external"
                   class={`flex items-center gap-2 px-4 py-2 rounded-full ${bg} hover:opacity-90 text-white font-medium shadow`}
                 >
                   {#if isImg}
@@ -286,9 +291,9 @@
     <div
       class="flex sm:justify-center bg-base-200 w-full p-5 gap-10 overflow-scroll md:overflow-hidden"
     >
-      {#each tabs as tab}
+      {#each tabs as tab, index (index)}
         <a
-          href="/user/{profile.username}{tab.link}"
+          href={resolve("/user/{profile.username}{tab.link}")}
           class="hover:text-primary border-0 {activeTab === tab.title
             ? 'border-b-4'
             : ''} border-primary"
@@ -302,7 +307,7 @@
       {/each}
       {#if user?.id === profile.user_id}
         <a
-          href="/user/submissions"
+          href={resolve("/user/submissions")}
           class="hover:text-primary border-0 {activeTab === 'Submissions'
             ? 'border-b-4'
             : ''} border-primary"

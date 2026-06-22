@@ -90,11 +90,6 @@
     const end = start + itemsPerPage;
     return sorted.slice(start, end);
   });
-
-  $effect(() => {
-    const _ = [filtered];
-    currentPage = 1;
-  });
 </script>
 
 <div class="relative mx-auto mt-12 max-w-6xl px-4">
@@ -140,6 +135,7 @@
     showFilter={false}
     bind:searchTerm
     placeholderLabel="Search achievements"
+    oninput={() => (currentPage = 1)}
   />
 
   {#if total > 0}

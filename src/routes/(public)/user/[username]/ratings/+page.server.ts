@@ -18,7 +18,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   const { data: user_cube_ratings, error: urErr } = await supabase
     .from("user_cube_ratings")
     .select(
-      "*, cube_model:cube_slug(*), profile:user_id(username, display_name)",
+      "*, cube_model:v_detailed_cube_models!cube_slug(*), profile:user_id(username, display_name)",
     )
     .eq("user_id", profile.user_id);
 

@@ -4,6 +4,7 @@
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
   import { queryParameters } from "sveltekit-search-params";
+  import { resolve } from "$app/paths";
 
   type SocialTabs = "following" | "followers";
 
@@ -58,11 +59,6 @@
     const end = start + itemsPerPage;
     return filtered.slice(start, end);
   });
-
-  $effect(() => {
-    const _ = [filtered, tab];
-    currentPage = 1;
-  });
 </script>
 
 <div class="max-w-6xl mx-auto mt-12 px-4">
@@ -83,7 +79,10 @@
           class="btn btn-sm join-item {tab === 'followers'
             ? 'btn-active'
             : 'btn-ghost'}"
-          onclick={() => ($params.tab = "followers")}
+          onclick={() => {
+            $params.tab = "followers";
+            currentPage = 1;
+          }}
         >
           Followers
         </button>
@@ -92,7 +91,10 @@
           class="btn btn-sm join-item {isFollowingTab
             ? 'btn-active'
             : 'btn-ghost'}"
-          onclick={() => ($params.tab = "following")}
+          onclick={() => {
+            $params.tab = "following";
+            currentPage = 1;
+          }}
         >
           Following
         </button>
@@ -129,7 +131,12 @@
         <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
           {#each paginated as f (f.user_id)}
             <li>
-              <a class="group block" href="/user/{f.username}">
+              <a
+                class="group block"
+                href={resolve("/(public)/user/[username]", {
+                  username: f.username ?? "",
+                })}
+              >
                 <article
                   class="relative overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-4 shadow-sm transition hover:shadow-md"
                 >
@@ -224,7 +231,7 @@
             {/if}
           </p>
           {#if isFollowingTab && profile.user_id === user?.id}
-            <a href="/explore/users" class="btn btn-primary">
+            <a href={resolve("/explore/users")} class="btn btn-primary">
               Find users to follow
             </a>
           {:else if isFollowersTab && profile.user_id !== user?.id}

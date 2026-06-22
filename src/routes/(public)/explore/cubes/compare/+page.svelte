@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { formatDate } from "$lib/components/helper_functions/formatDate.js";
   import type { Tables } from "$lib/types/database.types.js";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
@@ -6,7 +7,7 @@
   type Field = {
     label: string;
     key: string;
-    format?: (value: any) => string;
+    format?: (value: never) => string;
     boolean?: boolean;
   };
 
@@ -41,13 +42,18 @@
     { label: "Size (mm3)", key: "size", format: formatFloat },
   ];
 
-  let options: { label: string; value: string }[] = $state([]);
-
-  let cube1: Tables<"v_detailed_cube_models"> | null = $state(null);
-  let cube2: Tables<"v_detailed_cube_models"> | null = $state(null);
+  const options = $derived(
+    cubes.map((c) => ({
+      label: `${c.series} ${c.model} ${c.version_name}`,
+      value: c.slug,
+    })),
+  );
 
   let cube1Value: string = $state("");
   let cube2Value: string = $state("");
+
+  const cube1 = $derived(cubes.find((c) => c.slug === cube1Value) ?? null);
+  const cube2 = $derived(cubes.find((c) => c.slug === cube2Value) ?? null);
 
   function swapSelections() {
     const a = cube1Value;
@@ -74,7 +80,7 @@
   function getValue(c: Tables<"v_detailed_cube_models">, f: Field) {
     if (!c) return "-";
     const raw = c[f.key as keyof Tables<"v_detailed_cube_models">];
-    return f.format ? f.format(raw) : (raw ?? "-");
+    return f.format ? f.format(raw as never) : (raw ?? "-");
   }
 
   function differs(f: Field) {
@@ -83,23 +89,6 @@
     const b = getValue(cube2, f);
     return String(a) !== String(b);
   }
-
-  $effect(() => {
-    options = cubes.map((c) => ({
-      label: `${c.series} ${c.model} ${c.version_name}`,
-      value: c.slug,
-    }));
-  });
-
-  $effect(() => {
-    const _ = cube1Value;
-    cube1 = cubes.find((c) => c.slug === cube1Value) ?? null;
-  });
-
-  $effect(() => {
-    const _ = cube2Value;
-    cube2 = cubes.find((c) => c.slug === cube2Value) ?? null;
-  });
 </script>
 
 <section class="min-h-screen px-4 py-12">
@@ -188,16 +177,16 @@
                 <span class="flex flex-col items-center">
                   <img
                     src={cube1.image_url}
-                    alt="{cube1.series} {cube1.model} {cube1.version_name}"
+                    alt={cube1.name}
                     class="h-24 rounded-xl mb-2 border border-base-300 bg-base-100 object-cover"
                   />
                   <a
                     class="link font-medium"
-                    href={`/explore/cubes/${cube1.slug}`}
+                    href={resolve("/(public)/explore/cubes/[slug]", {
+                      slug: cube1.slug,
+                    })}
                   >
-                    {cube1.series}
-                    {cube1.model}
-                    {cube1.version_name}
+                    {cube1.name}
                   </a>
                 </span>
               {:else}
@@ -212,16 +201,16 @@
                 <span class="flex flex-col items-center">
                   <img
                     src={cube2.image_url}
-                    alt="{cube2.series} {cube2.model} {cube2.version_name}"
+                    alt={cube2.name}
                     class="h-24 rounded-xl mb-2 border border-base-300 bg-base-100 object-cover"
                   />
                   <a
                     class="link font-medium"
-                    href={`/explore/cubes/${cube2.slug}`}
+                    href={resolve(`/(public)/explore/cubes/[slug]`, {
+                      slug: cube2.slug,
+                    })}
                   >
-                    {cube2.series}
-                    {cube2.model}
-                    {cube2.version_name}
+                    {cube2.name}
                   </a>
                 </span>
               {:else}
@@ -231,9 +220,13 @@
           </tr>
         </thead>
         <tbody>
-          {#each fields as field}
+          {#each fields as field, index (index)}
             <tr
-              class={`border-b border-base-300 last:border-b-0 transition ${differs(field) ? "bg-base-100" : ""}`}
+              class="border-b border-base-300 last:border-b-0 transition {differs(
+                field,
+              )
+                ? 'bg-base-100'
+                : ''}"
             >
               <td class="py-3 px-4 font-medium">
                 {field.label}

@@ -10,10 +10,8 @@ export const POST: RequestHandler = async ({
 
   const {
     cube_slug,
-    user_id,
   }: {
     cube_slug: string;
-    user_id: string | undefined;
   } = await request.json();
 
   const { error: err } = await supabase

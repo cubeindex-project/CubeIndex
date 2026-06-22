@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { superForm } from "sveltekit-superforms";
   import { passwordStrength } from "$lib/components/helper_functions/passwordStrength";
   import { Turnstile } from "svelte-turnstile";
@@ -77,7 +78,7 @@
         <ol
           class="steps steps-vertical sm:steps-horizontal w-full mb-6 sm:mb-8 text-xs sm:text-sm"
         >
-          {#each steps as s}
+          {#each steps as s, index (index)}
             <li
               class="step"
               class:step-primary={isActive(s.key) || isDone(s.key)}
@@ -162,7 +163,9 @@
                   <ul
                     class="mt-1 text-xs opacity-70 list-disc ml-5 space-y-0.5"
                   >
-                    {#each pwSuggestions.slice(0, 3) as s}<li>{s}</li>{/each}
+                    {#each pwSuggestions.slice(0, 3) as s, index (index)}<li>
+                        {s}
+                      </li>{/each}
                   </ul>
                 {/if}
               </div>
@@ -195,12 +198,16 @@
               />
               <div class="text-sm select-none">
                 I accept the
-                <a href="/tos" target="_blank" class="link link-primary"
-                  >Terms of Service</a
+                <a
+                  href={resolve("/tos")}
+                  target="_blank"
+                  class="link link-primary">Terms of Service</a
                 >
                 and
-                <a href="/privacy" target="_blank" class="link link-primary"
-                  >Privacy Policy</a
+                <a
+                  href={resolve("/privacy")}
+                  target="_blank"
+                  class="link link-primary">Privacy Policy</a
                 >
               </div>
             </div>
@@ -229,7 +236,7 @@
             <div class="divider">or</div>
 
             <a
-              href="/auth/discord"
+              href={resolve("/auth/discord")}
               class="btn btn-lg sm:btn-xl bg-[#5865F2] text-white w-full"
             >
               <i class="fa-brands fa-discord text-2xl"></i>
@@ -352,7 +359,7 @@
               <label class="block text-sm font-medium">
                 What features interest you the most?
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {#each [["price_tracking", "Price tracking"], ["collection_management", "Collection management"], ["ratings_reviews", "Ratings & reviews"], ["shop_compare", "Shop compare"], ["alerts_discord", "Discord alerts"], ["achievements", "Achievements"]] as [val, label]}
+                  {#each [["price_tracking", "Price tracking"], ["collection_management", "Collection management"], ["ratings_reviews", "Ratings & reviews"], ["shop_compare", "Shop compare"], ["alerts_discord", "Discord alerts"], ["achievements", "Achievements"]] as [val, label], index (index)}
                     <label
                       class="flex gap-2 items-center p-2 rounded-lg border border-base-300"
                     >
@@ -416,7 +423,8 @@
               start tracking your collection, compare shops, and get price-drop
               alerts on Discord.
             </p>
-            <a href="/explore" class="btn btn-primary mt-2">Start Collecting!</a
+            <a href={resolve("/explore")} class="btn btn-primary mt-2"
+              >Start Collecting!</a
             >
           </div>
         {/if}
@@ -424,7 +432,9 @@
         <!-- Existing login hint -->
         <p class="text-sm text-center mt-6">
           Already have an account?
-          <a href="/auth/login" class="link link-primary link-hover">Log in</a>
+          <a href={resolve("/auth/login")} class="link link-primary link-hover"
+            >Log in</a
+          >
         </p>
       </div>
     </div>

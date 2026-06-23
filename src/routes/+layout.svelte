@@ -9,7 +9,6 @@
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import { page } from "$app/state";
-  import DOMPurify from "dompurify";
   import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
 
   let { data, children } = $props();
@@ -79,9 +78,7 @@
   {#if meta.jsonLd}
     <!-- The weird syntax is to not make Svelte parser choke on the </script> which will create a ESLint error -->
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-    {@html DOMPurify.sanitize(
-      `<${`script type="application/ld+json">`}${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`,
-    )}
+    {@html `<${`script type="application/ld+json">`}${JSON.stringify(meta.jsonLd).replace(/</g, "\\u003c")}</script>`}
   {/if}
 
   <meta property="og:title" content={meta.ogTitle} />

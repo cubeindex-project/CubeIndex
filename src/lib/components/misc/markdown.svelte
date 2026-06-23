@@ -1,7 +1,7 @@
 <script lang="ts">
   import Markdown from "svelte-exmarkdown";
   import "github-markdown-css/github-markdown.css";
-  import DOMPurify from "isomorphic-dompurify";
+  import DOMPurify from "dompurify";
   import { gfmPlugin } from "svelte-exmarkdown/gfm";
 
   const plugins = [gfmPlugin()];

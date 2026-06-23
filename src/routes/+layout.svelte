@@ -9,7 +9,7 @@
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import { page } from "$app/state";
-  import DOMPurify from "isomorphic-dompurify";
+  import DOMPurify from "dompurify";
   import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
 
   let { data, children } = $props();

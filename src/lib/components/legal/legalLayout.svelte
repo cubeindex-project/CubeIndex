@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DOMPurify from "isomorphic-dompurify";
+  import DOMPurify from "dompurify";
 
   /**
    * A content section in a legal document page.

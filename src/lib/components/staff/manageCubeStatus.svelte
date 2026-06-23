@@ -108,8 +108,7 @@
               bind:value={otherNote}
               class="textarea textarea-bordered rounded-2xl w-full h-32 mt-3"
               required
-              transition:blur
-            ></textarea>
+              transition:blur></textarea>
           {/if}
         </label>
       </div>

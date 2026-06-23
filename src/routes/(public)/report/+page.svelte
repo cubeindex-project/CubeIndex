@@ -273,8 +273,7 @@
                     bind:value={bug.expected}
                     class="textarea textarea-bordered rounded-xl min-h-[40px]"
                     maxlength="200"
-                    placeholder="What did you expect to happen?"
-                  ></textarea>
+                    placeholder="What did you expect to happen?"></textarea>
                 </label>
                 <label class="flex flex-col gap-1">
                   <span class="font-semibold">Actual Behavior</span>
@@ -282,8 +281,7 @@
                     bind:value={bug.actual}
                     class="textarea textarea-bordered rounded-xl min-h-[40px]"
                     maxlength="200"
-                    placeholder="What actually happened?"
-                  ></textarea>
+                    placeholder="What actually happened?"></textarea>
                 </label>
               </div>
 
@@ -293,8 +291,7 @@
                   bind:value={bug.extra}
                   class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
                   maxlength="250"
-                  placeholder="Anything else? (optional)"
-                ></textarea>
+                  placeholder="Anything else? (optional)"></textarea>
               </label>
               <div class="flex justify-end gap-2">
                 <button
@@ -354,8 +351,7 @@
                   bind:value={feature.description}
                   required
                   class="textarea textarea-bordered rounded-xl min-h-[60px] w-full"
-                  maxlength="400"
-                ></textarea>
+                  maxlength="400"></textarea>
                 <span class="text-xs text-base-content/60"
                   >Explain what the feature does</span
                 >
@@ -366,8 +362,7 @@
                 <textarea
                   bind:value={feature.useCase}
                   class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
-                  maxlength="200"
-                ></textarea>
+                  maxlength="200"></textarea>
                 <span class="text-xs text-base-content/60"
                   >How would you use it?</span
                 >
@@ -390,8 +385,7 @@
                 <textarea
                   bind:value={feature.extra}
                   class="textarea textarea-bordered rounded-xl min-h-[40px] w-full"
-                  maxlength="250"
-                ></textarea>
+                  maxlength="250"></textarea>
               </label>
 
               <div class="flex justify-end gap-2">

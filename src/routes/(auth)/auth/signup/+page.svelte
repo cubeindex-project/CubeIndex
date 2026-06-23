@@ -390,8 +390,7 @@
                   bind:value={$survey.other_text}
                   class="textarea w-full"
                   rows="3"
-                  placeholder="Optional"
-                ></textarea>
+                  placeholder="Optional"></textarea>
               </label>
               {#if $surveyErrors.other_text}
                 <span class="text-error">

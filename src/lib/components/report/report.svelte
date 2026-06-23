@@ -188,8 +188,7 @@ Add any other context about the problem here.`;
             bind:value={comment}
             class="textarea textarea-bordered rounded-2xl w-full min-h-28"
             maxlength="2000"
-            required
-          ></textarea>
+            required></textarea>
         </label>
 
         <label class="form-control">

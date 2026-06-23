@@ -177,8 +177,7 @@
           class="textarea textarea-bordered rounded-2xl w-full resize-y pr-12"
           aria-describedby="char-meter"
           maxlength={MAX + 100}
-          bind:this={firstFocusable}
-        ></textarea>
+          bind:this={firstFocusable}></textarea>
 
         <!-- Character meter -->
         <div class="absolute bottom-3 right-3 grid place-items-center">

@@ -17,9 +17,7 @@ export const load: PageServerLoad = async ({
   const { slug } = params;
   const log = createLogger({ scope: "staff-cube-edit-load", slug });
 
-  let cube: Tables<"cube_models"> = {} as Tables<"cube_models">;
-
-  const { data, error: cErr } = await supabase
+  const { data: cube, error: cErr } = await supabase
     .from("cube_models")
     .select("*")
     .eq("slug", slug)
@@ -28,8 +26,6 @@ export const load: PageServerLoad = async ({
   if (cErr) {
     return logError(500, "Failed to load cube details", log, cErr);
   }
-
-  cube = data;
 
   const { data: cubeTrims, error: ctErr } = await supabase
     .from("cube_models")

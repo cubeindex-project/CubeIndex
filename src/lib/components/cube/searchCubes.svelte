@@ -12,6 +12,7 @@
     disabled?: boolean;
   }
 
+  // eslint-disable-next-line no-useless-assignment
   let { cubes, outputVar = $bindable(), disabled }: Props = $props();
 
   const fuse = $derived.by(

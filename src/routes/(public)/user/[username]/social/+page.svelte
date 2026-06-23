@@ -3,21 +3,22 @@
   import Avatar from "$lib/components/user/avatar.svelte";
   import SearchBar from "$lib/components/misc/searchBar.svelte";
   import Pagination from "$lib/components/misc/pagination.svelte";
-  import { queryParameters } from "sveltekit-search-params";
   import { resolve } from "$app/paths";
+  import { parseAsStringLiteral, useQueryState } from "nuqs-svelte";
 
-  type SocialTabs = "following" | "followers";
+  const SOCIAL_TABS = ["following", "followers"] as const;
 
   let { data } = $props();
   const { profile, user, followers, following, isFollowing } = $derived(data);
 
-  const params = queryParameters({ tab: true }, { pushHistory: false });
-
   // Tabs
-  const tab = $derived(($params.tab ?? "followers") as SocialTabs);
+  const tab = useQueryState(
+    "tab",
+    parseAsStringLiteral(SOCIAL_TABS).withDefault("followers"),
+  );
 
-  const isFollowingTab = $derived(tab === "following");
-  const isFollowersTab = $derived(tab === "followers");
+  const isFollowingTab = $derived(tab.current === "following");
+  const isFollowersTab = $derived(tab.current === "followers");
 
   // Search & Filters
   let searchTerm: string = $state("");
@@ -76,11 +77,11 @@
       <div class="join">
         <button
           type="button"
-          class="btn btn-sm join-item {tab === 'followers'
+          class="btn btn-sm join-item {tab.current === 'followers'
             ? 'btn-active'
             : 'btn-ghost'}"
           onclick={() => {
-            $params.tab = "followers";
+            tab.current = "followers";
             currentPage = 1;
           }}
         >
@@ -92,7 +93,7 @@
             ? 'btn-active'
             : 'btn-ghost'}"
           onclick={() => {
-            $params.tab = "following";
+            tab.current = "following";
             currentPage = 1;
           }}
         >

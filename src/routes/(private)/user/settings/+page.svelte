@@ -2,17 +2,20 @@
   import { resolve } from "$app/paths";
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
-  import { queryParameters } from "sveltekit-search-params";
   import Avatar from "$lib/components/user/avatar.svelte";
+  import { parseAsStringLiteral, useQueryState } from "nuqs-svelte";
 
-  type SettingTabsId =
-    | "profile"
-    | "social"
-    | "security"
-    | "appearance"
-    | "about";
+  const SETTINGS_TABS = [
+    "profile",
+    "social",
+    "security",
+    "appearance",
+    "about",
+  ] as const;
 
-  type TabItem = { id: SettingTabsId; label: string; icon: string };
+  type SettingTabs = (typeof SETTINGS_TABS)[number];
+
+  type TabItem = { id: SettingTabs; label: string; icon: string };
 
   // Props & initial state
   let { data } = $props();
@@ -59,9 +62,10 @@
     resetForm: true,
   });
 
-  const params = queryParameters({ tab: true }, { pushHistory: false });
-
-  let tab = $derived(($params.tab ?? "profile") as SettingTabsId);
+  let tab = useQueryState(
+    "tab",
+    parseAsStringLiteral(SETTINGS_TABS).withDefault("profile"),
+  );
 
   const tabs: TabItem[] = [
     { id: "profile", label: "Profile", icon: "fa-solid fa-user" },
@@ -304,12 +308,12 @@
               type="button"
               role="tab"
               class="tab gap-2 shrink-0 snap-start group focus:outline-none focus-visible:ring focus-visible:ring-primary/40"
-              class:tab-active={tab === it.id}
-              aria-selected={tab === it.id}
-              aria-current={tab === it.id ? "page" : undefined}
-              tabindex={tab === it.id ? 0 : -1}
+              class:tab-active={tab.current === it.id}
+              aria-selected={tab.current === it.id}
+              aria-current={tab.current === it.id ? "page" : undefined}
+              tabindex={tab.current === it.id ? 0 : -1}
               onclick={() => {
-                $params.tab = it.id;
+                tab.current = it.id;
               }}
             >
               <i
@@ -324,7 +328,7 @@
       <!-- Right Content -->
       <div class="flex-1 space-y-8 min-h-screen">
         <div class="card bg-base-100 shadow-sm">
-          {#if tab === "profile"}
+          {#if tab.current === "profile"}
             <!-- Profile Information -->
             <div class="card-body">
               <h2 class="card-title">Profile Information</h2>
@@ -505,7 +509,7 @@
                 </div>
               </form>
             </div>
-          {:else if tab === "social"}
+          {:else if tab.current === "social"}
             <!-- Social Links -->
             <div class="card-body">
               <h2 class="card-title">Social Links</h2>
@@ -654,7 +658,7 @@
                 </div>
               </form>
             </div>
-          {:else if tab === "security"}
+          {:else if tab.current === "security"}
             <!-- Account Security -->
             <div class="card-body">
               <h2 class="card-title">Account Security</h2>
@@ -729,7 +733,7 @@
                 </div>
               </form>
             </div>
-          {:else if tab === "appearance"}
+          {:else if tab.current === "appearance"}
             <div class="card bg-base-100 shadow-sm">
               <div class="card-body space-y-6">
                 <div class="flex items-center justify-between">

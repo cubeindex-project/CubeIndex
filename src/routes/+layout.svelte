@@ -10,6 +10,7 @@
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import { page } from "$app/state";
   import DOMPurify from "isomorphic-dompurify";
+  import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
 
   let { data, children } = $props();
 
@@ -148,7 +149,9 @@
 <ClientErrorReporter />
 
 <div class="pb-16 md:pb-0">
-  {@render children()}
+  <NuqsAdapter>
+    {@render children()}
+  </NuqsAdapter>
 
   <div class="hidden md:block">
     <Footer />

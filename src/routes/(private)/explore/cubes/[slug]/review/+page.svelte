@@ -203,8 +203,7 @@
             <textarea
               class="textarea min-h-45 w-full leading-relaxed"
               autocomplete="off"
-              bind:value={reviewContent}
-            ></textarea>
+              bind:value={reviewContent}></textarea>
           </label>
         </div>
       </div>

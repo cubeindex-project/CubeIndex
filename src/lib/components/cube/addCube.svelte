@@ -346,8 +346,7 @@
           placeholder="Lubed with..., setup..., special mod..., etc."
           bind:value={form.notes}
           class="textarea textarea-bordered rounded-2xl w-full min-h-24"
-          maxlength="2000"
-        ></textarea>
+          maxlength="2000"></textarea>
       </label>
 
       <!-- Acquired date -->

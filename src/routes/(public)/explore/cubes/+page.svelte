@@ -8,21 +8,16 @@
   import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
   import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import type { SortFieldOption } from "$lib/components/misc/sortSelector.svelte";
-  import { queryParameters, ssp } from "sveltekit-search-params";
   import Fuse from "fuse.js";
   import type { Tables } from "$lib/types/database.types.js";
   import { resolve } from "$app/paths";
-
-  const { data } = $props();
-  const { cubes, userCubes } = $derived(data);
-
-  // Helper: tri-state codec (boolean | undefined)
-  const tri = {
-    encode: (v: boolean | undefined) =>
-      v === true ? "1" : v === false ? "0" : undefined,
-    decode: (s: string | null): boolean | undefined =>
-      s === "1" ? true : s === "0" ? false : undefined,
-  };
+  import {
+    createParser,
+    parseAsString,
+    parseAsInteger,
+    useQueryStates,
+    parseAsStringLiteral,
+  } from "nuqs-svelte";
 
   // narrow types
   const SORT_FIELDS = [
@@ -32,61 +27,54 @@
     "date",
     "price",
   ] as const;
-  type SortField = (typeof SORT_FIELDS)[number];
-  type SortDir = "asc" | "desc";
 
-  // codecs
-  const dirCodec = {
-    encode: (v: SortDir | null | undefined) => v ?? "asc",
-    decode: (s: string | null): SortDir => (s === "desc" ? "desc" : "asc"),
-    defaultValue: "asc" as const,
-  };
+  const { data } = $props();
+  const { cubes, userCubes } = $derived(data);
 
-  const sortCodec = {
-    encode: (v: SortField | null | undefined) => v ?? "name",
-    decode: (s: string | null): SortField =>
-      (SORT_FIELDS as readonly string[]).includes(s ?? "")
-        ? (s as SortField)
-        : "name",
-    defaultValue: "name" as const,
-  };
+  const triParser = createParser({
+    parse: (query: string): boolean => (query === "1" ? true : false),
+    serialize: (value: boolean) => (value === true ? "1" : "0"),
+  });
 
-  // Build the params object (with types & sensible defaults)
-  const params = queryParameters(
+  const yearParser = createParser({
+    parse: (query: string): number | "All" | null => {
+      if (query === "All") return "All";
+      const num = parseInt(query, 10);
+      return isNaN(num) ? null : num;
+    },
+    serialize: (value: number | "All") => {
+      return String(value);
+    },
+  });
+
+  const params = useQueryStates(
     {
-      q: ssp.string(""), // string | null
-      page: ssp.number(1), // number (default 1)
-      size: ssp.number(12), // number (default 12)
-      sort: sortCodec, // "name" | "rating" | "popularity" | "date"
-      dir: dirCodec, // "asc" | "desc"
+      q: parseAsString.withDefault(""),
+      page: parseAsInteger.withDefault(1),
+      size: parseAsInteger.withDefault(12),
+      sort: parseAsStringLiteral(SORT_FIELDS).withDefault("name"),
+      dir: parseAsStringLiteral(["asc", "desc"]).withDefault("asc"),
 
-      type: ssp.string("All"),
-      sub: ssp.string("All"),
-      brand: ssp.string("All"),
-      year: {
-        // allow empty, otherwise number
-        encode: (n: number | null) => (n === null ? undefined : String(n)),
-        decode: (s: string | null) =>
-          s ? (s !== "All" ? Number(s) : s) : null,
-        defaultValue: "All",
-      },
+      type: parseAsString.withDefault("All"),
+      sub: parseAsString.withDefault("All"),
+      brand: parseAsString.withDefault("All"),
+      year: yearParser.withDefault("All"),
 
       // tri-state feature flags
-      wca: tri,
-      mag: tri,
-      smart: tri,
-      mod: tri,
-      stick: tri,
+      wca: triParser,
+      mag: triParser,
+      smart: triParser,
+      mod: triParser,
+      stick: triParser,
 
       // tri-state version flags
-      base: tri,
-      trim: tri,
-      limit: tri,
+      base: triParser,
+      trim: triParser,
+      limit: triParser,
     },
     {
-      // Tuning:
-      pushHistory: false, // replaceState instead of pushState
-      showDefaults: true, // don’t pollute URL with default values
+      history: "replace",
+      clearOnDefault: false,
     },
   );
 
@@ -129,35 +117,36 @@
     return cubes.filter(
       (c) =>
         // Type filter
-        ($params.type === "All" || c.type === $params.type) &&
+        (params.type.current === "All" || c.type === params.type.current) &&
         // Sub-type filter
-        ($params.sub === "All" || c.sub_type === $params.sub) &&
+        (params.sub.current === "All" || c.sub_type === params.sub.current) &&
         // Brand filter
-        ($params.brand === "All" || c.brand === $params.brand) &&
+        (params.brand.current === "All" || c.brand === params.brand.current) &&
         // Year filter
-        ($params.year === "All" || c.year === +$params.year) &&
+        (params.year.current === "All" || c.year === +params.year.current) &&
         // Version type tri-state filters (base, trim, limited)
-        ($params.base === undefined
+        (params.base.current === null
           ? true
-          : $params.base
+          : params.base.current
             ? c.version_type === "Base"
             : c.version_type !== "Base") &&
-        ($params.trim === undefined
+        (params.trim.current === null
           ? true
-          : $params.trim
+          : params.trim.current
             ? c.version_type === "Trim"
             : c.version_type !== "Trim") &&
-        ($params.limit === undefined
+        (params.limit.current === null
           ? true
-          : $params.limit
+          : params.limit.current
             ? c.version_type === "Limited"
             : c.version_type !== "Limited") &&
         // Feature tri-state filters
-        ($params.wca === undefined || c.wca_legal === $params.wca) &&
-        ($params.mag === undefined || c.magnetic === $params.mag) &&
-        ($params.mod === undefined || c.modded === $params.mod) &&
-        ($params.stick === undefined || c.stickered === $params.stick) &&
-        ($params.smart === undefined || c.smart === $params.smart),
+        (params.wca.current === null || c.wca_legal === params.wca.current) &&
+        (params.mag.current === null || c.magnetic === params.mag.current) &&
+        (params.mod.current === null || c.modded === params.mod.current) &&
+        (params.stick.current === null ||
+          c.stickered === params.stick.current) &&
+        (params.smart.current === null || c.smart === params.smart.current),
     );
   });
 
@@ -177,7 +166,7 @@
 
   // Optional: effect to set the default sort mode based on the query
   $effect(() => {
-    const query = $params.q.trim();
+    const query = params.q.current.trim();
 
     if (query && !sortManuallySet) {
       // Default to relevance when the user starts typing
@@ -194,7 +183,7 @@
   // Sort the filtered cubes based on selected field and order
   const sortedCubes = $derived.by(() => {
     const base = filteredCubes.slice();
-    const query = $params.q.trim();
+    const query = params.q.current.trim();
 
     const compare = (
       a: Tables<"v_detailed_cube_models">,
@@ -203,7 +192,7 @@
       let av;
       let bv;
 
-      switch ($params.sort) {
+      switch (params.sort.current) {
         case "rating":
           av = a.rating ?? 0;
           bv = b.rating ?? 0;
@@ -219,7 +208,7 @@
         case "name": {
           const an = a.name ?? "";
           const bn = b.name ?? "";
-          return $params.dir === "asc"
+          return params.dir.current === "asc"
             ? an.localeCompare(bn, undefined, {
                 numeric: true,
                 sensitivity: "base",
@@ -236,8 +225,8 @@
           bv = new Date(b.verified_at ?? b.created_at ?? 0).getTime();
       }
 
-      if (av < bv) return $params.dir === "asc" ? -1 : 1;
-      if (av > bv) return $params.dir === "asc" ? 1 : -1;
+      if (av < bv) return params.dir.current === "asc" ? -1 : 1;
+      if (av > bv) return params.dir.current === "asc" ? 1 : -1;
       return 0;
     };
 
@@ -267,34 +256,19 @@
 
   // Paginate the sorted list
   const paginatedCubes = $derived.by(() => {
-    const start = ($params.page - 1) * $params.size;
-    const end = start + $params.size;
+    const start = (params.page.current - 1) * params.size.current;
+    const end = start + params.size.current;
     return sortedCubes.slice(start, end);
   });
 
   // Calculate total pages for pagination
   const totalPages = $derived(
-    Math.max(Math.ceil(sortedCubes.length / $params.size), 1),
+    Math.max(Math.ceil(sortedCubes.length / params.size.current), 1),
   );
 
   // Reset all filters to default state
   function resetFilters() {
-    $params.type = "All";
-    $params.sub = "All";
-    $params.brand = "All";
-    $params.year = "All";
-
-    $params.wca = undefined;
-    $params.mag = undefined;
-    $params.smart = undefined;
-    $params.mod = undefined;
-    $params.stick = undefined;
-    $params.base = undefined;
-    $params.trim = undefined;
-    $params.limit = undefined;
-
-    $params.q = "";
-    $params.page = 1;
+    params.set(null);
   }
 
   let _hydrated = $state(false);
@@ -303,21 +277,21 @@
   // --- track only filters/sort/search (exclude page/size)
   const filterKey = $derived.by(() =>
     JSON.stringify({
-      q: $params.q,
-      type: $params.type,
-      sub: $params.sub,
-      brand: $params.brand,
-      year: $params.year,
-      wca: $params.wca,
-      mag: $params.mag,
-      smart: $params.smart,
-      modded: $params.mod,
-      stick: $params.stick,
-      base: $params.base,
-      trim: $params.trim,
-      limit: $params.limit,
-      sort: $params.sort,
-      dir: $params.dir,
+      q: params.q,
+      type: params.type,
+      sub: params.sub,
+      brand: params.brand,
+      year: params.year,
+      wca: params.wca,
+      mag: params.mag,
+      smart: params.smart,
+      modded: params.mod,
+      stick: params.stick,
+      base: params.base,
+      trim: params.trim,
+      limit: params.limit,
+      sort: params.sort,
+      dir: params.dir,
     }),
   );
 
@@ -329,7 +303,7 @@
         return;
       }
       if (_userChangedFilters) {
-        $params.page = 1; // jump back to first page
+        params.set({ page: 1 }); // jump back to first page
         _userChangedFilters = false;
       }
     }
@@ -352,7 +326,7 @@
     <SearchBar
       showFilter={true}
       oninput={() => (_userChangedFilters = true)}
-      bind:searchTerm={$params.q}
+      bind:searchTerm={params.q.current}
       filterAction={() => (showFilters = !showFilters)}
       placeholderLabel="Search Cubes"
     />
@@ -365,7 +339,7 @@
           <label class="block text-sm mb-1">
             Type:
             <select
-              bind:value={$params.type}
+              bind:value={params.type.current}
               onchange={() => (_userChangedFilters = true)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
@@ -381,7 +355,7 @@
           <label class="block text-sm mb-1">
             Sub Type:
             <select
-              bind:value={$params.sub}
+              bind:value={params.sub.current}
               onchange={() => (_userChangedFilters = true)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
@@ -397,7 +371,7 @@
           <label class="block text-sm mb-1">
             Brand:
             <select
-              bind:value={$params.brand}
+              bind:value={params.brand.current}
               onchange={() => (_userChangedFilters = true)}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
@@ -413,10 +387,13 @@
           <label class="block text-sm mb-1">
             Release Year:
             <select
-              bind:value={$params.year}
+              bind:value={params.year.current}
               onchange={() => {
                 _userChangedFilters = true;
-                $params.year = $params.year === "All" ? "All" : $params.year;
+                params.set({
+                  year:
+                    params.year.current === "All" ? "All" : params.year.current,
+                });
               }}
               class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
             >
@@ -430,42 +407,42 @@
         <!-- Tri-state feature filters -->
         <div class="grid grid-cols-2 gap-2">
           <TriStateCheckbox
-            bind:value={$params.wca}
+            bind:value={params.wca.current}
             onchange={() => (_userChangedFilters = true)}
             label="WCA Legal"
           />
           <TriStateCheckbox
-            bind:value={$params.mag}
+            bind:value={params.mag.current}
             onchange={() => (_userChangedFilters = true)}
             label="Magnetic"
           />
           <TriStateCheckbox
-            bind:value={$params.smart}
+            bind:value={params.smart.current}
             onchange={() => (_userChangedFilters = true)}
             label="Smart"
           />
           <TriStateCheckbox
-            bind:value={$params.stick}
+            bind:value={params.stick.current}
             onchange={() => (_userChangedFilters = true)}
             label="Stickered"
           />
           <TriStateCheckbox
-            bind:value={$params.mod}
+            bind:value={params.mod.current}
             onchange={() => (_userChangedFilters = true)}
             label="Modded"
           />
           <TriStateCheckbox
-            bind:value={$params.base}
+            bind:value={params.base.current}
             onchange={() => (_userChangedFilters = true)}
             label="Base"
           />
           <TriStateCheckbox
-            bind:value={$params.trim}
+            bind:value={params.trim.current}
             onchange={() => (_userChangedFilters = true)}
             label="Trim"
           />
           <TriStateCheckbox
-            bind:value={$params.limit}
+            bind:value={params.limit.current}
             onchange={() => (_userChangedFilters = true)}
             label="Limited"
           />
@@ -491,7 +468,7 @@
         >
           <div class="flex flex-wrap items-center gap-4">
             <ItemsPerPageSelector
-              bind:itemsPerPage={$params.size}
+              bind:itemsPerPage={params.size.current}
               label="Cubes per page"
               onchange={() => {
                 _userChangedFilters = true;
@@ -500,8 +477,8 @@
               }}
             />
             <SortSelector
-              bind:sortField={$params.sort}
-              bind:sortOrder={$params.dir}
+              bind:sortField={params.sort.current}
+              bind:sortOrder={params.dir.current}
               fields={sortFields}
               label="Sort"
               useronchange={() => {
@@ -525,7 +502,7 @@
 
         <!-- Pagination at top -->
         <div class="mb-10">
-          <Pagination bind:currentPage={$params.page} {totalPages} />
+          <Pagination bind:currentPage={params.page.current} {totalPages} />
         </div>
 
         <!-- Display paginated cubes -->
@@ -568,10 +545,7 @@
                   Submit a New Cube
                 </a>
                 <button
-                  onclick={() => {
-                    resetFilters();
-                    $params.q = "";
-                  }}
+                  onclick={() => resetFilters()}
                   class="btn btn-outline flex items-center"
                   aria-label="Reset filters"
                 >
@@ -585,7 +559,7 @@
 
         <!-- Pagination at bottom -->
         <div class="mt-10">
-          <Pagination bind:currentPage={$params.page} {totalPages} />
+          <Pagination bind:currentPage={params.page.current} {totalPages} />
         </div>
       </div>
     </div>

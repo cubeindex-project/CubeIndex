@@ -200,7 +200,12 @@
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
               <a
-                href={resolve("/user/{profile.username}/social?tab=following")}
+                href={resolve(
+                  "/(public)/user/[username]/social?tab=following",
+                  {
+                    username: profile.username ?? "",
+                  },
+                )}
               >
                 <span class="text-sm">
                   {stats.followingCount}

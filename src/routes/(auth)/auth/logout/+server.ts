@@ -5,7 +5,10 @@ import { logError } from "$lib/server/logError.js";
 export const GET = async ({ locals: { supabase, log }, url }) => {
   const scope = url.searchParams.get("scope");
 
-  if (scope && !SIGN_OUT_SCOPES.includes(scope as SignOutScope)) {
+  if (
+    (scope && !SIGN_OUT_SCOPES.includes(scope as SignOutScope)) ||
+    scope === ""
+  ) {
     throw logError(
       400,
       "The scope is not correct",

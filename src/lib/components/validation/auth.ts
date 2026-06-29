@@ -2,7 +2,7 @@ import { z } from "zod/v4";
 
 export const USERNAME_REGEX = /^[a-z0-9._]{3,}$/;
 
-const email = z.email("Please enter a valid email address").trim().nonempty();
+const email = z.email("Please enter a valid email address").nonempty();
 const password = z
   .string()
   .min(8, "Password must be at least 8 characters")

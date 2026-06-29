@@ -65,7 +65,7 @@ export const actions: Actions = {
     const form = await superValidate(request, zod4(surveySchema));
     if (!user) {
       return fail(401, {
-        profileForm: {
+        surveyForm: {
           ...form,
           message: `Authenticated user not found`,
         },

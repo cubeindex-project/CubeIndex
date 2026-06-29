@@ -3,35 +3,45 @@
   import { Turnstile } from "svelte-turnstile";
   import { superForm } from "sveltekit-superforms";
   import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
-  import { page } from "$app/state";
-
-  const supabase = page.data.supabase;
+  import ExternalAuthProviders from "$lib/components/layout/ExternalAuthProviders.svelte";
+  import { untrack } from "svelte";
 
   const { data } = $props();
+  const { supabase } = $derived(data);
 
-  const { form, errors, delayed, enhance, message, isTainted, tainted } =
-    $derived(
-      superForm(data.form, {
-        onError({ result }) {
-          $message = result.error.message || "Unknown error";
-        },
-        delayMs: 500,
-        timeoutMs: 8000,
-      }),
-    );
+  const {
+    form,
+    errors,
+    delayed,
+    enhance,
+    message,
+    isTainted,
+    tainted,
+    constraints,
+    submitting,
+  } = superForm(
+    untrack(() => data.form),
+    {
+      onUpdate({ result }) {
+        if (result.type === "failure") {
+          resetTurnstile?.();
+        }
+      },
+      delayMs: 500,
+      timeoutMs: 8000,
+    },
+  );
 
   let showPassword = $state(false);
   let resetError: string = $state("");
   let resetMessage: string = $state("");
-  let isSubmitting = $state(false);
 
   async function resetPassword(e: Event) {
     e.preventDefault();
     resetError = "";
     resetMessage = "";
     if (!$form.email) {
-      resetError = "Please enter an email";
-      return;
+      return (resetError = "Please enter an email");
     }
     const { error: err } = await supabase.auth.resetPasswordForEmail(
       $form.email,
@@ -41,46 +51,46 @@
     );
 
     if (err) {
-      resetError = err.message;
-      return;
+      return (resetError = err.message);
     }
 
     resetMessage = "Check your email to reset your password";
   }
+
+  let resetTurnstile: (() => void) | undefined = $state();
 </script>
 
 <section
-  class="min-h-screen flex flex-col items-center justify-center gap-6 px-6 py-10"
+  class="flex flex-col min-h-screen justify-center px-6 sm:px-12 py-10 bg-base-200"
 >
-  <div
-    class="w-full max-w-md bg-base-200 border border-base-300 rounded-2xl shadow-lg p-8"
-  >
+  <div class="w-full max-w-md mx-auto">
     <h1 class="text-3xl font-clash font-bold mb-2">Welcome Back</h1>
     <p class="text-sm mb-8">Log in to your CubeIndex profile</p>
     <form method="POST" class="space-y-6" use:enhance>
-      <div>
-        <label for="email" class="block text-sm font-medium">Email</label>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Email</legend>
         <input
           name="email"
           type="email"
           bind:value={$form.email}
           class="input w-full"
-          required
+          {...$constraints.email}
         />
         {#if $errors.email}
           <span class="text-error">
             {$errors.email}
           </span>
         {/if}
-      </div>
+      </fieldset>
 
-      <div>
-        <label for="password" class="block text-sm font-medium">Password</label>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Password</legend>
         <div class="flex flex-row items-center">
           <input
             name="password"
             type={showPassword ? "text" : "password"}
             class="input w-full"
+            {...$constraints.password}
           />
           <label class="swap text-md">
             <input
@@ -99,7 +109,7 @@
             {$errors.password}
           </span>
         {/if}
-      </div>
+      </fieldset>
 
       <p class="text-sm text-gray-500 -mt-5">
         Forgot your password?
@@ -115,7 +125,7 @@
       <button
         type="submit"
         class="btn w-full btn-primary btn-lg"
-        disabled={isSubmitting || !isTainted($tainted)}
+        disabled={$submitting || !isTainted($tainted)}
       >
         {#if $delayed}
           <span class="loading loading-spinner"></span>
@@ -137,7 +147,11 @@
       {/if}
 
       <div>
-        <Turnstile siteKey={PUBLIC_TURNSTILE_SITE_KEY} size="flexible" />
+        <Turnstile
+          siteKey={PUBLIC_TURNSTILE_SITE_KEY}
+          size="flexible"
+          bind:reset={resetTurnstile}
+        />
         {#if $errors["cf-turnstile-response"]}
           <span class="text-error">
             {$errors["cf-turnstile-response"]}
@@ -151,18 +165,9 @@
         </p>
       {/if}
 
-      <!-- OR Divider -->
-      <div class="divider">or</div>
+      <div class="divider">or with</div>
 
-      <!-- Sign Up with Discord Button -->
-      <a
-        type="button"
-        href={resolve("/auth/discord")}
-        class="btn btn-lg bg-[#5865F2] text-white w-full mt-4"
-      >
-        <i class="fa-brands fa-discord text-2xl"></i>
-        Sign In with Discord
-      </a>
+      <ExternalAuthProviders />
     </form>
 
     <p class="text-sm text-center text-gray-500 mt-6">

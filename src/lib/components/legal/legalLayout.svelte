@@ -1,6 +1,4 @@
 <script lang="ts">
-  import DOMPurify from "dompurify";
-
   /**
    * A content section in a legal document page.
    */
@@ -27,7 +25,7 @@
   <div class="max-w-4xl mx-auto">
     <article class="prose prose-zinc dark:prose-invert max-w-none">
       <h1 class="mb-2">{title}</h1>
-      <p class="!mt-0 text-sm">
+      <p class="mt-0! text-sm">
         Last updated: {lastUpdated}
         ·
         <a
@@ -41,7 +39,7 @@
       {#each sections as section, i (i)}
         <h2>{i + 1}. {section.title}</h2>
         <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        <p>{@html DOMPurify.sanitize(section.content)}</p>
+        <p>{@html section.content}</p>
       {/each}
     </article>
   </div>

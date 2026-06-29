@@ -67,8 +67,16 @@ export const actions: Actions = {
     const redirect_to = url.searchParams.get("redirect_to");
 
     if (redirect_to && !redirect_to.includes("\\")) {
-      const target = new URL(redirect_to, url.origin);
+      let target: URL | null = null;
+
+      try {
+        target = new URL(redirect_to, url.origin);
+      } catch {
+        // Suppress exception if the URL is malformed.
+      }
+
       if (
+        target &&
         target.origin === url.origin &&
         redirect_to.startsWith("/") &&
         !redirect_to.startsWith("//")

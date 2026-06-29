@@ -59,7 +59,7 @@ export const actions: Actions = {
       .eq("user_id", user.id);
 
     if (profileUpdateError?.code === "23505") {
-      return setError(form, "display_name", "This username is already taken.");
+      return setError(form, "username", "This username is already taken.");
     }
 
     if (profileUpdateError) {

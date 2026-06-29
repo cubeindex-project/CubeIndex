@@ -1,9 +1,8 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG] Your bug here"
+title: "[BUG] "
 labels: bug
-assignees: Saterz
 ---
 
 **Describe the bug**

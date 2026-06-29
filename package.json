@@ -50,6 +50,7 @@
     "@resvg/resvg-js": "^2.6.2",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
+    "@tailwindcss/typography": "^0.5.20",
     "@types/node": "^26.0.0",
     "chart.js": "^4.5.1",
     "culori": "^4.0.2",

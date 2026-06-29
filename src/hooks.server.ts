@@ -129,7 +129,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .from("profiles")
     .select("id, username, role, onboarded")
     .eq("user_id", user.id)
-    .single();
+    .maybeSingle();
 
   if (err)
     logError(
@@ -140,7 +140,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
     );
 
   if (
-    !profile.onboarded &&
+    (!profile || !profile.onboarded) &&
     !event.url.pathname.startsWith("/auth/complete-profile") &&
     !event.url.pathname.startsWith("/auth/logout") &&
     !event.url.pathname.startsWith("/auth/callback") &&
@@ -156,7 +156,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   if (event.url.pathname === "/") {
     redirect(303, "/dashboard");
   }
-  if (event.url.pathname.startsWith("/staff") && profile.role === "User") {
+  if (event.url.pathname.startsWith("/staff") && profile?.role === "User") {
     redirect(303, "/");
   }
 

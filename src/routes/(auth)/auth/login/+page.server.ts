@@ -62,12 +62,15 @@ export const actions: Actions = {
 
     const redirect_to = url.searchParams.get("redirect_to");
 
-    if (
-      redirect_to &&
-      redirect_to.startsWith("/") &&
-      !redirect_to.startsWith("//")
-    ) {
-      redirect(303, redirect_to);
+    if (redirect_to && !redirect_to.includes("\\")) {
+      const target = new URL(redirect_to, url.origin);
+      if (
+        target.origin === url.origin &&
+        redirect_to.startsWith("/") &&
+        !redirect_to.startsWith("//")
+      ) {
+        redirect(303, `${target.pathname}${target.search}${target.hash}`);
+      }
     }
 
     redirect(303, `/user/${profile.username}`);

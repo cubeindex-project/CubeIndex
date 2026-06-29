@@ -1,12 +1,11 @@
 import { redirect } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
-export const GET: RequestHandler = async ({ locals: { supabase }, url }) => {
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user?.email)
+export const GET: RequestHandler = async ({
+  locals: { supabase, user },
+  url,
+}) => {
+  if (!user?.email)
     return new Response(JSON.stringify({ message: "Not signed in." }), {
       status: 400,
     });

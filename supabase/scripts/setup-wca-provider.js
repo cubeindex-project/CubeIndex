@@ -5,7 +5,7 @@ process.loadEnvFile(".env.local")
 const supabaseUrl = process.env.PUBLIC_SUPABASE_URL
 const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY
 
-if (!supabaseUrl && !supabaseSecretKey) {
+if (!supabaseUrl || !supabaseSecretKey) {
   throw new Error("Please specify the Supabase url and secret key")
 }
 
@@ -31,9 +31,13 @@ async function registerWCAProvider() {
 
   if (error) {
     console.error('Error creating custom provider:', error);
+    process.exitCode = 1;
   } else {
     console.log('WCA Custom Provider created successfully:', data);
   }
 }
 
-registerWCAProvider();
+await registerWCAProvider().catch((error) => {
+  console.error('Unexpected error creating custom provider:', error);
+  process.exitCode = 1;
+});

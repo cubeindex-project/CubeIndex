@@ -54,7 +54,14 @@ const supabase: Handle = async ({ event, resolve }) => {
             event.cookies.set(name, value, { ...options, path: "/" }),
           );
           if (headers && Object.keys(headers).length > 0) {
-            event.setHeaders(headers);
+            // Supabase sometimes sets multiple "Cache-Control" headers in one request. The try block makes it fail silently instead of giveing a 500 error
+            try {
+              event.setHeaders(headers);
+            } catch (error) {
+              event.locals.log.warn(
+                `An error occured while setting header: ${error}`,
+              );
+            }
           }
         },
       },
@@ -118,10 +125,11 @@ const authGuard: Handle = async ({ event, resolve }) => {
     return resolve(event);
   }
 
-  const { data: profiles, error: err } = await event.locals.supabase
+  const { data: profile, error: err } = await event.locals.supabase
     .from("profiles")
-    .select("id, username, role")
-    .eq("user_id", user?.id);
+    .select("id, username, role, onboarded")
+    .eq("user_id", user.id)
+    .single();
 
   if (err)
     logError(
@@ -131,7 +139,15 @@ const authGuard: Handle = async ({ event, resolve }) => {
       err,
     );
 
-  const profile = profiles?.[0];
+  if (
+    !profile.onboarded &&
+    !event.url.pathname.startsWith("/auth/complete-profile") &&
+    !event.url.pathname.startsWith("/auth/logout") &&
+    !event.url.pathname.startsWith("/auth/callback") &&
+    !event.url.pathname.startsWith("/auth/confirm")
+  ) {
+    redirect(303, "/auth/complete-profile");
+  }
 
   if (event.url.pathname === "/auth") {
     redirect(303, `/user/${profile?.id}`);

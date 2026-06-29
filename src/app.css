@@ -1,5 +1,6 @@
 @import url("/static/css/clash-display.css");
 @import "tailwindcss";
+@plugin '@tailwindcss/typography';
 
 @plugin "daisyui";
 

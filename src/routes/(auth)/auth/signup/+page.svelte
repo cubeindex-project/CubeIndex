@@ -15,6 +15,7 @@
     enhance: enhanceAccount,
     message: accountMessage,
     constraints: accountConstraints,
+    submitting: accountSubmitting,
   } = superForm(
     untrack(() => data.accountForm),
     {
@@ -210,8 +211,17 @@
             {/if}
           </div>
 
-          <button type="submit" class="btn btn-lg sm:btn-xl w-full btn-primary">
-            Continue
+          <button
+            type="submit"
+            class="btn btn-lg sm:btn-xl w-full btn-primary"
+            disabled={$accountSubmitting}
+          >
+            {#if $accountSubmitting}
+              <span class="loading loading-spinner"></span>
+              Creating account...
+            {:else}
+              Continue
+            {/if}
           </button>
 
           <div class="divider">or with</div>

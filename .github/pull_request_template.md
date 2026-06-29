@@ -23,8 +23,6 @@ If there's _not_ an existing issue, please open one first to make it more likely
 
 ### Checklist:
 
-- [ ] I have performed a self-review of my own code
-- [ ] This change requires a documentation update
 - [ ] I have performed a self-review of my code
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings

@@ -53,12 +53,16 @@ export const actions: Actions = {
 
     const { data: profile, error: profileErr } = await supabase
       .from("profiles")
-      .select("username")
+      .select("username, onboarded")
       .eq("user_id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profileErr)
       return fail(500, { form: { ...form, message: profileErr.message } });
+
+    if (!profile || !profile.onboarded) {
+      redirect(303, "/auth/complete-profile");
+    }
 
     const redirect_to = url.searchParams.get("redirect_to");
 

@@ -1,20 +1,19 @@
 <script lang="ts">
-  // Components and style
   import "../app.css";
   import Navbar from "$lib/components/layout/navbar.svelte";
-  import { Toaster } from "svelte-sonner";
+  import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
   import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
+  import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
   import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
 
   let { data, children } = $props();
 
-  // Keeping user fresh in the browser
-  import { invalidate } from "$app/navigation";
+  import { goto, invalidate } from "$app/navigation";
   import { onMount } from "svelte";
 
   let { session, supabase, profile, isDevelopmentEnvironment } = $derived(data);
@@ -24,6 +23,29 @@
         invalidate("supabase:auth");
       }
     });
+
+    const toastError = page.url.searchParams.get("toast_error");
+    const toastSuccess = page.url.searchParams.get("toast_success");
+
+    const removeToastParam = (newUrl: URL) =>
+      goto((newUrl.pathname + newUrl.search) as ResolvedPathname, {
+        replaceState: true,
+        keepFocus: true,
+        noScroll: true,
+      });
+
+    if (toastError) {
+      toast.error(toastError);
+      const newUrl = new URL(page.url);
+      newUrl.searchParams.delete("toast_error");
+      removeToastParam(newUrl);
+    } else if (toastSuccess) {
+      toast.success(toastSuccess);
+      const newUrl = new URL(page.url);
+      newUrl.searchParams.delete("toast_success");
+      removeToastParam(newUrl);
+    }
+
     return () => data.subscription.unsubscribe();
   });
 
@@ -142,7 +164,7 @@
 
 <Banner />
 
-<Toaster />
+<Toaster richColors />
 <ClientErrorReporter />
 
 <div class="pb-16 md:pb-0">

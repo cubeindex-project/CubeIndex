@@ -89,6 +89,7 @@
           <input
             name="password"
             type={showPassword ? "text" : "password"}
+            bind:value={$form.password}
             class="input w-full"
             {...$constraints.password}
           />

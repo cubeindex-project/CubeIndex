@@ -1,21 +1,14 @@
 <script lang="ts">
   import CubeForm from "$lib/components/forms/CubeForm.svelte";
-  import SubmissionStatusManager from "$lib/components/staff/SubmissionStatusManager.svelte";
 
   const { data } = $props();
-  const { cube, form, formOptions } = $derived(data);
+  const { form, formOptions } = $derived(data);
 </script>
-
-{#snippet headerActions()}
-  {#if cube.status === "Pending"}
-    <SubmissionStatusManager submission={cube} entityLabel="cube" />
-  {/if}
-{/snippet}
 
 <CubeForm
   initialForm={form}
   {...formOptions}
   formTitle="Edit a cube"
+  formDescription="Review and update the cube's details to keep the CubeIndex database accurate and up to date."
   submitLabel="Edit cube"
-  {headerActions}
 />

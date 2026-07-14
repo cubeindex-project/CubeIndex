@@ -10,7 +10,7 @@
     sizePattern,
     type CubeFormSchema,
   } from "$lib/schemas/cubeForm.js";
-  import { onMount, untrack, type Snippet } from "svelte";
+  import { onMount, untrack } from "svelte";
   import SearchValues, {
     type SearchValue,
   } from "$lib/components/ui/SearchValues.svelte";
@@ -45,11 +45,10 @@
     initialForm: SuperValidated<Infer<CubeFormSchema>>;
     submitLabel: string;
     formTitle: string;
+    formDescription: string;
     submissionNote?: string;
     enableAutofill?: boolean;
     formAction?: string;
-
-    headerActions?: Snippet;
   }
 
   type PageLabel = "Cube" | "Vendor links";
@@ -87,10 +86,9 @@
 
     submitLabel,
     formTitle,
+    formDescription,
     submissionNote,
     enableAutofill,
-
-    headerActions,
   }: Props = $props();
 
   let currentPage: PageKey = $state("cube");
@@ -251,11 +249,7 @@
 
 <section class="relative min-h-screen py-16">
   <div class="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
-    <SubmissionFormHeader
-      title={formTitle}
-      description="Provide accurate manufacturer details so the CubeIndex team can review and publish your cube quickly. Double-check specs before you send them."
-      actions={headerActions}
-    />
+    <SubmissionFormHeader title={formTitle} description={formDescription} />
 
     <div class="flex gap-3 flex-wrap sm:items-center justify-between">
       <div class="overflow-x-auto">

@@ -92,7 +92,6 @@ export const load: PageServerLoad = async ({
   ]);
 
   return {
-    cube,
     form,
     formOptions: options,
   };

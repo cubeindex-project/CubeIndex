@@ -1,5 +1,6 @@
 import { fileTypeFromBuffer } from "file-type";
 import sharp from "sharp";
+import type { NumericRange } from "@sveltejs/kit";
 
 const allowedMIMETypes = new Set([
   "image/jpeg",
@@ -35,7 +36,7 @@ export type ImageProfile = keyof typeof imageProfiles;
 
 export class ImageProcessingError extends Error {
   constructor(
-    readonly status: number,
+    readonly status: NumericRange<400, 599>,
     message: string,
   ) {
     super(message);

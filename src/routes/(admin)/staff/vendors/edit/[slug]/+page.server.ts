@@ -1,16 +1,17 @@
-import { slugify } from "$lib/components/helper_functions/slugify.svelte";
-import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
+import type { PageServerLoad } from "./$types";
 import { vendorFormSchema } from "$lib/schemas/vendorForm";
-import type { TablesInsert } from "$lib/types/database.types";
-import { error } from "@sveltejs/kit";
+import { zod4 } from "sveltekit-superforms/adapters";
+import { error, fail } from "@sveltejs/kit";
+import type { TablesUpdate } from "$lib/types/database-generated.types";
+import type { Actions } from "./$types";
 import {
+  superValidate,
   message,
   setError,
-  superValidate,
   withFiles,
 } from "sveltekit-superforms";
-import { zod4 } from "sveltekit-superforms/adapters";
-import type { Actions, PageServerLoad } from "./$types";
+import { slugify } from "$lib/components/helper_functions/slugify.svelte";
+import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { isFile } from "$lib/utils/isFile";
 import { cleanUpVendorLogo } from "$lib/server/vendor/cleanUpVendorLogo";
 import {
@@ -18,18 +19,50 @@ import {
   VendorLogoUploadError,
 } from "$lib/server/vendor/uploadVendorLogo";
 
-export const load = (async () => {
+export const load = (async ({ params, locals: { supabase, log } }) => {
+  const slug = params.slug;
+
+  const { data: vendor, error: vendorError } = await supabase
+    .from("vendors")
+    .select("name, base_url, country_iso, currency, logo_url")
+    .eq("slug", slug)
+    .neq("status", "Rejected")
+    .maybeSingle();
+
+  if (vendorError) {
+    log.error({ err: vendorError }, "Failed to load vendor");
+    return error(500, "Failed to load vendor");
+  }
+
+  if (!vendor) {
+    return error(404, "Vendor not found");
+  }
+
+  const form = await superValidate(
+    {
+      name: vendor.name,
+      baseURL: vendor.base_url,
+      countryISO: vendor.country_iso,
+      currency: vendor.currency,
+      logo: vendor.logo_url,
+    },
+    zod4(vendorFormSchema),
+    {
+      errors: false,
+    },
+  );
+
   return {
-    form: await superValidate(zod4(vendorFormSchema), { errors: false }),
+    form,
     meta: {
-      title: "Submit a Vendor - CubeIndex",
+      title: "Edit a Vendor - CubeIndex",
       noindex: true,
     },
   };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase, user, log } }) => {
+  default: async ({ params, request, locals: { supabase, user, log } }) => {
     if (!user) throw error(401, "Unauthorized");
 
     const form = await superValidate(request, zod4(vendorFormSchema));
@@ -39,6 +72,11 @@ export const actions: Actions = {
           status: 400,
         }),
       );
+    }
+
+    const currentVendorSlug = params.slug;
+    if (!currentVendorSlug) {
+      return fail(400, { form, message: "Missing vendor slug" });
     }
 
     const slug = slugify(form.data.name);
@@ -76,7 +114,7 @@ export const actions: Actions = {
       }
     }
 
-    const payload: TablesInsert<"vendors"> = {
+    const payload: TablesUpdate<"vendors"> = {
       name: form.data.name,
       slug,
       base_url: cleanLink(form.data.baseURL),
@@ -84,17 +122,12 @@ export const actions: Actions = {
       currency: form.data.currency,
       logo_url: logoURL,
       submitted_by_id: user.id,
-      status: "Pending",
-      is_active: false,
-      sponsored: false,
-      rating: 0,
-      supports_price_scraping: false,
-      supports_product_scraping: false,
     };
 
     const { error: insertError } = await supabase
       .from("vendors")
-      .insert(payload);
+      .update(payload)
+      .eq("slug", currentVendorSlug);
 
     if (insertError) {
       if (logoPath) {

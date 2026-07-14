@@ -13,9 +13,21 @@
 
   interface Props {
     initialForm: SuperValidated<Infer<VendorFormSchema>>;
+
+    formTitle: string;
+    formDescription: string;
+
+    submitLabel: string;
+    submissionNote?: string;
   }
 
-  let { initialForm }: Props = $props();
+  let {
+    initialForm,
+    formTitle,
+    formDescription,
+    submitLabel,
+    submissionNote,
+  }: Props = $props();
 
   const { form, allErrors, constraints, errors, message, enhance } = superForm(
     untrack(() => initialForm),
@@ -77,10 +89,7 @@
 
 <section class="relative min-h-screen py-16">
   <div class="relative mx-auto flex w-full max-w-4xl flex-col gap-12 px-6">
-    <SubmissionFormHeader
-      title="Submit a Vendor"
-      description="Provide the store's official details so the CubeIndex team can verify and publish it."
-    />
+    <SubmissionFormHeader title={formTitle} description={formDescription} />
 
     <div class="flex justify-end">
       <a
@@ -222,8 +231,8 @@
         </section>
 
         <SubmissionFormFooter
-          submitLabel="Submit vendor"
-          submissionNote="It may take up to 48h for your submission to be reviewed."
+          {submitLabel}
+          {submissionNote}
           message={$message}
           allErrors={$allErrors}
         />

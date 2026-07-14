@@ -4,4 +4,9 @@
   let { data } = $props();
 </script>
 
-<VendorForm initialForm={data.form} />
+<VendorForm
+  initialForm={data.form}
+  formTitle="Edit a vendor"
+  formDescription="Review and update the vendor's details to keep the CubeIndex database accurate and up to date."
+  submitLabel="Edit vendor"
+/>

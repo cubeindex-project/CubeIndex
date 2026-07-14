@@ -7,122 +7,17 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import type { TablesInsert } from "$lib/types/database.types";
 import { cubeFormSchema, normalizeReleaseDate } from "$lib/schemas/cubeForm";
+import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions";
 
-export const load = (async ({ locals }) => {
-  const form = await superValidate(zod4(cubeFormSchema), { errors: false });
-
-  const [
-    { data: cubes, error: cubeErr },
-    { data: brands, error: brandErr },
-    { data: types, error: typeErr },
-    { data: series, error: seriesErr },
-    { data: features, error: featuresErr },
-    { data: vendors, error: vendorsErr },
-  ] = await Promise.all([
-    locals.supabase
-      .from("v_detailed_cube_models")
-      .select("id, name, slug, image_url")
-      .eq("status", "Approved")
-      .eq("version_type", "Base"),
-    locals.supabase
-      .from("brands")
-      .select("name")
-      .order("name", { ascending: true }),
-    locals.supabase
-      .from("cube_types")
-      .select("name")
-      .order("name", { ascending: true }),
-    locals.supabase
-      .from("cube_series")
-      .select("name, id")
-      .order("name", { ascending: true }),
-    locals.supabase
-      .from("cube_features")
-      .select("label, code")
-      .order("label", { ascending: true }),
-    locals.supabase
-      .from("vendors")
-      .select("name, base_url, currency")
-      .eq("status", "Approved")
-      .order("name", { ascending: true }),
+export const load = (async ({ locals: { log, supabase } }) => {
+  const [form, options] = await Promise.all([
+    superValidate(zod4(cubeFormSchema), { errors: false }),
+    loadCubeFormOptions(supabase, log),
   ]);
-
-  if (cubeErr) {
-    locals.log.error({ err: cubeErr.message }, "Failed to fetch cubes");
-    throw error(500, "Failed to fetch cubes");
-  }
-  if (brandErr) {
-    locals.log.error({ err: brandErr.message }, "Failed to fetch brands");
-    throw error(500, "Failed to fetch brands");
-  }
-  if (typeErr) {
-    locals.log.error({ err: typeErr.message }, "Failed to fetch types");
-    throw error(500, "Failed to fetch types");
-  }
-  if (seriesErr) {
-    locals.log.error({ err: seriesErr.message }, "Failed to fetch cube series");
-    throw error(500, "Failed to fetch cube series");
-  }
-  if (featuresErr) {
-    locals.log.error(
-      { err: featuresErr.message },
-      "Failed to fetch cube features",
-    );
-    throw error(500, "Failed to fetch cube features");
-  }
-  if (vendorsErr) {
-    locals.log.error({ err: vendorsErr.message }, "Failed to fetch vendors");
-    throw error(500, "Failed to fetch vendors");
-  }
-
-  const [
-    { data: surfaces, error: surfaceErr },
-    { data: subTypes, error: subTypeErr },
-    { data: cubeVersions, error: cubeVersionsErr },
-  ] = await Promise.all([
-    locals.supabase.rpc("get_types", {
-      enum_type: "cube_surface_finishes",
-    }),
-    locals.supabase.rpc("get_types", {
-      enum_type: "cubes_subtypes",
-    }),
-    locals.supabase.rpc("get_types", {
-      enum_type: "cube_version_types",
-    }),
-  ]);
-
-  if (surfaceErr) {
-    locals.log.error({ err: surfaceErr.message }, "Failed to fetch surfaces");
-    throw error(500, "Failed to fetch surfaces");
-  }
-  if (subTypeErr) {
-    locals.log.error({ err: subTypeErr.message }, "Failed to fetch sub types");
-    throw error(500, "Failed to fetch sub types");
-  }
-  if (cubeVersionsErr) {
-    locals.log.error(
-      { err: cubeVersionsErr.message },
-      "Failed to fetch cube versions",
-    );
-    throw error(500, "Failed to fetch cube versions");
-  }
-
-  const formOptions = {
-    cubes,
-    brands,
-    types,
-    series,
-    features,
-    surfaces: (surfaces as string[] | null) ?? [],
-    subTypes: (subTypes as string[] | null) ?? [],
-    cubeVersions: (cubeVersions as string[] | null) ?? [],
-
-    vendors,
-  };
 
   return {
     form,
-    formOptions,
+    formOptions: options,
     meta: {
       title: "New Submission - CubeIndex",
     },

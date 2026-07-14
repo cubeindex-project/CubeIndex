@@ -9,6 +9,7 @@ import { logError } from "$lib/server/logError";
 import type { Tables, TablesUpdate } from "$lib/types/database.types.js";
 import { cubeFormSchema, normalizeReleaseDate } from "$lib/schemas/cubeForm.js";
 import { getPartialDate } from "$lib/utils/getPartialDate.js";
+import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions.js";
 
 export const load: PageServerLoad = async ({
   params,
@@ -16,16 +17,16 @@ export const load: PageServerLoad = async ({
 }) => {
   const { slug } = params;
 
-  const { data: cubes, error: cubesErr } = await supabase
+  const { data: cube, error: cubeErr } = await supabase
     .from("v_detailed_cube_models")
     .select("*")
-    .neq("status", "Rejected");
+    .eq("slug", slug)
+    .neq("status", "Rejected")
+    .maybeSingle();
 
-  if (cubesErr) {
-    return logError(500, "Unable to load cubes", log, cubesErr);
+  if (cubeErr) {
+    return logError(500, "Unable to load cubes", log, cubeErr);
   }
-
-  const cube = cubes.find((cube) => cube.slug === slug);
 
   if (!cube) {
     return logError(
@@ -55,134 +56,45 @@ export const load: PageServerLoad = async ({
     throw error(500, "Failed to fetch the current cube features");
   }
 
-  const [
-    { data: brands, error: brandErr },
-    { data: types, error: typeErr },
-    { data: series, error: seriesErr },
-    { data: features, error: featuresErr },
-    { data: vendors, error: vendorsErr },
-  ] = await Promise.all([
-    supabase.from("brands").select("name").order("name", { ascending: true }),
-    supabase
-      .from("cube_types")
-      .select("name")
-      .order("name", { ascending: true }),
-    supabase
-      .from("cube_series")
-      .select("name, id")
-      .order("name", { ascending: true }),
-    supabase
-      .from("cube_features")
-      .select("label, code")
-      .order("label", { ascending: true }),
-    supabase
-      .from("vendors")
-      .select("name, base_url, currency")
-      .order("name", { ascending: true }),
-  ]);
-
-  if (brandErr) {
-    log.error({ err: brandErr.message }, "Failed to fetch brands");
-    throw error(500, "Failed to fetch brands");
-  }
-  if (typeErr) {
-    log.error({ err: typeErr.message }, "Failed to fetch types");
-    throw error(500, "Failed to fetch types");
-  }
-  if (seriesErr) {
-    log.error({ err: seriesErr.message }, "Failed to fetch cube series");
-    throw error(500, "Failed to fetch cube series");
-  }
-  if (featuresErr) {
-    log.error({ err: featuresErr.message }, "Failed to fetch cube features");
-    throw error(500, "Failed to fetch cube features");
-  }
-  if (vendorsErr) {
-    log.error({ err: vendorsErr.message }, "Failed to fetch vendors");
-    throw error(500, "Failed to fetch vendors");
-  }
-
-  const [
-    { data: surfaces, error: surfaceErr },
-    { data: subTypes, error: subTypeErr },
-    { data: cubeVersions, error: cubeVersionsErr },
-  ] = await Promise.all([
-    supabase.rpc("get_types", {
-      enum_type: "cube_surface_finishes",
-    }),
-    supabase.rpc("get_types", {
-      enum_type: "cubes_subtypes",
-    }),
-    supabase.rpc("get_types", {
-      enum_type: "cube_version_types",
-    }),
-  ]);
-
-  if (surfaceErr) {
-    log.error({ err: surfaceErr.message }, "Failed to fetch surfaces");
-    throw error(500, "Failed to fetch surfaces");
-  }
-  if (subTypeErr) {
-    log.error({ err: subTypeErr.message }, "Failed to fetch sub types");
-    throw error(500, "Failed to fetch sub types");
-  }
-  if (cubeVersionsErr) {
-    log.error(
-      { err: cubeVersionsErr.message },
-      "Failed to fetch cube versions",
-    );
-    throw error(500, "Failed to fetch cube versions");
-  }
-
-  const form = await superValidate(
-    {
-      name: cube.name,
-      seriesId: cube.series_id ?? undefined,
-      brand: cube.brand,
-      type: cube.type,
-      subType: cube.sub_type ?? "auto",
-      releaseDate: cube.release_date
-        ? getPartialDate(cube.release_date, cube.release_date_precision)
-        : undefined,
-      imageUrl: cube.image_url,
-      surfaceFinish: cube.surface_finish ?? undefined,
-      weight: cube.weight,
-      size: cube.size ?? undefined,
-      versionType: cube.version_type,
-      relatedToId: cube.related_to_id ?? undefined,
-      discontinued: cube.discontinued,
-      features: {
-        wcaLegal: cubeFeatures.some((f) => f.feature === "wca_legal"),
-        magnetic: cubeFeatures.some((f) => f.feature === "magnetic"),
-        smart: cubeFeatures.some((f) => f.feature === "smart"),
-        modded: cubeFeatures.some((f) => f.feature === "modded"),
-        maglev: cubeFeatures.some((f) => f.feature === "maglev"),
-        stickered: cubeFeatures.some((f) => f.feature === "stickered"),
-        ballCore: cubeFeatures.some((f) => f.feature === "ball_core"),
+  const [form, options] = await Promise.all([
+    superValidate(
+      {
+        name: cube.name,
+        seriesId: cube.series_id ?? undefined,
+        brand: cube.brand,
+        type: cube.type,
+        subType: cube.sub_type ?? "auto",
+        releaseDate: cube.release_date
+          ? getPartialDate(cube.release_date, cube.release_date_precision)
+          : undefined,
+        imageUrl: cube.image_url,
+        surfaceFinish: cube.surface_finish ?? undefined,
+        weight: cube.weight,
+        size: cube.size ?? undefined,
+        versionType: cube.version_type,
+        relatedToId: cube.related_to_id ?? undefined,
+        discontinued: cube.discontinued,
+        features: {
+          wcaLegal: cubeFeatures.some((f) => f.feature === "wca_legal"),
+          magnetic: cubeFeatures.some((f) => f.feature === "magnetic"),
+          smart: cubeFeatures.some((f) => f.feature === "smart"),
+          modded: cubeFeatures.some((f) => f.feature === "modded"),
+          maglev: cubeFeatures.some((f) => f.feature === "maglev"),
+          stickered: cubeFeatures.some((f) => f.feature === "stickered"),
+          ballCore: cubeFeatures.some((f) => f.feature === "ball_core"),
+        },
+        vendorLinks: vendor_links,
       },
-      vendorLinks: vendor_links,
-    },
-    zod4(cubeFormSchema),
-    { errors: false },
-  );
-
-  const formOptions = {
-    cubes,
-    brands,
-    types,
-    series,
-    features,
-    surfaces: (surfaces as string[] | null) ?? [],
-    subTypes: (subTypes as string[] | null) ?? [],
-    cubeVersions: (cubeVersions as string[] | null) ?? [],
-
-    vendors,
-  };
+      zod4(cubeFormSchema),
+      { errors: false },
+    ),
+    loadCubeFormOptions(supabase, log),
+  ]);
 
   return {
     cube,
     form,
-    formOptions,
+    formOptions: options,
   };
 };
 

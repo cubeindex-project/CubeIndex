@@ -31,15 +31,12 @@
     isReportingCube = !isReportingCube;
   }
 
-  // Derive the active tab from the URL so it stays in sync on navigation
   const currentTab = $derived.by(() => {
     const segments = page.url.pathname.split("/").filter(Boolean);
-    // Expect .../explore/cubes/:slug[/tab]
     const last = segments[segments.length - 1] ?? "";
     return last === cube.slug ? "" : last;
   });
 
-  // Tab definitions (keys map to child routes)
   const tabs = [
     { label: "Details", key: "", icon: "fa-circle-info" },
     { label: "Shops & Prices", key: "price", icon: "fa-store" },
@@ -126,7 +123,6 @@
     </figure>
   </div>
   <h1 class="flex flex-col mb-4">
-    <!-- top row: text + discontinued badge -->
     <div class="flex items-center text-4xl font-bold">
       <div class="font-clash" data-hero-key={`cube-title-${cube.id}`}>
         {cube.name}
@@ -141,7 +137,6 @@
       {/if}
     </div>
 
-    <!-- bottom row: version type -->
     <div class="mt-2">
       <CubeVersionType version_type={cube.version_type} />
     </div>
@@ -285,7 +280,6 @@
     </section>
   {/if}
 
-  <!-- Related-to (for modded / non-base) -->
   {#if (cube.version_type !== "Base" || cube.modded) && relatedCube}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
@@ -330,7 +324,6 @@
     </section>
   {/if}
 
-  <!-- Same series -->
   {#if sameSeries && sameSeries.length > 0 && sameSeries[0].series !== ""}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">

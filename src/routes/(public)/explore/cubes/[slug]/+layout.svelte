@@ -381,7 +381,7 @@
   {/if}
 
   {#if cube.status === "Approved"}
-    <div class="mt-4">
+    <div class="mt-6">
       <button onclick={toggleReporting} class="btn btn-error">
         🚩 Report incorrect/missing data
       </button>

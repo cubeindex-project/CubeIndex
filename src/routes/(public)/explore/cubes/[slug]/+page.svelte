@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import MissingValue from "$lib/components/misc/MissingValue.svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
   import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
 
@@ -19,9 +20,35 @@
   const presentFeatures = $derived.by(() =>
     allFeatureBadges.filter((badge) => Boolean(cube[badge.key])),
   );
+
+  const missingFields = $derived(
+    Object.entries({
+      "release date": cube.release_date,
+      weight: cube.weight,
+      size: cube.size,
+      "surface finish": cube.surface_finish,
+    })
+      .filter(([, value]) => value === null)
+      .map(([label]) => label),
+  );
 </script>
 
+{#snippet missingField()}
+  <MissingValue missingValueText="Unknown" />
+{/snippet}
+
 <section class="space-y-6">
+  {#if missingFields.length > 0}
+    <div class="alert alert-warning" role="note">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>
+        Some data is missing: <span class="font-bold">
+          {missingFields.join(", ")}
+        </span>. If you know these values, please create a report.
+      </span>
+    </div>
+  {/if}
+
   <!-- Overview / Description -->
   <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
     <h2 class="text-base font-semibold opacity-70 mb-2">About</h2>
@@ -36,6 +63,8 @@
         <span class="font-medium">
           {formatPartialDate(cube.release_date, cube.release_date_precision)}
         </span>
+      {:else}
+        with no release date provided
       {/if}. It is
       <span class="font-medium"
         >{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
@@ -76,19 +105,31 @@
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Weight</dt>
-          <dd class="font-medium">{cube.weight} g</dd>
+          {#if cube.weight !== null}
+            <dd class="font-medium">{cube.weight} g</dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
         <div
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Size</dt>
-          <dd class="font-medium">{cube.size} mm</dd>
+          {#if cube.size}
+            <dd class="font-medium">{cube.size} mm</dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
         <div
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Surface</dt>
-          <dd class="font-medium">{cube.surface_finish || "—"}</dd>
+          {#if cube.surface_finish}
+            {cube.surface_finish}
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
         <div
           class="flex items-center justify-between sm:justify-start sm:gap-3"

@@ -79,6 +79,21 @@ export const actions: Actions = {
       return fail(400, { form, message: "Missing vendor slug" });
     }
 
+    const { data: previousVendor, error: previousVendorError } = await supabase
+      .from("vendors")
+      .select("logo_url")
+      .eq("slug", currentVendorSlug)
+      .maybeSingle();
+
+    if (previousVendorError) {
+      log.error({ err: previousVendorError }, "Failed to load existing vendor");
+      return fail(500, { form, message: "Unable to load the vendor." });
+    }
+
+    if (!previousVendor) {
+      return fail(404, { form, message: "Vendor not found." });
+    }
+
     const slug = slugify(form.data.name);
     if (!slug) {
       return withFiles(
@@ -120,7 +135,7 @@ export const actions: Actions = {
       base_url: cleanLink(form.data.baseURL),
       country_iso: form.data.countryISO,
       currency: form.data.currency,
-      logo_url: logoURL,
+      logo_url: logoURL ?? previousVendor.logo_url,
       submitted_by_id: user.id,
     };
 
@@ -148,6 +163,16 @@ export const actions: Actions = {
       return withFiles(
         setError(form, "Unable to submit the vendor.", { status: 500 }),
       );
+    }
+
+    if (logoPath && previousVendor.logo_url) {
+      const oldLogoPath = new URL(previousVendor.logo_url).pathname.split(
+        "/vendors-images/",
+      )[1];
+
+      if (oldLogoPath) {
+        await cleanUpVendorLogo(decodeURIComponent(oldLogoPath), supabase, log);
+      }
     }
 
     return withFiles(

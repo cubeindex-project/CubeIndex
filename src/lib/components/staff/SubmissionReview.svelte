@@ -12,11 +12,13 @@
   import type { ResolvedPathname } from "$app/types";
   import { getSubmissionStatusBadgeColor } from "$lib/utils/getSubmissionStatusBadgeColor";
   import type { Enums } from "$lib/types/database.types";
+  import StaffNote from "../submission/StaffNote.svelte";
 
   interface Submission extends SubmissionReviewUsers {
     id: number;
     name: string;
     status: Enums<"submission_status">;
+    staff_note: string | null;
     created_at: string;
     verified_at: string | null;
   }
@@ -101,6 +103,9 @@
               : "No verification date"}
           </p>
         </div>
+        {#if submission.staff_note}
+          <StaffNote staff_note={submission.staff_note} />
+        {/if}
       {/if}
     </aside>
   </div>

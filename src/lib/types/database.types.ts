@@ -16,6 +16,32 @@ type ProfileSocials = {
   youtube?: string;
 };
 
+type ReleaseDateFields =
+  | {
+      release_date: string;
+      release_date_precision: DatabaseGenerated["public"]["Enums"]["date_precision"];
+    }
+  | {
+      release_date: null;
+      release_date_precision: null;
+    };
+
+type WithReleaseDate<T> = Omit<T, "release_date" | "release_date_precision"> &
+  ReleaseDateFields;
+
+type ReleaseDateInput =
+  | ReleaseDateFields
+  | {
+      release_date?: never;
+      release_date_precision?: never;
+    };
+
+type WithReleaseDateInput<T> = Omit<
+  T,
+  "release_date" | "release_date_precision"
+> &
+  ReleaseDateInput;
+
 export type Database = MergeDeep<
   DatabaseGenerated,
   {
@@ -30,12 +56,20 @@ export type Database = MergeDeep<
       Views: {
         v_detailed_profiles: {
           Row: DatabaseGenerated["public"]["Tables"]["profiles"]["Row"] & {
-            user_cubes_count: number
-            user_achievements_count: number
-          }
+            user_cubes_count: number;
+            user_achievements_count: number;
+          };
         };
         v_detailed_cube_models: {
-          Row: DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"]
+          Row: WithReleaseDate<
+            DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"]
+          >;
+          Insert: WithReleaseDateInput<
+            DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
+          >;
+          Update: WithReleaseDateInput<
+            DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"]
+          >;
         };
         v_achievement_rarity: {
           Row: DatabaseGenerated["public"]["Tables"]["achievements"]["Row"];

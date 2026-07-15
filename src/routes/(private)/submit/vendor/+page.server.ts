@@ -85,9 +85,7 @@ export const actions: Actions = {
       logo_url: logoURL,
       submitted_by_id: user.id,
       status: "Pending",
-      is_active: false,
       sponsored: false,
-      rating: 0,
       supports_price_scraping: false,
       supports_product_scraping: false,
     };

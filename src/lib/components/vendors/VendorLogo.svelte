@@ -14,19 +14,25 @@
       <img
         src={vendor.logo_url}
         alt={`${vendor.name}'s logo`}
-        class="p-2 object-contain bg-white"
+        class="p-1 object-contain"
         loading="lazy"
         decoding="async"
       />
     </div>
   </div>
 {:else}
-  <div class="avatar avatar-placeholder">
-    <div
-      class="w-16 rounded-xl bg-white"
-      aria-label={`${vendor.name}'s placeholder logo`}
-    >
-      {vendor.name?.charAt(0)}
+  <div
+    class="avatar avatar-placeholder"
+    role="img"
+    aria-label={`${vendor.name}'s placeholder logo`}
+  >
+    <div class="w-16 rounded-xl bg-neutral text-neutral-content">
+      <span
+        class="font-clash text-2xl font-semibold uppercase"
+        aria-hidden="true"
+      >
+        {vendor.name.charAt(0)}
+      </span>
     </div>
   </div>
 {/if}

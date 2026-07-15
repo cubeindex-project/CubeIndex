@@ -1,5 +1,6 @@
 <script lang="ts">
-  import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
+  import SubmissionCubeCard from "$lib/components/cube/SubmissionCubeCard.svelte";
+  import VendorSubmissionCard from "$lib/components/submission/VendorSubmissionCard.svelte";
 
   const { data } = $props();
   const { cubeSubmissions, vendorSubmissions } = $derived(data);
@@ -29,12 +30,6 @@
           (vendor) => vendor.status.toLowerCase() === activeFilter,
         ),
   );
-
-  function statusBadgeColor(status: string): string {
-    if (status === "Approved") return "badge-success";
-    if (status === "Rejected") return "badge-error";
-    return "badge-warning";
-  }
 </script>
 
 {#snippet noResults(resultsType: SubmissionType)}
@@ -94,7 +89,9 @@
 
   {#if submissionType === "cubes"}
     {#if filteredCubes.length}
-      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div
+        class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 items-start"
+      >
         {#each filteredCubes as cube (cube.slug)}
           <SubmissionCubeCard {cube} />
         {/each}
@@ -103,37 +100,11 @@
       {@render noResults(submissionType)}
     {/if}
   {:else if filteredVendors.length}
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div
+      class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 items-start"
+    >
       {#each filteredVendors as vendor (vendor.id)}
-        <article class="card border border-base-300 bg-base-200">
-          <div class="card-body">
-            <div class="flex items-center gap-4">
-              {#if vendor.logo_url}
-                <img
-                  src={vendor.logo_url}
-                  alt=""
-                  class="size-16 shrink-0 rounded-xl p-2 object-contain bg-white"
-                />
-              {:else}
-                <div
-                  class="grid size-16 place-items-center rounded-xl bg-base-300"
-                >
-                  <i class="fa-solid fa-store" aria-hidden="true"></i>
-                </div>
-              {/if}
-              <div>
-                <h2 class="card-title">{vendor.name}</h2>
-                <span class={`badge ${statusBadgeColor(vendor.status)}`}>
-                  {vendor.status}
-                </span>
-              </div>
-            </div>
-            <p>{vendor.country_iso} · {vendor.currency}</p>
-            {#if vendor.staff_note}
-              <p class="text-sm text-error">Staff note: {vendor.staff_note}</p>
-            {/if}
-          </div>
-        </article>
+        <VendorSubmissionCard {vendor} />
       {/each}
     </div>
   {:else}

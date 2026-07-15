@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
+  import StaffVendorCard from "$lib/components/staff/StaffVendorCard.svelte";
 
   const { data } = $props();
   const { vendors } = $derived(data);
@@ -41,36 +41,7 @@
   {#if filteredVendors.length}
     <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {#each filteredVendors as vendor (vendor.id)}
-        <article class="card border border-base-300 bg-base-200">
-          <div class="card-body">
-            <div class="flex items-center gap-4">
-              {#if vendor.logo_url}
-                <img
-                  src={vendor.logo_url}
-                  alt=""
-                  class="size-16 rounded-xl bg-white object-contain p-2"
-                />
-              {/if}
-              <div>
-                <h2 class="card-title">{vendor.name}</h2>
-                <span class="badge">{vendor.status}</span>
-              </div>
-            </div>
-            <p class="text-sm text-base-content/70">
-              Submitted by {vendor.submitter?.display_name ?? "Unknown user"}
-            </p>
-            <div class="card-actions mt-3 justify-end">
-              <a
-                class="btn btn-primary btn-sm"
-                href={resolve("/(admin)/staff/vendors/review/[slug]", {
-                  slug: vendor.slug,
-                })}
-              >
-                Review
-              </a>
-            </div>
-          </div>
-        </article>
+        <StaffVendorCard {vendor} />
       {/each}
     </div>
   {:else}

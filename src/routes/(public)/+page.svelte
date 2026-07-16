@@ -167,14 +167,12 @@
     </div>
   </section>
 
-  <section class="px-5">
-    <dl
-      class="mx-auto flex max-w-6xl divide-x divide-y divide-base-300 sm:divide-y-0"
-    >
+  <section class="flex w-full">
+    <div class="stats stats-vertical sm:stats-horizontal mx-auto flex-1">
       {#each statistics as stat, index (index)}
-        <div class="flex-1 py-5 text-center sm:py-6">
-          <dt class="text-sm text-base-content/60">{stat.title}</dt>
-          <dd class="font-clash text-xl sm:text-2xl">
+        <div class="stat place-items-center">
+          <div class="stat-title">{stat.title}</div>
+          <div class="stat-value font-clash">
             <NumberFlow
               value={mounted ? stat.count : 0}
               plugins={[continuous]}
@@ -186,10 +184,10 @@
               opacityTiming={{ duration: 400, easing: "ease-out" }}
               class="inline-block align-baseline"
             />
-          </dd>
+          </div>
         </div>
       {/each}
-    </dl>
+    </div>
   </section>
 
   <section class="px-5 py-20 sm:px-8 sm:py-28">

@@ -166,14 +166,12 @@
 <Toaster richColors />
 <ClientErrorReporter />
 
-<div class="pb-16 md:pb-0">
-  <NuqsAdapter>
-    {@render children()}
-  </NuqsAdapter>
+<NuqsAdapter>
+  {@render children()}
+</NuqsAdapter>
 
-  <div class="hidden md:block">
-    <Footer />
-  </div>
-
-  <ScrollToTop />
+<div class="hidden md:block">
+  <Footer />
 </div>
+
+<ScrollToTop />

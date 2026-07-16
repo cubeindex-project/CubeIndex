@@ -5,7 +5,6 @@
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
-  import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
@@ -178,5 +177,3 @@
 
   <ScrollToTop />
 </div>
-
-<BottomNav {profile} />

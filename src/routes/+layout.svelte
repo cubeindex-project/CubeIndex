@@ -50,7 +50,7 @@
   });
 
   import Banner from "$lib/components/layout/banner.svelte";
-  import Footer from "$lib/components/layout/footer.svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
 
   const meta: ResolvedMeta = $derived.by(() => {
     const pageMeta = page.data.meta;

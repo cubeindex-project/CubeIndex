@@ -53,12 +53,21 @@
       </div>
 
       <nav>
-        <h2 class="footer-title">Community</h2>
+        <h2 class="footer-title">Website</h2>
+        <a class="link link-hover" href={resolve("/(public)/about")}>
+          About us
+        </a>
         <a class="link link-hover" href={resolve("/(public)/apply")}>
           Apply for staff
         </a>
         <a class="link link-hover" href={resolve("/(public)/report")}>
           Feedback & reports
+        </a>
+        <a
+          class="link link-hover"
+          href="https://github.com/orgs/cubeindex-project/projects/1"
+        >
+          Roadmap
         </a>
         <a class="link link-hover" href="mailto:contact@thecubeindex.com">
           Contact us
@@ -72,6 +81,9 @@
         </a>
         <a class="link link-hover" href={resolve("/(public)/privacy")}>
           Privacy policy
+        </a>
+        <a class="link link-hover" href="/sitemap.xml" rel="external">
+          Sitemap
         </a>
       </nav>
     </div>

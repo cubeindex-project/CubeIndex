@@ -226,37 +226,37 @@
     </div>
   </section>
 
-  <section class="px-5 py-20 sm:px-8 sm:py-28">
+  <section class="px-4 py-14 sm:px-8 sm:py-28">
     <div class="aura aura-holo mx-auto block max-w-6xl">
       <div
-        class="hero relative min-h-96 overflow-hidden rounded-box bg-neutral text-neutral-content"
+        class="hero relative overflow-hidden rounded-box bg-neutral text-neutral-content sm:min-h-96"
       >
-        <div class="hero-content max-w-3xl py-16 text-center">
+        <div class="hero-content max-w-3xl px-5 py-10 text-center sm:py-16">
           <div>
             <div
-              class="mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-content"
+              class="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-content sm:mb-6 sm:size-16"
             >
               <i class="fa-solid fa-cubes-stacked text-2xl" aria-hidden="true"
               ></i>
             </div>
-            <h2 class="font-clash text-4xl sm:text-5xl">
+            <h2 class="font-clash text-3xl leading-tight sm:text-5xl">
               Your collection deserves more than a spreadsheet.
             </h2>
             <p
-              class="mx-auto mt-5 max-w-xl text-lg leading-8 text-neutral-content/70"
+              class="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-content/70 sm:mt-5 sm:text-lg sm:leading-8"
             >
               Create your free collection and join cubers discovering, rating,
               and sharing their favorite puzzles.
             </p>
             <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <a
-                class="btn btn-primary btn-lg px-8"
+                class="btn btn-primary w-full px-5 sm:btn-lg sm:w-auto sm:px-8"
                 href={resolve("/(auth)/auth/signup")}
               >
                 Create your collection
               </a>
               <a
-                class="btn btn-outline btn-lg border-neutral-content/30 text-neutral-content hover:border-neutral-content hover:bg-neutral-content hover:text-neutral"
+                class="btn btn-outline w-full border-neutral-content/30 px-5 text-neutral-content hover:border-neutral-content hover:bg-neutral-content hover:text-neutral sm:btn-lg sm:w-auto sm:px-8"
                 href={resolve("/(public)/explore/cubes")}
               >
                 Browse the database

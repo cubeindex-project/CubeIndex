@@ -53,7 +53,7 @@ export async function saveCube(
   });
 
   if (error) {
-    log.error({ err: error.message }, "Failed to save cube");
+    log.error({ err: error }, "Failed to save cube");
     const duplicate = error.code === "23505";
     throw new StatusError(
       duplicate ? 400 : 500,

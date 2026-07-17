@@ -28,6 +28,7 @@ interface DetailedProfile {
   user_follower_count: number;
   user_following_count: number;
   created_at: string;
+  username: string;
 }
 
 interface DetailedCubeModels {

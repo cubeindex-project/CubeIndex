@@ -54,9 +54,9 @@
 
       <nav>
         <h2 class="footer-title">Website</h2>
-        <a class="link link-hover" href={resolve("/(public)/about")}>
+        <!-- <a class="link link-hover" href={resolve("/(public)/about")}>
           About us
-        </a>
+        </a> -->
         <a class="link link-hover" href={resolve("/(public)/apply")}>
           Apply for staff
         </a>

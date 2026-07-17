@@ -53,12 +53,12 @@
       link: resolve("/(public)/report"),
       mobileOnly: true,
     },
-    {
-      title: "About",
-      icon: "fa-solid fa-circle-info",
-      link: resolve("/(public)/about"),
-      hidden: true,
-    },
+    // {
+    //   title: "About",
+    //   icon: "fa-solid fa-circle-info",
+    //   link: resolve("/(public)/about"),
+    //   hidden: true,
+    // },
   ];
 
   let isSigningOut = $state(false);
@@ -281,7 +281,8 @@
             <li>
               <a
                 href={resolve("/(public)/user/[username]", {
-                  username: profile.username,
+                  // Temporary fix
+                  username: profile.username ?? "",
                 })}
               >
                 <i class="fa-solid fa-circle-user"></i>

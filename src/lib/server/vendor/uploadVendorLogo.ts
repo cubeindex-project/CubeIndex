@@ -1,5 +1,5 @@
-import { ImageProcessingError, processImage } from "$lib/server/processImage";
-import type { NumericRange } from "@sveltejs/kit";
+import { StatusError } from "$lib/errors/StatusError";
+import { processImage } from "$lib/server/processImage";
 
 const vendorImagesBucket = "vendors-images";
 
@@ -7,16 +7,6 @@ const vendorImagesBucket = "vendors-images";
 export interface UploadedVendorLogo {
   logoPath: string;
   logoURL: string;
-}
-
-/** An error safe to display when a vendor logo cannot be stored. */
-export class VendorLogoUploadError extends Error {
-  constructor(
-    readonly status: NumericRange<400, 599>,
-    message: string,
-  ) {
-    super(message);
-  }
 }
 
 /** Processes and uploads a vendor logo to Supabase Storage. */
@@ -30,12 +20,12 @@ export async function uploadVendorLogo(
   try {
     processedLogo = await processImage(logo, "vendor-logo");
   } catch (error) {
-    if (error instanceof ImageProcessingError) {
-      throw new VendorLogoUploadError(error.status, error.message);
+    if (error instanceof StatusError) {
+      throw error;
     }
 
     log.error({ err: error }, "Failed to process vendor logo");
-    throw new VendorLogoUploadError(500, "Unable to process the logo.");
+    throw new StatusError(500, "Unable to process the logo.");
   }
 
   const logoPath = `${userID}/${crypto.randomUUID()}.webp`;
@@ -50,7 +40,7 @@ export async function uploadVendorLogo(
       { err: uploadError.message, logoPath },
       "Failed to upload vendor logo",
     );
-    throw new VendorLogoUploadError(500, "Unable to upload the logo.");
+    throw new StatusError(500, "Unable to upload the logo.");
   }
 
   const logoURL = bucket.getPublicUrl(logoPath).data.publicUrl;

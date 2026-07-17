@@ -1,6 +1,6 @@
 import { fileTypeFromBuffer } from "file-type";
 import sharp from "sharp";
-import type { NumericRange } from "@sveltejs/kit";
+import { StatusError } from "$lib/errors/StatusError";
 
 const allowedMIMETypes = new Set([
   "image/jpeg",
@@ -34,15 +34,6 @@ const imageProfiles = {
 
 export type ImageProfile = keyof typeof imageProfiles;
 
-export class ImageProcessingError extends Error {
-  constructor(
-    readonly status: NumericRange<400, 599>,
-    message: string,
-  ) {
-    super(message);
-  }
-}
-
 /** Validates and normalizes an uploaded image to WebP. */
 export async function processImage(
   file: File,
@@ -51,10 +42,10 @@ export async function processImage(
   const profile = imageProfiles[profileName];
 
   if (file.size === 0) {
-    throw new ImageProcessingError(400, "Empty file.");
+    throw new StatusError(400, "Empty file.");
   }
   if (file.size > profile.maxBytes) {
-    throw new ImageProcessingError(
+    throw new StatusError(
       413,
       `File too large. Max ${Math.round(profile.maxBytes / 1024)} KB.`,
     );
@@ -63,7 +54,7 @@ export async function processImage(
   const input = new Uint8Array(await file.arrayBuffer());
   const detectedType = await fileTypeFromBuffer(input);
   if (!detectedType || !allowedMIMETypes.has(detectedType.mime)) {
-    throw new ImageProcessingError(415, "Unsupported image type.");
+    throw new StatusError(415, "Unsupported image type.");
   }
 
   try {
@@ -74,13 +65,10 @@ export async function processImage(
     const height = metadata.height ?? 0;
 
     if (!width || !height) {
-      throw new ImageProcessingError(400, "Could not read image dimensions.");
+      throw new StatusError(400, "Could not read image dimensions.");
     }
     if (width * height > maxInputPixels) {
-      throw new ImageProcessingError(
-        413,
-        "Image pixel count exceeds the limit.",
-      );
+      throw new StatusError(413, "Image pixel count exceeds the limit.");
     }
 
     return Uint8Array.from(
@@ -97,7 +85,7 @@ export async function processImage(
         .toBuffer(),
     );
   } catch (error) {
-    if (error instanceof ImageProcessingError) throw error;
-    throw new ImageProcessingError(400, "Invalid or corrupted image data.");
+    if (error instanceof StatusError) throw error;
+    throw new StatusError(400, "Invalid or corrupted image data.");
   }
 }

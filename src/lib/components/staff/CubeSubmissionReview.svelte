@@ -6,8 +6,8 @@
     type SubmissionReviewUsers,
   } from "./SubmissionReview.svelte";
 
-  interface CubeSubmission
-    extends Tables<"v_detailed_cube_models">, SubmissionReviewUsers {}
+  type CubeSubmission = Tables<"v_detailed_cube_models"> &
+    SubmissionReviewUsers;
 
   interface Props {
     cube: CubeSubmission;

@@ -14,10 +14,8 @@ import { slugify } from "$lib/components/helper_functions/slugify.svelte";
 import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
 import { isFile } from "$lib/utils/isFile";
 import { cleanUpVendorLogo } from "$lib/server/vendor/cleanUpVendorLogo";
-import {
-  uploadVendorLogo,
-  VendorLogoUploadError,
-} from "$lib/server/vendor/uploadVendorLogo";
+import { uploadVendorLogo } from "$lib/server/vendor/uploadVendorLogo";
+import { StatusError } from "$lib/errors/StatusError";
 
 export const load = (async ({ params, locals: { supabase, log } }) => {
   const slug = params.slug;
@@ -117,9 +115,9 @@ export const actions: Actions = {
         ));
       } catch (error) {
         const uploadError =
-          error instanceof VendorLogoUploadError
+          error instanceof StatusError
             ? error
-            : new VendorLogoUploadError(500, "Unable to upload the logo.");
+            : new StatusError(500, "Unable to upload the logo.");
 
         return withFiles(
           setError(form, "logo", uploadError.message, {

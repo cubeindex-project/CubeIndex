@@ -1,10 +1,7 @@
 // src/routes/api/user/avatar/+server.ts
 import type { RequestHandler } from "./$types";
-import {
-  ImageProcessingError,
-  processImage,
-  type ImageProfile,
-} from "$lib/server/processImage";
+import { processImage, type ImageProfile } from "$lib/server/processImage";
+import { StatusError } from "$lib/errors/StatusError";
 
 function bad(status: number, message: string) {
   return new Response(JSON.stringify({ error: message }), {
@@ -34,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
       },
     });
   } catch (error: unknown) {
-    if (error instanceof ImageProcessingError) {
+    if (error instanceof StatusError) {
       return bad(error.status, error.message);
     }
     return bad(500, "Image processing failed.");

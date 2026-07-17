@@ -13,10 +13,8 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import type { Actions, PageServerLoad } from "./$types";
 import { isFile } from "$lib/utils/isFile";
 import { cleanUpVendorLogo } from "$lib/server/vendor/cleanUpVendorLogo";
-import {
-  uploadVendorLogo,
-  VendorLogoUploadError,
-} from "$lib/server/vendor/uploadVendorLogo";
+import { uploadVendorLogo } from "$lib/server/vendor/uploadVendorLogo";
+import { StatusError } from "$lib/errors/StatusError";
 
 export const load = (async () => {
   return {
@@ -64,9 +62,9 @@ export const actions: Actions = {
         ));
       } catch (error) {
         const uploadError =
-          error instanceof VendorLogoUploadError
+          error instanceof StatusError
             ? error
-            : new VendorLogoUploadError(500, "Unable to upload the logo.");
+            : new StatusError(500, "Unable to upload the logo.");
 
         return withFiles(
           setError(form, "logo", uploadError.message, {

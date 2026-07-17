@@ -71,6 +71,11 @@
     label: PageLabel;
   }
 
+  interface VendorAutofillState {
+    status: "idle" | "loading" | "success" | "error";
+    errorMessage: string;
+  }
+
   let {
     cubes,
     brands,
@@ -178,6 +183,14 @@
       this.success = false;
     },
   });
+  let vendorAutofillStates: VendorAutofillState[] = $state(
+    untrack(() =>
+      initialForm.data.vendorLinks.map(() => ({
+        status: "idle",
+        errorMessage: "",
+      })),
+    ),
+  );
   $effect(() => {
     const { success, errorMessage } = autofill;
     if (!success && errorMessage) return;
@@ -188,12 +201,26 @@
   });
 
   async function autofillVendorPrice(index: number) {
-    const { price, availability } = await autofillVendorOffer(
-      $form.vendorLinks[index].url,
-    );
+    const state = vendorAutofillStates[index];
+    const vendorLink = $form.vendorLinks[index];
+    if (!state || !vendorLink) return;
 
-    if (price) $form.vendorLinks[index].price = price;
-    if (availability) $form.vendorLinks[index].available = availability;
+    state.status = "loading";
+    state.errorMessage = "";
+
+    try {
+      const { price, availability } = await autofillVendorOffer(vendorLink.url);
+
+      if (price !== undefined) vendorLink.price = price;
+      if (availability !== undefined) vendorLink.available = availability;
+      state.status = "success";
+    } catch (error) {
+      state.status = "error";
+      state.errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while contacting the autofill service.";
+    }
   }
 
   function applyData(data: CubeDetailsAutofillResult): void {
@@ -817,6 +844,10 @@
                         available: false,
                       },
                     ];
+                    vendorAutofillStates.push({
+                      status: "idle",
+                      errorMessage: "",
+                    });
                   }}
                 >
                   <i class="fa-solid fa-plus" aria-hidden="true"></i>
@@ -861,6 +892,8 @@
                         )}
                         {@const vendorErrors = $errors.vendorLinks?.[index]}
                         {@const hasProductUrl = Boolean(link.url?.trim())}
+                        {@const vendorAutofillState =
+                          vendorAutofillStates[index]}
 
                         <tr class="align-top hover:bg-base-200/20">
                           <td>
@@ -905,6 +938,10 @@
                                 type="url"
                                 class="min-w-0 grow"
                                 bind:value={link.url}
+                                oninput={() => {
+                                  vendorAutofillState.status = "idle";
+                                  vendorAutofillState.errorMessage = "";
+                                }}
                                 placeholder={currentVendor?.base_url ??
                                   "https://example.com/product"}
                                 aria-label={`Product URL for ${
@@ -956,9 +993,6 @@
                               class="checkbox"
                               name="vendorLinks"
                               bind:checked={link.available}
-                              aria-label={`${
-                                link.vendor_name || `Vendor ${index + 1}`
-                              } is available`}
                             />
 
                             {#if vendorErrors?.available}
@@ -969,40 +1003,86 @@
                           </td>
 
                           <td>
-                            <div class="flex justify-end gap-2">
-                              <button
-                                type="button"
-                                class="btn btn-outline btn-info btn-sm"
-                                disabled={!hasProductUrl}
-                                aria-label={`Autofill ${
-                                  link.vendor_name || `vendor row ${index + 1}`
-                                }`}
-                                title="Autofill using the product URL"
-                                onclick={() => autofillVendorPrice(index)}
-                              >
-                                <i
-                                  class="fa-solid fa-wand-magic-sparkles"
-                                  aria-hidden="true"
-                                ></i>
-                                <span class="hidden xl:inline">Autofill</span>
-                              </button>
+                            <div class="flex flex-col items-end gap-1">
+                              <div class="flex justify-end gap-2">
+                                <button
+                                  type="button"
+                                  class="btn btn-outline btn-sm"
+                                  class:btn-info={vendorAutofillState.status ===
+                                    "idle" ||
+                                    vendorAutofillState.status === "loading"}
+                                  class:btn-success={vendorAutofillState.status ===
+                                    "success"}
+                                  class:btn-error={vendorAutofillState.status ===
+                                    "error"}
+                                  disabled={!hasProductUrl ||
+                                    vendorAutofillState.status === "loading"}
+                                  aria-live="polite"
+                                  title="Autofill using the product URL"
+                                  onclick={() => autofillVendorPrice(index)}
+                                >
+                                  {#if vendorAutofillState.status === "loading"}
+                                    <i
+                                      class="fa-solid fa-spinner fa-spin"
+                                      aria-hidden="true"
+                                    ></i>
+                                    <span class="hidden xl:inline">
+                                      Loading
+                                    </span>
+                                  {:else if vendorAutofillState.status === "success"}
+                                    <i
+                                      class="fa-solid fa-check"
+                                      aria-hidden="true"
+                                    ></i>
+                                    <span class="hidden xl:inline">
+                                      Success
+                                    </span>
+                                  {:else if vendorAutofillState.status === "error"}
+                                    <i
+                                      class="fa-solid fa-triangle-exclamation"
+                                      aria-hidden="true"
+                                    ></i>
+                                    <span class="hidden xl:inline">
+                                      Error
+                                    </span>
+                                  {:else}
+                                    <i
+                                      class="fa-solid fa-wand-magic-sparkles"
+                                      aria-hidden="true"
+                                    ></i>
+                                    <span class="hidden xl:inline">
+                                      Autofill
+                                    </span>
+                                  {/if}
+                                </button>
 
-                              <button
-                                type="button"
-                                class="btn btn-ghost btn-sm text-error hover:bg-error/10"
-                                aria-label={`Remove ${
-                                  link.vendor_name || `vendor row ${index + 1}`
-                                }`}
-                                title="Remove vendor"
-                                onclick={() => {
-                                  $form.vendorLinks = $form.vendorLinks.filter(
-                                    (_, rowIndex) => rowIndex !== index,
-                                  );
-                                }}
-                              >
-                                <i class="fa-solid fa-trash" aria-hidden="true"
-                                ></i>
-                              </button>
+                                <button
+                                  type="button"
+                                  class="btn btn-ghost btn-sm text-error hover:bg-error/10"
+                                  title="Remove vendor"
+                                  onclick={() => {
+                                    vendorAutofillStates.splice(index, 1);
+                                    $form.vendorLinks =
+                                      $form.vendorLinks.filter(
+                                        (_, rowIndex) => rowIndex !== index,
+                                      );
+                                  }}
+                                >
+                                  <i
+                                    class="fa-solid fa-trash"
+                                    aria-hidden="true"
+                                  ></i>
+                                </button>
+                              </div>
+
+                              {#if vendorAutofillState.errorMessage}
+                                <p
+                                  class="max-w-48 wrap-break-words text-right text-xs text-error"
+                                  role="alert"
+                                >
+                                  {vendorAutofillState.errorMessage}
+                                </p>
+                              {/if}
                             </div>
                           </td>
                         </tr>

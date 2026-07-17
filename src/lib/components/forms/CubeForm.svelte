@@ -26,6 +26,8 @@
   } from "$lib/autofill/types";
   import CubeDetailsAutofillDialog from "$lib/autofill/CubeDetailsAutofillDialog.svelte";
   import { autofillVendorOffer } from "$lib/autofill/client";
+  import { goto } from "$app/navigation";
+  import type { ResolvedPathname } from "$app/types";
 
   interface Props {
     cubes: Pick<
@@ -115,6 +117,15 @@
       resetForm: false,
       onError({ result }) {
         $message = result.error.message || "Unknown error";
+      },
+      async onResult({ result, cancel }) {
+        if (result.type === "redirect") {
+          cancel();
+          await goto(result.location as ResolvedPathname, {
+            replaceState: true,
+            invalidateAll: true,
+          });
+        }
       },
     },
   );

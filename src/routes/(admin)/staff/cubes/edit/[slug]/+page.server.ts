@@ -127,6 +127,6 @@ export const actions: Actions = {
     }
 
     message(form, "Cube edited successfully!");
-    throw redirect(301, `/staff/cubes/edit/${slug}`);
+    throw redirect(303, `/staff/cubes/edit/${slug}`);
   },
 };

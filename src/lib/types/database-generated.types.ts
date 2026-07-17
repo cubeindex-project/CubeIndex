@@ -2215,6 +2215,18 @@ export type Database = {
         }[];
       };
       get_types: { Args: { enum_type: string }; Returns: Json };
+      save_cube: {
+        Args: {
+          p_cube: Json;
+          p_current_slug: string;
+          p_features: string[];
+          p_new_brand: string;
+          p_new_series: string;
+          p_new_type: string;
+          p_vendor_links: Json;
+        };
+        Returns: string;
+      };
       update_password: {
         Args: {
           current_id: string;

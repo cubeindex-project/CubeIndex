@@ -105,6 +105,19 @@ export type Database = MergeDeep<
           };
         };
       };
+      Functions: {
+        save_cube: {
+          Args: {
+            p_cube:
+              | DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
+              | DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"];
+            p_current_slug: string | null;
+            p_new_brand: string | null;
+            p_new_type: string | null;
+            p_new_series: string | null;
+          };
+        };
+      };
     };
   }
 >;

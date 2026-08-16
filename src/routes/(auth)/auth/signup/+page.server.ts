@@ -10,9 +10,7 @@ import { resolve } from "$app/paths";
 
 export const load: PageServerLoad = async ({ url }) => {
   const step = (url.searchParams.get("step") ?? "account") as
-    | "account"
-    | "survey"
-    | "done";
+    "account" | "survey" | "done";
 
   return {
     step,

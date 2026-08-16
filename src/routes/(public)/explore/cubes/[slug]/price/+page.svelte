@@ -43,8 +43,7 @@
       return {
         label: row.vendor_name,
         data: labels.map((date) => priceByDate.get(date) ?? null) as (
-          | number
-          | null
+          number | null
         )[], // null makes a gap
         spanGaps: true,
       };

@@ -259,16 +259,18 @@
       </div>
 
       {#if user_cubes && user_cubes.length > 0}
-        <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
+        <ul class="columns-1 sm:columns-2 md:columns-3">
           {#each paginatedCubes as row (row.cube_model?.slug)}
-            <UserCubeCard
-              mode={edit ? "edit" : "view"}
-              cube={row.cube_model}
-              user_details={row}
-              user_rating={user_cube_ratings.find(
-                (ucr) => ucr.cube_slug === row.cube_model?.slug,
-              )?.rating ?? 0}
-            />
+            <div class="mb-4">
+              <UserCubeCard
+                mode={edit ? "edit" : "view"}
+                cube={row.cube_model}
+                user_details={row}
+                user_rating={user_cube_ratings.find(
+                  (ucr) => ucr.cube_slug === row.cube_model?.slug,
+                )?.rating ?? 0}
+              />
+            </div>
           {:else}
             <!-- No results state -->
             <div

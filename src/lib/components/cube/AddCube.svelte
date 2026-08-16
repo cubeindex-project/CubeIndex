@@ -5,10 +5,10 @@
   import { clientLogger } from "$lib/logger/client";
   import type { Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
-  import Modal from "../layout/modal.svelte";
+  import Modal from "$lib/components/ui/Modal.svelte";
 
   interface Props {
-    onCancel: () => void;
+    open: boolean;
     cube: Pick<Tables<"v_detailed_cube_models">, "slug" | "name">;
     alreadyAdded: boolean;
     defaultData?: Pick<
@@ -38,7 +38,7 @@
   } satisfies Props["defaultData"];
 
   let {
-    onCancel,
+    open = $bindable(),
     cube,
     alreadyAdded,
     defaultData = DEFAULT_DATA,
@@ -157,8 +157,7 @@
       const data = await res.json().catch(() => ({}));
       if (res.ok && data?.success) {
         showSuccess = true;
-        // FIX: don't call onCancel immediately
-        setTimeout(onCancel, 900);
+        setTimeout(() => (open = false), 900);
       } else {
         throw new Error(
           data?.error || "Unable to add the cube. Please try again.",
@@ -181,29 +180,29 @@
 </script>
 
 <Modal
+  bind:open
   title={alreadyAdded ? "Edit Cube" : "Add to Collection"}
-  description={cube.name ?? undefined}
-  {onCancel}
+  description={cube.name}
 >
-  <form
-    aria-labelledby="add-cube-title"
-    aria-describedby="add-cube-desc"
-    onsubmit={addCubeToCollection}
-    method="dialog"
-  >
-    <!-- Form grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-      <!-- Quantity -->
-      <label class="form-control">
-        <div class="label">
-          <span class="label-text">Quantity</span>
-          {#if form.status === "Wishlist"}
-            <span class="label-text-alt opacity-70"> Locked for wishlist </span>
-          {/if}
-        </div>
-        <div class="flex w-full items-center gap-2">
+  {#if formMessage || !isConnected}
+    <div class="alert alert-error" aria-live="polite" aria-atomic="true">
+      {formMessage}
+      {#if !isConnected}
+        You must be logged in to perform this action.
+      {/if}
+    </div>
+  {/if}
+
+  <form onsubmit={addCubeToCollection} method="dialog">
+    <div class="flex justify-between items-center">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Quantity</legend>
+        {#if form.status === "Wishlist"}
+          <p class="label">Locked for wishlist</p>
+        {/if}
+        <div class="join w-fit">
           <button
-            class="btn btn-square no-animation"
+            class="btn btn-outline join-item flex-1 sm:flex-none"
             type="button"
             disabled={!canDec}
             aria-disabled={!canDec}
@@ -214,24 +213,19 @@
             }}
             onmousedown={(e) => e.preventDefault()}
           >
-            <i class="fa-solid fa-minus"></i>
+            <i class="fa-solid fa-minus" aria-hidden="true"></i>
           </button>
 
-          <NumberFlow
-            value={form.quantity}
-            plugins={[continuous]}
+          <output
+            class="btn join-item min-w-24 bg-base-200 text-lg font-semibold"
             aria-live="polite"
-          />
-
-          <input
-            type="number"
-            name="quantity"
-            class="hidden"
-            bind:value={form.quantity}
-          />
+            aria-label="Quantity"
+          >
+            <NumberFlow value={form.quantity} plugins={[continuous]} />
+          </output>
 
           <button
-            class="btn btn-square no-animation"
+            class="btn btn-outline join-item flex-1 sm:flex-none"
             type="button"
             disabled={!canInc}
             aria-disabled={!canInc}
@@ -242,35 +236,37 @@
             }}
             onmousedown={(e) => e.preventDefault()}
           >
-            <i class="fa-solid fa-plus"></i>
+            <i class="fa-solid fa-plus" aria-hidden="true"></i>
           </button>
         </div>
-      </label>
 
-      <!-- Main cube -->
-      <label class="form-control">
-        <div class="label">
-          <span class="label-text">Main Cube</span>
-          <span class="label-text-alt opacity-70"> Shows as your primary </span>
-        </div>
-        <div class="join">
-          <input
-            type="checkbox"
-            name="main"
-            bind:checked={form.main}
-            class="toggle join-item bg-base-100"
-            aria-label="Set as main cube"
-          />
-        </div>
-      </label>
+        <input
+          type="number"
+          name="quantity"
+          class="hidden"
+          bind:value={form.quantity}
+        />
+      </fieldset>
 
-      <!-- Condition -->
-      <label class="form-control md:col-span-1">
-        <div class="label"><span class="label-text">Condition</span></div>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Main Cube</legend>
+        <input
+          type="checkbox"
+          name="main"
+          bind:checked={form.main}
+          class="toggle"
+          aria-label="Set as main cube"
+        />
+      </fieldset>
+    </div>
+
+    <div class="flex gap-6">
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Condition</legend>
         <select
           name="condition"
+          class="select w-full"
           bind:value={form.condition}
-          class="select select-bordered rounded-xl w-full"
           required
         >
           <option value="New in box">New in box</option>
@@ -281,15 +277,14 @@
           <option value="Poor">Poor</option>
           <option value="Broken">Broken</option>
         </select>
-      </label>
+      </fieldset>
 
-      <!-- Status -->
-      <label class="form-control md:col-span-1">
-        <div class="label"><span class="label-text">Status</span></div>
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Status</legend>
         <select
           name="status"
           bind:value={form.status}
-          class="select select-bordered rounded-xl w-full"
+          class="select w-full"
           required
         >
           <option value="Owned">Owned</option>
@@ -298,34 +293,32 @@
           <option value="Borrowed">Borrowed</option>
           <option value="Lost">Lost</option>
         </select>
-      </label>
+      </fieldset>
+    </div>
 
-      <label class="form-control">
-        <div class="label"><span class="label-text">Bought From</span></div>
+    <div class="flex gap-6">
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Bought From</legend>
         <select
           name="bought_from"
           bind:value={form.bought_from}
-          class="select select-bordered rounded-xl w-full"
+          class="select w-full"
         >
           <option value={null}>None</option>
           {#each vendors as vendor (vendor.slug)}
             <option value={vendor.slug}>{vendor.name}</option>
           {/each}
         </select>
-      </label>
+      </fieldset>
 
-      <label class="form-control">
-        <div class="label">
-          <span class="label-text">Purchase Price</span>
-          <span class="label-text-alt opacity-70">Optional</span>
-        </div>
-        <label class="input flex items-center gap-2 rounded-xl">
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Purchase Price</legend>
+        <label class="input w-full">
           <span aria-hidden="true">$</span>
           <input
             type="number"
             name="purchase_price"
             bind:value={form.purchase_price}
-            class="grow"
             min="0"
             max="100000"
             step="0.01"
@@ -333,76 +326,60 @@
             inputmode="decimal"
           />
         </label>
-      </label>
-
-      <!-- Notes (full width on md) -->
-      <label class="form-control md:col-span-2">
-        <div class="label">
-          <span class="label-text">Notes</span>
-          <span class="label-text-alt opacity-70">Optional</span>
-        </div>
-        <textarea
-          name="notes"
-          placeholder="Lubed with..., setup..., special mod..., etc."
-          bind:value={form.notes}
-          class="textarea textarea-bordered rounded-2xl w-full min-h-24"
-          maxlength="2000"></textarea>
-      </label>
-
-      <!-- Acquired date -->
-      <label class="form-control md:col-span-1">
-        <div class="label">
-          <span class="label-text">Acquired on</span>
-          <span class="label-text-alt opacity-70">Optional</span>
-        </div>
-        <input
-          name="acquiredAt"
-          type="date"
-          bind:value={form.acquired_at}
-          class="input input-bordered rounded-xl w-full"
-          max={new Date().toISOString().slice(0, 10)}
-        />
-      </label>
+        <p class="label">Optional</p>
+      </fieldset>
     </div>
 
-    <!-- Footer -->
-    <div class="flex flex-col md:flex-row gap-3 justify-between items-center">
-      <div
-        class="text-sm min-h-5 text-error"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        {formMessage}
-        {#if !isConnected}
-          You must be logged in to perform this action.
-        {/if}
-      </div>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Acquired on</legend>
+      <input
+        name="acquiredAt"
+        type="date"
+        bind:value={form.acquired_at}
+        class="input w-full"
+        max={new Date().toISOString().slice(0, 10)}
+      />
+      <p class="label">Optional</p>
+    </fieldset>
 
-      <div class="flex gap-2">
-        <button
-          class="btn btn-ghost rounded-xl"
-          type="button"
-          onclick={onCancel}
-          disabled={isSubmitting}
-        >
-          Cancel
-        </button>
-        <button
-          class="btn btn-primary rounded-xl"
-          type="submit"
-          disabled={isSubmitting || !isConnected}
-        >
-          {#if isSubmitting}
-            <span class="loading loading-spinner"></span>
-            <span class="ml-2">{alreadyAdded ? "Editing…" : "Adding…"}</span>
-          {:else if showSuccess}
-            <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
-            {alreadyAdded ? "Edited!" : "Added!"}
-          {:else}
-            {alreadyAdded ? "Edit Cube" : "Add Cube"}
-          {/if}
-        </button>
-      </div>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Notes</legend>
+      <textarea
+        name="notes"
+        placeholder="Lubed with..., setup..., special mod..., etc."
+        bind:value={form.notes}
+        class="textarea w-full rounded-2xl"
+        maxlength="2000"></textarea>
+      <p class="label">Optional</p>
+    </fieldset>
+
+    <div
+      class="modal-action flex gap-3 sm:justify-end"
+    >
+      <button
+        class="btn flex-1 sm:flex-none"
+        type="button"
+        onclick={() => (open = false)}
+        disabled={isSubmitting}
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn btn-primary flex-1 sm:flex-none"
+        type="submit"
+        disabled={isSubmitting || !isConnected}
+      >
+        {#if isSubmitting}
+          <span class="loading loading-spinner"></span>
+          {alreadyAdded ? "Editing…" : "Adding…"}
+        {:else if showSuccess}
+          <i class="fa-solid fa-check" aria-hidden="true"></i>
+          {alreadyAdded ? "Edited!" : "Added!"}
+        {:else}
+          {alreadyAdded ? "Edit Cube" : "Add Cube"}
+        {/if}
+      </button>
     </div>
   </form>
 </Modal>

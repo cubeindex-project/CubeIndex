@@ -7,7 +7,7 @@
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import { page } from "$app/state";
   import Report from "$lib/components/report/report.svelte";
-  import AddCube from "$lib/components/cube/addCube.svelte";
+  import AddCube from "$lib/components/cube/AddCube.svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
 
@@ -427,16 +427,12 @@
   />
 {/if}
 
-{#if isAddingCube}
-  <AddCube
-    onCancel={() => {
-      isAddingCube = false;
-    }}
-    {cube}
-    {alreadyAdded}
-    defaultData={userCubeDetail ?? undefined}
-  />
-{/if}
+<AddCube
+  bind:open={isAddingCube}
+  {cube}
+  {alreadyAdded}
+  defaultData={userCubeDetail ?? undefined}
+/>
 
 {#if isRatingCube}
   <RateCube

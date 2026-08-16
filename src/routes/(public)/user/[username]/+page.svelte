@@ -261,7 +261,7 @@
       {#if user_cubes && user_cubes.length > 0}
         <ul class="columns-1 sm:columns-2 md:columns-3">
           {#each paginatedCubes as row (row.cube_model?.slug)}
-            <div class="mb-4">
+            <div class="mb-4 break-inside-avoid">
               <UserCubeCard
                 mode={edit ? "edit" : "view"}
                 cube={row.cube_model}

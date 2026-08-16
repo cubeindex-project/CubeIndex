@@ -511,7 +511,7 @@
                 {@const userCubeDetail = userCubes?.find(
                   (uc) => uc.cube === cube.slug,
                 )}
-                <div class="mb-4">
+                <div class="mb-4 break-inside-avoid">
                   <CubeCard
                     {cube}
                     showAddButton={true}

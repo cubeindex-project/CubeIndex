@@ -59,14 +59,14 @@
 {/snippet}
 
 {#snippet content()}
-  <div class="mt-4 flex gap-2">
+  <div class="mt-4 grid grid-cols-[repeat(auto-fit,minmax(10.5rem,1fr))] gap-4">
     {#if showAddButton}
       <AddToCollectionButton
         onClick={() => {
           openAddCard = !openAddCard;
         }}
         {alreadyAdded}
-        addClass="flex-1"
+        addClass="w-full"
       />
     {/if}
     {#if showRateButton}
@@ -74,7 +74,7 @@
         onClick={() => {
           openRateCard = !openRateCard;
         }}
-        addClass="flex-1"
+        addClass="w-full"
       />
     {/if}
   </div>

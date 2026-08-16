@@ -504,7 +504,7 @@
         <Pagination bind:currentPage={params.page.current} {totalPages} />
 
         <!-- Display paginated cubes -->
-        <div class="columns-3 my-10">
+        <div class="columns-1 sm:columns-2 md:columns-3 my-10">
           {#if paginatedCubes.length > 0}
             {#each paginatedCubes as cube, index (index)}
               {#key paginatedCubes}

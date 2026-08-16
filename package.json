@@ -32,6 +32,7 @@
     "jsdom": "^29.1.1",
     "prettier": "^3.8.4",
     "prettier-plugin-svelte": "^4.1.1",
+    "supabase": "^2.114.0",
     "svelte": "^5.56.3",
     "svelte-check": "^4.7.0",
     "svelte-turnstile": "^0.11.0",

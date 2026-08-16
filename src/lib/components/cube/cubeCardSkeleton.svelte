@@ -40,7 +40,7 @@
 </svelte:head>
 
 <div
-  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition flex flex-col h-full"
+  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden flex flex-col h-full"
 >
   {@render top?.()}
   <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>

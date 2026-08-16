@@ -501,26 +501,26 @@
         </div>
 
         <!-- Pagination at top -->
-        <div class="mb-10">
-          <Pagination bind:currentPage={params.page.current} {totalPages} />
-        </div>
+        <Pagination bind:currentPage={params.page.current} {totalPages} />
 
         <!-- Display paginated cubes -->
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(310px,1fr))] gap-8">
+        <div class="columns-3 my-10">
           {#if paginatedCubes.length > 0}
             {#each paginatedCubes as cube, index (index)}
               {#key paginatedCubes}
                 {@const userCubeDetail = userCubes?.find(
                   (uc) => uc.cube === cube.slug,
                 )}
-                <CubeCard
-                  {cube}
-                  showAddButton={true}
-                  showRateButton={true}
-                  showDetailsButton={true}
-                  alreadyAdded={userCubeDetail !== undefined}
-                  {userCubeDetail}
-                />
+                <div class="mb-4">
+                  <CubeCard
+                    {cube}
+                    showAddButton={true}
+                    showRateButton={true}
+                    showDetailsButton={true}
+                    alreadyAdded={userCubeDetail !== undefined}
+                    {userCubeDetail}
+                  />
+                </div>
               {/key}
             {/each}
           {:else}
@@ -558,9 +558,7 @@
         </div>
 
         <!-- Pagination at bottom -->
-        <div class="mt-10">
-          <Pagination bind:currentPage={params.page.current} {totalPages} />
-        </div>
+        <Pagination bind:currentPage={params.page.current} {totalPages} />
       </div>
     </div>
   </div>

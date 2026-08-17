@@ -473,13 +473,7 @@
   </div>
 </header>
 
-{#if signOutConfirmation}
-  <ConfirmSignOut
-    onCancel={() => {
-      signOutConfirmation = false;
-    }}
-  />
-{/if}
+<ConfirmSignOut bind:open={signOutConfirmation} />
 
 <style>
   .scroll-nav {

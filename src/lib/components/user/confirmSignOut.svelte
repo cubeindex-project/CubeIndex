@@ -1,28 +1,33 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import Modal from "$lib/components/ui/Modal.svelte";
 
-  let { onCancel } = $props();
+  interface Props {
+    open: boolean;
+  }
+
+  let { open = $bindable() }: Props = $props();
 </script>
 
-<div
-  class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50"
+<Modal
+  bind:open
+  title="Confirm Sign Out"
+  description="Are you sure you want to sign out?"
 >
-  <div
-    class="bg-base-300 rounded-3xl shadow-2xl p-8 w-full max-w-md text-center space-y-8"
-  >
-    <h2 class="text-2xl font-clash font-bold mb-2">Confirm Sign Out</h2>
-    <p class="text-lg">Are you sure you want to sign out?</p>
-    <div class="flex justify-center gap-6 mt-6">
-      <a
-        type="button"
-        href={resolve("/auth/logout")}
-        class="btn btn-primary btn-lg"
-      >
-        Sign Out
-      </a>
-      <button type="button" onclick={onCancel} class="btn btn-secondary btn-lg">
-        Cancel
-      </button>
-    </div>
+  <div class="modal-action flex gap-3 sm:justify-end">
+    <button
+      type="button"
+      class="btn flex-1 sm:flex-none"
+      onclick={() => (open = false)}
+    >
+      Cancel
+    </button>
+
+    <a
+      href={resolve("/auth/logout")}
+      class="btn btn-primary flex-1 sm:flex-none"
+    >
+      Sign Out
+    </a>
   </div>
-</div>
+</Modal>

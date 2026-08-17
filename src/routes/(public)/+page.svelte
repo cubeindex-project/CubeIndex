@@ -62,7 +62,7 @@
       url: "https://acubemy.com/r/cubeindex",
       logo: {
         src: "/partners-logo/acubemy_logo.svg",
-        alt: "acubemy Logo",
+        alt: "Visit acubemy",
         class: "size-9 object-contain",
       },
     },
@@ -71,7 +71,7 @@
       url: "https://discord.gg/VHhYR6nyzs",
       logo: {
         src: "/partners-logo/cubingpanda_logo.webp",
-        alt: "CubingPanda Logo",
+        alt: "Visit CubingPanda",
         class: "size-9 rounded-full object-cover",
       },
     },
@@ -295,6 +295,7 @@
                 alt={partner.logo.alt}
               />
               <span class="font-clash">{partner.name}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
             </a>
           {/each}
         </div>

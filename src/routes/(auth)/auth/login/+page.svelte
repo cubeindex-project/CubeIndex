@@ -60,9 +60,7 @@
   let resetTurnstile: (() => void) | undefined = $state();
 </script>
 
-<section
-  class="flex flex-col min-h-screen justify-center px-6 sm:px-12 py-10 bg-base-200"
->
+<section class="flex flex-col min-h-screen justify-center px-6 sm:px-12 py-10">
   <div class="w-full max-w-md mx-auto">
     <h1 class="text-3xl font-clash font-bold mb-2">Welcome Back</h1>
     <p class="text-sm mb-8">Log in to your CubeIndex profile</p>

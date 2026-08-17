@@ -59,9 +59,7 @@
 </script>
 
 <section class="flex min-h-screen">
-  <div
-    class="flex flex-1 flex-col justify-center px-6 sm:px-12 py-10 bg-base-200"
-  >
+  <div class="flex flex-1 flex-col justify-center px-6 sm:px-12 py-10">
     <div class="w-full max-w-md mx-auto">
       <h1 class="text-3xl font-clash font-bold mb-2">Join CubeIndex</h1>
       <p class="text-sm mb-6">
@@ -328,7 +326,10 @@
           <p class="opacity-80">
             You can now start adding cubes to your collection 🥳.
           </p>
-          <a href={resolve("/explore")} class="btn btn-primary mt-2">
+          <a
+            href={resolve("/(public)/explore/cubes")}
+            class="btn btn-primary mt-2"
+          >
             Start Collecting!
           </a>
         </div>

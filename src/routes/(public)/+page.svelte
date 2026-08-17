@@ -1,624 +1,407 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import CubeCard from "$lib/components/cube/cubeCard.svelte";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { onMount } from "svelte";
-  import FeatureSection from "$lib/components/marketing/FeatureSection.svelte";
-  import { inView } from "$lib/actions/inView.js";
 
   const { data } = $props();
-  const { totalCubes, totalUsers, achievements } = $derived(
-    data || { totalCubes: 0, totalUsers: 0, achievements: [] },
-  );
-  let mounted = $state(false);
+  const {
+    featuredCube,
+    totalCubes,
+    totalUsers,
+    totalVendors,
+    totalTrackedPrices,
+  } = $derived(data);
 
-  const unlockAchi = $derived(
-    achievements.filter((ta) => ta.unlockable === true).length,
-  );
-  const totalAchi = $derived(achievements.length);
+  const features = [
+    {
+      description:
+        "Search and filter the cube database by brand, puzzle type, release year, features, rating, popularity, and price.",
+      icon: "fa-solid fa-magnifying-glass",
+      image: "images/landing-page/discover.webp",
+      title: "Discover",
+    },
+    {
+      description:
+        "Build a personal collection, track versions and condition, leave notes, and share the collection through your profile.",
+      icon: "fa-solid fa-box-archive",
+      image: "images/landing-page/collect.webp",
+      title: "Collect",
+    },
+    {
+      description:
+        "Compare specifications, ratings, vendors, availability, and prices before purchasing.",
+      icon: "fa-solid fa-scale-balanced",
+      image: "images/landing-page/compare.webp",
+      title: "Compare",
+    },
+  ];
 
-  let statsVisible = $state(false);
+  const statistics = $derived([
+    {
+      title: "Cubes indexed",
+      count: totalCubes,
+    },
+    {
+      title: "Collectors",
+      count: totalUsers,
+    },
+    {
+      title: "Stores",
+      count: totalVendors,
+    },
+    {
+      title: "Prices tracked",
+      count: totalTrackedPrices,
+    },
+  ]);
 
-  type Partner = {
-    name: string;
-    emoji: string;
-    description: string;
-    links: {
-      label: string;
-      url: string;
-      color: "primary" | "secondary" | "neutral";
-    }[];
-  };
-
-  const partners: Partner[] = [
+  const partners = [
+    {
+      name: "acubemy",
+      url: "https://acubemy.com/r/cubeindex",
+      logo: {
+        src: "/partners-logo/acubemy_logo.svg",
+        alt: "Visit acubemy",
+        class: "size-9 object-contain",
+      },
+    },
     {
       name: "CubingPanda",
-      emoji: "🐼",
-      description:
-        "CubingPanda is the go-to community for Rubik's Cube fans at every skill level—whether you're a veteran speedcuber or someone who's never solved a single face.",
-      links: [
-        {
-          label: "Join Discord",
-          url: "https://discord.gg/VHhYR6nyzs",
-          color: "primary",
-        },
-      ],
-    },
-    {
-      name: "AlgArchive",
-      emoji: "📚",
-      description:
-        "The open archive for cube algorithms. Browse community-vetted solutions across every puzzle type, tag them with your average-of-5, and share your PB-crushing secrets.",
-      links: [
-        {
-          label: "Visit Site",
-          url: "https://alg-archive.vercel.app/",
-          color: "secondary",
-        },
-        {
-          label: "Join Discord",
-          url: "https://discord.gg/NYPG43xe9t",
-          color: "primary",
-        },
-      ],
+      url: "https://discord.gg/VHhYR6nyzs",
+      logo: {
+        src: "/partners-logo/cubingpanda_logo.webp",
+        alt: "Visit CubingPanda",
+        class: "size-9 rounded-full object-cover",
+      },
     },
   ];
 
-  // Compact feature tiles (mosaic) like the screenshot
-  type Tile = {
-    title: string;
-    description: string;
-    iconClass: string; // Font Awesome icon classes
-    accent:
-      | "primary"
-      | "secondary"
-      | "accent"
-      | "success"
-      | "warning"
-      | "info"
-      | "neutral";
-  };
+  let mounted = $state(false);
 
-  /**
-   * Accent style map: keep classes literal so Tailwind can see them.
-   */
-  const accentStyles: Record<
-    Tile["accent"],
-    { icon: string; gradient: string }
-  > = {
-    primary: {
-      icon: "bg-primary/15 text-primary ring-primary/30",
-      gradient: "from-primary/30",
-    },
-    secondary: {
-      icon: "bg-secondary/15 text-secondary ring-secondary/30",
-      gradient: "from-secondary/30",
-    },
-    accent: {
-      icon: "bg-accent/15 text-accent ring-accent/30",
-      gradient: "from-accent/30",
-    },
-    success: {
-      icon: "bg-success/15 text-success ring-success/30",
-      gradient: "from-success/30",
-    },
-    warning: {
-      icon: "bg-warning/15 text-warning ring-warning/30",
-      gradient: "from-warning/30",
-    },
-    info: {
-      icon: "bg-info/15 text-info ring-info/30",
-      gradient: "from-info/30",
-    },
-    neutral: {
-      icon: "bg-neutral/15 text-neutral ring-neutral/30",
-      gradient: "from-neutral/30",
-    },
-  };
-
-  const tiles: Tile[] = [
-    {
-      title: "Track Your Collection",
-      description:
-        "Log every cube with notes and versions. Keep your stash organized and easy to browse.",
-      iconClass: "fa-boxes-stacked",
-      accent: "primary",
-    },
-    {
-      title: "Explore Every Puzzle",
-      description:
-        "Search the largest cube database. From 2×2 to big cubes and rare mods, it’s all here.",
-      iconClass: "fa-cubes",
-      accent: "secondary",
-    },
-    {
-      title: "Follow Price Trends",
-      description:
-        "Compare vendors, view price history, and get instant alerts on drops and restocks.",
-      iconClass: "fa-tag",
-      accent: "info",
-    },
-    {
-      title: "Unlock Achievements",
-      description:
-        "Earn badges for milestones and rare finds. Show them off on your profile.",
-      iconClass: "fa-trophy",
-      accent: "accent",
-    },
-    {
-      title: "Discover the Community",
-      description:
-        "Follow collectors, share finds, and see how your shelf stacks up worldwide.",
-      iconClass: "fa-users",
-      accent: "success",
-    },
-    {
-      title: "Stay Notified",
-      description:
-        "Get updates on releases, alerts, and community news—always right on time.",
-      iconClass: "fa-bell",
-      accent: "neutral",
-    },
-  ];
-
-  // Reusable class tokens for consistency
-  const ui = {
-    section: "relative overflow-hidden py-20 px-6",
-    container: "mx-auto max-w-6xl",
-    heroContainer:
-      "px-6 relative flex min-h-[72vh] sm:min-h-[78vh] items-center justify-center text-center",
-    h1: "text-5xl sm:text-7xl font-clash font-extrabold leading-[1.05] tracking-tight",
-    h2: "text-3xl sm:text-4xl lg:text-5xl font-clash font-extrabold tracking-tight text-center",
-    lead: "text-lg sm:text-xl text-base-content/80",
-    ctas: "flex flex-col sm:flex-row gap-4 justify-center",
-    statCard:
-      "group relative rounded-3xl border border-base-300/60 bg-base-200/60 backdrop-blur-xl p-8 sm:p-10 shadow-sm hover:shadow-lg transition",
-    pill: "inline-flex items-center gap-3 rounded-full bg-base-100/70 ring-1 ring-base-300 px-3 py-1",
-    partnerCard:
-      "rounded-2xl border border-base-300/60 bg-base-200/40 backdrop-blur p-6 flex flex-col gap-4 hover:shadow-lg transition",
-    partnerHeader: "flex items-center gap-3",
-    partnerEmoji: "text-4xl",
-    tileCard:
-      "group relative overflow-hidden rounded-2xl border border-base-300/60 bg-base-100/50 backdrop-blur p-6 sm:p-7 shadow-sm hover:shadow-md transition",
-    tileIcon:
-      "inline-flex size-10 items-center justify-center rounded-xl ring-1",
-    tileHeading: "text-lg sm:text-xl font-bold",
-  };
-
-  onMount(() => {
-    mounted = true;
-  });
+  onMount(() => (mounted = true));
 </script>
 
-<!-- HERO -->
-<section class="relative overflow-hidden {ui.section} bg-base-100">
-  <div aria-hidden="true" class="absolute inset-0">
-    <!-- Subtle top divider line -->
-    <div
-      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-
-    <!-- Soft background wash -->
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-base-200/70 via-base-100 to-base-100"
-    ></div>
-
-    <!-- Radial glow (SaaS-style spotlight) -->
-    <svg
-      class="absolute inset-0 h-full w-full text-primary/90"
-      preserveAspectRatio="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <radialGradient id="hero-radial" cx="50%" cy="25%" r="75%">
-          <stop offset="0%" stop-color="currentColor" stop-opacity="0.22" />
-          <stop offset="60%" stop-color="currentColor" stop-opacity="0.12" />
-          <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
-        </radialGradient>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#hero-radial)" />
-    </svg>
-
-    <!-- Subtle grid pattern with radial fade -->
-    <svg
-      class="absolute inset-0 h-full w-full text-base-content/80"
-      preserveAspectRatio="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <pattern
-          id="hero-grid"
-          width="32"
-          height="32"
-          patternUnits="userSpaceOnUse"
-        >
-          <path
-            d="M 32 0 L 0 0 0 32"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1"
-            stroke-opacity="0.08"
-          />
-        </pattern>
-        <radialGradient id="hero-fade" cx="50%" cy="30%" r="80%">
-          <stop offset="0%" stop-color="white" stop-opacity="1" />
-          <stop offset="100%" stop-color="white" stop-opacity="0" />
-        </radialGradient>
-        <mask id="hero-grid-mask">
-          <rect width="100%" height="100%" fill="url(#hero-fade)" />
-        </mask>
-      </defs>
-      <rect
-        width="100%"
-        height="100%"
-        fill="url(#hero-grid)"
-        mask="url(#hero-grid-mask)"
-      />
-    </svg>
-
-    <!-- Accent blobs -->
-    <div
-      class="absolute left-1/2 -translate-x-1/2 h-[44rem] w-[44rem] rounded-full bg-primary/10 blur-3xl"
-    ></div>
-    <div
-      class="absolute -right-20 top-1/4 h-72 w-72 rounded-full bg-secondary/10 blur-3xl"
-    ></div>
-    <div
-      class="absolute -left-24 -bottom-10 h-56 w-56 rounded-full bg-accent/10 blur-3xl"
-    ></div>
-  </div>
-
-  <div class={ui.heroContainer}>
-    <div class="relative z-10 max-w-3xl space-y-6">
-      <h1 class={ui.h1}>Build Your Ultimate Cube Collection</h1>
-      <p class={ui.lead}>
-        Track your cubes, unlock achievements, and explore the world's largest
-        cube database.
-      </p>
-      <div class={ui.ctas}>
-        <a
-          href={resolve("/auth/signup")}
-          class="btn btn-primary btn-lg sm:btn-xl">Get Started</a
-        >
-        <a href={resolve("/explore")} class="btn btn-outline btn-lg sm:btn-xl"
-          >Explore Database</a
-        >
+{#snippet discover()}
+  <div
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-xl p-3 sm:p-4"
+    role="img"
+    aria-label="Cube database search interface"
+  >
+    <div class="join mb-4 flex" aria-hidden="true">
+      <div class="btn join-item pointer-events-none">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      </div>
+      <div class="input w-full pointer-events-none">
+        <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i>
+        <span class="grow text-base-content/50">Search cubes</span>
       </div>
     </div>
-  </div>
 
-  <!-- Scroll down indicator -->
-  <a
-    href="#why"
-    aria-label="Scroll to content"
-    class="group absolute inset-x-0 bottom-6 mx-auto mb-[7%] w-max select-none"
-  >
-    <span
-      class="mx-auto flex items-center gap-2 rounded-full bg-base-100/70 px-3 py-1 text-sm text-base-content/70 ring-1 ring-base-300 backdrop-blur transition hover:text-base-content/90 hover:ring-base-300/80"
-    >
-      <span>Scroll</span>
-      <i
-        class="fa-solid fa-chevron-down motion-safe:animate-bounce text-base opacity-80 group-hover:opacity-100"
-        aria-hidden="true"
-      ></i>
-    </span>
-  </a>
-</section>
-
-<!-- FEATURE TILES (mosaic) -->
-<section id="why" class={ui.section}>
-  <div
-    aria-hidden="true"
-    class="pointer-events-none select-none absolute inset-0"
-  >
-    <div
-      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-    <div
-      class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5"
-    ></div>
-    <div
-      class="absolute -left-24 -top-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-primary/20"
-    ></div>
-    <div
-      class="absolute -right-24 -bottom-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-secondary/20"
-    ></div>
-  </div>
-
-  <div class={ui.container}>
-    <h2 class={ui.h2}>Why CubeIndex</h2>
-
-    <div
-      class="mt-10 grid gap-4 sm:gap-6 md:gap-7 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-      role="list"
-      aria-label="Key benefits"
-    >
-      {#each tiles as t (t.title)}
-        <article class={ui.tileCard} role="listitem">
-          <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-            <div
-              class={`absolute inset-0 bg-gradient-to-br ${accentStyles[t.accent].gradient} to-transparent opacity-[0.18] group-hover:opacity-25 transition`}
-            ></div>
-          </div>
-
-          <div class="relative z-10">
-            <div class="flex items-center gap-3">
-              <span class={`${ui.tileIcon} ${accentStyles[t.accent].icon}`}>
-                <i class={`fa-solid ${t.iconClass} text-base`}></i>
-              </span>
-              <h3 class={ui.tileHeading}>{t.title}</h3>
-            </div>
-            <p class="mt-3 text-sm sm:text-base text-base-content/80">
-              {t.description}
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
+      {#each [{ name: "GAN16 MagLev", rating: "4.9", popularity: 842, price: "$64.99" }, { name: "MoYu WeiLong WR M V10 Ferrocore", rating: "4.8", popularity: 617, price: "$34.99" }, { name: "MoYu RS3 M V5", rating: "4.7", popularity: 1_294, price: "$9.99" }, { name: "QiYi Clock", rating: "4.4", popularity: 186, price: "$24.99" }, { name: "MoYu RS Skewb M", rating: "4.6", popularity: 243, price: "$12.99" }, { name: "QiYi MS 2x2", rating: "4.5", popularity: 328, price: "$7.99" }] as cube (cube.name)}
+        <div class="rounded-xl border border-base-300 bg-base-100">
+          <div class="p-2">
+            <p class="truncate text-xs font-semibold">
+              {cube.name}
             </p>
-          </div>
-        </article>
-      {/each}
-    </div>
-  </div>
-</section>
 
-<!-- Feature Sections (unchanged content, consistent padding/width handled inside component) -->
-<FeatureSection
-  eyebrow="Collection"
-  title="Add and Manage Your Rubik's Cube Collection"
-  description="Catalog your entire puzzle collection. Track conditions and personal notes, then share with friends to showcase and brag!"
-  imageSrc="images/home/personal_collection.webp"
-  imageAlt="Illustration of a personal collection dashboard with categorized cubes"
-/>
+            <div class="mt-1 flex flex-wrap items-center gap-2 text-[10px]">
+              <span class="flex items-center gap-1 text-warning">
+                <i class="fa-solid fa-star" aria-hidden="true"></i>
+                <span class="text-base-content/60">{cube.rating}</span>
+              </span>
 
-<FeatureSection
-  reverse
-  eyebrow="Pricing"
-  title="Compare Prices Between Shops"
-  description="Know where to buy. View vendor pricing side-by-side, check availability, and jump straight to the best deal."
-  imageSrc="images/home/compare_price.webp"
-  imageAlt="Illustration showing price comparison cards across multiple stores"
-/>
-
-<FeatureSection
-  eyebrow="Ratings"
-  title="Rate Cubes"
-  description="Share your experience. Leave ratings and feedback so others can find their perfect main — your opinion makes the database better for everybody."
-  imageSrc="images/home/rating.webp"
-  imageAlt="Illustration of rating stars and feedback cards"
-/>
-
-<FeatureSection
-  reverse
-  eyebrow="Community"
-  title="See Other People's Cube Collection"
-  description="Discover inspiring collections from across the community."
-  imageSrc="images/home/community.webp"
-  imageAlt="Illustration of community profiles and shared collections"
-/>
-
-<FeatureSection
-  eyebrow="Achievements"
-  title="Earn Achievements"
-  description="Celebrate milestones as you collect, rate, and explore. Unlock achievements for completing challenges and growing your collection."
-  imageSrc="images/home/achievements.webp"
-  imageAlt="Illustration of achievement badges and progress"
-/>
-
-<!-- STATS -->
-<section
-  class={`${ui.section} bg-base-100`}
-  use:inView={{ once: true, onEnter: () => (statsVisible = true) }}
->
-  <div
-    aria-hidden="true"
-    class="pointer-events-none select-none absolute inset-0"
-  >
-    <div
-      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-    <div
-      class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5"
-    ></div>
-    <div
-      class="absolute -left-24 -top-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-primary/20"
-    ></div>
-    <div
-      class="absolute -right-24 -bottom-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-secondary/20"
-    ></div>
-  </div>
-
-  <div class={`relative z-10 ${ui.container}`}>
-    <h2 class={ui.h2}>CubeIndex in Numbers</h2>
-
-    <div
-      class="mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-3"
-      role="list"
-      aria-label="Key statistics"
-    >
-      <!-- Cubes -->
-      <article class={ui.statCard} role="listitem">
-        <div class="flex items-start justify-between">
-          <div class={ui.pill}>
-            <i class="fa-solid fa-cubes text-base sm:text-lg"></i>
-            <span class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-              >Cubes Logged</span
-            >
-          </div>
-        </div>
-
-        <div
-          class="mt-6 text-5xl sm:text-6xl lg:text-7xl font-black leading-none"
-        >
-          <span class="bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            <NumberFlow
-              value={mounted && statsVisible ? totalCubes : 0}
-              plugins={[continuous]}
-              transformTiming={{ duration: 50, easing: "linear" }}
-              spinTiming={{
-                duration: Math.max(800, totalCubes * 3),
-                easing: "linear",
-              }}
-              opacityTiming={{ duration: 400, easing: "ease-out" }}
-              class="inline-block align-baseline"
-              aria-label={`Total cubes logged: ${totalCubes}`}
-            />
-          </span>
-        </div>
-
-        <p class="mt-3 text-sm text-base-content/70">
-          Cataloged across brands, types, and generations.
-        </p>
-      </article>
-
-      <!-- Users -->
-      <article class={ui.statCard} role="listitem">
-        <div class="flex items-start justify-between">
-          <div class={ui.pill}>
-            <i class="fa-solid fa-people-group text-base sm:text-lg"></i>
-            <span class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-              >Registered Users</span
-            >
-          </div>
-        </div>
-
-        <div
-          class="mt-6 text-5xl sm:text-6xl lg:text-7xl font-black leading-none"
-        >
-          <span class="bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            <NumberFlow
-              value={mounted && statsVisible ? totalUsers : 0}
-              plugins={[continuous]}
-              transformTiming={{ duration: 50, easing: "linear" }}
-              spinTiming={{
-                duration: Math.max(1000, totalUsers * 10),
-                easing: "linear",
-              }}
-              opacityTiming={{ duration: 400, easing: "ease-out" }}
-              class="inline-block align-baseline"
-              aria-label={`Registered users: ${totalUsers}`}
-            />
-          </span>
-        </div>
-
-        <p class="mt-3 text-sm text-base-content/70">
-          A growing community of cubers worldwide.
-        </p>
-      </article>
-
-      <!-- Achievements -->
-      <article class={ui.statCard} role="listitem">
-        <div class="flex items-start justify-between">
-          <div class={ui.pill}>
-            <i class="fa-solid fa-trophy text-base sm:text-lg"></i>
-            <span class="text-xs sm:text-sm font-medium uppercase tracking-wide"
-              >Unlockable Achievements</span
-            >
-          </div>
-        </div>
-
-        <div
-          class="mt-6 text-5xl sm:text-6xl lg:text-7xl font-black leading-none"
-        >
-          <span class="bg-clip-text bg-gradient-to-r from-primary to-secondary">
-            <!-- FIX: use numeric value, not function; make spin timing scale -->
-            <NumberFlow
-              value={mounted && statsVisible ? unlockAchi : 0}
-              plugins={[continuous]}
-              transformTiming={{ duration: 50, easing: "linear" }}
-              spinTiming={{
-                duration: Math.max(600, unlockAchi * 10),
-                easing: "linear",
-              }}
-              opacityTiming={{ duration: 400, easing: "ease-out" }}
-              class="inline-block align-baseline"
-              aria-label={`Unlockable achievements: ${unlockAchi} out of ${totalAchi}`}
-            />
-          </span>
-          <span
-            class="ml-2 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-base-content/60 align-baseline"
-          >
-            / {totalAchi}
-          </span>
-        </div>
-
-        <p class="mt-3 text-sm text-base-content/70">
-          Earnable today based on your collection & activity.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- PARTNERS -->
-<section class={`${ui.section} bg-base-100`}>
-  <div class={ui.container}>
-    <h2 class={ui.h2}>Our Partners</h2>
-
-    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-      {#each partners as partner, index (index)}
-        <div class={ui.partnerCard}>
-          <div class={ui.partnerHeader}>
-            <span class={ui.partnerEmoji}>{partner.emoji}</span>
-            <h3 class="text-xl font-semibold">{partner.name}</h3>
-          </div>
-
-          <p class="text-base-content/80">{partner.description}</p>
-
-          <div class="flex gap-3 flex-wrap pt-1">
-            {#each partner.links as link, index (index)}
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer external"
-                class={`btn btn-sm ${link.color === "primary" ? "btn-primary" : link.color === "secondary" ? "btn-secondary" : "btn-neutral"}`}
+              <span
+                class="flex items-center gap-1 text-base-content/50"
+                title={`${cube.popularity.toLocaleString()} users have this cube`}
               >
-                {link.label}
-              </a>
-            {/each}
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+                {cube.popularity.toLocaleString()}
+              </span>
+
+              <span class="flex items-center gap-1 text-base-content/50">
+                <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                {cube.price}
+              </span>
+            </div>
           </div>
         </div>
       {/each}
     </div>
   </div>
-</section>
+{/snippet}
 
-<!-- CTA -->
-<section class="{ui.section} text-center">
+{#snippet collect()}
   <div
-    aria-hidden="true"
-    class="pointer-events-none select-none absolute inset-0"
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 shadow-xl sm:p-4"
+    role="img"
+    aria-label="Personal cube collection interface"
   >
-    <div
-      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-base-content/20 to-transparent"
-    ></div>
-    <div
-      class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5"
-    ></div>
-    <div
-      class="absolute -left-24 -top-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-primary/20"
-    ></div>
-    <div
-      class="absolute -right-24 -bottom-24 h-72 w-72 rounded-full blur-3xl opacity-30 bg-secondary/20"
-    ></div>
-  </div>
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="font-clash text-lg">My Cube Collection</p>
+        <p class="mt-0.5 text-xs text-base-content/55">24 cubes collected</p>
+      </div>
+      <div class="badge badge-primary badge-sm gap-1">
+        <i class="fa-solid fa-plus text-[9px]" aria-hidden="true"></i>
+        Add cube
+      </div>
+    </div>
 
-  <div class={ui.container}>
-    <h2 class="text-4xl font-bold font-clash mb-4">
-      Ready to level up your cube game?
-    </h2>
-    <p class="text-lg max-w-2xl mx-auto mb-8">
-      Join the CubeIndex community and start tracking your collection, unlocking
-      achievements, and connecting with cubers worldwide.
-    </p>
-    <div class="flex justify-center gap-4 flex-wrap">
-      <a href={resolve("/auth/signup")} class="btn btn-primary btn-lg sm:btn-xl"
-        >Get Started</a
-      >
-      <a href={resolve("/explore")} class="btn btn-outline btn-lg sm:btn-xl"
-        >Explore Database</a
-      >
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      {#each [{ name: "GAN 16 MagLev", condition: "New in box", vendor: "SpeedCubeShop", color: "bg-primary" }, { name: "MoYu WRM V10", condition: "Good", vendor: "TheCubicle", color: "bg-secondary" }, { name: "QiYi MS 5x5", condition: "Broken", vendor: "Cubezz", color: "bg-accent" }, { name: "YJ MGC Square-1", condition: "New", vendor: "KewbzUK", color: "bg-warning" }] as cube (cube.name)}
+        <div class="rounded-xl border border-base-300 bg-base-100 p-3">
+          <div class="flex items-center gap-3">
+            <div class="min-w-0">
+              <p class="truncate text-xs font-semibold">
+                {cube.name}
+              </p>
+              <div class="flex flex-col sm:flex-row">
+                <span class="badge badge-ghost badge-xs mt-1">
+                  <i class="fa-solid fa-cube"></i>
+                  {cube.condition}
+                </span>
+                <span class="badge badge-ghost badge-xs mt-1">
+                  <i class="fa-solid fa-store"></i>
+                  {cube.vendor}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {/each}
     </div>
   </div>
-</section>
+{/snippet}
+
+{#snippet compare()}
+  <div
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 shadow-xl sm:p-4"
+    role="img"
+    aria-label="GAN 16 MagLev price comparison across stores"
+  >
+    <div class="mb-4 flex items-center justify-between">
+      <p class="font-clash text-lg">GAN 16 MagLev</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2 sm:gap-3">
+      {#each [{ name: "SpeedCubeShop", price: "$59.95", inStock: true, cheapest: false }, { name: "TheCubicle", price: "$57.99", inStock: true, cheapest: true }, { name: "Cubezz", price: "$61.99", inStock: true, cheapest: false }, { name: "KewbzUK", price: "$64.99", inStock: false, cheapest: false }] as vendor, index (index)}
+        <div
+          class:!border-primary={vendor.cheapest}
+          class:!bg-primary={vendor.cheapest}
+          class:!rounded-tr-none={vendor.cheapest}
+          class:!mt-2={vendor.cheapest}
+          class="relative rounded-xl border border-base-300 bg-base-100 p-3"
+        >
+          {#if vendor.cheapest}
+            <span
+              class="badge badge-primary rounded-br-none badge-xs absolute -top-2 right-0 gap-1"
+            >
+              <i class="fa-solid fa-trophy text-[8px]" aria-hidden="true"></i>
+              Best price
+            </span>
+          {/if}
+
+          <div class="flex items-start justify-between gap-2">
+            <p class="font-semibold">{vendor.name}</p>
+            <span
+              class:badge-success={vendor.inStock}
+              class:badge-error={!vendor.inStock}
+              class="badge badge-xs shrink-0"
+            >
+              {vendor.inStock ? "In stock" : "Out of stock"}
+            </span>
+          </div>
+
+          <div class="mt-3 flex items-end justify-between gap-2">
+            <span class="font-clash text-xl">
+              {vendor.price}
+            </span>
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"
+            ></i>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
+<main class="overflow-hidden">
+  <section class="hero">
+    <div class="hero-content flex-col px-5 py-16 lg:py-24">
+      <div class="flex flex-col gap-8 md:flex-row md:items-center lg:gap-14">
+        <div class="max-w-2xl text-left">
+          <h1 class="font-clash text-6xl tracking-tight sm:text-7xl">
+            Give your cubes<br /> a new home.
+          </h1>
+          <p class="mt-7 text-lg leading-8 text-base-content/70 sm:text-xl">
+            Build your collection, find your next puzzle, and share what you
+            love with the speedcubing community.
+          </p>
+          <div class="mt-5 flex flex-col gap-3 sm:flex-row">
+            <a
+              class="btn btn-primary btn-lg"
+              href={resolve("/(auth)/auth/signup")}
+            >
+              Start collecting <i
+                class="fa-solid fa-arrow-right"
+                aria-hidden="true"
+              ></i>
+            </a>
+            <a
+              class="btn btn-outline btn-lg"
+              href={resolve("/(public)/explore/cubes")}
+            >
+              Explore cubes
+            </a>
+          </div>
+        </div>
+
+        {#if featuredCube}
+          <div class="flex w-full justify-center md:w-auto md:shrink-0">
+            <div class="stack stack-end grid w-full max-w-sm md:rotate-2">
+              <CubeCard
+                cube={featuredCube}
+                showAddButton={false}
+                showRateButton={false}
+                showDetailsButton={true}
+                alreadyAdded={false}
+              />
+              {#each [1, 2] as index (index)}
+                <div
+                  class="rounded-2xl border border-base-300 bg-base-200"
+                ></div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+      </div>
+
+      <div class="mx-auto mt-15 text-center lg:col-span-2">
+        <h2 class="text-sm text-base-content/60">They believe in CubeIndex</h2>
+        <div class="mt-4 flex items-center justify-center gap-8 sm:gap-10">
+          {#each partners as partner, index (index)}
+            <a
+              class="flex items-center gap-2 transition-opacity hover:opacity-70"
+              href={partner.url}
+              target="_blank"
+              rel="noopener noreferrer external"
+            >
+              <img
+                class={partner.logo.class}
+                src={partner.logo.src}
+                alt={partner.logo.alt}
+              />
+              <span class="font-clash">{partner.name}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          {/each}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="flex w-full px-5 sm:px-[10vw]">
+    <div class="grid w-full grid-cols-2 lg:grid-cols-4">
+      {#each statistics as stat, index (index)}
+        <div class="stat place-items-center">
+          <div class="stat-title">{stat.title}</div>
+          <div class="stat-value font-clash">
+            <NumberFlow
+              value={mounted ? stat.count : 0}
+              plugins={[continuous]}
+              transformTiming={{ duration: 50, easing: "linear" }}
+              spinTiming={{
+                duration: 1000,
+                easing: "linear",
+              }}
+              opacityTiming={{ duration: 400, easing: "ease-out" }}
+              class="inline-block align-baseline"
+            />
+          </div>
+        </div>
+      {/each}
+    </div>
+  </section>
+
+  <section class="px-5 py-20 sm:px-8 sm:py-28">
+    <div class="mx-auto max-w-6xl">
+      <div class="mt-16 space-y-20 sm:mt-20 sm:space-y-28">
+        {#each features as feature, index (index)}
+          <article
+            class="flex flex-col-reverse items-center gap-9 lg:flex-row lg:gap-16 lg:even:flex-row-reverse"
+          >
+            <div class="w-full lg:w-1/2">
+              {#if feature.title === "Discover"}
+                {@render discover()}
+              {:else if feature.title === "Collect"}
+                {@render collect()}
+              {:else if feature.title === "Compare"}
+                {@render compare()}
+              {/if}
+            </div>
+
+            <div class="w-full lg:w-1/2">
+              <div class="flex items-center gap-4">
+                <div
+                  class="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary"
+                >
+                  <i class={feature.icon} aria-hidden="true"></i>
+                </div>
+                <h3 class="mt-2 font-clash text-4xl sm:text-5xl">
+                  {feature.title}
+                </h3>
+              </div>
+              <p class="mt-4 max-w-xl text-lg leading-8 text-base-content/70">
+                {feature.description}
+              </p>
+            </div>
+          </article>
+        {/each}
+      </div>
+    </div>
+  </section>
+
+  <section class="px-4 py-14 sm:px-8 sm:py-28">
+    <div class="aura aura-holo mx-auto block max-w-6xl">
+      <div
+        class="hero relative overflow-hidden rounded-box bg-base-200 sm:min-h-96"
+      >
+        <div class="hero-content max-w-3xl px-5 py-10 text-center sm:py-16">
+          <div>
+            <div
+              class="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-content sm:mb-6 sm:size-16"
+            >
+              <i class="fa-solid fa-cubes-stacked text-2xl" aria-hidden="true"
+              ></i>
+            </div>
+            <h2 class="font-clash text-3xl leading-tight sm:text-5xl">
+              Your collection deserves more than a spreadsheet.
+            </h2>
+            <p
+              class="mx-auto mt-4 max-w-xl text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8"
+            >
+              Create your free collection and join cubers discovering, rating,
+              and sharing their favorite puzzles.
+            </p>
+            <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <a
+                class="btn btn-primary w-full sm:btn-lg sm:w-auto"
+                href={resolve("/(auth)/auth/signup")}
+              >
+                Create your collection
+              </a>
+              <a
+                class="btn btn-ghost w-full sm:btn-lg sm:w-auto"
+                href={resolve("/(public)/explore/cubes")}
+              >
+                Browse the database
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

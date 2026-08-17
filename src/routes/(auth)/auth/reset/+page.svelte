@@ -16,9 +16,7 @@
   const pwStrength = $derived(passwordStrength($form.password));
 </script>
 
-<section
-  class="flex flex-col min-h-screen justify-center px-6 sm:px-12 py-10 bg-base-200"
->
+<section class="flex flex-col min-h-screen justify-center px-6 sm:px-12 py-10">
   <div class="w-full max-w-md mx-auto">
     <h1 class="text-3xl font-clash font-bold mb-2">Reset Password</h1>
     <p class="text-sm mb-8">Enter a new password for your account</p>

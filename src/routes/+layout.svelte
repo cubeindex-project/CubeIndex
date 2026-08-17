@@ -1,11 +1,11 @@
 <script lang="ts">
   import "../app.css";
-  import Navbar from "$lib/components/layout/navbar.svelte";
+  import Navbar from "$lib/components/layout/Navbar.svelte";
+  import Dock from "$lib/components/layout/Dock.svelte";
   import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
   import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
-  import BottomNav from "$lib/components/layout/bottomNav.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
@@ -50,7 +50,7 @@
   });
 
   import Banner from "$lib/components/layout/banner.svelte";
-  import Footer from "$lib/components/layout/footer.svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
 
   const meta: ResolvedMeta = $derived.by(() => {
     const pageMeta = page.data.meta;
@@ -167,7 +167,7 @@
 <Toaster richColors />
 <ClientErrorReporter />
 
-<div class="pb-16 md:pb-0">
+<div class="pb-16 lg:pb-0">
   <NuqsAdapter>
     {@render children()}
   </NuqsAdapter>
@@ -179,4 +179,4 @@
   <ScrollToTop />
 </div>
 
-<BottomNav {profile} />
+<Dock />

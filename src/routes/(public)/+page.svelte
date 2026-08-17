@@ -220,9 +220,7 @@
             <span class="font-clash text-xl">
               {vendor.price}
             </span>
-            <i
-              class="fa-solid fa-arrow-up-right-from-square"
-              aria-hidden="true"
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"
             ></i>
           </div>
         </div>
@@ -243,9 +241,7 @@
             Build your collection, find your next puzzle, and share what you
             love with the speedcubing community.
           </p>
-          <div
-            class="mt-5 flex flex-col gap-3 sm:flex-row"
-          >
+          <div class="mt-5 flex flex-col gap-3 sm:flex-row">
             <a
               class="btn btn-primary btn-lg px-8"
               href={resolve("/(auth)/auth/signup")}
@@ -306,7 +302,7 @@
   </section>
 
   <section class="flex w-full px-5 sm:px-[10vw]">
-    <div class="stats stats-vertical sm:stats-horizontal mx-auto flex-1">
+    <div class="grid w-full grid-cols-2 lg:grid-cols-4">
       {#each statistics as stat, index (index)}
         <div class="stat place-items-center">
           <div class="stat-title">{stat.title}</div>

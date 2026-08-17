@@ -15,31 +15,25 @@
 
   const navigation = [
     {
-      title: "Explore",
-      icon: "fa-solid fa-compass",
-      subMenu: [
-        {
-          title: "Cubes",
-          icon: "fa-solid fa-cube",
-          link: resolve("/(public)/explore/cubes"),
-        },
-        {
-          title: "Users",
-          icon: "fa-solid fa-users",
-          link: resolve("/(public)/explore/users"),
-        },
-        {
-          title: "Stores",
-          icon: "fa-solid fa-store",
-          link: resolve("/(public)/explore/vendors"),
-        },
-        {
-          title: "Achievements",
-          icon: "fa-solid fa-trophy",
-          link: resolve("/(public)/explore/achievements"),
-          hidden: true,
-        },
-      ],
+      title: "Cubes",
+      icon: "fa-solid fa-cube",
+      link: resolve("/(public)/explore/cubes"),
+    },
+    {
+      title: "Stores",
+      icon: "fa-solid fa-store",
+      link: resolve("/(public)/explore/vendors"),
+    },
+    {
+      title: "Users",
+      icon: "fa-solid fa-users",
+      link: resolve("/(public)/explore/users"),
+    },
+    {
+      title: "Achievements",
+      icon: "fa-solid fa-trophy",
+      link: resolve("/(public)/explore/achievements"),
+      hidden: true,
     },
     {
       title: "Awards",
@@ -143,7 +137,7 @@
                       <i class={nav.icon}></i>
                       {nav.title}
                     </a>
-                  {:else if nav.subMenu}
+                  <!-- {:else if nav.subMenu}
                     <p>
                       <i class={nav.icon}></i>
                       {nav.title}
@@ -159,7 +153,7 @@
                           </li>
                         {/if}
                       {/each}
-                    </ul>
+                    </ul> -->
                   {/if}
                 </li>
               {/if}
@@ -195,7 +189,7 @@
                     <i class={nav.icon}></i>
                     {nav.title}
                   </a>
-                {:else if nav.subMenu}
+                <!-- {:else if nav.subMenu}
                   <details>
                     <summary>
                       <i class={nav.icon}></i>
@@ -213,7 +207,7 @@
                         {/if}
                       {/each}
                     </ul>
-                  </details>
+                  </details> -->
                 {/if}
               </li>
             {/if}

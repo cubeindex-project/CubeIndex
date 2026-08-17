@@ -103,7 +103,7 @@
     <fieldset class="fieldset">
       <div class="flex items-center justify-between">
         <legend class="fieldset-legend">Comment</legend>
-        <span class=label>Max {MAX_COMMENT_LENGTH}</span>
+        <span class="label">Max {MAX_COMMENT_LENGTH}</span>
       </div>
 
       <div class="relative">

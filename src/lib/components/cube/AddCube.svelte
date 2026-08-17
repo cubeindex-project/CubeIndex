@@ -92,7 +92,7 @@
     return null;
   }
 
-  const vendors = $derived(page.data.vendors)
+  const vendors = $derived(page.data.vendors);
 
   async function addCubeToCollection(e: SubmitEvent) {
     e.preventDefault(); // ensure no page nav

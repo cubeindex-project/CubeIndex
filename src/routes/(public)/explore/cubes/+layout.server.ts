@@ -12,6 +12,6 @@ export const load = (async ({ locals: { log, supabase } }) => {
   }
 
   return {
-    vendors: data
+    vendors: data,
   };
 }) satisfies LayoutServerLoad;

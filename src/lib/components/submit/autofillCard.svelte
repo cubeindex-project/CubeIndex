@@ -76,10 +76,7 @@
     </div>
   {:else if variables.errorMessage}
     <div class="alert alert-error text-sm" aria-live="polite">
-      <i
-        class="fa-solid fa-triangle-exclamation"
-        aria-hidden="true"
-      ></i>
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
       <span>{variables.errorMessage}</span>
     </div>
   {:else if dirty}

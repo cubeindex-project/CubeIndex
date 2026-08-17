@@ -54,7 +54,6 @@ Smartphone (please complete the following information):
 Additional context
 Add any other context about the problem here.`;
 
-
   function validate(): string | null {
     if (!isConnected) return "You must be logged in to perform this action.";
     if (!title.trim()) return "Please provide a title.";
@@ -125,12 +124,7 @@ Add any other context about the problem here.`;
   <form onsubmit={sendReport} method="dialog">
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Title</legend>
-      <input
-        name="title"
-        bind:value={title}
-        class="input w-full"
-        required
-      />
+      <input name="title" bind:value={title} class="input w-full" required />
       <p class="label">Required</p>
     </fieldset>
 

@@ -89,7 +89,7 @@
     </div>
 
     <div
-      class="footer footer-horizontal mt-12 items-center justify-between gap-2 border-t border-base-300 pt-6 text-base-content/60"
+      class="footer footer-vertical sm:footer-horizontal mt-6 items-center justify-between gap-2 border-t border-base-300 pt-6 text-base-content/60"
     >
       <p>&copy; 2025&ndash;{currentYear} CubeIndex Project</p>
       <p>Released under the Apache 2.0 license</p>

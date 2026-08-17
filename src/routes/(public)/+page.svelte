@@ -167,7 +167,7 @@
     </div>
   </section>
 
-  <section class="flex w-full">
+  <section class="flex w-full px-5 sm:px-[10vw]">
     <div class="stats stats-vertical sm:stats-horizontal mx-auto flex-1">
       {#each statistics as stat, index (index)}
         <div class="stat place-items-center">

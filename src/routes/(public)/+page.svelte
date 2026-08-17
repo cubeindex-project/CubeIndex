@@ -82,14 +82,161 @@
   onMount(() => (mounted = true));
 </script>
 
+{#snippet discover()}
+  <div
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 sm:p-4"
+    role="img"
+    aria-label="Cube database search interface"
+  >
+    <div class="join flex mb-4">
+      <div class="btn join-item">
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+      </div>
+      <label class="input w-full">
+        <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i>
+        <input class="grow" placeholder="Search cubes" />
+      </label>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 sm:gap-3">
+      {#each [{ name: "GAN16 MagLev", rating: "4.9", popularity: 842, price: "$64.99" }, { name: "MoYu WeiLong WR M V10 Ferrocore", rating: "4.8", popularity: 617, price: "$34.99" }, { name: "MoYu RS3 M V5", rating: "4.7", popularity: 1_294, price: "$9.99" }, { name: "QiYi Clock", rating: "4.4", popularity: 186, price: "$24.99" }, { name: "MoYu RS Skewb M", rating: "4.6", popularity: 243, price: "$12.99" }, { name: "QiYi MS 2x2", rating: "4.5", popularity: 328, price: "$7.99" }, { name: "X-Man Tornado V4 Pioneer", rating: "4.8", popularity: 491, price: "$39.99" }, { name: "YuXin Little Magic 4x4 M", rating: "4.3", popularity: 275, price: "$16.99" }, { name: "MoYu Super RS3 M 2022", rating: "4.7", popularity: 736, price: "$29.99" }] as cube (cube.name)}
+        <div
+          class="overflow-hidden rounded-xl border border-base-300 bg-base-100"
+        >
+          <div class="p-2">
+            <p class="truncate text-xs font-semibold">
+              {cube.name}
+            </p>
+
+            <div class="mt-1 flex items-center gap-2 text-[10px]">
+              <span class="flex items-center gap-1 text-warning">
+                <i class="fa-solid fa-star" aria-hidden="true"></i>
+                <span class="text-base-content/60">{cube.rating}</span>
+              </span>
+
+              <span
+                class="flex items-center gap-1 text-base-content/50"
+                title={`${cube.popularity.toLocaleString()} users have this cube`}
+              >
+                <i class="fa-solid fa-users" aria-hidden="true"></i>
+                {cube.popularity.toLocaleString()}
+              </span>
+
+              <span class="flex items-center gap-1 text-base-content/50">
+                <i class="fa-solid fa-tag" aria-hidden="true"></i>
+                {cube.price}
+              </span>
+            </div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
+{#snippet collect()}
+  <div
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 shadow-xl sm:p-4"
+    role="img"
+    aria-label="Personal cube collection interface"
+  >
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="font-clash text-lg">My Cube Collection</p>
+        <p class="mt-0.5 text-xs text-base-content/55">24 cubes collected</p>
+      </div>
+      <a
+        href={resolve("/(auth)/auth/signup")}
+        class="btn btn-primary btn-sm gap-1"
+      >
+        <i class="fa-solid fa-plus text-[9px]" aria-hidden="true"></i>
+        Add cube
+      </a>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      {#each [{ name: "GAN 16 MagLev", condition: "New in box", vendor: "SpeedCubeShop", color: "bg-primary" }, { name: "MoYu WRM V10", condition: "Good", vendor: "TheCubicle", color: "bg-secondary" }, { name: "QiYi MS 5x5", condition: "Broken", vendor: "Cubezz", color: "bg-accent" }, { name: "YJ MGC Square-1", condition: "New", vendor: "KewbzUK", color: "bg-warning" }] as cube (cube.name)}
+        <div class="rounded-xl border border-base-300 bg-base-100 p-3">
+          <div class="flex items-center gap-3">
+            <div class="min-w-0">
+              <p class="truncate text-xs font-semibold">
+                {cube.name}
+              </p>
+              <span class="badge badge-ghost badge-xs mt-1">
+                <i class="fa-solid fa-cube"></i>
+                {cube.condition}
+              </span>
+              <span class="badge badge-ghost badge-xs mt-1">
+                <i class="fa-solid fa-store"></i>
+                {cube.vendor}
+              </span>
+            </div>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
+{#snippet compare()}
+  <div
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 shadow-xl sm:p-4"
+    role="img"
+    aria-label="GAN 16 MagLev price comparison across stores"
+  >
+    <div class="mb-4 flex items-center justify-between">
+      <p class="font-clash text-lg">GAN 16 MagLev</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2 sm:gap-3">
+      {#each [{ name: "SpeedCubeShop", price: "$59.95", inStock: true, cheapest: false }, { name: "TheCubicle", price: "$57.99", inStock: true, cheapest: true }, { name: "Cubezz", price: "$61.99", inStock: true, cheapest: false }, { name: "KewbzUK", price: "$64.99", inStock: false, cheapest: false }] as vendor, index (index)}
+        <div
+          class:!border-primary={vendor.cheapest}
+          class:!bg-primary={vendor.cheapest}
+          class:!rounded-tr-none={vendor.cheapest}
+          class="cursor-pointer relative rounded-xl border border-base-300 bg-base-100 p-3"
+        >
+          {#if vendor.cheapest}
+            <span
+              class="badge badge-primary rounded-br-none badge-xs absolute -top-2 right-0 gap-1"
+            >
+              <i class="fa-solid fa-trophy text-[8px]" aria-hidden="true"></i>
+              Best price
+            </span>
+          {/if}
+
+          <div class="flex items-start justify-between gap-2">
+            <p class="font-semibold">{vendor.name}</p>
+            <span
+              class:badge-success={vendor.inStock}
+              class:badge-error={!vendor.inStock}
+              class="badge badge-xs shrink-0"
+            >
+              {vendor.inStock ? "In stock" : "Out of stock"}
+            </span>
+          </div>
+
+          <div class="mt-3 flex items-end justify-between gap-2">
+            <span class="font-clash text-xl">
+              {vendor.price}
+            </span>
+            <i
+              class="fa-solid fa-arrow-up-right-from-square"
+              aria-hidden="true"
+            ></i>
+          </div>
+        </div>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
 <main class="overflow-hidden">
   <section class="hero">
     <div class="hero-content flex-col px-5 py-16 lg:py-24">
       <div class="flex flex-col lg:flex-row gap-14">
         <div class="max-w-2xl text-left">
-          <h1
-            class="font-clash text-6xl tracking-tight sm:text-7xl"
-          >
+          <h1 class="font-clash text-6xl tracking-tight sm:text-7xl">
             Give your cubes<br /> a new home.
           </h1>
           <p class="mt-7 text-lg leading-8 text-base-content/70 sm:text-xl">
@@ -189,11 +336,13 @@
             class="flex flex-col items-center gap-9 lg:flex-row lg:gap-16 lg:even:flex-row-reverse"
           >
             <div class="w-full lg:w-1/2">
-              <img
-                class="rounded-2xl shadow-xl"
-                src={feature.image}
-                alt="Feature illustration"
-              />
+              {#if feature.title === "Discover"}
+                {@render discover()}
+              {:else if feature.title === "Collect"}
+                {@render collect()}
+              {:else if feature.title === "Compare"}
+                {@render compare()}
+              {/if}
             </div>
 
             <div class="w-full lg:w-1/2">

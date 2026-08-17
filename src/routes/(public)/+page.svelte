@@ -344,7 +344,7 @@
             </div>
 
             <div class="w-full lg:w-1/2">
-              <span class="flex items-center gap-4">
+              <div class="flex items-center gap-4">
                 <div
                   class="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary"
                 >
@@ -353,7 +353,7 @@
                 <h3 class="mt-2 font-clash text-4xl sm:text-5xl">
                   {feature.title}
                 </h3>
-              </span>
+              </div>
               <p class="mt-4 max-w-xl text-lg leading-8 text-base-content/70">
                 {feature.description}
               </p>

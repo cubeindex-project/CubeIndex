@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../app.css";
-  import Navbar from "$lib/components/layout/navbar.svelte";
+  import Navbar from "$lib/components/layout/Navbar.svelte";
   import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";

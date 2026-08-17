@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import { page } from "$app/state";
 
   const navigation = [
     {
@@ -35,17 +36,29 @@
       hidden: true,
     },
   ];
+
+  const activeTab = $derived.by(() => {
+    if (page.url.pathname === "/" || page.url.pathname === "/dashboard") {
+      return "Home";
+    } else if (page.url.pathname === "/explore/cubes") {
+      return "Cubes";
+    } else if (page.url.pathname === "/explore/vendors") {
+      return "Stores";
+    } else if (page.url.pathname === "/explore/users") {
+      return "Users";
+    }
+  });
 </script>
 
 <nav class="dock bg-base-100/90 backdrop-blur-xl lg:hidden">
   {#each navigation as nav, index (index)}
     {#if !nav.hidden}
       {#if nav.link}
-        <a href={nav.link}>
+        <a href={nav.link} class:dock-active={activeTab === nav.title}>
           <i class={nav.icon}></i>
           <span class="dock-label">{nav.title}</span>
         </a>
-      <!-- {:else if nav.subMenu}
+        <!-- {:else if nav.subMenu}
         <details class="dropdown dropdown-top dropdown-center">
           <summary
             class="flex h-full w-full cursor-pointer list-none flex-col items-center justify-center gap-px"

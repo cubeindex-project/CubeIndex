@@ -234,7 +234,7 @@
 <main class="overflow-hidden">
   <section class="hero">
     <div class="hero-content flex-col px-5 py-16 lg:py-24">
-      <div class="flex flex-col lg:flex-row gap-14">
+      <div class="flex flex-col lg:flex-row lg:gap-14">
         <div class="max-w-2xl text-left">
           <h1 class="font-clash text-6xl tracking-tight sm:text-7xl">
             Give your cubes<br /> a new home.
@@ -244,7 +244,7 @@
             love with the speedcubing community.
           </p>
           <div
-            class="mt-5 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
+            class="mt-5 flex flex-col gap-3 sm:flex-row"
           >
             <a
               class="btn btn-primary btn-lg px-8"
@@ -264,7 +264,7 @@
 
         {#if featuredCube}
           <div class="flex justify-center">
-            <div class="stack stack-end max-w-sm lg:rotate-2">
+            <div class="stack stack-end max-w-sm hidden lg:grid lg:rotate-2">
               <CubeCard
                 cube={featuredCube}
                 showAddButton={false}
@@ -274,7 +274,7 @@
               />
               {#each [1, 2] as index (index)}
                 <div
-                  class="bg-base-200 border border-base-300 rounded-2xl shadow-lg hover:shadow-xl transition"
+                  class="bg-base-200 border border-base-300 rounded-2xl"
                 ></div>
               {/each}
             </div>

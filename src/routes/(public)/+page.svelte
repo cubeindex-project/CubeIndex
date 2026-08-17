@@ -233,7 +233,7 @@
 <main class="overflow-hidden">
   <section class="hero">
     <div class="hero-content flex-col px-5 py-16 lg:py-24">
-      <div class="flex flex-col lg:flex-row lg:gap-14">
+      <div class="flex flex-col gap-8 md:flex-row md:items-center lg:gap-14">
         <div class="max-w-2xl text-left">
           <h1 class="font-clash text-6xl tracking-tight sm:text-7xl">
             Give your cubes<br /> a new home.
@@ -244,7 +244,7 @@
           </p>
           <div class="mt-5 flex flex-col gap-3 sm:flex-row">
             <a
-              class="btn btn-primary btn-lg px-8"
+              class="btn btn-primary btn-lg"
               href={resolve("/(auth)/auth/signup")}
             >
               Start collecting <i
@@ -253,15 +253,19 @@
               ></i>
             </a>
             <a
-              class="btn btn-outline btn-lg px-8"
-              href={resolve("/(public)/explore/cubes")}>Explore cubes</a
+              class="btn btn-outline btn-lg"
+              href={resolve("/(public)/explore/cubes")}
             >
+              Explore cubes
+            </a>
           </div>
         </div>
 
         {#if featuredCube}
-          <div class="flex justify-center">
-            <div class="stack stack-end max-w-sm hidden lg:grid lg:rotate-2">
+          <div class="flex w-full justify-center md:w-auto md:shrink-0">
+            <div
+              class="stack stack-end grid w-full max-w-sm md:rotate-2"
+            >
               <CubeCard
                 cube={featuredCube}
                 showAddButton={false}
@@ -271,7 +275,7 @@
               />
               {#each [1, 2] as index (index)}
                 <div
-                  class="bg-base-200 border border-base-300 rounded-2xl"
+                  class="rounded-2xl border border-base-300 bg-base-200"
                 ></div>
               {/each}
             </div>

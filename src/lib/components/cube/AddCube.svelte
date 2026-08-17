@@ -1,8 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import NumberFlow, { continuous } from "@number-flow/svelte";
-  import { clientLogError } from "$lib/logger/clientLogError";
-  import { clientLogger } from "$lib/logger/client";
   import type { Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
@@ -44,7 +41,6 @@
     defaultData = DEFAULT_DATA,
   }: Props = $props();
 
-  const supabase = page.data.supabase;
   const user = $derived(page.data.user);
 
   let isConnected = $derived(Boolean(user));
@@ -96,28 +92,7 @@
     return null;
   }
 
-  let vendors: { slug: string; name: string }[] = $state([]);
-
-  async function loadVendors() {
-    try {
-      const { data, error } = await supabase
-        .from("vendors")
-        .select("slug, name")
-        .order("name", { ascending: true });
-
-      if (error) throw new Error(error.message);
-
-      vendors = data;
-    } catch (err) {
-      clientLogError(
-        "An error occurred while fetching vendors",
-        clientLogger,
-        err,
-      );
-    }
-  }
-
-  onMount(loadVendors);
+  const vendors = $derived(page.data.vendors)
 
   async function addCubeToCollection(e: SubmitEvent) {
     e.preventDefault(); // ensure no page nav
@@ -353,9 +328,7 @@
       <p class="label">Optional</p>
     </fieldset>
 
-    <div
-      class="modal-action flex gap-3 sm:justify-end"
-    >
+    <div class="modal-action flex gap-3 sm:justify-end">
       <button
         class="btn flex-1 sm:flex-none"
         type="button"

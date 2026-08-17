@@ -82,9 +82,9 @@
 
   let isBellClicked = $state(false);
   $effect(() => {
-    if (isBellClicked) {
-      setTimeout(() => (isBellClicked = false), 600);
-    }
+    if (!isBellClicked) return;
+    const timeout = setTimeout(() => (isBellClicked = false), 600);
+    return () => clearTimeout(timeout);
   });
 
   onMount(() => {

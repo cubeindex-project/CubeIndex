@@ -366,7 +366,7 @@
   <section class="px-4 py-14 sm:px-8 sm:py-28">
     <div class="aura aura-holo mx-auto block max-w-6xl">
       <div
-        class="hero relative overflow-hidden rounded-box bg-neutral text-neutral-content sm:min-h-96"
+        class="hero relative overflow-hidden rounded-box bg-base-200 sm:min-h-96"
       >
         <div class="hero-content max-w-3xl px-5 py-10 text-center sm:py-16">
           <div>
@@ -380,20 +380,20 @@
               Your collection deserves more than a spreadsheet.
             </h2>
             <p
-              class="mx-auto mt-4 max-w-xl text-base leading-7 text-neutral-content/70 sm:mt-5 sm:text-lg sm:leading-8"
+              class="mx-auto mt-4 max-w-xl text-base leading-7 sm:mt-5 sm:text-lg sm:leading-8"
             >
               Create your free collection and join cubers discovering, rating,
               and sharing their favorite puzzles.
             </p>
             <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <a
-                class="btn btn-primary w-full px-5 sm:btn-lg sm:w-auto sm:px-8"
+                class="btn btn-primary w-full sm:btn-lg sm:w-auto"
                 href={resolve("/(auth)/auth/signup")}
               >
                 Create your collection
               </a>
               <a
-                class="btn btn-outline w-full border-neutral-content/30 px-5 text-neutral-content hover:border-neutral-content hover:bg-neutral-content hover:text-neutral sm:btn-lg sm:w-auto sm:px-8"
+                class="btn btn-ghost w-full sm:btn-lg sm:w-auto"
                 href={resolve("/(public)/explore/cubes")}
               >
                 Browse the database

@@ -84,9 +84,6 @@
 
 <main class="overflow-hidden">
   <section class="hero">
-    <div
-      class="hero-overlay bg-base-100 bg-[radial-gradient(circle_at_top,color-mix(in_oklab,var(--color-primary)_30%,transparent)_0%,transparent_60%)]"
-    ></div>
     <div class="hero-content flex-col px-5 py-16 lg:py-24">
       <div class="flex flex-col lg:flex-row gap-14">
         <div class="max-w-2xl text-center lg:text-left">

@@ -99,16 +99,14 @@
     </div>
 
     <div class="grid grid-cols-3 gap-2 sm:gap-3">
-      {#each [{ name: "GAN16 MagLev", rating: "4.9", popularity: 842, price: "$64.99" }, { name: "MoYu WeiLong WR M V10 Ferrocore", rating: "4.8", popularity: 617, price: "$34.99" }, { name: "MoYu RS3 M V5", rating: "4.7", popularity: 1_294, price: "$9.99" }, { name: "QiYi Clock", rating: "4.4", popularity: 186, price: "$24.99" }, { name: "MoYu RS Skewb M", rating: "4.6", popularity: 243, price: "$12.99" }, { name: "QiYi MS 2x2", rating: "4.5", popularity: 328, price: "$7.99" }, { name: "X-Man Tornado V4 Pioneer", rating: "4.8", popularity: 491, price: "$39.99" }, { name: "YuXin Little Magic 4x4 M", rating: "4.3", popularity: 275, price: "$16.99" }, { name: "MoYu Super RS3 M 2022", rating: "4.7", popularity: 736, price: "$29.99" }] as cube (cube.name)}
-        <div
-          class="overflow-hidden rounded-xl border border-base-300 bg-base-100"
-        >
+      {#each [{ name: "GAN16 MagLev", rating: "4.9", popularity: 842, price: "$64.99" }, { name: "MoYu WeiLong WR M V10 Ferrocore", rating: "4.8", popularity: 617, price: "$34.99" }, { name: "MoYu RS3 M V5", rating: "4.7", popularity: 1_294, price: "$9.99" }, { name: "QiYi Clock", rating: "4.4", popularity: 186, price: "$24.99" }, { name: "MoYu RS Skewb M", rating: "4.6", popularity: 243, price: "$12.99" }, { name: "QiYi MS 2x2", rating: "4.5", popularity: 328, price: "$7.99" }] as cube (cube.name)}
+        <div class="rounded-xl border border-base-300 bg-base-100">
           <div class="p-2">
             <p class="truncate text-xs font-semibold">
               {cube.name}
             </p>
 
-            <div class="mt-1 flex items-center gap-2 text-[10px]">
+            <div class="mt-1 flex flex-wrap items-center gap-2 text-[10px]">
               <span class="flex items-center gap-1 text-warning">
                 <i class="fa-solid fa-star" aria-hidden="true"></i>
                 <span class="text-base-content/60">{cube.rating}</span>
@@ -162,14 +160,16 @@
               <p class="truncate text-xs font-semibold">
                 {cube.name}
               </p>
-              <span class="badge badge-ghost badge-xs mt-1">
-                <i class="fa-solid fa-cube"></i>
-                {cube.condition}
-              </span>
-              <span class="badge badge-ghost badge-xs mt-1">
-                <i class="fa-solid fa-store"></i>
-                {cube.vendor}
-              </span>
+              <div class="flex flex-col sm:flex-row">
+                <span class="badge badge-ghost badge-xs mt-1">
+                  <i class="fa-solid fa-cube"></i>
+                  {cube.condition}
+                </span>
+                <span class="badge badge-ghost badge-xs mt-1">
+                  <i class="fa-solid fa-store"></i>
+                  {cube.vendor}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -194,6 +194,7 @@
           class:!border-primary={vendor.cheapest}
           class:!bg-primary={vendor.cheapest}
           class:!rounded-tr-none={vendor.cheapest}
+          class:!mt-2={vendor.cheapest}
           class="cursor-pointer relative rounded-xl border border-base-300 bg-base-100 p-3"
         >
           {#if vendor.cheapest}
@@ -329,7 +330,7 @@
       <div class="mt-16 space-y-20 sm:mt-20 sm:space-y-28">
         {#each features as feature, index (index)}
           <article
-            class="flex flex-col items-center gap-9 lg:flex-row lg:gap-16 lg:even:flex-row-reverse"
+            class="flex flex-col-reverse items-center gap-9 lg:flex-row lg:gap-16 lg:even:flex-row-reverse"
           >
             <div class="w-full lg:w-1/2">
               {#if feature.title === "Discover"}

@@ -50,7 +50,6 @@
   ];
 
   let isSigningOut = $state(false);
-  let isMobileDropdownOpen = $state(false);
 
   const isEmailVerified = $derived(profile?.verified ?? false);
   let hasUnread = $state(false);

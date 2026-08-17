@@ -260,9 +260,7 @@
 
         {#if featuredCube}
           <div class="flex w-full justify-center md:w-auto md:shrink-0">
-            <div
-              class="stack stack-end grid w-full max-w-sm md:rotate-2"
-            >
+            <div class="stack stack-end grid w-full max-w-sm md:rotate-2">
               <CubeCard
                 cube={featuredCube}
                 showAddButton={false}

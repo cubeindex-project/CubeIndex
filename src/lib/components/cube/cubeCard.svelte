@@ -63,7 +63,7 @@
     {#if showAddButton}
       <AddToCollectionButton
         onClick={() => {
-          openAddCard = !openAddCard;
+          openAddCard = true;
         }}
         {alreadyAdded}
         addClass="w-full"

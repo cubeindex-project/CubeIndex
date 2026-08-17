@@ -3,6 +3,7 @@
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
   import type { Tables } from "$lib/types/database.types";
+  import Modal from "../ui/Modal.svelte";
 
   interface Props {
     open: boolean;
@@ -161,6 +162,49 @@
           Submitting…
         {:else if showSuccess}
           <i class="fa-solid fa-check" aria-hidden="true"></i>
+          Rated!
+        {:else}
+          Rate Cube
+        {/if}
+      </button>
+    </div>
+
+    <div
+      class="min-h-5 text-sm text-error"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      {formMessage}
+      {#if !isConnected}
+        You must be logged in to perform this action.
+      {/if}
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-2 justify-end">
+      <button
+        class="btn btn-ghost rounded-xl"
+        type="button"
+        onclick={() => (open = false)}
+        disabled={isSubmitting}
+      >
+        Cancel
+      </button>
+      <button
+        class="btn btn-primary rounded-xl"
+        type="submit"
+        disabled={isSubmitting || !isConnected || !rating || over}
+        aria-disabled={isSubmitting || !isConnected || !rating || over}
+        title={!rating
+          ? "Please select a rating"
+          : over
+            ? "Comment too long"
+            : ""}
+      >
+        {#if isSubmitting}
+          <span class="loading loading-spinner"></span>
+          <span class="ml-2">Submitting…</span>
+        {:else if showSuccess}
+          <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>
           Rated!
         {:else}
           Rate Cube

@@ -80,38 +80,6 @@
     </div>
   </header>
 
-  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-    {#each cards as c (c.label)}
-      <a
-        href={c.href}
-        class="card bg-base-100 border border-base-300 shadow-sm hover:shadow-md transition"
-      >
-        <div class="card-body">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm opacity-70">{c.label}</p>
-              <p class="text-3xl font-extrabold">{c.value}</p>
-            </div>
-            <i class={`fa-solid ${c.icon} text-2xl opacity-70`}></i>
-          </div>
-        </div>
-      </a>
-    {/each}
-    <!-- Add a CTA card -->
-    <a
-      href={resolve("/explore/cubes")}
-      class="card bg-primary text-primary-content shadow-md hover:shadow-lg transition"
-    >
-      <div class="card-body items-start">
-        <p class="text-sm opacity-90">Get Started</p>
-        <p class="text-2xl font-extrabold">Explore Cubes</p>
-        <span class="opacity-90 text-sm">
-          Find cubes to add to your collection.
-        </span>
-      </div>
-    </a>
-  </section>
-
   <section class="grid grid-cols-1 xl:grid-cols-1 gap-6 mb-8">
     <!-- Recent Submissions -->
     <div class="card bg-base-100 border border-base-300 xl:col-span-1">
@@ -171,35 +139,6 @@
             >
           </div>
         {/if}
-      </div>
-    </div>
-  </section>
-
-  <section class="card bg-base-100 border border-base-300">
-    <div class="card-body">
-      <h2 class="card-title">Quick Actions</h2>
-      <div class="flex flex-wrap gap-3">
-        <a class="btn btn-primary" href={resolve(`/user/${profile.username}`)}>
-          View Profile
-        </a>
-        <a class="btn" href={resolve(`/user/${profile.username}/cubes`)}>
-          Manage Collection
-        </a>
-        <a class="btn" href={resolve("/user/submissions")}>My Submissions</a>
-        <a class="btn" href={resolve("/submit")}>Submit a Cube</a>
-        <a
-          class="btn"
-          href={resolve("/(public)/user/[username]/ratings", {
-            username: profile.username ?? "",
-          })}
-        >
-          My Ratings
-        </a>
-        <!-- <a class="btn" href={resolve("/(public)/explore/achievements")}>
-          Browse Achievements
-        </a> -->
-        <a class="btn" href={resolve("/explore/users")}>Discover Users</a>
-        <a class="btn" href={resolve("/userbar")}>Userbar</a>
       </div>
     </div>
   </section>

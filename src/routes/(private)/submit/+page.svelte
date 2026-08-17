@@ -770,11 +770,9 @@
   </div>
 </section>
 
-{#if autofillCardOpen}
-  <AutofillCard
-    onCancel={() => toggleAutofillCard()}
-    {applyData}
-    bind:variables={autofillCardData}
-    {dirty}
-  />
-{/if}
+<AutofillCard
+  bind:open={autofillCardOpen}
+  {applyData}
+  bind:variables={autofillCardData}
+  {dirty}
+/>

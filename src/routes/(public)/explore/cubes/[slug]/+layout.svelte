@@ -434,11 +434,4 @@
   defaultData={userCubeDetail ?? undefined}
 />
 
-{#if isRatingCube}
-  <RateCube
-    onCancel={() => {
-      isRatingCube = false;
-    }}
-    {cube}
-  />
-{/if}
+<RateCube bind:open={isRatingCube} {cube} />

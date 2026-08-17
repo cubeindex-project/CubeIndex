@@ -88,17 +88,17 @@
     role="img"
     aria-label="Cube database search interface"
   >
-    <div class="join flex mb-4">
-      <div class="btn join-item">
+    <div class="join mb-4 flex" aria-hidden="true">
+      <div class="btn join-item pointer-events-none">
         <i class="fa-solid fa-sliders" aria-hidden="true"></i>
       </div>
-      <label class="input w-full">
+      <div class="input w-full pointer-events-none">
         <i class="fa-solid fa-magnifying-glass text-xs" aria-hidden="true"></i>
-        <input class="grow" placeholder="Search cubes" />
-      </label>
+        <span class="grow text-base-content/50">Search cubes</span>
+      </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-2 sm:gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
       {#each [{ name: "GAN16 MagLev", rating: "4.9", popularity: 842, price: "$64.99" }, { name: "MoYu WeiLong WR M V10 Ferrocore", rating: "4.8", popularity: 617, price: "$34.99" }, { name: "MoYu RS3 M V5", rating: "4.7", popularity: 1_294, price: "$9.99" }, { name: "QiYi Clock", rating: "4.4", popularity: 186, price: "$24.99" }, { name: "MoYu RS Skewb M", rating: "4.6", popularity: 243, price: "$12.99" }, { name: "QiYi MS 2x2", rating: "4.5", popularity: 328, price: "$7.99" }] as cube (cube.name)}
         <div class="rounded-xl border border-base-300 bg-base-100">
           <div class="p-2">
@@ -143,13 +143,10 @@
         <p class="font-clash text-lg">My Cube Collection</p>
         <p class="mt-0.5 text-xs text-base-content/55">24 cubes collected</p>
       </div>
-      <a
-        href={resolve("/(auth)/auth/signup")}
-        class="btn btn-primary btn-sm gap-1"
-      >
+      <div class="badge badge-primary badge-sm gap-1">
         <i class="fa-solid fa-plus text-[9px]" aria-hidden="true"></i>
         Add cube
-      </a>
+      </div>
     </div>
 
     <div class="mt-4 grid grid-cols-2 gap-3">
@@ -195,7 +192,7 @@
           class:!bg-primary={vendor.cheapest}
           class:!rounded-tr-none={vendor.cheapest}
           class:!mt-2={vendor.cheapest}
-          class="cursor-pointer relative rounded-xl border border-base-300 bg-base-100 p-3"
+          class="relative rounded-xl border border-base-300 bg-base-100 p-3"
         >
           {#if vendor.cheapest}
             <span

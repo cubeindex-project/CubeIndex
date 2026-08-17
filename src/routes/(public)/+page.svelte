@@ -84,7 +84,7 @@
 
 {#snippet discover()}
   <div
-    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 p-3 sm:p-4"
+    class="overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-xl p-3 sm:p-4"
     role="img"
     aria-label="Cube database search interface"
   >

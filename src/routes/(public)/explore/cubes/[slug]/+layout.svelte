@@ -20,7 +20,6 @@
     alreadyAdded,
     isCubeSubmitter,
     userCubeDetail,
-    profile,
   } = $derived(data);
 
   let isAddingCube = $state(false);
@@ -393,16 +392,6 @@
   {/if}
 
   <div class="mt-4">
-    {#if profile?.role === "Admin" || profile?.role === "Database Manager"}
-      <a
-        href={resolve("/(admin)/staff/cubes/edit/[slug]", {
-          slug: cube.slug,
-        })}
-        class="btn btn-info mr-2"
-      >
-        <i class="fa-solid fa-pencil mr-2"></i>Edit cube
-      </a>
-    {/if}
     <button onclick={toggleReporting} class="btn btn-error">
       🚩 Report incorrect/missing data
     </button>

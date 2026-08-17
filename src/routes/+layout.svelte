@@ -172,9 +172,7 @@
     {@render children()}
   </NuqsAdapter>
 
-  <div class="hidden md:block">
-    <Footer />
-  </div>
+  <Footer />
 
   <ScrollToTop />
 </div>

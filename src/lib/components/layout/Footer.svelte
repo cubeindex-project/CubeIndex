@@ -6,7 +6,7 @@
 
 <footer class="border-t border-base-300">
   <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-    <div class="footer footer-horizontal">
+    <div class="footer footer-vertical sm:footer-horizontal">
       <div class="max-w-md">
         <a class="inline-flex items-center gap-3" href={resolve("/")}>
           <img

@@ -1,6 +1,7 @@
 <script lang="ts">
   import "../app.css";
   import Navbar from "$lib/components/layout/Navbar.svelte";
+  import Dock from "$lib/components/layout/Dock.svelte";
   import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
   import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
@@ -166,12 +167,16 @@
 <Toaster richColors />
 <ClientErrorReporter />
 
-<NuqsAdapter>
-  {@render children()}
-</NuqsAdapter>
+<div class="pb-16 lg:pb-0">
+  <NuqsAdapter>
+    {@render children()}
+  </NuqsAdapter>
 
-<div class="hidden md:block">
-  <Footer />
+  <div class="hidden md:block">
+    <Footer />
+  </div>
+
+  <ScrollToTop />
 </div>
 
-<ScrollToTop />
+<Dock />

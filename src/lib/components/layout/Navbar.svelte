@@ -41,12 +41,6 @@
       link: resolve("/(public)/awards"),
       hidden: true,
     },
-    {
-      title: "Feedback & reports",
-      icon: "fa-solid fa-message",
-      link: resolve("/(public)/report"),
-      mobileOnly: true,
-    },
     // {
     //   title: "About",
     //   icon: "fa-solid fa-circle-info",
@@ -108,88 +102,27 @@
   <nav class="navbar mx-auto min-h-16 max-w-7xl px-4 lg:px-6">
     <div class="navbar-start gap-6">
       <div class="flex items-center gap-2">
-        <div class="dropdown">
-          <button
-            class="btn btn-circle btn-ghost swap swap-rotate lg:hidden"
-            popovertarget="mobile-dropdown"
-            style="anchor-name:--mobile-dropdown"
-            aria-label="Open mobile menu"
-            onclick={() => (isMobileDropdownOpen = !isMobileDropdownOpen)}
-          >
-            <input type="checkbox" bind:checked={isMobileDropdownOpen} />
-            <i class="swap-off fa-solid fa-bars"></i>
-            <i class="swap-on fa-solid fa-xmark"></i>
-          </button>
-          <ul
-            class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
-            popover
-            id="mobile-dropdown"
-            style="position-anchor:--mobile-dropdown"
-            ontoggle={(event) =>
-              (isMobileDropdownOpen =
-                event.currentTarget.matches(":popover-open"))}
-          >
-            {#each navigation as nav, index (index)}
-              {#if !nav.hidden}
-                <li>
-                  {#if nav.link}
-                    <a href={nav.link}>
-                      <i class={nav.icon}></i>
-                      {nav.title}
-                    </a>
-                  <!-- {:else if nav.subMenu}
-                    <p>
-                      <i class={nav.icon}></i>
-                      {nav.title}
-                    </p>
-                    <ul>
-                      {#each nav.subMenu as subMenu, index (index)}
-                        {#if !subMenu.hidden}
-                          <li>
-                            <a href={subMenu.link}>
-                              <i class={subMenu.icon}></i>
-                              {subMenu.title}
-                            </a>
-                          </li>
-                        {/if}
-                      {/each}
-                    </ul> -->
-                  {/if}
-                </li>
-              {/if}
-            {/each}
-            {#if profile}
-              <li>
-                <a href={resolve("/(private)/submit")}>
-                  <i class="fa-solid fa-plus"></i>
-                  Submit a cube
-                </a>
-              </li>
-            {/if}
-          </ul>
-        </div>
-
         <a class="flex items-center space-x-3" href={resolve("/")}>
           <img
             class="size-10 rounded-xl"
             src="/images/CubeIndex_Logo.webp"
             alt="CubeIndex's Logo"
           />
-          <span class="font-clash hidden text-3xl sm:flex">CubeIndex</span>
+          <span class="font-clash text-2xl sm:text-3xl">CubeIndex</span>
         </a>
       </div>
 
       <div class="hidden flex-none lg:flex">
         <ul class="menu menu-horizontal gap-1 px-0">
           {#each navigation as nav, index (index)}
-            {#if !nav.mobileOnly && !nav.hidden}
+            {#if !nav.hidden}
               <li>
                 {#if nav.link}
                   <a href={nav.link}>
                     <i class={nav.icon}></i>
                     {nav.title}
                   </a>
-                <!-- {:else if nav.subMenu}
+                  <!-- {:else if nav.subMenu}
                   <details>
                     <summary>
                       <i class={nav.icon}></i>
@@ -303,9 +236,16 @@
             </li>
             {#if profile.role !== "User"}
               <li>
-                <a href={resolve("/(admin)/staff/dashboard")}
-                  ><i class="fa-solid fa-clipboard-user"></i>
+                <a href={resolve("/(admin)/staff/dashboard")}>
+                  <i class="fa-solid fa-clipboard-user"></i>
                   Staff Dashboard
+                </a>
+              </li>
+            {:else}
+              <li>
+                <a href={resolve("/(public)/apply")}>
+                  <i class="fa-solid fa-clipboard-user"></i>
+                  Apply for staff
                 </a>
               </li>
             {/if}

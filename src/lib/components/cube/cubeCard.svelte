@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddCube from "./addCube.svelte";
+  import AddCube from "./AddCube.svelte";
   import RateCube from "../rating/rateCube.svelte";
   import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
@@ -95,21 +95,10 @@
 
 <CubeCardSkeleton {cube} rating={true} {top} {content} {bottom} />
 
-{#if openAddCard}
-  <AddCube
-    onCancel={() => {
-      openAddCard = false;
-    }}
-    {cube}
-    {alreadyAdded}
-    defaultData={userCubeDetail}
-  />
-{/if}
-{#if openRateCard}
-  <RateCube
-    onCancel={() => {
-      openRateCard = !openRateCard;
-    }}
-    {cube}
-  />
-{/if}
+<AddCube
+  bind:open={openAddCard}
+  {cube}
+  {alreadyAdded}
+  defaultData={userCubeDetail}
+/>
+<RateCube bind:open={openRateCard} {cube} />

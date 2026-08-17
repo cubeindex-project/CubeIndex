@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { AutofillResult } from "../../../routes/(api)/api/submit/autocomplete/+server";
   import { cleanLink } from "../helper_functions/linkCleaner";
-  import Card from "../layout/card.svelte";
+  import Modal from "$lib/components/ui/Modal.svelte";
 
   interface Props {
-    onCancel: () => void;
+    open: boolean;
     applyData: (data: AutofillResult) => void;
     variables: {
       storeUrl: string;
@@ -15,7 +15,12 @@
     dirty: boolean;
   }
 
-  let { onCancel, applyData, variables = $bindable(), dirty }: Props = $props();
+  let {
+    open = $bindable(),
+    applyData,
+    variables = $bindable(),
+    dirty,
+  }: Props = $props();
 
   async function requestAutofill(e: SubmitEvent) {
     e.preventDefault();
@@ -33,7 +38,7 @@
       return;
     }
 
-    onCancel();
+    open = false;
 
     try {
       const response = await fetch(
@@ -59,66 +64,65 @@
   }
 </script>
 
-<Card title="Autofill Service" {onCancel}>
-  <div class="flex items-start gap-3">
-    <p class="text-sm text-base-content/70">
-      Paste the exact product page for this cube from a shop like<br />
-      SpeedCubeShop, DailyPuzzles, or a manufacturer store.<br /> We will scan it
-      and fill what we can.
-    </p>
-  </div>
+<Modal
+  bind:open
+  title="Autofill Service"
+  description="Paste the exact product page for this cube from a shop or manufacturer store."
+>
+  {#if variables.success}
+    <div class="alert alert-success text-sm" aria-live="polite">
+      <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+      <span>Link processed.</span>
+    </div>
+  {:else if variables.errorMessage}
+    <div class="alert alert-error text-sm" aria-live="polite">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <span>{variables.errorMessage}</span>
+    </div>
+  {:else if dirty}
+    <div class="alert alert-warning text-sm">
+      <i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i>
+      <span>This will overwrite your current data.</span>
+    </div>
+  {/if}
 
-  <form class="space-y-4 pt-4" onsubmit={requestAutofill}>
-    <label class="flex flex-col gap-2 text-sm font-medium text-base-content/80">
-      Store product link
+  <form onsubmit={requestAutofill} method="dialog">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Store product link</legend>
       <input
         type="url"
+        name="store_url"
         placeholder="https://www.speedcubeshop.com/products/..."
-        class="input input-md w-full"
+        class="input w-full"
         bind:value={variables.storeUrl}
         autocomplete="off"
         required
       />
-      <span class="text-xs text-base-content/60">
-        Use a page with clear specs and the exact model you are submitting—no
-        shortened links.
-      </span>
-    </label>
+    </fieldset>
 
-    <div class="flex flex-col gap-2">
-      <div class="flex gap-2">
-        <button
-          type="submit"
-          class="btn btn-primary flex-1 text-primary-content"
-          aria-live="polite"
-        >
-          {#if variables.loading}
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            <span>Requesting autofill...</span>
-          {:else}
-            <span>Send link</span>
-          {/if}
-        </button>
-        <button type="button" class="btn btn-ghost" onclick={onCancel}>
-          Cancel
-        </button>
-      </div>
-      {#if variables.success}
-        <div class="alert alert-success text-sm">
-          <i class="fa-solid fa-bolt"></i>
-          <span> Link processed. </span>
-        </div>
-      {:else if variables.errorMessage}
-        <div class="alert alert-error text-sm">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          <span>{variables.errorMessage}</span>
-        </div>
-      {:else if dirty}
-        <div class="alert alert-warning text-sm">
-          <i class="fa-solid fa-exclamation-triangle"></i>
-          <span>This will overwrite your current data.</span>
-        </div>
-      {/if}
+    <div class="modal-action flex gap-3 sm:justify-end">
+      <button
+        type="button"
+        class="btn flex-1 sm:flex-none"
+        onclick={() => (open = false)}
+        disabled={variables.loading}
+      >
+        Cancel
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary flex-1 sm:flex-none"
+        disabled={variables.loading}
+        aria-live="polite"
+      >
+        {#if variables.loading}
+          <span class="loading loading-spinner"></span>
+          Requesting autofill…
+        {:else}
+          Send Link
+        {/if}
+      </button>
     </div>
   </form>
-</Card>
+</Modal>

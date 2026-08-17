@@ -265,21 +265,17 @@
   {/if}
 </div>
 
-{#if isEditingRating}
-  <RateCube
-    onCancel={() => (isEditingRating = !isEditingRating)}
-    {cube}
-    rating={user_rating.rating}
-    comment={user_rating.comment ?? undefined}
-  />
-{/if}
+<RateCube
+  bind:open={isEditingRating}
+  {cube}
+  rating={user_rating.rating}
+  comment={user_rating.comment ?? undefined}
+/>
 
-{#if isReporting}
-  <Report
-    onCancel={() => (isReporting = !isReporting)}
-    reportType="cube-rating"
-    reported={String(user_rating.id)}
-    reporLabel="{user_rating.profile
-      .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
-  />
-{/if}
+<Report
+  bind:open={isReporting}
+  reportType="cube-rating"
+  reported={String(user_rating.id)}
+  reporLabel="{user_rating.profile
+    .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+/>

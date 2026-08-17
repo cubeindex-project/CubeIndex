@@ -397,12 +397,8 @@
 {/if}
 
 <!-- Placeholder link: to change -->
-{#if showVideo}
-  <YoutubeVideoCard
-    title="The CubeIndex Awards Trailer"
-    videoUrl="https://www.youtube.com/embed/XwcnE7LAbC8?si=1lLuqwX_9qi3O7HG"
-    onCancel={() => {
-      showVideo = false;
-    }}
-  />
-{/if}
+<YoutubeVideoCard
+  bind:open={showVideo}
+  title="The CubeIndex Awards Trailer"
+  videoURL="https://www.youtube.com/embed/XwcnE7LAbC8?si=1lLuqwX_9qi3O7HG"
+/>

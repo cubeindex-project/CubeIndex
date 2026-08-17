@@ -7,7 +7,7 @@
   import ShareButton from "$lib/components/misc/shareButton.svelte";
   import { page } from "$app/state";
   import Report from "$lib/components/report/report.svelte";
-  import AddCube from "$lib/components/cube/addCube.svelte";
+  import AddCube from "$lib/components/cube/AddCube.svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
 
@@ -418,31 +418,18 @@
   </a>
 </section>
 
-{#if isReportingCube}
-  <Report
-    onCancel={() => (isReportingCube = !isReportingCube)}
-    reportType="cube"
-    reported={cube.slug}
-    reporLabel="the {cube.series} {cube.model} {cube.version_name}"
-  />
-{/if}
+<Report
+  bind:open={isReportingCube}
+  reportType="cube"
+  reported={cube.slug}
+  reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+/>
 
-{#if isAddingCube}
-  <AddCube
-    onCancel={() => {
-      isAddingCube = false;
-    }}
-    {cube}
-    {alreadyAdded}
-    defaultData={userCubeDetail ?? undefined}
-  />
-{/if}
+<AddCube
+  bind:open={isAddingCube}
+  {cube}
+  {alreadyAdded}
+  defaultData={userCubeDetail ?? undefined}
+/>
 
-{#if isRatingCube}
-  <RateCube
-    onCancel={() => {
-      isRatingCube = false;
-    }}
-    {cube}
-  />
-{/if}
+<RateCube bind:open={isRatingCube} {cube} />

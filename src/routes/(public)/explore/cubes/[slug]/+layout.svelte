@@ -43,7 +43,7 @@
     { label: "Details", key: "", icon: "fa-circle-info" },
     { label: "Shops & Prices", key: "price", icon: "fa-store" },
     { label: "Ratings", key: "ratings", icon: "fa-star" },
-    { label: "Reviews", key: "reviews", icon: "fa-comment-dots" },
+    // { label: "Reviews", key: "reviews", icon: "fa-comment-dots" },
   ] as const;
 
   const submissionStatusDescription = $derived.by(() => {

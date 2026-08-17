@@ -105,18 +105,18 @@
       link: "/stats",
       title: "Statistics",
     },
-    {
-      link: "/achievements",
-      title: "Achievements",
-    },
+    // {
+    //   link: "/achievements",
+    //   title: "Achievements",
+    // },
     {
       link: "/ratings",
       title: "Ratings",
     },
-    {
-      link: "/reviews",
-      title: "Reviews",
-    },
+    // {
+    //   link: "/reviews",
+    //   title: "Reviews",
+    // },
     {
       link: "/social",
       title: "Social",

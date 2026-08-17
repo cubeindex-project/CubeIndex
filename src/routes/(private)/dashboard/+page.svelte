@@ -24,14 +24,14 @@
         username: profile.username ?? "",
       }),
     },
-    {
-      label: "Achievements",
-      value: stats.achievementsCount,
-      icon: "fa-trophy",
-      href: resolve("/(public)/user/[username]/achievements", {
-        username: profile.username ?? "",
-      }),
-    },
+    // {
+    //   label: "Achievements",
+    //   value: stats.achievementsCount,
+    //   icon: "fa-trophy",
+    //   href: resolve("/(public)/user/[username]/achievements", {
+    //     username: profile.username ?? "",
+    //   }),
+    // },
     {
       label: "Followers",
       value: stats.followersCount,
@@ -195,9 +195,9 @@
         >
           My Ratings
         </a>
-        <a class="btn" href={resolve("/(public)/explore/achievements")}>
+        <!-- <a class="btn" href={resolve("/(public)/explore/achievements")}>
           Browse Achievements
-        </a>
+        </a> -->
         <a class="btn" href={resolve("/explore/users")}>Discover Users</a>
         <a class="btn" href={resolve("/userbar")}>Userbar</a>
       </div>

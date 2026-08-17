@@ -15,14 +15,16 @@
 </script>
 
 <Modal bind:open {title}>
-  <iframe
-    class="aspect-video w-full rounded-2xl"
-    src={videoURL}
-    {title}
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerpolicy="strict-origin-when-cross-origin"
-    allowfullscreen
-  ></iframe>
+  {#if open}
+    <iframe
+      class="aspect-video w-full rounded-2xl"
+      src={videoURL}
+      {title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+    ></iframe>
+  {/if}
 
   <div class="modal-action sm:justify-end">
     <button

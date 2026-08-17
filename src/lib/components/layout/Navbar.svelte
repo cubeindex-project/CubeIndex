@@ -343,9 +343,7 @@
   </nav>
 </header>
 
-{#if isSigningOut}
-  <ConfirmSignOut onCancel={() => (isSigningOut = false)} />
-{/if}
+<ConfirmSignOut bind:open={isSigningOut} />
 
 <style>
   .animate-bell {

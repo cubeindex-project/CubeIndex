@@ -344,11 +344,9 @@
   {/if}
 </section>
 
-{#if openReport}
-  <Report
-    onCancel={() => (openReport = !openReport)}
-    reportType="user"
-    reported={profile.user_id}
-    reporLabel="{profile.username}'s account"
-  />
-{/if}
+<Report
+  bind:open={openReport}
+  reportType="user"
+  reported={profile.user_id}
+  reporLabel="{profile.username}'s account"
+/>

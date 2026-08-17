@@ -418,14 +418,12 @@
   </a>
 </section>
 
-{#if isReportingCube}
-  <Report
-    onCancel={() => (isReportingCube = !isReportingCube)}
-    reportType="cube"
-    reported={cube.slug}
-    reporLabel="the {cube.series} {cube.model} {cube.version_name}"
-  />
-{/if}
+<Report
+  bind:open={isReportingCube}
+  reportType="cube"
+  reported={cube.slug}
+  reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+/>
 
 <AddCube
   bind:open={isAddingCube}

@@ -86,9 +86,9 @@
   <section class="hero">
     <div class="hero-content flex-col px-5 py-16 lg:py-24">
       <div class="flex flex-col lg:flex-row gap-14">
-        <div class="max-w-2xl text-center lg:text-left">
+        <div class="max-w-2xl text-left">
           <h1
-            class="font-clash text-5xl leading-[0.98] tracking-tight sm:text-7xl"
+            class="font-clash text-6xl tracking-tight sm:text-7xl"
           >
             Give your cubes<br /> a new home.
           </h1>
@@ -116,14 +116,8 @@
         </div>
 
         {#if featuredCube}
-          <div class="relative mx-auto w-full max-w-sm lg:rotate-2">
-            <div
-              class="badge badge-primary absolute -top-3 left-4 z-20 h-auto gap-2 px-3 py-2 shadow-sm"
-            >
-              <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
-              Most recent cube added
-            </div>
-            <div class="stack stack-end">
+          <div class="flex justify-center">
+            <div class="stack stack-end max-w-sm lg:rotate-2">
               <CubeCard
                 cube={featuredCube}
                 showAddButton={false}

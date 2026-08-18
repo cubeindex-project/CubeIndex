@@ -180,5 +180,4 @@
       </footer>
     </section>
   {/snippet}
-  {#snippet noResultsAction()}{/snippet}
 </ExplorePage>

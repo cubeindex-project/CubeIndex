@@ -95,5 +95,4 @@
   {#snippet renderItem(profile)}
     <UserCard {profile} />
   {/snippet}
-  {#snippet noResultsAction()}{/snippet}
 </ExplorePage>

@@ -74,11 +74,14 @@
     noResultsAction,
   }: Props = $props();
 
-  const params = $derived(
-    useQueryStates(queryStateKeyMap, {
-      history: "replace",
-      clearOnDefault: false,
-    }),
+  const params = $state(
+    useQueryStates(
+      untrack(() => queryStateKeyMap),
+      {
+        history: "replace",
+        clearOnDefault: false,
+      },
+    ),
   );
 
   const filteredItems = $derived.by(() =>

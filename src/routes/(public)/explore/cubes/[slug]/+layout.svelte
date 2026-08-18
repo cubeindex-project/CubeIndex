@@ -412,10 +412,6 @@
       🚩 Report incorrect/missing data
     </button>
   </div>
-
-  <a href={resolve("/explore/cubes")} class="btn btn-lg btn-primary mt-6">
-    ← Back to Explore
-  </a>
 </section>
 
 <Report

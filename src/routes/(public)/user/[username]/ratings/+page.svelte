@@ -1,268 +1,179 @@
 <script lang="ts">
-  import UserRatingCard from "$lib/components/rating/userRatingCard.svelte";
-  import Pagination from "$lib/components/misc/pagination.svelte";
-  import SearchBar from "$lib/components/misc/searchBar.svelte";
-  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
-  import SortSelector from "$lib/components/misc/sortSelector.svelte";
   import { resolve } from "$app/paths";
+  import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
+  import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
+  import UserRatingCard from "$lib/components/rating/userRatingCard.svelte";
+  import {
+    createParser,
+    parseAsInteger,
+    parseAsString,
+    parseAsStringLiteral,
+  } from "nuqs-svelte";
 
-  let { data } = $props();
-  let { user_cube_ratings, user, profile } = $derived(data);
+  const SORT_FIELDS = ["recent", "rating", "name"] as const;
 
-  // Pagination
-  let currentPage: number = $state(1);
-  let itemsPerPage: number = $state(6);
+  const booleanParser = createParser({
+    parse: (query: string): boolean => query === "1",
+    serialize: (value: boolean) => (value ? "1" : "0"),
+  });
 
-  // Search & Filters
-  let searchTerm: string = $state("");
-  let showFilters = $state(false);
-  let selectedType: string = $state("All");
-  let selectedRating: string = $state("All"); // e.g. All, 5, 4+, 3+, <=2
-  let onlyWithComments: boolean = $state(false);
-
-  // Sorting
-  type SortKey = "recent" | "rating" | "name";
-  let sortBy: SortKey = $state("recent");
-  let sortDir: "asc" | "desc" = $state("desc");
-  const sortFields = [
-    { value: "recent", label: "Recent" },
-    { value: "rating", label: "Rating" },
-    { value: "name", label: "Name" },
-  ];
-
-  // Derived
+  const { data } = $props();
+  const { user_cube_ratings, user, profile } = $derived(data);
   const total = $derived(user_cube_ratings.length);
-  const allTypes: string[] = $derived(
+
+  const allTypes = $derived(
     Array.from(
       new Set(
         user_cube_ratings
-          .map((r) => r.cube_model?.type as string)
-          .filter(Boolean),
+          .map((rating) => rating.cube_model?.type)
+          .filter((type): type is string => type !== undefined),
       ),
     ).sort(),
   );
 
-  const filteredRatings = $derived.by(() => {
-    const term = searchTerm.trim().toLowerCase();
-    return user_cube_ratings.filter((r) => {
-      const c = r.cube_model ?? {};
-      const name = `${c.series ?? ""} ${c.model ?? ""} ${c.version_name ?? ""}`
-        .trim()
-        .toLowerCase();
-      const typeOk = selectedType === "All" || c.type === selectedType;
-      const hasCommentOk =
-        !onlyWithComments || (r.comment ?? "").trim().length > 0;
-      let ratingOk = true;
-      const val = r.rating ?? 0;
-      if (selectedRating === "5") ratingOk = val === 5;
-      else if (selectedRating === "4+") ratingOk = val >= 4;
-      else if (selectedRating === "3+") ratingOk = val >= 3;
-      else if (selectedRating === "<=2") ratingOk = val <= 2;
-      return name.includes(term) && typeOk && hasCommentOk && ratingOk;
-    });
-  });
-
-  const sortedRatings = $derived.by(() => {
-    const arr = [...filteredRatings];
-    arr.sort((a, b) => {
-      if (sortBy === "recent") {
-        const ad = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const bd = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return bd - ad; // default desc
-      }
-      if (sortBy === "rating") {
-        return (b.rating ?? 0) - (a.rating ?? 0); // default desc
-      }
-      if (sortBy === "name") {
-        const an =
-          `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
-        const bn =
-          `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
-        return an.localeCompare(bn);
-      }
-      return 0;
-    });
-    if (sortDir === "asc") arr.reverse();
-    return arr;
-  });
-
-  const paginatedRatings = $derived.by(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return sortedRatings.slice(start, end);
-  });
-
-  const totalPages = $derived.by(() =>
-    Math.max(1, Math.ceil(sortedRatings.length / itemsPerPage)),
-  );
-
-  function resetFilters() {
-    selectedType = "All";
-    selectedRating = "All";
-    onlyWithComments = false;
+  function getCubeName(rating: (typeof user_cube_ratings)[number]): string {
+    const cube = rating.cube_model;
+    return `${cube?.series ?? ""} ${cube?.model ?? ""} ${cube?.version_name ?? ""}`.trim();
   }
 </script>
 
-<div class="relative max-w-6xl mx-auto mt-12 px-4">
-  <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
-    <div>
-      <h1 class="text-2xl font-extrabold tracking-tight">
-        {profile.display_name}'s Ratings
-      </h1>
-      <p class="text-sm text-base-content/70">{total} ratings</p>
-    </div>
+<ExplorePage
+  searchPlaceholder="Search by cube name"
+  itemsPerPageLabel="Ratings per page"
+  items={user_cube_ratings}
+  queryStateKeyMap={{
+    q: parseAsString.withDefault(""),
+    page: parseAsInteger.withDefault(1),
+    size: parseAsInteger.withDefault(12),
+    sort: parseAsStringLiteral(SORT_FIELDS),
+    dir: parseAsStringLiteral(["asc", "desc"]).withDefault("desc"),
+    type: parseAsString.withDefault("All"),
+    rating: parseAsString.withDefault("All"),
+    comments: booleanParser.withDefault(false),
+  }}
+  fuseOptions={{
+    keys: ["cube_model.series", "cube_model.model", "cube_model.version_name"],
+    threshold: 0.4,
+    includeScore: true,
+    ignoreLocation: true,
+  }}
+  showFilterDrawer={true}
+  filterFunc={(ratings, params) =>
+    ratings.filter((rating) => {
+      const value = rating.rating ?? 0;
+      const matchesRating =
+        params.rating.current === "All" ||
+        (params.rating.current === "5" && value === 5) ||
+        (params.rating.current === "4+" && value >= 4) ||
+        (params.rating.current === "3+" && value >= 3) ||
+        (params.rating.current === "<=2" && value <= 2);
 
-    {#if total > 0}
-      <div class="flex items-center gap-2">
-        <SortSelector
-          bind:sortField={sortBy}
-          bind:sortOrder={sortDir}
-          fields={sortFields}
-        />
+      return (
+        (params.type.current === "All" ||
+          rating.cube_model?.type === params.type.current) &&
+        (!params.comments.current ||
+          (rating.comment ?? "").trim().length > 0) &&
+        matchesRating
+      );
+    })}
+  sortFunc={(ratings, sortField, sortDirection) =>
+    [...ratings].sort((a, b) => {
+      if (sortField === "name") {
+        return sortDirection === "asc"
+          ? getCubeName(a).localeCompare(getCubeName(b), undefined, {
+              numeric: true,
+              sensitivity: "base",
+              ignorePunctuation: true,
+            })
+          : getCubeName(b).localeCompare(getCubeName(a), undefined, {
+              numeric: true,
+              sensitivity: "base",
+              ignorePunctuation: true,
+            });
+      }
 
-        <div class="divider divider-horizontal m-0"></div>
+      const aValue =
+        sortField === "rating"
+          ? (a.rating ?? 0)
+          : new Date(a.created_at ?? 0).getTime();
+      const bValue =
+        sortField === "rating"
+          ? (b.rating ?? 0)
+          : new Date(b.created_at ?? 0).getTime();
 
-        <div class="flex items-center gap-2">
-          <label class="text-sm" for="itemsPerPage">Per page</label>
-          <select
-            id="itemsPerPage"
-            bind:value={itemsPerPage}
-            class="select select-bordered"
-            onchange={() => (itemsPerPage = +itemsPerPage)}
-          >
-            <option value={3}>3</option>
-            <option value={6}>6</option>
-            <option value={12}>12</option>
-            <option value={24}>24</option>
-          </select>
-        </div>
-      </div>
-    {/if}
-  </header>
-
-  <SearchBar
-    showFilter={true}
-    bind:searchTerm
-    placeholderLabel="Search by cube name"
-    filterAction={() => {
-      showFilters = !showFilters;
-      currentPage = 1;
-    }}
-  />
-
-  <div class="flex flex-col lg:flex-row gap-8">
-    <FilterSidebar {showFilters}>
-      <div>
-        <label class="form-control w-full">
-          <span class="label-text text-sm">Type</span>
-          <select
-            bind:value={selectedType}
-            onchange={() => (currentPage = 1)}
-            class="select select-bordered w-full"
-          >
-            <option>All</option>
-            {#each allTypes as t, index (index)}
-              <option>{t}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label class="form-control w-full">
-          <span class="label-text text-sm">Rating</span>
-          <select
-            bind:value={selectedRating}
-            onchange={() => (currentPage = 1)}
-            class="select select-bordered w-full"
-          >
-            <option>All</option>
-            <option value="5">5</option>
-            <option value="4+">4+</option>
-            <option value="3+">3+</option>
-            <option value="<=2">≤2</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label class="cursor-pointer label justify-start gap-3">
-          <input
-            type="checkbox"
-            class="checkbox"
-            bind:checked={onlyWithComments}
-            onchange={() => (currentPage = 1)}
-          />
-          <span class="label-text">Only with comments</span>
-        </label>
-      </div>
-      <div>
-        <button
-          class="btn btn-outline w-full mt-2"
-          type="button"
-          onclick={resetFilters}
+      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+    })}
+  sortFields={[
+    { value: "recent", label: "Recent" },
+    { value: "rating", label: "Rating" },
+    { value: "name", label: "Name" },
+  ]}
+  defaultSortField="recent"
+  noResultsTitle={total === 0
+    ? "This user didn't rate any cubes"
+    : "No ratings found"}
+  noResultsMessage={total === 0
+    ? "There are no ratings to show yet."
+    : "We couldn't find any ratings matching your search or filters. Try adjusting them or resetting to see everything."}
+  noResultsIcon="fa-solid fa-ranking-star"
+>
+  {#snippet header()}
+    <UserExploreHeader
+      title={`${profile.display_name}'s Ratings`}
+      subtitle={`${total} ratings`}
+    />
+  {/snippet}
+  {#snippet filterContent(params)}
+    <div class="flex flex-col gap-2">
+      <label class="form-control w-full">
+        <span class="label-text text-sm">Type</span>
+        <select
+          bind:value={params.type.current}
+          class="select select-bordered w-full"
         >
-          <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-          Reset Filters
-        </button>
-      </div>
-    </FilterSidebar>
-
-    <div class="flex-1">
-      {#if user_cube_ratings && user_cube_ratings.length > 0}
-        <ul class="flex flex-col gap-4">
-          {#each paginatedRatings as user_rating (user_rating.id)}
-            <li>
-              <UserRatingCard
-                {user_rating}
-                cube={user_rating.cube_model}
-                isAuthor={user_rating.user_id === user?.id}
-                showCubeDetails={true}
-              />
-            </li>
-          {:else}
-            <!-- No results state -->
-            <div
-              class="col-span-full flex flex-col items-center justify-center py-20"
-            >
-              <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
-              <h2 class="text-2xl font-semibold mb-2">No ratings found</h2>
-              <p class="mb-6 text-center max-w-xs">
-                We couldn't find any ratings matching your search or filters.
-                Try adjusting them or resetting to see everything.
-              </p>
-              <button
-                onclick={() => {
-                  resetFilters();
-                  searchTerm = "";
-                }}
-                class="btn btn-outline flex items-center"
-                aria-label="Reset filters"
-              >
-                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                Reset
-              </button>
-            </div>
+          <option>All</option>
+          {#each allTypes as type (type)}
+            <option>{type}</option>
           {/each}
-        </ul>
-
-        <div class="mt-8">
-          <Pagination bind:currentPage {totalPages} />
-        </div>
-      {:else}
-        <div
-          class="col-span-full flex flex-col items-center justify-center py-20"
+        </select>
+      </label>
+      <label class="form-control w-full">
+        <span class="label-text text-sm">Rating</span>
+        <select
+          bind:value={params.rating.current}
+          class="select select-bordered w-full"
         >
-          <i class="fa-solid fa-ranking-star fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">
-            This user didn't rate any cube.
-          </h2>
-          {#if user?.id === profile.user_id}
-            <a href={resolve("/explore/cubes")} class="btn btn-primary mt-3">
-              Browse cubes to rate
-              <i class="fa-solid fa-arrow-right"></i>
-            </a>
-          {/if}
-        </div>
-      {/if}
+          <option>All</option>
+          <option value="5">5</option>
+          <option value="4+">4+</option>
+          <option value="3+">3+</option>
+          <option value="<=2">≤2</option>
+        </select>
+      </label>
+      <label class="cursor-pointer label justify-start gap-3">
+        <input
+          type="checkbox"
+          class="checkbox"
+          bind:checked={params.comments.current}
+        />
+        <span class="label-text">Only with comments</span>
+      </label>
     </div>
-  </div>
-</div>
+  {/snippet}
+  {#snippet renderItem(userRating)}
+    <UserRatingCard
+      user_rating={userRating}
+      cube={userRating.cube_model}
+      isAuthor={userRating.user_id === user?.id}
+      showCubeDetails={true}
+    />
+  {/snippet}
+  {#snippet noResultsAction()}
+    {#if total === 0 && user?.id === profile.user_id}
+      <a href={resolve("/explore/cubes")} class="btn btn-primary">
+        Browse cubes to rate
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    {/if}
+  {/snippet}
+</ExplorePage>

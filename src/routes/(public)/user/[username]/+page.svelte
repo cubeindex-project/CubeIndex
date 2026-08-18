@@ -1,321 +1,224 @@
 <script lang="ts">
-  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
-  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
-  import Pagination from "$lib/components/misc/pagination.svelte";
-  import SortSelector from "$lib/components/misc/sortSelector.svelte";
-  import SearchBar from "$lib/components/misc/searchBar.svelte";
   import { resolve } from "$app/paths";
+  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
+  import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
+  import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
+  import {
+    parseAsInteger,
+    parseAsString,
+    parseAsStringLiteral,
+  } from "nuqs-svelte";
 
-  let { data } = $props();
+  const SORT_FIELDS = ["recent", "name", "rating", "type"] as const;
+
+  const { data } = $props();
   const { profile, user, user_cube_ratings, user_cubes } = $derived(data);
-
   const total = $derived(user_cubes.length);
-
-  // Filtering and pagination
-  let searchTerm: string = $state("");
-  let selectedType: string = $state("All");
-  let selectedStatus: string = $state("All");
-  let selectedCondition: string = $state("All");
-  let currentPage: number = $state(1);
-  let itemsPerPage: number = $state(9);
-  let allTypes: string[] = $derived(
-    Array.from(
-      new Set(
-        user_cubes
-          .map((c) => c.cube_model?.type)
-          .filter((t): t is string => !!t),
-      ),
-    ).sort(),
-  );
-  let allStatuses: string[] = $derived(
-    Array.from(
-      new Set(user_cubes.map((uc) => uc.status).filter(Boolean)),
-    ).sort(),
-  );
-  let allConditions: string[] = $derived(
-    Array.from(
-      new Set(user_cubes.map((uc) => uc.condition).filter(Boolean)),
-    ).sort(),
-  );
-  let showFilters = $state(false);
 
   let edit = $state(false);
 
-  // Sorting
-  type SortKey = "recent" | "name" | "rating" | "type";
-  let sortBy: SortKey = $state("recent");
-  let sortDir: "asc" | "desc" = $state("desc");
+  const allTypes = $derived(
+    Array.from(
+      new Set(
+        user_cubes
+          .map((userCube) => userCube.cube_model?.type)
+          .filter((type): type is string => type !== undefined),
+      ),
+    ).sort(),
+  );
+  const allStatuses = $derived(
+    Array.from(
+      new Set(
+        user_cubes
+          .map((userCube) => userCube.status)
+          .filter(
+            (status): status is Exclude<typeof status, null> => status !== null,
+          ),
+      ),
+    ).sort(),
+  );
+  const allConditions = $derived(
+    Array.from(
+      new Set(
+        user_cubes
+          .map((userCube) => userCube.condition)
+          .filter(
+            (condition): condition is Exclude<typeof condition, null> =>
+              condition !== null,
+          ),
+      ),
+    ).sort(),
+  );
 
-  const sortFields = [
+  function getCubeName(userCube: (typeof user_cubes)[number]): string {
+    const cube = userCube.cube_model;
+    return `${cube?.series ?? ""} ${cube?.model ?? ""} ${cube?.version_name ?? ""}`.trim();
+  }
+</script>
+
+<ExplorePage
+  searchPlaceholder="Search cubes"
+  itemsPerPageLabel="Cubes per page"
+  items={user_cubes}
+  queryStateKeyMap={{
+    q: parseAsString.withDefault(""),
+    page: parseAsInteger.withDefault(1),
+    size: parseAsInteger.withDefault(12),
+    sort: parseAsStringLiteral(SORT_FIELDS),
+    dir: parseAsStringLiteral(["asc", "desc"]).withDefault("desc"),
+    type: parseAsString.withDefault("All"),
+    condition: parseAsString.withDefault("All"),
+    status: parseAsString.withDefault("All"),
+  }}
+  fuseOptions={{
+    keys: ["cube_model.series", "cube_model.model", "cube_model.version_name"],
+    threshold: 0.4,
+    includeScore: true,
+    ignoreLocation: true,
+  }}
+  showFilterDrawer={true}
+  filterFunc={(cubes, params) =>
+    cubes.filter(
+      (userCube) =>
+        (params.type.current === "All" ||
+          userCube.cube_model?.type === params.type.current) &&
+        (params.condition.current === "All" ||
+          userCube.condition === params.condition.current) &&
+        (params.status.current === "All" ||
+          userCube.status === params.status.current),
+    )}
+  sortFunc={(cubes, sortField, sortDirection) =>
+    [...cubes].sort((a, b) => {
+      let aValue: number;
+      let bValue: number;
+
+      switch (sortField) {
+        case "name":
+          return sortDirection === "asc"
+            ? getCubeName(a).localeCompare(getCubeName(b), undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              })
+            : getCubeName(b).localeCompare(getCubeName(a), undefined, {
+                numeric: true,
+                sensitivity: "base",
+                ignorePunctuation: true,
+              });
+        case "type":
+          return sortDirection === "asc"
+            ? (a.cube_model?.type ?? "").localeCompare(b.cube_model?.type ?? "")
+            : (b.cube_model?.type ?? "").localeCompare(
+                a.cube_model?.type ?? "",
+              );
+        case "rating":
+          aValue =
+            user_cube_ratings.find(
+              (rating) => rating.cube_slug === a.cube_model?.slug,
+            )?.rating ?? 0;
+          bValue =
+            user_cube_ratings.find(
+              (rating) => rating.cube_slug === b.cube_model?.slug,
+            )?.rating ?? 0;
+          break;
+        default:
+          aValue = a.acquired_at ? new Date(a.acquired_at).getTime() : 0;
+          bValue = b.acquired_at ? new Date(b.acquired_at).getTime() : 0;
+      }
+
+      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+    })}
+  sortFields={[
     { value: "recent", label: "Recent" },
     { value: "name", label: "Name" },
     { value: "rating", label: "Rating" },
     { value: "type", label: "Type" },
-  ];
-
-  const filteredCubes = $derived.by(() => {
-    const term = searchTerm.trim().toLowerCase();
-    return user_cubes.filter((uc) => {
-      const c = uc.cube_model ?? {};
-      const name =
-        `${c.series ?? ""} ${c.model ?? ""} ${c.version_name ?? ""}`.toLowerCase();
-      const typeOk = selectedType === "All" || c.type === selectedType;
-      const conditionOk =
-        selectedCondition === "All" || uc.condition === selectedCondition;
-      const statusOk = selectedStatus === "All" || uc.status === selectedStatus;
-      return name.includes(term) && typeOk && statusOk && conditionOk;
-    });
-  });
-
-  const sortedCubes = $derived.by(() => {
-    const arr = [...filteredCubes];
-    arr.sort((a, b) => {
-      if (sortBy === "recent") {
-        const ad = a.acquired_at ? new Date(a.acquired_at).getTime() : 0;
-        const bd = b.acquired_at ? new Date(b.acquired_at).getTime() : 0;
-        return bd - ad; // default desc
-      }
-      if (sortBy === "name") {
-        const an =
-          `${a.cube_model?.series ?? ""} ${a.cube_model?.model ?? ""} ${a.cube_model?.version_name ?? ""}`.trim();
-        const bn =
-          `${b.cube_model?.series ?? ""} ${b.cube_model?.model ?? ""} ${b.cube_model?.version_name ?? ""}`.trim();
-        return an.localeCompare(bn);
-      }
-      if (sortBy === "type") {
-        return (a.cube_model?.type ?? "").localeCompare(
-          b.cube_model?.type ?? "",
-        );
-      }
-      if (sortBy === "rating") {
-        const ar =
-          user_cube_ratings.find((r) => r.cube_slug === a.cube_model?.slug)
-            ?.rating ?? 0;
-        const br =
-          user_cube_ratings.find((r) => r.cube_slug === b.cube_model?.slug)
-            ?.rating ?? 0;
-        return br - ar; // default desc
-      }
-      return 0;
-    });
-    if (sortDir === "asc") arr.reverse();
-    return arr;
-  });
-
-  const totalPages = $derived.by(() => {
-    const per = +itemsPerPage || 9;
-    return Math.max(1, Math.ceil(filteredCubes.length / per));
-  });
-
-  const paginatedCubes = $derived.by(() => {
-    const per = +itemsPerPage || 9;
-    const pages = Math.max(1, Math.ceil(sortedCubes.length / per));
-    const page = Math.min(Math.max(1, currentPage), pages);
-    const start = (page - 1) * per;
-    const end = start + per;
-    return sortedCubes.slice(start, end);
-  });
-
-  function resetFilters() {
-    selectedType = "All";
-    selectedStatus = "All";
-    selectedCondition = "All";
-  }
-</script>
-
-<section class="relative max-w-6xl mx-auto mt-12 px-4">
-  <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
-    <div>
-      <h1 class="text-2xl font-extrabold tracking-tight">
-        {profile.display_name}'s Cube Collection
-      </h1>
-      <p class="text-sm text-base-content/70">{total} cubes</p>
-    </div>
-
-    {#if user?.id === profile.user_id && user_cubes.length > 0}
-      <div class="flex items-center gap-2">
-        <!-- Sort controls -->
-        <SortSelector
-          bind:sortField={sortBy}
-          bind:sortOrder={sortDir}
-          fields={sortFields}
-        />
-
-        <div class="divider divider-horizontal m-0"></div>
-
-        <button
-          class="btn btn-outline {edit ? 'btn-error' : ''} btn-sm"
-          onclick={() => {
-            edit = !edit;
-          }}
-          type="button"
+  ]}
+  defaultSortField="recent"
+  noResultsTitle={total === 0
+    ? "This user doesn't have any cubes in their collection"
+    : "No cubes found"}
+  noResultsMessage={total === 0
+    ? "There are no cubes to show yet."
+    : "We couldn't find any cubes matching your search or filters. Try adjusting them or resetting to see everything."}
+  noResultsIcon="fa-solid fa-cube"
+>
+  {#snippet header()}
+    <UserExploreHeader
+      title={`${profile.display_name}'s Cube Collection`}
+      subtitle={`${total} cubes`}
+    >
+      {#snippet action()}
+        {#if user?.id === profile.user_id && total > 0}
+          <button
+            class:btn-error={edit}
+            class="btn btn-outline btn-sm"
+            type="button"
+            onclick={() => (edit = !edit)}
+          >
+            <i class={edit ? "fa-solid fa-xmark" : "fa-solid fa-pencil"}></i>
+            {edit ? "Cancel" : "Edit"}
+          </button>
+        {/if}
+      {/snippet}
+    </UserExploreHeader>
+  {/snippet}
+  {#snippet filterContent(params)}
+    <div class="flex flex-col gap-2">
+      <label class="form-control w-full">
+        <span class="label-text text-sm">Type</span>
+        <select
+          bind:value={params.type.current}
+          class="select select-bordered w-full"
         >
-          {#if edit}
-            <i class="fa-solid fa-xmark"></i>
-            Cancel
-          {:else}
-            <i class="fa-solid fa-pencil"></i>
-            Edit
-          {/if}
-        </button>
-      </div>
-    {/if}
-  </header>
-
-  <SearchBar
-    showFilter={true}
-    bind:searchTerm
-    placeholderLabel="Search cubes"
-    filterAction={() => {
-      showFilters = !showFilters;
-      currentPage = 1;
-    }}
-  />
-
-  <div class="flex flex-col lg:flex-row gap-8">
-    <FilterSidebar {showFilters}>
-      <div>
-        <label class="form-control w-full">
-          <span class="label-text text-sm">Type</span>
-          <select
-            bind:value={selectedType}
-            onchange={() => (currentPage = 1)}
-            class="select select-bordered w-full"
-          >
-            <option>All</option>
-            {#each allTypes as t, index (index)}
-              <option>{t}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label class="form-control w-full">
-          <span class="label-text text-sm">Condition</span>
-          <select
-            bind:value={selectedCondition}
-            onchange={() => (currentPage = 1)}
-            class="select select-bordered w-full"
-          >
-            <option>All</option>
-            {#each allConditions as c, index (index)}
-              <option>{c}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label class="form-control w-full">
-          <span class="label-text text-sm">Status</span>
-          <select
-            bind:value={selectedStatus}
-            onchange={() => (currentPage = 1)}
-            class="select select-bordered w-full"
-          >
-            <option>All</option>
-            {#each allStatuses as s, index (index)}
-              <option>{s}</option>
-            {/each}
-          </select>
-        </label>
-      </div>
-      <div>
-        <button
-          class="btn btn-outline w-full mt-2"
-          onclick={resetFilters}
-          type="button"
-        >
-          <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-          Reset Filters
-        </button>
-      </div>
-    </FilterSidebar>
-
-    <div class="flex-1">
-      <div
-        class="flex flex-row items-start sm:items-center justify-between mb-4 gap-4"
-      >
-        <div class="flex items-center gap-2">
-          <label class="text-sm" for="itemsPerPage">Per page</label>
-          <select
-            id="itemsPerPage"
-            bind:value={itemsPerPage}
-            class="select select-bordered"
-            style="width:auto"
-            onchange={() => (itemsPerPage = +itemsPerPage)}
-          >
-            <option value={6}>6</option>
-            <option value={9}>9</option>
-            <option value={12}>12</option>
-            <option value={24}>24</option>
-            <option value={48}>48</option>
-            <option value={96}>96</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mb-10">
-        <Pagination bind:currentPage {totalPages} />
-      </div>
-
-      {#if user_cubes && user_cubes.length > 0}
-        <ul class="columns-1 sm:columns-2 md:columns-3">
-          {#each paginatedCubes as row (row.cube_model?.slug)}
-            <div class="mb-4 break-inside-avoid">
-              <UserCubeCard
-                mode={edit ? "edit" : "view"}
-                cube={row.cube_model}
-                user_details={row}
-                user_rating={user_cube_ratings.find(
-                  (ucr) => ucr.cube_slug === row.cube_model?.slug,
-                )?.rating ?? 0}
-              />
-            </div>
-          {:else}
-            <!-- No results state -->
-            <div
-              class="col-span-full flex flex-col items-center justify-center py-20"
-            >
-              <i class="fa-solid fa-cube fa-3x mb-4"></i>
-              <h2 class="text-2xl font-semibold mb-2">No cubes found</h2>
-              <p class="mb-6 text-center max-w-xs">
-                We couldn't find any cubes matching your search or filters. Try
-                adjusting them or resetting to see everything.
-              </p>
-              <button
-                onclick={() => {
-                  resetFilters();
-                  searchTerm = "";
-                }}
-                class="btn btn-outline flex items-center"
-                aria-label="Reset filters"
-              >
-                <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-                Reset
-              </button>
-            </div>
+          <option>All</option>
+          {#each allTypes as type (type)}
+            <option>{type}</option>
           {/each}
-        </ul>
-      {:else}
-        <div
-          class="col-span-full flex flex-col items-center justify-center py-20"
+        </select>
+      </label>
+      <label class="form-control w-full">
+        <span class="label-text text-sm">Condition</span>
+        <select
+          bind:value={params.condition.current}
+          class="select select-bordered w-full"
         >
-          <i class="fa-solid fa-cube fa-3x mb-4"></i>
-          <h2 class="text-2xl font-semibold mb-2">
-            This user doesn't have any cube in their collection.
-          </h2>
-          {#if user?.id === profile.user_id}
-            <a href={resolve("/explore/cubes")} class="btn btn-primary mt-3">
-              Browse cubes
-              <i class="fa-solid fa-arrow-right"></i>
-            </a>
-          {/if}
-        </div>
-      {/if}
-
-      <div class="mt-10">
-        <Pagination bind:currentPage {totalPages} />
-      </div>
+          <option>All</option>
+          {#each allConditions as condition (condition)}
+            <option>{condition}</option>
+          {/each}
+        </select>
+      </label>
+      <label class="form-control w-full">
+        <span class="label-text text-sm">Status</span>
+        <select
+          bind:value={params.status.current}
+          class="select select-bordered w-full"
+        >
+          <option>All</option>
+          {#each allStatuses as status (status)}
+            <option>{status}</option>
+          {/each}
+        </select>
+      </label>
     </div>
-  </div>
-</section>
+  {/snippet}
+  {#snippet renderItem(userCube)}
+    <UserCubeCard
+      mode={edit ? "edit" : "view"}
+      cube={userCube.cube_model}
+      user_details={userCube}
+      user_rating={user_cube_ratings.find(
+        (rating) => rating.cube_slug === userCube.cube_model?.slug,
+      )?.rating ?? 0}
+    />
+  {/snippet}
+  {#snippet noResultsAction()}
+    {#if total === 0 && user?.id === profile.user_id}
+      <a href={resolve("/explore/cubes")} class="btn btn-primary">
+        Browse cubes
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    {/if}
+  {/snippet}
+</ExplorePage>

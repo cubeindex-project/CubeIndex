@@ -10,6 +10,7 @@
   import AddCube from "$lib/components/cube/AddCube.svelte";
   import RateCube from "$lib/components/rating/rateCube.svelte";
   import StarRating from "$lib/components/rating/starRating.svelte";
+  import StaffNote from "$lib/components/submission/StaffNote.svelte";
 
   let { data, children }: LayoutProps = $props();
   let {
@@ -225,14 +226,9 @@
 
   {@render children()}
 
-  {#if cube.notes && isCubeSubmitter}
-    <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
-      <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-note-sticky"></i>
-        Moderator Note
-        <span class="text-xs">(Only you can see this)</span>
-      </h2>
-      <p class="whitespace-pre-line">{cube.notes}</p>
+  {#if cube.staff_note && isCubeSubmitter}
+    <div class="mt-5">
+      <StaffNote staff_note={cube.staff_note} />
     </div>
   {/if}
 
@@ -391,11 +387,13 @@
     </section>
   {/if}
 
-  <div class="mt-4">
-    <button onclick={toggleReporting} class="btn btn-error">
-      🚩 Report incorrect/missing data
-    </button>
-  </div>
+  {#if cube.status === "Approved"}
+    <div class="mt-4">
+      <button onclick={toggleReporting} class="btn btn-error">
+        🚩 Report incorrect/missing data
+      </button>
+    </div>
+  {/if}
 </section>
 
 <Report

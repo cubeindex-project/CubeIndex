@@ -169,34 +169,10 @@
     $form.banner = bannerPreviewUrl;
   }
 
-  const lightThemes = [
+  const themes = [
     "light",
-    "lofi",
-    "lemonade",
-    "winter",
-    "valentine",
-    "autumn",
-    "caramellatte",
-    "cyberpunk",
-    "acid",
-    "garden",
-    "corporate",
-    "pastel",
-  ];
-
-  const darkThemes = [
     "dark",
     "black",
-    "synthwave",
-    "forest",
-    "luxury",
-    "aqua",
-    "night",
-    "sunset",
-    "abyss",
-    "coffee",
-    "dim",
-    "halloween",
   ];
 
   let selectedTheme = $state("light");
@@ -755,55 +731,11 @@
 
                 <!-- Theme picker -->
                 <div>
-                  <p class="font-bold mb-2">Light:</p>
+                  <p class="font-bold mb-2">Themes:</p>
                   <div
                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
-                    {#each lightThemes as t (t)}
-                      <label data-theme={t} class="cursor-pointer rounded-2xl">
-                        <!-- hidden radio acts as theme-controller -->
-                        <input
-                          type="radio"
-                          name="theme"
-                          class="theme-controller hidden"
-                          value={t}
-                          bind:group={selectedTheme}
-                          onchange={onThemeChange}
-                          disabled={useSystemTheme}
-                        />
-
-                        <!-- the card itself -->
-                        <div
-                          class="card bg-base-100 transition-all hover:shadow"
-                          class:ring-2={selectedTheme === t}
-                          class:ring-primary={selectedTheme === t}
-                        >
-                          <div class="card-body p-3 items-center">
-                            <!-- DaisyUI “icon”: four live colour chips -->
-                            <div
-                              class="grid grid-cols-2 sm:grid-cols-4 gap-1 mb-2"
-                            >
-                              <span class="w-4 h-4 rounded bg-primary"></span>
-                              <span class="w-4 h-4 rounded bg-secondary"></span>
-                              <span class="w-4 h-4 rounded bg-accent"></span>
-                              <span class="w-4 h-4 rounded bg-neutral"></span>
-                            </div>
-                            <span class="text-sm font-medium capitalize"
-                              >{t}</span
-                            >
-                          </div>
-                        </div>
-                      </label>
-                    {/each}
-                  </div>
-                </div>
-
-                <div>
-                  <p class="font-bold mb-2">Dark:</p>
-                  <div
-                    class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
-                  >
-                    {#each darkThemes as t (t)}
+                    {#each themes as t (t)}
                       <label data-theme={t} class="cursor-pointer rounded-2xl">
                         <!-- hidden radio acts as theme-controller -->
                         <input

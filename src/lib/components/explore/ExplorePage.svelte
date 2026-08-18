@@ -203,9 +203,11 @@
             {#if paginatedItems.length > 0}
               <div class="columns-1 sm:columns-2 md:columns-3 my-10">
                 {#each paginatedItems as item, index (index)}
-                  <div class="mb-4 break-inside-avoid">
-                    {@render renderItem(item)}
-                  </div>
+                  {#key item}
+                    <div class="mb-4 break-inside-avoid">
+                      {@render renderItem(item)}
+                    </div>
+                  {/key}
                 {/each}
               </div>
             {:else}

@@ -1815,7 +1815,6 @@ export type Database = {
           magnetic: boolean | null;
           modded: boolean | null;
           name: string | null;
-          notes: string | null;
           popularity: number | null;
           rating: number | null;
           rating_count: number | null;
@@ -1830,6 +1829,7 @@ export type Database = {
           size: string | null;
           slug: string | null;
           smart: boolean | null;
+          staff_note: string | null;
           status: Database["public"]["Enums"]["submission_status"] | null;
           stickered: boolean | null;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"] | null;

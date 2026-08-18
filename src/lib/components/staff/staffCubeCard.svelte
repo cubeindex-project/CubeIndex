@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CubeCardSkeleton from "../cube/cubeCardSkeleton.svelte";
+  import CubeCardSkeleton from "../cube/CubeCardSkeleton.svelte";
   import { resolve } from "$app/paths";
 
   let { cube } = $props();

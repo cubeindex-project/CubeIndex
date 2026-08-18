@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { formatDate } from "../../utils/formatDate";
-  import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
+  import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
   import { clientLogger } from "$lib/logger/client";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { page } from "$app/state";

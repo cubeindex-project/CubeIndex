@@ -169,11 +169,7 @@
     $form.banner = bannerPreviewUrl;
   }
 
-  const themes = [
-    "light",
-    "dark",
-    "black",
-  ];
+  const themes = ["light", "dark", "black"];
 
   let selectedTheme = $state("light");
   let useSystemTheme = $state(false);

@@ -160,8 +160,8 @@
               });
         }
         default:
-          av = new Date(a.verified_at ?? a.created_at ?? 0).getTime();
-          bv = new Date(b.verified_at ?? b.created_at ?? 0).getTime();
+          av = new Date(a.created_at).getTime();
+          bv = new Date(b.created_at).getTime();
       }
 
       if (av < bv) return sortDirection === "asc" ? -1 : 1;
@@ -265,7 +265,7 @@
     />
   {/snippet}
   {#snippet noResultsAction()}
-    <a href={resolve("/submit")} class="btn btn-primary flex items-center">
+    <a href={resolve("/submit/cube")} class="btn btn-primary flex items-center">
       <i class="fa-solid fa-plus mr-2"></i>
       Submit a New Cube
     </a>

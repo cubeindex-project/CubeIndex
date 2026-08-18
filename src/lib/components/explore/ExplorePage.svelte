@@ -194,8 +194,6 @@
               {/if}
             </div>
 
-            <Pagination bind:currentPage={params.page.current} {totalPages} />
-
             {#if paginatedItems.length > 0}
               <div class="columns-1 sm:columns-2 md:columns-3 my-10">
                 {#each paginatedItems as item, index (index)}

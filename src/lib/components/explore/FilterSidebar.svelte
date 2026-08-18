@@ -20,11 +20,7 @@
     </div>
     <div class="flex flex-col gap-4">
       {@render children()}
-      <button
-        class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-        onclick={resetFilters}
-        type="button"
-      >
+      <button class="btn btn-outline" onclick={resetFilters} type="button">
         <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
         Reset Filters
       </button>

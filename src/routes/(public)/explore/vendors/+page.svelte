@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
   import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol";
   import {
@@ -23,8 +24,6 @@
 </script>
 
 <ExplorePage
-  title="Explore Vendors"
-  subtitle="Find the best shops and trusted vendors in the cubing world."
   searchPlaceholder="Search Vendors"
   itemsPerPageLabel="Vendors per page"
   items={vendors}
@@ -72,6 +71,12 @@
   noResultsMessage="We couldn't find any vendors matching your search. Try adjusting it or resetting to see everything."
   noResultsIcon="fa-solid fa-shop"
 >
+  {#snippet header()}
+    <ExploreHeader
+      title="Explore Vendors"
+      subtitle="Find the best shops and trusted vendors in the cubing world."
+    />
+  {/snippet}
   {#snippet renderItem(vendor)}
     <section
       class="group relative grid rounded-2xl border border-base-300 bg-base-200 shadow-sm transition focus-within:shadow-md"

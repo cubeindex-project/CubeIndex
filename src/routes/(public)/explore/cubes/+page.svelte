@@ -9,6 +9,7 @@
     parseAsStringLiteral,
   } from "nuqs-svelte";
   import TriStateCheckbox from "$lib/components/explore/TriStateCheckbox.svelte";
+  import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
 
   const SORT_FIELDS = [
     "name",
@@ -63,8 +64,6 @@
 </script>
 
 <ExplorePage
-  title="Explore Cubes"
-  subtitle="Browse all your favorite cubes by type, brand, or rating."
   searchPlaceholder="Search Cubes"
   itemsPerPageLabel="Cubes per page"
   items={cubes}
@@ -181,6 +180,12 @@
   noResultsMessage="We couldn't find any cubes matching your search or filters; try adjusting them or resetting to see everything. If the cube you're looking for isn't listed, consider submitting it to help grow our database."
   noResultsIcon="fa-solid fa-cube"
 >
+  {#snippet header()}
+    <ExploreHeader
+      title="Explore Cubes"
+      subtitle="Browse all your favorite cubes by type, brand, or rating."
+    />
+  {/snippet}
   {#snippet action()}
     <a
       href={resolve("/explore/cubes/compare")}

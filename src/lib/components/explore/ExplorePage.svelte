@@ -17,8 +17,7 @@
   import NoResultsFound from "./NoResultsFound.svelte";
 
   interface Props {
-    title: string;
-    subtitle: string;
+    header: Snippet;
     searchPlaceholder?: string;
     itemsPerPageLabel?: string;
 
@@ -55,8 +54,7 @@
   }
 
   const {
-    title,
-    subtitle,
+    header,
     searchPlaceholder = "Search items",
     itemsPerPageLabel = "Items per page",
     items,
@@ -97,7 +95,7 @@
     const currentPage = params.page.current;
 
     if (currentPage !== previousPage) {
-      previousPage = currentPage
+      previousPage = currentPage;
       window.scrollTo({ top: 0, behavior: "instant" });
     }
   });
@@ -163,12 +161,7 @@
   <div class="drawer-content">
     <section class="min-h-screen px-6 py-16">
       <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-clash font-bold mb-6 text-center">
-          {title}
-        </h1>
-        <p class="mb-12 text-center">
-          {subtitle}
-        </p>
+        {@render header()}
 
         <SearchBar
           bind:searchTerm={searchInput}

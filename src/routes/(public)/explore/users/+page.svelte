@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
   import UserCard from "$lib/components/user/userCard.svelte";
   import {
@@ -14,8 +15,6 @@
 </script>
 
 <ExplorePage
-  title="Explore Users"
-  subtitle="Discover cubers, their collections, and achievements."
   searchPlaceholder="Search Users"
   itemsPerPageLabel="Users per page"
   items={profiles}
@@ -87,6 +86,12 @@
   noResultsMessage="We couldn't find any users matching your search. Try adjusting it or resetting to see everyone."
   noResultsIcon="fa-solid fa-users"
 >
+  {#snippet header()}
+    <ExploreHeader
+      title="Explore Users"
+      subtitle="Discover cubers, their collections, and achievements."
+    />
+  {/snippet}
   {#snippet renderItem(profile)}
     <UserCard {profile} />
   {/snippet}

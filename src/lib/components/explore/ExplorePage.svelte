@@ -19,21 +19,24 @@
   interface Props {
     title: string;
     subtitle: string;
+    searchPlaceholder?: string;
+    itemsPerPageLabel?: string;
 
     items: T[];
     renderItem: Snippet<[item: T]>;
 
-    action: Snippet;
+    action?: Snippet;
 
     queryStateKeyMap: UseQueryStatesKeysMap;
 
     fuseOptions: IFuseOptions<T>;
 
-    filterFunc: (
+    showFilterDrawer: boolean;
+    filterFunc?: (
       items: T[],
       params: UseQueryStatesReturn<UseQueryStatesKeysMap>,
     ) => T[];
-    filterContent: Snippet<
+    filterContent?: Snippet<
       [params: UseQueryStatesReturn<UseQueryStatesKeysMap>]
     >;
 
@@ -54,11 +57,14 @@
   const {
     title,
     subtitle,
+    searchPlaceholder = "Search items",
+    itemsPerPageLabel = "Items per page",
     items,
     renderItem,
     action,
     queryStateKeyMap,
     fuseOptions,
+    showFilterDrawer,
     filterFunc,
     filterContent,
     sortFunc,
@@ -77,7 +83,9 @@
     }),
   );
 
-  const filteredItems = $derived.by(() => filterFunc(items, params));
+  const filteredItems = $derived.by(() =>
+    filterFunc ? filterFunc(items, params) : items,
+  );
 
   const fuse = $derived.by(() => new Fuse(filteredItems, fuseOptions));
 
@@ -154,8 +162,8 @@
 
         <SearchBar
           bind:searchTerm={searchInput}
-          showFilterToggle={true}
-          placeholder="Search Cubes"
+          showFilterToggle={showFilterDrawer}
+          placeholder={searchPlaceholder}
         />
 
         <div class="flex flex-col lg:flex-row gap-8">
@@ -166,7 +174,7 @@
               <div class="flex flex-wrap items-center gap-4">
                 <ItemsPerPageSelector
                   bind:itemsPerPage={params.size.current}
-                  label="Cubes per page"
+                  label={itemsPerPageLabel}
                 />
                 <SortSelector
                   bind:sortField={params.sort.current}
@@ -176,9 +184,11 @@
                   label="Sort"
                 />
               </div>
-              <div>
-                {@render action()}
-              </div>
+              {#if action}
+                <div>
+                  {@render action()}
+                </div>
+              {/if}
             </div>
 
             <Pagination bind:currentPage={params.page.current} {totalPages} />
@@ -207,13 +217,15 @@
       </div>
     </section>
   </div>
-  <FilterSidebar {resetFilters}>
-    <div
-      onchange={() => {
-        params.set({ page: 1 });
-      }}
-    >
-      {@render filterContent(params)}
-    </div>
-  </FilterSidebar>
+  {#if showFilterDrawer && filterContent}
+    <FilterSidebar {resetFilters}>
+      <div
+        onchange={() => {
+          params.set({ page: 1 });
+        }}
+      >
+        {@render filterContent(params)}
+      </div>
+    </FilterSidebar>
+  {/if}
 </div>

@@ -14,11 +14,7 @@
 
 <div class="flex items-center">
   <label class="text-sm mr-2" for="itemsPerPage">{label}:</label>
-  <select
-    id="itemsPerPage"
-    bind:value={itemsPerPage}
-    class="select w-auto"
-  >
+  <select id="itemsPerPage" bind:value={itemsPerPage} class="select w-auto">
     {#each options as option, index (index)}
       <option value={option}>{option}</option>
     {/each}

@@ -65,6 +65,8 @@
 <ExplorePage
   title="Explore Cubes"
   subtitle="Browse all your favorite cubes by type, brand, or rating."
+  searchPlaceholder="Search Cubes"
+  itemsPerPageLabel="Cubes per page"
   items={cubes}
   queryStateKeyMap={{
     q: parseAsString.withDefault(""),
@@ -94,6 +96,7 @@
     includeScore: true,
     ignoreLocation: true,
   }}
+  showFilterDrawer={true}
   filterFunc={(cubes, params) => {
     return cubes.filter(
       (c) =>

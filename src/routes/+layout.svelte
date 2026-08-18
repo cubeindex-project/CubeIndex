@@ -49,7 +49,6 @@
     return () => data.subscription.unsubscribe();
   });
 
-  import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/Footer.svelte";
 
   const meta: ResolvedMeta = $derived.by(() => {
@@ -162,8 +161,6 @@
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Navbar {profile} />
-
-<Banner />
 
 <Toaster richColors />
 <ClientErrorReporter />

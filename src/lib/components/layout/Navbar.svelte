@@ -115,13 +115,13 @@
         <ul class="menu menu-horizontal gap-1 px-0">
           {#each navigation as nav, index (index)}
             <!-- {#if !nav.hidden} -->
-              <li>
-                {#if nav.link}
-                  <a href={nav.link}>
-                    <i class={nav.icon}></i>
-                    {nav.title}
-                  </a>
-                  <!-- {:else if nav.subMenu}
+            <li>
+              {#if nav.link}
+                <a href={nav.link}>
+                  <i class={nav.icon}></i>
+                  {nav.title}
+                </a>
+                <!-- {:else if nav.subMenu}
                   <details>
                     <summary>
                       <i class={nav.icon}></i>
@@ -140,8 +140,8 @@
                       {/each}
                     </ul>
                   </details> -->
-                {/if}
-              </li>
+              {/if}
+            </li>
             <!-- {/if} -->
           {/each}
         </ul>

@@ -175,10 +175,16 @@
               class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4"
             >
               <div class="flex flex-wrap items-center gap-4">
-                <ItemsPerPageSelector
-                  bind:itemsPerPage={params.size.current}
-                  label={itemsPerPageLabel}
-                />
+                <div
+                  onchange={() => {
+                    params.set({ page: 1 });
+                  }}
+                >
+                  <ItemsPerPageSelector
+                    bind:itemsPerPage={params.size.current}
+                    label={itemsPerPageLabel}
+                  />
+                </div>
                 <SortSelector
                   bind:sortField={params.sort.current}
                   bind:sortOrder={params.dir.current}

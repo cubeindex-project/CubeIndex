@@ -6,7 +6,7 @@
     message: string;
     icon: string;
 
-    action: Snippet;
+    action?: Snippet;
     resetFilters: () => void;
   }
 
@@ -20,7 +20,9 @@
     {message}
   </p>
   <div class="flex flex-col justify-center gap-4">
-    {@render action()}
+    {#if action}
+      {@render action()}
+    {/if}
     <button
       onclick={() => resetFilters()}
       class="btn btn-outline flex items-center"

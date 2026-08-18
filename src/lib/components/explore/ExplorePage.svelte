@@ -51,7 +51,7 @@
     noResultsTitle: string;
     noResultsMessage: string;
     noResultsIcon: string;
-    noResultsAction: Snippet;
+    noResultsAction?: Snippet;
   }
 
   const {

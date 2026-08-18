@@ -48,7 +48,7 @@
 
 {#snippet top()}
   <div class="flex justify-end">
-    {#if isNewCube(cube.verified_at)}
+    {#if isNewCube(cube.created_at)}
       <div
         class="absolute top-4 -right-8 transform rotate-45 bg-primary text-primary-content shadow-lg px-10 py-1 text-sm font-bold tracking-wide"
       >

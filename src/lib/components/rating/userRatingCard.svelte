@@ -273,5 +273,5 @@
   reportType="cube-rating"
   reported={String(user_rating.id)}
   reporLabel="{user_rating.profile
-    .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+    .display_name}'s comment on the {cube.name}"
 />

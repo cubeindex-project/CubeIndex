@@ -3,7 +3,6 @@
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
   import type { Tables } from "$lib/types/database.types";
-  import Modal from "../ui/Modal.svelte";
 
   interface Props {
     open: boolean;
@@ -83,7 +82,7 @@
 <Modal
   bind:open
   title="Rate this Cube"
-  description={`${cube.series} ${cube.model}${cube.version_type !== "Base" ? ` · ${cube.version_name}` : ""}`}
+  description={cube.name}
 >
   {#if formMessage || !isConnected}
     <div class="alert alert-error" aria-live="polite" aria-atomic="true">
@@ -192,11 +191,11 @@
       <button
         class="btn btn-primary rounded-xl"
         type="submit"
-        disabled={isSubmitting || !isConnected || !rating || over}
-        aria-disabled={isSubmitting || !isConnected || !rating || over}
+        disabled={isSubmitting || !isConnected || !rating || isOverLimit}
+        aria-disabled={isSubmitting || !isConnected || !rating || isOverLimit}
         title={!rating
           ? "Please select a rating"
-          : over
+          : isOverLimit
             ? "Comment too long"
             : ""}
       >

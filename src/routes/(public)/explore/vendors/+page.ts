@@ -8,6 +8,7 @@ export const load = (async ({ setHeaders, parent }) => {
   const { data: vendors, error: vendorsErr } = await supabase
     .from("v_detailed_vendors")
     .select("*")
+    .eq("status", "Approved")
     .order("name", { ascending: true });
 
   if (vendorsErr) {
@@ -17,8 +18,6 @@ export const load = (async ({ setHeaders, parent }) => {
   const sortedVendors = vendors.sort((a, b) => {
     if (a.sponsored && !b.sponsored) return -1;
     if (!a.sponsored && b.sponsored) return 1;
-    if (a.verified && !b.verified) return -1;
-    if (!a.verified && b.verified) return 1;
     return 0;
   });
 

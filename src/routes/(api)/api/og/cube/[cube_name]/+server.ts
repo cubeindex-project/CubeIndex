@@ -10,7 +10,7 @@ export const GET = async ({ params, locals }) => {
   // 1. Fetch cube data from Supabase
   const { data: cube, error: cErr } = await locals.supabase
     .from("v_detailed_cube_models")
-    .select("series, model, version_name, image_url, rating")
+    .select("name, image_url, rating")
     .eq("slug", cubeName)
     .single();
 
@@ -226,7 +226,7 @@ export const GET = async ({ params, locals }) => {
                 textAlign: "center",
                 color: CX.baseContent,
               },
-              children: cube.series + " " + cube.model,
+              children: cube.name,
             },
           },
           {
@@ -240,7 +240,7 @@ export const GET = async ({ params, locals }) => {
                 marginBottom: "22px",
                 textAlign: "center",
               },
-              children: cube.version_name || "",
+              children: "",
             },
           },
 

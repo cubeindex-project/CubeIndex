@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
+  import { formatDate } from "$lib/utils/formatDate.js";
+  import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
 
   let { data } = $props();
   let { cube, submitter, verifier } = $derived(data);
@@ -32,7 +33,9 @@
       is a <span class="font-medium">{cube.type}</span> twisty puzzle
       {#if cube.release_date}
         released on
-        <span class="font-medium">{formatDate(cube.release_date)}</span>
+        <span class="font-medium">
+          {formatPartialDate(cube.release_date, cube.release_date_precision)}
+        </span>
       {/if}. It is
       <span class="font-medium"
         >{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
@@ -91,12 +94,7 @@
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Version</dt>
-          <dd class="font-medium">
-            {cube.version_type}{cube.version_type !== "Base" &&
-            cube.version_name
-              ? ` · ${cube.version_name}`
-              : ""}
-          </dd>
+          <dd class="font-medium">{cube.version_type}</dd>
         </div>
       </dl>
     </div>

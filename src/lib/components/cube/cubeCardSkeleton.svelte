@@ -1,6 +1,7 @@
 ﻿<script lang="ts">
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
+  import { formatCurrency } from "$lib/utils/formatCurrency";
   import StarRating from "../rating/starRating.svelte";
   import CubeVersionType from "./cubeVersionType.svelte";
   import type { Snippet } from "svelte";
@@ -25,13 +26,6 @@
     maximumFractionDigits: 1,
   });
   const fmtCompact = (n: number) => compactNF.format(n);
-
-  const currencyNF = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-  const formatCurrency = (n: number) => currencyNF.format(n);
 </script>
 
 <svelte:head>
@@ -47,7 +41,7 @@
     <img
       data-hero-key={`cube-image-${cube.id}`}
       src={preloadImage}
-      alt="{cube.series} {cube.model} {cube.version_name}"
+      alt={cube.name}
       class="w-full h-48 object-cover"
       loading="eager"
       fetchpriority="high"
@@ -55,11 +49,7 @@
   </a>
   <div class="p-5 flex-1 flex flex-col">
     <h2 class="text-xl font-bold mb-1" data-hero-key={`cube-title-${cube.id}`}>
-      {cube.series}
-      {cube.model}
-      {#if cube.version_type !== "Base"}
-        <span class="text-blue-400">{cube.version_name}</span>
-      {/if}
+      {cube.name}
       <CubeVersionType version_type={cube.version_type} />
     </h2>
     {#if showMeta}

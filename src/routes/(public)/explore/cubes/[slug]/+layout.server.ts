@@ -1,5 +1,5 @@
-import { formatDate } from "$lib/components/helper_functions/formatDate";
 import { logError } from "$lib/server/logError";
+import { formatPartialDate } from "$lib/utils/formatPartialDate";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -32,34 +32,32 @@ export const load = (async ({
   }
 
   const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
-    cube.series
+    cube.series_id
       ? supabase
-          .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
-          .eq("series", cube.series)
+          .from("v_detailed_cube_models")
+          .select("slug, name, series, image_url")
+          .eq("series_id", cube.series_id)
           .eq("version_type", "Base")
-          .neq("model", cube.model ?? "")
+          .neq("id", cube.id)
           .eq("status", "Approved")
           .order("model", { ascending: true })
           .limit(12)
       : Promise.resolve({ data: null, error: null }),
-    cube.related_to
+    cube.related_to_id
       ? supabase
-          .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
-          .eq("slug", cube.related_to)
+          .from("v_detailed_cube_models")
+          .select("slug, name, series, image_url")
+          .eq("id", cube.related_to_id)
           .eq("status", "Approved")
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
-    cube.slug
-      ? supabase
-          .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
-          .eq("related_to", cube.slug)
-          .eq("status", "Approved")
-          .order("model", { ascending: true })
-          .limit(24)
-      : Promise.resolve({ data: null, error: null }),
+    supabase
+      .from("v_detailed_cube_models")
+      .select("slug, name, series, image_url")
+      .eq("related_to_id", cube.id)
+      .eq("status", "Approved")
+      .order("model", { ascending: true })
+      .limit(24),
   ]);
 
   let alreadyAdded = false;
@@ -100,7 +98,9 @@ export const load = (async ({
   const title = `${cube.name} - CubeIndex`;
   const description =
     `The ${cube.name} is a ${cube.type} twisty puzzle` +
-    (cube.release_date ? ` released on ${formatDate(cube.release_date)}` : "") +
+    (cube.release_date
+      ? ` released on ${formatPartialDate(cube.release_date, cube.release_date_precision)}`
+      : "") +
     `. ` +
     (cube.low_price != null ? `Prices start at $${cube.low_price}. ` : "");
   const image = `${url.origin}/api/og/cube/${cube.slug}`;

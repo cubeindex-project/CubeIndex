@@ -1,106 +1,142 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
   import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
 
   const { data } = $props();
-  let { submissions } = $derived(data);
+  const { cubeSubmissions, vendorSubmissions } = $derived(data);
 
+  type SubmissionType = "cubes" | "vendors";
   type FilterKey = "all" | "pending" | "approved" | "rejected";
-  let activeFilter = $state<FilterKey>("all");
 
-  const filters = $derived([
-    { label: "All", value: "all" as const },
-    { label: "Pending", value: "pending" as const },
-    { label: "Approved", value: "approved" as const },
-    { label: "Rejected", value: "rejected" as const },
-  ]);
+  let submissionType: SubmissionType = $state("cubes");
+  let activeFilter: FilterKey = $state("all");
+  const filters: { label: string; value: FilterKey }[] = [
+    { label: "Approved", value: "approved" },
+    { label: "Pending", value: "pending" },
+    { label: "Rejected", value: "rejected" },
+  ];
 
-  const filteredSubmissions = $derived(
+  const filteredCubes = $derived(
     activeFilter === "all"
-      ? submissions
-      : submissions.filter(
+      ? cubeSubmissions
+      : cubeSubmissions.filter(
           (cube) => cube.status.toLowerCase() === activeFilter,
         ),
   );
+  const filteredVendors = $derived(
+    activeFilter === "all"
+      ? vendorSubmissions
+      : vendorSubmissions.filter(
+          (vendor) => vendor.status.toLowerCase() === activeFilter,
+        ),
+  );
 
-  const hasSubmissions = $derived(submissions.length > 0);
-  const hasFilteredResults = $derived(filteredSubmissions.length > 0);
+  function statusBadgeColor(status: string): string {
+    if (status === "Approved") return "badge-success";
+    if (status === "Rejected") return "badge-error";
+    return "badge-warning";
+  }
 </script>
 
-<div class="min-h-screen mx-auto max-w-6xl px-4 py-8 flex flex-col gap-8">
+{#snippet noResults(resultsType: SubmissionType)}
+  <div
+    class="rounded-2xl border border-dashed border-base-300 p-10 text-center"
+  >
+    <p>No {resultsType} match this filter.</p>
+  </div>
+{/snippet}
+
+<div class="mx-auto flex min-h-screen max-w-6xl flex-col gap-8 px-4 py-8">
   <header
     class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
   >
     <div class="space-y-1">
-      <h1 class="text-3xl font-clash tracking-tight">My submissions</h1>
+      <h1 class="font-clash text-3xl tracking-tight">My submissions</h1>
       <p class="text-sm text-base-content/70">
-        Track every cube you have sent to the catalog and keep an eye on
-        moderator decisions.
+        Track catalog contributions and moderator decisions.
       </p>
-    </div>
-    <div class="flex flex-wrap items-center gap-3">
-      <a href={resolve("/submit")} class="btn btn-primary btn-sm">
-        <i class="fa-solid fa-plus" aria-hidden="true"></i>
-        <span>Submit a cube</span>
-      </a>
     </div>
   </header>
 
-  <section class="space-y-4">
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <h2 class="text-lg font-semibold text-base-content">Submitted cubes</h2>
-      <div class="flex flex-wrap gap-2">
-        {#each filters as filter (filter.label)}
-          <button
-            type="button"
-            class={`btn btn-xs md:btn-sm ${activeFilter === filter.value ? "btn-primary" : "btn-ghost"}`}
-            onclick={() => (activeFilter = filter.value)}
-            aria-pressed={activeFilter === filter.value}
-          >
-            {filter.label}
-          </button>
-        {/each}
-      </div>
+  <div class="flex justify-between">
+    <div role="tablist" class="tabs tabs-box w-fit">
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={submissionType === "cubes"}
+        onclick={() => (submissionType = "cubes")}>Cubes</button
+      >
+      <button
+        role="tab"
+        class="tab"
+        class:tab-active={submissionType === "vendors"}
+        onclick={() => (submissionType = "vendors")}>Vendors</button
+      >
     </div>
 
-    {#if hasSubmissions}
-      {#if hasFilteredResults}
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {#each filteredSubmissions as cube (cube.slug)}
-            <SubmissionCubeCard {cube} />
-          {/each}
-        </div>
-      {:else}
-        <div
-          class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-6 text-center"
-        >
-          <p class="text-base font-semibold text-base-content">
-            No cubes match that filter yet.
-          </p>
-          <p class="mt-2 text-sm text-base-content/60">
-            Try another status or submit a new cube.
-          </p>
-        </div>
-      {/if}
-    {:else}
-      <div
-        class="rounded-2xl border border-dashed border-base-200 bg-base-100/70 p-10 text-center"
-      >
-        <p class="text-xl font-semibold text-base-content mb-2">
-          You have not submitted any cubes yet.
-        </p>
-        <p class="text-sm text-base-content/70">
-          Start with our guided form and we will keep you posted as moderators
-          review your submission.
-        </p>
-        <a
-          href={resolve("/submit")}
-          class="btn btn-primary mt-4 inline-flex items-center gap-2"
-        >
-          <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-          <span>Submit your first cube</span>
-        </a>
+    <form class="filter" aria-label="Filter by status">
+      <input
+        class="btn"
+        type="reset"
+        value="x"
+        onclick={() => (activeFilter = "all")}
+      />
+      {#each filters as filter (filter.value)}
+        <input
+          type="radio"
+          class="btn"
+          name="frameworks"
+          aria-label={filter.label}
+          onclick={() => (activeFilter = filter.value)}
+        />
+      {/each}
+    </form>
+  </div>
+
+  {#if submissionType === "cubes"}
+    {#if filteredCubes.length}
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {#each filteredCubes as cube (cube.slug)}
+          <SubmissionCubeCard {cube} />
+        {/each}
       </div>
+    {:else}
+      {@render noResults(submissionType)}
     {/if}
-  </section>
+  {:else if filteredVendors.length}
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {#each filteredVendors as vendor (vendor.id)}
+        <article class="card border border-base-300 bg-base-200">
+          <div class="card-body">
+            <div class="flex items-center gap-4">
+              {#if vendor.logo_url}
+                <img
+                  src={vendor.logo_url}
+                  alt=""
+                  class="size-16 shrink-0 rounded-xl p-2 object-contain bg-white"
+                />
+              {:else}
+                <div
+                  class="grid size-16 place-items-center rounded-xl bg-base-300"
+                >
+                  <i class="fa-solid fa-store" aria-hidden="true"></i>
+                </div>
+              {/if}
+              <div>
+                <h2 class="card-title">{vendor.name}</h2>
+                <span class={`badge ${statusBadgeColor(vendor.status)}`}>
+                  {vendor.status}
+                </span>
+              </div>
+            </div>
+            <p>{vendor.country_iso} · {vendor.currency}</p>
+            {#if vendor.staff_note}
+              <p class="text-sm text-error">Staff note: {vendor.staff_note}</p>
+            {/if}
+          </div>
+        </article>
+      {/each}
+    </div>
+  {:else}
+    {@render noResults(submissionType)}
+  {/if}
 </div>

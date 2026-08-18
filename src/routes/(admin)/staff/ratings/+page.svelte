@@ -12,10 +12,9 @@
     created_at: string;
     cube_slug: {
       slug: string;
+      name?: string | null;
       series?: string | null;
-      model?: string | null;
       version_type?: string | null;
-      version_name?: string | null;
     };
     user_id: {
       username?: string | null;
@@ -44,9 +43,8 @@
           rating.comment,
           rating.user_id?.display_name,
           rating.user_id?.username,
+          rating.cube_slug?.name,
           rating.cube_slug?.series,
-          rating.cube_slug?.model,
-          rating.cube_slug?.version_name,
           rating.cube_slug?.version_type,
           rating.rating?.toString(),
           rating.created_at,

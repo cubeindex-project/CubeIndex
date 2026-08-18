@@ -1,23 +1,21 @@
-<script>
-  const { version_type } = $props();
+<script lang="ts">
+  import type { Enums } from "$lib/types/database.types";
+
+  interface Props {
+    version_type: Enums<"cube_version_types">;
+  }
+
+  const { version_type }: Props = $props();
+
+  const bgColor = $derived(
+    version_type === "Base"
+      ? "badge-primary"
+      : version_type === "Variant"
+        ? "badge-secondary"
+        : "badge-accent",
+  );
 </script>
 
-{#if version_type === "Base"}
-  <span
-    class="px-2 py-1 rounded bg-primary text-primary-content text-xs font-semibold"
-  >
-    <span class="font-clash uppercase">Base</span>
-  </span>
-{:else if version_type === "Limited"}
-  <span
-    class="px-2 py-1 rounded bg-accent text-accent-content text-xs font-semibold"
-  >
-    <span class="font-clash uppercase">Limited Edition</span>
-  </span>
-{:else}
-  <span
-    class="px-2 py-1 rounded bg-secondary text-secondary-content text-xs font-semibold"
-  >
-    <span class="font-clash uppercase">Trim</span>
-  </span>
-{/if}
+<span class="badge {bgColor}">
+  <span class="font-clash uppercase">{version_type}</span>
+</span>

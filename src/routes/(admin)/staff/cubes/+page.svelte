@@ -74,8 +74,7 @@
       return {
         ...c,
         _year: new Date(c.release_date ?? "").getFullYear(),
-        _name:
-          `${c.series ?? ""} ${c.model ?? ""} ${c.version_type ?? ""}`.toLowerCase(),
+        _name: c.name.toLowerCase(),
         _wcaLegal: feats.has("wca_legal"),
         _magnetic: feats.has("magnetic"),
         _modded: feats.has("modded"),
@@ -380,7 +379,7 @@
 
           <div>
             <a
-              href={resolve("/(admin)/staff/cubes/add")}
+              href={resolve("/(private)/submit/cube")}
               class="btn bg-primary text-primary-content"
             >
               <i class="fa-solid fa-plus mr-2"></i>

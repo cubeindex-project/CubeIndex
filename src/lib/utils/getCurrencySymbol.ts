@@ -1,9 +1,9 @@
-export function getCurrencySymbol(currencyCode: string) {
+export function getCurrencySymbol(currencyCode?: string) {
+  if (!currencyCode) return;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    currencyDisplay: "symbol",
   })
     .formatToParts(0)
     .find((part) => part.type === "currency")?.value;

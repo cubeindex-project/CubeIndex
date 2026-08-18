@@ -87,6 +87,12 @@
       implemented: true,
     },
     {
+      href: resolve("/(admin)/staff/vendors"),
+      icon: "🏪",
+      label: "Manage Vendors",
+      implemented: true,
+    },
+    {
       icon: "👤",
       label: "Manage Users",
       implemented: false,

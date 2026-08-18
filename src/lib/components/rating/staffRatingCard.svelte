@@ -1,6 +1,6 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
-  import { formatDate } from "../helper_functions/formatDate";
+  import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
@@ -89,11 +89,7 @@
 <div class="bg-base-200 rounded-xl p-4 border border-base-300 shadow-sm">
   <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
     <h2 class="text-xl font-bold mb-1">
-      {cube.series}
-      {cube.model}
-      {#if cube.version_type !== "Base"}
-        <span class="text-blue-400">{cube.version_name}</span>
-      {/if}
+      {cube.name}
     </h2>
   </a>
   <div

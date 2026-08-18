@@ -1,6 +1,6 @@
 <script lang="ts">
   import StarRating from "./starRating.svelte";
-  import { formatDate } from "../helper_functions/formatDate";
+  import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
   import RateCube from "./rateCube.svelte";
   import Report from "../report/report.svelte";
@@ -116,16 +116,12 @@
     <div class="flex flex-row items-center gap-4 mb-4">
       <img
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,fl_lossy,q_auto,h_96/{cube.image_url}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={cube.name}
         class="size-24 object-cover rounded-2xl"
       />
       <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
         <h2 class="text-xl font-bold mb-1">
-          {cube.series}
-          {cube.model}
-          {#if cube.version_type !== "Base"}
-            <span class="text-blue-400">{cube.version_name}</span>
-          {/if}
+          {cube.name}
         </h2>
       </a>
     </div>

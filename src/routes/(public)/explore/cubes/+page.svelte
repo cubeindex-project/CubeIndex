@@ -108,11 +108,11 @@
           : params.base.current
             ? c.version_type === "Base"
             : c.version_type !== "Base") &&
-        (params.trim.current === null
+        (params.variant.current === null
           ? true
-          : params.trim.current
-            ? c.version_type === "Trim"
-            : c.version_type !== "Trim") &&
+          : params.variant.current
+            ? c.version_type === "Variant"
+            : c.version_type !== "Variant") &&
         (params.limit.current === null
           ? true
           : params.limit.current

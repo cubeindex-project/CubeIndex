@@ -1,20 +1,8 @@
-<!-- staffCubeCard.svelte -->
 <script lang="ts">
-  import ManageCubeStatus from "./manageCubeStatus.svelte";
   import CubeCardSkeleton from "../cube/cubeCardSkeleton.svelte";
   import { resolve } from "$app/paths";
 
-  // single props destructure
   let { cube } = $props();
-
-  // reactive state
-  let openModNotes = $state(false);
-  let reason = $state<"Accept" | "Reject">("Accept");
-
-  function toggleModNotes(r: typeof reason) {
-    reason = r;
-    openModNotes = !openModNotes;
-  }
 </script>
 
 {#snippet top()}
@@ -60,26 +48,14 @@
   {:else if cube.status === "Pending"}
     <div class="flex-1 flex flex-col">
       <div class="mt-4 flex gap-2">
-        <button
-          class="btn btn-success flex-1"
-          onclick={() => toggleModNotes("Accept")}
-        >
-          <i class="fa-solid fa-check mr-2"></i>Accept
-        </button>
         <a
-          href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+          href={resolve("/(admin)/staff/cubes/review/[slug]", {
             slug: cube.slug,
           })}
           class="btn btn-info flex-1"
         >
-          <i class="fa-solid fa-pencil mr-2"></i>Edit
+          <i class="fa-solid fa-magnifying-glass"></i>Review
         </a>
-        <button
-          class="btn btn-error flex-1"
-          onclick={() => toggleModNotes("Reject")}
-        >
-          <i class="fa-solid fa-xmark mr-2"></i>Reject
-        </button>
       </div>
       <a
         href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}
@@ -116,12 +92,3 @@
 {#snippet bottom()}{/snippet}
 
 <CubeCardSkeleton {cube} rating={false} {top} {content} {bottom} />
-
-{#if openModNotes}
-  <ManageCubeStatus
-    cube_name={`${cube.series} ${cube.model} ${cube.version_name}`}
-    cube_id={cube.id}
-    {reason}
-    onCancel={() => (openModNotes = false)}
-  />
-{/if}

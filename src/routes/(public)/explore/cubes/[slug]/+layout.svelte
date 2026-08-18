@@ -20,6 +20,7 @@
     alreadyAdded,
     isCubeSubmitter,
     userCubeDetail,
+    profile,
   } = $derived(data);
 
   let isAddingCube = $state(false);
@@ -108,7 +109,7 @@
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
           cube.image_url,
         )}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={cube.name}
         fetchpriority="high"
         decoding="async"
         width="768"
@@ -128,11 +129,7 @@
     <!-- top row: text + discontinued badge -->
     <div class="flex items-center text-4xl font-bold">
       <div class="font-clash" data-hero-key={`cube-title-${cube.id}`}>
-        {cube.series}
-        {cube.model}
-        {#if cube.version_type !== "Base"}
-          <span class="text-secondary"> {cube.version_name}</span>
-        {/if}
+        {cube.name}
       </div>
       {#if cube.discontinued}
         <div
@@ -196,12 +193,10 @@
     <ShareButton url={page.url.href} label="" />
   </div>
 
-  <!-- Highlighted Rating -->
   <div class="flex flex-col items-start mb-5 sm:mt-0">
     <StarRating readOnly={true} rating={cube.rating ?? 0} />
   </div>
 
-  <!-- Tabs: URL-aware, scrollable on mobile, accessible roles -->
   <nav class="my-6 -mx-6 px-6 overflow-x-auto">
     <div
       class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
@@ -242,7 +237,6 @@
     </div>
   {/if}
 
-  <!-- Trim selector -->
   {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
@@ -250,7 +244,7 @@
           class="text-xl font-semibold tracking-tight flex items-center gap-2"
         >
           <i class="fa-solid fa-palette text-primary"></i>
-          Select Trim
+          Select Variant
         </h2>
         <span class="badge badge-neutral badge-sm ml-2">{cubeTrims.length}</span
         >
@@ -267,7 +261,7 @@
                 slug: trim.slug,
               })}
               class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              aria-label={"Open " + trim.version_name}
+              aria-label={"Open " + trim.name}
             >
               <div class="p-3">
                 <div
@@ -275,7 +269,7 @@
                 >
                   <img
                     src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(trim.image_url)}`}
-                    alt={trim.version_name}
+                    alt={trim.name}
                     loading="lazy"
                     decoding="async"
                     width="256"
@@ -285,7 +279,7 @@
                 </div>
                 <div class="mt-2 text-center">
                   <span class="text-sm font-medium line-clamp-2"
-                    >{trim.version_name}</span
+                    >{trim.name}</span
                   >
                 </div>
               </div>
@@ -314,7 +308,7 @@
             slug: relatedCube.slug,
           })}
           class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          aria-label={"Open " + (relatedCube.series + " " + relatedCube.model)}
+          aria-label={"Open " + relatedCube.name}
         >
           <div class="p-4 flex items-center gap-4">
             <div
@@ -322,7 +316,7 @@
             >
               <img
                 src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
-                alt={relatedCube.version_name}
+                alt={relatedCube.name}
                 loading="lazy"
                 decoding="async"
                 width="192"
@@ -332,11 +326,7 @@
             </div>
             <div class="min-w-0">
               <p class="text-base font-semibold truncate">
-                {relatedCube.series}
-                {relatedCube.model}
-              </p>
-              <p class="text-xs opacity-70 truncate">
-                {relatedCube.version_name}
+                {relatedCube.name}
               </p>
             </div>
           </div>
@@ -372,8 +362,7 @@
                   slug: seriesCube.slug,
                 })}
                 class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                aria-label={"Open " +
-                  (seriesCube.series + " " + seriesCube.model)}
+                aria-label={"Open " + seriesCube.name}
               >
                 <div class="p-3">
                   <div
@@ -381,7 +370,7 @@
                   >
                     <img
                       src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
-                      alt={seriesCube.version_name}
+                      alt={seriesCube.name}
                       loading="lazy"
                       decoding="async"
                       width="256"
@@ -391,11 +380,7 @@
                   </div>
                   <div class="mt-2 text-center">
                     <p class="text-sm font-semibold line-clamp-2">
-                      {seriesCube.series}
-                      {seriesCube.model}
-                    </p>
-                    <p class="text-xs opacity-70 line-clamp-1">
-                      {seriesCube.version_name}
+                      {seriesCube.name}
                     </p>
                   </div>
                 </div>
@@ -408,6 +393,16 @@
   {/if}
 
   <div class="mt-4">
+    {#if profile?.role === "Admin" || profile?.role === "Database Manager"}
+      <a
+        href={resolve("/(admin)/staff/cubes/edit/[slug]", {
+          slug: cube.slug,
+        })}
+        class="btn btn-info mr-2"
+      >
+        <i class="fa-solid fa-pencil mr-2"></i>Edit cube
+      </a>
+    {/if}
     <button onclick={toggleReporting} class="btn btn-error">
       🚩 Report incorrect/missing data
     </button>

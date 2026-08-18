@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
+  import { formatDate } from "$lib/utils/formatDate.js";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   const { data } = $props();
@@ -50,7 +50,7 @@
         {#if recent.submissions.length === 0}
           <div class="text-sm opacity-70">
             Share cubes that are missing from the catalog and track their status
-            from here. <a class="link" href={resolve("/submit")}
+            from here. <a class="link" href={resolve("/(private)/submit/cube")}
               >Submit a cube</a
             > to get started.
           </div>
@@ -93,7 +93,10 @@
             {/each}
           </ul>
           <div class="pt-3 flex flex-wrap">
-            <a class="btn btn-ghost btn-sm" href={resolve("/submit")}
+            <a
+              class="btn btn-ghost btn-sm"
+              href={resolve("/(private)/submit/cube")}
+            >
               >Submit another cube</a
             >
           </div>

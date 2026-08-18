@@ -2,7 +2,7 @@
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import { onMount } from "svelte";
-  import ConfirmSignOut from "../user/confirmSignOut.svelte";
+  import ConfirmSignOut from "$lib/components/user/ConfirmSignOut.svelte";
 
   interface Props {
     profile: Pick<
@@ -151,7 +151,7 @@
       {#if profile}
         <a
           class="btn btn-primary btn-sm hidden sm:inline-flex"
-          href={resolve("/(private)/submit")}
+          href={resolve("/(private)/submit/cube")}
         >
           <i class="fa-solid fa-plus"></i>
           Submit cube
@@ -207,8 +207,7 @@
             <li>
               <a
                 href={resolve("/(public)/user/[username]", {
-                  // Temporary fix
-                  username: profile.username ?? "",
+                  username: profile.username,
                 })}
               >
                 <i class="fa-solid fa-circle-user"></i>

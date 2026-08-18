@@ -137,7 +137,8 @@
 
         if (mode === "system") {
           const mql = window.matchMedia("(prefers-color-scheme: dark)");
-          const setFromSystem = () => apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
+          const setFromSystem = () =>
+            apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
           setFromSystem();
           // Keep in sync with OS changes
           mql.addEventListener("change", setFromSystem);

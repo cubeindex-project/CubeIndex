@@ -736,7 +736,10 @@
                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
                     {#each themes as t, index (index)}
-                      <label data-theme={t.value} class="cursor-pointer rounded-2xl">
+                      <label
+                        data-theme={t.value}
+                        class="cursor-pointer rounded-2xl"
+                      >
                         <!-- hidden radio acts as theme-controller -->
                         <input
                           type="radio"

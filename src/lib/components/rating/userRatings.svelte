@@ -1,7 +1,7 @@
 <script lang="ts">
   import UserRatingCard from "./userRatingCard.svelte";
-  import Pagination from "../misc/pagination.svelte";
-  import SearchBar from "../misc/searchBar.svelte";
+  import Pagination from "../explore/Pagination.svelte";
+  import SearchBar from "../explore/SearchBar.svelte";
   import type { Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
 
@@ -99,8 +99,8 @@
     </div>
 
     <SearchBar
-      placeholderLabel="Search Ratings"
-      showFilter={false}
+      placeholder="Search Ratings"
+      showFilterToggle={false}
       bind:searchTerm
     />
 

@@ -23,18 +23,18 @@
       icon: "fa-solid fa-users",
       link: resolve("/(public)/explore/users"),
     },
-    {
-      title: "Achievements",
-      icon: "fa-solid fa-trophy",
-      link: resolve("/(public)/explore/achievements"),
-      hidden: true,
-    },
-    {
-      title: "Awards",
-      icon: "fa-solid fa-award",
-      link: resolve("/(public)/awards"),
-      hidden: true,
-    },
+    // {
+    //   title: "Achievements",
+    //   icon: "fa-solid fa-trophy",
+    //   link: resolve("/(public)/explore/achievements"),
+    //   hidden: true,
+    // },
+    // {
+    //   title: "Awards",
+    //   icon: "fa-solid fa-award",
+    //   link: resolve("/(public)/awards"),
+    //   hidden: true,
+    // },
   ];
 
   const activeTab = $derived.by(() => {
@@ -52,13 +52,13 @@
 
 <nav class="dock bg-base-100/90 backdrop-blur-xl lg:hidden">
   {#each navigation as nav, index (index)}
-    {#if !nav.hidden}
-      {#if nav.link}
-        <a href={nav.link} class:dock-active={activeTab === nav.title}>
-          <i class={nav.icon}></i>
-          <span class="dock-label">{nav.title}</span>
-        </a>
-        <!-- {:else if nav.subMenu}
+    <!-- {#if !nav.hidden} -->
+    {#if nav.link}
+      <a href={nav.link} class:dock-active={activeTab === nav.title}>
+        <i class={nav.icon}></i>
+        <span class="dock-label">{nav.title}</span>
+      </a>
+      <!-- {:else if nav.subMenu}
         <details class="dropdown dropdown-top dropdown-center">
           <summary
             class="flex h-full w-full cursor-pointer list-none flex-col items-center justify-center gap-px"
@@ -81,7 +81,7 @@
             {/each}
           </ul>
         </details> -->
-      {/if}
     {/if}
+    <!-- {/if} -->
   {/each}
 </nav>

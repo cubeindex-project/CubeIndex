@@ -303,9 +303,7 @@
     >
       {#each tabs as tab, index (index)}
         <a
-          href={resolve(`/(public)/user/[username]${tab.link}`, {
-            username: profile.username ?? "",
-          })}
+          href={resolve(`/user/${profile.username}${tab.link}`)}
           class="hover:text-primary border-0 {activeTab === tab.title
             ? 'border-b-4'
             : ''} border-primary"

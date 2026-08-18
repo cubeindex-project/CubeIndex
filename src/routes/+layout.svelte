@@ -49,7 +49,6 @@
     return () => data.subscription.unsubscribe();
   });
 
-  import Banner from "$lib/components/layout/banner.svelte";
   import Footer from "$lib/components/layout/Footer.svelte";
 
   const meta: ResolvedMeta = $derived.by(() => {
@@ -137,7 +136,8 @@
 
         if (mode === "system") {
           const mql = window.matchMedia("(prefers-color-scheme: dark)");
-          const setFromSystem = () => apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
+          const setFromSystem = () =>
+            apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
           setFromSystem();
           // Keep in sync with OS changes
           mql.addEventListener("change", setFromSystem);
@@ -161,8 +161,6 @@
 <SvelteKitTopLoader color="#044eb4" showSpinner={false} shadow={false} />
 
 <Navbar {profile} />
-
-<Banner />
 
 <Toaster richColors />
 <ClientErrorReporter />

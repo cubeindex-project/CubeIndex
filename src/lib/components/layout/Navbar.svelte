@@ -29,18 +29,18 @@
       icon: "fa-solid fa-users",
       link: resolve("/(public)/explore/users"),
     },
-    {
-      title: "Achievements",
-      icon: "fa-solid fa-trophy",
-      link: resolve("/(public)/explore/achievements"),
-      hidden: true,
-    },
-    {
-      title: "Awards",
-      icon: "fa-solid fa-award",
-      link: resolve("/(public)/awards"),
-      hidden: true,
-    },
+    // {
+    //   title: "Achievements",
+    //   icon: "fa-solid fa-trophy",
+    //   link: resolve("/(public)/explore/achievements"),
+    //   hidden: true,
+    // },
+    // {
+    //   title: "Awards",
+    //   icon: "fa-solid fa-award",
+    //   link: resolve("/(public)/awards"),
+    //   hidden: true,
+    // },
     // {
     //   title: "About",
     //   icon: "fa-solid fa-circle-info",
@@ -114,14 +114,14 @@
       <div class="hidden flex-none lg:flex">
         <ul class="menu menu-horizontal gap-1 px-0">
           {#each navigation as nav, index (index)}
-            {#if !nav.hidden}
-              <li>
-                {#if nav.link}
-                  <a href={nav.link}>
-                    <i class={nav.icon}></i>
-                    {nav.title}
-                  </a>
-                  <!-- {:else if nav.subMenu}
+            <!-- {#if !nav.hidden} -->
+            <li>
+              {#if nav.link}
+                <a href={nav.link}>
+                  <i class={nav.icon}></i>
+                  {nav.title}
+                </a>
+                <!-- {:else if nav.subMenu}
                   <details>
                     <summary>
                       <i class={nav.icon}></i>
@@ -140,9 +140,9 @@
                       {/each}
                     </ul>
                   </details> -->
-                {/if}
-              </li>
-            {/if}
+              {/if}
+            </li>
+            <!-- {/if} -->
           {/each}
         </ul>
       </div>

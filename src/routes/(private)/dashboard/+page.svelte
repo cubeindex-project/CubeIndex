@@ -5,48 +5,7 @@
 
   const { data } = $props();
 
-  const { profile, stats, recent } = $derived(data);
-
-  const cards = $derived([
-    {
-      label: "Collection",
-      value: stats.cubesCount,
-      icon: "fa-box-archive",
-      href: resolve("/(public)/user/[username]", {
-        username: profile.username ?? "",
-      }),
-    },
-    {
-      label: "Ratings",
-      value: stats.ratingsCount,
-      icon: "fa-star",
-      href: resolve("/(public)/user/[username]/ratings", {
-        username: profile.username ?? "",
-      }),
-    },
-    // {
-    //   label: "Achievements",
-    //   value: stats.achievementsCount,
-    //   icon: "fa-trophy",
-    //   href: resolve("/(public)/user/[username]/achievements", {
-    //     username: profile.username ?? "",
-    //   }),
-    // },
-    {
-      label: "Followers",
-      value: stats.followersCount,
-      icon: "fa-user-group",
-      href: resolve('/(public)/user/[username]/social?tab="followers"', {
-        username: profile.username ?? "",
-      }),
-    },
-    {
-      label: "Submissions",
-      value: stats.submissionsCount,
-      icon: "fa-paper-plane",
-      href: resolve("/(private)/user/submissions"),
-    },
-  ]);
+  const { profile, recent } = $derived(data);
 
   const submissionStatusBadge = (status: string) => {
     const normalized = status.toLowerCase();

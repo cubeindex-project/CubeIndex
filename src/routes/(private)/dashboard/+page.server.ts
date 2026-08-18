@@ -22,46 +22,6 @@ export const load = (async ({ locals }) => {
     return logError(500, "Unable to load profile", log, pErr);
   }
 
-  // Parallel counts for dashboard stats
-  const [
-    { count: cubesCount = 0, error: cErr },
-    { count: ratingsCount = 0, error: rErr },
-    { count: achievementsCount = 0, error: aErr },
-    { count: followersCount = 0, error: f1Err },
-    { count: followingCount = 0, error: f2Err },
-    { count: submissionsCount = 0, error: sErr },
-  ] = await Promise.all([
-    supabase
-      .from("user_cubes")
-      .select("*", { head: true, count: "exact" })
-      .eq("user_id", user.id),
-    supabase
-      .from("user_cube_ratings")
-      .select("*", { head: true, count: "exact" })
-      .eq("user_id", user.id),
-    supabase
-      .from("user_achievements")
-      .select("*", { head: true, count: "exact" })
-      .eq("user_id", user.id),
-    supabase
-      .from("user_follows")
-      .select("*", { head: true, count: "exact" })
-      .eq("following_id", user.id),
-    supabase
-      .from("user_follows")
-      .select("*", { head: true, count: "exact" })
-      .eq("follower_id", user.id),
-    supabase
-      .from("cube_models")
-      .select("*", { head: true, count: "exact" })
-      .eq("submitted_by_id", user.id),
-  ]);
-
-  if (cErr || rErr || aErr || f1Err || f2Err || sErr) {
-    const aggregateError = cErr ?? rErr ?? aErr ?? f1Err ?? f2Err ?? sErr;
-    return logError(500, "Failed to load dashboard stats", log, aggregateError);
-  }
-
   // Recent activity (lightweight)
   const { data: submissions, error: rsErr } = await supabase
     .from("v_detailed_cube_models")
@@ -81,14 +41,6 @@ export const load = (async ({ locals }) => {
 
   return {
     profile,
-    stats: {
-      cubesCount: cubesCount ?? 0,
-      ratingsCount: ratingsCount ?? 0,
-      achievementsCount: achievementsCount ?? 0,
-      followersCount: followersCount ?? 0,
-      followingCount: followingCount ?? 0,
-      submissionsCount: submissionsCount ?? 0,
-    },
     recent: {
       submissions,
     },

@@ -199,10 +199,7 @@
     <div class="flex flex-col gap-2 mb-4">
       <label class="block">
         Type:
-        <select
-          bind:value={params.type.current}
-          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-        >
+        <select bind:value={params.type.current} class="select">
           <option>All</option>
           {#each allTypes as t, index (index)}
             <option>{t}</option>
@@ -211,10 +208,7 @@
       </label>
       <label class="block">
         Sub Type:
-        <select
-          bind:value={params.sub.current}
-          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-        >
+        <select bind:value={params.sub.current} class="select">
           <option>All</option>
           {#each allSubTypes as st, index (index)}
             <option>{st}</option>
@@ -223,10 +217,7 @@
       </label>
       <label class="block">
         Brand:
-        <select
-          bind:value={params.brand.current}
-          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
-        >
+        <select bind:value={params.brand.current} class="select">
           <option>All</option>
           {#each allBrands as b, index (index)}
             <option>{b}</option>
@@ -242,7 +233,7 @@
               year: params.year.current === "All" ? "All" : params.year.current,
             });
           }}
-          class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border"
+          class="select"
         >
           <option>All</option>
           {#each allYears as year, index (index)}

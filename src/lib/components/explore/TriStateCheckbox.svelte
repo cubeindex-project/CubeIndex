@@ -1,15 +1,23 @@
 <script lang="ts">
   interface Props {
-    value: boolean | null | undefined;
+    value: boolean | null;
     label: string;
     onchange?: () => void;
   }
 
-  let { value = $bindable(), label, onchange = () => {} }: Props = $props();
+  let {
+    value = $bindable<boolean | null>(null),
+    label,
+    onchange = () => {},
+  }: Props = $props();
   let box: HTMLInputElement;
 
-  function cycle() {
-    value = value === undefined ? true : value ? false : undefined;
+  function cycle(e: MouseEvent) {
+    e.preventDefault();
+
+    value = value === null ? true : value ? false : null;
+
+    box.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   $effect(() => {
@@ -18,7 +26,7 @@
       box.indeterminate = value === false;
       box.setAttribute(
         "aria-checked",
-        value === undefined ? "mixed" : value ? "true" : "false",
+        value === null ? "mixed" : value ? "true" : "false",
       );
     }
   });

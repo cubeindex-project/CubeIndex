@@ -1,19 +1,14 @@
 <script lang="ts">
   interface Props {
-    /** Currently selected number of items shown on each page */
     itemsPerPage: number;
-    /** Available item counts to choose from */
     options?: number[];
-    /** Label displayed next to the selector */
     label?: string;
-    onchange?: () => void;
   }
 
   let {
     itemsPerPage = $bindable(),
     options = [6, 12, 24, 48, 96],
     label = "Items per page",
-    onchange = () => {},
   }: Props = $props();
 </script>
 
@@ -22,9 +17,7 @@
   <select
     id="itemsPerPage"
     bind:value={itemsPerPage}
-    class="select"
-    style="width:auto"
-    {onchange}
+    class="select w-auto"
   >
     {#each options as option, index (index)}
       <option value={option}>{option}</option>

@@ -40,7 +40,7 @@ export const load: PageServerLoad = async ({
     { data: cubeFeatures, error: cubeFeaturesErr },
   ] = await Promise.all([
     supabase.from("cube_vendor_links").select("*").eq("cube_slug", slug),
-    supabase.from("cubes_model_features").select("feature").eq("cube", slug),
+    supabase.from("cube_model_features").select("feature").eq("cube", slug),
   ]);
 
   if (vlError) {

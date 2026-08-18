@@ -394,6 +394,73 @@ export type Database = {
         };
         Relationships: [];
       };
+      cube_model_features: {
+        Row: {
+          added_by_id: string | null;
+          created_at: string;
+          cube: string;
+          feature: string;
+          id: number;
+        };
+        Insert: {
+          added_by_id?: string | null;
+          created_at?: string;
+          cube?: string;
+          feature?: string;
+          id?: number;
+        };
+        Update: {
+          added_by_id?: string | null;
+          created_at?: string;
+          cube?: string;
+          feature?: string;
+          id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cube_model_features_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "cube_model_features_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "cubes_model_features_cube_fkey";
+            columns: ["cube"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "cubes_model_features_cube_fkey";
+            columns: ["cube"];
+            isOneToOne: false;
+            referencedRelation: "v_awards_category_winners";
+            referencedColumns: ["nominee_slug"];
+          },
+          {
+            foreignKeyName: "cubes_model_features_cube_fkey";
+            columns: ["cube"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "cubes_model_features_feature_fkey";
+            columns: ["feature"];
+            isOneToOne: false;
+            referencedRelation: "cube_features";
+            referencedColumns: ["code"];
+          },
+        ];
+      };
       cube_models: {
         Row: {
           brand: string;
@@ -590,21 +657,39 @@ export type Database = {
       };
       cube_series: {
         Row: {
+          added_by_id: string | null;
           created_at: string;
           id: number;
           name: string;
         };
         Insert: {
+          added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name: string;
         };
         Update: {
+          added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "cube_series_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "cube_series_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       cube_types: {
         Row: {
@@ -612,24 +697,18 @@ export type Database = {
           created_at: string;
           id: number;
           name: string;
-          popularity: number;
-          shape_family: string;
         };
         Insert: {
           added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name: string;
-          popularity?: number;
-          shape_family?: string;
         };
         Update: {
           added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name?: string;
-          popularity?: number;
-          shape_family?: string;
         };
         Relationships: [
           {
@@ -650,6 +729,7 @@ export type Database = {
       };
       cube_vendor_links: {
         Row: {
+          added_by_id: string | null;
           available: boolean;
           created_at: string;
           cube_slug: string;
@@ -662,6 +742,7 @@ export type Database = {
           vendor_name: string;
         };
         Insert: {
+          added_by_id?: string | null;
           available?: boolean;
           created_at?: string;
           cube_slug: string;
@@ -674,6 +755,7 @@ export type Database = {
           vendor_name: string;
         };
         Update: {
+          added_by_id?: string | null;
           available?: boolean;
           created_at?: string;
           cube_slug?: string;
@@ -686,6 +768,20 @@ export type Database = {
           vendor_name?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_vendor_links_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_added_by_id_fkey";
+            columns: ["added_by_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_profiles";
+            referencedColumns: ["user_id"];
+          },
           {
             foreignKeyName: "cube_vendor_links_duplicate_cube_slug_fkey";
             columns: ["cube_slug"];
@@ -800,56 +896,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "vendors";
             referencedColumns: ["name"];
-          },
-        ];
-      };
-      cubes_model_features: {
-        Row: {
-          created_at: string;
-          cube: string;
-          feature: string;
-          id: number;
-        };
-        Insert: {
-          created_at?: string;
-          cube?: string;
-          feature?: string;
-          id?: number;
-        };
-        Update: {
-          created_at?: string;
-          cube?: string;
-          feature?: string;
-          id?: number;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "cubes_model_features_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
-          },
-          {
-            foreignKeyName: "cubes_model_features_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "cubes_model_features_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
-          },
-          {
-            foreignKeyName: "cubes_model_features_feature_fkey";
-            columns: ["feature"];
-            isOneToOne: false;
-            referencedRelation: "cube_features";
-            referencedColumns: ["code"];
           },
         ];
       };
@@ -1009,7 +1055,6 @@ export type Database = {
           banner: string | null;
           beta_flags: Json;
           bio: string | null;
-          certified: boolean;
           created_at: string;
           display_name: string;
           id: number;
@@ -1026,7 +1071,6 @@ export type Database = {
           banner?: string | null;
           beta_flags?: Json;
           bio?: string | null;
-          certified?: boolean;
           created_at?: string;
           display_name: string;
           id?: number;
@@ -1043,7 +1087,6 @@ export type Database = {
           banner?: string | null;
           beta_flags?: Json;
           bio?: string | null;
-          certified?: boolean;
           created_at?: string;
           display_name?: string;
           id?: number;
@@ -1904,7 +1947,6 @@ export type Database = {
         Row: {
           banner: string | null;
           bio: string | null;
-          certified: boolean | null;
           created_at: string | null;
           cube_reviews_count: number | null;
           display_name: string | null;

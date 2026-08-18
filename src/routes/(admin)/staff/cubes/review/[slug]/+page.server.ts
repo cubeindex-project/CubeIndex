@@ -30,7 +30,7 @@ export const load = (async ({ params, locals: { supabase, log } }) => {
       .from("cube_vendor_links")
       .select("vendor_name,price,available,url")
       .eq("cube_slug", slug),
-    supabase.from("cubes_model_features").select("feature").eq("cube", slug),
+    supabase.from("cube_model_features").select("feature").eq("cube", slug),
   ]);
 
   if (vlError) {

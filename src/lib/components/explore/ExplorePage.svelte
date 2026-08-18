@@ -13,7 +13,7 @@
     type UseQueryStatesKeysMap,
     type UseQueryStatesReturn,
   } from "nuqs-svelte";
-  import { type Snippet } from "svelte";
+  import { untrack, type Snippet } from "svelte";
   import NoResultsFound from "./NoResultsFound.svelte";
 
   interface Props {
@@ -90,7 +90,17 @@
   const fuse = $derived.by(() => new Fuse(filteredItems, fuseOptions));
 
   let searchInput = $derived(params.q.current);
+  let previousPage = $state(untrack(() => params.page.current));
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+
+  $effect(() => {
+    const currentPage = params.page.current;
+
+    if (currentPage !== previousPage) {
+      previousPage = currentPage
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  });
 
   $effect(() => {
     const nextQuery = searchInput.trim();

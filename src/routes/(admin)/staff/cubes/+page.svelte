@@ -2,9 +2,9 @@
   import StaffCubeCard from "$lib/components/staff/staffCubeCard.svelte";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
-  import Pagination from "$lib/components/misc/pagination.svelte";
-  import FilterSidebar from "$lib/components/misc/filterSidebar.svelte";
-  import ItemsPerPageSelector from "$lib/components/misc/itemsPerPageSelector.svelte";
+  import Pagination from "$lib/components/explore/Pagination.svelte";
+  import FilterSidebar from "$lib/components/explore/FilterSidebar.svelte";
+  import ItemsPerPageSelector from "$lib/components/explore/ItemsPerPageSelector.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";
@@ -228,11 +228,7 @@
 
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Filters Sidebar -->
-      <FilterSidebar
-        {showFilters}
-        asideClass="lg:w-64"
-        wrapperClass="top-0 max-h-full overflow-x-scroll"
-      >
+      <FilterSidebar {resetFilters}>
         <!-- Type -->
         <div>
           <label class="block text-sm mb-1"
@@ -372,17 +368,6 @@
               {/each}
             </select>
           </label>
-        </div>
-        <!-- Reset -->
-        <div>
-          <button
-            class="w-full px-4 py-2 mt-1 rounded-lg bg-base-200 border cursor-pointer hover:bg-neutral hover:text-neutral-content"
-            onclick={resetFilters}
-            type="button"
-          >
-            <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
-            Reset Filters
-          </button>
         </div>
       </FilterSidebar>
 

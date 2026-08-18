@@ -1,6 +1,6 @@
 <script lang="ts">
   import StaffRatingCard from "$lib/components/rating/staffRatingCard.svelte";
-  import SearchBar from "$lib/components/misc/searchBar.svelte";
+  import SearchBar from "$lib/components/explore/SearchBar.svelte";
 
   type RatingFilter = "all" | "5" | "4plus" | "3plus" | "2plus" | "1plus";
   type SortOrder = "newest" | "oldest" | "highest" | "lowest";
@@ -178,8 +178,8 @@
       <div class="flex flex-col gap-4">
         <SearchBar
           bind:searchTerm
-          showFilter={false}
-          placeholderLabel="Search by user, cube, or comment"
+          showFilterToggle={false}
+          placeholder="Search by user, cube, or comment"
         />
 
         <div

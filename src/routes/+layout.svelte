@@ -137,18 +137,18 @@
 
         if (mode === "system") {
           const mql = window.matchMedia("(prefers-color-scheme: dark)");
-          const setFromSystem = () => apply(mql.matches ? "dark" : "light");
+          const setFromSystem = () => apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
           setFromSystem();
           // Keep in sync with OS changes
           mql.addEventListener("change", setFromSystem);
         } else if (mode === "manual") {
-          const t = localStorage.getItem("theme") || "light";
+          const t = localStorage.getItem("theme") || "cubeindex-light";
           apply(t);
         } else {
           // Default to system if nothing set yet
           localStorage.setItem("themeMode", "system");
           const mql = window.matchMedia("(prefers-color-scheme: dark)");
-          apply(mql.matches ? "dark" : "light");
+          apply(mql.matches ? "cubeindex-dark" : "cubeindex-light");
         }
       } catch (e) {
         // Silently fail to avoid breaking rendering

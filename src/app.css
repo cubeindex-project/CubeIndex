@@ -9,7 +9,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "light";
+  name: "cubeindex-light";
   default: true;
   prefersdark: false;
   color-scheme: "light";
@@ -44,7 +44,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "dark";
+  name: "cubeindex-dark";
   default: false;
   prefersdark: true;
   color-scheme: "dark";
@@ -79,7 +79,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "black";
+  name: "cubeindex-black";
   default: false;
   prefersdark: false;
   color-scheme: "dark";

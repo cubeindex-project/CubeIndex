@@ -169,9 +169,13 @@
     $form.banner = bannerPreviewUrl;
   }
 
-  const themes = ["light", "dark", "black"];
+  const themes = [
+    { name: "Light", value: "cubeindex-light" },
+    { name: "Dark", value: "cubeindex-dark" },
+    { name: "Black", value: "cubeindex-black" },
+  ];
 
-  let selectedTheme = $state("light");
+  let selectedTheme = $state("cubeindex-light");
   let useSystemTheme = $state(false);
 
   // ---------- helpers ----------
@@ -185,7 +189,7 @@
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)",
     ).matches;
-    const next = prefersDark ? "dark" : "light";
+    const next = prefersDark ? "cubeindex-dark" : "cubeindex-light";
     selectedTheme = next;
     applyTheme(next);
   }
@@ -731,14 +735,14 @@
                   <div
                     class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
                   >
-                    {#each themes as t (t)}
-                      <label data-theme={t} class="cursor-pointer rounded-2xl">
+                    {#each themes as t, index (index)}
+                      <label data-theme={t.value} class="cursor-pointer rounded-2xl">
                         <!-- hidden radio acts as theme-controller -->
                         <input
                           type="radio"
                           name="theme"
                           class="theme-controller hidden"
-                          value={t}
+                          value={t.value}
                           bind:group={selectedTheme}
                           onchange={onThemeChange}
                           disabled={useSystemTheme}
@@ -747,8 +751,8 @@
                         <!-- the card itself -->
                         <div
                           class="card bg-base-100 transition-all hover:shadow"
-                          class:ring-2={selectedTheme === t}
-                          class:ring-primary={selectedTheme === t}
+                          class:ring-2={selectedTheme === t.value}
+                          class:ring-primary={selectedTheme === t.value}
                         >
                           <div class="card-body p-3 items-center">
                             <!-- DaisyUI “icon”: four live colour chips -->
@@ -760,9 +764,9 @@
                               <span class="w-4 h-4 rounded bg-accent"></span>
                               <span class="w-4 h-4 rounded bg-neutral"></span>
                             </div>
-                            <span class="text-sm font-medium capitalize"
-                              >{t}</span
-                            >
+                            <span class="text-sm font-medium">
+                              {t.name}
+                            </span>
                           </div>
                         </div>
                       </label>

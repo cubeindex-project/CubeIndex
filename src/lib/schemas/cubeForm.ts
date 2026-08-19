@@ -43,6 +43,20 @@ const defaultFeatures = {
   ballCore: false,
 };
 
+/**
+ * Form controls submit IDs as strings. Keeping this schema single-typed gives
+ * Superforms a neutral empty default; IDs are converted at the database boundary.
+ */
+const idOrOtherSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === "___other" || /^[1-9][0-9]*$/.test(value),
+    "Selection is required",
+  );
+
+const optionalIdOrOtherSchema = idOrOtherSchema.optional();
+
 const featuresSchema = z
   .object({
     wcaLegal: z.coerce.boolean().default(false),
@@ -68,7 +82,7 @@ const featuresSchema = z
 const vendorLinksSchema = z
   .array(
     z.object({
-      vendor_name: z.string().trim().min(1, "Vendor name is required"),
+      vendor_id: z.number().int().min(1, "Please choose a valid vendor"),
       url: z.url().trim(),
       price: z.coerce.number().min(0, "Price must be >= 0"),
       available: z.coerce.boolean().default(false),
@@ -78,13 +92,13 @@ const vendorLinksSchema = z
 
 export const cubeFormSchema = z
   .object({
-    name: z.string().trim().min(1, "Name is required"),
-    seriesId: z.number().int().nonnegative().optional(),
+    name: z.string().trim().nonempty(),
+    seriesID: optionalIdOrOtherSchema,
     otherSeries: z.string().trim().default(""),
     versionType: z.enum(Constants.public.Enums.cube_version_types),
-    brand: z.string().trim().min(1, "Brand is required"),
+    brandID: idOrOtherSchema,
     otherBrand: z.string().trim().default(""),
-    type: z.string().trim().min(1, "Type is required"),
+    typeID: idOrOtherSchema,
     otherType: z.string().trim().default(""),
     subType: z
       .enum(["auto", ...Constants.public.Enums.cubes_subtypes])
@@ -101,7 +115,7 @@ export const cubeFormSchema = z
     surfaceFinish: z
       .enum([...Constants.public.Enums.cube_surface_finishes])
       .optional(),
-    weight: z.coerce.number().min(0, "Weight must be >= 0").optional(),
+    weight: z.coerce.number().nonnegative().optional(),
     size: z.coerce
       .string()
       .trim()
@@ -110,13 +124,14 @@ export const cubeFormSchema = z
       })
       .optional(),
     discontinued: z.coerce.boolean().default(false),
+    submitterNote: z.string().trim().nonempty().default(""),
     features: featuresSchema,
     vendorLinks: vendorLinksSchema,
   })
   .check((data) => {
     if (
-      data.value.brand === "___other" &&
-      (!data.value.otherBrand || data.value.otherBrand.trim().length === 0)
+      data.value.brandID === "___other" &&
+      data.value.otherBrand.trim().length === 0
     ) {
       data.issues.push({
         code: "custom",
@@ -127,14 +142,26 @@ export const cubeFormSchema = z
     }
 
     if (
-      data.value.type === "___other" &&
-      (!data.value.otherType || data.value.otherType.trim().length === 0)
+      data.value.typeID === "___other" &&
+      data.value.otherType.trim().length === 0
     ) {
       data.issues.push({
         code: "custom",
         message: "Type is required",
         input: data.value.otherType,
         path: ["otherType"],
+      });
+    }
+
+    if (
+      data.value.seriesID === "___other" &&
+      data.value.otherSeries.length === 0
+    ) {
+      data.issues.push({
+        code: "custom",
+        message: "Series is required",
+        input: data.value.otherSeries,
+        path: ["otherSeries"],
       });
     }
   });

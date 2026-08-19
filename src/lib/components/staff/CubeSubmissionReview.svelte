@@ -2,61 +2,111 @@
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import MissingSubmissionValue from "./MissingSubmissionValue.svelte";
-  import SubmissionReview, {
-    type SubmissionReviewUsers,
-  } from "./SubmissionReview.svelte";
+  import SubmissionReview from "./SubmissionReview.svelte";
 
-  type CubeSubmission = Tables<"v_detailed_cube_models"> &
-    SubmissionReviewUsers;
+  interface CubeSubmission extends Tables<"cube_submissions"> {
+    submission: Tables<"submissions"> & {
+      submitter: Pick<Tables<"profiles">, "display_name"> | null;
+      reviewer: Pick<Tables<"profiles">, "display_name"> | null;
+    };
+    brand: Pick<Tables<"brands">, "name"> | null;
+    type: Pick<Tables<"cube_types">, "name"> | null;
+    series: Pick<Tables<"cube_series">, "name"> | null;
+    relatedCube: Pick<Tables<"cube_models">, "name"> | null;
+    targetCube: Pick<Tables<"cube_models">, "slug" | "name"> | null;
+  }
 
   interface Props {
     cube: CubeSubmission;
-    features: { feature: string }[];
+    features: Pick<Tables<"cube_features">, "label">[];
     vendorLinks: {
-      vendor_name: string;
       price: number;
       available: boolean;
       url: string;
+      vendor: Pick<Tables<"vendors">, "name">;
     }[];
   }
 
   let { cube, features, vendorLinks }: Props = $props();
+
+  const submission = $derived({
+    id: cube.submission.id,
+    name: cube.name,
+    status: cube.submission.status,
+    staff_note: cube.submission.reviewer_note,
+    created_at: cube.submission.submitted_at,
+    verified_at: cube.submission.reviewed_at,
+    submitter: cube.submission.submitter,
+    verifier: cube.submission.reviewer,
+  });
 </script>
 
-<SubmissionReview
-  submission={cube}
-  entityLabel="cube"
-  editHref={resolve("/(admin)/staff/cubes/edit/[slug]", { slug: cube.slug })}
->
+{#snippet proposedBadge()}
+  <span class="badge badge-info badge-sm">Proposed</span>
+{/snippet}
+
+<SubmissionReview {submission} entityLabel="cube">
+  <tr>
+    <th>Operation</th>
+    <td class="capitalize">{cube.submission.operation}</td>
+  </tr>
+  {#if cube.targetCube}
+    <tr>
+      <th>Target cube</th>
+      <td>
+        <a
+          href={resolve("/(public)/explore/cubes/[slug]", {
+            slug: cube.targetCube.slug,
+          })}
+          class="link"
+        >
+          {cube.targetCube.name}
+        </a>
+      </td>
+    </tr>
+  {/if}
   <tr>
     <th>Brand</th>
     <td>
-      {cube.brand}
+      {#if cube.brand}
+        {cube.brand.name}
+      {:else if cube.proposed_brand_name}
+        {cube.proposed_brand_name}
+        {@render proposedBadge()}
+      {:else}
+        <MissingSubmissionValue />
+      {/if}
     </td>
   </tr>
   <tr>
     <th>Type</th>
     <td>
-      {cube.type}
+      {#if cube.type}
+        {cube.type.name}
+      {:else if cube.proposed_type_name}
+        {cube.proposed_type_name}
+        {@render proposedBadge()}
+      {:else}
+        <MissingSubmissionValue />
+      {/if}
     </td>
   </tr>
   <tr>
     <th>Subtype</th>
-    <td>
-      {cube.sub_type}
-    </td>
+    <td>{cube.sub_type}</td>
   </tr>
   <tr>
     <th>Version</th>
-    <td>
-      {cube.version_type}
-    </td>
+    <td>{cube.version_type}</td>
   </tr>
   <tr>
     <th>Series</th>
     <td>
       {#if cube.series}
-        {cube.series}
+        {cube.series.name}
+      {:else if cube.proposed_series_name}
+        {cube.proposed_series_name}
+        {@render proposedBadge()}
       {:else}
         <MissingSubmissionValue />
       {/if}
@@ -65,8 +115,8 @@
   <tr>
     <th>Related cube</th>
     <td>
-      {#if cube.related_to}
-        {cube.related_to}
+      {#if cube.relatedCube}
+        {cube.relatedCube.name}
       {:else}
         <MissingSubmissionValue />
       {/if}
@@ -91,7 +141,7 @@
     <th>Size</th>
     <td>
       {#if cube.size}
-        {cube.size}
+        {cube.size} mm
       {:else}
         <MissingSubmissionValue />
       {/if}
@@ -121,26 +171,28 @@
     <th>Discontinued</th>
     <td>{cube.discontinued ? "Yes" : "No"}</td>
   </tr>
+  {#if cube.submission.submitter_note}
+    <tr>
+      <th>Submitter note</th>
+      <td class="whitespace-pre-wrap">{cube.submission.submitter_note}</td>
+    </tr>
+  {/if}
   <tr>
     <th>Image</th>
     <td>
-      {#if cube.image_url}
-        <a
-          class="inline-flex items-center gap-3 link"
-          href={cube.image_url}
-          target="_blank"
-          rel="noreferrer external"
-        >
-          <img
-            class="size-16 rounded border border-base-300 bg-base-100 object-contain"
-            src={cube.image_url}
-            alt={cube.name}
-          />
-          Open image
-        </a>
-      {:else}
-        <MissingSubmissionValue />
-      {/if}
+      <a
+        class="inline-flex items-center gap-3 link"
+        href={cube.image_url}
+        target="_blank"
+        rel="noreferrer external"
+      >
+        <img
+          class="size-16 rounded border border-base-300 bg-base-100 object-contain"
+          src={cube.image_url}
+          alt={cube.name}
+        />
+        Open image
+      </a>
     </td>
   </tr>
   <tr>
@@ -148,8 +200,8 @@
     <td>
       {#if features.length}
         <div class="flex flex-wrap gap-1">
-          {#each features as item, index (index)}
-            <span class="badge badge-outline badge-sm">{item.feature}</span>
+          {#each features as feature, index (index)}
+            <span class="badge badge-outline badge-sm">{feature.label}</span>
           {/each}
         </div>
       {:else}
@@ -172,9 +224,9 @@
               </tr>
             </thead>
             <tbody>
-              {#each vendorLinks as link, index (index)}
+              {#each vendorLinks as link (link.url)}
                 <tr>
-                  <td>{link.vendor_name}</td>
+                  <td>{link.vendor.name}</td>
                   <td>{link.price}</td>
                   <td>{link.available ? "Yes" : "No"}</td>
                   <td>

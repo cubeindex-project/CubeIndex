@@ -1,9 +1,12 @@
 <script lang="ts">
   import SubmissionCubeCard from "$lib/components/cube/SubmissionCubeCard.svelte";
-  import VendorSubmissionCard from "$lib/components/submission/VendorSubmissionCard.svelte";
+  // import VendorSubmissionCard from "$lib/components/submission/VendorSubmissionCard.svelte";
 
   const { data } = $props();
-  const { cubeSubmissions, vendorSubmissions } = $derived(data);
+  const {
+    cubeSubmissions,
+    // vendorSubmissions
+  } = $derived(data);
 
   type SubmissionType = "cubes" | "vendors";
   type FilterKey = "all" | "pending" | "approved" | "rejected";
@@ -16,20 +19,21 @@
     { label: "Rejected", value: "rejected" },
   ];
 
-  const filteredCubes = $derived(
+  const filteredCubeSubmissions = $derived(
     activeFilter === "all"
       ? cubeSubmissions
       : cubeSubmissions.filter(
-          (cube) => cube.status.toLowerCase() === activeFilter,
+          (cubeSubmission) =>
+            cubeSubmission.status.toLowerCase() === activeFilter,
         ),
   );
-  const filteredVendors = $derived(
-    activeFilter === "all"
-      ? vendorSubmissions
-      : vendorSubmissions.filter(
-          (vendor) => vendor.status.toLowerCase() === activeFilter,
-        ),
-  );
+  // const filteredVendors = $derived(
+  //   activeFilter === "all"
+  //     ? vendorSubmissions
+  //     : vendorSubmissions.filter(
+  //         (vendor) => vendor.status.toLowerCase() === activeFilter,
+  //       ),
+  // );
 </script>
 
 {#snippet noResults(resultsType: SubmissionType)}
@@ -88,26 +92,28 @@
   </div>
 
   {#if submissionType === "cubes"}
-    {#if filteredCubes.length}
+    {#if filteredCubeSubmissions.length}
       <div
         class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 items-start"
       >
-        {#each filteredCubes as cube (cube.slug)}
-          <SubmissionCubeCard {cube} />
+        {#each filteredCubeSubmissions as cubeSubmission, index (index)}
+          <SubmissionCubeCard {cubeSubmission} />
         {/each}
       </div>
     {:else}
       {@render noResults(submissionType)}
     {/if}
-  {:else if filteredVendors.length}
-    <div
-      class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 items-start"
-    >
-      {#each filteredVendors as vendor (vendor.id)}
-        <VendorSubmissionCard {vendor} />
-      {/each}
-    </div>
   {:else}
-    {@render noResults(submissionType)}
+    <!-- {#if filteredVendors.length}
+      <div
+        class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 items-start"
+      >
+        {#each filteredVendors as vendor (vendor.id)}
+          <VendorSubmissionCard {vendor} />
+        {/each}
+      </div>
+    {:else}
+      {@render noResults(submissionType)}
+    {/if} -->
   {/if}
 </div>

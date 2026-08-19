@@ -7,7 +7,7 @@ import { cubeFormSchema } from "$lib/schemas/cubeForm.js";
 import { getPartialDate } from "$lib/utils/getPartialDate.js";
 import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions.js";
 import { StatusError } from "$lib/errors/StatusError.js";
-import { saveCube } from "$lib/server/cube/saveCube";
+import { submitCube } from "$lib/server/cube/submitCube";
 
 export const load: PageServerLoad = async ({
   params,
@@ -19,7 +19,6 @@ export const load: PageServerLoad = async ({
     .from("v_detailed_cube_models")
     .select("*")
     .eq("slug", slug)
-    .neq("status", "Rejected")
     .maybeSingle();
 
   if (cubeErr) {
@@ -58,9 +57,9 @@ export const load: PageServerLoad = async ({
     superValidate(
       {
         name: cube.name,
-        seriesId: cube.series_id ?? undefined,
-        brand: cube.brand,
-        type: cube.type,
+        seriesID: cube.series_id ? String(cube.series_id) : undefined,
+        brandID: String(cube.brand_id),
+        typeID: String(cube.type_id),
         subType: cube.sub_type ?? "auto",
         releaseDate: cube.release_date
           ? getPartialDate(cube.release_date, cube.release_date_precision)
@@ -116,9 +115,8 @@ export const actions: Actions = {
       });
     }
 
-    let slug: string;
     try {
-      slug = await saveCube(form.data, supabase, log, currentSlug);
+      await submitCube(form.data, supabase, log);
     } catch (cause) {
       if (cause instanceof StatusError) {
         return setError(form, cause.message, { status: cause.status });
@@ -127,6 +125,7 @@ export const actions: Actions = {
     }
 
     message(form, "Cube edited successfully!");
-    throw redirect(303, `/staff/cubes/edit/${slug}`);
+    // Temporary fix, it should redirect to the updated cube page
+    throw redirect(303, "/staff/cubes");
   },
 };

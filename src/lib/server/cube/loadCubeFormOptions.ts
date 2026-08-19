@@ -8,8 +8,12 @@ export async function loadCubeFormOptions(
   try {
     const [brands, types, series, features, vendors, cubes] = await Promise.all(
       [
-        supabase.from("brands").select("name").order("name").throwOnError(),
-        supabase.from("cube_types").select("name").order("name").throwOnError(),
+        supabase.from("brands").select("id, name").order("name").throwOnError(),
+        supabase
+          .from("cube_types")
+          .select("id, name")
+          .order("name")
+          .throwOnError(),
         supabase
           .from("cube_series")
           .select("name, id")
@@ -22,14 +26,13 @@ export async function loadCubeFormOptions(
           .throwOnError(),
         supabase
           .from("vendors")
-          .select("name, base_url, currency")
+          .select("id, name, base_url, currency")
           .eq("status", "Approved")
           .order("name")
           .throwOnError(),
         supabase
           .from("v_detailed_cube_models")
           .select("id, name, slug, image_url")
-          .eq("status", "Approved")
           .eq("version_type", "Base")
           .throwOnError(),
       ],

@@ -26,7 +26,7 @@
   interface Props {
     submission: Submission;
     entityLabel: string;
-    editHref: ResolvedPathname;
+    editHref?: ResolvedPathname;
     children: Snippet;
   }
 
@@ -82,10 +82,12 @@
           <p class="mb-3 text-sm text-base-content/60">
             Verify the values, then approve or reject.
           </p>
-          <a class="btn btn-outline btn-sm mb-3 w-full" href={editHref}>
-            <i class="fa-solid fa-pencil" aria-hidden="true"></i>
-            Edit {entityLabel}
-          </a>
+          {#if editHref}
+            <a class="btn btn-outline btn-sm mb-3 w-full" href={editHref}>
+              <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+              Edit {entityLabel}
+            </a>
+          {/if}
           <SubmissionStatusManager {submission} {entityLabel} />
         </div>
       {:else}

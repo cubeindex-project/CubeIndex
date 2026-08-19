@@ -278,6 +278,19 @@ Personal modifications are not eligible for separate database entries.
 - **True:** The cube was manufactured with removable stickers, whether pre-applied or supplied separately.
 - **False:** The cube uses coloured plastic, tiles, printing, or another non-stickered color system.
 
+### Submitter note
+
+Use the submitter note to help reviewers verify the submission. Include links to the official manufacturer page, product announcement, catalogue, reputable retailer listing, or other reliable sources used to complete the form.
+
+Also explain any details that may not be obvious from the form, such as:
+
+- Conflicting information between sources.
+- Uncertain release dates, measurements, or features.
+- How a variant, limited edition, or modified product differs from a related model.
+- Any other unusual detail a reviewer should know.
+
+Write a short, focused note. Do not repeat information that is already clear from the form.
+
 ## Vendor links
 
 Vendor links identify stores where the exact cube version can be purchased. They allow CubeIndex to display current pricing and availability information.

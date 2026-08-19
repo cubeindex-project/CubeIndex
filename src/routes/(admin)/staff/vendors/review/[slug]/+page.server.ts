@@ -29,7 +29,12 @@ export const actions: Actions = {
     async ({ supabase, id, payload }) => {
       const { error } = await supabase
         .from("vendors")
-        .update(payload)
+        .update({
+          status: payload.status,
+          staff_note: payload.reviewerNote,
+          verified_by_id: payload.reviewedByID,
+          verified_at: payload.reviewedAt,
+        })
         .eq("id", id);
       return error;
     },

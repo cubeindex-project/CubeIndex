@@ -24,8 +24,8 @@ export const load = (async ({ locals }) => {
 
   // Recent activity (lightweight)
   const { data: submissions, error: rsErr } = await supabase
-    .from("v_detailed_cube_models")
-    .select("slug, name, image_url, status, created_at")
+    .from("submissions")
+    .select("")
     .eq("submitted_by_id", user.id)
     .order("created_at", { ascending: false })
     .limit(5);

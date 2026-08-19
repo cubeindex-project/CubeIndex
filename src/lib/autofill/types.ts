@@ -10,10 +10,10 @@ export interface AutofillState {
 
 export interface CubeDetailsAutofillResult {
   name?: string;
-  brand?: string;
+  brand_id?: number;
   image_url?: string;
 
-  type?: string;
+  type_id?: number;
   discontinued?: boolean;
   release_date?: string;
   weight?: number;

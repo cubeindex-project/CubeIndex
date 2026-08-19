@@ -1,10 +1,6 @@
 import type { CubeDetailsAutofillResult, PriceAutofillResult } from "./types";
 
-const fallbackErrorMessage = "We could not process that link right now.";
-const connectionErrorMessage =
-  "Something went wrong while contacting the autofill service.";
-
-async function requestAutofill<Result>(
+async function sendAutofillRequest<Result>(
   endpoint: string,
   url: string,
 ): Promise<Result> {
@@ -21,12 +17,17 @@ async function requestAutofill<Result>(
 
     result = await response.json();
   } catch (cause) {
-    throw new Error(connectionErrorMessage, { cause });
+    throw new Error(
+      "Something went wrong while contacting the autofill service.",
+      { cause },
+    );
   }
 
   if (!response.ok) {
     throw new Error(
-      "error" in result && result.error ? result.error : fallbackErrorMessage,
+      "error" in result && result.error
+        ? result.error
+        : "We could not process that link right now.",
     );
   }
 
@@ -36,9 +37,9 @@ async function requestAutofill<Result>(
 export function autofillCubeDetails(
   url: string,
 ): Promise<CubeDetailsAutofillResult> {
-  return requestAutofill("cube-details", url);
+  return sendAutofillRequest("cube-details", url);
 }
 
 export function autofillVendorOffer(url: string): Promise<PriceAutofillResult> {
-  return requestAutofill("vendor-offer", url);
+  return sendAutofillRequest("vendor-offer", url);
 }

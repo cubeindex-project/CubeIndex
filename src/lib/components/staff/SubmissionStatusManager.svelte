@@ -32,7 +32,7 @@
     nextStatus: Exclude<Enums<"submission_status">, "Pending">,
   ) {
     status = nextStatus;
-    note = entityLabel === "cube" ? "Not a twisty puzzle" : "";
+    note = "";
     formMessage = "";
     showSuccess = false;
     isUpdatingStatus = true;
@@ -97,8 +97,8 @@
   title="You are {actionVerb.toLowerCase()}: {submission.name}"
 >
   <form class="w-full" method="POST" use:enhance={enhanceStatusForm}>
-    <input type="hidden" name="ID" value={submission.id} />
-    <input type="hidden" name="status" value={status ?? ""} />
+    <input type="hidden" name="submissionID" value={submission.id} />
+    <input type="hidden" name="status" value={status} />
 
     {#if status === "Rejected"}
       <fieldset class="fieldset w-full">

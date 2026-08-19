@@ -106,15 +106,16 @@ export type Database = MergeDeep<
         };
       };
       Functions: {
-        save_cube: {
+        submit_cube: {
           Args: {
-            p_cube:
-              | DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
-              | DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"];
-            p_current_slug: string | null;
-            p_new_brand: string | null;
-            p_new_type: string | null;
-            p_new_series: string | null;
+            p_cube: Omit<
+              DatabaseGenerated["public"]["Tables"]["cube_submissions"]["Row"],
+              "id" | "submission_id" | "created_at"
+            >;
+            p_vendor_links: Pick<
+              DatabaseGenerated["public"]["Tables"]["cube_vendor_link_submissions"]["Row"],
+              "vendor_id" | "url" | "available" | "price"
+            >[];
           };
         };
       };

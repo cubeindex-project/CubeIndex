@@ -34,15 +34,15 @@
       Tables<"v_detailed_cube_models">,
       "id" | "name" | "slug" | "image_url"
     >[];
-    brands: Pick<Tables<"brands">, "name">[];
-    types: Pick<Tables<"cube_types">, "name">[];
+    brands: Pick<Tables<"brands">, "id" | "name">[];
+    types: Pick<Tables<"cube_types">, "id" | "name">[];
     series: Pick<Tables<"cube_series">, "id" | "name">[];
     features: Pick<Tables<"cube_features">, "label" | "code">[];
     surfaces: string[];
     subTypes: string[];
     cubeVersions: string[];
 
-    vendors: Pick<Tables<"vendors">, "name" | "base_url" | "currency">[];
+    vendors: Pick<Tables<"vendors">, "id" | "name" | "base_url" | "currency">[];
 
     initialForm: SuperValidated<Infer<CubeFormSchema>>;
     submitLabel: string;
@@ -53,8 +53,8 @@
     formAction?: string;
   }
 
-  type PageLabel = "Cube" | "Vendor links";
-  type PageKey = "cube" | "vendor-links";
+  type PageLabel = "Cube" | "Vendor links" | "Sources & notes";
+  type PageKey = "cube" | "vendor-links" | "sources";
   const featureFormKeys: Partial<
     Record<string, keyof Infer<CubeFormSchema>["features"]>
   > = {
@@ -102,6 +102,7 @@
   const pages: Page[] = [
     { key: "cube", label: "Cube" },
     { key: "vendor-links", label: "Vendor links" },
+    { key: "sources", label: "Sources & notes" },
   ];
 
   const cubeSubmissionManualPath = "/docs/submission-manual/cubes";
@@ -153,13 +154,13 @@
       a.label.localeCompare(b.label),
     );
   });
-  let allSeries: SearchValue<number>[] = $derived.by(() => {
+  let allSeries: SearchValue<string>[] = $derived.by(() => {
     const uniqueById = new Map(
       series.map((series) => [
         series.name,
         {
           label: series.name,
-          value: series.id,
+          value: String(series.id),
         },
       ]),
     );
@@ -227,8 +228,8 @@
     $form = {
       ...$form,
       name: data.name ?? $form.name,
-      brand: data.brand ?? $form.brand,
-      type: data.type ?? $form.type,
+      brandID: data.brand_id ? String(data.brand_id) : $form.brandID,
+      typeID: data.type_id ? String(data.type_id) : $form.typeID,
       imageUrl: data.image_url ?? $form.imageUrl,
       surfaceFinish: data.surface_finish ?? $form.surfaceFinish,
       versionType: data.version_type ?? $form.versionType,
@@ -316,7 +317,7 @@
           {#if currentPage === "cube"}
             <section class="space-y-6" aria-labelledby="cube-identity-heading">
               <div
-                class="flex flex-col gap-4 border-b border-base-300 pb-5 sm:flex-row sm:items-start sm:justify-between"
+                class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
               >
                 <div class="space-y-1">
                   <h2
@@ -418,7 +419,7 @@
 
               <div class="grid gap-6 md:grid-cols-2">
                 {#snippet brandField()}
-                  {#if $form.brand === "___other"}
+                  {#if $form.brandID === "___other"}
                     <div class="join w-full">
                       <input
                         name="otherBrand"
@@ -433,7 +434,7 @@
                         class="btn btn-outline join-item"
                         aria-label="Choose an existing brand"
                         onclick={() => {
-                          $form.brand = brands[0]?.name ?? "";
+                          $form.brandID = String(brands[0].id);
                           $form.otherBrand = "";
                         }}
                       >
@@ -444,30 +445,30 @@
                     </div>
                   {:else}
                     <select
-                      name="brand"
-                      bind:value={$form.brand}
-                      {...$constraints.brand}
+                      name="brandID"
+                      bind:value={$form.brandID}
+                      {...$constraints.brandID}
                       class="select w-full"
                       required
                     >
                       <option value="___other">+ Add Brand</option>
                       {#each brands as b, index (index)}
-                        <option>{b.name}</option>
+                        <option value={String(b.id)}>{b.name}</option>
                       {/each}
                     </select>
                   {/if}
                 {/snippet}
                 <FormField
-                  title={$form.brand === "___other" ? "New brand" : "Brand"}
-                  error={$form.brand === "___other"
+                  title={$form.brandID === "___other" ? "New brand" : "Brand"}
+                  error={$form.brandID === "___other"
                     ? $errors.otherBrand
-                    : $errors.brand}
+                    : $errors.brandID}
                   required
                   helpHref="/docs/submission-manual/cubes#brand"
                   children={brandField}
                 />
                 {#snippet cubeTypeField()}
-                  {#if $form.type === "___other"}
+                  {#if $form.typeID === "___other"}
                     <div class="join w-full">
                       <input
                         name="otherType"
@@ -482,7 +483,7 @@
                         class="btn btn-outline join-item"
                         aria-label="Choose an existing cube type"
                         onclick={() => {
-                          $form.type = types[0]?.name ?? "";
+                          $form.typeID = String(types[0].id);
                           $form.otherType = "";
                         }}
                       >
@@ -493,26 +494,26 @@
                     </div>
                   {:else}
                     <select
-                      name="type"
-                      bind:value={$form.type}
-                      {...$constraints.type}
+                      name="typeID"
+                      bind:value={$form.typeID}
+                      {...$constraints.typeID}
                       class="select w-full"
                       required
                     >
                       <option value="___other">+ Create Type</option>
                       {#each types as t (t.name)}
-                        <option>{t.name}</option>
+                        <option value={String(t.id)}>{t.name}</option>
                       {/each}
                     </select>
                   {/if}
                 {/snippet}
                 <FormField
-                  title={$form.type === "___other"
+                  title={$form.typeID === "___other"
                     ? "New cube type"
                     : "Cube type"}
-                  error={$form.type === "___other"
+                  error={$form.typeID === "___other"
                     ? $errors.otherType
-                    : $errors.type}
+                    : $errors.typeID}
                   required
                   helpHref="/docs/submission-manual/cubes#cube-type"
                   children={cubeTypeField}
@@ -568,14 +569,14 @@
                   <div class="space-y-2">
                     <SearchValues
                       values={allSeries}
-                      bind:outputValue={$form.seriesId}
+                      bind:outputValue={$form.seriesID}
                     />
                     <button
                       type="button"
                       class="btn btn-ghost btn-sm"
                       onclick={() => {
                         isAddingSeries = true;
-                        $form.seriesId = undefined;
+                        $form.seriesID = "___other";
                       }}
                     >
                       <i class="fa-solid fa-plus" aria-hidden="true"></i>
@@ -585,14 +586,14 @@
                 {/if}
                 <input
                   type="hidden"
-                  name="seriesId"
-                  bind:value={$form.seriesId}
-                  {...$constraints.seriesId}
+                  name="seriesID"
+                  bind:value={$form.seriesID}
+                  {...$constraints.seriesID}
                 />
               {/snippet}
               <FormField
                 title={isAddingSeries ? "New series" : "Series"}
-                error={isAddingSeries ? $errors.otherSeries : $errors.seriesId}
+                error={isAddingSeries ? $errors.otherSeries : $errors.seriesID}
                 helpHref="/docs/submission-manual/cubes#series"
                 children={seriesField}
               />
@@ -623,15 +624,9 @@
               />
             </section>
 
-            <section
-              class="space-y-6"
-              aria-labelledby="product-details-heading"
-            >
-              <div class="space-y-1 border-b border-base-300 pb-5">
-                <h2
-                  id="product-details-heading"
-                  class="flex items-center gap-2 text-xl font-semibold"
-                >
+            <section class="space-y-6">
+              <div class="space-y-1">
+                <h2 class="flex items-center gap-2 text-xl font-semibold">
                   <i
                     class="fa-solid fa-box-open text-primary"
                     aria-hidden="true"
@@ -766,12 +761,9 @@
               </div>
             </section>
 
-            <section class="space-y-5" aria-labelledby="features-heading">
-              <div class="space-y-1 border-b border-base-300 pb-5">
-                <h2
-                  id="features-heading"
-                  class="flex items-center gap-2 text-xl font-semibold"
-                >
+            <section class="space-y-5">
+              <div class="space-y-1">
+                <h2 class="flex items-center gap-2 text-xl font-semibold">
                   <i
                     class="fa-solid fa-wand-magic-sparkles text-primary"
                     aria-hidden="true"
@@ -826,6 +818,7 @@
                   <a
                     href={resolve("/submit/vendor")}
                     class="link link-primary font-medium"
+                    target="_blank"
                   >
                     Submit it here
                   </a>
@@ -838,7 +831,7 @@
                     $form.vendorLinks = [
                       ...$form.vendorLinks,
                       {
-                        vendor_name: "",
+                        vendor_id: 0,
                         url: "",
                         price: 0,
                         available: false,
@@ -888,7 +881,7 @@
                     <tbody>
                       {#each $form.vendorLinks as link, index (index)}
                         {@const currentVendor = vendors.find(
-                          (vendor) => vendor.name === link.vendor_name,
+                          (vendor) => vendor.id === link.vendor_id,
                         )}
                         {@const vendorErrors = $errors.vendorLinks?.[index]}
                         {@const hasProductUrl = Boolean(link.url?.trim())}
@@ -899,26 +892,25 @@
                           <td>
                             <select
                               name="vendorLinks"
-                              bind:value={link.vendor_name}
+                              bind:value={link.vendor_id}
                               class:select-error={Boolean(
-                                vendorErrors?.vendor_name,
+                                vendorErrors?.vendor_id,
                               )}
                               class="select select-bordered w-full"
-                              aria-label={`Vendor for row ${index + 1}`}
                               required
                             >
-                              <option value="" disabled>Select vendor</option>
+                              <option value={0} disabled>Select vendor</option>
 
-                              {#each vendors as vendor (vendor.name)}
-                                <option value={vendor.name}>
+                              {#each vendors as vendor, index (index)}
+                                <option value={vendor.id}>
                                   {vendor.name}
                                 </option>
                               {/each}
                             </select>
 
-                            {#if vendorErrors?.vendor_name}
+                            {#if vendorErrors?.vendor_id}
                               <p class="mt-1 text-xs text-error">
-                                {vendorErrors.vendor_name}
+                                {vendorErrors.vendor_id}
                               </p>
                             {/if}
                           </td>
@@ -944,9 +936,6 @@
                                 }}
                                 placeholder={currentVendor?.base_url ??
                                   "https://example.com/product"}
-                                aria-label={`Product URL for ${
-                                  link.vendor_name || `row ${index + 1}`
-                                }`}
                               />
                             </label>
 
@@ -974,9 +963,6 @@
                                 class="min-w-0 grow"
                                 name="vendorLinks"
                                 bind:value={link.price}
-                                aria-label={`Price for ${
-                                  link.vendor_name || `row ${index + 1}`
-                                }`}
                               />
                             </label>
 
@@ -1092,8 +1078,41 @@
                 </div>
               {/if}
             </section>
-          {:else if currentPage === "edit-history"}
-            WIP
+          {:else if currentPage === "sources"}
+            <section class="space-y-6">
+              <div class="space-y-1">
+                <h2
+                  id="submitter-note-heading"
+                  class="flex items-center gap-2 text-xl font-semibold"
+                >
+                  <i
+                    class="fa-solid fa-file-lines text-primary"
+                    aria-hidden="true"
+                  ></i>
+                  Sources and notes
+                </h2>
+                <p class="text-sm text-base-content/60">
+                  Help reviewers verify the submission and understand any
+                  details that are not clear from the form alone.
+                </p>
+              </div>
+
+              {#snippet submitterNoteField()}
+                <textarea
+                  name="submitterNote"
+                  class="textarea min-h-40 w-full"
+                  placeholder="Add source links and any context reviewers should know…"
+                  bind:value={$form.submitterNote}
+                  {...$constraints.submitterNote}></textarea>
+              {/snippet}
+              <FormField
+                title="Sources and notes"
+                error={$errors.submitterNote}
+                required
+                helpHref="/docs/submission-manual/cubes#submitter-note"
+                children={submitterNoteField}
+              />
+            </section>
           {/if}
 
           <SubmissionFormFooter
@@ -1110,7 +1129,7 @@
 
 {#if enableAutofill}
   <CubeDetailsAutofillDialog
-    open={isAutofillCardOpen}
+    bind:open={isAutofillCardOpen}
     {applyData}
     bind:autofill
     dirty={isTainted($tainted)}

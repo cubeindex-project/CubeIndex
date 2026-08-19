@@ -5,7 +5,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { cubeFormSchema } from "$lib/schemas/cubeForm";
 import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions";
 import { StatusError } from "$lib/errors/StatusError";
-import { saveCube } from "$lib/server/cube/saveCube";
+import { submitCube } from "$lib/server/cube/submitCube";
 
 export const load = (async ({ locals: { log, supabase } }) => {
   const [form, options] = await Promise.all([
@@ -35,7 +35,7 @@ export const actions: Actions = {
     }
 
     try {
-      await saveCube(form.data, supabase, locals.log);
+      await submitCube(form.data, supabase, locals.log);
     } catch (cause) {
       if (cause instanceof StatusError) {
         return setError(form, cause.message, { status: cause.status });

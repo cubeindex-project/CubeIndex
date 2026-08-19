@@ -10,7 +10,12 @@
     dirty: boolean;
   }
 
-  let { open, applyData, autofill = $bindable(), dirty }: Props = $props();
+  let {
+    open = $bindable(),
+    applyData,
+    autofill = $bindable(),
+    dirty,
+  }: Props = $props();
 
   async function submitAutofillRequest(e: SubmitEvent) {
     e.preventDefault();
@@ -29,6 +34,7 @@
       applyData(autoFillResult);
       autofill.success = true;
     } catch (err) {
+      open = true;
       autofill.errorMessage =
         err instanceof Error
           ? err.cause instanceof Error
@@ -42,7 +48,7 @@
 </script>
 
 <Modal
-  {open}
+  bind:open
   title="Autofill Service"
   description="Paste the exact product page of the cube you want to add from a store. We will scan it and fill what we can."
 >

@@ -339,19 +339,19 @@ export type Database = {
       };
       brands: {
         Row: {
-          added_by_id: string;
+          added_by_id: string | null;
           created_at: string;
           id: number;
           name: string;
         };
         Insert: {
-          added_by_id?: string;
+          added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name?: string;
         };
         Update: {
-          added_by_id?: string;
+          added_by_id?: string | null;
           created_at?: string;
           id?: number;
           name?: string;
@@ -464,6 +464,7 @@ export type Database = {
       cube_models: {
         Row: {
           brand: string;
+          brand_id: number;
           created_at: string;
           discontinued: boolean;
           id: number;
@@ -477,23 +478,19 @@ export type Database = {
           series_id: number | null;
           size: string | null;
           slug: string;
-          sources: string | null;
-          staff_note: string | null;
-          status: Database["public"]["Enums"]["submission_status"];
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
-          submitted_by_id: string;
           surface_finish:
             | Database["public"]["Enums"]["cube_surface_finishes"]
             | null;
           type: string;
+          type_id: number | null;
           updated_at: string;
-          verified_at: string | null;
-          verified_by_id: string | null;
           version_type: Database["public"]["Enums"]["cube_version_types"];
           weight: number | null;
         };
         Insert: {
           brand: string;
+          brand_id: number;
           created_at?: string;
           discontinued?: boolean;
           id?: number;
@@ -507,23 +504,19 @@ export type Database = {
           series_id?: number | null;
           size?: string | null;
           slug: string;
-          sources?: string | null;
-          staff_note?: string | null;
-          status?: Database["public"]["Enums"]["submission_status"];
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
-          submitted_by_id?: string;
           surface_finish?:
             | Database["public"]["Enums"]["cube_surface_finishes"]
             | null;
           type: string;
+          type_id?: number | null;
           updated_at?: string;
-          verified_at?: string | null;
-          verified_by_id?: string | null;
           version_type?: Database["public"]["Enums"]["cube_version_types"];
           weight?: number | null;
         };
         Update: {
           brand?: string;
+          brand_id?: number;
           created_at?: string;
           discontinued?: boolean;
           id?: number;
@@ -537,22 +530,24 @@ export type Database = {
           series_id?: number | null;
           size?: string | null;
           slug?: string;
-          sources?: string | null;
-          staff_note?: string | null;
-          status?: Database["public"]["Enums"]["submission_status"];
           sub_type?: Database["public"]["Enums"]["cubes_subtypes"];
-          submitted_by_id?: string;
           surface_finish?:
             | Database["public"]["Enums"]["cube_surface_finishes"]
             | null;
           type?: string;
+          type_id?: number | null;
           updated_at?: string;
-          verified_at?: string | null;
-          verified_by_id?: string | null;
           version_type?: Database["public"]["Enums"]["cube_version_types"];
           weight?: number | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_models_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_models_related_to_id_fkey";
             columns: ["related_to_id"];
@@ -575,32 +570,11 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "cube_models_submitted_by_id_fkey";
-            columns: ["submitted_by_id"];
+            foreignKeyName: "cube_models_type_id_fkey";
+            columns: ["type_id"];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_submitted_by_id_fkey";
-            columns: ["submitted_by_id"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_profiles";
-            referencedColumns: ["user_id"];
+            referencedRelation: "cube_types";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -691,24 +665,224 @@ export type Database = {
           },
         ];
       };
+      cube_submission_features: {
+        Row: {
+          created_at: string;
+          cube_submission_id: number;
+          feature_id: number;
+          id: number;
+        };
+        Insert: {
+          created_at?: string;
+          cube_submission_id: number;
+          feature_id: number;
+          id?: number;
+        };
+        Update: {
+          created_at?: string;
+          cube_submission_id?: number;
+          feature_id?: number;
+          id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cube_submission_features_cube_submission_id_fkey";
+            columns: ["cube_submission_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_submissions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submission_features_feature_id_fkey";
+            columns: ["feature_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_features";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cube_submissions: {
+        Row: {
+          affected_cube_model_id: number | null;
+          brand_id: number | null;
+          created_at: string;
+          discontinued: boolean;
+          id: number;
+          image_url: string;
+          name: string;
+          proposed_brand_name: string | null;
+          proposed_series_name: string | null;
+          proposed_type_name: string | null;
+          related_to_id: number | null;
+          release_date: string | null;
+          release_date_precision:
+            | Database["public"]["Enums"]["date_precision"]
+            | null;
+          series_id: number | null;
+          size: string | null;
+          sub_type: Database["public"]["Enums"]["cubes_subtypes"];
+          submission_id: number;
+          surface_finish:
+            | Database["public"]["Enums"]["cube_surface_finishes"]
+            | null;
+          target_cube_id: number | null;
+          type_id: number | null;
+          version_type: Database["public"]["Enums"]["cube_version_types"];
+          weight: number | null;
+        };
+        Insert: {
+          affected_cube_model_id?: number | null;
+          brand_id?: number | null;
+          created_at?: string;
+          discontinued: boolean;
+          id?: number;
+          image_url: string;
+          name: string;
+          proposed_brand_name?: string | null;
+          proposed_series_name?: string | null;
+          proposed_type_name?: string | null;
+          related_to_id?: number | null;
+          release_date?: string | null;
+          release_date_precision?:
+            | Database["public"]["Enums"]["date_precision"]
+            | null;
+          series_id?: number | null;
+          size?: string | null;
+          sub_type: Database["public"]["Enums"]["cubes_subtypes"];
+          submission_id: number;
+          surface_finish?:
+            | Database["public"]["Enums"]["cube_surface_finishes"]
+            | null;
+          target_cube_id?: number | null;
+          type_id?: number | null;
+          version_type: Database["public"]["Enums"]["cube_version_types"];
+          weight?: number | null;
+        };
+        Update: {
+          affected_cube_model_id?: number | null;
+          brand_id?: number | null;
+          created_at?: string;
+          discontinued?: boolean;
+          id?: number;
+          image_url?: string;
+          name?: string;
+          proposed_brand_name?: string | null;
+          proposed_series_name?: string | null;
+          proposed_type_name?: string | null;
+          related_to_id?: number | null;
+          release_date?: string | null;
+          release_date_precision?:
+            | Database["public"]["Enums"]["date_precision"]
+            | null;
+          series_id?: number | null;
+          size?: string | null;
+          sub_type?: Database["public"]["Enums"]["cubes_subtypes"];
+          submission_id?: number;
+          surface_finish?:
+            | Database["public"]["Enums"]["cube_surface_finishes"]
+            | null;
+          target_cube_id?: number | null;
+          type_id?: number | null;
+          version_type?: Database["public"]["Enums"]["cube_version_types"];
+          weight?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cube_submissions_affected_cube_model_id_fkey";
+            columns: ["affected_cube_model_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_affected_cube_model_id_fkey";
+            columns: ["affected_cube_model_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_related_to_id_fkey";
+            columns: ["related_to_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_related_to_id_fkey";
+            columns: ["related_to_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_series_id_fkey";
+            columns: ["series_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_series";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_submission_id_fkey";
+            columns: ["submission_id"];
+            isOneToOne: false;
+            referencedRelation: "submissions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_target_cube_id_fkey";
+            columns: ["target_cube_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_target_cube_id_fkey";
+            columns: ["target_cube_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_submissions_type_id_fkey";
+            columns: ["type_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_types";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       cube_types: {
         Row: {
           added_by_id: string | null;
           created_at: string;
+          created_from_cube_id: number | null;
           id: number;
           name: string;
+          status: Database["public"]["Enums"]["submission_status"];
         };
         Insert: {
           added_by_id?: string | null;
           created_at?: string;
+          created_from_cube_id?: number | null;
           id?: number;
           name: string;
+          status?: Database["public"]["Enums"]["submission_status"];
         };
         Update: {
           added_by_id?: string | null;
           created_at?: string;
+          created_from_cube_id?: number | null;
           id?: number;
           name?: string;
+          status?: Database["public"]["Enums"]["submission_status"];
         };
         Relationships: [
           {
@@ -725,6 +899,72 @@ export type Database = {
             referencedRelation: "v_detailed_profiles";
             referencedColumns: ["user_id"];
           },
+          {
+            foreignKeyName: "cube_types_created_from_cube_id_fkey";
+            columns: ["created_from_cube_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_types_created_from_cube_id_fkey";
+            columns: ["created_from_cube_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cube_vendor_link_submissions: {
+        Row: {
+          available: boolean;
+          created_at: string;
+          cube_submission_id: number;
+          id: number;
+          price: number;
+          url: string;
+          vendor_id: number;
+        };
+        Insert: {
+          available: boolean;
+          created_at?: string;
+          cube_submission_id: number;
+          id?: number;
+          price: number;
+          url: string;
+          vendor_id: number;
+        };
+        Update: {
+          available?: boolean;
+          created_at?: string;
+          cube_submission_id?: number;
+          id?: number;
+          price?: number;
+          url?: string;
+          vendor_id?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cube_vendor_link_submissions_cube_submission_id_fkey";
+            columns: ["cube_submission_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_submissions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_link_submissions_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_vendors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_link_submissions_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendors";
+            referencedColumns: ["id"];
+          },
         ];
       };
       cube_vendor_links: {
@@ -739,6 +979,7 @@ export type Database = {
           price: number;
           updated_at: string;
           url: string;
+          vendor_id: number | null;
           vendor_name: string;
         };
         Insert: {
@@ -752,6 +993,7 @@ export type Database = {
           price?: number;
           updated_at?: string;
           url: string;
+          vendor_id?: number | null;
           vendor_name: string;
         };
         Update: {
@@ -765,6 +1007,7 @@ export type Database = {
           price?: number;
           updated_at?: string;
           url?: string;
+          vendor_id?: number | null;
           vendor_name?: string;
         };
         Relationships: [
@@ -823,6 +1066,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "vendors";
             referencedColumns: ["name"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_vendors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendors";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1208,6 +1465,74 @@ export type Database = {
           {
             foreignKeyName: "staff_logs_staff_id_fkey";
             columns: ["staff_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
+      };
+      submissions: {
+        Row: {
+          id: number;
+          operation: Database["public"]["Enums"]["submission_operation"];
+          reviewed_at: string | null;
+          reviewed_by_id: string | null;
+          reviewer_note: string | null;
+          status: Database["public"]["Enums"]["submission_status"];
+          submitted_at: string;
+          submitted_by_id: string;
+          submitter_note: string | null;
+          type: Database["public"]["Enums"]["submission_type"];
+        };
+        Insert: {
+          id?: number;
+          operation: Database["public"]["Enums"]["submission_operation"];
+          reviewed_at?: string | null;
+          reviewed_by_id?: string | null;
+          reviewer_note?: string | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          submitted_at?: string;
+          submitted_by_id?: string;
+          submitter_note?: string | null;
+          type: Database["public"]["Enums"]["submission_type"];
+        };
+        Update: {
+          id?: number;
+          operation?: Database["public"]["Enums"]["submission_operation"];
+          reviewed_at?: string | null;
+          reviewed_by_id?: string | null;
+          reviewer_note?: string | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          submitted_at?: string;
+          submitted_by_id?: string;
+          submitter_note?: string | null;
+          type?: Database["public"]["Enums"]["submission_type"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "submissions_reviewed_by_id_fkey";
+            columns: ["reviewed_by_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "submissions_reviewed_by_id_fkey";
+            columns: ["reviewed_by_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "submissions_submitted_by_id_fkey";
+            columns: ["submitted_by_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "submissions_submitted_by_id_fkey";
+            columns: ["submitted_by_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_profiles";
             referencedColumns: ["user_id"];
@@ -1848,6 +2173,7 @@ export type Database = {
           avg_price: number | null;
           ball_core: boolean | null;
           brand: string | null;
+          brand_id: number | null;
           created_at: string | null;
           discontinued: boolean | null;
           id: number | null;
@@ -1872,18 +2198,14 @@ export type Database = {
           size: string | null;
           slug: string | null;
           smart: boolean | null;
-          staff_note: string | null;
-          status: Database["public"]["Enums"]["submission_status"] | null;
           stickered: boolean | null;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"] | null;
-          submitted_by_id: string | null;
           surface_finish:
             | Database["public"]["Enums"]["cube_surface_finishes"]
             | null;
           type: string | null;
+          type_id: number | null;
           updated_at: string | null;
-          verified_at: string | null;
-          verified_by_id: string | null;
           version_type:
             | Database["public"]["Enums"]["cube_version_types"]
             | null;
@@ -1892,6 +2214,13 @@ export type Database = {
           year: number | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_models_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_models_related_to_id_fkey";
             columns: ["related_to_id"];
@@ -1914,32 +2243,11 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "cube_models_submitted_by_id_fkey";
-            columns: ["submitted_by_id"];
+            foreignKeyName: "cube_models_type_id_fkey";
+            columns: ["type_id"];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_submitted_by_id_fkey";
-            columns: ["submitted_by_id"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_profiles";
-            referencedColumns: ["user_id"];
+            referencedRelation: "cube_types";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -2237,6 +2545,27 @@ export type Database = {
       };
     };
     Functions: {
+      approve_submission: {
+        Args: { p_submission_id: number };
+        Returns: {
+          id: number;
+          operation: Database["public"]["Enums"]["submission_operation"];
+          reviewed_at: string | null;
+          reviewed_by_id: string | null;
+          reviewer_note: string | null;
+          status: Database["public"]["Enums"]["submission_status"];
+          submitted_at: string;
+          submitted_by_id: string;
+          submitter_note: string | null;
+          type: Database["public"]["Enums"]["submission_type"];
+        };
+        SetofOptions: {
+          from: "*";
+          to: "submissions";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       build_v_detailed_cube_models: { Args: never; Returns: undefined };
       due_vendor_links_capped: {
         Args: {
@@ -2257,17 +2586,36 @@ export type Database = {
         }[];
       };
       get_types: { Args: { enum_type: string }; Returns: Json };
-      save_cube: {
-        Args: {
-          p_cube: Json;
-          p_current_slug: string;
-          p_features: string[];
-          p_new_brand: string;
-          p_new_series: string;
-          p_new_type: string;
-          p_vendor_links: Json;
+      reject_submission: {
+        Args: { p_reviewer_note: string; p_submission_id: number };
+        Returns: {
+          id: number;
+          operation: Database["public"]["Enums"]["submission_operation"];
+          reviewed_at: string | null;
+          reviewed_by_id: string | null;
+          reviewer_note: string | null;
+          status: Database["public"]["Enums"]["submission_status"];
+          submitted_at: string;
+          submitted_by_id: string;
+          submitter_note: string | null;
+          type: Database["public"]["Enums"]["submission_type"];
         };
-        Returns: string;
+        SetofOptions: {
+          from: "*";
+          to: "submissions";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      submit_cube: {
+        Args: {
+          p_cube?: Json;
+          p_feature_ids?: number[];
+          p_operation: Database["public"]["Enums"]["submission_operation"];
+          p_submitter_note?: string;
+          p_vendor_links?: Json;
+        };
+        Returns: number;
       };
       update_password: {
         Args: {
@@ -2322,7 +2670,9 @@ export type Database = {
       rating_categories: "cube" | "accessory";
       report_types: "user" | "cube" | "cube-rating" | "website";
       staff_actions: "INSERT" | "UPDATE" | "DELETE";
+      submission_operation: "create" | "update";
       submission_status: "Approved" | "Rejected" | "Pending";
+      submission_type: "cube" | "vendor";
       user_cube_condition:
         | "New in box"
         | "New"
@@ -2519,7 +2869,9 @@ export const Constants = {
       rating_categories: ["cube", "accessory"],
       report_types: ["user", "cube", "cube-rating", "website"],
       staff_actions: ["INSERT", "UPDATE", "DELETE"],
+      submission_operation: ["create", "update"],
       submission_status: ["Approved", "Rejected", "Pending"],
+      submission_type: ["cube", "vendor"],
       user_cube_condition: [
         "New in box",
         "New",

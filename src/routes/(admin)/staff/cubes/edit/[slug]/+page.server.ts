@@ -1,10 +1,10 @@
 import { type Actions, fail, redirect } from "@sveltejs/kit";
-import { slugify } from "$lib/components/helper_functions/slugify.svelte.js";
-import { getSubTypes } from "$lib/components/helper_functions/subType.svelte.js";
+import { slugify } from "$lib/utils/slugify";
+import { getSubTypes } from "$lib/utils/subType";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
-import { cleanLink } from "$lib/components/helper_functions/linkCleaner.js";
+import { cleanLink } from "$lib/utils/linkCleaner.js";
 import { cubeSchema } from "$lib/components/validation/cubeForm.js";
 import { logError } from "$lib/server/logError";
 import { createLogger } from "$lib/server/logger";

@@ -1,10 +1,10 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
-import { slugify } from "$lib/components/helper_functions/slugify.svelte";
-import { getSubTypes } from "$lib/components/helper_functions/subType.svelte";
+import { slugify } from "$lib/utils/slugify";
+import { getSubTypes } from "$lib/utils/subType";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { cleanLink } from "$lib/components/helper_functions/linkCleaner";
+import { cleanLink } from "$lib/utils/linkCleaner";
 import { cubeSchema } from "$lib/components/validation/cubeForm";
 import { logError } from "$lib/server/logError";
 import type { TablesInsert } from "$lib/types/database.types";

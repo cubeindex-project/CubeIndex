@@ -7,7 +7,7 @@
   import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
+  import { formatDate } from "$lib/utils/formatDate.js";
   import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
   import SearchCubes from "$lib/components/cube/searchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";

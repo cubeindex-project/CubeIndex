@@ -5,7 +5,7 @@ import { superValidate } from "sveltekit-superforms";
 import { accountSchema, surveySchema } from "$lib/components/validation/auth";
 import { setError } from "sveltekit-superforms";
 import { TURNSTILE_SECRET_KEY } from "$env/static/private";
-import { validateTurnstileToken } from "$lib/components/helper_functions/validateTurnstileToken";
+import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
 import { resolve } from "$app/paths";
 
 export const load: PageServerLoad = async ({ url }) => {

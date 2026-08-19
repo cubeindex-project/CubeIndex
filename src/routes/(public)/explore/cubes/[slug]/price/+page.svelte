@@ -1,7 +1,7 @@
 <script lang="ts">
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
-  import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol.js";
+  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol.js";
   import Tag from "$lib/components/misc/tag.svelte";
   import type { Tables } from "$lib/types/database.types.js";
 

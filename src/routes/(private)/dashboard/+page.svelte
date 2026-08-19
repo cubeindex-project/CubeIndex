@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/components/helper_functions/formatDate.js";
+  import { formatDate } from "$lib/utils/formatDate.js";
   import Avatar from "$lib/components/user/avatar.svelte";
 
   const { data } = $props();

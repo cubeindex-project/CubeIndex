@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { AutofillResult } from "../../../routes/(api)/api/submit/autocomplete/+server";
-  import { cleanLink } from "../helper_functions/linkCleaner";
+  import { cleanLink } from "../../utils/linkCleaner";
   import Modal from "$lib/components/ui/Modal.svelte";
 
   interface Props {

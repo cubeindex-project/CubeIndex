@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate, setError } from "sveltekit-superforms";
 import { completeProfileSchema } from "$lib/components/validation/auth";
-import { addToEmailList } from "$lib/components/helper_functions/addToEmailList";
+import { addToEmailList } from "$lib/utils/addToEmailList";
 import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({

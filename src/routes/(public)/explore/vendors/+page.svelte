@@ -1,7 +1,7 @@
 <script lang="ts">
   import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import { getCurrencySymbol } from "$lib/components/helper_functions/getCurrencySymbol";
+  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
   import {
     parseAsInteger,
     parseAsString,

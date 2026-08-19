@@ -1,6 +1,6 @@
 import type { LayoutServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
-import { removeMarkdown } from "$lib/components/helper_functions/removeMarkdown";
+import { removeMarkdown } from "$lib/utils/removeMarkdown";
 
 export const load = (async ({
   locals: { user, log, supabase },

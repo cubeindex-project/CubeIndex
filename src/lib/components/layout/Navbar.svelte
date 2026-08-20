@@ -126,9 +126,6 @@
                 <a href={nav.link} rel="external">
                   <i class={nav.icon}></i>
                   {nav.title}
-                  {#if nav.external}
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                  {/if}
                 </a>
                 <!-- {:else if nav.subMenu}
                   <details>

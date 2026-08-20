@@ -14,10 +14,11 @@
     "lint": "eslint .",
     "test:unit": "vitest",
     "test": "npm run test:unit -- --run",
-    "update-types": "npx supabase gen types --lang=typescript --project-id \"$PROJECT_REF\" > ./src/lib/types/database-generated.types.ts",
-    "db:start": "npx supabase start",
-    "db:restart": "npx supabase stop && npx supabase start",
-    "db:stop": "npx supabase stop"
+    "update-types": "supabase gen types --lang=typescript --project-id \"$PROJECT_REF\" > ./src/lib/types/database-generated.types.ts",
+    "db:start": "supabase start",
+    "db:restart": "supabase stop && npx supabase start",
+    "db:reset": "supabase db reset",
+    "db:stop": "supabase stop"
   },
   "devDependencies": {
     "@eslint/compat": "^2.1.0",

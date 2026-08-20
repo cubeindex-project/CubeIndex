@@ -82,7 +82,7 @@
 <Modal
   bind:open
   title="Rate this Cube"
-  description={`${cube.series} ${cube.model}${cube.version_type !== "Base" ? ` · ${cube.version_name}` : ""}`}
+  description={cube.name}
 >
   {#if formMessage || !isConnected}
     <div class="alert alert-error" aria-live="polite" aria-atomic="true">

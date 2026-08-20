@@ -11,7 +11,7 @@ export interface AutofillResult {
   release_date?: string;
   weight?: number;
   version_type?: Enums<"cube_version_type">;
-  surface_finish?: Enums<"cube_surface_finishes">;
+  surface_finish?: Enums<"cube_surface_finish">;
   size?: string;
   magnetic?: boolean;
   maglev?: boolean;

@@ -12,14 +12,10 @@ export const load = (async ({ locals: { supabase, log } }) => {
     supabase
       .from("v_detailed_cube_models")
       .select("*")
-      .eq("status", "Approved")
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase
-      .from("cube_models")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "Approved"),
+    supabase.from("cube_models").select("*", { count: "exact", head: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("onboarded", true),
     supabase.from("vendors").select("*", { count: "exact", head: true }),
     supabase

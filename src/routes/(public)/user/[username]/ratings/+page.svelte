@@ -32,8 +32,7 @@
   );
 
   function getCubeName(rating: (typeof user_cube_ratings)[number]): string {
-    const cube = rating.cube_model;
-    return `${cube?.series ?? ""} ${cube?.model ?? ""} ${cube?.version_name ?? ""}`.trim();
+    return rating.cube_model.name;
   }
 </script>
 
@@ -52,7 +51,7 @@
     comments: booleanParser.withDefault(false),
   }}
   fuseOptions={{
-    keys: ["cube_model.series", "cube_model.model", "cube_model.version_name"],
+    keys: ["cube_model.name"],
     threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,

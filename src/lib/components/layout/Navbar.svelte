@@ -228,10 +228,10 @@
               </a>
             </li>
             <li>
-              <a href={resolve("/(private)/user/submissions")}>
+              <!-- <a href={resolve("/(private)/user/submissions")}>
                 <i class="fa-solid fa-paper-plane"></i>
                 Submissions
-              </a>
+              </a> -->
             </li>
             <li>
               <a href={resolve("/(private)/userbar")}>

@@ -18,7 +18,6 @@
     relatedCube,
     cubeTrims,
     alreadyAdded,
-    isCubeSubmitter,
     userCubeDetail,
   } = $derived(data);
 
@@ -45,16 +44,6 @@
     { label: "Ratings", key: "ratings", icon: "fa-star" },
     // { label: "Reviews", key: "reviews", icon: "fa-comment-dots" },
   ] as const;
-
-  const submissionStatusDescription = $derived.by(() => {
-    if (cube.status === "Pending") {
-      return "is awaiting verification by moderators";
-    }
-    if (cube.status === "Rejected") {
-      return "has been rejected";
-    }
-    return "is being reviewed";
-  });
 </script>
 
 <svelte:head>
@@ -70,36 +59,6 @@
 </svelte:head>
 
 <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
-  {#if isCubeSubmitter && cube.status !== "Approved"}
-    <div
-      class="flex items-center gap-3 p-4 my-4 rounded-xl {cube.status ===
-      'Pending'
-        ? 'bg-warning'
-        : 'bg-error'} font-semibold shadow-sm"
-    >
-      {#if cube.status === "Pending"}
-        <i class="fa-solid fa-hourglass-half"></i>
-      {:else}
-        <i class="fa-solid fa-triangle-exclamation"></i>
-      {/if}
-
-      {`Your submission ${submissionStatusDescription}.`}
-    </div>
-  {:else if cube.status === "Rejected"}
-    <div
-      class="flex items-center gap-3 p-4 my-4 rounded-xl bg-error font-semibold shadow-sm"
-    >
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      This cube has been rejected.
-    </div>
-  {:else if cube.status === "Pending"}
-    <div
-      class="flex items-center gap-3 p-4 my-4 rounded-xl bg-warning font-semibold shadow-sm"
-    >
-      <i class="fa-solid fa-hourglass-half"></i>
-      This cube is awaiting verification by moderators.
-    </div>
-  {/if}
 
   <div class="my-6 flex flex-col items-start">
     <figure class="relative w-full max-w-md">
@@ -108,7 +67,7 @@
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
           cube.image_url,
         )}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={cube.name}
         fetchpriority="high"
         decoding="async"
         width="768"
@@ -128,11 +87,7 @@
     <!-- top row: text + discontinued badge -->
     <div class="flex items-center text-4xl font-bold">
       <div class="font-clash" data-hero-key={`cube-title-${cube.id}`}>
-        {cube.series}
-        {cube.model}
-        {#if cube.version_type !== "Base"}
-          <span class="text-secondary"> {cube.version_name}</span>
-        {/if}
+        {cube.name}
       </div>
       {#if cube.discontinued}
         <div
@@ -157,41 +112,17 @@
 
   <div class="flex flex-wrap mb-4 justify-between">
     <div class="flex justify-start join">
-      {#if cube.status === "Approved"}
-        <AddToCollectionButton
-          {alreadyAdded}
-          onClick={() => {
-            isAddingCube = !isAddingCube;
-          }}
-          addClass="join-item"
-        />
-      {:else}
-        <button
-          class="btn btn-error cursor-not-allowed join-item tooltip"
-          type="button"
-          aria-label="Only approved cubes can be added to your collection"
-          data-tip="Only approved cubes can be added to your collection"
-        >
-          <i class="fa-solid fa-ban mr-2"></i>
-          Not Available
-        </button>
-      {/if}
-      {#if cube.status === "Approved"}
-        <RateCubeButton
-          onClick={() => (isRatingCube = !isRatingCube)}
-          addClass="join-item"
-        />
-      {:else}
-        <button
-          class="btn btn-error cursor-not-allowed join-item tooltip"
-          type="button"
-          aria-label="Only approved cubes can be rated"
-          data-tip="Only approved cubes can be rated"
-        >
-          <i class="fa-solid fa-ban mr-2"></i>
-          Not Available
-        </button>
-      {/if}
+      <AddToCollectionButton
+        {alreadyAdded}
+        onClick={() => {
+          isAddingCube = !isAddingCube;
+        }}
+        addClass="join-item"
+      />
+      <RateCubeButton
+        onClick={() => (isRatingCube = !isRatingCube)}
+        addClass="join-item"
+      />
     </div>
     <ShareButton url={page.url.href} label="" />
   </div>
@@ -231,17 +162,6 @@
 
   {@render children()}
 
-  {#if cube.notes && isCubeSubmitter}
-    <div class="bg-base-200 border border-base-300 rounded-xl p-4 my-8">
-      <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-        <i class="fa-solid fa-note-sticky"></i>
-        Moderator Note
-        <span class="text-xs">(Only you can see this)</span>
-      </h2>
-      <p class="whitespace-pre-line">{cube.notes}</p>
-    </div>
-  {/if}
-
   <!-- Trim selector -->
   {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
     <section class="my-10">
@@ -267,7 +187,7 @@
                 slug: trim.slug,
               })}
               class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              aria-label={"Open " + trim.version_name}
+              aria-label="Open {trim.name}"
             >
               <div class="p-3">
                 <div
@@ -275,7 +195,7 @@
                 >
                   <img
                     src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(trim.image_url)}`}
-                    alt={trim.version_name}
+                    alt={trim.name}
                     loading="lazy"
                     decoding="async"
                     width="256"
@@ -284,9 +204,9 @@
                   />
                 </div>
                 <div class="mt-2 text-center">
-                  <span class="text-sm font-medium line-clamp-2"
-                    >{trim.version_name}</span
-                  >
+                  <span class="text-sm font-medium line-clamp-2">
+                    {trim.name}
+                  </span>
                 </div>
               </div>
             </a>
@@ -314,7 +234,7 @@
             slug: relatedCube.slug,
           })}
           class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          aria-label={"Open " + (relatedCube.series + " " + relatedCube.model)}
+          aria-label="Open {relatedCube.name}"
         >
           <div class="p-4 flex items-center gap-4">
             <div
@@ -322,7 +242,7 @@
             >
               <img
                 src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
-                alt={relatedCube.version_name}
+                alt={relatedCube.name}
                 loading="lazy"
                 decoding="async"
                 width="192"
@@ -332,11 +252,7 @@
             </div>
             <div class="min-w-0">
               <p class="text-base font-semibold truncate">
-                {relatedCube.series}
-                {relatedCube.model}
-              </p>
-              <p class="text-xs opacity-70 truncate">
-                {relatedCube.version_name}
+                {relatedCube.name}
               </p>
             </div>
           </div>
@@ -346,7 +262,7 @@
   {/if}
 
   <!-- Same series -->
-  {#if sameSeries && sameSeries.length > 0 && sameSeries[0].series !== ""}
+  {#if sameSeries && sameSeries.length > 0}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
         <h2
@@ -363,7 +279,7 @@
       <div class="-mx-2 overflow-x-auto pb-2">
         <ul
           class="flex gap-4 px-2 snap-x snap-mandatory"
-          aria-label={"Cubes in the " + sameSeries[0].series + " series"}
+          aria-label="Cubes in the same series"
         >
           {#each sameSeries as seriesCube (seriesCube.slug)}
             <li class="w-48 shrink-0 snap-start">
@@ -372,8 +288,7 @@
                   slug: seriesCube.slug,
                 })}
                 class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                aria-label={"Open " +
-                  (seriesCube.series + " " + seriesCube.model)}
+                aria-label="Open {seriesCube.name}"
               >
                 <div class="p-3">
                   <div
@@ -381,7 +296,7 @@
                   >
                     <img
                       src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
-                      alt={seriesCube.version_name}
+                      alt={seriesCube.name}
                       loading="lazy"
                       decoding="async"
                       width="256"
@@ -391,11 +306,7 @@
                   </div>
                   <div class="mt-2 text-center">
                     <p class="text-sm font-semibold line-clamp-2">
-                      {seriesCube.series}
-                      {seriesCube.model}
-                    </p>
-                    <p class="text-xs opacity-70 line-clamp-1">
-                      {seriesCube.version_name}
+                      {seriesCube.name}
                     </p>
                   </div>
                 </div>
@@ -418,7 +329,7 @@
   bind:open={isReportingCube}
   reportType="cube"
   reported={cube.slug}
-  reporLabel="the {cube.series} {cube.model} {cube.version_name}"
+  reporLabel={`the ${cube.name}`}
 />
 
 <AddCube

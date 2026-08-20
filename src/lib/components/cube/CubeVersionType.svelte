@@ -18,6 +18,6 @@
   <span
     class="px-2 py-1 rounded bg-secondary text-secondary-content text-xs font-semibold"
   >
-    <span class="font-clash uppercase">Trim</span>
+    <span class="font-clash uppercase">Variant</span>
   </span>
 {/if}

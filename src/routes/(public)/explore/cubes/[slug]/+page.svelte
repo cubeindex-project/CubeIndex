@@ -92,10 +92,7 @@
         >
           <dt class="opacity-70">Version</dt>
           <dd class="font-medium">
-            {cube.version_type}{cube.version_type !== "Base" &&
-            cube.version_name
-              ? ` · ${cube.version_name}`
-              : ""}
+            {cube.version_type}
           </dd>
         </div>
       </dl>

@@ -116,16 +116,12 @@
     <div class="flex flex-row items-center gap-4 mb-4">
       <img
         src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,fl_lossy,q_auto,h_96/{cube.image_url}"
-        alt="{cube.series} {cube.model} {cube.version_name}"
+        alt={cube.name}
         class="size-24 object-cover rounded-2xl"
       />
       <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
         <h2 class="text-xl font-bold mb-1">
-          {cube.series}
-          {cube.model}
-          {#if cube.version_type !== "Base"}
-            <span class="text-blue-400">{cube.version_name}</span>
-          {/if}
+          {cube.name}
         </h2>
       </a>
     </div>
@@ -276,6 +272,5 @@
   bind:open={isReporting}
   reportType="cube-rating"
   reported={String(user_rating.id)}
-  reporLabel="{user_rating.profile
-    .display_name}'s comment on the {cube.series} {cube.model} {cube.version_name}"
+  reporLabel="{user_rating.profile.display_name}'s comment on {cube.name}"
 />

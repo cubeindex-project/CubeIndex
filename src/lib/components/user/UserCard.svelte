@@ -60,9 +60,7 @@
             class="text-xs/5 text-base-content/70 flex items-center gap-2 truncate"
           >
             <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
-            <span
-              title={`${cubeCount} ${plural(cubeCount, "cube")}`}
-            >
+            <span title={`${cubeCount} ${plural(cubeCount, "cube")}`}>
               {fmt(cubeCount)}
               {plural(cubeCount, "cube")}
             </span>

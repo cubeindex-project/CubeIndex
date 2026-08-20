@@ -79,11 +79,7 @@
   }
 </script>
 
-<Modal
-  bind:open
-  title="Rate this Cube"
-  description={cube.name}
->
+<Modal bind:open title="Rate this Cube" description={cube.name}>
   {#if formMessage || !isConnected}
     <div class="alert alert-error" aria-live="polite" aria-atomic="true">
       {formMessage}

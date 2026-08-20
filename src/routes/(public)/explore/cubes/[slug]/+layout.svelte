@@ -59,7 +59,6 @@
 </svelte:head>
 
 <section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
-
   <div class="my-6 flex flex-col items-start">
     <figure class="relative w-full max-w-md">
       <img

@@ -19,7 +19,9 @@
       <i class="fa-solid fa-pencil mr-2"></i>Edit
     </a> -->
     <a
-      href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug ?? "" })}
+      href={resolve("/(public)/explore/cubes/[slug]", {
+        slug: cube.slug ?? "",
+      })}
       class="btn btn-primary"
     >
       See Cube <i class="fa-solid fa-arrow-right"></i>

@@ -1,6 +1,10 @@
 create type "public"."date_precision" as enum ('day', 'month', 'year');
 
--- drop trigger if exists "log_cube_models" on "public"."cube_models";
+drop trigger if exists "log_cube_models" on "public"."cube_models";
+
+drop trigger if exists "trg_cube_models_table_rules" on "public"."cube_models";
+
+drop trigger if exists "notify_discord_new_cube" on "public"."cube_models";
 
 drop policy "Enable delete for Admins and Community Managers" on "public"."cube_models";
 
@@ -11,6 +15,27 @@ drop view if exists "public"."v_awards_category_winners";
 drop view if exists "public"."v_detailed_cube_models";
 
 drop view if exists "public"."v_user_stats";
+
+alter table "public"."cube_models"
+drop constraint "cube_models_related_to_fkey";
+
+alter table "public"."user_cubes"
+drop constraint "user_cubes_cube_fkey";
+
+alter table "public"."cubes_model_features"
+drop constraint "cubes_model_features_cube_fkey";
+
+alter table "public"."user_cube_ratings"
+drop constraint "user_ratings_cube_slug_fkey";
+
+alter table "public"."cube_vendor_links_snapshot"
+drop constraint "cube_vendor_links_snapshot_cube_slug_fkey";
+
+alter table "public"."cube_vendor_links"
+drop constraint "cube_vendor_links_duplicate_cube_slug_fkey";
+
+alter table "public"."user_cube_reviews"
+drop constraint "user_cube_reviews_cube_fkey";
 
 alter table "public"."cube_models" drop constraint "cubes_pkey";
 
@@ -38,7 +63,12 @@ alter table "public"."cube_series" enable row level security;
 
 alter table "public"."cube_models" alter column sub_type type "public"."cubes_subtypes" using sub_type::text::"public"."cubes_subtypes";
 
-alter table "public"."cube_models" alter column version_type type "public"."cube_version_type" using version_type::text::"public"."cube_version_type";
+alter table "public"."cube_models" alter column version_type type "public"."cube_version_type" using (
+    case version_type::text
+        when 'Trim' then 'Variant'
+        else version_type::text
+    end
+)::"public"."cube_version_type";
 
 alter table "public"."cube_models" alter column "version_type" set default 'Base'::public.cube_version_type;
 
@@ -46,31 +76,73 @@ drop type "public"."cube_surface_finish__old_version_to_be_dropped";
 
 drop type "public"."cube_version_type__old_version_to_be_dropped";
 
-alter table "public"."cube_models" drop column "brand";
-
-alter table "public"."cube_models" drop column "model";
-
 alter table "public"."cube_models" drop column "notes";
 
 alter table "public"."cube_models" drop column "rating";
 
-alter table "public"."cube_models" drop column "series";
-
 alter table "public"."cube_models" drop column "status";
 
-alter table "public"."cube_models" drop column "type";
+-- Populate cube_models' brand_id before deleting the brand column
+
+alter table "public"."cube_models" add column "brand_id" bigint;
+
+update cube_models cm
+set brand_id = (select id from brands b where b.name = cm.brand);
+
+alter table "public"."cube_models" alter column "brand_id" set not null;
+
+alter table "public"."cube_models" drop column "brand";
+
+-- End
+
+-- Populate cube_models' name column
+
+alter table "public"."cube_models" add column "name" text;
+
+update cube_models
+set name = trim(concat(series, ' ', model, ' ', version_name));
+
+alter table "public"."cube_models" alter column "name" set not null;
 
 alter table "public"."cube_models" drop column "version_name";
 
-alter table "public"."cube_models" add column "brand_id" bigint not null;
+alter table "public"."cube_models" drop column "model";
 
-alter table "public"."cube_models" add column "name" text not null;
+alter table "public"."cube_models" drop column "series";
+
+-- End
 
 alter table "public"."cube_models" add column "release_date_precision" public.date_precision;
 
 alter table "public"."cube_models" add column "series_id" bigint;
 
-alter table "public"."cube_models" add column "type_id" bigint not null;
+-- Populate cube_models' type_id column
+
+alter table "public"."cube_models" add column "type_id" bigint;
+
+update cube_models cm
+set type_id = coalesce(
+	(
+		select ct.id
+		from public.cube_types ct
+		where ct.name = cm.type
+	),
+	(
+		select ct.id
+		from public.cube_types ct
+		where ct.name = 'Other'
+	)
+);
+
+alter table "public"."cube_models" alter column "type_id" set not null;
+
+alter table "public"."cube_models" drop column "type";
+
+-- End
+
+update cube_models
+set sub_type = 'Other'::cubes_subtypes
+where sub_type is null;
 
 alter table "public"."cube_models" alter column "sub_type" set not null;
 
@@ -92,6 +164,47 @@ CREATE UNIQUE INDEX cube_series_pkey ON public.cube_series USING btree (id);
 
 alter table "public"."cube_models" add constraint "cube_models_pkey" PRIMARY KEY using index "cube_models_pkey";
 
+ALTER TABLE ONLY "public"."cube_models"
+    ADD CONSTRAINT "cube_models_related_to_fkey" FOREIGN KEY ("related_to") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE SET NULL;
+
+ALTER TABLE ONLY "public"."user_cubes"
+    ADD CONSTRAINT "user_cubes_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."cubes_model_features"
+    ADD CONSTRAINT "cubes_model_features_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."user_cube_ratings"
+ADD CONSTRAINT "user_ratings_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+alter table public.cube_vendor_links
+disable trigger "trg_cube_links_table_rules";
+
+delete from public.cube_vendor_links cvl
+where not exists (
+	select 1
+	from public.cube_models cm
+	where cm.slug = cvl.cube_slug
+);
+
+alter table public.cube_vendor_links
+enable trigger "trg_cube_links_table_rules";
+
+ALTER TABLE ONLY "public"."cube_vendor_links"
+    ADD CONSTRAINT "cube_vendor_links_duplicate_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ONLY "public"."user_cube_reviews"
+    ADD CONSTRAINT "user_cube_reviews_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+delete from public.cube_vendor_links_snapshot cvs
+where not exists (
+	select 1
+	from public.cube_models cm
+	where cm.slug = cvs.cube_slug
+);
+
+ALTER TABLE ONLY "public"."cube_vendor_links_snapshot"
+    ADD CONSTRAINT "cube_vendor_links_snapshot_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
 alter table "public"."cube_series" add constraint "cube_series_pkey" PRIMARY KEY using index "cube_series_pkey";
 
 alter table "public"."cube_models" add constraint "cube_models_brand_id_fkey" FOREIGN KEY (brand_id) REFERENCES public.brands(id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
@@ -105,6 +218,10 @@ alter table "public"."cube_models" validate constraint "cube_models_series_id_fk
 alter table "public"."cube_models" add constraint "cube_models_type_id_fkey" FOREIGN KEY (type_id) REFERENCES public.cube_types(id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
 
 alter table "public"."cube_models" validate constraint "cube_models_type_id_fkey";
+
+update cube_models
+set release_date_precision = 'day'::public.date_precision
+where release_date is not null;
 
 alter table "public"."cube_models" add constraint "release_date_precision_check" CHECK (((release_date IS NULL) = (release_date_precision IS NULL))) not valid;
 
@@ -143,7 +260,7 @@ end if;
 end;$function$
 ;
 
-create or replace view "public"."v_awards_category_winners" as  WITH votes AS (
+create or replace view "public"."v_awards_category_winners" with (security_invoker = on) as  WITH votes AS (
          SELECT an.category_id,
             cm.slug AS nominee_slug,
             count(DISTINCT auv.user_id) AS vote_count
@@ -168,7 +285,7 @@ create or replace view "public"."v_awards_category_winners" as  WITH votes AS (
   WHERE (r.rnk = 1);
 
 
-create or replace view "public"."v_detailed_cube_models" as  SELECT cm.name,
+create or replace view "public"."v_detailed_cube_models" with (security_invoker = on) as  SELECT cm.name,
     cm.image_url,
     v.name AS image_source,
     cm.slug,
@@ -240,7 +357,7 @@ create or replace view "public"."v_detailed_cube_models" as  SELECT cm.name,
      LEFT JOIN public.vendors v ON ((lower(regexp_replace(split_part(regexp_replace(cm.image_url, '^https?://'::text, ''::text), '/'::text, 1), '^www\.'::text, ''::text)) = lower(regexp_replace(split_part(regexp_replace(v.base_url, '^https?://'::text, ''::text), '/'::text, 1), '^www\.'::text, ''::text)))));
 
 
-create or replace view "public"."v_user_stats" as  WITH cube_stats AS (
+create or replace view "public"."v_user_stats" with (security_invoker = on) as  WITH cube_stats AS (
          SELECT uc.user_id,
             count(*) AS cube_count,
             sum(uc.purchase_price) AS collection_value
@@ -453,13 +570,7 @@ grant truncate on table "public"."cube_series" to "service_role";
 grant update on table "public"."cube_series" to "service_role";
 
 CREATE TRIGGER notify_discord_new_cube AFTER INSERT ON public.cube_models FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_cube_model();
-ALTER TABLE "public"."cube_models" DISABLE TRIGGER "notify_discord_new_cube";
 
-CREATE TRIGGER trg_price_alert_discord AFTER INSERT ON public.cube_vendor_links_snapshot FOR EACH ROW EXECUTE FUNCTION public.notify_discord_price_alert();
-ALTER TABLE "public"."cube_vendor_links_snapshot" DISABLE TRIGGER "trg_price_alert_discord";
+CREATE TRIGGER "trg_cube_models_table_rules" BEFORE INSERT OR DELETE OR UPDATE ON "public"."cube_models" FOR EACH ROW EXECUTE FUNCTION "public"."cube_models_table_rules"();
 
-CREATE TRIGGER notify_discord_new_user AFTER UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_user();
-ALTER TABLE "public"."profiles" DISABLE TRIGGER "notify_discord_new_user";
-
-CREATE TRIGGER notify_discord_new_user_report AFTER INSERT ON public.reports FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_user_report();
-ALTER TABLE "public"."reports" DISABLE TRIGGER "notify_discord_new_user_report";
+CREATE TRIGGER log_cube_models AFTER UPDATE OR DELETE OR INSERT ON public.cube_models FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();

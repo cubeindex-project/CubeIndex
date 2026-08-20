@@ -12,6 +12,7 @@
    <a href="https://thecubeindex.com/discord"><img src="https://img.shields.io/discord/1360562604535447732?logo=discord&label=Discord" /></a>
   <a href="https://github.com/cubeindex-project/CubeIndex/stargazers"><img src="https://img.shields.io/github/stars/cubeindex-project/CubeIndex" /></a>
   <a href="https://github.com/cubeindex-project/CubeIndex/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green" /></a>
+  <a href="https://app.netlify.com/projects/cubeindex/deploys"><img src="https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status" /></a>
 </p>
 
 <details>
@@ -24,51 +25,35 @@
 </div>
 </details>
 
----
-
-### Tech & Deploy
+## Tech & Deploy
 
 **Built with:** SvelteKit · Tailwind · Supabase · TypeScript  
 **Live:** [thecubeindex.com](https://thecubeindex.com)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/d3a625d9-afd1-48a1-a431-f8855eaedbb8/deploy-status)](https://app.netlify.com/projects/cubeindex/deploys)
-
----
-
-### Contribute
+## Contribute
 
 ```bash
 git clone https://github.com/cubeindex-project/CubeIndex.git
 cd CubeIndex
 npm install
 cp .env.example .env
-npx supabase db start
+npm run db:start
 npm run dev
 ```
 
 Then visit localhost:5173
 
-#### Environment
+### Environment
 
 - `PUBLIC_SUPABASE_URL` / `PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Frontend Supabase access
 - `LOG_LEVEL`: Server-side Pino log level (`debug`, `info`, `warn`, etc.)
 - `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`: For Cloudflare's turnstile service
 - `AUTOFILL_SERVICE_URL`: The autofill service URL for the cube submission page
 
----
+## AI Disclosure
 
-### Community
+AI-powered tools are utilized in this project for research, debugging, and task automation.
 
-[Discord](https://thecubeindex.com/discord)
-
----
-
-### Extras
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Saterz/CubeIndex&type=Date)](https://www.star-history.com/#Saterz/CubeIndex&Date)
-
----
-
-### License
+## License
 
 This project is under the Apache 2.0 license

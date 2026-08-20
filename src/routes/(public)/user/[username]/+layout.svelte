@@ -315,7 +315,7 @@
           {tab.title}
         </a>
       {/each}
-      {#if user?.id === profile.user_id}
+      <!-- {#if user?.id === profile.user_id}
         <a
           href={resolve("/user/submissions")}
           class="hover:text-primary border-0 {activeTab === 'Submissions'
@@ -327,7 +327,7 @@
         >
           Submissions
         </a>
-      {/if}
+      {/if} -->
     </div>
     {@render children()}
   {:else}

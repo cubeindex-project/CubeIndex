@@ -1,22 +1,25 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/utils/formatDate.js";
+  // import { resolve } from "$app/paths";
+  // import { formatDate } from "$lib/utils/formatDate.js";
   import Avatar from "$lib/components/user/Avatar.svelte";
 
   const { data } = $props();
 
-  const { profile, recent } = $derived(data);
+  const {
+    profile,
+    // recent
+  } = $derived(data);
 
-  const submissionStatusBadge = (status: string) => {
-    const normalized = status.toLowerCase();
-    if (normalized === "approved") return "badge-success";
-    if (normalized === "pending") return "badge-warning";
-    if (normalized === "rejected") return "badge-error";
-    return "badge-ghost";
-  };
+  // const submissionStatusBadge = (status: string) => {
+  //   const normalized = status.toLowerCase();
+  //   if (normalized === "approved") return "badge-success";
+  //   if (normalized === "pending") return "badge-warning";
+  //   if (normalized === "rejected") return "badge-error";
+  //   return "badge-ghost";
+  // };
 </script>
 
-<div class="mx-auto max-w-6xl px-4 py-8">
+<div class="min-h-screen mx-auto max-w-6xl px-4 py-8">
   <header class="mb-8">
     <div class="flex md:items-center gap-4 flex-col justify-start md:flex-row">
       <Avatar
@@ -40,8 +43,9 @@
   </header>
 
   <section class="grid grid-cols-1 xl:grid-cols-1 gap-6 mb-8">
+    Yes the dashboard is empty, yes it's normal. There's more to come soon...
     <!-- Recent Submissions -->
-    <div class="card bg-base-100 border border-base-300 xl:col-span-1">
+    <!-- <div class="card bg-base-100 border border-base-300 xl:col-span-1">
       <div class="card-body">
         <div class="flex items-center justify-between gap-2">
           <h2 class="card-title">Recent Submissions</h2>
@@ -99,6 +103,6 @@
           </div>
         {/if}
       </div>
-    </div>
+    </div> -->
   </section>
 </div>

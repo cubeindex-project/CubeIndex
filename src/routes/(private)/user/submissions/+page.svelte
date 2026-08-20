@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resolve } from "$app/paths";
+  // import { resolve } from "$app/paths";
   import SubmissionCubeCard from "$lib/components/cube/SubmissionCubeCard.svelte";
 
   const { data } = $props();
@@ -38,12 +38,12 @@
         moderator decisions.
       </p>
     </div>
-    <div class="flex flex-wrap items-center gap-3">
+    <!-- <div class="flex flex-wrap items-center gap-3">
       <a href={resolve("/submit")} class="btn btn-primary btn-sm">
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span>Submit a cube</span>
       </a>
-    </div>
+    </div> -->
   </header>
 
   <section class="space-y-4">
@@ -93,13 +93,13 @@
           Start with our guided form and we will keep you posted as moderators
           review your submission.
         </p>
-        <a
+        <!-- <a
           href={resolve("/submit")}
           class="btn btn-primary mt-4 inline-flex items-center gap-2"
         >
           <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           <span>Submit your first cube</span>
-        </a>
+        </a> -->
       </div>
     {/if}
   </section>

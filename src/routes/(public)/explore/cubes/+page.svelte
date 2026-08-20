@@ -86,7 +86,7 @@
     stick: triParser,
 
     base: triParser,
-    trim: triParser,
+    variant: triParser,
     limit: triParser,
   }}
   fuseOptions={{
@@ -108,11 +108,11 @@
           : params.base.current
             ? c.version_type === "Base"
             : c.version_type !== "Base") &&
-        (params.trim.current === null
+        (params.variant.current === null
           ? true
-          : params.trim.current
-            ? c.version_type === "Trim"
-            : c.version_type !== "Trim") &&
+          : params.variant.current
+            ? c.version_type === "Variant"
+            : c.version_type !== "Variant") &&
         (params.limit.current === null
           ? true
           : params.limit.current
@@ -249,7 +249,7 @@
       <TriStateCheckbox bind:value={params.stick.current} label="Stickered" />
       <TriStateCheckbox bind:value={params.mod.current} label="Modded" />
       <TriStateCheckbox bind:value={params.base.current} label="Base" />
-      <TriStateCheckbox bind:value={params.trim.current} label="Trim" />
+      <TriStateCheckbox bind:value={params.variant.current} label="Variant" />
       <TriStateCheckbox bind:value={params.limit.current} label="Limited" />
     </div>
   {/snippet}

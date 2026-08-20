@@ -30,6 +30,8 @@
     maximumFractionDigits: 1,
   });
   const fmt = (n: number) => nf.format(n);
+  const cubeCount = $derived(profile.user_cubes_count ?? 0);
+  const achievementCount = $derived(profile.user_achievements_count ?? 0);
 
   // 2. Tiny plural helper
   const plural = (n: number, s: string) => (n === 1 ? s : `${s}s`);
@@ -58,21 +60,19 @@
             class="text-xs/5 text-base-content/70 flex items-center gap-2 truncate"
           >
             <i class="fa-solid fa-cube shrink-0" aria-hidden="true"></i>
-            <span
-              title={`${profile.user_cubes_count} ${plural(profile.user_cubes_count, "cube")}`}
-            >
-              {fmt(profile.user_cubes_count)}
-              {plural(profile.user_cubes_count, "cube")}
+            <span title={`${cubeCount} ${plural(cubeCount, "cube")}`}>
+              {fmt(cubeCount)}
+              {plural(cubeCount, "cube")}
             </span>
 
             <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
             <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
             <span
-              title={`${profile.user_achievements_count} ${plural(profile.user_achievements_count, "achievement")}`}
+              title={`${achievementCount} ${plural(achievementCount, "achievement")}`}
             >
-              {fmt(profile.user_achievements_count)}
-              {plural(profile.user_achievements_count, "achievement")}
+              {fmt(achievementCount)}
+              {plural(achievementCount, "achievement")}
             </span>
           </span>
         {/if}

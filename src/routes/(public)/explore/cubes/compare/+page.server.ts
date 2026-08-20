@@ -4,8 +4,7 @@ import type { PageServerLoad } from "./$types";
 export const load = (async ({ locals: { log, supabase } }) => {
   const { data: cubes, error: err } = await supabase
     .from("v_detailed_cube_models")
-    .select("*")
-    .eq("status", "Approved");
+    .select("*");
 
   if (err) logError(500, "Failed to fetch cubes", log, err.message);
 

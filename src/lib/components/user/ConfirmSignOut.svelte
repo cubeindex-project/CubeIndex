@@ -23,10 +23,7 @@
       Cancel
     </button>
 
-    <a
-      href={resolve("/auth/logout")}
-      class="btn btn-error flex-1 sm:flex-none"
-    >
+    <a href={resolve("/auth/logout")} class="btn btn-error flex-1 sm:flex-none">
       Sign Out
     </a>
   </div>

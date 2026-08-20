@@ -9,8 +9,7 @@ export const load: PageServerLoad = async ({
 }) => {
   const { data: cubes, error: err } = await supabase
     .from("v_detailed_cube_models")
-    .select("*")
-    .eq("status", "Approved");
+    .select("*");
 
   if (err) {
     return logError(500, "Failed to load cubes", log, err);

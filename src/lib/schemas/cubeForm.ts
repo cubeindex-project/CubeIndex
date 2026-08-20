@@ -1,9 +1,37 @@
 import z from "zod/v4";
-import { Constants } from "$lib/types/database.types";
+import { Constants, type Enums } from "$lib/types/database.types";
 
-export const releaseDatePattern = /^\d{4}-\d{2}-\d{2}$/;
 export const sizePattern =
   /^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$/;
+
+export interface NormalizedReleaseDate {
+  date: string;
+  precision: Enums<"date_precision">;
+}
+
+export function normalizeReleaseDate(
+  value: string,
+): NormalizedReleaseDate | null {
+  const match = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(value);
+  if (!match) return null;
+
+  const [, year, suppliedMonth, suppliedDay] = match;
+  const month = suppliedMonth ?? "01";
+  const day = suppliedDay ?? "01";
+  const date = `${year}-${month}-${day}`;
+
+  if (
+    !Number.isFinite(Date.parse(`${date}T00:00:00Z`)) ||
+    new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date
+  ) {
+    return null;
+  }
+
+  return {
+    date,
+    precision: suppliedDay ? "day" : suppliedMonth ? "month" : "year",
+  };
+}
 
 const defaultFeatures = {
   wcaLegal: false,
@@ -14,6 +42,20 @@ const defaultFeatures = {
   stickered: false,
   ballCore: false,
 };
+
+/**
+ * Form controls submit IDs as strings. Keeping this schema single-typed gives
+ * Superforms a neutral empty default; IDs are converted at the database boundary.
+ */
+const idOrOtherSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value === "___other" || /^[1-9][0-9]*$/.test(value),
+    "Selection is required",
+  );
+
+const optionalIdOrOtherSchema = idOrOtherSchema.optional();
 
 const featuresSchema = z
   .object({
@@ -30,7 +72,7 @@ const featuresSchema = z
     if (data.value.smart && data.value.wcaLegal) {
       data.issues.push({
         code: "custom",
-        message: "Smart cubes can not be WCA Legal",
+        message: "Smart cubes cannot be WCA Legal",
         input: data.value.wcaLegal,
         path: ["wcaLegal"],
       });
@@ -40,65 +82,56 @@ const featuresSchema = z
 const vendorLinksSchema = z
   .array(
     z.object({
-      vendor_name: z.string().trim().min(1, "Vendor name is required"),
-      url: z.url("Must be a valid URL").trim(),
+      vendor_id: z.number().int().min(1, "Please choose a valid vendor"),
+      url: z.url().trim(),
       price: z.coerce.number().min(0, "Price must be >= 0"),
       available: z.coerce.boolean().default(false),
     }),
   )
   .default([]);
 
-export const cubeSchema = z
+export const cubeFormSchema = z
   .object({
-    id: z.number().int().nonnegative().optional(),
-    series: z.string().trim().optional(),
-    model: z.string().trim().min(1, "Model is required"),
-    versionType: z.enum(["Base", "Trim", "Limited"]),
-    versionName: z.string().trim().optional(),
-    brand: z.string().trim().min(1, "Brand is required"),
+    name: z.string().trim().nonempty(),
+    seriesID: optionalIdOrOtherSchema,
+    otherSeries: z.string().trim().default(""),
+    versionType: z.enum(Constants.public.Enums.cube_version_type),
+    brandID: idOrOtherSchema,
     otherBrand: z.string().trim().default(""),
-    type: z.string().trim().min(1, "Type is required"),
+    typeID: idOrOtherSchema,
     otherType: z.string().trim().default(""),
-    sub_type: z
+    subType: z
       .enum(["auto", ...Constants.public.Enums.cubes_subtypes])
       .default("auto"),
-    relatedTo: z.string().trim().optional(),
+    relatedToId: z.number().int().optional(),
     releaseDate: z
       .string()
       .trim()
-      .min(1, "Release date is required")
-      .refine((val) => releaseDatePattern.test(val), {
-        message: "Release date must be YYYY-MM-DD",
-      }),
-    imageUrl: z.url("Image URL must be valid"),
-    surfaceFinish: z.enum([...Constants.public.Enums.cube_surface_finishes]),
-    weight: z.coerce.number().min(0, "Weight must be >= 0"),
+      .refine((value) => value === "" || normalizeReleaseDate(value) !== null, {
+        message: "Release date must be YYYY, YYYY-MM, or YYYY-MM-DD",
+      })
+      .optional(),
+    imageUrl: z.url(),
+    surfaceFinish: z
+      .enum([...Constants.public.Enums.cube_surface_finish])
+      .optional(),
+    weight: z.coerce.number().nonnegative().optional(),
     size: z.coerce
       .string()
       .trim()
       .refine((val) => sizePattern.test(val), {
         message: "Size must be num x num x num",
-      }),
+      })
+      .optional(),
     discontinued: z.coerce.boolean().default(false),
+    submitterNote: z.string().trim().nonempty().default(""),
     features: featuresSchema,
     vendorLinks: vendorLinksSchema,
   })
   .check((data) => {
     if (
-      data.value.versionType !== "Base" &&
-      (!data.value.versionName || data.value.versionName.trim().length === 0)
-    ) {
-      data.issues.push({
-        code: "custom",
-        message: "The version name is required when the cube type is not Base",
-        input: data.value.versionName,
-        path: ["versionName"],
-      });
-    }
-
-    if (
-      data.value.brand === "___other" &&
-      (!data.value.otherBrand || data.value.otherBrand.trim().length === 0)
+      data.value.brandID === "___other" &&
+      data.value.otherBrand.trim().length === 0
     ) {
       data.issues.push({
         code: "custom",
@@ -109,14 +142,28 @@ export const cubeSchema = z
     }
 
     if (
-      data.value.type === "___other" &&
-      (!data.value.otherType || data.value.otherType.trim().length === 0)
+      data.value.typeID === "___other" &&
+      data.value.otherType.trim().length === 0
     ) {
       data.issues.push({
         code: "custom",
-        message: "A Type is required",
+        message: "Type is required",
         input: data.value.otherType,
         path: ["otherType"],
       });
     }
+
+    if (
+      data.value.seriesID === "___other" &&
+      data.value.otherSeries.length === 0
+    ) {
+      data.issues.push({
+        code: "custom",
+        message: "Series is required",
+        input: data.value.otherSeries,
+        path: ["otherSeries"],
+      });
+    }
   });
+
+export type CubeFormSchema = typeof cubeFormSchema;

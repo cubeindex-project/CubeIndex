@@ -18,8 +18,6 @@
     { label: "Version Type", key: "version_type" },
     { label: "Brand", key: "brand" },
     { label: "Series", key: "series" },
-    { label: "Model", key: "model" },
-    { label: "Version Name", key: "version_name" },
     { label: "Type", key: "type" },
     { label: "Subtype", key: "sub_type" },
     { label: "Surface Finish", key: "surface_finish" },
@@ -44,7 +42,7 @@
 
   const options = $derived(
     cubes.map((c) => ({
-      label: `${c.series} ${c.model} ${c.version_name}`,
+      label: c.name,
       value: c.slug,
     })),
   );

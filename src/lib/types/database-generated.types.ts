@@ -7,11 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)";
-  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -344,7 +339,7 @@ export type Database = {
           name: string;
         };
         Insert: {
-          added_by_id: string;
+          added_by_id?: string;
           created_at?: string;
           id?: number;
           name?: string;
@@ -395,87 +390,88 @@ export type Database = {
       };
       cube_models: {
         Row: {
-          brand: string;
+          brand_id: number;
           created_at: string;
           discontinued: boolean;
           id: number;
           image_url: string;
-          model: string;
-          notes: string | null;
-          rating: number | null;
+          name: string;
           related_to: string | null;
           release_date: string | null;
-          series: string | null;
+          release_date_precision:
+            Database["public"]["Enums"]["date_precision"] | null;
+          series_id: number | null;
           size: string | null;
           slug: string;
-          status: Database["public"]["Enums"]["submission_status"];
-          sub_type: Database["public"]["Enums"]["cubes_subtypes"] | null;
+          sub_type: Database["public"]["Enums"]["cubes_subtypes"];
           submitted_by_id: string;
           surface_finish:
-            Database["public"]["Enums"]["cube_surface_finishes"] | null;
-          type: string;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
+          type_id: number;
           updated_at: string;
           verified_at: string | null;
           verified_by_id: string | null;
-          version_name: string | null;
           version_type: Database["public"]["Enums"]["cube_version_type"];
-          weight: number;
+          weight: number | null;
         };
         Insert: {
-          brand?: string;
+          brand_id: number;
           created_at?: string;
           discontinued?: boolean;
           id?: number;
           image_url: string;
-          model: string;
-          notes?: string | null;
-          rating?: number | null;
+          name: string;
           related_to?: string | null;
           release_date?: string | null;
-          series?: string | null;
+          release_date_precision?:
+            Database["public"]["Enums"]["date_precision"] | null;
+          series_id?: number | null;
           size?: string | null;
           slug: string;
-          status?: Database["public"]["Enums"]["submission_status"];
-          sub_type?: Database["public"]["Enums"]["cubes_subtypes"] | null;
-          submitted_by_id?: string;
+          sub_type: Database["public"]["Enums"]["cubes_subtypes"];
+          submitted_by_id: string;
           surface_finish?:
-            Database["public"]["Enums"]["cube_surface_finishes"] | null;
-          type: string;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
+          type_id: number;
           updated_at?: string;
           verified_at?: string | null;
           verified_by_id?: string | null;
-          version_name?: string | null;
           version_type?: Database["public"]["Enums"]["cube_version_type"];
-          weight: number;
+          weight?: number | null;
         };
         Update: {
-          brand?: string;
+          brand_id?: number;
           created_at?: string;
           discontinued?: boolean;
           id?: number;
           image_url?: string;
-          model?: string;
-          notes?: string | null;
-          rating?: number | null;
+          name?: string;
           related_to?: string | null;
           release_date?: string | null;
-          series?: string | null;
+          release_date_precision?:
+            Database["public"]["Enums"]["date_precision"] | null;
+          series_id?: number | null;
           size?: string | null;
           slug?: string;
-          status?: Database["public"]["Enums"]["submission_status"];
-          sub_type?: Database["public"]["Enums"]["cubes_subtypes"] | null;
+          sub_type?: Database["public"]["Enums"]["cubes_subtypes"];
           submitted_by_id?: string;
           surface_finish?:
-            Database["public"]["Enums"]["cube_surface_finishes"] | null;
-          type?: string;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
+          type_id?: number;
           updated_at?: string;
           verified_at?: string | null;
           verified_by_id?: string | null;
-          version_name?: string | null;
           version_type?: Database["public"]["Enums"]["cube_version_type"];
-          weight?: number;
+          weight?: number | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_models_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_models_related_to_fkey";
             columns: ["related_to"];
@@ -498,6 +494,13 @@ export type Database = {
             referencedColumns: ["slug"];
           },
           {
+            foreignKeyName: "cube_models_series_id_fkey";
+            columns: ["series_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_series";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "cube_models_submitted_by_id_fkey";
             columns: ["submitted_by_id"];
             isOneToOne: false;
@@ -510,6 +513,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "v_detailed_profiles";
             referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "cube_models_type_id_fkey";
+            columns: ["type_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_types";
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "cube_models_verified_by_id_fkey";
@@ -577,6 +587,24 @@ export type Database = {
             referencedColumns: ["user_id"];
           },
         ];
+      };
+      cube_series: {
+        Row: {
+          created_at: string;
+          id: number;
+          name: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          name: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          name?: string;
+        };
+        Relationships: [];
       };
       cube_types: {
         Row: {
@@ -980,7 +1008,7 @@ export type Database = {
           bio: string | null;
           certified: boolean;
           created_at: string;
-          display_name: string | null;
+          display_name: string;
           id: number;
           onboarded: boolean;
           private: boolean;
@@ -988,7 +1016,7 @@ export type Database = {
           role: Database["public"]["Enums"]["users_roles"];
           socials: Json | null;
           user_id: string;
-          username: string | null;
+          username: string;
           verified: boolean;
         };
         Insert: {
@@ -997,7 +1025,7 @@ export type Database = {
           bio?: string | null;
           certified?: boolean;
           created_at?: string;
-          display_name?: string | null;
+          display_name: string;
           id?: number;
           onboarded?: boolean;
           private?: boolean;
@@ -1005,7 +1033,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["users_roles"];
           socials?: Json | null;
           user_id?: string;
-          username?: string | null;
+          username: string;
           verified?: boolean;
         };
         Update: {
@@ -1014,7 +1042,7 @@ export type Database = {
           bio?: string | null;
           certified?: boolean;
           created_at?: string;
-          display_name?: string | null;
+          display_name?: string;
           id?: number;
           onboarded?: boolean;
           private?: boolean;
@@ -1022,7 +1050,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["users_roles"];
           socials?: Json | null;
           user_id?: string;
-          username?: string | null;
+          username?: string;
           verified?: boolean;
         };
         Relationships: [];
@@ -1111,7 +1139,7 @@ export type Database = {
           id?: number;
           new_data?: Json | null;
           old_data?: Json | null;
-          staff_id: string;
+          staff_id?: string;
           target_table: string;
         };
         Update: {
@@ -1741,9 +1769,7 @@ export type Database = {
           maglev: boolean | null;
           magnetic: boolean | null;
           modded: boolean | null;
-          model: string | null;
           name: string | null;
-          notes: string | null;
           popularity: number | null;
           rating: number | null;
           rating_count: number | null;
@@ -1753,17 +1779,15 @@ export type Database = {
           size: string | null;
           slug: string | null;
           smart: boolean | null;
-          status: Database["public"]["Enums"]["submission_status"] | null;
           stickered: boolean | null;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"] | null;
           submitted_by_id: string | null;
           surface_finish:
-            Database["public"]["Enums"]["cube_surface_finishes"] | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           type: string | null;
           updated_at: string | null;
           verified_at: string | null;
           verified_by_id: string | null;
-          version_name: string | null;
           version_type: Database["public"]["Enums"]["cube_version_type"] | null;
           wca_legal: boolean | null;
           weight: number | null;
@@ -2119,10 +2143,8 @@ export type Database = {
         "Special" | "Legendary" | "Mythic" | "Epic" | "Rare" | "Common";
       cube_review_status: "published" | "draft" | "hidden";
       cube_scrap_runs_status: "queued" | "done" | "running" | "failed";
-      cube_surface_finish:
-        "Matte" | "Frosted" | "UV Coated" | "Glossy" | "Sculpted";
-      cube_surface_finishes: "Frosted" | "UV Coated" | "Glossy" | "Sculpted";
-      cube_version_type: "Base" | "Trim" | "Limited";
+      cube_surface_finish: "Frosted" | "UV Coated" | "Glossy" | "Sculpted";
+      cube_version_type: "Base" | "Variant" | "Limited";
       cubes_subtypes:
         | "NxNxN"
         | "Square-N"
@@ -2159,7 +2181,10 @@ export type Database = {
         | "MXN"
         | "BRL"
         | "CAD"
-        | "CHF";
+        | "CHF"
+        | "NOK"
+        | "JPY";
+      date_precision: "day" | "month" | "year";
       rating_categories: "cube" | "accessory";
       report_types: "user" | "cube" | "cube-rating" | "website";
       staff_actions: "INSERT" | "UPDATE" | "DELETE";
@@ -2325,15 +2350,8 @@ export const Constants = {
       ],
       cube_review_status: ["published", "draft", "hidden"],
       cube_scrap_runs_status: ["queued", "done", "running", "failed"],
-      cube_surface_finish: [
-        "Matte",
-        "Frosted",
-        "UV Coated",
-        "Glossy",
-        "Sculpted",
-      ],
-      cube_surface_finishes: ["Frosted", "UV Coated", "Glossy", "Sculpted"],
-      cube_version_type: ["Base", "Trim", "Limited"],
+      cube_surface_finish: ["Frosted", "UV Coated", "Glossy", "Sculpted"],
+      cube_version_type: ["Base", "Variant", "Limited"],
       cubes_subtypes: [
         "NxNxN",
         "Square-N",
@@ -2373,7 +2391,10 @@ export const Constants = {
         "BRL",
         "CAD",
         "CHF",
+        "NOK",
+        "JPY",
       ],
+      date_precision: ["day", "month", "year"],
       rating_categories: ["cube", "accessory"],
       report_types: ["user", "cube", "cube-rating", "website"],
       staff_actions: ["INSERT", "UPDATE", "DELETE"],

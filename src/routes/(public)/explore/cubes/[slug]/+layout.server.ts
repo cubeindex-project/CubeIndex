@@ -32,32 +32,29 @@ export const load = (async ({
   }
 
   const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
-    cube.series
+    cube.series_id
       ? supabase
           .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
-          .eq("series", cube.series)
+          .select("slug, name, image_url")
+          .eq("series_id", cube.series_id)
           .eq("version_type", "Base")
-          .neq("model", cube.model ?? "")
-          .eq("status", "Approved")
-          .order("model", { ascending: true })
+          .neq("id", cube.id)
+          .order("name", { ascending: true })
           .limit(12)
       : Promise.resolve({ data: null, error: null }),
     cube.related_to
       ? supabase
           .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
+          .select("slug, name, image_url")
           .eq("slug", cube.related_to)
-          .eq("status", "Approved")
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
     cube.slug
       ? supabase
           .from("cube_models")
-          .select("slug, series, model, version_name, image_url")
+          .select("slug, name, image_url")
           .eq("related_to", cube.slug)
-          .eq("status", "Approved")
-          .order("model", { ascending: true })
+          .order("name", { ascending: true })
           .limit(24)
       : Promise.resolve({ data: null, error: null }),
   ]);
@@ -81,8 +78,6 @@ export const load = (async ({
     alreadyAdded = user_cube !== null;
     userCubeDetail = user_cube;
   }
-
-  const isCubeSubmitter = user?.id === cube.submitted_by_id;
 
   const { data: cube_vendor_links, error: cvrErr } = await supabase
     .from("cube_vendor_links")
@@ -119,7 +114,6 @@ export const load = (async ({
   return {
     cube,
     alreadyAdded,
-    isCubeSubmitter,
     userCubeDetail,
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,

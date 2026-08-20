@@ -51,8 +51,7 @@
   );
 
   function getCubeName(userCube: (typeof user_cubes)[number]): string {
-    const cube = userCube.cube_model;
-    return `${cube?.series ?? ""} ${cube?.model ?? ""} ${cube?.version_name ?? ""}`.trim();
+    return userCube.cube_model.name;
   }
 </script>
 
@@ -71,7 +70,7 @@
     status: parseAsString.withDefault("All"),
   }}
   fuseOptions={{
-    keys: ["cube_model.series", "cube_model.model", "cube_model.version_name"],
+    keys: ["cube_model.name"],
     threshold: 0.4,
     includeScore: true,
     ignoreLocation: true,

@@ -81,10 +81,9 @@
 
   const tools = [
     {
-      href: resolve("/(admin)/staff/cubes"),
       icon: "🧊",
       label: "Manage Cubes",
-      implemented: true,
+      implemented: false,
     },
     {
       icon: "👤",

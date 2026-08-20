@@ -218,7 +218,9 @@ CREATE TYPE "public"."currencies" AS ENUM (
     'MXN',
     'BRL',
     'CAD',
-    'CHF'
+    'CHF',
+    'NOK',
+    'JPY'
 );
 
 
@@ -557,6 +559,26 @@ $$;
 
 
 ALTER FUNCTION "public"."get_types"("enum_type" "text") OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    SET "search_path" TO ''
+    AS $$
+begin
+  insert into public.profiles (user_id, display_name, username, profile_picture)
+  values (new.id, 'Username', concat('user_', replace(new.id::text, '-', '')), COALESCE(
+      NEW.raw_user_meta_data->>'avatar_url',
+      NEW.raw_user_meta_data->>'picture',
+      NEW.raw_user_meta_data->>'avatar',
+      ''
+    ));
+  return new;
+end;
+$$;
+
+
+ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."helpful_rating_table_rules"() RETURNS "trigger"
@@ -1011,9 +1033,11 @@ ALTER FUNCTION "public"."set_updated_at_now"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."staff_logs_table_rules"() RETURNS "trigger"
     LANGUAGE "plpgsql"
-    AS $$begin 
+    AS $$begin if tg_op = 'UPDATE' then IF (to_jsonb(OLD) - 'staff_id') is distinct from (to_jsonb(NEW) - 'staff_id') then RAISE EXCEPTION 'Update on staff log fields other than staff_id is restricted';
 
-raise exception 'Update and delete on staff logs is restricted';
+end IF;
+
+end if;
 
 return new;
 
@@ -1481,7 +1505,7 @@ CREATE TABLE IF NOT EXISTS "public"."brands" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "name" "text" DEFAULT ''::"text" NOT NULL,
-    "added_by_id" "uuid" NOT NULL
+    "added_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL
 );
 
 
@@ -1545,7 +1569,7 @@ CREATE TABLE IF NOT EXISTS "public"."cube_models" (
     "verified_at" timestamp with time zone,
     "size" "text",
     "submitted_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL,
-    "verified_by_id" "uuid",
+    "verified_by_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid",
     CONSTRAINT "cube_models_size_new_check" CHECK (("size" ~ '^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$'::"text"))
 );
 
@@ -1772,7 +1796,7 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "id" bigint NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "username" "text",
+    "username" "text" NOT NULL,
     "private" boolean DEFAULT false NOT NULL,
     "profile_picture" "text" DEFAULT ''::"text",
     "bio" "text",
@@ -1781,9 +1805,10 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
     "verified" boolean DEFAULT false NOT NULL,
     "certified" boolean DEFAULT false NOT NULL,
     "role" "public"."users_roles" DEFAULT 'User'::"public"."users_roles" NOT NULL,
-    "display_name" "text",
+    "display_name" "text" NOT NULL,
     "onboarded" boolean DEFAULT false NOT NULL,
     "beta_flags" "jsonb" DEFAULT '{}'::"jsonb" NOT NULL,
+    CONSTRAINT "profiles_display_name_check" CHECK (("length"("display_name") > 3)),
     CONSTRAINT "profiles_username_check" CHECK (("username" ~ '^[a-z0-9._]{3,}$'::"text")),
     CONSTRAINT "profiles_username_required_when_onboarded" CHECK ((("onboarded" = false) OR ("username" IS NOT NULL) OR ("display_name" IS NOT NULL)))
 );
@@ -1838,7 +1863,7 @@ CREATE TABLE IF NOT EXISTS "public"."staff_logs" (
     "old_data" "jsonb",
     "new_data" "jsonb",
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "staff_id" "uuid" NOT NULL
+    "staff_id" "uuid" DEFAULT '898d0e3a-3465-4c25-9b9f-b498b9884d1d'::"uuid" NOT NULL
 );
 
 
@@ -2970,7 +2995,7 @@ CREATE OR REPLACE TRIGGER "trg_save_cube_vendor_links_snapshots" AFTER INSERT OR
 
 
 
-CREATE OR REPLACE TRIGGER "trg_staff_logs_table_rules" BEFORE DELETE OR UPDATE ON "public"."staff_logs" FOR EACH ROW EXECUTE FUNCTION "public"."staff_logs_table_rules"();
+CREATE OR REPLACE TRIGGER "trg_staff_logs_table_rules" BEFORE INSERT OR DELETE OR UPDATE ON "public"."staff_logs" FOR EACH ROW EXECUTE FUNCTION "public"."staff_logs_table_rules"();
 
 
 
@@ -3048,7 +3073,7 @@ ALTER TABLE ONLY "public"."awards_user_vote"
 
 
 ALTER TABLE ONLY "public"."brands"
-    ADD CONSTRAINT "brands_added_by_id_fkey" FOREIGN KEY ("added_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT NOT VALID;
+    ADD CONSTRAINT "brands_added_by_id_fkey" FOREIGN KEY ("added_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
@@ -3063,7 +3088,7 @@ ALTER TABLE ONLY "public"."cube_models"
 
 
 ALTER TABLE ONLY "public"."cube_models"
-    ADD CONSTRAINT "cube_models_verified_by_id_fkey" FOREIGN KEY ("verified_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT "cube_models_verified_by_id_fkey" FOREIGN KEY ("verified_by_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
@@ -3143,7 +3168,7 @@ ALTER TABLE ONLY "public"."reports"
 
 
 ALTER TABLE ONLY "public"."staff_logs"
-    ADD CONSTRAINT "staff_logs_staff_id_fkey" FOREIGN KEY ("staff_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT "staff_logs_staff_id_fkey" FOREIGN KEY ("staff_id") REFERENCES "public"."profiles"("user_id") ON UPDATE CASCADE ON DELETE SET DEFAULT;
 
 
 
@@ -3938,6 +3963,12 @@ GRANT ALL ON FUNCTION "public"."get_types"("enum_type" "text") TO "service_role"
 
 
 
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
+
+
+
 GRANT ALL ON FUNCTION "public"."helpful_rating_table_rules"() TO "anon";
 GRANT ALL ON FUNCTION "public"."helpful_rating_table_rules"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."helpful_rating_table_rules"() TO "service_role";
@@ -4553,1163 +4584,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 drop extension if exists "pgjwt";
 
-drop trigger if exists "log_achievements" on "public"."achievements";
-
-drop trigger if exists "trig_awards_user_vote_achi_check" on "public"."awards_user_vote";
-
-drop trigger if exists "log_brands_insert" on "public"."brands";
-
-drop trigger if exists "log_cube_models" on "public"."cube_models";
-
-drop trigger if exists "notify_discord_new_cube" on "public"."cube_models";
-
-drop trigger if exists "trg_cube_models_table_rules" on "public"."cube_models";
-
-drop trigger if exists "log_cube_types_insert" on "public"."cube_types";
-
-drop trigger if exists "trg_cube_links_table_rules" on "public"."cube_vendor_links";
-
-drop trigger if exists "trg_save_cube_vendor_links_snapshots" on "public"."cube_vendor_links";
-
-drop trigger if exists "trg_cube_links_snapshot_table_rules" on "public"."cube_vendor_links_snapshot";
-
-drop trigger if exists "trg_price_alert_discord" on "public"."cube_vendor_links_snapshot";
-
-drop trigger if exists "trg_helpful_rating_table_rule" on "public"."helpful_rating";
-
-drop trigger if exists "notify_discord_new_user" on "public"."profiles";
-
-drop trigger if exists "trg_early_collector_achievement_insert" on "public"."profiles";
-
-drop trigger if exists "notify_discord_new_user_report" on "public"."reports";
-
-drop trigger if exists "trg_reports_table_rules" on "public"."reports";
-
-drop trigger if exists "trg_staff_logs_table_rules" on "public"."staff_logs";
-
-drop trigger if exists "trg_user_achievements_table_rules" on "public"."user_achievements";
-
-drop trigger if exists "trg_update_rating" on "public"."user_cube_ratings";
-
-drop trigger if exists "trg_user_cube_ratings_achi_check" on "public"."user_cube_ratings";
-
-drop trigger if exists "trg_user_cubes_achi_check" on "public"."user_cubes";
-
-drop trigger if exists "trg_user_cubes_table_rules" on "public"."user_cubes";
-
-drop trigger if exists "trg_create_following_notif" on "public"."user_follows";
-
-drop trigger if exists "trg_user_follows_table_rules" on "public"."user_follows";
-
-drop trigger if exists "log_vendors" on "public"."vendors";
-
-drop policy "Enable insert for authenticated users if the event is active" on "public"."awards_user_vote";
-
-drop policy "Enable insert for Database Managers and Admins" on "public"."brands";
-
-drop policy "Enable delete for Admins and Community Managers" on "public"."cube_models";
-
-drop policy "Only Database Manager's and Admin's can insert" on "public"."cube_models";
-
-drop policy "Only Database Manager's and Admin's can update" on "public"."cube_models";
-
-drop policy "Database Managers can read all" on "public"."cube_scrap_runs";
-
-drop policy "Enable insert for Admins and Database Managers only" on "public"."cube_types";
-
-drop policy "Only Admins and Database Managers can insert" on "public"."cube_vendor_links";
-
-drop policy "Only Admins and Database Managers can update" on "public"."cube_vendor_links";
-
-drop policy "Enable delete for Database Managers and Admins" on "public"."cubes_model_features";
-
-drop policy "Enable insert for Database Managers and Admins" on "public"."cubes_model_features";
-
-drop policy "Only Community Managers and Admins can insert" on "public"."notifications";
-
-drop policy "Only Community Managers and Admins can update" on "public"."notifications";
-
-drop policy "Only Staff can read" on "public"."reports";
-
-drop policy "Only staff can update" on "public"."reports";
-
-drop policy "Users can delete their own ratings" on "public"."user_cube_ratings";
-
-drop policy "Enable update for users own reviews ratings" on "public"."user_cube_reviews_ratings";
-
-drop policy "Only Admins and Database Managers can insert" on "public"."vendors";
-
-drop policy "Only Database Managers and Admins can update" on "public"."vendors";
-
-alter table "public"."achievements" drop constraint "achievements_submitted_by_id_fkey";
-
-alter table "public"."awards_category" drop constraint "awards_category_event_id_fkey";
-
-alter table "public"."awards_nominee" drop constraint "awards_nominee_category_id_fkey";
-
-alter table "public"."awards_nominee" drop constraint "awards_nominee_cube_id_fkey";
-
-alter table "public"."awards_user_vote" drop constraint "awards_user_vote_category_id_fkey";
-
-alter table "public"."awards_user_vote" drop constraint "awards_user_vote_nominee_category_fkey";
-
-alter table "public"."awards_user_vote" drop constraint "awards_user_vote_nominee_id_fkey";
-
-alter table "public"."awards_user_vote" drop constraint "awards_user_vote_user_id_fkey";
-
-alter table "public"."brands" drop constraint "brands_added_by_id_fkey";
-
-alter table "public"."cube_models" drop constraint "cube_models_related_to_fkey";
-
-alter table "public"."cube_models" drop constraint "cube_models_submitted_by_id_fkey";
-
-alter table "public"."cube_models" drop constraint "cube_models_verified_by_id_fkey";
-
-alter table "public"."cube_scrap_runs" drop constraint "cube_scrap_runs_user_id_fkey";
-
-alter table "public"."cube_types" drop constraint "cube_types_added_by_id_fkey";
-
-alter table "public"."cube_vendor_links" drop constraint "cube_vendor_links_duplicate_cube_slug_fkey";
-
-alter table "public"."cube_vendor_links" drop constraint "cube_vendor_links_duplicate_vendor_name_fkey";
-
-alter table "public"."cube_vendor_links_snapshot" drop constraint "cube_vendor_links_snapshot_cube_slug_fkey";
-
-alter table "public"."cube_vendor_links_snapshot" drop constraint "cube_vendor_links_snapshot_vendor_name_fkey";
-
-alter table "public"."cubes_model_features" drop constraint "cubes_model_features_cube_fkey";
-
-alter table "public"."cubes_model_features" drop constraint "cubes_model_features_feature_fkey";
-
-alter table "public"."helpful_rating" drop constraint "helpful_rating_user_id_fkey";
-
-alter table "public"."helpful_review" drop constraint "helpful_review_review_id_fkey";
-
-alter table "public"."helpful_review" drop constraint "helpful_review_user_id_fkey";
-
-alter table "public"."notifications" drop constraint "announcement_published_by_id_fkey";
-
-alter table "public"."notifications" drop constraint "notifications_user_id_fkey";
-
-alter table "public"."reports" drop constraint "reports_reporter_fkey";
-
-alter table "public"."reports" drop constraint "reports_resolved_by_fkey";
-
-alter table "public"."staff_logs" drop constraint "staff_logs_staff_id_fkey";
-
-alter table "public"."user_achievements" drop constraint "user_achievements_achievement_slug_fkey";
-
-alter table "public"."user_achievements" drop constraint "user_achievements_awarded_by_id_fkey";
-
-alter table "public"."user_achievements" drop constraint "user_achievements_user_id_fkey";
-
-alter table "public"."user_cube_ratings" drop constraint "user_ratings_cube_slug_fkey";
-
-alter table "public"."user_cube_ratings" drop constraint "user_ratings_user_id_fkey";
-
-alter table "public"."user_cube_reviews" drop constraint "user_cube_reviews_cube_fkey";
-
-alter table "public"."user_cube_reviews" drop constraint "user_cube_reviews_user_id_fkey";
-
-alter table "public"."user_cube_reviews_ratings" drop constraint "user_cube_reviews_ratings_category_id_fkey";
-
-alter table "public"."user_cube_reviews_ratings" drop constraint "user_cube_reviews_ratings_review_id_fkey";
-
-alter table "public"."user_cubes" drop constraint "no_quantity_for_wishlist";
-
-alter table "public"."user_cubes" drop constraint "user_cubes_bought_from_fkey";
-
-alter table "public"."user_cubes" drop constraint "user_cubes_cube_fkey";
-
-alter table "public"."user_cubes" drop constraint "user_cubes_user_id_fkey";
-
-alter table "public"."user_follows" drop constraint "user_follows_follower_id_fkey";
-
-alter table "public"."user_follows" drop constraint "user_follows_following_id_fkey";
-
-alter table "public"."user_notification_status" drop constraint "user_notification_status_notification_id_fkey";
-
-alter table "public"."user_notification_status" drop constraint "user_notification_status_user_id_fkey";
-
-alter table "public"."user_onboarding" drop constraint "user_onboarding_user_id_fkey";
-
-drop view if exists "public"."v_achievement_rarity";
-
-drop view if exists "public"."v_awards_category_winners";
-
-drop view if exists "public"."v_detailed_cube_models";
-
-drop view if exists "public"."v_detailed_profiles";
-
-drop view if exists "public"."v_detailed_user_cube_reviews";
-
-drop view if exists "public"."v_detailed_vendors";
-
-drop view if exists "public"."v_user_stats";
-
-alter table "public"."accessories" alter column "category" set data type public.accessories_categories using "category"::text::public.accessories_categories;
-
-alter table "public"."achievements" alter column "category" set data type public.achievements_categories using "category"::text::public.achievements_categories;
-
-alter table "public"."achievements" alter column "rarity" set default 'Common'::public."badge-rarity";
-
-alter table "public"."achievements" alter column "rarity" set data type public."badge-rarity" using "rarity"::text::public."badge-rarity";
-
-alter table "public"."cube_models" alter column "status" set default 'Pending'::public.submission_status;
-
-alter table "public"."cube_models" alter column "status" set data type public.submission_status using "status"::text::public.submission_status;
-
-alter table "public"."cube_models" alter column "sub_type" set data type public.cubes_subtypes using "sub_type"::text::public.cubes_subtypes;
-
-alter table "public"."cube_models" alter column "surface_finish" set data type public.cube_surface_finishes using "surface_finish"::text::public.cube_surface_finishes;
-
-alter table "public"."cube_models" alter column "version_type" set default 'Base'::public.cube_version_type;
-
-alter table "public"."cube_models" alter column "version_type" set data type public.cube_version_type using "version_type"::text::public.cube_version_type;
-
-alter table "public"."cube_scrap_runs" alter column "status" set default 'queued'::public.cube_scrap_runs_status;
-
-alter table "public"."cube_scrap_runs" alter column "status" set data type public.cube_scrap_runs_status using "status"::text::public.cube_scrap_runs_status;
-
-alter table "public"."helpful_rating" alter column "rating_category" set data type public.rating_categories using "rating_category"::text::public.rating_categories;
-
-alter table "public"."profiles" alter column "role" set default 'User'::public.users_roles;
-
-alter table "public"."profiles" alter column "role" set data type public.users_roles using "role"::text::public.users_roles;
-
-alter table "public"."reports" alter column "report_type" set data type public.report_types using "report_type"::text::public.report_types;
-
-alter table "public"."staff_logs" alter column "action" set data type public.staff_actions using "action"::text::public.staff_actions;
-
-alter table "public"."user_cube_reviews" alter column "status" set default 'draft'::public.cube_review_status;
-
-alter table "public"."user_cube_reviews" alter column "status" set data type public.cube_review_status using "status"::text::public.cube_review_status;
-
-alter table "public"."user_cubes" alter column "condition" set data type public.user_cube_condition using "condition"::text::public.user_cube_condition;
-
-alter table "public"."user_cubes" alter column "status" set data type public.user_cube_status using "status"::text::public.user_cube_status;
-
-alter table "public"."vendors" alter column "currency" set default 'USD'::public.currencies;
-
-alter table "public"."vendors" alter column "currency" set data type public.currencies using "currency"::text::public.currencies;
-
-alter table "public"."achievements" add constraint "achievements_submitted_by_id_fkey" FOREIGN KEY (submitted_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."achievements" validate constraint "achievements_submitted_by_id_fkey";
-
-alter table "public"."awards_category" add constraint "awards_category_event_id_fkey" FOREIGN KEY (event_id) REFERENCES public.awards_event(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_category" validate constraint "awards_category_event_id_fkey";
-
-alter table "public"."awards_nominee" add constraint "awards_nominee_category_id_fkey" FOREIGN KEY (category_id) REFERENCES public.awards_category(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_nominee" validate constraint "awards_nominee_category_id_fkey";
-
-alter table "public"."awards_nominee" add constraint "awards_nominee_cube_id_fkey" FOREIGN KEY (cube_id) REFERENCES public.cube_models(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_nominee" validate constraint "awards_nominee_cube_id_fkey";
-
-alter table "public"."awards_user_vote" add constraint "awards_user_vote_category_id_fkey" FOREIGN KEY (category_id) REFERENCES public.awards_category(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_user_vote" validate constraint "awards_user_vote_category_id_fkey";
-
-alter table "public"."awards_user_vote" add constraint "awards_user_vote_nominee_category_fkey" FOREIGN KEY (nominee_id, category_id) REFERENCES public.awards_nominee(id, category_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_user_vote" validate constraint "awards_user_vote_nominee_category_fkey";
-
-alter table "public"."awards_user_vote" add constraint "awards_user_vote_nominee_id_fkey" FOREIGN KEY (nominee_id) REFERENCES public.awards_nominee(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_user_vote" validate constraint "awards_user_vote_nominee_id_fkey";
-
-alter table "public"."awards_user_vote" add constraint "awards_user_vote_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."awards_user_vote" validate constraint "awards_user_vote_user_id_fkey";
-
-alter table "public"."brands" add constraint "brands_added_by_id_fkey" FOREIGN KEY (added_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE RESTRICT NOT VALID not valid;
-
-alter table "public"."brands" validate constraint "brands_added_by_id_fkey";
-
-alter table "public"."cube_models" add constraint "cube_models_related_to_fkey" FOREIGN KEY (related_to) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE SET NULL not valid;
-
-alter table "public"."cube_models" validate constraint "cube_models_related_to_fkey";
-
-alter table "public"."cube_models" add constraint "cube_models_submitted_by_id_fkey" FOREIGN KEY (submitted_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."cube_models" validate constraint "cube_models_submitted_by_id_fkey";
-
-alter table "public"."cube_models" add constraint "cube_models_verified_by_id_fkey" FOREIGN KEY (verified_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
-
-alter table "public"."cube_models" validate constraint "cube_models_verified_by_id_fkey";
-
-alter table "public"."cube_scrap_runs" add constraint "cube_scrap_runs_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cube_scrap_runs" validate constraint "cube_scrap_runs_user_id_fkey";
-
-alter table "public"."cube_types" add constraint "cube_types_added_by_id_fkey" FOREIGN KEY (added_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."cube_types" validate constraint "cube_types_added_by_id_fkey";
-
-alter table "public"."cube_vendor_links" add constraint "cube_vendor_links_duplicate_cube_slug_fkey" FOREIGN KEY (cube_slug) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cube_vendor_links" validate constraint "cube_vendor_links_duplicate_cube_slug_fkey";
-
-alter table "public"."cube_vendor_links" add constraint "cube_vendor_links_duplicate_vendor_name_fkey" FOREIGN KEY (vendor_name) REFERENCES public.vendors(name) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cube_vendor_links" validate constraint "cube_vendor_links_duplicate_vendor_name_fkey";
-
-alter table "public"."cube_vendor_links_snapshot" add constraint "cube_vendor_links_snapshot_cube_slug_fkey" FOREIGN KEY (cube_slug) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cube_vendor_links_snapshot" validate constraint "cube_vendor_links_snapshot_cube_slug_fkey";
-
-alter table "public"."cube_vendor_links_snapshot" add constraint "cube_vendor_links_snapshot_vendor_name_fkey" FOREIGN KEY (vendor_name) REFERENCES public.vendors(name) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cube_vendor_links_snapshot" validate constraint "cube_vendor_links_snapshot_vendor_name_fkey";
-
-alter table "public"."cubes_model_features" add constraint "cubes_model_features_cube_fkey" FOREIGN KEY (cube) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cubes_model_features" validate constraint "cubes_model_features_cube_fkey";
-
-alter table "public"."cubes_model_features" add constraint "cubes_model_features_feature_fkey" FOREIGN KEY (feature) REFERENCES public.cube_features(code) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."cubes_model_features" validate constraint "cubes_model_features_feature_fkey";
-
-alter table "public"."helpful_rating" add constraint "helpful_rating_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."helpful_rating" validate constraint "helpful_rating_user_id_fkey";
-
-alter table "public"."helpful_review" add constraint "helpful_review_review_id_fkey" FOREIGN KEY (review_id) REFERENCES public.user_cube_reviews(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."helpful_review" validate constraint "helpful_review_review_id_fkey";
-
-alter table "public"."helpful_review" add constraint "helpful_review_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."helpful_review" validate constraint "helpful_review_user_id_fkey";
-
-alter table "public"."notifications" add constraint "announcement_published_by_id_fkey" FOREIGN KEY (published_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
-
-alter table "public"."notifications" validate constraint "announcement_published_by_id_fkey";
-
-alter table "public"."notifications" add constraint "notifications_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."notifications" validate constraint "notifications_user_id_fkey";
-
-alter table "public"."reports" add constraint "reports_reporter_fkey" FOREIGN KEY (reporter) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."reports" validate constraint "reports_reporter_fkey";
-
-alter table "public"."reports" add constraint "reports_resolved_by_fkey" FOREIGN KEY (resolved_by) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."reports" validate constraint "reports_resolved_by_fkey";
-
-alter table "public"."staff_logs" add constraint "staff_logs_staff_id_fkey" FOREIGN KEY (staff_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE RESTRICT not valid;
-
-alter table "public"."staff_logs" validate constraint "staff_logs_staff_id_fkey";
-
-alter table "public"."user_achievements" add constraint "user_achievements_achievement_slug_fkey" FOREIGN KEY (achievement_slug) REFERENCES public.achievements(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_achievements" validate constraint "user_achievements_achievement_slug_fkey";
-
-alter table "public"."user_achievements" add constraint "user_achievements_awarded_by_id_fkey" FOREIGN KEY (awarded_by_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."user_achievements" validate constraint "user_achievements_awarded_by_id_fkey";
-
-alter table "public"."user_achievements" add constraint "user_achievements_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_achievements" validate constraint "user_achievements_user_id_fkey";
-
-alter table "public"."user_cube_ratings" add constraint "user_ratings_cube_slug_fkey" FOREIGN KEY (cube_slug) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_ratings" validate constraint "user_ratings_cube_slug_fkey";
-
-alter table "public"."user_cube_ratings" add constraint "user_ratings_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_ratings" validate constraint "user_ratings_user_id_fkey";
-
-alter table "public"."user_cube_reviews" add constraint "user_cube_reviews_cube_fkey" FOREIGN KEY (cube) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_reviews" validate constraint "user_cube_reviews_cube_fkey";
-
-alter table "public"."user_cube_reviews" add constraint "user_cube_reviews_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_reviews" validate constraint "user_cube_reviews_user_id_fkey";
-
-alter table "public"."user_cube_reviews_ratings" add constraint "user_cube_reviews_ratings_category_id_fkey" FOREIGN KEY (category_id) REFERENCES public.user_cube_reviews_categories(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_reviews_ratings" validate constraint "user_cube_reviews_ratings_category_id_fkey";
-
-alter table "public"."user_cube_reviews_ratings" add constraint "user_cube_reviews_ratings_review_id_fkey" FOREIGN KEY (review_id) REFERENCES public.user_cube_reviews(id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cube_reviews_ratings" validate constraint "user_cube_reviews_ratings_review_id_fkey";
-
-alter table "public"."user_cubes" add constraint "no_quantity_for_wishlist" CHECK (((status <> 'Wishlist'::public.user_cube_status) OR (quantity = 1))) not valid;
-
-alter table "public"."user_cubes" validate constraint "no_quantity_for_wishlist";
-
-alter table "public"."user_cubes" add constraint "user_cubes_bought_from_fkey" FOREIGN KEY (bought_from) REFERENCES public.vendors(slug) ON UPDATE CASCADE ON DELETE SET NULL not valid;
-
-alter table "public"."user_cubes" validate constraint "user_cubes_bought_from_fkey";
-
-alter table "public"."user_cubes" add constraint "user_cubes_cube_fkey" FOREIGN KEY (cube) REFERENCES public.cube_models(slug) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cubes" validate constraint "user_cubes_cube_fkey";
-
-alter table "public"."user_cubes" add constraint "user_cubes_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_cubes" validate constraint "user_cubes_user_id_fkey";
-
-alter table "public"."user_follows" add constraint "user_follows_follower_id_fkey" FOREIGN KEY (follower_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_follows" validate constraint "user_follows_follower_id_fkey";
-
-alter table "public"."user_follows" add constraint "user_follows_following_id_fkey" FOREIGN KEY (following_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE CASCADE not valid;
-
-alter table "public"."user_follows" validate constraint "user_follows_following_id_fkey";
-
-alter table "public"."user_notification_status" add constraint "user_notification_status_notification_id_fkey" FOREIGN KEY (notification_id) REFERENCES public.notifications(id) ON DELETE CASCADE not valid;
-
-alter table "public"."user_notification_status" validate constraint "user_notification_status_notification_id_fkey";
-
-alter table "public"."user_notification_status" add constraint "user_notification_status_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON DELETE CASCADE not valid;
-
-alter table "public"."user_notification_status" validate constraint "user_notification_status_user_id_fkey";
-
-alter table "public"."user_onboarding" add constraint "user_onboarding_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.profiles(user_id) ON UPDATE CASCADE ON DELETE SET DEFAULT not valid;
-
-alter table "public"."user_onboarding" validate constraint "user_onboarding_user_id_fkey";
-
-create or replace view "public"."v_achievement_rarity" as  WITH eligible AS (
-         SELECT (count(*))::numeric AS n
-           FROM public.profiles
-          WHERE (COALESCE(profiles.onboarded, false) = true)
-        ), counts AS (
-         SELECT a.id,
-            a.name,
-            a.icon,
-            a.description,
-            a.created_at,
-            a.updated_at,
-            a.unlockable,
-            a.slug,
-            a.unlock_method,
-            a.rarity,
-            a.category,
-            a.title,
-            a.evolutive,
-            a.evolves_from,
-            a.submitted_by_id,
-            a.is_special,
-            a.hidden,
-            (COALESCE(count(ua.user_id), (0)::bigint))::integer AS holders_count
-           FROM (public.achievements a
-             LEFT JOIN public.user_achievements ua ON ((ua.achievement_slug = a.slug)))
-          GROUP BY a.id, a.slug, a.name, a.icon, a.description, a.category, a.title, a.unlock_method, a.unlockable, a.hidden, a.is_special, a.created_at
-        ), scored AS (
-         SELECT c.id,
-            c.slug,
-            c.name,
-            c.icon,
-            c.description,
-            c.category,
-            c.title,
-            c.unlock_method,
-            c.unlockable,
-            c.hidden,
-            c.is_special,
-            c.holders_count,
-            c.created_at,
-                CASE
-                    WHEN (e.n = (0)::numeric) THEN (0)::numeric
-                    ELSE round((((100)::numeric * (c.holders_count)::numeric) / e.n), 2)
-                END AS rarity_percent
-           FROM (counts c
-             CROSS JOIN eligible e)
-        )
- SELECT scored.id,
-    scored.slug,
-    scored.name,
-    scored.icon,
-    scored.description,
-    scored.category,
-    scored.title,
-    scored.unlock_method,
-    scored.unlockable,
-    scored.hidden,
-    scored.holders_count,
-    scored.rarity_percent,
-    scored.created_at,
-        CASE
-            WHEN scored.is_special THEN 'Special'::text
-            WHEN (scored.holders_count = 0) THEN 'Legendary'::text
-            WHEN ((((100)::numeric * (scored.holders_count)::numeric) / NULLIF(( SELECT eligible.n
-               FROM eligible), (0)::numeric)) < (1)::numeric) THEN 'Legendary'::text
-            WHEN ((((100)::numeric * (scored.holders_count)::numeric) / NULLIF(( SELECT eligible.n
-               FROM eligible), (0)::numeric)) < (5)::numeric) THEN 'Epic'::text
-            WHEN ((((100)::numeric * (scored.holders_count)::numeric) / NULLIF(( SELECT eligible.n
-               FROM eligible), (0)::numeric)) < (20)::numeric) THEN 'Rare'::text
-            WHEN ((((100)::numeric * (scored.holders_count)::numeric) / NULLIF(( SELECT eligible.n
-               FROM eligible), (0)::numeric)) < (50)::numeric) THEN 'Uncommon'::text
-            ELSE 'Common'::text
-        END AS rarity
-   FROM scored;
-
-
-create or replace view "public"."v_awards_category_winners" as  WITH votes AS (
-         SELECT an.category_id,
-            cm.slug AS nominee_slug,
-            count(DISTINCT auv.user_id) AS vote_count
-           FROM ((public.awards_nominee an
-             JOIN public.cube_models cm ON ((cm.id = an.cube_id)))
-             LEFT JOIN public.awards_user_vote auv ON ((auv.nominee_id = an.id)))
-          GROUP BY an.category_id, cm.slug
-        ), ranked AS (
-         SELECT v.category_id,
-            v.nominee_slug,
-            v.vote_count,
-            dense_rank() OVER (PARTITION BY v.category_id ORDER BY v.vote_count DESC) AS rnk
-           FROM votes v
-        )
- SELECT r.category_id,
-    r.nominee_slug,
-    r.vote_count,
-    ( SELECT count(*) AS count
-           FROM public.awards_nominee an
-          WHERE (an.category_id = r.category_id)) AS nominee_count
-   FROM ranked r
-  WHERE (r.rnk = 1);
-
-
-create or replace view "public"."v_detailed_cube_models" as  SELECT cm.brand,
-    cm.image_url,
-    v.name AS image_source,
-    cm.model,
-    cm.slug,
-    cm.created_at,
-    cm.updated_at,
-    cm.type,
-    cm.discontinued,
-    cm.release_date,
-    cm.series,
-    cm.id,
-    cm.sub_type,
-    cm.weight,
-    cm.related_to,
-    cm.version_type,
-    cm.version_name,
-    cm.status,
-    cm.notes,
-    cm.surface_finish,
-    cm.verified_at,
-    cm.size,
-    cm.submitted_by_id,
-    cm.verified_by_id,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'ball_core'::text)))) AS ball_core,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'maglev'::text)))) AS maglev,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'magnetic'::text)))) AS magnetic,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'modded'::text)))) AS modded,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'smart'::text)))) AS smart,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'stickered'::text)))) AS stickered,
-    (EXISTS ( SELECT 1
-           FROM public.cubes_model_features f
-          WHERE ((f.cube = cm.slug) AND (f.feature = 'wca_legal'::text)))) AS wca_legal,
-    TRIM(BOTH FROM ((((COALESCE(cm.series, ''::text) || ' '::text) || COALESCE(cm.model, ''::text)) || ' '::text) || COALESCE(cm.version_name, ''::text))) AS name,
-    (EXTRACT(year FROM cm.release_date))::integer AS year,
-    ( SELECT count(*) AS count
-           FROM public.user_cubes uc
-          WHERE (uc.cube = cm.slug)) AS popularity,
-    ( SELECT avg(cvl.price) AS avg
-           FROM public.cube_vendor_links cvl
-          WHERE ((cvl.cube_slug = cm.slug) AND (( SELECT v_1.currency
-                   FROM public.vendors v_1
-                  WHERE (cvl.vendor_name = v_1.name)) = 'USD'::public.currencies))) AS avg_price,
-    ( SELECT min(cvl.price) AS min
-           FROM public.cube_vendor_links cvl
-          WHERE ((cvl.cube_slug = cm.slug) AND (( SELECT v_1.currency
-                   FROM public.vendors v_1
-                  WHERE (cvl.vendor_name = v_1.name)) = 'USD'::public.currencies))) AS low_price,
-    ( SELECT avg(ucr.rating) AS avg
-           FROM public.user_cube_ratings ucr
-          WHERE (ucr.cube_slug = cm.slug)) AS rating,
-    ( SELECT count(ucr.rating) AS count
-           FROM public.user_cube_ratings ucr
-          WHERE (ucr.cube_slug = cm.slug)) AS rating_count
-   FROM (public.cube_models cm
-     LEFT JOIN public.vendors v ON ((lower(regexp_replace(split_part(regexp_replace(cm.image_url, '^https?://'::text, ''::text), '/'::text, 1), '^www\.'::text, ''::text)) = lower(regexp_replace(split_part(regexp_replace(v.base_url, '^https?://'::text, ''::text), '/'::text, 1), '^www\.'::text, ''::text)))));
-
-
-create or replace view "public"."v_detailed_profiles" as  SELECT p.id,
-    p.created_at,
-    p.user_id,
-    p.username,
-    p.private,
-    p.profile_picture,
-    p.bio,
-    p.socials,
-    p.banner,
-    p.verified,
-    p.certified,
-    p.role,
-    p.display_name,
-    p.onboarded,
-    COALESCE(uc.cube_count, (0)::bigint) AS user_cubes_count,
-    COALESCE(ua.achievement_count, (0)::bigint) AS user_achievements_count,
-    COALESCE(fwing.following_count, (0)::bigint) AS user_following_count,
-    COALESCE(fwer.follower_count, (0)::bigint) AS user_follower_count,
-    COALESCE(ur.ratings_count, (0)::bigint) AS user_cube_ratings_count,
-    COALESCE(ur.rating_avg, (0)::double precision) AS user_avg_rating_count,
-    COALESCE((ucr.reviews_count)::double precision, (0)::double precision) AS cube_reviews_count
-   FROM ((((((public.profiles p
-     LEFT JOIN ( SELECT user_cubes.user_id,
-            count(*) AS cube_count
-           FROM public.user_cubes
-          GROUP BY user_cubes.user_id) uc ON ((uc.user_id = p.user_id)))
-     LEFT JOIN ( SELECT user_achievements.user_id,
-            count(*) AS achievement_count
-           FROM public.user_achievements
-          GROUP BY user_achievements.user_id) ua ON ((ua.user_id = p.user_id)))
-     LEFT JOIN ( SELECT user_follows.follower_id,
-            count(*) AS following_count
-           FROM public.user_follows
-          GROUP BY user_follows.follower_id) fwing ON ((fwing.follower_id = p.user_id)))
-     LEFT JOIN ( SELECT user_follows.following_id,
-            count(*) AS follower_count
-           FROM public.user_follows
-          GROUP BY user_follows.following_id) fwer ON ((fwer.following_id = p.user_id)))
-     LEFT JOIN ( SELECT user_cube_ratings.user_id,
-            count(*) AS ratings_count,
-            avg(user_cube_ratings.rating) AS rating_avg
-           FROM public.user_cube_ratings
-          GROUP BY user_cube_ratings.user_id) ur ON ((ur.user_id = p.user_id)))
-     LEFT JOIN ( SELECT ucr_1.user_id,
-            count(*) AS reviews_count
-           FROM public.user_cube_reviews ucr_1
-          WHERE (ucr_1.status = 'published'::public.cube_review_status)
-          GROUP BY ucr_1.user_id) ucr ON ((ucr.user_id = p.user_id)));
-
-
-create or replace view "public"."v_detailed_user_cube_reviews" as  WITH ratings AS (
-         SELECT ucrr.review_id,
-            jsonb_object_agg(ucrc.label, ucrr.rating) AS ratings
-           FROM (public.user_cube_reviews_ratings ucrr
-             JOIN public.user_cube_reviews_categories ucrc ON (((ucrc.id = ucrr.category_id) AND (ucrc.active = true))))
-          GROUP BY ucrr.review_id
-        ), helpful AS (
-         SELECT hr.review_id,
-            count(DISTINCT hr.user_id) AS helpful_count
-           FROM public.helpful_review hr
-          GROUP BY hr.review_id
-        )
- SELECT ucr.id,
-    ucr.created_at,
-    ucr.review,
-    ucr.status,
-    ucr.user_id,
-    ucr.cube,
-    ucr.title,
-    ucr.updated_at,
-    COALESCE(r.ratings, '{}'::jsonb) AS ratings,
-    COALESCE(h.helpful_count, (0)::bigint) AS helpful_count
-   FROM ((public.user_cube_reviews ucr
-     LEFT JOIN ratings r ON ((r.review_id = ucr.id)))
-     LEFT JOIN helpful h ON ((h.review_id = ucr.id)));
-
-
-create or replace view "public"."v_detailed_vendors" as  SELECT v.id,
-    v.slug,
-    v.created_at,
-    v.name,
-    v.base_url,
-    v.country_iso,
-    v.updated_at,
-    v.is_active,
-    v.rating,
-    v.logo_url,
-    v.currency,
-    v.sponsored,
-    v.verified,
-    ( SELECT count(DISTINCT uc.user_id) AS count
-           FROM public.user_cubes uc
-          WHERE (uc.bought_from = v.slug)) AS buyer_count
-   FROM public.vendors v;
-
-
-create or replace view "public"."v_notifications_for_user" as  SELECT n.id,
-    n.message,
-    n.icon,
-    n.link,
-    n.link_text,
-    n.created_at,
-    n.published_by_id,
-    n.user_id,
-    COALESCE(uns.read, false) AS read
-   FROM (public.notifications n
-     LEFT JOIN public.user_notification_status uns ON (((uns.notification_id = n.id) AND (uns.user_id = auth.uid()))))
-  WHERE ((n.user_id = auth.uid()) OR (n.user_id IS NULL));
-
-
-create or replace view "public"."v_price_history" as  WITH daily_rows AS (
-         SELECT DISTINCT ON (cube_vendor_links_snapshot.cube_slug, cube_vendor_links_snapshot.vendor_name, ((cube_vendor_links_snapshot.created_at)::date)) cube_vendor_links_snapshot.cube_slug,
-            cube_vendor_links_snapshot.vendor_name,
-            (cube_vendor_links_snapshot.created_at)::date AS day,
-            cube_vendor_links_snapshot.price
-           FROM public.cube_vendor_links_snapshot
-          WHERE (cube_vendor_links_snapshot.vendor_name = ANY (ARRAY['GANCUBE'::text, 'TheCubicle'::text, 'SpeedCubeShop'::text]))
-          ORDER BY cube_vendor_links_snapshot.cube_slug, cube_vendor_links_snapshot.vendor_name, ((cube_vendor_links_snapshot.created_at)::date), cube_vendor_links_snapshot.created_at DESC
-        )
- SELECT daily_rows.cube_slug,
-    daily_rows.vendor_name,
-    jsonb_agg(jsonb_build_object('date', to_char((daily_rows.day)::timestamp with time zone, 'YYYY-MM-DD'::text), 'price', daily_rows.price) ORDER BY daily_rows.day) AS price_history
-   FROM daily_rows
-  GROUP BY daily_rows.cube_slug, daily_rows.vendor_name;
-
-
-create or replace view "public"."v_user_stats" as  WITH cube_stats AS (
-         SELECT uc.user_id,
-            count(*) AS cube_count,
-            sum(uc.purchase_price) AS collection_value
-           FROM public.user_cubes uc
-          WHERE (uc.status <> 'Wishlist'::public.user_cube_status)
-          GROUP BY uc.user_id
-        ), rating_stats AS (
-         SELECT user_cube_ratings.user_id,
-            avg(user_cube_ratings.rating) AS rating_avg,
-            count(*) AS rating_count
-           FROM public.user_cube_ratings
-          GROUP BY user_cube_ratings.user_id
-        ), brand_counts AS (
-         SELECT uc.user_id,
-            cm.brand,
-            count(*) AS cnt
-           FROM (public.user_cubes uc
-             JOIN public.cube_models cm ON ((cm.slug = uc.cube)))
-          WHERE (uc.status <> 'Wishlist'::public.user_cube_status)
-          GROUP BY cm.brand, uc.user_id
-        ), type_counts AS (
-         SELECT uc.user_id,
-            cm.type,
-            count(*) AS cnt
-           FROM (public.user_cubes uc
-             JOIN public.cube_models cm ON ((cm.slug = uc.cube)))
-          WHERE (uc.status <> 'Wishlist'::public.user_cube_status)
-          GROUP BY cm.type, uc.user_id
-        ), store_counts AS (
-         SELECT uc.user_id,
-            v.name AS store,
-            count(*) AS cnt
-           FROM (public.user_cubes uc
-             JOIN public.vendors v ON ((v.slug = uc.bought_from)))
-          WHERE (uc.status <> 'Wishlist'::public.user_cube_status)
-          GROUP BY v.name, uc.user_id
-        ), condition_counts AS (
-         SELECT uc.user_id,
-            uc.condition,
-            count(*) AS cnt
-           FROM public.user_cubes uc
-          WHERE (uc.status <> 'Wishlist'::public.user_cube_status)
-          GROUP BY uc.condition, uc.user_id
-        ), cubes_over_time_counts AS (
-         SELECT user_cubes.user_id,
-            (date_trunc('month'::text, (user_cubes.acquired_at)::timestamp with time zone))::date AS month,
-            count(*) AS cnt
-           FROM public.user_cubes
-          WHERE ((user_cubes.acquired_at IS NOT NULL) AND (user_cubes.status <> 'Wishlist'::public.user_cube_status))
-          GROUP BY user_cubes.user_id, ((date_trunc('month'::text, (user_cubes.acquired_at)::timestamp with time zone))::date)
-        ), brand_grouped AS (
-         SELECT t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.brand
-                    ELSE 'Other'::text
-                END AS brand,
-            sum(t.cnt) AS cnt
-           FROM ( SELECT brand_counts.user_id,
-                    brand_counts.brand,
-                    brand_counts.cnt,
-                    row_number() OVER (PARTITION BY brand_counts.user_id ORDER BY brand_counts.cnt DESC) AS rn
-                   FROM brand_counts
-                  WHERE (brand_counts.brand IS NOT NULL)) t
-          GROUP BY t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.brand
-                    ELSE 'Other'::text
-                END
-        ), store_grouped AS (
-         SELECT t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.store
-                    ELSE 'Other'::text
-                END AS store,
-            sum(t.cnt) AS cnt
-           FROM ( SELECT store_counts.user_id,
-                    store_counts.store,
-                    store_counts.cnt,
-                    row_number() OVER (PARTITION BY store_counts.user_id ORDER BY store_counts.cnt DESC) AS rn
-                   FROM store_counts
-                  WHERE (store_counts.store IS NOT NULL)) t
-          GROUP BY t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.store
-                    ELSE 'Other'::text
-                END
-        ), type_grouped AS (
-         SELECT t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.type
-                    ELSE 'Other'::text
-                END AS type,
-            sum(t.cnt) AS cnt
-           FROM ( SELECT type_counts.user_id,
-                    type_counts.type,
-                    type_counts.cnt,
-                    row_number() OVER (PARTITION BY type_counts.user_id ORDER BY type_counts.cnt DESC) AS rn
-                   FROM type_counts
-                  WHERE (type_counts.type IS NOT NULL)) t
-          GROUP BY t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN t.type
-                    ELSE 'Other'::text
-                END
-        ), condition_grouped AS (
-         SELECT t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN (t.condition)::text
-                    ELSE 'Other'::text
-                END AS condition,
-            sum(t.cnt) AS cnt
-           FROM ( SELECT condition_counts.user_id,
-                    condition_counts.condition,
-                    condition_counts.cnt,
-                    row_number() OVER (PARTITION BY condition_counts.user_id ORDER BY condition_counts.cnt DESC) AS rn
-                   FROM condition_counts
-                  WHERE (condition_counts.condition IS NOT NULL)) t
-          GROUP BY t.user_id,
-                CASE
-                    WHEN (t.rn <= 7) THEN (t.condition)::text
-                    ELSE 'Other'::text
-                END
-        ), cubes_per_brand AS (
-         SELECT brand_grouped.user_id,
-            COALESCE(jsonb_object_agg(brand_grouped.brand, brand_grouped.cnt) FILTER (WHERE (brand_grouped.brand IS NOT NULL)), '{}'::jsonb) AS cubes_per_brand
-           FROM brand_grouped
-          GROUP BY brand_grouped.user_id
-        ), cubes_per_store AS (
-         SELECT store_grouped.user_id,
-            COALESCE(jsonb_object_agg(store_grouped.store, store_grouped.cnt) FILTER (WHERE (store_grouped.store IS NOT NULL)), '{}'::jsonb) AS cubes_per_store
-           FROM store_grouped
-          GROUP BY store_grouped.user_id
-        ), cubes_per_type AS (
-         SELECT type_grouped.user_id,
-            COALESCE(jsonb_object_agg(type_grouped.type, type_grouped.cnt) FILTER (WHERE (type_grouped.type IS NOT NULL)), '{}'::jsonb) AS cubes_per_type
-           FROM type_grouped
-          GROUP BY type_grouped.user_id
-        ), cubes_per_condition AS (
-         SELECT condition_grouped.user_id,
-            COALESCE(jsonb_object_agg(condition_grouped.condition, condition_grouped.cnt) FILTER (WHERE (condition_grouped.condition IS NOT NULL)), '{}'::jsonb) AS cubes_per_condition
-           FROM condition_grouped
-          GROUP BY condition_grouped.user_id
-        ), cubes_over_time AS (
-         SELECT cubes_over_time_counts.user_id,
-            COALESCE(jsonb_object_agg(to_char((cubes_over_time_counts.month)::timestamp with time zone, 'YYYY-MM'::text), cubes_over_time_counts.cnt ORDER BY cubes_over_time_counts.month), '{}'::jsonb) AS cubes_over_time
-           FROM cubes_over_time_counts
-          GROUP BY cubes_over_time_counts.user_id
-        )
- SELECT cs.user_id,
-    cs.cube_count,
-    cs.collection_value,
-    rs.rating_count,
-    rs.rating_avg,
-    cb.cubes_per_brand,
-    cps.cubes_per_store,
-    cot.cubes_over_time,
-    ct.cubes_per_type,
-    cp.cubes_per_condition
-   FROM ((((((cube_stats cs
-     LEFT JOIN rating_stats rs ON ((rs.user_id = cs.user_id)))
-     LEFT JOIN cubes_per_brand cb ON ((cb.user_id = cs.user_id)))
-     LEFT JOIN cubes_per_store cps ON ((cps.user_id = cs.user_id)))
-     LEFT JOIN cubes_over_time cot ON ((cot.user_id = cs.user_id)))
-     LEFT JOIN cubes_per_type ct ON ((ct.user_id = cs.user_id)))
-     LEFT JOIN cubes_per_condition cp ON ((cp.user_id = cs.user_id)));
-
-
-
-  create policy "Enable insert for authenticated users if the event is active"
-  on "public"."awards_user_vote"
-  as permissive
-  for insert
-  to authenticated
-with check (((( SELECT auth.uid() AS uid) = user_id) AND (EXISTS ( SELECT 1
-   FROM ((public.awards_nominee n
-     JOIN public.awards_category c ON ((c.id = n.category_id)))
-     JOIN public.awards_event ae ON ((ae.id = c.event_id)))
-  WHERE ((n.id = awards_user_vote.nominee_id) AND (c.id = awards_user_vote.category_id) AND ((now() >= ae.start_at) AND (now() <= ae.end_at)))))));
-
-
-
-  create policy "Enable insert for Database Managers and Admins"
-  on "public"."brands"
-  as permissive
-  for insert
-  to authenticated
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Enable delete for Admins and Community Managers"
-  on "public"."cube_models"
-  as permissive
-  for delete
-  to authenticated
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Database Manager's and Admin's can insert"
-  on "public"."cube_models"
-  as permissive
-  for insert
-  to authenticated
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Database Manager's and Admin's can update"
-  on "public"."cube_models"
-  as permissive
-  for update
-  to authenticated
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Database Managers can read all"
-  on "public"."cube_scrap_runs"
-  as permissive
-  for select
-  to public
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Enable insert for Admins and Database Managers only"
-  on "public"."cube_types"
-  as permissive
-  for insert
-  to public
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Admins and Database Managers can insert"
-  on "public"."cube_vendor_links"
-  as permissive
-  for insert
-  to public
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Admins and Database Managers can update"
-  on "public"."cube_vendor_links"
-  as permissive
-  for update
-  to public
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Enable delete for Database Managers and Admins"
-  on "public"."cubes_model_features"
-  as permissive
-  for delete
-  to authenticated
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Enable insert for Database Managers and Admins"
-  on "public"."cubes_model_features"
-  as permissive
-  for insert
-  to authenticated
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Community Managers and Admins can insert"
-  on "public"."notifications"
-  as permissive
-  for insert
-  to public
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Community Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Community Managers and Admins can update"
-  on "public"."notifications"
-  as permissive
-  for update
-  to public
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Community Manager'::public.users_roles, 'Admin'::public.users_roles])))
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Community Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Staff can read"
-  on "public"."reports"
-  as permissive
-  for select
-  to public
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) <> 'User'::public.users_roles));
-
-
-
-  create policy "Only staff can update"
-  on "public"."reports"
-  as permissive
-  for update
-  to authenticated
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) <> 'User'::public.users_roles));
-
-
-
-  create policy "Users can delete their own ratings"
-  on "public"."user_cube_ratings"
-  as permissive
-  for delete
-  to authenticated
-using (((user_id = auth.uid()) OR (( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Moderator'::public.users_roles, 'Admin'::public.users_roles]))));
-
-
-
-  create policy "Enable update for users own reviews ratings"
-  on "public"."user_cube_reviews_ratings"
-  as permissive
-  for update
-  to authenticated
-using ((EXISTS ( SELECT 1
-   FROM public.user_cube_reviews ucr
-  WHERE ((ucr.id = user_cube_reviews_ratings.review_id) AND (ucr.user_id = auth.uid())))))
-with check ((EXISTS ( SELECT 1
-   FROM public.user_cube_reviews ucr
-  WHERE ((ucr.id = user_cube_reviews_ratings.review_id) AND (ucr.user_id = auth.uid())))));
-
-
-
-  create policy "Only Admins and Database Managers can insert"
-  on "public"."vendors"
-  as permissive
-  for insert
-  to public
-with check ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-
-  create policy "Only Database Managers and Admins can update"
-  on "public"."vendors"
-  as permissive
-  for update
-  to public
-using ((( SELECT profiles.role
-   FROM public.profiles
-  WHERE (profiles.user_id = auth.uid())) = ANY (ARRAY['Database Manager'::public.users_roles, 'Admin'::public.users_roles])));
-
-
-CREATE TRIGGER log_achievements AFTER INSERT OR DELETE OR UPDATE ON public.achievements FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();
-
-CREATE TRIGGER trig_awards_user_vote_achi_check AFTER INSERT ON public.awards_user_vote FOR EACH ROW EXECUTE FUNCTION public.awards_user_vote_achi_check();
-
-CREATE TRIGGER log_brands_insert AFTER INSERT ON public.brands FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();
-
-CREATE TRIGGER log_cube_models AFTER INSERT OR DELETE OR UPDATE OF brand, image_url, model, slug, created_at, updated_at, type, discontinued, release_date, series, id, sub_type, weight, related_to, version_type, version_name, status, notes, surface_finish, verified_at, size, submitted_by_id, verified_by_id ON public.cube_models FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();
-
-CREATE TRIGGER notify_discord_new_cube AFTER INSERT OR UPDATE ON public.cube_models FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_cube_model();
-
-CREATE TRIGGER trg_cube_models_table_rules BEFORE INSERT OR DELETE OR UPDATE ON public.cube_models FOR EACH ROW EXECUTE FUNCTION public.cube_models_table_rules();
-
-CREATE TRIGGER log_cube_types_insert AFTER INSERT ON public.cube_types FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();
-
-CREATE TRIGGER trg_cube_links_table_rules BEFORE INSERT OR DELETE OR UPDATE ON public.cube_vendor_links FOR EACH ROW EXECUTE FUNCTION public.cube_links_table_rules();
-
-CREATE TRIGGER trg_save_cube_vendor_links_snapshots AFTER INSERT OR DELETE OR UPDATE ON public.cube_vendor_links FOR EACH ROW EXECUTE FUNCTION public.save_cube_vendor_links_snapshots();
-
-CREATE TRIGGER trg_cube_links_snapshot_table_rules BEFORE UPDATE ON public.cube_vendor_links_snapshot FOR EACH ROW EXECUTE FUNCTION public.cube_links_snapshot_table_rules();
-ALTER TABLE "public"."cube_vendor_links_snapshot" DISABLE TRIGGER "trg_cube_links_snapshot_table_rules";
-
-CREATE TRIGGER trg_price_alert_discord AFTER INSERT ON public.cube_vendor_links_snapshot FOR EACH ROW EXECUTE FUNCTION public.notify_discord_price_alert();
-
-CREATE TRIGGER trg_helpful_rating_table_rule BEFORE INSERT OR UPDATE ON public.helpful_rating FOR EACH ROW EXECUTE FUNCTION public.helpful_rating_table_rules();
-
-CREATE TRIGGER notify_discord_new_user AFTER UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_user();
-
-CREATE TRIGGER trg_early_collector_achievement_insert AFTER INSERT ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.insert_user_achievement();
-ALTER TABLE "public"."profiles" DISABLE TRIGGER "trg_early_collector_achievement_insert";
-
-CREATE TRIGGER notify_discord_new_user_report AFTER INSERT ON public.reports FOR EACH ROW EXECUTE FUNCTION public.notify_discord_new_user_report();
-
-CREATE TRIGGER trg_reports_table_rules BEFORE INSERT OR DELETE OR UPDATE ON public.reports FOR EACH ROW EXECUTE FUNCTION public.reports_table_rules();
-
-CREATE TRIGGER trg_staff_logs_table_rules BEFORE DELETE OR UPDATE ON public.staff_logs FOR EACH ROW EXECUTE FUNCTION public.staff_logs_table_rules();
-
-CREATE TRIGGER trg_user_achievements_table_rules BEFORE UPDATE ON public.user_achievements FOR EACH ROW EXECUTE FUNCTION public.user_achievements_table_rules();
-
-CREATE TRIGGER trg_update_rating AFTER INSERT OR DELETE OR UPDATE ON public.user_cube_ratings FOR EACH ROW EXECUTE FUNCTION public.update_average_cube_rating();
-
-CREATE TRIGGER trg_user_cube_ratings_achi_check AFTER INSERT OR UPDATE ON public.user_cube_ratings FOR EACH ROW EXECUTE FUNCTION public.user_cube_ratings_achi_check();
-
-CREATE TRIGGER trg_user_cubes_achi_check AFTER INSERT OR UPDATE ON public.user_cubes FOR EACH ROW EXECUTE FUNCTION public.user_cubes_achi_check();
-
-CREATE TRIGGER trg_user_cubes_table_rules BEFORE INSERT OR UPDATE ON public.user_cubes FOR EACH ROW EXECUTE FUNCTION public.user_cubes_table_rules();
-
-CREATE TRIGGER trg_create_following_notif AFTER INSERT ON public.user_follows FOR EACH ROW EXECUTE FUNCTION public.create_following_notification();
-
-CREATE TRIGGER trg_user_follows_table_rules BEFORE UPDATE ON public.user_follows FOR EACH ROW EXECUTE FUNCTION public.user_follows_table_rules();
-
-CREATE TRIGGER log_vendors AFTER INSERT OR UPDATE ON public.vendors FOR EACH ROW EXECUTE FUNCTION public.log_data_changes();
+CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 
   create policy "Everyone can select avatars 1oj01fe_0"

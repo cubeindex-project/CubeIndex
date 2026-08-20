@@ -29,6 +29,12 @@
       icon: "fa-solid fa-users",
       link: resolve("/(public)/explore/users"),
     },
+    {
+      title: "CubingAtlas",
+      icon: "fa-solid fa-book-atlas",
+      link: "https://atlas.thecubeindex.com",
+      external: true,
+    },
     // {
     //   title: "Achievements",
     //   icon: "fa-solid fa-trophy",
@@ -117,9 +123,12 @@
             <!-- {#if !nav.hidden} -->
             <li>
               {#if nav.link}
-                <a href={nav.link}>
+                <a href={nav.link} rel="external">
                   <i class={nav.icon}></i>
                   {nav.title}
+                  {#if nav.external}
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                  {/if}
                 </a>
                 <!-- {:else if nav.subMenu}
                   <details>

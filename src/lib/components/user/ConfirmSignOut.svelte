@@ -25,7 +25,7 @@
 
     <a
       href={resolve("/auth/logout")}
-      class="btn btn-primary flex-1 sm:flex-none"
+      class="btn btn-error flex-1 sm:flex-none"
     >
       Sign Out
     </a>

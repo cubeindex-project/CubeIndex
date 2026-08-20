@@ -6,7 +6,7 @@
   import { footnote } from "@mdit/plugin-footnote";
   import { fullEmoji } from "@mdit/plugin-emoji";
 
-  import "@mdit/plugin-alert/style.css";
+  import "@mdit/plugin-alert/style";
 
   interface Props {
     text: string;

@@ -80,6 +80,10 @@ alter table "public"."cube_models" drop column "notes";
 
 alter table "public"."cube_models" drop column "rating";
 
+-- Remove unapproved cubes
+delete from cube_models
+where status <> 'Approved';
+
 alter table "public"."cube_models" drop column "status";
 
 -- Populate cube_models' brand_id before deleting the brand column
@@ -108,13 +112,28 @@ alter table "public"."cube_models" drop column "version_name";
 
 alter table "public"."cube_models" drop column "model";
 
+-- Populate cube_series
+
+insert into cube_series (name)
+select distinct series from cube_models where series is not null and series <> '';
+
+-- End
+
+-- Populate cube_models' series_id table
+
+alter table "public"."cube_models" add column "series_id" bigint;
+
+update cube_models c
+set series_id = (select id from cube_series cs where cs.name = c.series)
+where c.series is not null and c.series <> '';
+
 alter table "public"."cube_models" drop column "series";
 
 -- End
 
-alter table "public"."cube_models" add column "release_date_precision" public.date_precision;
+-- End
 
-alter table "public"."cube_models" add column "series_id" bigint;
+alter table "public"."cube_models" add column "release_date_precision" public.date_precision;
 
 -- Populate cube_models' type_id column
 
@@ -170,6 +189,13 @@ ALTER TABLE ONLY "public"."cube_models"
 ALTER TABLE ONLY "public"."user_cubes"
     ADD CONSTRAINT "user_cubes_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
 
+delete from public.cubes_model_features cmf
+where not exists (
+	select 1
+	from public.cube_models cm
+	where cm.slug = cmf.cube
+);
+
 ALTER TABLE ONLY "public"."cubes_model_features"
     ADD CONSTRAINT "cubes_model_features_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -191,6 +217,13 @@ enable trigger "trg_cube_links_table_rules";
 
 ALTER TABLE ONLY "public"."cube_vendor_links"
     ADD CONSTRAINT "cube_vendor_links_duplicate_cube_slug_fkey" FOREIGN KEY ("cube_slug") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;
+
+delete from public.user_cube_reviews ucr
+where not exists (
+	select 1
+	from public.cube_models cm
+	where cm.slug = ucr.cube
+);
 
 ALTER TABLE ONLY "public"."user_cube_reviews"
     ADD CONSTRAINT "user_cube_reviews_cube_fkey" FOREIGN KEY ("cube") REFERENCES "public"."cube_models"("slug") ON UPDATE CASCADE ON DELETE CASCADE;

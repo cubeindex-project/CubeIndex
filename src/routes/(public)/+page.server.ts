@@ -20,7 +20,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
       .from("cube_models")
       .select("*", { count: "exact", head: true })
       .eq("status", "Approved"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }),
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("onboarded", true),
     supabase.from("vendors").select("*", { count: "exact", head: true }),
     supabase
       .from("cube_vendor_links")

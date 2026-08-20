@@ -1,5 +1,5 @@
 <script>
-  import LegalLayout from "$lib/components/legal/legalLayout.svelte";
+  import LegalLayout from "$lib/components/legal/LegalLayout.svelte";
 
   const lastUpdated = "September 14, 2025";
   const historyURL =

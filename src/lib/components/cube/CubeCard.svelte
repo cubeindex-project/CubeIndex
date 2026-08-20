@@ -1,9 +1,9 @@
 <script lang="ts">
   import AddCube from "./AddCube.svelte";
-  import RateCube from "../rating/rateCube.svelte";
-  import CubeCardSkeleton from "./cubeCardSkeleton.svelte";
-  import AddToCollectionButton from "../misc/addToCollectionButton.svelte";
-  import RateCubeButton from "../misc/rateCubeButton.svelte";
+  import RateCube from "../rating/RateCube.svelte";
+  import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
+  import AddToCollectionButton from "../misc/AddToCollectionButton.svelte";
+  import RateCubeButton from "../misc/RateCubeButton.svelte";
   import type { Tables } from "$lib/types/database.types";
   import { resolve } from "$app/paths";
 

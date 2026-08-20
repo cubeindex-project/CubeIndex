@@ -2,7 +2,7 @@
   import { resolve } from "$app/paths";
   import { browser } from "$app/environment";
   import { superForm } from "sveltekit-superforms";
-  import Avatar from "$lib/components/user/avatar.svelte";
+  import Avatar from "$lib/components/user/Avatar.svelte";
   import { parseAsStringLiteral, useQueryState } from "nuqs-svelte";
 
   const SETTINGS_TABS = [

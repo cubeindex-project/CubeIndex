@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import { formatDate } from "$lib/utils/formatDate.js";
-  import Avatar from "$lib/components/user/avatar.svelte";
+  import Avatar from "$lib/components/user/Avatar.svelte";
 
   const { data } = $props();
 

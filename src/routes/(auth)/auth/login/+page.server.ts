@@ -4,7 +4,7 @@ import { setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { TURNSTILE_SECRET_KEY } from "$env/static/private";
 import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
-import { loginSchema } from "$lib/components/validation/auth";
+import { loginSchema } from "$lib/schemas/auth";
 
 export const load = (async () => {
   return {

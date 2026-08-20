@@ -2,7 +2,7 @@
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import { onMount } from "svelte";
-  import ConfirmSignOut from "../user/confirmSignOut.svelte";
+  import ConfirmSignOut from "../user/ConfirmSignOut.svelte";
 
   interface Props {
     profile: Pick<

@@ -1,7 +1,7 @@
 <script lang="ts">
   import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import UserCard from "$lib/components/user/userCard.svelte";
+  import UserCard from "$lib/components/user/UserCard.svelte";
   import {
     parseAsInteger,
     parseAsString,

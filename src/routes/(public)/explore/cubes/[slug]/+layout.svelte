@@ -1,15 +1,15 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import type { LayoutProps } from "./$types";
-  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
-  import AddToCollectionButton from "$lib/components/misc/addToCollectionButton.svelte";
-  import RateCubeButton from "$lib/components/misc/rateCubeButton.svelte";
-  import ShareButton from "$lib/components/misc/shareButton.svelte";
+  import CubeVersionType from "$lib/components/cube/CubeVersionType.svelte";
+  import AddToCollectionButton from "$lib/components/misc/AddToCollectionButton.svelte";
+  import RateCubeButton from "$lib/components/misc/RateCubeButton.svelte";
+  import ShareButton from "$lib/components/misc/ShareButton.svelte";
   import { page } from "$app/state";
-  import Report from "$lib/components/report/report.svelte";
+  import Report from "$lib/components/report/Report.svelte";
   import AddCube from "$lib/components/cube/AddCube.svelte";
-  import RateCube from "$lib/components/rating/rateCube.svelte";
-  import StarRating from "$lib/components/rating/starRating.svelte";
+  import RateCube from "$lib/components/rating/RateCube.svelte";
+  import StarRating from "$lib/components/rating/StarRating.svelte";
 
   let { data, children }: LayoutProps = $props();
   let {

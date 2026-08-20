@@ -1,8 +1,8 @@
 ﻿<script lang="ts">
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
-  import StarRating from "../rating/starRating.svelte";
-  import CubeVersionType from "./cubeVersionType.svelte";
+  import StarRating from "../rating/StarRating.svelte";
+  import CubeVersionType from "./CubeVersionType.svelte";
   import type { Snippet } from "svelte";
 
   interface Props {

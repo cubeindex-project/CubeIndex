@@ -2,7 +2,7 @@
   import { superForm } from "sveltekit-superforms";
   import { blur } from "svelte/transition";
   import { onMount } from "svelte";
-  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import SearchCubes from "$lib/components/cube/SearchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";

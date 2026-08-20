@@ -2,8 +2,8 @@
   import { resolve } from "$app/paths";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
   import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
-  import FollowButton from "$lib/components/misc/followButton.svelte";
-  import Avatar from "$lib/components/user/avatar.svelte";
+  import FollowButton from "$lib/components/misc/FollowButton.svelte";
+  import Avatar from "$lib/components/user/Avatar.svelte";
   import {
     parseAsInteger,
     parseAsString,

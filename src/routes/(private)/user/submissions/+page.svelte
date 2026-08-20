@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import SubmissionCubeCard from "$lib/components/cube/submissionCubeCard.svelte";
+  import SubmissionCubeCard from "$lib/components/cube/SubmissionCubeCard.svelte";
 
   const { data } = $props();
   let { submissions } = $derived(data);

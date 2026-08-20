@@ -2,7 +2,7 @@
   import Chart from "chart.js/auto";
   import { onMount, onDestroy } from "svelte";
   import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol.js";
-  import Tag from "$lib/components/misc/tag.svelte";
+  import Tag from "$lib/components/misc/Tag.svelte";
   import type { Tables } from "$lib/types/database.types.js";
 
   let { data } = $props();

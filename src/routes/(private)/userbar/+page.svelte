@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import { page } from "$app/state";
-  import Tag from "$lib/components/misc/tag.svelte";
+  import Tag from "$lib/components/misc/Tag.svelte";
 
   const { data } = $props();
   const { profile } = $derived(data);

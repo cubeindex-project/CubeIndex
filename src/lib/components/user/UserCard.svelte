@@ -1,8 +1,8 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
-  import Avatar from "./avatar.svelte";
-  import RoleBadge from "./roleBadge.svelte";
+  import Avatar from "./Avatar.svelte";
+  import RoleBadge from "./RoleBadge.svelte";
 
   interface Props {
     profile: Tables<"v_detailed_profiles">;

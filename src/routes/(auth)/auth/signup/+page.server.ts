@@ -2,7 +2,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms";
-import { accountSchema, surveySchema } from "$lib/components/validation/auth";
+import { accountSchema, surveySchema } from "$lib/schemas/auth";
 import { setError } from "sveltekit-superforms";
 import { TURNSTILE_SECRET_KEY } from "$env/static/private";
 import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";

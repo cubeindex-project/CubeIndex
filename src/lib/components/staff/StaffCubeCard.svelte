@@ -1,7 +1,7 @@
 <!-- staffCubeCard.svelte -->
 <script lang="ts">
-  import ManageCubeStatus from "./manageCubeStatus.svelte";
-  import CubeCardSkeleton from "../cube/cubeCardSkeleton.svelte";
+  import ManageCubeStatus from "./ManageCubeStatus.svelte";
+  import CubeCardSkeleton from "../cube/CubeCardSkeleton.svelte";
   import { resolve } from "$app/paths";
 
   // single props destructure

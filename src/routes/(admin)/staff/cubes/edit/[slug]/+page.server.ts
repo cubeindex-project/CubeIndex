@@ -5,7 +5,7 @@ import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
 import { cleanLink } from "$lib/utils/linkCleaner.js";
-import { cubeSchema } from "$lib/components/validation/cubeForm.js";
+import { cubeSchema } from "$lib/schemas/cubeForm";
 import { logError } from "$lib/server/logError";
 import { createLogger } from "$lib/server/logger";
 import type { Tables } from "$lib/types/database.types.js";

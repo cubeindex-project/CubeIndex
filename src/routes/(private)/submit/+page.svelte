@@ -3,13 +3,10 @@
   import { superForm } from "sveltekit-superforms";
   import SearchCubes, {
     type SearchCube,
-  } from "$lib/components/cube/searchCubes.svelte";
-  import AutofillCard from "$lib/components/submit/autofillCard.svelte";
+  } from "$lib/components/cube/SearchCubes.svelte";
+  import AutofillCard from "$lib/components/submit/AutofillCard.svelte";
   import type { AutofillResult } from "../../(api)/api/submit/autocomplete/+server.js";
-  import {
-    releaseDatePattern,
-    sizePattern,
-  } from "$lib/components/validation/cubeForm.js";
+  import { releaseDatePattern, sizePattern } from "$lib/schemas/cubeForm.js";
   import { onMount } from "svelte";
 
   let { data } = $props();

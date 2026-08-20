@@ -5,7 +5,7 @@ import { getSubTypes } from "$lib/utils/subType";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { cleanLink } from "$lib/utils/linkCleaner";
-import { cubeSchema } from "$lib/components/validation/cubeForm";
+import { cubeSchema } from "$lib/schemas/cubeForm";
 import { logError } from "$lib/server/logError";
 import type { TablesInsert } from "$lib/types/database.types";
 

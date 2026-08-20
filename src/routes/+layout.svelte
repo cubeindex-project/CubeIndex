@@ -4,8 +4,8 @@
   import Dock from "$lib/components/layout/Dock.svelte";
   import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
-  import ClientErrorReporter from "$lib/components/misc/clientErrorReporter.svelte";
-  import ScrollToTop from "$lib/components/misc/scrollToTop.svelte";
+  import ClientErrorReporter from "$lib/components/misc/ClientErrorReporter.svelte";
+  import ScrollToTop from "$lib/components/misc/ScrollToTop.svelte";
   import type { ResolvedMeta } from "$lib/types/meta.types";
   import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";

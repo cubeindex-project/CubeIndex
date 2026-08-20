@@ -1,5 +1,5 @@
 <script lang="ts">
-  import UserRatings from "$lib/components/rating/userRatings.svelte";
+  import UserRatings from "$lib/components/rating/UserRatings.svelte";
 
   let { data } = $props();
   let { cube, user_cube_ratings } = $derived(data);

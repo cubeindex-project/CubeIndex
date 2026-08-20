@@ -1,6 +1,6 @@
 <script lang="ts">
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import CubeCard from "$lib/components/cube/cubeCard.svelte";
+  import CubeCard from "$lib/components/cube/CubeCard.svelte";
   import { resolve } from "$app/paths";
   import {
     createParser,

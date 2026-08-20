@@ -4,12 +4,12 @@
   import { resolve } from "$app/paths";
   // Import necessary modules and types for Svelte component
   import { superForm } from "sveltekit-superforms";
-  import CubeVersionType from "$lib/components/cube/cubeVersionType.svelte";
+  import CubeVersionType from "$lib/components/cube/CubeVersionType.svelte";
   import { blur, fly } from "svelte/transition";
   import { onMount } from "svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
-  import ManageCubeStatus from "$lib/components/staff/manageCubeStatus.svelte";
-  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import ManageCubeStatus from "$lib/components/staff/ManageCubeStatus.svelte";
+  import SearchCubes from "$lib/components/cube/SearchCubes.svelte";
   import { clientLogError } from "$lib/logger/clientLogError";
   import { clientLogger } from "$lib/logger/client";
   import { page } from "$app/state";

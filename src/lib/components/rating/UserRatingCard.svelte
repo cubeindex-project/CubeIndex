@@ -1,9 +1,9 @@
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "./StarRating.svelte";
   import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
-  import RateCube from "./rateCube.svelte";
-  import Report from "../report/report.svelte";
+  import RateCube from "./RateCube.svelte";
+  import Report from "../report/Report.svelte";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
   import { resolve } from "$app/paths";

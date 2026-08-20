@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import CubeCard from "$lib/components/cube/cubeCard.svelte";
+  import CubeCard from "$lib/components/cube/CubeCard.svelte";
   import NumberFlow, { continuous } from "@number-flow/svelte";
   import { onMount } from "svelte";
 

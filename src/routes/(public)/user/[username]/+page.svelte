@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import UserCubeCard from "$lib/components/cube/userCubeCard.svelte";
+  import UserCubeCard from "$lib/components/cube/UserCubeCard.svelte";
   import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
   import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
   import {

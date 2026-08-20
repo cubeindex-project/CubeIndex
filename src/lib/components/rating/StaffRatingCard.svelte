@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "./StarRating.svelte";
   import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
   import { page } from "$app/state";

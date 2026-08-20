@@ -1,5 +1,5 @@
 <script lang="ts">
-  import UserRatingCard from "./userRatingCard.svelte";
+  import UserRatingCard from "./UserRatingCard.svelte";
   import Pagination from "../explore/Pagination.svelte";
   import SearchBar from "../explore/SearchBar.svelte";
   import type { Tables } from "$lib/types/database.types";

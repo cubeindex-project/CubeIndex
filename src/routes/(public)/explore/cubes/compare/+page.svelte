@@ -2,7 +2,7 @@
   import { resolve } from "$app/paths";
   import { formatDate } from "$lib/utils/formatDate.js";
   import type { Tables } from "$lib/types/database.types.js";
-  import SearchCubes from "$lib/components/cube/searchCubes.svelte";
+  import SearchCubes from "$lib/components/cube/SearchCubes.svelte";
 
   type Field = {
     label: string;

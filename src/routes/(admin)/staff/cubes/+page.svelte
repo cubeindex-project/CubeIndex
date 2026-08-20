@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StaffCubeCard from "$lib/components/staff/staffCubeCard.svelte";
+  import StaffCubeCard from "$lib/components/staff/StaffCubeCard.svelte";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import Pagination from "$lib/components/explore/Pagination.svelte";

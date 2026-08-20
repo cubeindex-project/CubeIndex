@@ -1,13 +1,13 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import RoleBadge from "$lib/components/user/roleBadge.svelte";
-  import Report from "$lib/components/report/report.svelte";
+  import RoleBadge from "$lib/components/user/RoleBadge.svelte";
+  import Report from "$lib/components/report/Report.svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
   import { page } from "$app/state";
-  import Avatar from "$lib/components/user/avatar.svelte";
-  import ShareButton from "$lib/components/misc/shareButton.svelte";
-  import FollowButton from "$lib/components/misc/followButton.svelte";
-  import UserBanner from "$lib/components/layout/userBanner.svelte";
+  import Avatar from "$lib/components/user/Avatar.svelte";
+  import ShareButton from "$lib/components/misc/ShareButton.svelte";
+  import FollowButton from "$lib/components/misc/FollowButton.svelte";
+  import UserBanner from "$lib/components/user/UserBanner.svelte";
 
   type ProfileTabsTitle =
     | "Collection"

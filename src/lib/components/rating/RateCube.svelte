@@ -1,5 +1,5 @@
 <script lang="ts">
-  import StarRating from "./starRating.svelte";
+  import StarRating from "./StarRating.svelte";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
   import type { Tables } from "$lib/types/database.types";

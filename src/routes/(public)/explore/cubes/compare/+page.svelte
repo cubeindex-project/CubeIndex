@@ -111,15 +111,6 @@
         <div class="block mb-2 text-sm font-semibold opacity-70">Cube 1</div>
         <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
           <SearchValues values={options} bind:outputValue={cube1Value} />
-          <div class="mt-2 flex gap-2">
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick={() => clearSelection(1)}
-              disabled={!cube1Value}
-            >
-              Clear
-            </button>
-          </div>
         </div>
       </div>
       <div class="flex flex-col justify-center items-center gap-3">
@@ -148,15 +139,6 @@
         <div class="block mb-2 text-sm font-semibold opacity-70">Cube 2</div>
         <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
           <SearchValues values={options} bind:outputValue={cube2Value} />
-          <div class="mt-2 flex gap-2">
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick={() => clearSelection(2)}
-              disabled={!cube2Value}
-            >
-              Clear
-            </button>
-          </div>
         </div>
       </div>
     </div>

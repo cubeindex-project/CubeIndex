@@ -5,8 +5,7 @@ The core functionality lives in the `src/` folder.
 
 ## Build & Commands
 
-- Typecheck and lint everything: `npm check`
-- Fix linting/formatting: `npm check:fix`
+- Typecheck and lint everything: `npm run check`
 - Start development server: `npm run dev`
 - Build for production: `npm run build`
 - Preview production build: `npm run preview`

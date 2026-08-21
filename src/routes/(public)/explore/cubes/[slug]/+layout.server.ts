@@ -81,8 +81,8 @@ export const load = (async ({
 
   const { data: cube_vendor_links, error: cvrErr } = await supabase
     .from("cube_vendor_links")
-    .select("*, vendor:vendor_name(*)")
-    .eq("cube_slug", slug);
+    .select("*, vendor:vendor_id(*)")
+    .eq("cube_id", cube.id);
 
   if (cvrErr) {
     return logError(500, "Unable to load vendor links", log, cvrErr);

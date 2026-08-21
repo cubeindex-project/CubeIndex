@@ -7,6 +7,11 @@ export type Json =
   | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)";
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -652,37 +657,60 @@ export type Database = {
         Row: {
           available: boolean;
           created_at: string;
+          cube_id: number;
           cube_slug: string;
           id: number;
+          is_dead: boolean;
           last_modified: string;
           price: number;
           updated_at: string;
           url: string;
+          vendor_id: number;
           vendor_name: string;
         };
         Insert: {
           available?: boolean;
           created_at?: string;
+          cube_id: number;
           cube_slug: string;
           id?: number;
+          is_dead?: boolean;
           last_modified?: string;
           price?: number;
           updated_at?: string;
           url: string;
+          vendor_id: number;
           vendor_name: string;
         };
         Update: {
           available?: boolean;
           created_at?: string;
+          cube_id?: number;
           cube_slug?: string;
           id?: number;
+          is_dead?: boolean;
           last_modified?: string;
           price?: number;
           updated_at?: string;
           url?: string;
+          vendor_id?: number;
           vendor_name?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_vendor_links_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_vendor_links_duplicate_cube_slug_fkey";
             columns: ["cube_slug"];
@@ -717,6 +745,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "v_detailed_vendors";
             referencedColumns: ["name"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_duplicate_vendor_name_fkey";
+            columns: ["vendor_name"];
+            isOneToOne: false;
+            referencedRelation: "v_price_history";
+            referencedColumns: ["vendor_name"];
           },
           {
             foreignKeyName: "cube_vendor_links_duplicate_vendor_name_fkey";
@@ -725,37 +760,71 @@ export type Database = {
             referencedRelation: "vendors";
             referencedColumns: ["name"];
           },
+          {
+            foreignKeyName: "cube_vendor_links_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_vendors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendors";
+            referencedColumns: ["id"];
+          },
         ];
       };
       cube_vendor_links_snapshot: {
         Row: {
           available: boolean;
           created_at: string;
+          cube_id: number;
           cube_slug: string;
           id: number;
           price: number;
           url: string;
+          vendor_id: number;
           vendor_name: string;
         };
         Insert: {
           available?: boolean;
           created_at?: string;
+          cube_id: number;
           cube_slug: string;
           id?: number;
           price?: number;
           url: string;
+          vendor_id: number;
           vendor_name: string;
         };
         Update: {
           available?: boolean;
           created_at?: string;
+          cube_id?: number;
           cube_slug?: string;
           id?: number;
           price?: number;
           url?: string;
+          vendor_id?: number;
           vendor_name?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_vendor_links_snapshot_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_snapshot_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_vendor_links_snapshot_cube_slug_fkey";
             columns: ["cube_slug"];
@@ -778,6 +847,20 @@ export type Database = {
             referencedColumns: ["slug"];
           },
           {
+            foreignKeyName: "cube_vendor_links_snapshot_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_vendors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_snapshot_vendor_id_fkey";
+            columns: ["vendor_id"];
+            isOneToOne: false;
+            referencedRelation: "vendors";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
             columns: ["vendor_name"];
             isOneToOne: false;
@@ -790,6 +873,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "v_detailed_vendors";
             referencedColumns: ["name"];
+          },
+          {
+            foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
+            columns: ["vendor_name"];
+            isOneToOne: false;
+            referencedRelation: "v_price_history";
+            referencedColumns: ["vendor_name"];
           },
           {
             foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
@@ -1673,14 +1763,14 @@ export type Database = {
           base_url: string;
           country_iso: string;
           created_at: string;
-          currency: Database["public"]["Enums"]["currencies"];
+          currency: string;
           id: number;
-          is_active: boolean;
           logo_url: string | null;
           name: string;
-          rating: number;
           slug: string;
           sponsored: boolean;
+          supports_price_scraping: boolean;
+          supports_product_scraping: boolean;
           updated_at: string;
           verified: boolean;
         };
@@ -1688,14 +1778,14 @@ export type Database = {
           base_url: string;
           country_iso: string;
           created_at?: string;
-          currency?: Database["public"]["Enums"]["currencies"];
+          currency?: string;
           id?: number;
-          is_active?: boolean;
           logo_url?: string | null;
           name: string;
-          rating?: number;
           slug: string;
           sponsored?: boolean;
+          supports_price_scraping?: boolean;
+          supports_product_scraping?: boolean;
           updated_at?: string;
           verified?: boolean;
         };
@@ -1703,14 +1793,14 @@ export type Database = {
           base_url?: string;
           country_iso?: string;
           created_at?: string;
-          currency?: Database["public"]["Enums"]["currencies"];
+          currency?: string;
           id?: number;
-          is_active?: boolean;
           logo_url?: string | null;
           name?: string;
-          rating?: number;
           slug?: string;
           sponsored?: boolean;
+          supports_price_scraping?: boolean;
+          supports_product_scraping?: boolean;
           updated_at?: string;
           verified?: boolean;
         };
@@ -1928,12 +2018,10 @@ export type Database = {
           buyer_count: number | null;
           country_iso: string | null;
           created_at: string | null;
-          currency: Database["public"]["Enums"]["currencies"] | null;
+          currency: string | null;
           id: number | null;
-          is_active: boolean | null;
           logo_url: string | null;
           name: string | null;
-          rating: number | null;
           slug: string | null;
           sponsored: boolean | null;
           updated_at: string | null;
@@ -1944,12 +2032,10 @@ export type Database = {
           buyer_count?: never;
           country_iso?: string | null;
           created_at?: string | null;
-          currency?: Database["public"]["Enums"]["currencies"] | null;
+          currency?: string | null;
           id?: number | null;
-          is_active?: boolean | null;
           logo_url?: string | null;
           name?: string | null;
-          rating?: number | null;
           slug?: string | null;
           sponsored?: boolean | null;
           updated_at?: string | null;
@@ -1960,12 +2046,10 @@ export type Database = {
           buyer_count?: never;
           country_iso?: string | null;
           created_at?: string | null;
-          currency?: Database["public"]["Enums"]["currencies"] | null;
+          currency?: string | null;
           id?: number | null;
-          is_active?: boolean | null;
           logo_url?: string | null;
           name?: string | null;
-          rating?: number | null;
           slug?: string | null;
           sponsored?: boolean | null;
           updated_at?: string | null;
@@ -2018,52 +2102,39 @@ export type Database = {
       };
       v_price_history: {
         Row: {
-          cube_slug: string | null;
+          cube_id: number | null;
           price_history: Json | null;
+          vendor_id: number | null;
           vendor_name: string | null;
         };
         Relationships: [
           {
-            foreignKeyName: "cube_vendor_links_snapshot_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "cube_vendor_links_snapshot_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "cube_vendor_links_snapshot_cube_slug_fkey";
-            columns: ["cube_slug"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "cube_vendor_links_snapshot_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "cube_vendor_links_snapshot_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
-            columns: ["vendor_name"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["image_source"];
-          },
-          {
-            foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
-            columns: ["vendor_name"];
+            foreignKeyName: "cube_vendor_links_snapshot_vendor_id_fkey";
+            columns: ["vendor_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_vendors";
-            referencedColumns: ["name"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "cube_vendor_links_snapshot_vendor_name_fkey";
-            columns: ["vendor_name"];
+            foreignKeyName: "cube_vendor_links_snapshot_vendor_id_fkey";
+            columns: ["vendor_id"];
             isOneToOne: false;
             referencedRelation: "vendors";
-            referencedColumns: ["name"];
+            referencedColumns: ["id"];
           },
         ];
       };

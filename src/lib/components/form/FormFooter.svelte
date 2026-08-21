@@ -6,6 +6,7 @@
 
   interface Props {
     submitLabel: string;
+    submitting: boolean;
     submissionNote?: string;
     message?: string;
     allErrors?: FormError[];
@@ -13,6 +14,7 @@
 
   let {
     submitLabel,
+    submitting,
     submissionNote,
     message,
     allErrors = [],
@@ -20,7 +22,12 @@
 </script>
 
 <div class="flex flex-col gap-3">
-  <button type="submit" class="btn btn-primary btn-lg w-full">
+  <button
+    type="submit"
+    class="btn btn-primary btn-lg w-full"
+    disabled={submitting}
+  >
+    {#if submitting}<span class="loading loading-spinner"></span>{/if}
     {submitLabel}
   </button>
   {#if submissionNote}

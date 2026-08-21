@@ -114,6 +114,7 @@
     errors,
     message,
     enhance,
+    submitting,
     isTainted,
     tainted,
   } = superForm(
@@ -1121,6 +1122,7 @@
 
           <FormFooter
             {submitLabel}
+            submitting={$submitting}
             {submissionNote}
             message={$message}
             allErrors={$allErrors}

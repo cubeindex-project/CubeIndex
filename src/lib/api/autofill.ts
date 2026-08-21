@@ -3,10 +3,7 @@ import type {
   VendorOfferAutofillResult,
 } from "$lib/types/autofill.types";
 
-async function sendAutofillRequest(
-  endpoint: string,
-  url: string,
-) {
+async function sendAutofillRequest(endpoint: string, url: string) {
   let response: Response;
   let result;
 
@@ -41,6 +38,8 @@ export function fetchCubeDetailsAutofill(
   return sendAutofillRequest("cube-details", url);
 }
 
-export function fetchVendorOfferAutofill(url: string): Promise<VendorOfferAutofillResult> {
+export function fetchVendorOfferAutofill(
+  url: string,
+): Promise<VendorOfferAutofillResult> {
   return sendAutofillRequest("vendor-offer", url);
 }

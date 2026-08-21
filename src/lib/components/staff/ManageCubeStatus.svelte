@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import { page } from "$app/state";
-    import { isValueOther } from "$lib/utils/isValueOther";
+  import { isValueOther } from "$lib/utils/isValueOther";
 
   interface Props {
     reason: "Accept" | "Reject";
@@ -101,7 +101,7 @@
               Already in the database
             </option>
             <option value="Not a valid trim">Not a valid trim</option>
-            <option value=VALUE_OTHER>Other...</option>
+            <option value="VALUE_OTHER">Other...</option>
           </select>
           {#if isValueOther(note)}
             <span class="label-text">Other reason</span>

@@ -2,8 +2,7 @@ import { AUTOFILL_SERVICE_URL } from "$env/static/private";
 import { json, type RequestHandler } from "@sveltejs/kit";
 
 type ScrapingCapability =
-  | "supports_product_scraping"
-  | "supports_price_scraping";
+  "supports_product_scraping" | "supports_price_scraping";
 
 interface AutofillHandlerOptions {
   endpoint: string;

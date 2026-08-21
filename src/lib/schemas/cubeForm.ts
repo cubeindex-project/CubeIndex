@@ -88,6 +88,25 @@ const vendorLinksSchema = z
       available: z.coerce.boolean().default(false),
     }),
   )
+  .check((context) => {
+    const firstIndexByVendorID = new Map<number, number>();
+
+    context.value.forEach((vendorLink, index) => {
+      const firstIndex = firstIndexByVendorID.get(vendorLink.vendor_id);
+
+      if (firstIndex === undefined) {
+        firstIndexByVendorID.set(vendorLink.vendor_id, index);
+        return;
+      }
+
+      context.issues.push({
+        code: "custom",
+        message: `A link for this vendor was already added in row ${firstIndex + 1}`,
+        input: vendorLink.vendor_id,
+        path: [index, "vendor_id"],
+      });
+    });
+  })
   .default([]);
 
 export const cubeFormSchema = z
@@ -115,11 +134,11 @@ export const cubeFormSchema = z
     surfaceFinish: z
       .enum([...Constants.public.Enums.cube_surface_finish])
       .optional(),
-    weight: z.coerce.number().nonnegative().optional(),
+    weight: z.coerce.number().min(1).optional(),
     size: z.coerce
       .string()
       .trim()
-      .refine((val) => sizePattern.test(val), {
+      .refine((value) => value === "" && sizePattern.test(value), {
         message: "Size must be num x num x num",
       })
       .optional(),
@@ -128,40 +147,63 @@ export const cubeFormSchema = z
     features: featuresSchema,
     vendorLinks: vendorLinksSchema,
   })
-  .check((data) => {
+  .check((context) => {
     if (
-      data.value.brandID === "___other" &&
-      data.value.otherBrand.trim().length === 0
+      context.value.brandID === "___other" &&
+      context.value.otherBrand.trim().length === 0
     ) {
-      data.issues.push({
+      context.issues.push({
         code: "custom",
         message: "Brand is required",
-        input: data.value.otherBrand,
+        input: context.value.otherBrand,
         path: ["otherBrand"],
       });
     }
 
     if (
-      data.value.typeID === "___other" &&
-      data.value.otherType.trim().length === 0
+      context.value.typeID === "___other" &&
+      context.value.otherType.trim().length === 0
     ) {
-      data.issues.push({
+      context.issues.push({
         code: "custom",
         message: "Type is required",
-        input: data.value.otherType,
+        input: context.value.otherType,
         path: ["otherType"],
       });
     }
 
     if (
-      data.value.seriesID === "___other" &&
-      data.value.otherSeries.length === 0
+      context.value.seriesID === "___other" &&
+      context.value.otherSeries.length === 0
     ) {
-      data.issues.push({
+      context.issues.push({
         code: "custom",
         message: "Series is required",
-        input: data.value.otherSeries,
+        input: context.value.otherSeries,
         path: ["otherSeries"],
+      });
+    }
+
+    const requiresRelatedCube =
+      context.value.features.modded || context.value.versionType !== "Base";
+
+    if (requiresRelatedCube && context.value.relatedToId === undefined) {
+      context.issues.push({
+        code: "custom",
+        message:
+          "Select the base model this variant, limited edition, or modification is based on",
+        input: context.value.relatedToId,
+        path: ["relatedToId"],
+      });
+    }
+
+    if (!requiresRelatedCube && context.value.relatedToId !== undefined) {
+      context.issues.push({
+        code: "custom",
+        message:
+          "A related model can only be set for variants, limited editions, or commercially modified cubes",
+        input: context.value.relatedToId,
+        path: ["relatedToId"],
       });
     }
   });

@@ -1,10 +1,14 @@
-export function getCurrencySymbol(currencyCode: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currencyCode,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })
-    .formatToParts(0)
-    .find((part) => part.type === "currency")?.value;
+export function getCurrencySymbol(currencyCode?: string) {
+  if (!currencyCode) return;
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currencyCode,
+      currencyDisplay: "symbol",
+    })
+      .formatToParts(0)
+      .find((part) => part.type === "currency")?.value;
+  } catch {
+    return currencyCode;
+  }
 }

@@ -1,18 +1,38 @@
-﻿<script lang="ts">
+﻿﻿<script lang="ts">
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import StarRating from "../rating/StarRating.svelte";
   import CubeVersionType from "./CubeVersionType.svelte";
+  import { formatCurrency } from "$lib/utils/formatCurrency";
   import type { Snippet } from "svelte";
 
-  interface Props {
-    cube: Tables<"v_detailed_cube_models">;
-    rating: boolean;
+  type CubeModel = Tables<"v_detailed_cube_models">;
+  type BaseCube = Pick<
+    CubeModel,
+    "id" | "image_url" | "name" | "version_type"
+  > &
+    Partial<Pick<CubeModel, "slug">>;
+  type MetaCube = Pick<
+    CubeModel,
+    "avg_price" | "brand" | "popularity" | "type"
+  >;
+  type RatingCube = Pick<CubeModel, "rating">;
+
+  interface SharedProps {
     top?: Snippet<[]>;
     content: Snippet<[]>;
     bottom?: Snippet<[]>;
-    showMeta?: boolean;
   }
+
+  type Props = SharedProps &
+    (
+      | { showMeta?: true; cube: BaseCube & MetaCube }
+      | { showMeta: false; cube: BaseCube & Partial<MetaCube> }
+    ) &
+    (
+      | { rating: true; cube: BaseCube & RatingCube }
+      | { rating: false; cube: BaseCube & Partial<RatingCube> }
+    );
 
   let { cube, top, rating, content, bottom, showMeta = true }: Props = $props();
 
@@ -25,13 +45,6 @@
     maximumFractionDigits: 1,
   });
   const fmtCompact = (n: number) => compactNF.format(n);
-
-  const currencyNF = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-  const formatCurrency = (n: number) => currencyNF.format(n);
 </script>
 
 <svelte:head>
@@ -43,7 +56,11 @@
   class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden flex flex-col h-full"
 >
   {@render top?.()}
-  <a href={resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })}>
+  <a
+    href={cube.slug
+      ? resolve("/(public)/explore/cubes/[slug]", { slug: cube.slug })
+      : undefined}
+  >
     <img
       data-hero-key={`cube-image-${cube.id}`}
       src={preloadImage}

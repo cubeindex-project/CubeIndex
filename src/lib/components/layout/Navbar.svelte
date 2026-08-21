@@ -155,13 +155,13 @@
     </div>
     <div class="navbar-end space-x-4">
       {#if profile}
-        <!-- <a
+        <a
           class="btn btn-primary btn-sm hidden sm:inline-flex"
-          href={resolve("/(private)/submit")}
+          href={resolve("/(private)/submit/cube")}
         >
           <i class="fa-solid fa-plus"></i>
           Submit cube
-        </a> -->
+        </a>
         <a
           class="notification-button"
           href={resolve("/(private)/notifications")}
@@ -228,10 +228,10 @@
               </a>
             </li>
             <li>
-              <!-- <a href={resolve("/(private)/user/submissions")}>
+              <a href={resolve("/(private)/user/submissions")}>
                 <i class="fa-solid fa-paper-plane"></i>
                 Submissions
-              </a> -->
+              </a>
             </li>
             <li>
               <a href={resolve("/(private)/userbar")}>

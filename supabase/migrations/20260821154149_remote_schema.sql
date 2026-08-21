@@ -20,11 +20,19 @@ drop index if exists "public"."cube_vendor_links_duplicate_id_key";
 
 drop index if exists "public"."cube_vendor_links_duplicate_pkey";
 
-alter table "public"."cube_vendor_links" add column "cube_id" bigint not null;
+alter table "public"."cube_vendor_links" add column "cube_id" bigint;
+
+update "public"."cube_vendor_links" cvl set cube_id = (select id from cube_models cm where cm.slug = cvl.cube_slug);
+
+alter table "public"."cube_vendor_links" alter column "cube_id" set not null;
 
 alter table "public"."cube_vendor_links" add column "is_dead" boolean not null default false;
 
-alter table "public"."cube_vendor_links" add column "vendor_id" bigint not null;
+alter table "public"."cube_vendor_links" add column "vendor_id" bigint;
+
+update "public"."cube_vendor_links" cvl set vendor_id = (select id from vendors v where v.name = cvl.vendor_name);
+
+alter table "public"."cube_vendor_links" alter column "vendor_id" set not null;
 
 alter table "public"."cube_vendor_links" alter column "price" set data type numeric(12,2) using "price"::numeric(12,2);
 

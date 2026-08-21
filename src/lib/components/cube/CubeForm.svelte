@@ -1063,14 +1063,14 @@
                                 </button>
                               </div>
 
-                              <!-- {#if vendorAutofillState.errorMessage}
+                              {#if vendorAutofillState.errorMessage}
                                 <p
                                   class="max-w-48 wrap-break-words text-right text-xs text-error"
                                   role="alert"
                                 >
                                   {vendorAutofillState.errorMessage}
                                 </p>
-                              {/if} -->
+                              {/if}
                             </div>
                           </td>
                         </tr>

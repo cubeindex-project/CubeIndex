@@ -1,4 +1,4 @@
-import type { CubeDetailsAutofillResult, PriceAutofillResult } from "./types";
+import type { CubeDetailsAutofillResult, PriceAutofillResult } from "$lib/types/autofill.types";
 
 async function sendAutofillRequest<Result>(
   endpoint: string,

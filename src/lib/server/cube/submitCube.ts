@@ -38,7 +38,7 @@ export async function submitCube(
   const { error } = await supabase.rpc("submit_cube", {
     p_operation: targetCubeID ? "update" : "create",
     p_submitter_note: data.submitterNote,
-    p_cube: { ...cube, target_cube_id: targetCubeID ?? null },
+    p_cube: cube,
     p_feature_ids: features.map(({ id }) => id),
     p_vendor_links: vendorLinks,
   });

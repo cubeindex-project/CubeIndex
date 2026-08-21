@@ -57,7 +57,7 @@
   </header>
 
   <div class="flex justify-between">
-    <div role="tablist" class="tabs tabs-box w-fit">
+    <!-- <div role="tablist" class="tabs tabs-box w-fit">
       <button
         role="tab"
         class="tab"
@@ -70,7 +70,7 @@
         class:tab-active={submissionType === "vendors"}
         onclick={() => (submissionType = "vendors")}>Vendors</button
       >
-    </div>
+    </div> -->
 
     <form class="filter" aria-label="Filter by status">
       <input

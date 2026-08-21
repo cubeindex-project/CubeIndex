@@ -28,6 +28,7 @@
   import FormHelpLink from "../form/FormHelpLink.svelte";
   import FormHeader from "../form/FormHeader.svelte";
   import { fetchVendorOfferAutofill } from "$lib/api/autofill";
+  import { isValueOther, VALUE_OTHER } from "$lib/utils/isValueOther";
 
   interface Props {
     cubes: Pick<
@@ -211,7 +212,9 @@
     state.errorMessage = "";
 
     try {
-      const { price, availability } = await fetchVendorOfferAutofill(vendorLink.url);
+      const { price, availability } = await fetchVendorOfferAutofill(
+        vendorLink.url,
+      );
 
       if (price !== undefined) vendorLink.price = price;
       if (availability !== undefined) vendorLink.available = availability;
@@ -420,7 +423,7 @@
 
               <div class="grid gap-6 md:grid-cols-2">
                 {#snippet brandField()}
-                  {#if $form.brandID === "___other"}
+                  {#if isValueOther($form.brandID)}
                     <div class="join w-full">
                       <input
                         name="otherBrand"
@@ -452,7 +455,7 @@
                       class="select w-full"
                       required
                     >
-                      <option value="___other">+ Add Brand</option>
+                      <option value={VALUE_OTHER}>+ Add Brand</option>
                       {#each brands as b, index (index)}
                         <option value={String(b.id)}>{b.name}</option>
                       {/each}
@@ -460,8 +463,8 @@
                   {/if}
                 {/snippet}
                 <FormField
-                  title={$form.brandID === "___other" ? "New brand" : "Brand"}
-                  error={$form.brandID === "___other"
+                  title={isValueOther($form.brandID) ? "New brand" : "Brand"}
+                  error={isValueOther($form.brandID)
                     ? $errors.otherBrand
                     : $errors.brandID}
                   required
@@ -469,7 +472,7 @@
                   children={brandField}
                 />
                 {#snippet cubeTypeField()}
-                  {#if $form.typeID === "___other"}
+                  {#if isValueOther($form.typeID)}
                     <div class="join w-full">
                       <input
                         name="otherType"
@@ -501,7 +504,7 @@
                       class="select w-full"
                       required
                     >
-                      <option value="___other">+ Create Type</option>
+                      <option value={VALUE_OTHER}>+ Create Type</option>
                       {#each types as t (t.name)}
                         <option value={String(t.id)}>{t.name}</option>
                       {/each}
@@ -509,10 +512,10 @@
                   {/if}
                 {/snippet}
                 <FormField
-                  title={$form.typeID === "___other"
+                  title={isValueOther($form.typeID)
                     ? "New cube type"
                     : "Cube type"}
-                  error={$form.typeID === "___other"
+                  error={isValueOther($form.typeID)
                     ? $errors.otherType
                     : $errors.typeID}
                   required
@@ -577,7 +580,7 @@
                       class="btn btn-ghost btn-sm"
                       onclick={() => {
                         isAddingSeries = true;
-                        $form.seriesID = "___other";
+                        $form.seriesID = VALUE_OTHER;
                       }}
                     >
                       <i class="fa-solid fa-plus" aria-hidden="true"></i>

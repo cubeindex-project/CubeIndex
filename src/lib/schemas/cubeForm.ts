@@ -1,5 +1,6 @@
 import z from "zod/v4";
 import { Constants, type Enums } from "$lib/types/database.types";
+import { VALUE_OTHER } from "$lib/utils/isValueOther";
 
 export const sizePattern =
   /^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$/;
@@ -51,7 +52,7 @@ const idOrOtherSchema = z
   .string()
   .trim()
   .refine(
-    (value) => value === "___other" || /^[1-9][0-9]*$/.test(value),
+    (value) => value === VALUE_OTHER || /^[1-9][0-9]*$/.test(value),
     "Selection is required",
   );
 
@@ -149,7 +150,7 @@ export const cubeFormSchema = z
   })
   .check((context) => {
     if (
-      context.value.brandID === "___other" &&
+      context.value.brandID === VALUE_OTHER &&
       context.value.otherBrand.trim().length === 0
     ) {
       context.issues.push({
@@ -161,7 +162,7 @@ export const cubeFormSchema = z
     }
 
     if (
-      context.value.typeID === "___other" &&
+      context.value.typeID === VALUE_OTHER &&
       context.value.otherType.trim().length === 0
     ) {
       context.issues.push({
@@ -173,7 +174,7 @@ export const cubeFormSchema = z
     }
 
     if (
-      context.value.seriesID === "___other" &&
+      context.value.seriesID === VALUE_OTHER &&
       context.value.otherSeries.length === 0
     ) {
       context.issues.push({

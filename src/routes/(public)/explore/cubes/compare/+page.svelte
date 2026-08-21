@@ -1,25 +1,26 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/utils/formatDate.js";
   import type { Tables } from "$lib/types/database.types.js";
-  import SearchCubes from "$lib/components/cube/SearchCubes.svelte";
+  import SearchValues from "$lib/components/ui/SearchValues.svelte";
+  import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
 
-  type Field = {
+  type DetailedCubeModelsKeys = keyof Tables<"v_detailed_cube_models">;
+
+  interface Field {
     label: string;
-    key: string;
-    format?: (value: never) => string;
+    key: DetailedCubeModelsKeys;
+    format?: (value: never, cube: Tables<"v_detailed_cube_models">) => string;
     boolean?: boolean;
-  };
+  }
 
   const { data } = $props();
   const { cubes } = $derived(data);
 
   const fields: Field[] = [
-    { label: "Version Type", key: "version_type" },
     { label: "Brand", key: "brand" },
     { label: "Series", key: "series" },
     { label: "Type", key: "type" },
-    { label: "Subtype", key: "sub_type" },
+    { label: "Version Type", key: "version_type" },
     { label: "Surface Finish", key: "surface_finish" },
     { label: "Stickered", key: "stickered", format: boolYesNo, boolean: true },
     { label: "WCA Legal", key: "wca_legal", format: boolYesNo, boolean: true },
@@ -34,24 +35,30 @@
       boolean: true,
     },
     { label: "Related To", key: "related_to" },
-    { label: "Release Date", key: "release_date", format: formatDate },
-    { label: "Rating", key: "rating", format: formatFloat },
+    {
+      label: "Release Date",
+      key: "release_date",
+      format: (value, cube) =>
+        cube.release_date_precision
+          ? formatPartialDate(value, cube.release_date_precision)
+          : "-",
+    },
     { label: "Weight (g)", key: "weight", format: formatFloat },
-    { label: "Size (mm3)", key: "size", format: formatFloat },
+    { label: "Size (mm)", key: "size", format: formatFloat },
   ];
 
   const options = $derived(
     cubes.map((c) => ({
       label: c.name,
-      value: c.slug,
+      value: c.id,
     })),
   );
 
-  let cube1Value: string = $state("");
-  let cube2Value: string = $state("");
+  let cube1Value: number | undefined = $state(undefined);
+  let cube2Value: number | undefined = $state(undefined);
 
-  const cube1 = $derived(cubes.find((c) => c.slug === cube1Value) ?? null);
-  const cube2 = $derived(cubes.find((c) => c.slug === cube2Value) ?? null);
+  const cube1 = $derived(cubes.find((c) => c.id === cube1Value) ?? undefined);
+  const cube2 = $derived(cubes.find((c) => c.id === cube2Value) ?? undefined);
 
   function swapSelections() {
     const a = cube1Value;
@@ -61,10 +68,10 @@
 
   function clearSelection(which: 1 | 2 | "both" = "both") {
     if (which === 1 || which === "both") {
-      cube1Value = "";
+      cube1Value = undefined;
     }
     if (which === 2 || which === "both") {
-      cube2Value = "";
+      cube2Value = undefined;
     }
   }
 
@@ -75,10 +82,10 @@
     return typeof n === "number" ? n.toFixed(2).replace(/\.00$/, "") : n;
   }
 
-  function getValue(c: Tables<"v_detailed_cube_models">, f: Field) {
-    if (!c) return "-";
-    const raw = c[f.key as keyof Tables<"v_detailed_cube_models">];
-    return f.format ? f.format(raw as never) : (raw ?? "-");
+  function getValue(cube: Tables<"v_detailed_cube_models">, field: Field) {
+    const raw = cube[field.key];
+    if (raw === null || raw === undefined) return "-";
+    return field.format ? field.format(raw as never, cube) : raw;
   }
 
   function differs(f: Field) {
@@ -103,24 +110,15 @@
       <div class="flex-1">
         <div class="block mb-2 text-sm font-semibold opacity-70">Cube 1</div>
         <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
-          <SearchCubes cubes={options} bind:outputVar={cube1Value} />
-          <div class="mt-2 flex gap-2">
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick={() => clearSelection(1)}
-              disabled={!cube1Value}
-            >
-              Clear
-            </button>
-          </div>
+          <SearchValues values={options} bind:outputValue={cube1Value} />
         </div>
       </div>
-      <!-- VS / Controls -->
       <div class="flex flex-col justify-center items-center gap-3">
         <span
           class="bg-base-300 rounded-full text-2xl px-5 py-3 text-primary font-bold"
-          >VS</span
         >
+          VS
+        </span>
         <button
           class="btn btn-outline btn-sm"
           onclick={swapSelections}
@@ -140,16 +138,7 @@
       <div class="flex-1">
         <div class="block mb-2 text-sm font-semibold opacity-70">Cube 2</div>
         <div class="card bg-base-200 border border-base-300 rounded-2xl p-3">
-          <SearchCubes cubes={options} bind:outputVar={cube2Value} />
-          <div class="mt-2 flex gap-2">
-            <button
-              class="btn btn-ghost btn-sm"
-              onclick={() => clearSelection(2)}
-              disabled={!cube2Value}
-            >
-              Clear
-            </button>
-          </div>
+          <SearchValues values={options} bind:outputValue={cube2Value} />
         </div>
       </div>
     </div>
@@ -158,13 +147,10 @@
     <div
       class="overflow-x-auto mt-8 rounded-2xl border border-base-300 bg-base-200"
     >
-      <table class="min-w-full table-auto text-left text-base">
+      <table class="min-w-full table-auto text-left">
         <thead>
-          <tr class="">
-            <th
-              scope="col"
-              class="py-4 px-4 font-bold text-primary text-lg w-1/3"
-            >
+          <tr>
+            <th scope="col" class="py-4 px-4 font-bold text-lg w-1/3">
               Feature
             </th>
             <th

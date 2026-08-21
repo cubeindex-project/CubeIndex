@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import { page } from "$app/state";
+  import { isValueOther } from "$lib/utils/isValueOther";
 
   interface Props {
     reason: "Accept" | "Reject";
@@ -47,7 +48,7 @@
       status: reason === "Accept" ? "Approved" : "Rejected",
     };
     if (reason === "Reject")
-      payload.notes = note === "___other" ? otherNote : note;
+      payload.notes = isValueOther(note) ? otherNote : note;
 
     try {
       const res = await fetch("/api/staff/update-cube-status", {
@@ -100,9 +101,9 @@
               Already in the database
             </option>
             <option value="Not a valid trim">Not a valid trim</option>
-            <option value="___other">Other...</option>
+            <option value="VALUE_OTHER">Other...</option>
           </select>
-          {#if note === "___other"}
+          {#if isValueOther(note)}
             <span class="label-text">Other reason</span>
             <textarea
               bind:value={otherNote}

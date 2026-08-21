@@ -54,11 +54,11 @@
     })),
   );
 
-  let cube1Value: number | null = $state(null);
-  let cube2Value: number | null = $state(null);
+  let cube1Value: number | undefined = $state(undefined);
+  let cube2Value: number | undefined = $state(undefined);
 
-  const cube1 = $derived(cubes.find((c) => c.id === cube1Value) ?? null);
-  const cube2 = $derived(cubes.find((c) => c.id === cube2Value) ?? null);
+  const cube1 = $derived(cubes.find((c) => c.id === cube1Value) ?? undefined);
+  const cube2 = $derived(cubes.find((c) => c.id === cube2Value) ?? undefined);
 
   function swapSelections() {
     const a = cube1Value;
@@ -68,10 +68,10 @@
 
   function clearSelection(which: 1 | 2 | "both" = "both") {
     if (which === 1 || which === "both") {
-      cube1Value = null;
+      cube1Value = undefined;
     }
     if (which === 2 || which === "both") {
-      cube2Value = null;
+      cube2Value = undefined;
     }
   }
 
@@ -84,7 +84,7 @@
 
   function getValue(cube: Tables<"v_detailed_cube_models">, field: Field) {
     const raw = cube[field.key];
-    if (raw == null) return "-";
+    if (raw === null || raw === undefined) return "-";
     return field.format ? field.format(raw as never, cube) : raw;
   }
 

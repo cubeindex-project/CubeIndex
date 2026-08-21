@@ -3,6 +3,7 @@ import { cleanLink } from "$lib/utils/linkCleaner";
 import { StatusError } from "$lib/errors/StatusError";
 import { camelToSnakeCase } from "$lib/utils/camelToSnakeCase";
 import { createCubeSubmissionPayload } from "$lib/utils/submissions/cube/createCubeSubmissionPayload";
+import type { AppLogger } from "$lib/server/logger";
 import type { Infer } from "sveltekit-superforms";
 
 /** Saves every part of a cube form in one database transaction.
@@ -14,6 +15,7 @@ import type { Infer } from "sveltekit-superforms";
 export async function submitCube(
   data: Infer<CubeFormSchema>,
   supabase: App.Locals["supabase"],
+  log: AppLogger,
   targetCubeID?: number,
 ): Promise<void> {
   const cube = await createCubeSubmissionPayload(data, supabase, targetCubeID);
@@ -44,6 +46,18 @@ export async function submitCube(
   });
 
   if (error) {
+    log.error(
+      {
+        err: error,
+        databaseError: {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        },
+      },
+      "Failed to submit cube to database",
+    );
+
     const duplicate = error.code === "23505";
     throw new StatusError(
       duplicate ? 400 : 500,

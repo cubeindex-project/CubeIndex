@@ -39,7 +39,7 @@ export const actions: Actions = {
     }
 
     try {
-      await submitCube(form.data, supabase);
+      await submitCube(form.data, supabase, log);
     } catch (cause) {
       log.error({ err: cause }, "Failed to submit cube");
       if (cause instanceof StatusError) {

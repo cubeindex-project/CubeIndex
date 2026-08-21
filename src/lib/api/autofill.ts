@@ -1,12 +1,12 @@
 import type {
   CubeDetailsAutofillResult,
-  PriceAutofillResult,
+  VendorOfferAutofillResult,
 } from "$lib/types/autofill.types";
 
-async function sendAutofillRequest<Result>(
+async function sendAutofillRequest(
   endpoint: string,
   url: string,
-): Promise<Result> {
+) {
   let response: Response;
   let result;
 
@@ -27,22 +27,20 @@ async function sendAutofillRequest<Result>(
   }
 
   if (!response.ok) {
-    throw new Error(
-      "error" in result && result.error
-        ? result.error
-        : "We could not process that link right now.",
-    );
+    const message =
+      result?.error || "We could not process that link right now.";
+    throw new Error(message);
   }
 
-  return result as Result;
+  return result;
 }
 
-export function autofillCubeDetails(
+export function fetchCubeDetailsAutofill(
   url: string,
 ): Promise<CubeDetailsAutofillResult> {
   return sendAutofillRequest("cube-details", url);
 }
 
-export function autofillVendorOffer(url: string): Promise<PriceAutofillResult> {
+export function fetchVendorOfferAutofill(url: string): Promise<VendorOfferAutofillResult> {
   return sendAutofillRequest("vendor-offer", url);
 }

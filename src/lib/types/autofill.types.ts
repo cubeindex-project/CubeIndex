@@ -30,7 +30,7 @@ export interface CubeDetailsAutofillResult {
   ball_core?: boolean;
 }
 
-export interface PriceAutofillResult {
+export interface VendorOfferAutofillResult {
   price?: number;
   availability?: boolean;
 }

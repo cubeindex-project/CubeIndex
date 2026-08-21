@@ -1,6 +1,6 @@
 <script lang="ts">
   import Modal from "$lib/components/ui/Modal.svelte";
-  import { autofillCubeDetails } from "$lib/api/autofill";
+  import { fetchCubeDetailsAutofill } from "$lib/api/autofill";
   import type {
     AutofillState,
     CubeDetailsAutofillResult,
@@ -33,7 +33,7 @@
 
     try {
       const autoFillResult: CubeDetailsAutofillResult =
-        await autofillCubeDetails(autofill.storeURL);
+        await fetchCubeDetailsAutofill(autofill.storeURL);
       applyData(autoFillResult);
       autofill.success = true;
     } catch (err) {

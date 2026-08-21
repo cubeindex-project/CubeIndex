@@ -21,13 +21,13 @@
     CubeDetailsAutofillResult,
   } from "$lib/types/autofill.types";
   import CubeDetailsAutofillDialog from "$lib/components/autofill/CubeDetailsAutofillDialog.svelte";
-  // import { autofillVendorOffer } from "$lib/api/autofill";
   import { goto } from "$app/navigation";
   import type { ResolvedPathname } from "$app/types";
   import FormField from "../form/FormField.svelte";
   import FormFooter from "../form/FormFooter.svelte";
   import FormHelpLink from "../form/FormHelpLink.svelte";
   import FormHeader from "../form/FormHeader.svelte";
+  import { fetchVendorOfferAutofill } from "$lib/api/autofill";
 
   interface Props {
     cubes: Pick<
@@ -170,12 +170,6 @@
     );
   });
 
-  $effect(() => {
-    if (!$form.features.modded && $form.versionType === "Base") {
-      $form.relatedToId = undefined;
-    }
-  });
-
   let isAutofillCardOpen = $state(false);
   function openAutofillCard() {
     isAutofillCardOpen = true;
@@ -208,28 +202,28 @@
     return () => clearTimeout(resetTimeout);
   });
 
-  // async function autofillVendorPrice(index: number) {
-  //   const state = vendorAutofillStates[index];
-  //   const vendorLink = $form.vendorLinks[index];
-  //   if (!state || !vendorLink) return;
+  async function autofillVendorLinkOffer(index: number) {
+    const state = vendorAutofillStates[index];
+    const vendorLink = $form.vendorLinks[index];
+    if (!state || !vendorLink) return;
 
-  //   state.status = "loading";
-  //   state.errorMessage = "";
+    state.status = "loading";
+    state.errorMessage = "";
 
-  //   try {
-  //     const { price, availability } = await autofillVendorOffer(vendorLink.url);
+    try {
+      const { price, availability } = await fetchVendorOfferAutofill(vendorLink.url);
 
-  //     if (price !== undefined) vendorLink.price = price;
-  //     if (availability !== undefined) vendorLink.available = availability;
-  //     state.status = "success";
-  //   } catch (error) {
-  //     state.status = "error";
-  //     state.errorMessage =
-  //       error instanceof Error
-  //         ? error.message
-  //         : "Something went wrong while contacting the autofill service.";
-  //   }
-  // }
+      if (price !== undefined) vendorLink.price = price;
+      if (availability !== undefined) vendorLink.available = availability;
+      state.status = "success";
+    } catch (error) {
+      state.status = "error";
+      state.errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while contacting the autofill service.";
+    }
+  }
 
   function applyData(data: CubeDetailsAutofillResult): void {
     $form = {
@@ -889,7 +883,7 @@
                           (vendor) => vendor.id === link.vendor_id,
                         )}
                         {@const vendorErrors = $errors.vendorLinks?.[index]}
-                        <!-- {@const hasProductUrl = Boolean(link.url?.trim())} -->
+                        {@const hasProductUrl = Boolean(link.url?.trim())}
                         {@const vendorAutofillState =
                           vendorAutofillStates[index]}
 
@@ -996,7 +990,7 @@
                           <td>
                             <div class="flex flex-col items-end gap-1">
                               <div class="flex justify-end gap-2">
-                                <!-- <button
+                                <button
                                   type="button"
                                   class="btn btn-outline btn-sm"
                                   class:btn-info={vendorAutofillState.status ===
@@ -1010,7 +1004,7 @@
                                     vendorAutofillState.status === "loading"}
                                   aria-live="polite"
                                   title="Autofill using the product URL"
-                                  onclick={() => autofillVendorPrice(index)}
+                                  onclick={() => autofillVendorLinkOffer(index)}
                                 >
                                   {#if vendorAutofillState.status === "loading"}
                                     <i
@@ -1045,7 +1039,7 @@
                                       Autofill
                                     </span>
                                   {/if}
-                                </button> -->
+                                </button>
 
                                 <button
                                   type="button"

@@ -169,6 +169,12 @@
     );
   });
 
+  $effect(() => {
+    if (!$form.features.modded && $form.versionType === "Base") {
+      $form.relatedToId = undefined;
+    }
+  });
+
   let isAutofillCardOpen = $state(false);
   function openAutofillCard() {
     isAutofillCardOpen = true;
@@ -599,14 +605,12 @@
               />
 
               {#snippet relatedCubeField()}
-                <div>
-                  <SearchValues
-                    values={allCubes}
-                    bind:outputValue={$form.relatedToId}
-                    disabled={!$form.features.modded &&
-                      $form.versionType === "Base"}
-                  />
-                </div>
+                <SearchValues
+                  values={allCubes}
+                  bind:outputValue={$form.relatedToId}
+                  disabled={!$form.features.modded &&
+                    $form.versionType === "Base"}
+                />
                 <input
                   type="hidden"
                   name="relatedToId"

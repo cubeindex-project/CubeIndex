@@ -138,7 +138,7 @@ export const cubeFormSchema = z
     size: z.coerce
       .string()
       .trim()
-      .refine((value) => value === "" && sizePattern.test(value), {
+      .refine((value) => value === "" || sizePattern.test(value), {
         message: "Size must be num x num x num",
       })
       .optional(),

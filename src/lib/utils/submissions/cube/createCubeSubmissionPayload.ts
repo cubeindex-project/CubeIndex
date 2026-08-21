@@ -12,7 +12,9 @@ export async function createCubeSubmissionPayload(
   data: Infer<CubeFormSchema>,
   supabase: App.Locals["supabase"],
   targetCubeID?: number,
-): Promise<Omit<Tables<"cube_submissions">, "created_at" | "id" | "submission_id">> {
+): Promise<
+  Omit<Tables<"cube_submissions">, "created_at" | "id" | "submission_id">
+> {
   const typeName = isValueOther(data.typeID)
     ? data.otherType
     : (

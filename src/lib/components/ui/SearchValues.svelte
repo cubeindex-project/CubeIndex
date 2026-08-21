@@ -43,7 +43,7 @@
     {disabled}
     onclick={() => {
       search = "";
-      outputValue = undefined
+      outputValue = undefined;
     }}
   >
     Clear

@@ -7,9 +7,7 @@ export const load = (async ({ locals: { supabase, user, log } }) => {
 
   const { data: cubeSubmissions, error } = await supabase
     .from("cube_submissions")
-    .select(
-      "*, ...submissions!inner(*)",
-    )
+    .select("*, ...submissions!inner(*)")
     .eq("submissions.submitted_by_id", user.id)
     .order("created_at", { ascending: false })
     .limit(100);

@@ -24,10 +24,10 @@
   // import { autofillVendorOffer } from "$lib/api/autofill";
   import { goto } from "$app/navigation";
   import type { ResolvedPathname } from "$app/types";
-    import FormField from "../form/FormField.svelte";
-    import FormFooter from "../form/FormFooter.svelte";
-    import FormHelpLink from "../form/FormHelpLink.svelte";
-    import FormHeader from "../form/FormHeader.svelte";
+  import FormField from "../form/FormField.svelte";
+  import FormFooter from "../form/FormFooter.svelte";
+  import FormHelpLink from "../form/FormHelpLink.svelte";
+  import FormHeader from "../form/FormHeader.svelte";
 
   interface Props {
     cubes: Pick<

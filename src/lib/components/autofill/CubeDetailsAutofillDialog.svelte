@@ -1,7 +1,10 @@
 <script lang="ts">
   import Modal from "$lib/components/ui/Modal.svelte";
   import { autofillCubeDetails } from "$lib/api/autofill";
-  import type { AutofillState, CubeDetailsAutofillResult } from "$lib/types/autofill.types";
+  import type {
+    AutofillState,
+    CubeDetailsAutofillResult,
+  } from "$lib/types/autofill.types";
 
   interface Props {
     open: boolean;

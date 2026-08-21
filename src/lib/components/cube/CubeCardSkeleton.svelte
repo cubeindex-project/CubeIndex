@@ -1,4 +1,4 @@
-﻿﻿<script lang="ts">
+﻿<script lang="ts">
   import { resolve } from "$app/paths";
   import type { Tables } from "$lib/types/database.types";
   import StarRating from "../rating/StarRating.svelte";

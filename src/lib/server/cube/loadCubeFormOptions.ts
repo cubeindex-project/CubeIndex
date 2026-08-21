@@ -23,6 +23,7 @@ export async function loadCubeFormOptions(supabase: App.Locals["supabase"]) {
       .from("v_detailed_cube_models")
       .select("id, name, slug, image_url")
       .eq("version_type", "Base")
+      .order("name")
       .throwOnError(),
   ]);
 

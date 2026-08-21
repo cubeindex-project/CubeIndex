@@ -70,7 +70,7 @@
               label: ({ parsed: { y }, dataset: { label } }) => {
                 if (y == null) return `${label}: -`;
                 const currency = vendor_links.find(
-                  (l) => l.vendor_name === label,
+                  (l) => l.vendor.name === label,
                 )?.vendor?.currency;
                 return `${label}: ${currency ? nf(currency).format(y) : `$${y.toFixed(2)}`}`;
               },
@@ -135,12 +135,12 @@
             target="_blank"
             rel="noopener noreferrer"
             class="group block rounded-xl border border-base-300 bg-base-200 hover:bg-base-300/70 focus:outline-none focus-visible:ring focus-visible:ring-primary/40 transition-colors duration-200 p-4"
-            aria-label={`Open ${shop.vendor_name} in a new tab`}
+            aria-label={`Open ${shop.vendor.name} in a new tab`}
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <div class="text-base font-semibold truncate">
-                  {shop.vendor_name}
+                  {shop.vendor.name}
                 </div>
                 <div class="mt-1 text-2xl font-bold">
                   {#if shop.price != null}

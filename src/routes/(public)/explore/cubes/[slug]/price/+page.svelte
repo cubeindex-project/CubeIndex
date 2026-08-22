@@ -142,26 +142,30 @@
                 <div class="text-base font-semibold truncate">
                   {shop.vendor.name}
                 </div>
-                <div class="mt-1 text-2xl font-bold">
-                  {#if shop.price != null}
-                    <span class="text-primary">
-                      {#if shop.vendor?.currency}
-                        {nf(shop.vendor.currency).format(shop.price)}
-                      {:else}
-                        {getCurrencySymbol(
-                          shop.vendor?.currency,
-                        )}{shop.price.toFixed(2)}
-                      {/if}
-                    </span>
-                  {:else}
-                    <span class="opacity-60">—</span>
-                  {/if}
-                </div>
+                {#if shop.vendor.supports_price_scraping}
+                  <div class="mt-1 text-2xl font-bold">
+                    {#if shop.price != null}
+                      <span class="text-primary">
+                        {#if shop.vendor?.currency}
+                          {nf(shop.vendor.currency).format(shop.price)}
+                        {:else}
+                          {getCurrencySymbol(
+                            shop.vendor?.currency,
+                          )}{shop.price.toFixed(2)}
+                        {/if}
+                      </span>
+                    {:else}
+                      <span class="opacity-60">—</span>
+                    {/if}
+                  </div>
+                {/if}
               </div>
-              <span class={status.badgeClass}>
-                <i class={status.icon} aria-hidden="true"></i>
-                {status.text}
-              </span>
+              {#if shop.vendor.supports_price_scraping}
+                <span class={status.badgeClass}>
+                  <i class={status.icon} aria-hidden="true"></i>
+                  {status.text}
+                </span>
+              {/if}
             </div>
 
             <div

@@ -1,9 +1,11 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import MissingValue from "$lib/components/ui/MissingValue.svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
+  import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
 
   let { data } = $props();
-  let { cube, submitter, verifier } = $derived(data);
+  let { cube, submitter } = $derived(data);
 
   const allFeatureBadges = [
     { label: "Smart", key: "smart", icon: "fa-microchip" },
@@ -18,38 +20,34 @@
   const presentFeatures = $derived.by(() =>
     allFeatureBadges.filter((badge) => Boolean(cube[badge.key])),
   );
+
+  const missingFields = $derived(
+    Object.entries({
+      "release date": cube.release_date,
+      weight: cube.weight,
+      size: cube.size,
+      "surface finish": cube.surface_finish,
+    })
+      .filter(([, value]) => value === null)
+      .map(([label]) => label),
+  );
 </script>
 
+{#snippet missingField()}
+  <MissingValue missingValueText="Unknown" />
+{/snippet}
+
 <section class="space-y-6">
-  <!-- Overview / Description -->
-  <div class="p-5 bg-base-200 rounded-2xl border border-base-300 shadow-sm">
-    <h2 class="text-base font-semibold opacity-70 mb-2">About</h2>
-    <p class="leading-relaxed">
-      The
-      <span class="font-semibold text-primary">
-        {cube.name}
+  {#if missingFields.length > 0}
+    <div class="alert alert-warning" role="note">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>
+        Some data is missing: <span class="font-bold">
+          {missingFields.join(", ")}
+        </span>. If you know these values, please create a report.
       </span>
-      is a <span class="font-medium">{cube.type}</span> twisty puzzle
-      {#if cube.release_date}
-        released on
-        <span class="font-medium">{formatDate(cube.release_date)}</span>
-      {/if}. It is
-      <span class="font-medium"
-        >{cube.magnetic ? "magnetic" : "non‑magnetic"}</span
-      >,
-      <span class="font-medium">{cube.smart ? "smart" : "non‑smart"}</span>, and
-      <span class="font-medium"
-        >{cube.wca_legal ? "WCA‑legal" : "not WCA‑legal"}</span
-      >. Currently
-      <span class="font-medium"
-        >{cube.discontinued ? "discontinued" : "available"}</span
-      >
-      with a community rating of
-      <span class="font-medium">{(cube.rating ?? 0).toFixed(1)}/5</span>
-      and
-      <span class="font-medium">{cube.modded ? "modded" : "original"}</span> design.
-    </p>
-  </div>
+    </div>
+  {/if}
 
   <!-- Specs + Features -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -73,27 +71,44 @@
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Weight</dt>
-          <dd class="font-medium">{cube.weight} g</dd>
+          {#if cube.weight !== null}
+            <dd class="font-medium">{cube.weight} g</dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
         <div
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Size</dt>
-          <dd class="font-medium">{cube.size} mm</dd>
+          {#if cube.size}
+            <dd class="font-medium">{cube.size} mm</dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
         <div
           class="flex items-center justify-between sm:justify-start sm:gap-3"
         >
           <dt class="opacity-70">Surface</dt>
-          <dd class="font-medium">{cube.surface_finish || "—"}</dd>
+          {#if cube.surface_finish}
+            <dd class="font-medium">{cube.surface_finish}</dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
-        <div
-          class="flex items-center justify-between sm:justify-start sm:gap-3"
-        >
-          <dt class="opacity-70">Version</dt>
-          <dd class="font-medium">
-            {cube.version_type}
-          </dd>
+        <div class="flex flex-col justify-between sm:justify-start">
+          <dt class="opacity-70">Release Date</dt>
+          {#if cube.release_date}
+            <dd class="font-medium">
+              {formatPartialDate(
+                cube.release_date,
+                cube.release_date_precision,
+              )}
+            </dd>
+          {:else}
+            {@render missingField()}
+          {/if}
         </div>
       </dl>
     </div>
@@ -127,35 +142,15 @@
           <div class="font-medium">{cube.id}</div>
         </div>
       </div>
-      {#if verifier}
-        <div class="flex items-center gap-3">
-          <i class="fa-regular fa-circle-check opacity-70"></i>
-          <div>
-            <div class="text-xs opacity-70">Verified By</div>
-            <a
-              class="font-medium link"
-              href={verifier.username
-                ? resolve("/(public)/user/[username]", {
-                    username: verifier.username,
-                  })
-                : "#"}
-            >
-              {verifier.display_name ?? "Unknown"}
-            </a>
-          </div>
-        </div>
-      {/if}
       <div class="flex items-center gap-3">
         <i class="fa-regular fa-user opacity-70"></i>
         <div>
           <div class="text-xs opacity-70">Submitted By</div>
           <a
             class="font-medium link"
-            href={submitter.username
-              ? resolve("/(public)/user/[username]", {
-                  username: submitter.username,
-                })
-              : "#"}
+            href={resolve("/(public)/user/[username]", {
+              username: submitter.username,
+            })}
           >
             {submitter.display_name || "Unknown"}
           </a>

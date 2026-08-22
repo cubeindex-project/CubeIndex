@@ -29,15 +29,12 @@
     isReportingCube = !isReportingCube;
   }
 
-  // Derive the active tab from the URL so it stays in sync on navigation
   const currentTab = $derived.by(() => {
     const segments = page.url.pathname.split("/").filter(Boolean);
-    // Expect .../explore/cubes/:slug[/tab]
     const last = segments[segments.length - 1] ?? "";
     return last === cube.slug ? "" : last;
   });
 
-  // Tab definitions (keys map to child routes)
   const tabs = [
     { label: "Details", key: "", icon: "fa-circle-info" },
     { label: "Shops & Prices", key: "price", icon: "fa-store" },
@@ -83,7 +80,6 @@
     </figure>
   </div>
   <h1 class="flex flex-col mb-4">
-    <!-- top row: text + discontinued badge -->
     <div class="flex items-center text-4xl font-bold">
       <div class="font-clash" data-hero-key={`cube-title-${cube.id}`}>
         {cube.name}
@@ -98,7 +94,6 @@
       {/if}
     </div>
 
-    <!-- bottom row: version type -->
     <div class="mt-2">
       <CubeVersionType version_type={cube.version_type} />
     </div>
@@ -126,12 +121,10 @@
     <ShareButton url={page.url.href} label="" />
   </div>
 
-  <!-- Highlighted Rating -->
   <div class="flex flex-col items-start mb-5 sm:mt-0">
     <StarRating readOnly={true} rating={cube.rating ?? 0} />
   </div>
 
-  <!-- Tabs: URL-aware, scrollable on mobile, accessible roles -->
   <nav class="my-6 -mx-6 px-6 overflow-x-auto">
     <div
       class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
@@ -161,7 +154,6 @@
 
   {@render children()}
 
-  <!-- Trim selector -->
   {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
@@ -169,7 +161,7 @@
           class="text-xl font-semibold tracking-tight flex items-center gap-2"
         >
           <i class="fa-solid fa-palette text-primary"></i>
-          Select Trim
+          Select Variant
         </h2>
         <span class="badge badge-neutral badge-sm ml-2">{cubeTrims.length}</span
         >
@@ -203,9 +195,9 @@
                   />
                 </div>
                 <div class="mt-2 text-center">
-                  <span class="text-sm font-medium line-clamp-2">
-                    {trim.name}
-                  </span>
+                  <span class="text-sm font-medium line-clamp-2"
+                    >{trim.name}</span
+                  >
                 </div>
               </div>
             </a>
@@ -215,7 +207,6 @@
     </section>
   {/if}
 
-  <!-- Related-to (for modded / non-base) -->
   {#if (cube.version_type !== "Base" || cube.modded) && relatedCube}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
@@ -260,8 +251,7 @@
     </section>
   {/if}
 
-  <!-- Same series -->
-  {#if sameSeries && sameSeries.length > 0}
+  {#if cube.series !== "" && sameSeries && sameSeries.length > 0}
     <section class="my-10">
       <header class="mb-4 flex items-center gap-2">
         <h2
@@ -278,7 +268,7 @@
       <div class="-mx-2 overflow-x-auto pb-2">
         <ul
           class="flex gap-4 px-2 snap-x snap-mandatory"
-          aria-label="Cubes in the same series"
+          aria-label={"Cubes in the " + cube.series + " series"}
         >
           {#each sameSeries as seriesCube (seriesCube.slug)}
             <li class="w-48 shrink-0 snap-start">
@@ -317,9 +307,10 @@
     </section>
   {/if}
 
-  <div class="mt-4">
+  <div class="mt-6">
     <button onclick={toggleReporting} class="btn btn-error">
-      🚩 Report incorrect/missing data
+      <i class="fa-regular fa-flag"></i>
+      Report incorrect/missing data
     </button>
   </div>
 </section>
@@ -328,7 +319,7 @@
   bind:open={isReportingCube}
   reportType="cube"
   reported={cube.slug}
-  reporLabel={`the ${cube.name}`}
+  reporLabel="the {cube.name}"
 />
 
 <AddCube

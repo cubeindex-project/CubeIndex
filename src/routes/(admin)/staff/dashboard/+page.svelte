@@ -81,9 +81,10 @@
 
   const tools = [
     {
+      href: resolve("/(admin)/staff/cubes"),
       icon: "🧊",
       label: "Manage Cubes",
-      implemented: false,
+      implemented: true,
     },
     {
       icon: "👤",
@@ -153,7 +154,7 @@
       <section
         class="bg-base-200 p-7 rounded-3xl border border-base-300 flex flex-col sm:flex-row items-start gap-6 animate-fade-in"
       >
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
           <div class="bg-primary rounded-xl p-4 h-14 w-12">
             <i class="fa-solid {currentRole.icon} text-primary-content"></i>
           </div>

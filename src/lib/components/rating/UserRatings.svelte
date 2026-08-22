@@ -154,8 +154,14 @@
       <Pagination bind:currentPage {totalPages} />
     </div>
   {:else}
-    <div class="text-center italic text-gray-500">
-      No user ratings yet. Be the first to rate this cube!
+    <div
+      aria-live="polite"
+      class="rounded-xl border border-dashed border-base-300 p-6 text-center"
+    >
+      <p class="font-medium">No user ratings yet.</p>
+      <p class="text-sm text-base-content/70">
+        Be the first to rate this cube!
+      </p>
     </div>
   {/if}
 </div>

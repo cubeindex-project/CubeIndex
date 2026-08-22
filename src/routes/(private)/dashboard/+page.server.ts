@@ -16,27 +16,27 @@ export const load = (async ({ locals }) => {
     return logError(500, "Unable to load profile", log, pErr);
   }
 
-  // const { data: submissions, error: rsErr } = await supabase
-  //   .from("v_detailed_cube_models")
-  //   .select("slug, name, image_url, status, created_at")
-  //   .eq("submitted_by_id", user.id)
-  //   .order("created_at", { ascending: false })
-  //   .limit(5);
+  const { data: cubeSubmissions, error: rsErr } = await supabase
+    .from("cube_submissions")
+    .select("id, name, image_url, ...submissions!inner(status, submitted_at)")
+    .eq("submissions.submitted_by_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(5);
 
-  // if (rsErr) {
-  //   return logError(
-  //     500,
-  //     "Failed to load recent submission activity",
-  //     log,
-  //     rsErr ?? new Error("Missing recent submission activity data"),
-  //   );
-  // }
+  if (rsErr) {
+    return logError(
+      500,
+      "Failed to load recent submission activity",
+      log,
+      rsErr ?? new Error("Missing recent submission activity data"),
+    );
+  }
 
   return {
     profile,
-    // recent: {
-    //   submissions,
-    // },
+    recent: {
+      cubeSubmissions,
+    },
     meta: {
       title: "Dashboard - CubeIndex",
       noindex: true,

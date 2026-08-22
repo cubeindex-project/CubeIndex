@@ -39,8 +39,7 @@ export type Database = {
           approved: boolean;
           brand: string | null;
           category:
-            | Database["public"]["Enums"]["accessories_categories"]
-            | null;
+            Database["public"]["Enums"]["accessories_categories"] | null;
           compatibility: string | null;
           created_at: string;
           discontinued: boolean;
@@ -56,8 +55,7 @@ export type Database = {
           approved?: boolean;
           brand?: string | null;
           category?:
-            | Database["public"]["Enums"]["accessories_categories"]
-            | null;
+            Database["public"]["Enums"]["accessories_categories"] | null;
           compatibility?: string | null;
           created_at?: string;
           discontinued?: boolean;
@@ -73,8 +71,7 @@ export type Database = {
           approved?: boolean;
           brand?: string | null;
           category?:
-            | Database["public"]["Enums"]["accessories_categories"]
-            | null;
+            Database["public"]["Enums"]["accessories_categories"] | null;
           compatibility?: string | null;
           created_at?: string;
           discontinued?: boolean;
@@ -91,8 +88,7 @@ export type Database = {
       achievements: {
         Row: {
           category:
-            | Database["public"]["Enums"]["achievements_categories"]
-            | null;
+            Database["public"]["Enums"]["achievements_categories"] | null;
           created_at: string;
           description: string;
           evolutive: boolean;
@@ -112,8 +108,7 @@ export type Database = {
         };
         Insert: {
           category?:
-            | Database["public"]["Enums"]["achievements_categories"]
-            | null;
+            Database["public"]["Enums"]["achievements_categories"] | null;
           created_at?: string;
           description: string;
           evolutive?: boolean;
@@ -133,8 +128,7 @@ export type Database = {
         };
         Update: {
           category?:
-            | Database["public"]["Enums"]["achievements_categories"]
-            | null;
+            Database["public"]["Enums"]["achievements_categories"] | null;
           created_at?: string;
           description?: string;
           evolutive?: boolean;
@@ -405,16 +399,14 @@ export type Database = {
           related_to_id: number | null;
           release_date: string | null;
           release_date_precision:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id: number | null;
           size: string | null;
           slug: string;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
           submitted_by_id: string;
           surface_finish:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           type_id: number;
           updated_at: string;
           verified_at: string | null;
@@ -432,16 +424,14 @@ export type Database = {
           related_to_id?: number | null;
           release_date?: string | null;
           release_date_precision?:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id?: number | null;
           size?: string | null;
           slug: string;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
           submitted_by_id: string;
           surface_finish?:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           type_id: number;
           updated_at?: string;
           verified_at?: string | null;
@@ -459,16 +449,14 @@ export type Database = {
           related_to_id?: number | null;
           release_date?: string | null;
           release_date_precision?:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id?: number | null;
           size?: string | null;
           slug?: string;
           sub_type?: Database["public"]["Enums"]["cubes_subtypes"];
           submitted_by_id?: string;
           surface_finish?:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           type_id?: number;
           updated_at?: string;
           verified_at?: string | null;
@@ -661,15 +649,13 @@ export type Database = {
           related_to_id: number | null;
           release_date: string | null;
           release_date_precision:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id: number | null;
           size: string | null;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
           submission_id: number;
           surface_finish:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           target_cube_id: number | null;
           type_id: number | null;
           version_type: Database["public"]["Enums"]["cube_version_type"];
@@ -688,15 +674,13 @@ export type Database = {
           related_to_id?: number | null;
           release_date?: string | null;
           release_date_precision?:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id?: number | null;
           size?: string | null;
           sub_type: Database["public"]["Enums"]["cubes_subtypes"];
           submission_id: number;
           surface_finish?:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           target_cube_id?: number | null;
           type_id?: number | null;
           version_type: Database["public"]["Enums"]["cube_version_type"];
@@ -715,15 +699,13 @@ export type Database = {
           related_to_id?: number | null;
           release_date?: string | null;
           release_date_precision?:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series_id?: number | null;
           size?: string | null;
           sub_type?: Database["public"]["Enums"]["cubes_subtypes"];
           submission_id?: number;
           surface_finish?:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           target_cube_id?: number | null;
           type_id?: number | null;
           version_type?: Database["public"]["Enums"]["cube_version_type"];
@@ -1998,8 +1980,7 @@ export type Database = {
       v_achievement_rarity: {
         Row: {
           category:
-            | Database["public"]["Enums"]["achievements_categories"]
-            | null;
+            Database["public"]["Enums"]["achievements_categories"] | null;
           created_at: string | null;
           description: string | null;
           hidden: boolean | null;
@@ -2056,8 +2037,7 @@ export type Database = {
           related_to_id: number | null;
           release_date: string | null;
           release_date_precision:
-            | Database["public"]["Enums"]["date_precision"]
-            | null;
+            Database["public"]["Enums"]["date_precision"] | null;
           series: string | null;
           series_id: number | null;
           size: string | null;
@@ -2067,8 +2047,7 @@ export type Database = {
           sub_type: Database["public"]["Enums"]["cubes_subtypes"] | null;
           submitted_by_id: string | null;
           surface_finish:
-            | Database["public"]["Enums"]["cube_surface_finish"]
-            | null;
+            Database["public"]["Enums"]["cube_surface_finish"] | null;
           type: string | null;
           type_id: number | null;
           updated_at: string | null;
@@ -2441,12 +2420,7 @@ export type Database = {
         | "Stand";
       achievements_categories: "Website" | "Quantity";
       "badge-rarity":
-        | "Special"
-        | "Legendary"
-        | "Mythic"
-        | "Epic"
-        | "Rare"
-        | "Common";
+        "Special" | "Legendary" | "Mythic" | "Epic" | "Rare" | "Common";
       cube_review_status: "published" | "draft" | "hidden";
       cube_scrap_runs_status: "queued" | "done" | "running" | "failed";
       cube_surface_finish: "Frosted" | "UV Coated" | "Glossy" | "Sculpted";
@@ -2498,13 +2472,7 @@ export type Database = {
       submission_status: "Approved" | "Rejected" | "Pending";
       submission_type: "cube" | "vendor";
       user_cube_condition:
-        | "New in box"
-        | "New"
-        | "Good"
-        | "Fair"
-        | "Worn"
-        | "Poor"
-        | "Broken";
+        "New in box" | "New" | "Good" | "Fair" | "Worn" | "Poor" | "Broken";
       user_cube_status: "Owned" | "Wishlist" | "Loaned" | "Borrowed" | "Lost";
       users_roles:
         | "Admin"
@@ -2531,12 +2499,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
@@ -2558,13 +2526,12 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
@@ -2583,13 +2550,12 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+    keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
@@ -2608,13 +2574,12 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
@@ -2627,11 +2592,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }

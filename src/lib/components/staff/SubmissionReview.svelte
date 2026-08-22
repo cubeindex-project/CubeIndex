@@ -1,4 +1,7 @@
 <script module lang="ts">
+  /**
+   * The submitter and verifier details displayed in a submission review.
+   */
   export interface SubmissionReviewUsers {
     submitter?: { display_name: string | null } | null;
     verifier?: { display_name: string | null } | null;
@@ -14,6 +17,9 @@
   import type { Enums } from "$lib/types/database.types";
   import StaffNote from "../submission/StaffNote.svelte";
 
+  /**
+   * Submission data required to render the staff review layout.
+   */
   interface Submission extends SubmissionReviewUsers {
     id: number;
     name: string;

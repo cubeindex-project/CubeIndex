@@ -16,6 +16,9 @@ type ProfileSocials = {
   youtube?: string;
 };
 
+/**
+ * A release date and its precision are either both populated or both `null`.
+ */
 type ReleaseDateFields =
   | {
       release_date: string;
@@ -26,6 +29,9 @@ type ReleaseDateFields =
       release_date_precision: null;
     };
 
+/**
+ * Input may provide a complete release-date pair, a pair of `null` values, or neither field.
+ */
 type ReleaseDateInput =
   | ReleaseDateFields
   | {
@@ -33,9 +39,15 @@ type ReleaseDateInput =
       release_date_precision?: never;
     };
 
+/**
+ * Replaces an entity's release-date fields with the required paired-field invariant.
+ */
 type WithReleaseDate<T> = Omit<T, "release_date" | "release_date_precision"> &
   ReleaseDateFields;
 
+/**
+ * Replaces an entity's release-date input fields while preserving the paired-field invariant.
+ */
 type WithReleaseDateInput<T> = Omit<
   T,
   "release_date" | "release_date_precision"
@@ -56,12 +68,6 @@ export type Database = MergeDeep<
           Row: WithReleaseDate<
             DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"]
           >;
-          Insert: WithReleaseDateInput<
-            DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
-          >;
-          Update: WithReleaseDateInput<
-            DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"]
-          >;
         };
       };
       Views: {
@@ -72,15 +78,12 @@ export type Database = MergeDeep<
           Row: WithReleaseDate<
             DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"]
           >;
-<<<<<<< HEAD
-=======
           Insert: WithReleaseDateInput<
             DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
           >;
           Update: WithReleaseDateInput<
             DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"]
           >;
->>>>>>> 63fdb5aa (feat: implement Staff Submission Review Workflow)
         };
         v_achievement_rarity: {
           Row: DatabaseGenerated["public"]["Tables"]["achievements"]["Row"];

@@ -102,7 +102,7 @@ export const load: PageServerLoad = async ({
 export const actions: Actions = {
   default: async ({ request, locals: { user, supabase, log }, params }) => {
     if (!user) {
-      return fail(401, "Unauthorized");
+      throw error(401, "Unauthorized");
     }
 
     const form = await superValidate(request, zod4(cubeFormSchema));

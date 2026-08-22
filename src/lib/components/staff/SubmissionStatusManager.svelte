@@ -4,6 +4,9 @@
   import { enhance } from "$app/forms";
   import type { SubmitFunction } from "@sveltejs/kit";
 
+  /**
+   * Inputs that identify the submission whose status can be updated.
+   */
   interface Props {
     submission: { id: number; name: string };
     entityLabel: string;
@@ -28,6 +31,9 @@
     status === "Rejected" ? "Rejected" : "Approved",
   );
 
+  /**
+   * Opens the status confirmation modal for the selected final status.
+   */
   function openStatusModal(
     nextStatus: Exclude<Enums<"submission_status">, "Pending">,
   ) {

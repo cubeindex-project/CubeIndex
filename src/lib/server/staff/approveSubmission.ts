@@ -1,5 +1,10 @@
 import { StatusError } from "$lib/errors/StatusError";
 
+/**
+ * Approves a submission through the database RPC.
+ *
+ * @throws {StatusError} When the approval operation fails.
+ */
 export async function approveSubmission(
   submissionID: number,
   supabase: App.Locals["supabase"],

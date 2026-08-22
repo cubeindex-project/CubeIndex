@@ -6,11 +6,12 @@ import { createCubeSubmissionPayload } from "$lib/utils/submissions/cube/createC
 import type { AppLogger } from "$lib/server/logger";
 import type { Infer } from "sveltekit-superforms";
 
-/** Saves every part of a cube form in one database transaction.
+/**
+ * Updates every part of an existing cube in one database transaction.
  * @param data The form data
  * @param supabase A Supabase client instance
  * @param log A server-side log instance
- * @returns The slug of the inserted or updated cube.
+ * @param targetCubeID The ID of the cube to update
  */
 export async function updateCube(
   data: Infer<CubeFormSchema>,

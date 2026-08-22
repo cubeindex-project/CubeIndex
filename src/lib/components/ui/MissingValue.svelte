@@ -1,4 +1,7 @@
 <script lang="ts">
+  /**
+   * The message to display when a value is unavailable.
+   */
   interface Props {
     missingValueText: string;
   }

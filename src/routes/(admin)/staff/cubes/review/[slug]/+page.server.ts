@@ -8,6 +8,11 @@ import { rejectSubmission } from "$lib/server/staff/rejectSubmission";
 import { approveSubmission } from "$lib/server/staff/approveSubmission";
 import { StatusError } from "$lib/errors/StatusError";
 
+/**
+ * Loads a cube submission and its related review data for staff.
+ *
+ * @throws {import("@sveltejs/kit").HttpError} When the submission is missing, invalid, or cannot be loaded.
+ */
 export const load = (async ({ params, locals: { supabase, log } }) => {
   const submissionID = Number(params.slug);
   if (!Number.isSafeInteger(submissionID) || submissionID < 1) {
@@ -74,6 +79,9 @@ export const load = (async ({ params, locals: { supabase, log } }) => {
   };
 }) satisfies PageServerLoad;
 
+/**
+ * Updates a pending submission by approving it or rejecting it with a staff note.
+ */
 export const actions: Actions = {
   default: async ({ request, locals: { supabase, user, log } }) => {
     const form = await superValidate(request, zod4(updateSubmissionStatus));

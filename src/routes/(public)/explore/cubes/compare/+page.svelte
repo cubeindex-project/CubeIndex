@@ -34,7 +34,7 @@
       format: boolYesNo,
       boolean: true,
     },
-    { label: "Related To", key: "related_to" },
+    { label: "Related To", key: "related_to_id" },
     {
       label: "Release Date",
       key: "release_date",

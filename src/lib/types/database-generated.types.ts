@@ -2043,6 +2043,8 @@ export type Database = {
           rating_count: number | null;
           related_to: string | null;
           release_date: string | null;
+          release_date_precision:
+            Database["public"]["Enums"]["date_precision"] | null;
           series: string | null;
           series_id: number | null;
           size: string | null;

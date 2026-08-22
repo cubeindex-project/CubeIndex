@@ -70,13 +70,7 @@ export type Database = MergeDeep<
         };
         v_detailed_cube_models: {
           Row: WithReleaseDate<
-            DatabaseGenerated["public"]["Tables"]["cube_models"]["Row"]
-          >;
-          Insert: WithReleaseDateInput<
-            DatabaseGenerated["public"]["Tables"]["cube_models"]["Insert"]
-          >;
-          Update: WithReleaseDateInput<
-            DatabaseGenerated["public"]["Tables"]["cube_models"]["Update"]
+            DatabaseGenerated["public"]["Views"]["v_detailed_cube_models"]["Row"]
           >;
         };
         v_achievement_rarity: {

@@ -14,7 +14,7 @@
     Partial<Pick<CubeModel, "slug">>;
   type MetaCube = Pick<
     CubeModel,
-    "avg_price" | "brand" | "popularity" | "type"
+    "avg_price" | "brand" | "owned_count" | "type"
   >;
   type RatingCube = Pick<CubeModel, "rating">;
 
@@ -88,12 +88,12 @@
         <StarRating readOnly={true} rating={cube.rating ?? 0} />
       </div>
     {/if}
-    {#if showMeta && ((cube.popularity ?? 0) > 0 || (cube.avg_price ?? 0) > 0)}
+    {#if showMeta && ((cube.owned_count ?? 0) > 0 || (cube.avg_price ?? 0) > 0)}
       <div class="mt-3 flex items-center gap-4 text-xs text-base-content/70">
-        {#if (cube.popularity ?? 0) > 0}
-          <span title="Popularity">
+        {#if (cube.owned_count ?? 0) > 0}
+          <span title="Owners">
             <i class="fa-solid fa-users mr-1" aria-hidden="true"></i>
-            {fmtCompact(cube.popularity!)}
+            {fmtCompact(cube.owned_count!)}
           </span>
         {/if}
         {#if (cube.avg_price ?? 0) > 0}

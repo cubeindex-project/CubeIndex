@@ -1,5 +1,5 @@
-import { formatDate } from "$lib/utils/formatDate";
 import { logError } from "$lib/server/logError";
+import { formatPartialDate } from "$lib/utils/formatPartialDate";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
@@ -13,9 +13,7 @@ export const load = (async ({
 
   const { data: cube, error: cubeErr } = await supabase
     .from("v_detailed_cube_models")
-    .select(
-      "*,verifier:profiles!verified_by_id(display_name, username),submitter:profiles!submitted_by_id(display_name, username)",
-    )
+    .select("*,submitter:profiles!submitted_by_id(display_name, username)")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -34,8 +32,8 @@ export const load = (async ({
   const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
     cube.series_id
       ? supabase
-          .from("cube_models")
-          .select("slug, name, image_url")
+          .from("v_detailed_cube_models")
+          .select("slug, name, series, image_url")
           .eq("series_id", cube.series_id)
           .eq("version_type", "Base")
           .neq("id", cube.id)
@@ -44,20 +42,29 @@ export const load = (async ({
       : Promise.resolve({ data: null, error: null }),
     cube.related_to
       ? supabase
-          .from("cube_models")
-          .select("slug, name, image_url")
+          .from("v_detailed_cube_models")
+          .select("slug, name, series, image_url")
           .eq("slug", cube.related_to)
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
-    cube.slug
-      ? supabase
-          .from("cube_models")
-          .select("slug, name, image_url")
-          .eq("related_to", cube.slug)
-          .order("name", { ascending: true })
-          .limit(24)
-      : Promise.resolve({ data: null, error: null }),
+    supabase
+      .from("v_detailed_cube_models")
+      .select("slug, name, series, image_url")
+      .eq("related_to", cube.slug)
+      .order("name", { ascending: true })
+      .limit(24),
   ]);
+
+  if (sameSeriesRes.error || relatedRes.error || trimsRes.error) {
+    return logError(
+      500,
+      "Unable to load related cube data",
+      log,
+      new Error("", {
+        cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
+      }),
+    );
+  }
 
   let alreadyAdded = false;
   let userCubeDetail = null;
@@ -82,7 +89,8 @@ export const load = (async ({
   const { data: cube_vendor_links, error: cvrErr } = await supabase
     .from("cube_vendor_links")
     .select("*, vendor:vendor_id(*)")
-    .eq("cube_id", cube.id);
+    .eq("cube_id", cube.id)
+    .eq("is_dead", false);
 
   if (cvrErr) {
     return logError(500, "Unable to load vendor links", log, cvrErr);
@@ -95,7 +103,9 @@ export const load = (async ({
   const title = `${cube.name} - CubeIndex`;
   const description =
     `The ${cube.name} is a ${cube.type} twisty puzzle` +
-    (cube.release_date ? ` released on ${formatDate(cube.release_date)}` : "") +
+    (cube.release_date
+      ? ` released on ${formatPartialDate(cube.release_date, cube.release_date_precision)}`
+      : "") +
     `. ` +
     (cube.low_price != null ? `Prices start at $${cube.low_price}. ` : "");
   const image = `${url.origin}/api/og/cube/${cube.slug}`;
@@ -118,7 +128,6 @@ export const load = (async ({
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,
     cubeTrims: trimsRes.data ?? [],
-    verifier: cube.verifier,
     submitter: cube.submitter,
     cube_vendor_links,
     meta: {

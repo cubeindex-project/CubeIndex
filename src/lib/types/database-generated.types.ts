@@ -7,11 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)";
-  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -2031,6 +2026,7 @@ export type Database = {
           avg_price: number | null;
           ball_core: boolean | null;
           brand: string | null;
+          brand_id: number | null;
           created_at: string | null;
           discontinued: boolean | null;
           id: number | null;
@@ -2041,12 +2037,16 @@ export type Database = {
           magnetic: boolean | null;
           modded: boolean | null;
           name: string | null;
-          popularity: number | null;
+          owned_count: number | null;
+          previously_owned_count: number | null;
           rating: number | null;
           rating_count: number | null;
           related_to: string | null;
           release_date: string | null;
+          release_date_precision:
+            Database["public"]["Enums"]["date_precision"] | null;
           series: string | null;
+          series_id: number | null;
           size: string | null;
           slug: string | null;
           smart: boolean | null;
@@ -2056,15 +2056,22 @@ export type Database = {
           surface_finish:
             Database["public"]["Enums"]["cube_surface_finish"] | null;
           type: string | null;
+          type_id: number | null;
           updated_at: string | null;
-          verified_at: string | null;
-          verified_by_id: string | null;
           version_type: Database["public"]["Enums"]["cube_version_type"] | null;
           wca_legal: boolean | null;
           weight: number | null;
+          wishlist_count: number | null;
           year: number | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "cube_models_brand_id_fkey";
+            columns: ["brand_id"];
+            isOneToOne: false;
+            referencedRelation: "brands";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "cube_models_related_to_fkey";
             columns: ["related_to"];
@@ -2087,6 +2094,13 @@ export type Database = {
             referencedColumns: ["slug"];
           },
           {
+            foreignKeyName: "cube_models_series_id_fkey";
+            columns: ["series_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_series";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "cube_models_submitted_by_id_fkey";
             columns: ["submitted_by_id"];
             isOneToOne: false;
@@ -2101,18 +2115,11 @@ export type Database = {
             referencedColumns: ["user_id"];
           },
           {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
+            foreignKeyName: "cube_models_type_id_fkey";
+            columns: ["type_id"];
             isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["user_id"];
-          },
-          {
-            foreignKeyName: "cube_models_verified_by_id_fkey";
-            columns: ["verified_by_id"];
-            isOneToOne: false;
-            referencedRelation: "v_detailed_profiles";
-            referencedColumns: ["user_id"];
+            referencedRelation: "cube_types";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -2371,6 +2378,7 @@ export type Database = {
         }[];
       };
       get_types: { Args: { enum_type: string }; Returns: Json };
+      is_database_manager: { Args: never; Returns: boolean };
       submit_cube: {
         Args: {
           p_cube?: Json;

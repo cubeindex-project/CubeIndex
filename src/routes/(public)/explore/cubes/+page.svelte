@@ -11,13 +11,7 @@
   import TriStateCheckbox from "$lib/components/explore/TriStateCheckbox.svelte";
   import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
 
-  const SORT_FIELDS = [
-    "name",
-    "rating",
-    "popularity",
-    "date",
-    "price",
-  ] as const;
+  const SORT_FIELDS = ["name", "rating", "owners", "date", "price"] as const;
 
   const { data } = $props();
   const { cubes, userCubes } = $derived(data);
@@ -136,9 +130,9 @@
           av = a.rating ?? 0;
           bv = b.rating ?? 0;
           break;
-        case "popularity":
-          av = a.popularity ?? 0;
-          bv = b.popularity ?? 0;
+        case "owners":
+          av = a.owned_count ?? 0;
+          bv = b.owned_count ?? 0;
           break;
         case "price":
           av = a.avg_price ?? 0;
@@ -172,7 +166,7 @@
     { value: "date", label: "Recent" },
     { value: "name", label: "Name" },
     { value: "rating", label: "Rating" },
-    { value: "popularity", label: "Popularity" },
+    { value: "owners", label: "Owners" },
     { value: "price", label: "Price" },
   ]}
   defaultSortField="name"

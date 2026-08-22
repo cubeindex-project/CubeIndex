@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import type { Tables } from "$lib/types/database.types";
   import type { LayoutProps } from "./$types";
   import CubeVersionType from "$lib/components/cube/CubeVersionType.svelte";
   import AddToCollectionButton from "$lib/components/misc/AddToCollectionButton.svelte";
@@ -10,6 +11,7 @@
   import AddCube from "$lib/components/cube/AddCube.svelte";
   import RateCube from "$lib/components/rating/RateCube.svelte";
   import StarRating from "$lib/components/rating/StarRating.svelte";
+  import { formatPartialDate } from "$lib/utils/formatPartialDate";
 
   let { data, children }: LayoutProps = $props();
   let {
@@ -29,21 +31,23 @@
     isReportingCube = !isReportingCube;
   }
 
-  // Derive the active tab from the URL so it stays in sync on navigation
   const currentTab = $derived.by(() => {
     const segments = page.url.pathname.split("/").filter(Boolean);
-    // Expect .../explore/cubes/:slug[/tab]
     const last = segments[segments.length - 1] ?? "";
-    return last === cube.slug ? "" : last;
+    return last === cube.slug ? "details" : last;
   });
 
-  // Tab definitions (keys map to child routes)
   const tabs = [
-    { label: "Details", key: "", icon: "fa-circle-info" },
-    { label: "Shops & Prices", key: "price", icon: "fa-store" },
-    { label: "Ratings", key: "ratings", icon: "fa-star" },
-    // { label: "Reviews", key: "reviews", icon: "fa-comment-dots" },
+    { label: "Details", key: "details", path: null, icon: "fa-circle-info" },
+    { label: "Shops & Prices", key: "price", path: "price", icon: "fa-store" },
+    { label: "Ratings", key: "ratings", path: "ratings", icon: "fa-star" },
+    // { label: "Reviews", key: "reviews", path: "reviews", icon: "fa-comment-dots" },
   ] as const;
+
+  type CubePreview = Pick<
+    Tables<"v_detailed_cube_models">,
+    "slug" | "name" | "series" | "image_url"
+  >;
 </script>
 
 <svelte:head>
@@ -58,269 +62,248 @@
   <link rel="dns-prefetch" href="//res.cloudinary.com" />
 </svelte:head>
 
-<section class="min-h-screen px-6 py-16 max-w-4xl mx-auto">
-  <div class="my-6 flex flex-col items-start">
-    <figure class="relative w-full max-w-md">
-      <img
-        data-hero-key={`cube-image-${cube.id}`}
-        src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
-          cube.image_url,
-        )}"
-        alt={cube.name}
-        fetchpriority="high"
-        decoding="async"
-        width="768"
-        height="384"
-        class="rounded-2xl bg-base-200 p-4 mt-4 border border-base-300 object-contain w-full max-h-96"
-      />
-      {#if cube.image_source}
-        <figcaption
-          class="absolute left-2 bottom-2 rounded-lg backdrop-blur px-3 py-1.5 text-xs font-medium bg-base-200/80"
-        >
-          Image &copy;{cube.image_source}. All rights reserved.
-        </figcaption>
-      {/if}
-    </figure>
-  </div>
-  <h1 class="flex flex-col mb-4">
-    <!-- top row: text + discontinued badge -->
-    <div class="flex items-center text-4xl font-bold">
-      <div class="font-clash" data-hero-key={`cube-title-${cube.id}`}>
-        {cube.name}
-      </div>
-      {#if cube.discontinued}
-        <div
-          class="ml-3 flex items-center gap-1 px-3 py-1 rounded-full bg-error text-error-content text-xs font-semibold"
-        >
-          <i class="fa-solid fa-ban"></i>
-          <span>Discontinued</span>
-        </div>
-      {/if}
-    </div>
+{#snippet similarCubesSection(
+  title: string,
+  icon: string,
+  cubes: CubePreview[],
+  ariaLabel: string,
+)}
+  <section class="my-10">
+    <header class="mb-4 flex items-center gap-2">
+      <h2 class="flex items-center gap-2 text-xl font-semibold">
+        <i class={`fa-solid ${icon}`}></i>
+        {title}
+      </h2>
+      <span class="badge badge-neutral badge-sm">{cubes.length}</span>
+    </header>
 
-    <!-- bottom row: version type -->
-    <div class="mt-2">
-      <CubeVersionType version_type={cube.version_type} />
-    </div>
-  </h1>
-
-  <p class="mb-4">
-    {cube.popularity} user{cube.popularity === 1 ? "" : "s"}
-    have this cube
-  </p>
-
-  <div class="flex flex-wrap mb-4 justify-between">
-    <div class="flex justify-start join">
-      <AddToCollectionButton
-        {alreadyAdded}
-        onClick={() => {
-          isAddingCube = !isAddingCube;
-        }}
-        addClass="join-item"
-      />
-      <RateCubeButton
-        onClick={() => (isRatingCube = !isRatingCube)}
-        addClass="join-item"
-      />
-    </div>
-    <ShareButton url={page.url.href} label="" />
-  </div>
-
-  <!-- Highlighted Rating -->
-  <div class="flex flex-col items-start mb-5 sm:mt-0">
-    <StarRating readOnly={true} rating={cube.rating ?? 0} />
-  </div>
-
-  <!-- Tabs: URL-aware, scrollable on mobile, accessible roles -->
-  <nav class="my-6 -mx-6 px-6 overflow-x-auto">
-    <div
-      class="tabs tabs-border flex-nowrap gap-2 justify-start sm:justify-center"
-      role="tablist"
-      aria-label="Cube sections"
+    <ul
+      class="flex gap-3 overflow-x-auto md:grid md:grid-cols-3 md:gap-4 md:overflow-visible lg:grid-cols-4 xl:grid-cols-6"
+      aria-label={ariaLabel}
     >
-      {#each tabs as tab (tab.key)}
-        <a
-          href={resolve(
-            tab.key
-              ? `/explore/cubes/${cube.slug}/${tab.key}`
-              : `/explore/cubes/${cube.slug}`,
-          )}
-          class="tab tab-sm sm:tab-md whitespace-nowrap"
-          class:tab-active={tab.key === currentTab}
-          role="tab"
-          aria-selected={tab.key === currentTab}
-          aria-current={tab.key === currentTab ? "page" : undefined}
-          data-sveltekit-noscroll
-        >
-          <i class={`fa-solid ${tab.icon} mr-2`}></i>
-          {tab.label}
-        </a>
-      {/each}
-    </div>
-  </nav>
-
-  {@render children()}
-
-  <!-- Trim selector -->
-  {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
-    <section class="my-10">
-      <header class="mb-4 flex items-center gap-2">
-        <h2
-          class="text-xl font-semibold tracking-tight flex items-center gap-2"
-        >
-          <i class="fa-solid fa-palette text-primary"></i>
-          Select Trim
-        </h2>
-        <span class="badge badge-neutral badge-sm ml-2">{cubeTrims.length}</span
-        >
-      </header>
-
-      <ul
-        class="flex gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory pr-1 md:grid md:grid-cols-2 md:sm:grid-cols-3 md:lg:grid-cols-4 md:xl:grid-cols-6 md:gap-4 md:overflow-visible md:snap-none"
-        aria-label="Available trims"
-      >
-        {#each cubeTrims as trim (trim.slug)}
-          <li class="min-w-38 snap-start md:min-w-0">
-            <a
-              href={resolve("/(public)/explore/cubes/[slug]", {
-                slug: trim.slug,
-              })}
-              class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-              aria-label="Open {trim.name}"
-            >
-              <div class="p-3">
-                <div
-                  class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
-                >
-                  <img
-                    src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(trim.image_url)}`}
-                    alt={trim.name}
-                    loading="lazy"
-                    decoding="async"
-                    width="256"
-                    height="256"
-                    class="size-full object-contain p-2 transition-transform duration-200"
-                  />
-                </div>
-                <div class="mt-2 text-center">
-                  <span class="text-sm font-medium line-clamp-2">
-                    {trim.name}
-                  </span>
-                </div>
-              </div>
-            </a>
-          </li>
-        {/each}
-      </ul>
-    </section>
-  {/if}
-
-  <!-- Related-to (for modded / non-base) -->
-  {#if (cube.version_type !== "Base" || cube.modded) && relatedCube}
-    <section class="my-10">
-      <header class="mb-4 flex items-center gap-2">
-        <h2
-          class="text-xl font-semibold tracking-tight flex items-center gap-2"
-        >
-          <i class="fa-solid fa-link text-primary"></i>
-          Related To
-        </h2>
-      </header>
-
-      <div class="max-w-sm">
-        <a
-          href={resolve("/(public)/explore/cubes/[slug]", {
-            slug: relatedCube.slug,
-          })}
-          class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-          aria-label="Open {relatedCube.name}"
-        >
-          <div class="p-4 flex items-center gap-4">
-            <div
-              class="size-20 shrink-0 rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
-            >
+      {#each cubes as similarCube (similarCube.slug)}
+        <li class="w-40 shrink-0 md:w-auto">
+          <a
+            href={resolve("/(public)/explore/cubes/[slug]", {
+              slug: similarCube.slug,
+            })}
+            class="flex aspect-square flex-col rounded-2xl border border-base-300 bg-base-200 p-3 transition-all duration-200 hover:shadow-md"
+            aria-label="Open {similarCube.name}"
+          >
+            <div class="min-h-0 flex-1">
               <img
-                src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
-                alt={relatedCube.name}
+                src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(similarCube.image_url)}`}
+                alt={similarCube.name}
                 loading="lazy"
                 decoding="async"
-                width="192"
-                height="192"
-                class="size-full object-contain p-1 transition-transform duration-200"
+                width="256"
+                height="256"
+                class="size-full object-contain"
               />
             </div>
-            <div class="min-w-0">
-              <p class="text-base font-semibold truncate">
-                {relatedCube.name}
-              </p>
-            </div>
-          </div>
-        </a>
+            <p class="mt-2 line-clamp-2 text-sm font-semibold">
+              {similarCube.name}
+            </p>
+          </a>
+        </li>
+      {/each}
+    </ul>
+  </section>
+{/snippet}
+
+<section class="min-h-screen pb-16">
+  <header class="border-b border-base-300">
+    <div
+      class="relative mx-auto grid max-w-7xl overflow-hidden px-6 py-10 sm:px-8 md:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] md:items-center md:gap-10 md:py-12"
+    >
+      <div class="relative z-10 max-w-2xl">
+        <div class="mb-3 flex flex-wrap items-center gap-2">
+          <CubeVersionType version_type={cube.version_type} />
+          {#if cube.discontinued}
+            <span
+              class="flex items-center gap-1 rounded-full bg-error px-3 py-1 text-xs font-semibold text-error-content"
+            >
+              <i class="fa-solid fa-ban"></i>
+              Discontinued
+            </span>
+          {/if}
+        </div>
+
+        <h1
+          class="font-clash text-4xl font-bold tracking-tight sm:text-5xl"
+          data-hero-key={`cube-title-${cube.id}`}
+        >
+          {cube.name}
+        </h1>
+
+        {#if cube.release_date}
+          <p class="mt-4 flex items-center gap-2 text-sm text-base-content/70">
+            <i class="fa-solid fa-calendar-days"></i>
+            Released {formatPartialDate(
+              cube.release_date,
+              cube.release_date_precision,
+            )}
+          </p>
+        {/if}
+
+        <div
+          class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-base-content/75"
+        >
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-cube"></i>
+            {cube.owned_count} user{cube.owned_count === 1 ? "" : "s"} own this cube
+          </span>
+          <span class="flex items-center gap-2">
+            <i class="fa-regular fa-heart"></i>
+            {cube.wishlist_count} user{cube.wishlist_count === 1 ? "" : "s"} want
+            this cube
+          </span>
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            {cube.previously_owned_count} user{cube.previously_owned_count === 1
+              ? ""
+              : "s"} previously owned this cube
+          </span>
+        </div>
+
+        <div class="mt-4">
+          <StarRating readOnly={true} rating={cube.rating ?? 0} />
+        </div>
+
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <AddToCollectionButton
+            {alreadyAdded}
+            onClick={() => {
+              isAddingCube = !isAddingCube;
+            }}
+          />
+          <RateCubeButton onClick={() => (isRatingCube = !isRatingCube)} />
+          <ShareButton
+            url={page.url.href}
+            label="Share"
+            btnClass="btn btn-outline btn-info"
+          />
+        </div>
       </div>
-    </section>
-  {/if}
 
-  <!-- Same series -->
-  {#if sameSeries && sameSeries.length > 0}
-    <section class="my-10">
-      <header class="mb-4 flex items-center gap-2">
-        <h2
-          class="text-xl font-semibold tracking-tight flex items-center gap-2"
-        >
-          <i class="fa-solid fa-layer-group text-primary"></i>
-          In the Same Series
-        </h2>
-        <span class="badge badge-neutral badge-sm ml-2"
-          >{sameSeries.length}</span
-        >
-      </header>
+      <figure class="relative mx-auto mt-8 w-full max-w-sm md:mt-0">
+        <img
+          data-hero-key={`cube-image-${cube.id}`}
+          src="https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/{encodeURIComponent(
+            cube.image_url,
+          )}"
+          alt={cube.name}
+          fetchpriority="high"
+          decoding="async"
+          width="768"
+          height="384"
+          class="aspect-4/3 w-full object-contain"
+        />
+        {#if cube.image_source}
+          <figcaption class="text-xs">
+            Image &copy;{cube.image_source}. All rights reserved.
+          </figcaption>
+        {/if}
+      </figure>
+    </div>
+  </header>
 
-      <div class="-mx-2 overflow-x-auto pb-2">
-        <ul
-          class="flex gap-4 px-2 snap-x snap-mandatory"
-          aria-label="Cubes in the same series"
-        >
-          {#each sameSeries as seriesCube (seriesCube.slug)}
-            <li class="w-48 shrink-0 snap-start">
-              <a
-                href={resolve("/(public)/explore/cubes/[slug]", {
-                  slug: seriesCube.slug,
-                })}
-                class="group block rounded-2xl border border-base-300 bg-base-200/80 hover:bg-base-300/60 transition-all duration-200 shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
-                aria-label="Open {seriesCube.name}"
+  <div class="mx-auto max-w-4xl px-6 sm:px-8">
+    <nav class="flex my-6 -mx-6 px-6 overflow-x-auto md:justify-center">
+      <div
+        class="tabs tabs-box flex-nowrap gap-2 justify-start sm:justify-center"
+        role="tablist"
+        aria-label="Cube sections"
+      >
+        {#each tabs as tab (tab.key)}
+          <a
+            href={resolve(
+              tab.path
+                ? `/explore/cubes/${cube.slug}/${tab.path}`
+                : `/explore/cubes/${cube.slug}`,
+            )}
+            class="tab tab-sm sm:tab-md whitespace-nowrap"
+            class:tab-active={tab.key === currentTab}
+            role="tab"
+            data-sveltekit-noscroll
+          >
+            <i class={`fa-solid ${tab.icon} mr-2`}></i>
+            {tab.label}
+          </a>
+        {/each}
+      </div>
+    </nav>
+
+    {@render children()}
+
+    {#if (cube.version_type !== "Base" || cube.modded) && relatedCube}
+      <section class="my-10">
+        <header class="mb-4 flex items-center gap-2">
+          <h2
+            class="text-xl font-semibold tracking-tight flex items-center gap-2"
+          >
+            <i class="fa-solid fa-link"></i>
+            Related To
+          </h2>
+        </header>
+
+        <div class="max-w-sm">
+          <a
+            href={resolve("/(public)/explore/cubes/[slug]", {
+              slug: relatedCube.slug,
+            })}
+            class="group block rounded-2xl border border-base-300 bg-base-200 transition-all duration-200 hover:shadow-md"
+            aria-label="Open {relatedCube.name}"
+          >
+            <div class="p-4 flex items-center gap-4">
+              <div
+                class="size-20 shrink-0 rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
               >
-                <div class="p-3">
-                  <div
-                    class="aspect-square w-full rounded-xl bg-base-100/70 border border-base-300 overflow-hidden"
-                  >
-                    <img
-                      src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_256/${encodeURIComponent(seriesCube.image_url)}`}
-                      alt={seriesCube.name}
-                      loading="lazy"
-                      decoding="async"
-                      width="256"
-                      height="256"
-                      class="size-full object-contain p-2 transition-transform duration-200"
-                    />
-                  </div>
-                  <div class="mt-2 text-center">
-                    <p class="text-sm font-semibold line-clamp-2">
-                      {seriesCube.name}
-                    </p>
-                  </div>
-                </div>
-              </a>
-            </li>
-          {/each}
-        </ul>
-      </div>
-    </section>
-  {/if}
+                <img
+                  src={`https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_192/${encodeURIComponent(relatedCube.image_url)}`}
+                  alt={relatedCube.name}
+                  loading="lazy"
+                  decoding="async"
+                  width="192"
+                  height="192"
+                  class="size-full object-contain p-1 transition-transform duration-200"
+                />
+              </div>
+              <div class="min-w-0">
+                <p class="text-base font-semibold truncate">
+                  {relatedCube.name}
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
+      </section>
+    {/if}
 
-  <div class="mt-4">
-    <button onclick={toggleReporting} class="btn btn-error">
-      🚩 Report incorrect/missing data
-    </button>
+    {#if cube.version_type === "Base" && cubeTrims && cubeTrims.length > 0}
+      {@render similarCubesSection(
+        "Select Variant",
+        "fa-palette",
+        cubeTrims,
+        "Available variants",
+      )}
+    {/if}
+
+    {#if sameSeries && sameSeries.length > 0}
+      {@render similarCubesSection(
+        "In the Same Series",
+        "fa-layer-group",
+        sameSeries,
+        `Other cubes in the ${cube.series ?? "current"} series`,
+      )}
+    {/if}
+
+    <div class="mt-6">
+      <button onclick={toggleReporting} class="btn btn-error">
+        <i class="fa-regular fa-flag"></i>
+        Report incorrect/missing data
+      </button>
+    </div>
   </div>
 </section>
 
@@ -328,7 +311,7 @@
   bind:open={isReportingCube}
   reportType="cube"
   reported={cube.slug}
-  reporLabel={`the ${cube.name}`}
+  reporLabel="the {cube.name}"
 />
 
 <AddCube

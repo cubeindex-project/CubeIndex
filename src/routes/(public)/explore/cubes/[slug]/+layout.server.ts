@@ -40,17 +40,17 @@ export const load = (async ({
           .order("name", { ascending: true })
           .limit(12)
       : Promise.resolve({ data: null, error: null }),
-    cube.related_to
+    cube.related_to_id
       ? supabase
           .from("v_detailed_cube_models")
           .select("slug, name, series, image_url")
-          .eq("slug", cube.related_to)
+          .eq("id", cube.related_to_id)
           .maybeSingle()
       : Promise.resolve({ data: null, error: null }),
     supabase
       .from("v_detailed_cube_models")
       .select("slug, name, series, image_url")
-      .eq("related_to", cube.slug)
+      .eq("related_to_id", cube.id)
       .order("name", { ascending: true })
       .limit(24),
   ]);

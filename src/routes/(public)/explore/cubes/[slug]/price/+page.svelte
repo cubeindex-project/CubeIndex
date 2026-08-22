@@ -1,8 +1,7 @@
 <script lang="ts">
   import Chart from "chart.js/auto";
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
   import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol.js";
-  import Tag from "$lib/components/misc/Tag.svelte";
   import type { Tables } from "$lib/types/database.types.js";
 
   let { data } = $props();
@@ -22,79 +21,102 @@
 
   // Build chart on mount; clean up on destroy
   onMount(() => {
-    if (!canvas) return;
+    void createChart();
 
-    chart?.destroy();
+    async function createChart() {
+      const { default: zoomPlugin } = await import("chartjs-plugin-zoom");
 
-    const labels = Array.from(
-      new Set(
-        per_vendor_history.flatMap((row) =>
-          row.price_history.map((p) => p.date),
+      if (!canvas) return;
+
+      chart?.destroy();
+
+      const labels = Array.from(
+        new Set(
+          per_vendor_history.flatMap((row) =>
+            row.price_history.map((p) => p.date),
+          ),
         ),
-      ),
-    ).sort();
+      ).sort();
 
-    const datasets = per_vendor_history.map((row) => {
-      // Map date -> price for quick lookup
-      const priceByDate = new Map(
-        row.price_history.map((p) => [p.date, p.price] as const),
-      );
+      const datasets = per_vendor_history.map((row) => {
+        // Map date -> price for quick lookup
+        const priceByDate = new Map(
+          row.price_history.map((p) => [p.date, p.price] as const),
+        );
 
-      return {
-        label: row.vendor_name,
-        data: labels.map((date) => priceByDate.get(date) ?? null) as (
-          number | null
-        )[], // null makes a gap
-        spanGaps: true,
-      };
-    });
+        return {
+          label: row.vendor_name,
+          data: labels.map((date) => priceByDate.get(date) ?? null) as (
+            number | null
+          )[], // null makes a gap
+          spanGaps: true,
+        };
+      });
 
-    chart = new Chart(canvas, {
-      type: "line",
-      data: {
-        labels,
-        datasets,
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: "index", intersect: false },
-        plugins: {
-          legend: {
-            display: true,
-            position: "bottom",
-            labels: { usePointStyle: true },
-          },
-          tooltip: {
-            callbacks: {
-              label: ({ parsed: { y }, dataset: { label } }) => {
-                if (y == null) return `${label}: -`;
-                const currency = vendor_links.find(
-                  (l) => l.vendor.name === label,
-                )?.vendor?.currency;
-                return `${label}: ${currency ? nf(currency).format(y) : `$${y.toFixed(2)}`}`;
+      Chart.register(zoomPlugin);
+
+      chart = new Chart(canvas, {
+        type: "line",
+        data: {
+          labels,
+          datasets,
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: "index", intersect: false },
+          plugins: {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: "x",
+              },
+              zoom: {
+                wheel: {
+                  enabled: true,
+                },
+                pinch: {
+                  enabled: true,
+                },
+                mode: "x",
+              },
+            },
+            legend: {
+              display: true,
+              position: "bottom",
+              labels: { usePointStyle: true },
+            },
+            tooltip: {
+              callbacks: {
+                label: ({ parsed: { y }, dataset: { label } }) => {
+                  if (y == null) return `${label}: -`;
+                  const currency = vendor_links.find(
+                    (l) => l.vendor.name === label,
+                  )?.vendor?.currency;
+                  return `${label}: ${currency ? nf(currency).format(y) : `$${y.toFixed(2)}`}`;
+                },
               },
             },
           },
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            title: { display: true, text: "Price" },
-            ticks: {
-              display: false,
+          scales: {
+            y: {
+              beginAtZero: false,
+              title: { display: true, text: "Price" },
+              ticks: {
+                display: false,
+              },
+            },
+            x: {
+              title: { display: true, text: "Date" },
             },
           },
-          x: {
-            title: { display: true, text: "Date" },
-          },
         },
-      },
-    });
-  });
+      });
+    }
 
-  onDestroy(() => {
-    chart?.destroy();
+    return () => {
+      chart?.destroy();
+    };
   });
 
   // Vendor pill status
@@ -117,16 +139,16 @@
 </script>
 
 <div class="space-y-8">
-  <!-- Vendor grid -->
-  {#if vendor_links.length > 0}
-    <section aria-labelledby="vendors-title">
-      <h2
-        id="vendors-title"
-        class="text-lg font-semibold mb-3 flex items-center gap-2"
-      >
-        <i class="fa-solid fa-store" aria-hidden="true"></i>
-        Available at
-      </h2>
+  <section aria-labelledby="vendors-title">
+    <h2
+      id="vendors-title"
+      class="text-lg font-semibold mb-3 flex items-center gap-2"
+    >
+      <i class="fa-solid fa-store" aria-hidden="true"></i>
+      Available at
+    </h2>
+
+    {#if vendor_links.length > 0}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {#each vendor_links as shop (shop.id)}
           {@const status = getVendorStatus(shop)}
@@ -179,18 +201,18 @@
           </a>
         {/each}
       </div>
-    </section>
-  {:else}
-    <section
-      aria-live="polite"
-      class="rounded-xl border border-dashed border-base-300 p-6 text-center"
-    >
-      <p class="font-medium">No vendor information available</p>
-      <p class="text-sm text-base-content/70">
-        We’ll display shops and prices as soon as we track them.
-      </p>
-    </section>
-  {/if}
+    {:else}
+      <div
+        aria-live="polite"
+        class="rounded-xl border border-dashed border-base-300 p-6 text-center"
+      >
+        <p class="font-medium">No vendor information available</p>
+        <p class="text-sm text-base-content/70">
+          We’ll display shops and prices as soon as we track them.
+        </p>
+      </div>
+    {/if}
+  </section>
 
   <!-- Chart -->
   <section aria-labelledby="price-history-title" class="space-y-3">
@@ -200,7 +222,6 @@
     >
       <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
       Price history
-      <Tag label="Beta" gradient="from-indigo-500 via-purple-500 to-pink-500" />
     </h2>
 
     {#if per_vendor_history.length > 0}

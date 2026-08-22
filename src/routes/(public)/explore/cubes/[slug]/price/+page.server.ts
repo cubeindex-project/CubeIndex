@@ -1,7 +1,7 @@
-import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
+import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ locals: { supabase, log }, parent }) => {
+export const load = (async ({ parent, locals: { supabase, log } }) => {
   const {
     cube,
     cube_vendor_links: raw_cube_vendor_links,
@@ -38,10 +38,7 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
   return {
     cube,
     vendor_links: cube_vendor_links,
-    per_vendor_history: per_vendor_history.map((row) => ({
-      vendor_name: row.vendor_name,
-      price_history: row.price_history,
-    })),
+    per_vendor_history,
     meta: {
       ...meta,
       title: `${cube.name} - Prices`,

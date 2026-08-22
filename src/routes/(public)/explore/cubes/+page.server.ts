@@ -36,7 +36,7 @@ export const load: PageServerLoad = async ({
 
   const jsonLDItems = cubes
     .slice()
-    .sort((a, b) => (a.popularity ?? 0) - (b.popularity ?? 0))
+    .sort((a, b) => (a.owned_count ?? 0) - (b.owned_count ?? 0))
     .slice(0, 50)
     .map((cube, index) => ({
       "@type": "ListItem",

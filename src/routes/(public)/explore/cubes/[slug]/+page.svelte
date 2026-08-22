@@ -2,7 +2,6 @@
   import { resolve } from "$app/paths";
   import MissingValue from "$lib/components/ui/MissingValue.svelte";
   import { formatDate } from "$lib/utils/formatDate.js";
-  import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
 
   let { data } = $props();
   let { cube, submitter } = $derived(data);
@@ -93,19 +92,6 @@
           <dt class="opacity-70">Surface</dt>
           {#if cube.surface_finish}
             <dd class="font-medium">{cube.surface_finish}</dd>
-          {:else}
-            {@render missingField()}
-          {/if}
-        </div>
-        <div class="flex flex-col justify-between sm:justify-start">
-          <dt class="opacity-70">Release Date</dt>
-          {#if cube.release_date}
-            <dd class="font-medium">
-              {formatPartialDate(
-                cube.release_date,
-                cube.release_date_precision,
-              )}
-            </dd>
           {:else}
             {@render missingField()}
           {/if}

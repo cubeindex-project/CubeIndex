@@ -38,7 +38,17 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     return logError(500, "Unable to load user ratings", log, userRatingsError);
   }
 
+  const { data: vendors, error: err } = await supabase
+    .from("vendors")
+    .select("slug, name")
+    .order("name", { ascending: true });
+
+  if (err) {
+    return logError(500, "Failed to load vendors", log, err);
+  }
+
   return {
+    vendors,
     user_cubes,
     user_cube_ratings,
     meta: {

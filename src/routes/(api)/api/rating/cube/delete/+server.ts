@@ -5,8 +5,7 @@ export const POST: RequestHandler = async ({
   request,
   locals: { supabase, user, log },
 }) => {
-  if (!user)
-    return json({error: "Unauthorized" }, { status: 500 });
+  if (!user) return json({ error: "Unauthorized" }, { status: 500 });
 
   const {
     rating_id,
@@ -19,12 +18,13 @@ export const POST: RequestHandler = async ({
     .delete()
     .eq("id", rating_id);
 
-  if (err){
-    log.error({err}, "An error occurred while deleting rating");
+  if (err) {
+    log.error({ err }, "An error occurred while deleting rating");
     return json(
       { error: "An error occurred while deleting rating" },
       { status: 500 },
-    );}
+    );
+  }
 
   return json({ success: true });
 };

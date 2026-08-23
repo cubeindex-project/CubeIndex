@@ -3,26 +3,22 @@
   import type { Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
+  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  import { untrack } from "svelte";
+  import { saveCubeInCollection } from "$lib/api/cubeCollection";
+  import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
 
   interface Props {
     open: boolean;
     cube: Pick<Tables<"v_detailed_cube_models">, "id" | "name">;
     alreadyAdded: boolean;
-    defaultData?: Pick<
-      Tables<"user_cubes">,
-      | "quantity"
-      | "condition"
-      | "main"
-      | "status"
-      | "bought_from"
-      | "notes"
-      | "acquired_at"
-      | "purchase_price"
-    >;
+    defaultData?: CubeCollectionForm;
   }
 
   const MIN_QUANTITY = 1;
   const MAX_QUANTITY = 999;
+  const CURRENCIES = Intl.supportedValuesOf("currency");
+
   const DEFAULT_DATA = {
     quantity: 1,
     condition: "New in box",
@@ -32,6 +28,7 @@
     notes: "",
     acquired_at: "",
     purchase_price: null,
+    purchase_price_currency: null,
   } satisfies Props["defaultData"];
 
   let {
@@ -50,59 +47,31 @@
   let showSuccess = $state(false);
   let formMessage = $state<string>("");
 
-  let id = $derived(cube.id);
-
-  // svelte-ignore state_referenced_locally
-  let form = $state({
-    quantity: defaultData.quantity,
-    condition: defaultData.condition,
-    main: defaultData.main,
-    status: defaultData.status,
-    bought_from: defaultData.bought_from,
-    notes: defaultData.notes,
-    acquired_at: defaultData.acquired_at,
-    purchase_price:
-      defaultData.purchase_price === null
-        ? null
-        : Number(defaultData.purchase_price),
-  });
+  let form = $state(
+    untrack(() => ({
+      quantity: defaultData.quantity,
+      condition: defaultData.condition,
+      main: defaultData.main,
+      status: defaultData.status,
+      bought_from: defaultData.bought_from,
+      notes: defaultData.notes,
+      acquired_at: defaultData.acquired_at,
+      purchase_price: defaultData.purchase_price,
+      purchase_price_currency: defaultData.purchase_price_currency,
+    })),
+  );
 
   // wishlist rule
   $effect(() => {
     if (form.status === "Wishlist") form.quantity = 1;
   });
 
-  // simple client checks
-  function validate(): string | null {
-    if (!form.status) return "Please choose a status.";
-    if (!form.condition) return "Please choose a condition.";
-    if (!form.quantity || form.quantity < 1 || form.quantity > 999)
-      return "Quantity must be between 1 and 999.";
-    if (form.purchase_price !== null) {
-      if (!Number.isFinite(form.purchase_price) || form.purchase_price < 0)
-        return "Price must be a valid number greater than or equal to 0.";
-      if (form.purchase_price > 100000)
-        return "Price seems too high. Please double-check.";
-    }
-    if (form.acquired_at) {
-      const today = new Date().toISOString().slice(0, 10);
-      if (form.acquired_at > today)
-        return "Acquired date cannot be in the future.";
-    }
-    return null;
-  }
-
   const vendors = $derived(page.data.vendors);
 
-  async function addCubeToCollection(e: SubmitEvent) {
-    e.preventDefault(); // ensure no page nav
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
     formMessage = "";
 
-    const err = validate();
-    if (err) {
-      formMessage = err;
-      return;
-    }
     if (!isConnected) {
       formMessage = "You must be logged in to perform this action.";
       return;
@@ -110,34 +79,11 @@
 
     isSubmitting = true;
 
-    const payload = {
-      cube_id: id,
-      quantity: form.quantity,
-      main: form.main,
-      condition: form.condition,
-      status: form.status,
-      bought_from: form.bought_from,
-      notes: form.notes,
-      acquired_at: form.acquired_at,
-      purchase_price: form.purchase_price,
-    };
-
     try {
-      const res = await fetch("/api/collection/cube/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      await saveCubeInCollection(cube.id, form);
 
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data?.success) {
-        showSuccess = true;
-        setTimeout(() => (open = false), 900);
-      } else {
-        throw new Error(
-          data?.error || "Unable to add the cube. Please try again.",
-        );
-      }
+      showSuccess = true;
+      setTimeout(() => (open = false), 900);
     } catch (err) {
       formMessage =
         err instanceof Error
@@ -168,7 +114,7 @@
     </div>
   {/if}
 
-  <form onsubmit={addCubeToCollection} method="dialog">
+  <form onsubmit={handleSubmit} method="dialog">
     <div class="flex justify-between items-center">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Quantity</legend>
@@ -289,7 +235,11 @@
       <fieldset class="fieldset flex-1">
         <legend class="fieldset-legend">Purchase Price</legend>
         <label class="input w-full">
-          <span aria-hidden="true">$</span>
+          {#if form.purchase_price_currency}
+            <span aria-hidden="true">
+              {getCurrencySymbol(form.purchase_price_currency)}
+            </span>
+          {/if}
           <input
             type="number"
             name="purchase_price"
@@ -302,6 +252,23 @@
           />
         </label>
         <p class="label">Optional</p>
+      </fieldset>
+
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Currency</legend>
+        <select
+          name="purchase_price_currency"
+          bind:value={form.purchase_price_currency}
+          class="select w-full"
+          aria-label="Purchase price currency"
+        >
+          <option value={null}>None</option>
+          {#each CURRENCIES as currency (currency)}
+            <option value={currency}>
+              {currency} ({getCurrencySymbol(currency)})
+            </option>
+          {/each}
+        </select>
       </fieldset>
     </div>
 

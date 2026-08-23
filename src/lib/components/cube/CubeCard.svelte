@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddCubeModal from "./AddCubeModal.svelte";
+  import ManageCubeModal from "./ManageCubeModal.svelte";
   import RateCubeModal from "../rating/RateCubeModal.svelte";
   import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/AddToCollectionButton.svelte";
@@ -95,7 +95,7 @@
 
 <CubeCardSkeleton {cube} rating={true} {top} {content} {bottom} />
 
-<AddCubeModal
+<ManageCubeModal
   bind:open={openAddCard}
   {cube}
   {alreadyAdded}

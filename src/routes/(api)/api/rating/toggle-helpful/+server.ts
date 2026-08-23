@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({
 
   const { count, error: countErr } = await supabase
     .from("helpful_rating")
-    .select("*", { count: 'exact', head: true })
+    .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
     .eq("rating", ratingId);
 

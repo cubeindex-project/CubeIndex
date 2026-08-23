@@ -126,7 +126,7 @@
         : "Unknown";
 
     return {
-      cube_slug: ucr?.cube_slug ?? "",
+      cube_slug: ucr?.cube_id.toString() ?? "",
       rating: ucr?.rating ?? 0,
       comment: ucr?.comment ?? "",
       updated_at: ucr?.updated_at ?? "",

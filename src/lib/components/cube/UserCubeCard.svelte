@@ -1,154 +1,42 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { formatDate } from "../../utils/formatDate";
   import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
-  import { clientLogger } from "$lib/logger/client";
-  import { clientLogError } from "$lib/logger/clientLogError";
-  import { page } from "$app/state";
-  import type { Tables } from "$lib/types/database.types";
+  import ManageCubeModal from "./ManageCubeModal.svelte";
+  import { type Tables } from "$lib/types/database.types";
   import { resolve } from "$app/paths";
-
-  interface LocalUserCubesType extends Tables<"user_cubes"> {
-    vendor: { name: string } | null;
-  }
+  import { deleteCubeFromCollection } from "$lib/api/cubeCollection";
+  import { formatCurrency } from "$lib/utils/formatCurrency";
 
   interface Props {
     mode?: "view" | "edit";
     cube: Tables<"v_detailed_cube_models">;
-    user_details: LocalUserCubesType;
+    user_details: Tables<"user_cubes"> & {
+      vendor: { name: string } | null;
+    };
     user_rating: number;
   }
 
   let { mode = "view", cube, user_details, user_rating }: Props = $props();
 
-  const supabase = page.data.supabase;
+  let editModalOpen = $state(false);
+  let deleteMessage = $state("");
+  let isDeleting = $state(false);
+  let isRemoved = $state(false);
 
-  const slug = $derived(user_details.cube);
-
-  let isSubmitting = $state(false);
-  let showSuccess = $state(false);
-  let formMessage = $state("");
-  let vendors: { slug: string; name: string }[] = $state([]);
-
-  // svelte-ignore state_referenced_locally
-  let form = $state({
-    quantity: user_details.quantity,
-    condition: user_details.condition,
-    main: user_details.main,
-    status: user_details.status,
-    bought_from: user_details.bought_from,
-    notes: user_details.notes,
-    acquired_at: user_details.acquired_at,
-    purchase_price: user_details.purchase_price,
-  });
-
-  const currencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-
-  $effect(() => {
-    if (showSuccess) location.reload();
-  });
-
-  async function getVendors() {
-    try {
-      const { data, error } = await supabase
-        .from("vendors")
-        .select("slug, name")
-        .order("name", { ascending: true });
-
-      if (error) throw new Error(error.message);
-
-      vendors = data;
-    } catch (err) {
-      clientLogError(
-        "An error occurred while fetching vendors",
-        clientLogger,
-        err,
-      );
-    }
-  }
-
-  async function updateUserCube() {
-    isSubmitting = true;
-    formMessage = "";
-
-    if (form.purchase_price !== null) {
-      if (!Number.isFinite(form.purchase_price) || form.purchase_price < 0) {
-        formMessage =
-          "Price must be a valid number greater than or equal to 0.";
-        isSubmitting = false;
-        return;
-      }
-      if (form.purchase_price > 100000) {
-        formMessage = "Price seems too high. Please double-check.";
-        isSubmitting = false;
-        return;
-      }
-    }
-
-    const payload = {
-      cube: slug,
-      quantity: form.quantity,
-      main: form.main,
-      condition: form.condition,
-      status: form.status,
-      bought_from: form.bought_from,
-      notes: form.status,
-      acquired_at: form.acquired_at,
-      purchase_price: form.purchase_price,
-    };
+  async function handleDelete() {
+    deleteMessage = "";
+    isDeleting = true;
 
     try {
-      const res = await fetch("/api/add-cube-to-collection", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success) {
-        showSuccess = true;
-        location.reload();
-      } else {
-        throw new Error(data.error);
-      }
+      await deleteCubeFromCollection(user_details.id);
+      isRemoved = true;
     } catch (err) {
-      formMessage =
+      deleteMessage =
         err instanceof Error ? err.message : "An unknown error occurred";
     } finally {
-      isSubmitting = false;
+      isDeleting = false;
     }
   }
-
-  async function removeUserCube() {
-    formMessage = "";
-    const payload = {
-      slug,
-    };
-
-    try {
-      const res = await fetch("/api/delete-cube-from-collection", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (data.success) {
-        showSuccess = true;
-        location.reload();
-      } else {
-        throw new Error(data.error);
-      }
-    } catch (err) {
-      formMessage =
-        err instanceof Error ? err.message : "An unknown error occurred";
-    }
-  }
-
-  onMount(getVendors);
 </script>
 
 {#snippet top()}
@@ -169,17 +57,6 @@
         </div>
       </div>
     {/if}
-  {:else}
-    <div class="absolute right-3 top-3">
-      <button
-        class="btn btn-error btn-sm"
-        onclick={removeUserCube}
-        aria-label="Remove from collection"
-      >
-        <i class="fa-solid fa-trash"></i>
-        Remove
-      </button>
-    </div>
   {/if}
 {/snippet}
 {#snippet content()}
@@ -220,7 +97,7 @@
         {#if user_details.purchase_price !== null}
           <div class="badge badge-lg gap-1 bg-base-300" title="Purchase price">
             <i class="fa-solid fa-tag"></i>
-            {currencyFormatter.format(user_details.purchase_price)}
+            {formatCurrency(user_details.purchase_price)}
           </div>
         {/if}
 
@@ -238,135 +115,6 @@
         </div>
       {/if}
     </div>
-  {:else}
-    <form
-      class="mt-4 flex gap-2"
-      onsubmit={(e) => {
-        e.preventDefault();
-        updateUserCube();
-      }}
-    >
-      <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
-        <label class="form-control">
-          <span class="label-text font-semibold">Quantity</span>
-          <input
-            id="quantity"
-            name="quantity"
-            type="number"
-            min="1"
-            max="999"
-            bind:value={form.quantity}
-            class="input input-bordered w-full"
-            required
-          />
-        </label>
-
-        <label class="form-control">
-          <span class="label-text font-semibold">Status</span>
-          <select
-            id="status"
-            name="status"
-            bind:value={form.status}
-            class="select select-bordered w-full"
-            required
-          >
-            <option value="Owned">Owned</option>
-            <option value="Wishlist">Wishlist</option>
-            <option value="Loaned">Loaned</option>
-            <option value="Borrowed">Borrowed</option>
-            <option value="Lost">Lost</option>
-          </select>
-        </label>
-
-        <label class="form-control">
-          <span class="label-text font-semibold">Condition</span>
-          <select
-            id="condition"
-            name="condition"
-            bind:value={form.condition}
-            class="select select-bordered w-full"
-            required
-          >
-            <option value="New in box">New in box</option>
-            <option value="New">New</option>
-            <option value="Good">Good</option>
-            <option value="Fair">Fair</option>
-            <option value="Worn">Worn</option>
-            <option value="Poor">Poor</option>
-            <option value="Broken">Broken</option>
-          </select>
-        </label>
-
-        <label class="form-control">
-          <span class="label-text font-semibold">Bought From</span>
-          <select
-            id="bought_from"
-            name="bought_from"
-            bind:value={form.bought_from}
-            class="select select-bordered w-full"
-          >
-            <option value={null}>None</option>
-            {#each vendors as vendor (vendor.slug)}
-              <option value={vendor.slug}>{vendor.name}</option>
-            {/each}
-          </select>
-        </label>
-
-        <label class="form-control">
-          <span class="label-text font-semibold">Purchase Price</span>
-          <label
-            class="input input-bordered flex items-center gap-2 rounded-xl"
-          >
-            <span aria-hidden="true">$</span>
-            <input
-              id="purchase_price"
-              name="purchase_price"
-              type="number"
-              min="0"
-              max="100000"
-              step="0.01"
-              placeholder="0.00"
-              bind:value={form.purchase_price}
-              class="grow"
-              inputmode="decimal"
-            />
-          </label>
-        </label>
-
-        <label class="form-control md:col-span-2">
-          <span class="label-text font-semibold">Notes</span>
-          <textarea
-            id="notes"
-            name="notes"
-            placeholder="Any special notes..."
-            bind:value={form.notes}
-            class="textarea textarea-bordered rounded-2xl w-full max-h-50"
-          ></textarea>
-        </label>
-
-        <label class="form-control">
-          <span class="label-text font-semibold">Acquired Date</span>
-          <input
-            id="acquiredAt"
-            name="acquiredAt"
-            type="date"
-            bind:value={form.acquired_at}
-            class="input input-bordered w-full"
-          />
-        </label>
-
-        <label class="label cursor-pointer gap-3 items-center">
-          <input
-            id="main"
-            name="main"
-            type="checkbox"
-            class="checkbox"
-            bind:checked={form.main}
-          />
-          <span class="label-text">Set as main cube</span>
-        </label>
-      </div>
-    </form>
   {/if}
 {/snippet}
 
@@ -381,31 +129,65 @@
       <i class="fa-solid fa-arrow-right"></i>
     </a>
   {:else}
-    <button
-      class="btn btn-primary mt-4 items-center"
-      onclick={updateUserCube}
-      disabled={isSubmitting || showSuccess}
-      aria-live="polite"
+    <div
+      class="mt-4 grid grid-cols-[repeat(auto-fit,minmax(10.5rem,1fr))] gap-4"
     >
-      {#if isSubmitting}
-        <span class="loading loading-spinner"></span>
-        Editing...
-      {:else if showSuccess}
-        <i class="fa-solid fa-check"></i>
-        Edited!
-      {:else}
-        <i class="fa-solid fa-floppy-disk"></i>
-        Save
-      {/if}
-    </button>
+      <button
+        class="btn btn-error w-full"
+        onclick={handleDelete}
+        disabled={isDeleting}
+        aria-label="Remove from collection"
+      >
+        {#if isDeleting}
+          <span class="loading loading-spinner"></span>
+          Removing...
+        {:else}
+          <i class="fa-solid fa-trash"></i>
+          Remove
+        {/if}
+      </button>
+      <button
+        class="btn btn-primary w-full"
+        onclick={() => (editModalOpen = true)}
+      >
+        <i class="fa-solid fa-pen"></i>
+        Edit
+      </button>
+    </div>
 
-    {#if formMessage}
+    {#if deleteMessage}
       <div class="alert alert-error mt-3">
         <i class="fa-solid fa-circle-exclamation"></i>
-        <span>{formMessage}</span>
+        <span>{deleteMessage}</span>
       </div>
     {/if}
   {/if}
 {/snippet}
 
-<CubeCardSkeleton {cube} rating={false} {top} {content} {bottom} />
+{#if !isRemoved}
+  <CubeCardSkeleton
+    {cube}
+    rating={false}
+    showMeta={false}
+    {top}
+    {content}
+    {bottom}
+  />
+
+  <ManageCubeModal
+    bind:open={editModalOpen}
+    {cube}
+    alreadyAdded={true}
+    defaultData={{
+      quantity: user_details.quantity,
+      condition: user_details.condition,
+      main: user_details.main,
+      status: user_details.status,
+      bought_from: user_details.bought_from,
+      notes: user_details.notes,
+      acquired_at: user_details.acquired_at,
+      purchase_price: user_details.purchase_price,
+      purchase_price_currency: user_details.purchase_price_currency,
+    }}
+  />
+{/if}

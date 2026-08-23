@@ -113,11 +113,11 @@
         case "rating":
           aValue =
             user_cube_ratings.find(
-              (rating) => rating.cube_slug === a.cube_model?.slug,
+              (rating) => rating.cube_id === a.cube_model?.id,
             )?.rating ?? 0;
           bValue =
             user_cube_ratings.find(
-              (rating) => rating.cube_slug === b.cube_model?.slug,
+              (rating) => rating.cube_id === b.cube_model?.id,
             )?.rating ?? 0;
           break;
         default:
@@ -208,7 +208,7 @@
       cube={userCube.cube_model}
       user_details={userCube}
       user_rating={user_cube_ratings.find(
-        (rating) => rating.cube_slug === userCube.cube_model?.slug,
+        (rating) => rating.cube_id === userCube.cube_model?.id,
       )?.rating ?? 0}
     />
   {/snippet}

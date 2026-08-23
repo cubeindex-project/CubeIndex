@@ -35,7 +35,7 @@
       return [] satisfies StaffRating[];
     }
 
-    const filtered = user_cube_ratings.filter((rating: StaffRating) => {
+    const filtered = user_cube_ratings.filter((rating) => {
       const matchesSearch =
         normalizedSearch.length === 0 ||
         [
@@ -108,7 +108,7 @@
     }
 
     const total = user_cube_ratings.reduce(
-      (sum: number, rating: StaffRating) => sum + (rating.rating ?? 0),
+      (sum: number, rating) => sum + (rating.rating ?? 0),
       0,
     );
 
@@ -122,7 +122,7 @@
 
     const seen = new Set(
       user_cube_ratings
-        .map((rating: StaffRating) => rating.cube_slug?.slug)
+        .map((rating) => rating.cube_slug?.slug)
         .filter((slug): slug is string => typeof slug === "string"),
     );
 

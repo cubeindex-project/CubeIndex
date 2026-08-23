@@ -1,18 +1,20 @@
 <script lang="ts">
   import NumberFlow, { continuous } from "@number-flow/svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import { Constants, type Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
   import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
-  import { untrack } from "svelte";
+  import { tick, untrack } from "svelte";
   import { saveCubeInCollection } from "$lib/api/cubeCollection";
   import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
+  import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
 
   interface Props {
     open: boolean;
     cube: Pick<Tables<"v_detailed_cube_models">, "id" | "name">;
     alreadyAdded: boolean;
     defaultData?: CubeCollectionForm;
+    onAdded?: () => void;
   }
 
   const MIN_QUANTITY = 1;
@@ -23,8 +25,8 @@
     quantity: 1,
     condition: "New in box",
     main: false,
-    status: "Owned",
-    bought_from: null,
+    status: "owned",
+    bought_from_id: null,
     notes: "",
     acquired_at: "",
     purchase_price: null,
@@ -36,6 +38,7 @@
     cube,
     alreadyAdded,
     defaultData = DEFAULT_DATA,
+    onAdded,
   }: Props = $props();
 
   const user = $derived(page.data.user);
@@ -53,7 +56,7 @@
       condition: defaultData.condition,
       main: defaultData.main,
       status: defaultData.status,
-      bought_from: defaultData.bought_from,
+      bought_from_id: defaultData.bought_from_id,
       notes: defaultData.notes,
       acquired_at: defaultData.acquired_at,
       purchase_price: defaultData.purchase_price,
@@ -63,7 +66,7 @@
 
   // wishlist rule
   $effect(() => {
-    if (form.status === "Wishlist") form.quantity = 1;
+    if (form.status === "wanted") form.quantity = 1;
   });
 
   const vendors = $derived(page.data.vendors);
@@ -83,7 +86,10 @@
       await saveCubeInCollection(cube.id, form);
 
       showSuccess = true;
-      setTimeout(() => (open = false), 900);
+      open = false;
+      await tick();
+
+      if (!alreadyAdded) onAdded?.();
     } catch (err) {
       formMessage =
         err instanceof Error
@@ -94,7 +100,7 @@
     }
   }
 
-  let readonly: boolean = $derived(form.status === "Wishlist");
+  let readonly: boolean = $derived(form.status === "wanted");
 
   const canDec = $derived(!readonly && form.quantity > MIN_QUANTITY);
   const canInc = $derived(!readonly && form.quantity < MAX_QUANTITY);
@@ -118,7 +124,7 @@
     <div class="flex justify-between items-center">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Quantity</legend>
-        {#if form.status === "Wishlist"}
+        {#if form.status === "wanted"}
           <p class="label">Locked for wishlist</p>
         {/if}
         <div class="join w-fit">
@@ -190,13 +196,9 @@
           bind:value={form.condition}
           required
         >
-          <option value="New in box">New in box</option>
-          <option value="New">New</option>
-          <option value="Good">Good</option>
-          <option value="Fair">Fair</option>
-          <option value="Worn">Worn</option>
-          <option value="Poor">Poor</option>
-          <option value="Broken">Broken</option>
+          {#each Constants.public.Enums.user_cube_condition as condition, index (index)}
+            <option>{condition}</option>
+          {/each}
         </select>
       </fieldset>
 
@@ -208,11 +210,9 @@
           class="select w-full"
           required
         >
-          <option value="Owned">Owned</option>
-          <option value="Wishlist">Wishlist</option>
-          <option value="Loaned">Loaned</option>
-          <option value="Borrowed">Borrowed</option>
-          <option value="Lost">Lost</option>
+          {#each Constants.public.Enums.user_cube_status as status, index (index)}
+            <option value={status}>{getUserCubeStatusLabel(status)}</option>
+          {/each}
         </select>
       </fieldset>
     </div>
@@ -221,13 +221,13 @@
       <fieldset class="fieldset flex-1">
         <legend class="fieldset-legend">Bought From</legend>
         <select
-          name="bought_from"
-          bind:value={form.bought_from}
+          name="bought_from_id"
+          bind:value={form.bought_from_id}
           class="select w-full"
         >
           <option value={null}>None</option>
           {#each vendors as vendor (vendor.slug)}
-            <option value={vendor.slug}>{vendor.name}</option>
+            <option value={vendor.id}>{vendor.name}</option>
           {/each}
         </select>
       </fieldset>

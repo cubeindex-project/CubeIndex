@@ -106,7 +106,9 @@
       .eq("rating_id", user_rating.id);
 
     if (helpErr) {
-      throw new Error(`500, Failed to fetch helpful cube ratings: ${helpErr.message}`);
+      throw new Error(
+        `500, Failed to fetch helpful cube ratings: ${helpErr.message}`,
+      );
     }
 
     helpful_ratings = helpful;

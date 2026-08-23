@@ -5,7 +5,8 @@
   import { type Tables } from "$lib/types/database.types";
   import { resolve } from "$app/paths";
   import { deleteCubeFromCollection } from "$lib/api/cubeCollection";
-  import { formatCurrency } from "$lib/utils/formatCurrency";
+  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
 
   interface Props {
     mode?: "view" | "edit";
@@ -14,14 +15,20 @@
       vendor: { name: string } | null;
     };
     user_rating: number;
+    onDelete?: () => void;
   }
 
-  let { mode = "view", cube, user_details, user_rating }: Props = $props();
+  let {
+    mode = "view",
+    cube,
+    user_details,
+    user_rating,
+    onDelete,
+  }: Props = $props();
 
   let editModalOpen = $state(false);
   let deleteMessage = $state("");
   let isDeleting = $state(false);
-  let isRemoved = $state(false);
 
   async function handleDelete() {
     deleteMessage = "";
@@ -29,7 +36,7 @@
 
     try {
       await deleteCubeFromCollection(user_details.id);
-      isRemoved = true;
+      onDelete?.();
     } catch (err) {
       deleteMessage =
         err instanceof Error ? err.message : "An unknown error occurred";
@@ -76,7 +83,7 @@
         {#if user_details.status}
           <div class="badge badge-lg gap-1 bg-base-300" title="Status">
             <i class="fa-solid fa-clipboard-check"></i>
-            {user_details.status}
+            {getUserCubeStatusLabel(user_details.status)}
           </div>
         {/if}
 
@@ -94,10 +101,11 @@
           </div>
         {/if}
 
-        {#if user_details.purchase_price !== null}
+        {#if user_details.purchase_price !== null && user_details.purchase_price_currency !== null}
           <div class="badge badge-lg gap-1 bg-base-300" title="Purchase price">
             <i class="fa-solid fa-tag"></i>
-            {formatCurrency(user_details.purchase_price)}
+            {getCurrencySymbol(user_details.purchase_price_currency)}
+            {user_details.purchase_price}
           </div>
         {/if}
 
@@ -164,30 +172,28 @@
   {/if}
 {/snippet}
 
-{#if !isRemoved}
-  <CubeCardSkeleton
-    {cube}
-    rating={false}
-    showMeta={false}
-    {top}
-    {content}
-    {bottom}
-  />
+<CubeCardSkeleton
+  {cube}
+  rating={false}
+  showMeta={false}
+  {top}
+  {content}
+  {bottom}
+/>
 
-  <ManageCubeModal
-    bind:open={editModalOpen}
-    {cube}
-    alreadyAdded={true}
-    defaultData={{
-      quantity: user_details.quantity,
-      condition: user_details.condition,
-      main: user_details.main,
-      status: user_details.status,
-      bought_from: user_details.bought_from,
-      notes: user_details.notes,
-      acquired_at: user_details.acquired_at,
-      purchase_price: user_details.purchase_price,
-      purchase_price_currency: user_details.purchase_price_currency,
-    }}
-  />
-{/if}
+<ManageCubeModal
+  bind:open={editModalOpen}
+  {cube}
+  alreadyAdded={true}
+  defaultData={{
+    quantity: user_details.quantity,
+    condition: user_details.condition,
+    main: user_details.main,
+    status: user_details.status,
+    bought_from_id: user_details.bought_from_id,
+    notes: user_details.notes,
+    acquired_at: user_details.acquired_at,
+    purchase_price: user_details.purchase_price,
+    purchase_price_currency: user_details.purchase_price_currency,
+  }}
+/>

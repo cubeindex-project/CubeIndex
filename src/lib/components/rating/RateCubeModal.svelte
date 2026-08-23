@@ -33,7 +33,6 @@
   const isNearLimit = $derived(usedCharacters >= MAX_COMMENT_LENGTH * 0.9);
   const isOverLimit = $derived(usedCharacters > MAX_COMMENT_LENGTH);
 
-
   async function rateCube(e: SubmitEvent) {
     e.preventDefault();
     formMessage = "";

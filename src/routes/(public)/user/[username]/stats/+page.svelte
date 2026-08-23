@@ -140,13 +140,13 @@
   </header>
 
   {#if stats && Object.keys(stats).length > 0}
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-2">
       <div class="stat bg-base-200 rounded-2xl border border-base-300/40">
         <div class="stat-title">Total cubes</div>
         <div class="stat-value text-3xl">{stats.cube_count}</div>
       </div>
 
-      <div class="stat bg-base-200 rounded-2xl border border-base-300/40">
+      <!-- <div class="stat bg-base-200 rounded-2xl border border-base-300/40">
         <div class="stat-title">Collection value</div>
         <div class="stat-value text-3xl">
           {#if stats.collection_value}
@@ -155,7 +155,7 @@
             Not enough data
           {/if}
         </div>
-      </div>
+      </div> -->
 
       <div class="stat bg-base-200 rounded-2xl border border-base-300/40">
         <div class="stat-title">Average rating</div>

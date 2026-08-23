@@ -45,7 +45,11 @@ export const cubeCollectionFormSchema = z
     status: z.enum(Constants.public.Enums.user_cube_status, {
       error: "Please choose a valid status.",
     }),
-    bought_from: z.string().trim().min(1).nullable(),
+    bought_from_id: z
+      .number()
+      .int()
+      .positive("'Bought from ID' must be a positive integer.")
+      .nullable(),
     notes: z
       .string()
       .max(MAX_NOTE_LENGTH, "Notes cannot exceed 2,000 characters.")

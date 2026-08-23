@@ -100,5 +100,8 @@
   {cube}
   {alreadyAdded}
   defaultData={userCubeDetail}
+  onAdded={() => {
+    openRateCard = true;
+  }}
 />
 <RateCubeModal bind:open={openRateCard} {cube} />

@@ -3,7 +3,6 @@ import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({
   locals: { supabase, log, user },
-  setHeaders,
   url,
   untrack,
 }) => {

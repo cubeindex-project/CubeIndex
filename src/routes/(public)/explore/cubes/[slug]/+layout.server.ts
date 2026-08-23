@@ -95,10 +95,6 @@ export const load = (async ({
     return logError(500, "Unable to load vendor links", log, cvrErr);
   }
 
-  setHeaders({
-    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
-  });
-
   const title = `${cube.name} - CubeIndex`;
   const description =
     `The ${cube.name} is a ${cube.type} twisty puzzle` +

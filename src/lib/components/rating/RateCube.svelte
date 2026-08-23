@@ -34,7 +34,7 @@
 
   function validate(): string | null {
     if (!isConnected) return "You must be logged in to perform this action.";
-    if (!rating || rating < 1) return "Please select a rating.";
+    if (!rating || rating < 0.5) return "Please select a rating.";
     if (isOverLimit)
       return `Comment is too long by ${usedCharacters - MAX_COMMENT_LENGTH} characters.`;
     return null;

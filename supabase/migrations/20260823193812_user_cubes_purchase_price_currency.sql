@@ -30,6 +30,10 @@ alter table "public"."user_cubes" add constraint "user_cubes_currency_check" CHE
 
 alter table "public"."user_cubes" validate constraint "user_cubes_currency_check";
 
+update "public"."user_cubes"
+set purchase_price_currency = 'USD'
+where purchase_price is not null;
+
 alter table "public"."user_cubes" add constraint "user_cubes_purchase_price_currency_check" CHECK (((purchase_price IS NULL) = (purchase_price_currency IS NULL))) not valid;
 
 alter table "public"."user_cubes" validate constraint "user_cubes_purchase_price_currency_check";
@@ -349,6 +353,3 @@ create or replace view "public"."v_user_stats" as  WITH cube_stats AS (
      LEFT JOIN cubes_over_time cot ON ((cot.user_id = cs.user_id)))
      LEFT JOIN cubes_per_type ct ON ((ct.user_id = cs.user_id)))
      LEFT JOIN cubes_per_condition cp ON ((cp.user_id = cs.user_id)));
-
-
-

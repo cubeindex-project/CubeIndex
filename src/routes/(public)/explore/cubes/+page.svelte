@@ -258,10 +258,10 @@
       {userCubeDetail}
     />
   {/snippet}
-  <!-- {#snippet noResultsAction()}
-    <a href={resolve("/submit")} class="btn btn-primary flex items-center">
+  {#snippet noResultsAction()}
+    <a href={resolve("/submit/cube")} class="btn btn-primary flex items-center">
       <i class="fa-solid fa-plus mr-2"></i>
       Submit a New Cube
     </a>
-  {/snippet} -->
+  {/snippet}
 </ExplorePage>

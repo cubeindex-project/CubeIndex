@@ -26,7 +26,7 @@ update user_cube_ratings ucr set cube_id = (select id from cube_models cm where 
 
 alter table "public"."user_cube_ratings" drop column "cube_slug";
 
-alter table "public"."user_cube_ratings" alter column "cube_id" not null;
+alter table "public"."user_cube_ratings" alter column "cube_id" set not null;
 
 -- End migration
 
@@ -38,7 +38,7 @@ update user_cubes uc set cube_id = (select id from cube_models cm where cm.slug 
 
 alter table "public"."user_cubes" drop column "cube";
 
-alter table "public"."user_cubes" alter column "cube_id" not null;
+alter table "public"."user_cubes" alter column "cube_id" set not null;
 
 -- End migration
 
@@ -365,6 +365,3 @@ create or replace view "public"."v_user_stats" as  WITH cube_stats AS (
      LEFT JOIN cubes_over_time cot ON ((cot.user_id = cs.user_id)))
      LEFT JOIN cubes_per_type ct ON ((ct.user_id = cs.user_id)))
      LEFT JOIN cubes_per_condition cp ON ((cp.user_id = cs.user_id)));
-
-
-

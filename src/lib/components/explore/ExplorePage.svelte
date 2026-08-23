@@ -204,7 +204,9 @@
             </div>
 
             {#if paginatedItems.length > 0}
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-10">
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 my-10"
+              >
                 {#each paginatedItems as item, index (index)}
                   {#key item}
                     {@render renderItem(item)}

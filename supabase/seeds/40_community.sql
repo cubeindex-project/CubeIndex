@@ -10,16 +10,17 @@ insert into public.user_cubes (
 	status,
 	notes,
 	acquired_at,
-	bought_from,
-	purchase_price
+	bought_from_id,
+	purchase_price,
+	purchase_price_currency
 )
 values
-	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'gan-16-maglev'), true, 1, 'Good', 'Owned', 'Current competition main.', '2026-02-14', 'thecubicle', 62.99),
-	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'moyu-rs3-m-v5'), false, 2, 'Good', 'Owned', 'One stock and one set up for OH.', '2025-11-10', 'speedcubeshop', 19.90),
-	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'yj-mgc-square-1'), false, 1, 'New', 'Wishlist', 'Try before the next competition.', null, null, null),
-	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'moyu-weilong-wr-m-v10'), true, 1, 'New', 'Owned', 'Smooth setup with medium compression.', '2026-03-02', 'speedcubeshop', 34.95),
-	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'qiyi-ms-2x2'), false, 1, 'Fair', 'Owned', 'First magnetic 2x2.', '2025-08-20', 'cubezz', 7.49),
-	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'x-man-tornado-v4-pioneer'), false, 1, 'New', 'Wishlist', '', null, null, null);
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'gan-16-maglev'), true, 1, 'Good', 'owned', 'Current competition main.', '2026-02-14', (select id from vendors v where v.slug = 'thecubicle'), 62.99, 'USD'),
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'moyu-rs3-m-v5'), false, 2, 'Good', 'owned', 'One stock and one set up for OH.', '2025-11-10', (select id from vendors v where v.slug = 'speedcubeshop'), 19.90, 'EUR'),
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'yj-mgc-square-1'), false, 1, 'New', 'wanted', 'Try before the next competition.', null, null, null, null),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'moyu-weilong-wr-m-v10'), true, 1, 'New', 'owned', 'Smooth setup with medium compression.', '2026-03-02', (select id from vendors v where v.slug = 'speedcubeshop'), 34.95, 'GBP'),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'qiyi-ms-2x2'), false, 1, 'Fair', 'owned', 'First magnetic 2x2.', '2025-08-20', (select id from vendors v where v.slug = 'cubezz'), 7.49, 'XOF'),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'x-man-tornado-v4-pioneer'), false, 1, 'New', 'wanted', '', null, null, null, null);
 
 insert into public.user_cube_ratings (user_id, cube_id, rating, comment, created_at, updated_at)
 values

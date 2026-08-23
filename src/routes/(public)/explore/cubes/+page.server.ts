@@ -30,10 +30,6 @@ export const load: PageServerLoad = async ({
     userCubes = data;
   }
 
-  setHeaders({
-    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
-  });
-
   const jsonLDItems = cubes
     .slice()
     .sort((a, b) => (a.owned_count ?? 0) - (b.owned_count ?? 0))

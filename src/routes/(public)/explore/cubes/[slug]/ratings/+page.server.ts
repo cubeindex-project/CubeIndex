@@ -9,7 +9,7 @@ export const load = (async ({ parent, params, locals: { supabase } }) => {
   const ratingsPromise = supabase
     .from("user_cube_ratings")
     .select("*, profile:user_id(username, display_name)")
-    .eq("cube_slug", slug);
+    .eq("cube_id", cube.id);
 
   const [ratingsRes] = await Promise.all([ratingsPromise]);
 

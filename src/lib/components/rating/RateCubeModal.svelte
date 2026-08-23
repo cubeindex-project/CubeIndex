@@ -6,7 +6,7 @@
 
   interface Props {
     open: boolean;
-    cube: Tables<"cube_models">;
+    cube: Pick<Tables<"cube_models">, "id" | "name">;
     rating?: number;
     comment?: string;
   }
@@ -21,7 +21,7 @@
   let showSuccess = $state(false);
   let formMessage = $state("");
 
-  const slug = $derived(cube.slug);
+  const id = $derived(cube.id);
 
   const MAX_COMMENT_LENGTH = 500;
   const usedCharacters = $derived(comment.length);
@@ -51,10 +51,10 @@
     }
 
     isSubmitting = true;
-    const payload = { cube_slug: slug, rating, comment };
+    const payload = { cube_id: id, rating, comment };
 
     try {
-      const res = await fetch("/api/rating/add-rating", {
+      const res = await fetch("/api/rating/cube/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -4,13 +4,13 @@ import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
-  locals: { supabase, user },
+  locals: { supabase, user, log },
 }) => {
-  if (!user)
-    return json({ success: false, error: "Unauthorized" }, { status: 401 });
+  if (!user){
+    return json({ error: "Unauthorized" }, { status: 401 });}
 
   const {
-    cube,
+    cube_id,
     quantity,
     main,
     condition,
@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({
     acquired_at,
     purchase_price,
   }: {
-    cube: string;
+    cube_id: number;
     quantity: number;
     main: boolean;
     condition: Enums<"user_cube_condition">;
@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({
 
   const payload: TablesInsert<"user_cubes"> = {
     user_id: user.id,
-    cube,
+    cube_id,
     quantity,
     main,
     condition,
@@ -48,11 +48,12 @@ export const POST: RequestHandler = async ({
     .from("user_cubes")
     .upsert(payload);
 
-  if (userCubesErr)
+  if (userCubesErr){
+    log.error({err: userCubesErr}, "An error occorred while adding cube to collection")
     return json(
-      { success: false, error: "An error occurred: " + userCubesErr.message },
+      { error: "An error occorred while adding cube to collection" },
       { status: 500 },
-    );
+    );}
 
-  return json({ success: true });
+  return new Response(null, { status: 204 });
 };

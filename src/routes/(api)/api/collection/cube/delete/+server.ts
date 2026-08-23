@@ -9,16 +9,15 @@ export const POST: RequestHandler = async ({
     return json({ success: false, error: "Unauthorized" }, { status: 401 });
 
   const {
-    slug,
+    collection_id,
   }: {
-    slug: string;
+    collection_id: number;
   } = await request.json();
 
   const { error: err } = await supabase
     .from("user_cubes")
     .delete()
-    .eq("user_id", user.id)
-    .eq("cube", slug);
+    .eq("id", collection_id);
 
   if (err)
     return json(

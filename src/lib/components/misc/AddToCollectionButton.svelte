@@ -19,7 +19,6 @@
     Edit
   {:else}
     <i class="fa-solid fa-plus mr-2"></i>
-    Add
-    <span class="hidden sm:block">to Collection</span>
+    Add to Collection
   {/if}
 </button>

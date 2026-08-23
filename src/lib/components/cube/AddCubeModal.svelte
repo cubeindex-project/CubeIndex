@@ -6,7 +6,7 @@
 
   interface Props {
     open: boolean;
-    cube: Pick<Tables<"v_detailed_cube_models">, "slug" | "name">;
+    cube: Pick<Tables<"v_detailed_cube_models">, "id" | "name">;
     alreadyAdded: boolean;
     defaultData?: Pick<
       Tables<"user_cubes">,
@@ -50,7 +50,7 @@
   let showSuccess = $state(false);
   let formMessage = $state<string>("");
 
-  let slug = $derived(cube.slug);
+  let id = $derived(cube.id);
 
   // svelte-ignore state_referenced_locally
   let form = $state({
@@ -111,7 +111,7 @@
     isSubmitting = true;
 
     const payload = {
-      cube: slug,
+      cube_id: id,
       quantity: form.quantity,
       main: form.main,
       condition: form.condition,
@@ -123,7 +123,7 @@
     };
 
     try {
-      const res = await fetch("/api/add-cube-to-collection", {
+      const res = await fetch("/api/collection/cube/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -2,7 +2,7 @@
   import StarRating from "./StarRating.svelte";
   import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
-  import RateCube from "./RateCube.svelte";
+  import RateCubeModal from "./RateCubeModal.svelte";
   import Report from "../report/Report.svelte";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
@@ -55,10 +55,10 @@
     loading = true;
 
     setTimeout(async () => {
-      const res = await fetch("/api/rating/delete-rating", {
+      const res = await fetch("/api/rating/cube/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cube_slug: cube.slug }),
+        body: JSON.stringify({ rating_id: user_rating.id }),
       });
       const data = await res.json();
 
@@ -74,7 +74,7 @@
   }
 
   async function setRatingHelpful() {
-    const res = await fetch("/api/rating/helpful-rating", {
+    const res = await fetch("/api/rating/toggle-helpful", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -261,7 +261,7 @@
   {/if}
 </div>
 
-<RateCube
+<RateCubeModal
   bind:open={isEditingRating}
   {cube}
   rating={user_rating.rating}

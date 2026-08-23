@@ -74,7 +74,7 @@ export const load = (async ({
       .from("user_cubes")
       .select("*")
       .eq("user_id", user.id)
-      .eq("cube", cube.slug)
+      .eq("cube_id", cube.id)
       .maybeSingle();
 
     if (ucErr) {

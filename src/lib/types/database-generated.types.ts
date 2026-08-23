@@ -1495,7 +1495,7 @@ export type Database = {
         Row: {
           comment: string | null;
           created_at: string;
-          cube_slug: string;
+          cube_id: number;
           id: number;
           rating: number;
           updated_at: string;
@@ -1504,7 +1504,7 @@ export type Database = {
         Insert: {
           comment?: string | null;
           created_at?: string;
-          cube_slug: string;
+          cube_id: number;
           id?: number;
           rating: number;
           updated_at?: string;
@@ -1513,7 +1513,7 @@ export type Database = {
         Update: {
           comment?: string | null;
           created_at?: string;
-          cube_slug?: string;
+          cube_id?: number;
           id?: number;
           rating?: number;
           updated_at?: string;
@@ -1521,25 +1521,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "user_cube_ratings_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "user_cube_ratings_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "user_ratings_user_id_fkey";
@@ -1699,7 +1692,7 @@ export type Database = {
           bought_from: string | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at: string;
-          cube: string;
+          cube_id: number;
           id: number;
           main: boolean;
           modified_at: string;
@@ -1714,7 +1707,7 @@ export type Database = {
           bought_from?: string | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;
-          cube: string;
+          cube_id: number;
           id?: number;
           main?: boolean;
           modified_at?: string;
@@ -1729,7 +1722,7 @@ export type Database = {
           bought_from?: string | null;
           condition?: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;
-          cube?: string;
+          cube_id?: number;
           id?: number;
           main?: boolean;
           modified_at?: string;
@@ -1755,25 +1748,18 @@ export type Database = {
             referencedColumns: ["slug"];
           },
           {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
+            foreignKeyName: "user_cubes_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
+            foreignKeyName: "user_cubes_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "user_cubes_user_id_fkey";
@@ -2349,12 +2335,10 @@ export type Database = {
         Returns: undefined;
       };
       build_v_detailed_cube_models: { Args: never; Returns: undefined };
-      copy_cube_submission:
-        | { Args: { p_submission_id: number }; Returns: number }
-        | {
-            Args: { p_reviewer_id: string; p_submission_id: number };
-            Returns: undefined;
-          };
+      copy_cube_submission: {
+        Args: { p_submission_id: number };
+        Returns: number;
+      };
       due_vendor_links_capped: {
         Args: {
           p_backoff_cap?: number;

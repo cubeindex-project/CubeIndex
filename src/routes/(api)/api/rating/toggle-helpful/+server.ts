@@ -22,31 +22,22 @@ export const POST: RequestHandler = async ({
     rating_category: "cube" | "accessory";
   } = await request.json();
 
-  const { data, error: selecErr } = await supabase
+  const { count, error: countErr } = await supabase
     .from("helpful_rating")
-    .select("*")
+    .select("*", { count: 'exact', head: true })
     .eq("user_id", user.id)
     .eq("rating", ratingId);
 
-  if (selecErr?.message === 'invalid input syntax for type uuid: "undefined"')
+  if (countErr)
     return json(
       {
         success: false,
-        error: "You must be logged in to perform this action!",
+        error: "Couldn't fetch rows from helpful_rating: " + countErr.message,
       },
       { status: 500 },
     );
 
-  if (selecErr)
-    return json(
-      {
-        success: false,
-        error: "Couldn't fetch rows from helpful_rating: " + selecErr.message,
-      },
-      { status: 500 },
-    );
-
-  if (data.length) {
+  if (count && count > 0) {
     const { error: err } = await supabase
       .from("helpful_rating")
       .delete()

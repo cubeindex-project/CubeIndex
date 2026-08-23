@@ -2,9 +2,8 @@ import type { PageServerLoad } from "./$types";
 import { clientLogError } from "$lib/logger/clientLogError";
 import { clientLogger } from "$lib/logger/client";
 
-export const load = (async ({ parent, params, locals: { supabase } }) => {
+export const load = (async ({ parent, locals: { supabase } }) => {
   const { cube, meta } = await parent();
-  const { slug } = params;
 
   const ratingsPromise = supabase
     .from("user_cube_ratings")

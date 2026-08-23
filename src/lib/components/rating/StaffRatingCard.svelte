@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
+  import { deleteCubeRating } from "$lib/api/cubeRating";
   import type { Tables } from "$lib/types/database.types";
 
   const supabase = page.data.supabase;
@@ -17,7 +18,7 @@
 
   const { user_rating, cube }: Props = $props();
 
-  let helpful_ratings: (Omit<Tables<"helpful_rating">, "user_id"> & {
+  let helpful_ratings: (Omit<Tables<"helpful_cube_rating">, "user_id"> & {
     user_id: Pick<Tables<"profiles">, "display_name" | "username">;
   })[] = $state([]);
 
@@ -33,33 +34,24 @@
 
   let loading = $state(false);
   let success = $state(false);
+  let deleteMessage = $state("");
 
   async function deleteRating() {
+    deleteMessage = "";
     loading = true;
 
-    setTimeout(async () => {
-      const res = await fetch("/api/rating/delete-rating", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cube_slug: cube.slug,
-          user_id: user_rating.user_id,
-        }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        loading = false;
-        success = true;
-        setTimeout(() => {
-          onCancel();
-          location.reload();
-        }, 1000);
-      } else {
-        loading = false;
-        new Error("Failed: " + data.error);
-      }
-    }, 1000);
+    try {
+      await deleteCubeRating(user_rating.id);
+      success = true;
+      setTimeout(onCancel, 1000);
+    } catch (error) {
+      deleteMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to delete the rating. Please try again.";
+    } finally {
+      loading = false;
+    }
   }
 
   $effect(() => {
@@ -147,6 +139,13 @@
       </div>
     </div>
   </div>
+  {#if deleteMessage}
+    <div class="alert alert-error mt-3" aria-live="polite">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>{deleteMessage}</span>
+    </div>
+  {/if}
+
   {#if user_rating.comment}
     <p class="mt-2 text-sm leading-relaxed">
       {user_rating.comment.length > maxCommentLength && !showFull

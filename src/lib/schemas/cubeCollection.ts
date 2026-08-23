@@ -39,11 +39,11 @@ export const cubeCollectionFormSchema = z
       .min(MIN_QUANTITY, `Quantity must be at least ${MIN_QUANTITY}.`)
       .max(MAX_QUANTITY, `Quantity cannot exceed ${MAX_QUANTITY}.`),
     condition: z.enum(Constants.public.Enums.user_cube_condition, {
-      message: "Please choose a valid condition.",
+      error: "Please choose a valid condition.",
     }),
     main: z.boolean(),
     status: z.enum(Constants.public.Enums.user_cube_status, {
-      message: "Please choose a valid status.",
+      error: "Please choose a valid status.",
     }),
     bought_from: z.string().trim().min(1).nullable(),
     notes: z
@@ -53,10 +53,10 @@ export const cubeCollectionFormSchema = z
     acquired_at: z
       .string()
       .refine((value) => value === "" || isValidISODate(value), {
-        message: "Acquired date must be a valid date.",
+        error: "Acquired date must be a valid date.",
       })
       .refine((value) => value === "" || value <= getTodayISODate(), {
-        message: "Acquired date cannot be in the future.",
+        error: "Acquired date cannot be in the future.",
       })
       .nullable()
       .transform((value) => value || null),

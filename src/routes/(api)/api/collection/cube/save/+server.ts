@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({
 
   const { error: userCubesErr } = await supabase
     .from("user_cubes")
-    .upsert(payload);
+    .upsert(payload, { onConflict: "cube_id,user_id" });
 
   if (userCubesErr) {
     log.error(

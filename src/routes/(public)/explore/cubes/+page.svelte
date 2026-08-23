@@ -248,7 +248,7 @@
     </div>
   {/snippet}
   {#snippet renderItem(cube)}
-    {@const userCubeDetail = userCubes?.find((uc) => uc.cube === cube.slug)}
+    {@const userCubeDetail = userCubes?.find((uc) => uc.cube_id === cube.id)}
     <CubeCard
       {cube}
       showAddButton={true}

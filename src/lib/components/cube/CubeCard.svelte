@@ -1,6 +1,6 @@
 <script lang="ts">
-  import AddCube from "./AddCube.svelte";
-  import RateCube from "../rating/RateCube.svelte";
+  import ManageCubeModal from "./ManageCubeModal.svelte";
+  import RateCubeModal from "../rating/RateCubeModal.svelte";
   import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/AddToCollectionButton.svelte";
   import RateCubeButton from "../misc/RateCubeButton.svelte";
@@ -95,10 +95,13 @@
 
 <CubeCardSkeleton {cube} rating={true} {top} {content} {bottom} />
 
-<AddCube
+<ManageCubeModal
   bind:open={openAddCard}
   {cube}
   {alreadyAdded}
   defaultData={userCubeDetail}
+  onAdded={() => {
+    openRateCard = true;
+  }}
 />
-<RateCube bind:open={openRateCard} {cube} />
+<RateCubeModal bind:open={openRateCard} {cube} />

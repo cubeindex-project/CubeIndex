@@ -3,7 +3,7 @@ set local session_replication_role = replica;
 
 insert into public.user_cubes (
 	user_id,
-	cube,
+	cube_id,
 	main,
 	quantity,
 	condition,
@@ -14,19 +14,19 @@ insert into public.user_cubes (
 	purchase_price
 )
 values
-	('11111111-1111-4111-8111-111111111111', 'gan-16-maglev', true, 1, 'Good', 'Owned', 'Current competition main.', '2026-02-14', 'thecubicle', 62.99),
-	('11111111-1111-4111-8111-111111111111', 'moyu-rs3-m-v5', false, 2, 'Good', 'Owned', 'One stock and one set up for OH.', '2025-11-10', 'speedcubeshop', 19.90),
-	('11111111-1111-4111-8111-111111111111', 'yj-mgc-square-1', false, 1, 'New', 'Wishlist', 'Try before the next competition.', null, null, null),
-	('22222222-2222-4222-8222-222222222222', 'moyu-weilong-wr-m-v10', true, 1, 'New', 'Owned', 'Smooth setup with medium compression.', '2026-03-02', 'speedcubeshop', 34.95),
-	('22222222-2222-4222-8222-222222222222', 'qiyi-ms-2x2', false, 1, 'Fair', 'Owned', 'First magnetic 2x2.', '2025-08-20', 'cubezz', 7.49),
-	('22222222-2222-4222-8222-222222222222', 'x-man-tornado-v4-pioneer', false, 1, 'New', 'Wishlist', '', null, null, null);
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'gan-16-maglev'), true, 1, 'Good', 'Owned', 'Current competition main.', '2026-02-14', 'thecubicle', 62.99),
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'moyu-rs3-m-v5'), false, 2, 'Good', 'Owned', 'One stock and one set up for OH.', '2025-11-10', 'speedcubeshop', 19.90),
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'yj-mgc-square-1'), false, 1, 'New', 'Wishlist', 'Try before the next competition.', null, null, null),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'moyu-weilong-wr-m-v10'), true, 1, 'New', 'Owned', 'Smooth setup with medium compression.', '2026-03-02', 'speedcubeshop', 34.95),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'qiyi-ms-2x2'), false, 1, 'Fair', 'Owned', 'First magnetic 2x2.', '2025-08-20', 'cubezz', 7.49),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'x-man-tornado-v4-pioneer'), false, 1, 'New', 'Wishlist', '', null, null, null);
 
-insert into public.user_cube_ratings (user_id, cube_slug, rating, comment, created_at, updated_at)
+insert into public.user_cube_ratings (user_id, cube_id, rating, comment, created_at, updated_at)
 values
-	('11111111-1111-4111-8111-111111111111', 'gan-16-maglev', 4.5, 'Fast, stable, and highly adjustable.', '2026-04-10 12:00:00+00', '2026-04-10 12:00:00+00'),
-	('11111111-1111-4111-8111-111111111111', 'moyu-rs3-m-v5', 4.0, 'Excellent value after a basic setup.', '2026-04-11 12:00:00+00', '2026-04-11 12:00:00+00'),
-	('22222222-2222-4222-8222-222222222222', 'gan-16-maglev', 5.0, 'Premium feel with dependable corner cutting.', '2026-04-12 12:00:00+00', '2026-04-12 12:00:00+00'),
-	('22222222-2222-4222-8222-222222222222', 'moyu-weilong-wr-m-v10', 4.5, 'Light and effortless without feeling unstable.', '2026-04-13 12:00:00+00', '2026-04-13 12:00:00+00');
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'gan-16-maglev'), 4.5, 'Fast, stable, and highly adjustable.', '2026-04-10 12:00:00+00', '2026-04-10 12:00:00+00'),
+	('11111111-1111-4111-8111-111111111111', (select id from cube_models where slug = 'moyu-rs3-m-v5'), 4.0, 'Excellent value after a basic setup.', '2026-04-11 12:00:00+00', '2026-04-11 12:00:00+00'),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'gan-16-maglev'), 5.0, 'Premium feel with dependable corner cutting.', '2026-04-12 12:00:00+00', '2026-04-12 12:00:00+00'),
+	('22222222-2222-4222-8222-222222222222', (select id from cube_models where slug = 'moyu-weilong-wr-m-v10'), 4.5, 'Light and effortless without feeling unstable.', '2026-04-13 12:00:00+00', '2026-04-13 12:00:00+00');
 
 insert into public.user_cube_reviews (user_id, cube, title, review, status, created_at, updated_at)
 values

@@ -12,7 +12,8 @@
   const SORT_FIELDS = ["recent", "name", "rating", "type"] as const;
 
   const { data } = $props();
-  const { profile, user, user_cube_ratings, user_cubes } = $derived(data);
+  const { profile, user, user_cube_ratings } = $derived(data);
+  let user_cubes = $derived(data.user_cubes);
   const total = $derived(user_cubes.length);
 
   let edit = $state(false);
@@ -113,11 +114,11 @@
         case "rating":
           aValue =
             user_cube_ratings.find(
-              (rating) => rating.cube_slug === a.cube_model?.slug,
+              (rating) => rating.cube_id === a.cube_model?.id,
             )?.rating ?? 0;
           bValue =
             user_cube_ratings.find(
-              (rating) => rating.cube_slug === b.cube_model?.slug,
+              (rating) => rating.cube_id === b.cube_model?.id,
             )?.rating ?? 0;
           break;
         default:
@@ -208,8 +209,10 @@
       cube={userCube.cube_model}
       user_details={userCube}
       user_rating={user_cube_ratings.find(
-        (rating) => rating.cube_slug === userCube.cube_model?.slug,
+        (rating) => rating.cube_id === userCube.cube_model?.id,
       )?.rating ?? 0}
+      onDelete={() =>
+        (user_cubes = user_cubes.filter((cube) => cube.id !== userCube.id))}
     />
   {/snippet}
   {#snippet noResultsAction()}

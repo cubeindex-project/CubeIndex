@@ -22,7 +22,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     supabase
       .from("user_cubes")
       .select(
-        "*, cube_model:v_detailed_cube_models(*), bought_from, vendor:bought_from(name)",
+        "*, cube_model:v_detailed_cube_models(*), bought_from_id, vendor:bought_from_id(name)",
       )
       .eq("user_id", profile.user_id),
     supabase

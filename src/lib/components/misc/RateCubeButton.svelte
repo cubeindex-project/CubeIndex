@@ -14,6 +14,5 @@
   aria-label="Rate this Cube"
 >
   <i class="fa-solid fa-star mr-2"></i>
-  Rate
-  <span class="hidden sm:block">this Cube</span>
+  Rate this Cube
 </button>

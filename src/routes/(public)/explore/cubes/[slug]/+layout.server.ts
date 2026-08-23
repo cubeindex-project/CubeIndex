@@ -5,7 +5,6 @@ import { error } from "@sveltejs/kit";
 
 export const load = (async ({
   locals: { supabase, log, user },
-  setHeaders,
   params,
   url,
 }) => {
@@ -74,7 +73,7 @@ export const load = (async ({
       .from("user_cubes")
       .select("*")
       .eq("user_id", user.id)
-      .eq("cube", cube.slug)
+      .eq("cube_id", cube.id)
       .maybeSingle();
 
     if (ucErr) {
@@ -95,10 +94,6 @@ export const load = (async ({
   if (cvrErr) {
     return logError(500, "Unable to load vendor links", log, cvrErr);
   }
-
-  setHeaders({
-    "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
-  });
 
   const title = `${cube.name} - CubeIndex`;
   const description =

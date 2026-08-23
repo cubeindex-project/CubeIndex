@@ -2,11 +2,13 @@
   import StarRating from "./StarRating.svelte";
   import { formatDate } from "../../utils/formatDate";
   import { onMount } from "svelte";
-  import RateCube from "./RateCube.svelte";
+  import RateCubeModal from "./RateCubeModal.svelte";
   import Report from "../report/Report.svelte";
   import { page } from "$app/state";
   import type { Tables } from "$lib/types/database.types";
   import { resolve } from "$app/paths";
+  import { deleteCubeRating } from "$lib/api/cubeRating";
+  import { toggleHelpfulCubeRating } from "$lib/api/helpfulRating";
 
   const MAX_COMMENT_LENGTH = 300;
 
@@ -22,14 +24,17 @@
   const { user_rating, cube, isAuthor, showCubeDetails }: Props = $props();
 
   const supabase = page.data.supabase;
-  const popoverId = $derived(`popover-${user_rating.id}`);
+  const popoverId = $derived(`popover-cube-rating-${user_rating.id}`);
 
   let showFullComment = $state(false);
 
   let loading = $state(false);
   let success = $state(false);
+  let deleteMessage = $state("");
+  let helpfulMessage = $state("");
+  let isTogglingHelpful = $state(false);
 
-  let helpful_ratings: Tables<"helpful_rating">[] = $state([]);
+  let helpful_ratings: Tables<"helpful_cube_rating">[] = $state([]);
 
   let isConfirmingDelete = $state(false);
   let isEditingRating = $state(false);
@@ -52,42 +57,39 @@
   }
 
   async function deleteRating() {
+    deleteMessage = "";
     loading = true;
 
-    setTimeout(async () => {
-      const res = await fetch("/api/rating/delete-rating", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cube_slug: cube.slug }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        loading = false;
-        success = true;
-        setTimeout(onCancel, 1000);
-      } else {
-        loading = false;
-        new Error("Failed: " + data.error);
-      }
-    }, 1000);
+    try {
+      await deleteCubeRating(user_rating.id);
+      success = true;
+      setTimeout(onCancel, 1000);
+    } catch (error) {
+      deleteMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to delete the rating. Please try again.";
+    } finally {
+      loading = false;
+    }
   }
 
   async function setRatingHelpful() {
-    const res = await fetch("/api/rating/helpful-rating", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ratingId: user_rating.id,
-        rating_category: "cube",
-      }),
-    });
-    const data = await res.json();
+    helpfulMessage = "";
+    isTogglingHelpful = true;
 
-    if (data.success) {
+    try {
+      await toggleHelpfulCubeRating({
+        rating_id: user_rating.id,
+      });
       onCancel();
-    } else {
-      new Error("Failed: " + data.error);
+    } catch (error) {
+      helpfulMessage =
+        error instanceof Error
+          ? error.message
+          : "Unable to update the helpful rating. Please try again.";
+    } finally {
+      isTogglingHelpful = false;
     }
   }
 
@@ -99,12 +101,14 @@
 
   onMount(async () => {
     const { data: helpful, error: helpErr } = await supabase
-      .from("helpful_rating")
+      .from("helpful_cube_rating")
       .select("*")
-      .eq("rating", user_rating.id);
+      .eq("rating_id", user_rating.id);
 
     if (helpErr) {
-      throw new Error(`500, Failed to fetch profiles: ${helpErr.message}`);
+      throw new Error(
+        `500, Failed to fetch helpful cube ratings: ${helpErr.message}`,
+      );
     }
 
     helpful_ratings = helpful;
@@ -214,6 +218,13 @@
       </div>
     </div>
   </div>
+  {#if deleteMessage}
+    <div class="alert alert-error mt-3" aria-live="polite">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>{deleteMessage}</span>
+    </div>
+  {/if}
+
   {#if user_rating.comment}
     <p class="mt-2 text-sm leading-relaxed">
       {user_rating.comment.length > MAX_COMMENT_LENGTH && !showFullComment
@@ -243,14 +254,27 @@
     </p>
   {/if}
 
+  {#if helpfulMessage}
+    <div class="alert alert-error mt-3" aria-live="polite">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>{helpfulMessage}</span>
+    </div>
+  {/if}
+
   {#if !isAuthor}
     <div class="flex flex-row">
       <button
         class="link link-success link-hover mt-3"
         onclick={setRatingHelpful}
+        disabled={isTogglingHelpful}
       >
-        <i class="fa-solid fa-thumbs-up"></i>
-        <span>Helpful</span>
+        {#if isTogglingHelpful}
+          <span class="loading loading-spinner loading-xs"></span>
+          <span>Updating...</span>
+        {:else}
+          <i class="fa-solid fa-thumbs-up"></i>
+          <span>Helpful</span>
+        {/if}
       </button>
       <div class="divider-vertical mx-3 divider-primary"></div>
       <button class="link link-error link-hover mt-3" onclick={toggleReporting}>
@@ -261,7 +285,7 @@
   {/if}
 </div>
 
-<RateCube
+<RateCubeModal
   bind:open={isEditingRating}
   {cube}
   rating={user_rating.rating}

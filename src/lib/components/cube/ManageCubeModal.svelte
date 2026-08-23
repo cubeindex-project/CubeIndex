@@ -1,37 +1,36 @@
 <script lang="ts">
   import NumberFlow, { continuous } from "@number-flow/svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import { Constants, type Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
+  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  import { tick, untrack } from "svelte";
+  import { saveCubeInCollection } from "$lib/api/cubeCollection";
+  import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
+  import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
 
   interface Props {
     open: boolean;
-    cube: Pick<Tables<"v_detailed_cube_models">, "slug" | "name">;
+    cube: Pick<Tables<"v_detailed_cube_models">, "id" | "name">;
     alreadyAdded: boolean;
-    defaultData?: Pick<
-      Tables<"user_cubes">,
-      | "quantity"
-      | "condition"
-      | "main"
-      | "status"
-      | "bought_from"
-      | "notes"
-      | "acquired_at"
-      | "purchase_price"
-    >;
+    defaultData?: CubeCollectionForm;
+    onAdded?: () => void;
   }
 
   const MIN_QUANTITY = 1;
   const MAX_QUANTITY = 999;
+  const CURRENCIES = Intl.supportedValuesOf("currency");
+
   const DEFAULT_DATA = {
     quantity: 1,
     condition: "New in box",
     main: false,
-    status: "Owned",
-    bought_from: null,
+    status: "owned",
+    bought_from_id: null,
     notes: "",
     acquired_at: "",
     purchase_price: null,
+    purchase_price_currency: null,
   } satisfies Props["defaultData"];
 
   let {
@@ -39,6 +38,7 @@
     cube,
     alreadyAdded,
     defaultData = DEFAULT_DATA,
+    onAdded,
   }: Props = $props();
 
   const user = $derived(page.data.user);
@@ -50,59 +50,31 @@
   let showSuccess = $state(false);
   let formMessage = $state<string>("");
 
-  let slug = $derived(cube.slug);
-
-  // svelte-ignore state_referenced_locally
-  let form = $state({
-    quantity: defaultData.quantity,
-    condition: defaultData.condition,
-    main: defaultData.main,
-    status: defaultData.status,
-    bought_from: defaultData.bought_from,
-    notes: defaultData.notes,
-    acquired_at: defaultData.acquired_at,
-    purchase_price:
-      defaultData.purchase_price === null
-        ? null
-        : Number(defaultData.purchase_price),
-  });
+  let form = $state(
+    untrack(() => ({
+      quantity: defaultData.quantity,
+      condition: defaultData.condition,
+      main: defaultData.main,
+      status: defaultData.status,
+      bought_from_id: defaultData.bought_from_id,
+      notes: defaultData.notes,
+      acquired_at: defaultData.acquired_at,
+      purchase_price: defaultData.purchase_price,
+      purchase_price_currency: defaultData.purchase_price_currency,
+    })),
+  );
 
   // wishlist rule
   $effect(() => {
-    if (form.status === "Wishlist") form.quantity = 1;
+    if (form.status === "wanted") form.quantity = 1;
   });
-
-  // simple client checks
-  function validate(): string | null {
-    if (!form.status) return "Please choose a status.";
-    if (!form.condition) return "Please choose a condition.";
-    if (!form.quantity || form.quantity < 1 || form.quantity > 999)
-      return "Quantity must be between 1 and 999.";
-    if (form.purchase_price !== null) {
-      if (!Number.isFinite(form.purchase_price) || form.purchase_price < 0)
-        return "Price must be a valid number greater than or equal to 0.";
-      if (form.purchase_price > 100000)
-        return "Price seems too high. Please double-check.";
-    }
-    if (form.acquired_at) {
-      const today = new Date().toISOString().slice(0, 10);
-      if (form.acquired_at > today)
-        return "Acquired date cannot be in the future.";
-    }
-    return null;
-  }
 
   const vendors = $derived(page.data.vendors);
 
-  async function addCubeToCollection(e: SubmitEvent) {
-    e.preventDefault(); // ensure no page nav
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
     formMessage = "";
 
-    const err = validate();
-    if (err) {
-      formMessage = err;
-      return;
-    }
     if (!isConnected) {
       formMessage = "You must be logged in to perform this action.";
       return;
@@ -110,34 +82,14 @@
 
     isSubmitting = true;
 
-    const payload = {
-      cube: slug,
-      quantity: form.quantity,
-      main: form.main,
-      condition: form.condition,
-      status: form.status,
-      bought_from: form.bought_from,
-      notes: form.notes,
-      acquired_at: form.acquired_at,
-      purchase_price: form.purchase_price,
-    };
-
     try {
-      const res = await fetch("/api/add-cube-to-collection", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      await saveCubeInCollection(cube.id, form);
 
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data?.success) {
-        showSuccess = true;
-        setTimeout(() => (open = false), 900);
-      } else {
-        throw new Error(
-          data?.error || "Unable to add the cube. Please try again.",
-        );
-      }
+      showSuccess = true;
+      open = false;
+      await tick();
+
+      if (!alreadyAdded) onAdded?.();
     } catch (err) {
       formMessage =
         err instanceof Error
@@ -148,7 +100,7 @@
     }
   }
 
-  let readonly: boolean = $derived(form.status === "Wishlist");
+  let readonly: boolean = $derived(form.status === "wanted");
 
   const canDec = $derived(!readonly && form.quantity > MIN_QUANTITY);
   const canInc = $derived(!readonly && form.quantity < MAX_QUANTITY);
@@ -168,11 +120,11 @@
     </div>
   {/if}
 
-  <form onsubmit={addCubeToCollection} method="dialog">
+  <form onsubmit={handleSubmit} method="dialog">
     <div class="flex justify-between items-center">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Quantity</legend>
-        {#if form.status === "Wishlist"}
+        {#if form.status === "wanted"}
           <p class="label">Locked for wishlist</p>
         {/if}
         <div class="join w-fit">
@@ -244,13 +196,9 @@
           bind:value={form.condition}
           required
         >
-          <option value="New in box">New in box</option>
-          <option value="New">New</option>
-          <option value="Good">Good</option>
-          <option value="Fair">Fair</option>
-          <option value="Worn">Worn</option>
-          <option value="Poor">Poor</option>
-          <option value="Broken">Broken</option>
+          {#each Constants.public.Enums.user_cube_condition as condition, index (index)}
+            <option>{condition}</option>
+          {/each}
         </select>
       </fieldset>
 
@@ -262,11 +210,9 @@
           class="select w-full"
           required
         >
-          <option value="Owned">Owned</option>
-          <option value="Wishlist">Wishlist</option>
-          <option value="Loaned">Loaned</option>
-          <option value="Borrowed">Borrowed</option>
-          <option value="Lost">Lost</option>
+          {#each Constants.public.Enums.user_cube_status as status, index (index)}
+            <option value={status}>{getUserCubeStatusLabel(status)}</option>
+          {/each}
         </select>
       </fieldset>
     </div>
@@ -275,13 +221,13 @@
       <fieldset class="fieldset flex-1">
         <legend class="fieldset-legend">Bought From</legend>
         <select
-          name="bought_from"
-          bind:value={form.bought_from}
+          name="bought_from_id"
+          bind:value={form.bought_from_id}
           class="select w-full"
         >
           <option value={null}>None</option>
           {#each vendors as vendor (vendor.slug)}
-            <option value={vendor.slug}>{vendor.name}</option>
+            <option value={vendor.id}>{vendor.name}</option>
           {/each}
         </select>
       </fieldset>
@@ -289,7 +235,11 @@
       <fieldset class="fieldset flex-1">
         <legend class="fieldset-legend">Purchase Price</legend>
         <label class="input w-full">
-          <span aria-hidden="true">$</span>
+          {#if form.purchase_price_currency}
+            <span aria-hidden="true">
+              {getCurrencySymbol(form.purchase_price_currency)}
+            </span>
+          {/if}
           <input
             type="number"
             name="purchase_price"
@@ -302,6 +252,23 @@
           />
         </label>
         <p class="label">Optional</p>
+      </fieldset>
+
+      <fieldset class="fieldset flex-1">
+        <legend class="fieldset-legend">Currency</legend>
+        <select
+          name="purchase_price_currency"
+          bind:value={form.purchase_price_currency}
+          class="select w-full"
+          aria-label="Purchase price currency"
+        >
+          <option value={null}>None</option>
+          {#each CURRENCIES as currency (currency)}
+            <option value={currency}>
+              {currency} ({getCurrencySymbol(currency)})
+            </option>
+          {/each}
+        </select>
       </fieldset>
     </div>
 

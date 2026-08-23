@@ -2,11 +2,12 @@
   import StarRating from "./StarRating.svelte";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
+  import { saveCubeRating } from "$lib/api/cubeRating";
   import type { Tables } from "$lib/types/database.types";
 
   interface Props {
     open: boolean;
-    cube: Tables<"cube_models">;
+    cube: Pick<Tables<"cube_models">, "id" | "name">;
     rating?: number;
     comment?: string;
   }
@@ -21,7 +22,7 @@
   let showSuccess = $state(false);
   let formMessage = $state("");
 
-  const slug = $derived(cube.slug);
+  const id = $derived(cube.id);
 
   const MAX_COMMENT_LENGTH = 500;
   const usedCharacters = $derived(comment.length);
@@ -32,42 +33,21 @@
   const isNearLimit = $derived(usedCharacters >= MAX_COMMENT_LENGTH * 0.9);
   const isOverLimit = $derived(usedCharacters > MAX_COMMENT_LENGTH);
 
-  function validate(): string | null {
-    if (!isConnected) return "You must be logged in to perform this action.";
-    if (!rating || rating < 0.5) return "Please select a rating.";
-    if (isOverLimit)
-      return `Comment is too long by ${usedCharacters - MAX_COMMENT_LENGTH} characters.`;
-    return null;
-  }
-
   async function rateCube(e: SubmitEvent) {
     e.preventDefault();
     formMessage = "";
 
-    const err = validate();
-    if (err) {
-      formMessage = err;
+    if (!isConnected) {
+      formMessage = "You must be logged in to perform this action.";
       return;
     }
 
     isSubmitting = true;
-    const payload = { cube_slug: slug, rating, comment };
 
     try {
-      const res = await fetch("/api/rating/add-rating", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data?.success) {
-        showSuccess = true;
-        setTimeout(() => (open = false), 900);
-      } else {
-        throw new Error(
-          data?.error || "Unable to submit rating. Please try again.",
-        );
-      }
+      await saveCubeRating(id, { rating, comment });
+      showSuccess = true;
+      setTimeout(() => (open = false), 900);
     } catch (err) {
       formMessage =
         err instanceof Error

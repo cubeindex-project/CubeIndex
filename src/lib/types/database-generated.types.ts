@@ -1041,29 +1041,33 @@ export type Database = {
           },
         ];
       };
-      helpful_rating: {
+      helpful_cube_rating: {
         Row: {
           created_at: string;
           id: number;
-          rating: number;
-          rating_category: Database["public"]["Enums"]["rating_categories"];
+          rating_id: number;
           user_id: string;
         };
         Insert: {
           created_at?: string;
           id?: number;
-          rating: number;
-          rating_category: Database["public"]["Enums"]["rating_categories"];
+          rating_id: number;
           user_id: string;
         };
         Update: {
           created_at?: string;
           id?: number;
-          rating?: number;
-          rating_category?: Database["public"]["Enums"]["rating_categories"];
+          rating_id?: number;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "helpful_cube_rating_rating_id_fkey";
+            columns: ["rating_id"];
+            isOneToOne: false;
+            referencedRelation: "user_cube_ratings";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "helpful_rating_user_id_fkey";
             columns: ["user_id"];
@@ -1495,7 +1499,7 @@ export type Database = {
         Row: {
           comment: string | null;
           created_at: string;
-          cube_slug: string;
+          cube_id: number;
           id: number;
           rating: number;
           updated_at: string;
@@ -1504,7 +1508,7 @@ export type Database = {
         Insert: {
           comment?: string | null;
           created_at?: string;
-          cube_slug: string;
+          cube_id: number;
           id?: number;
           rating: number;
           updated_at?: string;
@@ -1513,7 +1517,7 @@ export type Database = {
         Update: {
           comment?: string | null;
           created_at?: string;
-          cube_slug?: string;
+          cube_id?: number;
           id?: number;
           rating?: number;
           updated_at?: string;
@@ -1521,25 +1525,18 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "user_cube_ratings_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "user_ratings_cube_slug_fkey";
-            columns: ["cube_slug"];
+            foreignKeyName: "user_cube_ratings_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "user_ratings_user_id_fkey";
@@ -1696,84 +1693,80 @@ export type Database = {
       user_cubes: {
         Row: {
           acquired_at: string | null;
-          bought_from: string | null;
+          bought_from_id: number | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at: string;
-          cube: string;
+          cube_id: number;
           id: number;
           main: boolean;
           modified_at: string;
           notes: string | null;
           purchase_price: number | null;
+          purchase_price_currency: string | null;
           quantity: number;
           status: Database["public"]["Enums"]["user_cube_status"];
           user_id: string;
         };
         Insert: {
           acquired_at?: string | null;
-          bought_from?: string | null;
+          bought_from_id?: number | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;
-          cube: string;
+          cube_id: number;
           id?: number;
           main?: boolean;
           modified_at?: string;
           notes?: string | null;
           purchase_price?: number | null;
+          purchase_price_currency?: string | null;
           quantity?: number;
           status: Database["public"]["Enums"]["user_cube_status"];
           user_id: string;
         };
         Update: {
           acquired_at?: string | null;
-          bought_from?: string | null;
+          bought_from_id?: number | null;
           condition?: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;
-          cube?: string;
+          cube_id?: number;
           id?: number;
           main?: boolean;
           modified_at?: string;
           notes?: string | null;
           purchase_price?: number | null;
+          purchase_price_currency?: string | null;
           quantity?: number;
           status?: Database["public"]["Enums"]["user_cube_status"];
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: "user_cubes_bought_from_fkey";
-            columns: ["bought_from"];
+            foreignKeyName: "user_cubes_bought_from_id_fkey";
+            columns: ["bought_from_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_vendors";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_cubes_bought_from_fkey";
-            columns: ["bought_from"];
+            foreignKeyName: "user_cubes_bought_from_id_fkey";
+            columns: ["bought_from_id"];
             isOneToOne: false;
             referencedRelation: "vendors";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
+            foreignKeyName: "user_cubes_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "user_cubes_cube_fkey";
-            columns: ["cube"];
+            foreignKeyName: "user_cubes_cube_id_fkey";
+            columns: ["cube_id"];
             isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
-            referencedColumns: ["slug"];
+            referencedColumns: ["id"];
           },
           {
             foreignKeyName: "user_cubes_user_id_fkey";
@@ -2349,12 +2342,10 @@ export type Database = {
         Returns: undefined;
       };
       build_v_detailed_cube_models: { Args: never; Returns: undefined };
-      copy_cube_submission:
-        | { Args: { p_submission_id: number }; Returns: number }
-        | {
-            Args: { p_reviewer_id: string; p_submission_id: number };
-            Returns: undefined;
-          };
+      copy_cube_submission: {
+        Args: { p_submission_id: number };
+        Returns: number;
+      };
       due_vendor_links_capped: {
         Args: {
           p_backoff_cap?: number;
@@ -2465,7 +2456,6 @@ export type Database = {
         | "NOK"
         | "JPY";
       date_precision: "day" | "month" | "year";
-      rating_categories: "cube" | "accessory";
       report_types: "user" | "cube" | "cube-rating" | "website";
       staff_actions: "INSERT" | "UPDATE" | "DELETE";
       submission_operation: "create" | "update";
@@ -2473,7 +2463,7 @@ export type Database = {
       submission_type: "cube" | "vendor";
       user_cube_condition:
         "New in box" | "New" | "Good" | "Fair" | "Worn" | "Poor" | "Broken";
-      user_cube_status: "Owned" | "Wishlist" | "Loaned" | "Borrowed" | "Lost";
+      user_cube_status: "owned" | "wanted" | "previously_owned";
       users_roles:
         | "Admin"
         | "Moderator"
@@ -2677,7 +2667,6 @@ export const Constants = {
         "JPY",
       ],
       date_precision: ["day", "month", "year"],
-      rating_categories: ["cube", "accessory"],
       report_types: ["user", "cube", "cube-rating", "website"],
       staff_actions: ["INSERT", "UPDATE", "DELETE"],
       submission_operation: ["create", "update"],
@@ -2692,7 +2681,7 @@ export const Constants = {
         "Poor",
         "Broken",
       ],
-      user_cube_status: ["Owned", "Wishlist", "Loaned", "Borrowed", "Lost"],
+      user_cube_status: ["owned", "wanted", "previously_owned"],
       users_roles: [
         "Admin",
         "Moderator",

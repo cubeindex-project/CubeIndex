@@ -28,7 +28,7 @@ export const GET = async ({ params, locals }) => {
     locals.supabase
       .from("user_cube_ratings")
       .select("*", { count: "exact", head: true })
-      .eq("cube_slug", cubeName),
+      .eq("cube_id", cube.id),
     locals.supabase
       .from("cube_vendor_links")
       .select("*", { count: "exact", head: true })
@@ -36,7 +36,7 @@ export const GET = async ({ params, locals }) => {
     locals.supabase
       .from("user_cubes")
       .select("*", { count: "exact", head: true })
-      .eq("cube", cubeName),
+      .eq("cube_id", cube.id),
   ]);
 
   if (urErr)

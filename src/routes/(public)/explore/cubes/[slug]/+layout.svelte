@@ -8,8 +8,8 @@
   import ShareButton from "$lib/components/misc/ShareButton.svelte";
   import { page } from "$app/state";
   import Report from "$lib/components/report/Report.svelte";
-  import AddCube from "$lib/components/cube/AddCube.svelte";
-  import RateCube from "$lib/components/rating/RateCube.svelte";
+  import ManageCubeModal from "$lib/components/cube/ManageCubeModal.svelte";
+  import RateCubeModal from "$lib/components/rating/RateCubeModal.svelte";
   import StarRating from "$lib/components/rating/StarRating.svelte";
   import { formatPartialDate } from "$lib/utils/formatPartialDate";
 
@@ -314,11 +314,11 @@
   reporLabel="the {cube.name}"
 />
 
-<AddCube
+<ManageCubeModal
   bind:open={isAddingCube}
   {cube}
   {alreadyAdded}
   defaultData={userCubeDetail ?? undefined}
 />
 
-<RateCube bind:open={isRatingCube} {cube} />
+<RateCubeModal bind:open={isRatingCube} {cube} />

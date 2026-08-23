@@ -1,7 +1,6 @@
 # Supabase
 .branches
 .temp
-seed.sql
 snippets
 
 # dotenvx

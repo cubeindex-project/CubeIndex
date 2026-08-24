@@ -31,7 +31,7 @@
   });
   const fmt = (n: number) => nf.format(n);
   const cubeCount = $derived(profile.user_cubes_count ?? 0);
-  const achievementCount = $derived(profile.user_achievements_count ?? 0);
+  // const achievementCount = $derived(profile.user_achievements_count ?? 0);
 
   // 2. Tiny plural helper
   const plural = (n: number, s: string) => (n === 1 ? s : `${s}s`);

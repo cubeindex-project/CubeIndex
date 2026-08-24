@@ -27,10 +27,10 @@ Please avoid including sensitive data belonging to other users in your report.
 
 We will make a reasonable effort to:
 
-* Acknowledge your report within a few business days.
-* Investigate and confirm the vulnerability.
-* Keep you informed about significant progress.
-* Release a fix as soon as reasonably possible.
+- Acknowledge your report within a few business days.
+- Investigate and confirm the vulnerability.
+- Keep you informed about significant progress.
+- Release a fix as soon as reasonably possible.
 
 Resolution time may vary depending on the severity and complexity of the issue.
 
@@ -46,14 +46,14 @@ Security issues affecting the current CubeIndex deployment or its source code ar
 
 Examples may include:
 
-* Authentication or authorization issues
-* Exposure of sensitive information
-* Cross-site scripting (XSS)
-* Injection vulnerabilities
-* Server-side request forgery (SSRF)
-* Access-control bypasses
-* Vulnerable application logic
-* Security issues caused by project dependencies
+- Authentication or authorization issues
+- Exposure of sensitive information
+- Cross-site scripting (XSS)
+- Injection vulnerabilities
+- Server-side request forgery (SSRF)
+- Access-control bypasses
+- Vulnerable application logic
+- Security issues caused by project dependencies
 
 Reports about unsupported or older deployments may not be investigated unless the issue also affects the latest deployment.
 
@@ -63,10 +63,10 @@ We welcome good-faith security research conducted in accordance with this policy
 
 Please:
 
-* Avoid accessing, modifying, or deleting data that does not belong to you.
-* Avoid disrupting CubeIndex or its users.
-* Stop testing and contact us if you encounter sensitive user data.
-* Report discovered vulnerabilities privately and give us reasonable time to address them.
+- Avoid accessing, modifying, or deleting data that does not belong to you.
+- Avoid disrupting CubeIndex or its users.
+- Stop testing and contact us if you encounter sensitive user data.
+- Report discovered vulnerabilities privately and give us reasonable time to address them.
 
 Research performed in good faith and consistent with this policy will not be considered malicious by the CubeIndex project.
 

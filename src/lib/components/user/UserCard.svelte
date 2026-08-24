@@ -65,7 +65,7 @@
               {plural(cubeCount, "cube")}
             </span>
 
-            <span class="mx-1 opacity-60" aria-hidden="true">•</span>
+            <!-- <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
             <i class="fa-solid fa-medal shrink-0" aria-hidden="true"></i>
             <span
@@ -73,7 +73,7 @@
             >
               {fmt(achievementCount)}
               {plural(achievementCount, "achievement")}
-            </span>
+            </span> -->
           </span>
         {/if}
       </div>

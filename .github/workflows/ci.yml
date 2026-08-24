@@ -2,7 +2,8 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
   push:
     branches:
       - main
@@ -45,7 +46,10 @@ jobs:
         with:
           version: latest
 
-      - name: Check seed files
+      - name: Start Supabase
+        run: supabase start
+
+      - name: Check migrations and seed files
         run: supabase db reset
 
       - name: Verify generated types match Postgres schema

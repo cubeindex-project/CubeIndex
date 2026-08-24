@@ -55,6 +55,7 @@ jobs:
       - name: Verify generated types match Postgres schema
         run: |
           supabase gen types typescript --local > src/lib/types/database-generated.types.ts
+          npx prettier --write src/lib/types/database-generated.types.ts
           if ! git diff --ignore-space-at-eol --exit-code --quiet src/lib/types/database-generated.types.ts; then
             echo "Detected uncommitted changes after build. See status below:"
             git diff

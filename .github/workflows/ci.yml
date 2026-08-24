@@ -1,8 +1,11 @@
-name: Pull Request Check
+name: CI
 
 on:
   pull_request:
     branches: [main]
+  push:
+    branches:
+      - main
 
 jobs:
   check:
@@ -36,3 +39,20 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+      - name: Set up Supabase
+        uses: supabase/setup-cli@v3
+        with:
+          version: latest
+
+      - name: Check seed files
+        run: supabase db reset
+
+      - name: Verify generated types match Postgres schema
+        run: |
+          supabase gen types typescript --local > src/lib/types/database-generated.types.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet src/lib/types/database-generated.types.ts; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff
+            exit 1
+          fi

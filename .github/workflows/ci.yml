@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  check:
+  app-check:
+    name: Application
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: "npm"
 
       - name: Install dependencies
@@ -40,6 +41,16 @@ jobs:
 
       - name: Run build
         run: npm run build
+    
+  supa-check:
+    name: Database
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
 
       - name: Set up Supabase
         uses: supabase/setup-cli@v3

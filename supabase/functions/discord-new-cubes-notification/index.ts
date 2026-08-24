@@ -20,7 +20,7 @@ serve(async (req)=>{
       ],
       content: "||<@&1375821731142439042>||"
     };
-    const response = await fetch(webhookUrl, {
+    await fetch(webhookUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

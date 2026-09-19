@@ -7,6 +7,7 @@
   import { deleteCubeFromCollection } from "$lib/api/cubeCollection";
   import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
   import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
+  import { formatTime, millisecondsToTime } from "$lib/utils/time";
 
   interface Props {
     mode?: "view" | "edit";
@@ -25,6 +26,9 @@
     user_rating,
     onDelete,
   }: Props = $props();
+
+  const best_time = $derived(millisecondsToTime(user_details.best_time_ms));
+  const formatted_best_time = $derived(formatTime(best_time));
 
   let editModalOpen = $state(false);
   let deleteMessage = $state("");
@@ -77,6 +81,13 @@
           >
             <i class="fa-solid fa-star"></i>
             {user_rating}
+          </div>
+        {/if}
+
+        {#if formatted_best_time}
+          <div class="badge badge-success badge-lg gap-1" title="Best time">
+            <i class="fa-solid fa-stopwatch"></i>
+            {formatted_best_time}
           </div>
         {/if}
 
@@ -195,5 +206,6 @@
     acquired_at: user_details.acquired_at,
     purchase_price: user_details.purchase_price,
     purchase_price_currency: user_details.purchase_price_currency,
+    best_time_ms: user_details.best_time_ms,
   }}
 />

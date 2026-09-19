@@ -8,6 +8,7 @@
   import { saveCubeInCollection } from "$lib/api/cubeCollection";
   import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
   import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
+  import { millisecondsToTime, timeToMilliseconds } from "$lib/utils/time";
 
   interface Props {
     open: boolean;
@@ -31,6 +32,7 @@
     acquired_at: "",
     purchase_price: null,
     purchase_price_currency: null,
+    best_time_ms: null,
   } satisfies Props["defaultData"];
 
   let {
@@ -61,6 +63,7 @@
       acquired_at: defaultData.acquired_at,
       purchase_price: defaultData.purchase_price,
       purchase_price_currency: defaultData.purchase_price_currency,
+      best_time_ms: defaultData.best_time_ms,
     })),
   );
 
@@ -70,6 +73,8 @@
   });
 
   const vendors = $derived(page.data.vendors);
+
+  let best_time = $state(millisecondsToTime(form.best_time_ms));
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -83,7 +88,10 @@
     isSubmitting = true;
 
     try {
-      await saveCubeInCollection(cube.id, form);
+      await saveCubeInCollection(cube.id, {
+        ...form,
+        best_time_ms: timeToMilliseconds(best_time),
+      });
 
       showSuccess = true;
       open = false;
@@ -271,6 +279,43 @@
         </select>
       </fieldset>
     </div>
+
+    <fieldset class="fieldset min-w-0 flex-1">
+      <legend class="fieldset-legend">Best time</legend>
+      <label class="input w-full gap-1">
+        <input
+          class="min-w-0 flex-1 text-center"
+          type="number"
+          name="best_time_minutes"
+          bind:value={best_time.minutes}
+          min="0"
+          inputmode="numeric"
+          aria-label="Best time minutes"
+        />
+        <span aria-hidden="true">:</span>
+        <input
+          class="min-w-0 flex-1 text-center"
+          type="number"
+          name="best_time_seconds"
+          bind:value={best_time.seconds}
+          min="0"
+          max="59"
+          inputmode="numeric"
+          aria-label="Best time seconds"
+        />
+        <span aria-hidden="true">.</span>
+        <input
+          class="min-w-0 flex-1 text-center"
+          type="number"
+          name="best_time_milliseconds"
+          bind:value={best_time.milliseconds}
+          min="0"
+          max="999"
+          inputmode="numeric"
+          aria-label="Best time milliseconds"
+        />
+      </label>
+    </fieldset>
 
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Acquired on</legend>

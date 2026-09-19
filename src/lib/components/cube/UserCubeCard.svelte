@@ -85,10 +85,7 @@
         {/if}
 
         {#if formatted_best_time}
-          <div
-            class="badge badge-success badge-lg gap-1"
-            title="Best time"
-          >
+          <div class="badge badge-success badge-lg gap-1" title="Best time">
             <i class="fa-solid fa-stopwatch"></i>
             {formatted_best_time}
           </div>

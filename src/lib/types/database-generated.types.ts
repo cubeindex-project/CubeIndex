@@ -1693,6 +1693,7 @@ export type Database = {
       user_cubes: {
         Row: {
           acquired_at: string | null;
+          best_time_ms: number | null;
           bought_from_id: number | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at: string;
@@ -1709,6 +1710,7 @@ export type Database = {
         };
         Insert: {
           acquired_at?: string | null;
+          best_time_ms?: number | null;
           bought_from_id?: number | null;
           condition: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;
@@ -1725,6 +1727,7 @@ export type Database = {
         };
         Update: {
           acquired_at?: string | null;
+          best_time_ms?: number | null;
           bought_from_id?: number | null;
           condition?: Database["public"]["Enums"]["user_cube_condition"];
           created_at?: string;

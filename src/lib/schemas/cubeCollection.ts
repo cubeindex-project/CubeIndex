@@ -74,6 +74,11 @@ export const cubeCollectionFormSchema = z
       .string()
       .regex(/^[A-Z]{3}$/, "Currency must be a three-letter code, such as USD.")
       .nullable(),
+    best_time_ms: z
+      .number()
+      .min(0)
+      .nullable()
+      .transform((value) => value ?? null),
   })
   .check((context) => {
     if (

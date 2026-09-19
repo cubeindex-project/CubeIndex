@@ -307,12 +307,12 @@
         <input
           class="min-w-0 flex-1 text-center"
           type="number"
-          name="best_time_centiseconds"
+          name="best_time_milliseconds"
           bind:value={best_time.milliseconds}
           min="0"
           max="999"
           inputmode="numeric"
-          aria-label="Best time centiseconds"
+          aria-label="Best time milliseconds"
         />
       </label>
     </fieldset>

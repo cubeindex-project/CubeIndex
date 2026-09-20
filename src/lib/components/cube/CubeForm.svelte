@@ -260,7 +260,7 @@
 
   let wakingUp = $state(false);
   const warmUpController = new AbortController();
-  const warmUpTimeout = setTimeout(() => warmUpController.abort(), 15_000);
+  const warmUpTimeout = setTimeout(() => warmUpController.abort(), 120_000);
 
   async function warmUpService() {
     wakingUp = true;

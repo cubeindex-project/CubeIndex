@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from "./$types";
 export const load = (async ({ locals: { log, supabase } }) => {
   const { data, error: err } = await supabase
     .from("vendors")
-    .select("slug, name")
+    .select("id,slug, name")
     .order("name", { ascending: true });
 
   if (err) {

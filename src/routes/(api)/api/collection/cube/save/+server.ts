@@ -69,7 +69,7 @@ export const POST: RequestHandler = async ({
         "An error occorred while editing cube in collection",
       );
       return json(
-        { error: "An error occorred while editing cube in collection" },
+        { error: "An error occurred while editing cube in collection" },
         { status: 500 },
       );
     }

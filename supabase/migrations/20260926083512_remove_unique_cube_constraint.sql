@@ -12,6 +12,12 @@ drop view if exists "public"."v_user_stats";
 
 drop index if exists "public"."user_cubes_cube_id_user_id_unique";
 
+insert into public.user_cubes (cube_id, condition, status, user_id)
+select uc.cube_id, uc.condition, uc.status, uc.user_id
+from public.user_cubes uc
+cross join lateral generate_series(2, uc.quantity)
+where uc.quantity > 1;
+
 alter table "public"."user_cubes" drop column "quantity";
 
 create or replace view "public"."v_detailed_cube_models" as  SELECT cm.name,

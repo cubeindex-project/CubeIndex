@@ -52,11 +52,16 @@ export const POST: RequestHandler = async ({
   } else {
     const payload: TablesUpdate<"user_cubes"> = cubeData;
 
-    const { error: userCubesErr } = await supabase
+    const { data, error: userCubesErr } = await supabase
       .from("user_cubes")
       .update(payload)
       .eq("id", collection_id)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .select("id");
+
+    if (!data || data.length === 0) {
+      return json({ error: "Collection entry not found." }, { status: 404 });
+    }
 
     if (userCubesErr) {
       log.error(

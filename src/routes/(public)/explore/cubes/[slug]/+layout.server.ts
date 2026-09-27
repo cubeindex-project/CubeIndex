@@ -3,11 +3,7 @@ import { formatPartialDate } from "$lib/utils/formatPartialDate";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load = (async ({
-  locals: { supabase, log, user },
-  params,
-  url,
-}) => {
+export const load = (async ({ locals: { supabase, log }, params, url }) => {
   const slug = params.slug;
 
   const { data: cube, error: cubeErr } = await supabase
@@ -65,26 +61,6 @@ export const load = (async ({
     );
   }
 
-  let alreadyAdded = false;
-  let userCubeDetail = null;
-
-  if (user) {
-    const { data: user_cube, error: ucErr } = await supabase
-      .from("user_cubes")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("cube_id", cube.id)
-      .maybeSingle();
-
-    if (ucErr) {
-      log.error({ err: ucErr }, "Failed to fetch user_cubes");
-      throw error(500, "Failed to fetch user cubes");
-    }
-
-    alreadyAdded = user_cube !== null;
-    userCubeDetail = user_cube;
-  }
-
   const { data: cube_vendor_links, error: cvrErr } = await supabase
     .from("cube_vendor_links")
     .select("*, vendor:vendor_id(*)")
@@ -118,8 +94,6 @@ export const load = (async ({
 
   return {
     cube,
-    alreadyAdded,
-    userCubeDetail,
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,
     cubeTrims: trimsRes.data ?? [],

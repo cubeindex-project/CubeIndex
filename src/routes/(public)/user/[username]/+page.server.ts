@@ -40,7 +40,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
 
   const { data: vendors, error: err } = await supabase
     .from("vendors")
-    .select("slug, name")
+    .select("id, slug, name")
     .order("name", { ascending: true });
 
   if (err) {

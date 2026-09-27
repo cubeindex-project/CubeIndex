@@ -14,7 +14,7 @@
   const SORT_FIELDS = ["name", "rating", "owners", "date", "price"] as const;
 
   const { data } = $props();
-  const { cubes, userCubes } = $derived(data);
+  const { cubes } = $derived(data);
 
   const triParser = createParser({
     parse: (query: string): boolean => (query === "1" ? true : false),
@@ -248,14 +248,11 @@
     </div>
   {/snippet}
   {#snippet renderItem(cube)}
-    {@const userCubeDetail = userCubes?.find((uc) => uc.cube_id === cube.id)}
     <CubeCard
       {cube}
       showAddButton={true}
       showRateButton={true}
       showDetailsButton={true}
-      alreadyAdded={userCubeDetail !== undefined}
-      {userCubeDetail}
     />
   {/snippet}
   {#snippet noResultsAction()}

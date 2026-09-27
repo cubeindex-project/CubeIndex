@@ -2,7 +2,7 @@ import type { PageServerLoad } from "./$types";
 import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({
-  locals: { supabase, log, user },
+  locals: { supabase, log },
   url,
   untrack,
 }) => {
@@ -12,21 +12,6 @@ export const load: PageServerLoad = async ({
 
   if (err) {
     return logError(500, "Failed to load cubes", log, err);
-  }
-
-  let userCubes;
-
-  if (user) {
-    const { data, error: ucErr } = await supabase
-      .from("user_cubes")
-      .select("*")
-      .eq("user_id", user.id);
-
-    if (ucErr) {
-      return logError(500, "Failed to load user cubes cubes", log, err);
-    }
-
-    userCubes = data;
   }
 
   const jsonLDItems = cubes
@@ -42,7 +27,6 @@ export const load: PageServerLoad = async ({
 
   return {
     cubes,
-    userCubes,
     meta: {
       title: "Explore Cubes - CubeIndex",
       description:

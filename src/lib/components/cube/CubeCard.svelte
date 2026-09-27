@@ -12,8 +12,6 @@
     showRateButton: boolean;
     showAddButton: boolean;
     showDetailsButton: boolean;
-    alreadyAdded: boolean;
-    userCubeDetail?: Tables<"user_cubes">;
   }
 
   let {
@@ -21,8 +19,6 @@
     showRateButton,
     showAddButton,
     showDetailsButton,
-    alreadyAdded,
-    userCubeDetail,
   }: Props = $props();
 
   let openAddCard = $state(false);
@@ -65,7 +61,6 @@
         onClick={() => {
           openAddCard = !openAddCard;
         }}
-        {alreadyAdded}
         addClass="w-full"
       />
     {/if}
@@ -98,8 +93,6 @@
 <ManageCubeModal
   bind:open={openAddCard}
   {cube}
-  {alreadyAdded}
-  defaultData={userCubeDetail}
   onAdded={() => {
     openRateCard = true;
   }}

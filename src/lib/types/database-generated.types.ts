@@ -1704,7 +1704,6 @@ export type Database = {
           notes: string | null;
           purchase_price: number | null;
           purchase_price_currency: string | null;
-          quantity: number;
           status: Database["public"]["Enums"]["user_cube_status"];
           user_id: string;
         };
@@ -1721,7 +1720,6 @@ export type Database = {
           notes?: string | null;
           purchase_price?: number | null;
           purchase_price_currency?: string | null;
-          quantity?: number;
           status: Database["public"]["Enums"]["user_cube_status"];
           user_id: string;
         };
@@ -1738,7 +1736,6 @@ export type Database = {
           notes?: string | null;
           purchase_price?: number | null;
           purchase_price_currency?: string | null;
-          quantity?: number;
           status?: Database["public"]["Enums"]["user_cube_status"];
           user_id?: string;
         };

@@ -14,14 +14,7 @@
   import { formatPartialDate } from "$lib/utils/formatPartialDate";
 
   let { data, children }: LayoutProps = $props();
-  let {
-    cube,
-    sameSeries,
-    relatedCube,
-    cubeTrims,
-    alreadyAdded,
-    userCubeDetail,
-  } = $derived(data);
+  let { cube, sameSeries, relatedCube, cubeTrims } = $derived(data);
 
   let isAddingCube = $state(false);
   let isReportingCube = $state(false);
@@ -172,7 +165,6 @@
 
         <div class="mt-7 flex flex-wrap items-center gap-3">
           <AddToCollectionButton
-            {alreadyAdded}
             onClick={() => {
               isAddingCube = !isAddingCube;
             }}
@@ -317,8 +309,9 @@
 <ManageCubeModal
   bind:open={isAddingCube}
   {cube}
-  {alreadyAdded}
-  defaultData={userCubeDetail ?? undefined}
+  onAdded={() => {
+    isRatingCube = true;
+  }}
 />
 
 <RateCubeModal bind:open={isRatingCube} {cube} />

@@ -1,8 +1,6 @@
 import { Constants } from "$lib/types/database.types";
 import { z } from "zod";
 
-const MIN_QUANTITY = 1;
-const MAX_QUANTITY = 999;
 const MAX_PURCHASE_PRICE = 100_000;
 const MAX_NOTE_LENGTH = 2_000;
 
@@ -33,11 +31,6 @@ function getTodayISODate(): string {
 
 export const cubeCollectionFormSchema = z
   .object({
-    quantity: z
-      .number()
-      .int("Quantity must be a whole number.")
-      .min(MIN_QUANTITY, `Quantity must be at least ${MIN_QUANTITY}.`)
-      .max(MAX_QUANTITY, `Quantity cannot exceed ${MAX_QUANTITY}.`),
     condition: z.enum(Constants.public.Enums.user_cube_condition, {
       error: "Please choose a valid condition.",
     }),
@@ -98,6 +91,7 @@ export const cubeCollectionFormSchema = z
 
 export const cubeCollectionUpsertSchema = cubeCollectionFormSchema.extend({
   cube_id: z.number().int().positive("Cube ID must be a positive integer."),
+  collection_id: z.number().int().positive().optional(),
 });
 
 export const cubeCollectionDeleteSchema = z.object({

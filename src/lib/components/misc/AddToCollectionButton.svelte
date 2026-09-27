@@ -1,11 +1,10 @@
 <script lang="ts">
   interface Props {
     onClick: () => void;
-    alreadyAdded: boolean;
     addClass?: string;
   }
 
-  const { onClick, alreadyAdded, addClass }: Props = $props();
+  const { onClick, addClass }: Props = $props();
 </script>
 
 <button
@@ -14,11 +13,6 @@
   onclick={onClick}
   aria-label="Add to Collection"
 >
-  {#if alreadyAdded}
-    <i class="fa-solid fa-pencil mr-2"></i>
-    Edit
-  {:else}
-    <i class="fa-solid fa-plus mr-2"></i>
-    Add to Collection
-  {/if}
+  <i class="fa-solid fa-plus mr-2"></i>
+  Add to Collection
 </button>

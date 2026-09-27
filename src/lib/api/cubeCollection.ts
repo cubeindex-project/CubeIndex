@@ -8,9 +8,11 @@ import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
 export async function saveCubeInCollection(
   cubeID: number,
   form: CubeCollectionForm,
+  collectionID?: number,
 ): Promise<void> {
   const parsedPayload = cubeCollectionUpsertSchema.safeParse({
     cube_id: cubeID,
+    collection_id: collectionID,
     ...form,
   });
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import NumberFlow, { continuous } from "@number-flow/svelte";
   import { Constants, type Tables } from "$lib/types/database.types";
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
@@ -13,17 +12,14 @@
   interface Props {
     open: boolean;
     cube: Pick<Tables<"v_detailed_cube_models">, "id" | "name">;
-    alreadyAdded: boolean;
+    collectionID?: number;
     defaultData?: CubeCollectionForm;
     onAdded?: () => void;
   }
 
-  const MIN_QUANTITY = 1;
-  const MAX_QUANTITY = 999;
   const CURRENCIES = Intl.supportedValuesOf("currency");
 
   const DEFAULT_DATA = {
-    quantity: 1,
     condition: "New in box",
     main: false,
     status: "owned",
@@ -38,39 +34,35 @@
   let {
     open = $bindable(),
     cube,
-    alreadyAdded,
-    defaultData = DEFAULT_DATA,
+    collectionID,
+    defaultData,
     onAdded,
   }: Props = $props();
 
   const user = $derived(page.data.user);
-
   let isConnected = $derived(Boolean(user));
 
-  // UI state
+  const editing = $derived(defaultData !== undefined);
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state<string>("");
 
   let form = $state(
-    untrack(() => ({
-      quantity: defaultData.quantity,
-      condition: defaultData.condition,
-      main: defaultData.main,
-      status: defaultData.status,
-      bought_from_id: defaultData.bought_from_id,
-      notes: defaultData.notes,
-      acquired_at: defaultData.acquired_at,
-      purchase_price: defaultData.purchase_price,
-      purchase_price_currency: defaultData.purchase_price_currency,
-      best_time_ms: defaultData.best_time_ms,
-    })),
+    untrack(() => {
+      const initialData = defaultData ?? DEFAULT_DATA;
+      return {
+        condition: initialData.condition,
+        main: initialData.main,
+        status: initialData.status,
+        bought_from_id: initialData.bought_from_id,
+        notes: initialData.notes,
+        acquired_at: initialData.acquired_at,
+        purchase_price: initialData.purchase_price,
+        purchase_price_currency: initialData.purchase_price_currency,
+        best_time_ms: initialData.best_time_ms,
+      };
+    }),
   );
-
-  // wishlist rule
-  $effect(() => {
-    if (form.status === "wanted") form.quantity = 1;
-  });
 
   const vendors = $derived(page.data.vendors);
 
@@ -88,16 +80,20 @@
     isSubmitting = true;
 
     try {
-      await saveCubeInCollection(cube.id, {
-        ...form,
-        best_time_ms: timeToMilliseconds(best_time),
-      });
+      await saveCubeInCollection(
+        cube.id,
+        {
+          ...form,
+          best_time_ms: timeToMilliseconds(best_time),
+        },
+        collectionID,
+      );
 
       showSuccess = true;
       open = false;
       await tick();
 
-      if (!alreadyAdded) onAdded?.();
+      if (!editing) onAdded?.();
     } catch (err) {
       formMessage =
         err instanceof Error
@@ -107,16 +103,11 @@
       isSubmitting = false;
     }
   }
-
-  let readonly: boolean = $derived(form.status === "wanted");
-
-  const canDec = $derived(!readonly && form.quantity > MIN_QUANTITY);
-  const canInc = $derived(!readonly && form.quantity < MAX_QUANTITY);
 </script>
 
 <Modal
   bind:open
-  title={alreadyAdded ? "Edit Cube" : "Add to Collection"}
+  title={editing ? "Edit Cube" : "Add to Collection"}
   description={cube.name}
 >
   {#if formMessage || !isConnected}
@@ -130,59 +121,6 @@
 
   <form onsubmit={handleSubmit} method="dialog">
     <div class="flex justify-between items-center">
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">Quantity</legend>
-        {#if form.status === "wanted"}
-          <p class="label">Locked for wishlist</p>
-        {/if}
-        <div class="join w-fit">
-          <button
-            class="btn btn-outline join-item flex-1 sm:flex-none"
-            type="button"
-            disabled={!canDec}
-            aria-disabled={!canDec}
-            aria-label="Decrease quantity"
-            onclick={() => {
-              if (!canDec) return;
-              form.quantity = Math.max(MIN_QUANTITY, form.quantity - 1);
-            }}
-            onmousedown={(e) => e.preventDefault()}
-          >
-            <i class="fa-solid fa-minus" aria-hidden="true"></i>
-          </button>
-
-          <output
-            class="btn join-item min-w-24 bg-base-200 text-lg font-semibold"
-            aria-live="polite"
-            aria-label="Quantity"
-          >
-            <NumberFlow value={form.quantity} plugins={[continuous]} />
-          </output>
-
-          <button
-            class="btn btn-outline join-item flex-1 sm:flex-none"
-            type="button"
-            disabled={!canInc}
-            aria-disabled={!canInc}
-            aria-label="Increase quantity"
-            onclick={() => {
-              if (!canInc) return;
-              form.quantity = Math.min(MAX_QUANTITY, form.quantity + 1);
-            }}
-            onmousedown={(e) => e.preventDefault()}
-          >
-            <i class="fa-solid fa-plus" aria-hidden="true"></i>
-          </button>
-        </div>
-
-        <input
-          type="number"
-          name="quantity"
-          class="hidden"
-          bind:value={form.quantity}
-        />
-      </fieldset>
-
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Main Cube</legend>
         <input
@@ -357,12 +295,12 @@
       >
         {#if isSubmitting}
           <span class="loading loading-spinner"></span>
-          {alreadyAdded ? "Editing…" : "Adding…"}
+          {editing ? "Editing…" : "Adding…"}
         {:else if showSuccess}
           <i class="fa-solid fa-check" aria-hidden="true"></i>
-          {alreadyAdded ? "Edited!" : "Added!"}
+          {editing ? "Edited!" : "Added!"}
         {:else}
-          {alreadyAdded ? "Edit Cube" : "Add Cube"}
+          {editing ? "Edit Cube" : "Add Cube"}
         {/if}
       </button>
     </div>

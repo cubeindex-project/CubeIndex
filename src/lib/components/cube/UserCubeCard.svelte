@@ -60,14 +60,6 @@
         </div>
       </div>
     {/if}
-    {#if user_details.quantity > 1}
-      <div class="absolute right-3 top-3">
-        <div class="badge badge-primary badge-lg gap-1" title="Quantity">
-          <i class="fa-solid fa-layer-group"></i>
-          x{user_details.quantity}
-        </div>
-      </div>
-    {/if}
   {/if}
 {/snippet}
 {#snippet content()}
@@ -195,9 +187,8 @@
 <ManageCubeModal
   bind:open={editModalOpen}
   {cube}
-  alreadyAdded={true}
+  collectionID={user_details.id}
   defaultData={{
-    quantity: user_details.quantity,
     condition: user_details.condition,
     main: user_details.main,
     status: user_details.status,

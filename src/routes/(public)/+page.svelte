@@ -266,7 +266,6 @@
                 showAddButton={false}
                 showRateButton={false}
                 showDetailsButton={true}
-                alreadyAdded={false}
               />
               {#each [1, 2] as index (index)}
                 <div

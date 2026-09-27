@@ -3,11 +3,7 @@ import { formatPartialDate } from "$lib/utils/formatPartialDate";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 
-export const load = (async ({
-  locals: { supabase, log },
-  params,
-  url,
-}) => {
+export const load = (async ({ locals: { supabase, log }, params, url }) => {
   const slug = params.slug;
 
   const { data: cube, error: cubeErr } = await supabase

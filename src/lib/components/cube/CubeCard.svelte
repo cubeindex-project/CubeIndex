@@ -14,12 +14,8 @@
     showDetailsButton: boolean;
   }
 
-  let {
-    cube,
-    showRateButton,
-    showAddButton,
-    showDetailsButton,
-  }: Props = $props();
+  let { cube, showRateButton, showAddButton, showDetailsButton }: Props =
+    $props();
 
   let openAddCard = $state(false);
   let openRateCard = $state(false);

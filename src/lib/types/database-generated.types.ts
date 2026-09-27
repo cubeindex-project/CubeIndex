@@ -1199,7 +1199,7 @@ export type Database = {
       profiles: {
         Row: {
           banner: string | null;
-          beta_flags: Json;
+          beta_flags: NonNullable<Json>;
           bio: string | null;
           certified: boolean;
           created_at: string;
@@ -1216,7 +1216,7 @@ export type Database = {
         };
         Insert: {
           banner?: string | null;
-          beta_flags?: Json;
+          beta_flags?: NonNullable<Json>;
           bio?: string | null;
           certified?: boolean;
           created_at?: string;
@@ -1233,7 +1233,7 @@ export type Database = {
         };
         Update: {
           banner?: string | null;
-          beta_flags?: Json;
+          beta_flags?: NonNullable<Json>;
           bio?: string | null;
           certified?: boolean;
           created_at?: string;
@@ -1885,21 +1885,21 @@ export type Database = {
         Row: {
           discovered_via: string;
           id: number;
-          interested_features: Json;
+          interested_features: NonNullable<Json>;
           other_text: string | null;
           user_id: string;
         };
         Insert: {
           discovered_via: string;
           id?: number;
-          interested_features?: Json;
+          interested_features?: NonNullable<Json>;
           other_text?: string | null;
           user_id?: string;
         };
         Update: {
           discovered_via?: string;
           id?: number;
-          interested_features?: Json;
+          interested_features?: NonNullable<Json>;
           other_text?: string | null;
           user_id?: string;
         };
@@ -2341,7 +2341,10 @@ export type Database = {
         Args: { p_submission_id: number };
         Returns: undefined;
       };
-      build_v_detailed_cube_models: { Args: never; Returns: undefined };
+      build_v_detailed_cube_models: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
       copy_cube_submission: {
         Args: { p_submission_id: number };
         Returns: number;
@@ -2365,7 +2368,10 @@ export type Database = {
         }[];
       };
       get_types: { Args: { enum_type: string }; Returns: Json };
-      is_database_manager: { Args: never; Returns: boolean };
+      is_database_manager: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
       reject_submission: {
         Args: { p_reviewer_note: string; p_submission_id: number };
         Returns: undefined;

@@ -50,7 +50,7 @@ export const POST: RequestHandler = async ({
       owner: "cubeindex-project",
       repo: "CubeIndex",
       title: payload.title,
-      body: `**Description**\n${payload.description}\n\n**Additional Context**\n${payload.extra}`,
+      body: `**Description**\n${payload.description}\n\n**Additional Context**\n${payload.extra}\n\n*Issue opened from CubeIndex's feature request page*`,
       labels: ["enhancement"],
       headers: {
         "X-GitHub-Api-Version": "2026-03-10",

@@ -169,5 +169,5 @@ export const handleError: HandleServerError = ({ error: err, event }) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
   log.error({ err: errorToLog }, "Unhandled error");
-  return { message: errorToLog.message, reqId: event.locals.reqId };
+  return { message: "Something went wrong", reqId: event.locals.reqId };
 };

@@ -166,13 +166,8 @@ const authGuard: Handle = async ({ event, resolve }) => {
 export const handle: Handle = sequence(context, supabase, authGuard);
 
 export const handleError: HandleServerError = ({ error: err, event }) => {
-  const fallbackLogger = createLogger({
-    route: event?.route?.id,
-    reqId: event?.locals?.reqId,
-    scope: "handleError",
-  });
-  const log = event?.locals?.log ?? fallbackLogger;
+  const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
   log.error({ err: errorToLog }, "Unhandled error");
-  return { message: "Something went wrong", reqId: event?.locals?.reqId };
+  return { message: errorToLog.message, reqId: event.locals.reqId };
 };

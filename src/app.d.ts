@@ -5,7 +5,9 @@ import type { Meta } from "$lib/types/meta.types";
 
 declare global {
   namespace App {
-    // interface Error {}
+    interface Error {
+      reqId: string;
+    }
     interface Locals {
       reqId: string;
       log: AppLogger;

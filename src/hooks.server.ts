@@ -39,11 +39,11 @@ const context: Handle = async ({ event, resolve }) => {
   };
 
   if (response.status >= 500) {
-    log.error(fields, "Request completed with a server error");
+    event.locals.log.error(fields, "Request completed with a server error");
   } else if (response.status >= 400) {
-    log.warn(fields, "Request completed with a client error");
+    event.locals.log.warn(fields, "Request completed with a client error");
   } else {
-    log.debug(fields, "Request completed");
+    event.locals.log.debug(fields, "Request completed");
   }
 
   return response;

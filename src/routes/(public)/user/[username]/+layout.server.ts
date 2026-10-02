@@ -16,15 +16,17 @@ export const load = (async ({
     .maybeSingle();
 
   if (err) {
-    log.error({ err, msg: "Unable to load profile" });
+    log.error({ err }, "Unable to load profile");
     throw error(500, "Unable to load profile");
   }
 
   if (!profile) {
-    log.error({
-      err: new Error(`Profile "${username}" not found`),
-      msg: "User not found",
-    });
+    log.error(
+      {
+        err: new Error(`Profile "${username}" not found`),
+      },
+      "User not found",
+    );
     throw error(404, "User not found");
   }
 
@@ -40,7 +42,7 @@ export const load = (async ({
       .eq("following_id", profile.user_id);
 
     if (followErr) {
-      log.error({ err: followErr, msg: "Unable to check follow status" });
+      log.error({ err: followErr }, "Unable to check follow status");
       throw error(500, "Unable to check follow status");
     }
 

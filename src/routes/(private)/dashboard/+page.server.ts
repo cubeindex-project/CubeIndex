@@ -12,7 +12,7 @@ export const load = (async ({ locals }) => {
     .single();
 
   if (pErr) {
-    log.error({ err: pErr, msg: "Unable to load profile" });
+    log.error({ err: pErr }, "Unable to load profile");
     throw error(500, "Unable to load profile");
   }
 
@@ -24,10 +24,12 @@ export const load = (async ({ locals }) => {
     .limit(5);
 
   if (rsErr) {
-    log.error({
-      err: rsErr ?? new Error("Missing recent submission activity data"),
-      msg: "Failed to load recent submission activity",
-    });
+    log.error(
+      {
+        err: rsErr ?? new Error("Missing recent submission activity data"),
+      },
+      "Failed to load recent submission activity",
+    );
     throw error(500, "Failed to load recent submission activity");
   }
 

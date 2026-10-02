@@ -46,15 +46,17 @@ export async function updateCube(
   });
 
   if (error) {
-    log.error({
-      err: error,
-      databaseError: {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
+    log.error(
+      {
+        err: error,
+        databaseError: {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        },
       },
-      msg: "Failed to update cube in database",
-    });
+      "Failed to update cube in database",
+    );
 
     const duplicate = error.code === "23505";
     throw new StatusError(

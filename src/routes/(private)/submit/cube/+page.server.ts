@@ -14,7 +14,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
   try {
     options = await loadCubeFormOptions(supabase);
   } catch (cause) {
-    log.error({ err: cause, msg: "Failed to load cube form options" });
+    log.error({ err: cause }, "Failed to load cube form options");
     throw error(500, "Failed to load cube form options");
   }
 
@@ -41,7 +41,7 @@ export const actions: Actions = {
     try {
       await submitCube(form.data, supabase, log);
     } catch (cause) {
-      log.error({ err: cause, msg: "Failed to submit cube" });
+      log.error({ err: cause }, "Failed to submit cube");
       if (cause instanceof StatusError) {
         return setError(form, cause.message, { status: cause.status });
       }

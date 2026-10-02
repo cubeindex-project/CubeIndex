@@ -26,29 +26,33 @@ export const load = (async ({ locals: { supabase, log } }) => {
   ]);
 
   if (cubeErr) {
-    log.error({ err: cubeErr, msg: "Failed to fetch cube" });
+    log.error({ err: cubeErr }, "Failed to fetch cube");
   }
   if (cubeCountErr) {
-    log.error({ err: cubeCountErr, msg: "Failed to fetch cube count" });
+    log.error({ err: cubeCountErr }, "Failed to fetch cube count");
   }
   if (userCountErr) {
-    log.error({ err: userCountErr, msg: "Failed to fetch user count" });
+    log.error({ err: userCountErr }, "Failed to fetch user count");
   }
   if (vendorCountErr) {
-    log.error({ err: vendorCountErr, msg: "Failed to fetch vendor count" });
+    log.error({ err: vendorCountErr }, "Failed to fetch vendor count");
   }
   if (trackedPricesCountErr) {
-    log.error({
-      err: trackedPricesCountErr,
-      msg: "Failed to fetch tracked prices count",
-    });
+    log.error(
+      {
+        err: trackedPricesCountErr,
+      },
+      "Failed to fetch tracked prices count",
+    );
   }
 
   if (!featuredCube) {
-    log.error({
-      err: new Error("Featured cube not found"),
-      msg: "Featured cube not found",
-    });
+    log.error(
+      {
+        err: new Error("Featured cube not found"),
+      },
+      "Featured cube not found",
+    );
   }
 
   return {

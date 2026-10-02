@@ -14,7 +14,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .eq("cube_id", cube.id);
 
   if (pvhErr) {
-    log.error({ err: pvhErr, msg: "Unable to load price history" });
+    log.error({ err: pvhErr }, "Unable to load price history");
     throw error(500, "Unable to load price history");
   }
 

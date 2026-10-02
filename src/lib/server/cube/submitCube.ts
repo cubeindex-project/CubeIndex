@@ -46,15 +46,17 @@ export async function submitCube(
   });
 
   if (error) {
-    log.error({
-      err: error,
-      databaseError: {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
+    log.error(
+      {
+        err: error,
+        databaseError: {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        },
       },
-      msg: "Failed to submit cube to database",
-    });
+      "Failed to submit cube to database",
+    );
 
     const duplicate = error.code === "23505";
     throw new StatusError(

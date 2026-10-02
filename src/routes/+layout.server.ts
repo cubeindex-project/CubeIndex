@@ -18,10 +18,12 @@ export const load: LayoutServerLoad = async ({
       .single();
 
     if (err) {
-      log.error({
-        err,
-        msg: "Error while retrieving profile in layout",
-      });
+      log.error(
+        {
+          err,
+        },
+        "Error while retrieving profile in layout",
+      );
     }
 
     profile = data;

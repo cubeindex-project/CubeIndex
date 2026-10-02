@@ -12,7 +12,7 @@ export const load = (async ({ locals }) => {
     .single();
 
   if (err) {
-    log.error({ err, msg: "Unable to load profile" });
+    log.error({ err }, "Unable to load profile");
     throw error(500, "Unable to load profile");
   }
 

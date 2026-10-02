@@ -22,15 +22,17 @@ export const load: PageServerLoad = async ({
     .maybeSingle();
 
   if (cubeErr) {
-    log.error({ err: cubeErr, msg: "Unable to load cubes" });
+    log.error({ err: cubeErr }, "Unable to load cubes");
     throw error(500, "Unable to load cubes");
   }
 
   if (!cube) {
-    log.error({
-      err: new Error("No cube was found"),
-      msg: "This cube doesn't exist",
-    });
+    log.error(
+      {
+        err: new Error("No cube was found"),
+      },
+      "This cube doesn't exist",
+    );
     throw error(500, "This cube doesn't exist");
   }
 
@@ -43,14 +45,16 @@ export const load: PageServerLoad = async ({
   ]);
 
   if (vlError) {
-    log.error({ err: vlError, msg: "Failed to load vendor links" });
+    log.error({ err: vlError }, "Failed to load vendor links");
     throw error(500, "Failed to load vendor links");
   }
   if (cubeFeaturesErr) {
-    log.error({
-      err: cubeFeaturesErr.message,
-      msg: "Failed to fetch the current cube features",
-    });
+    log.error(
+      {
+        err: cubeFeaturesErr.message,
+      },
+      "Failed to fetch the current cube features",
+    );
     throw error(500, "Failed to fetch the current cube features");
   }
 
@@ -90,7 +94,7 @@ export const load: PageServerLoad = async ({
   try {
     options = await loadCubeFormOptions(supabase);
   } catch (cause) {
-    log.error({ err: cause, msg: "Failed to load cube form options" });
+    log.error({ err: cause }, "Failed to load cube form options");
     throw error(500, "Failed to load cube form options");
   }
 
@@ -128,7 +132,7 @@ export const actions: Actions = {
       .maybeSingle();
 
     if (cubeErr) {
-      log.error({ err: cubeErr, msg: "Failed to fetch cube" });
+      log.error({ err: cubeErr }, "Failed to fetch cube");
       return setError(form, "Failed to fetch cube", { status: 500 });
     }
 
@@ -140,7 +144,7 @@ export const actions: Actions = {
       await updateCube(form.data, supabase, log, cube.id);
     } catch (err) {
       if (err instanceof StatusError) {
-        log.error({ err: err.cause, msg: err.message });
+        log.error({ err: err.cause }, err.message);
         return setError(form, err.message, { status: err.status });
       }
       throw err;

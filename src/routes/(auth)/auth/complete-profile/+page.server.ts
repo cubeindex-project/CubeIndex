@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({
     .maybeSingle();
 
   if (profileErr) {
-    log.error({ err: profileErr, msg: "Failed to fetch error" });
+    log.error({ err: profileErr }, "Failed to fetch error");
     throw error(500, "Failed to fetch error");
   }
 
@@ -63,10 +63,12 @@ export const actions: Actions = {
     }
 
     if (profileUpdateError) {
-      log.error({
-        err: profileUpdateError,
-        msg: "Failed to update user profile row",
-      });
+      log.error(
+        {
+          err: profileUpdateError,
+        },
+        "Failed to update user profile row",
+      );
       return fail(500, { form, message: profileUpdateError.message });
     }
 
@@ -75,10 +77,12 @@ export const actions: Actions = {
       display_name,
     );
     if (!addToEmailListResponse.success) {
-      log.warn({
-        err: addToEmailListResponse.error,
-        msg: "Failed to add user to list",
-      });
+      log.warn(
+        {
+          err: addToEmailListResponse.error,
+        },
+        "Failed to add user to list",
+      );
     }
 
     redirect(303, "/auth/signup?step=survey");

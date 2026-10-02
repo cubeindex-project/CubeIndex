@@ -8,11 +8,13 @@ export const GET: RequestHandler = async ({ fetch, locals: { log } }) => {
     },
   });
 
-  log.debug({
-    msg: "Autofill service status",
-    status: res.status,
-    statusText: res.statusText,
-  });
+  log.debug(
+    {
+      status: res.status,
+      statusText: res.statusText,
+    },
+    "Autofill service status",
+  );
 
   return new Response(null, {
     status: 204,

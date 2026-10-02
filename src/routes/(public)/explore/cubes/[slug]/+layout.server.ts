@@ -12,10 +12,12 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
     .maybeSingle();
 
   if (cubeErr) {
-    log.error({
-      err: cubeErr,
-      msg: "An error occurred while fetching the cube data",
-    });
+    log.error(
+      {
+        err: cubeErr,
+      },
+      "An error occurred while fetching the cube data",
+    );
     throw error(500, "An error occurred while fetching the cube data");
   }
 
@@ -50,12 +52,14 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
   ]);
 
   if (sameSeriesRes.error || relatedRes.error || trimsRes.error) {
-    log.error({
-      err: new Error("", {
-        cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
-      }),
-      msg: "Unable to load related cube data",
-    });
+    log.error(
+      {
+        err: new Error("", {
+          cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
+        }),
+      },
+      "Unable to load related cube data",
+    );
     throw error(500, "Unable to load related cube data");
   }
 
@@ -66,7 +70,7 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
     .eq("is_dead", false);
 
   if (cvrErr) {
-    log.error({ err: cvrErr, msg: "Unable to load vendor links" });
+    log.error({ err: cvrErr }, "Unable to load vendor links");
     throw error(500, "Unable to load vendor links");
   }
 

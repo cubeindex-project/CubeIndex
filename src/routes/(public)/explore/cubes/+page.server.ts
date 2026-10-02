@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({
     .select("*");
 
   if (err) {
-    log.error({ err, msg: "Failed to load cubes" });
+    log.error({ err }, "Failed to load cubes");
     throw error(500, "Failed to load cubes");
   }
 

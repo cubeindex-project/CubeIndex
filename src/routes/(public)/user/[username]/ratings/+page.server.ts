@@ -23,10 +23,12 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .eq("user_id", profile.user_id);
 
   if (urErr) {
-    log.error({
-      err: urErr,
-      msg: "An error occurred while fetching user cube ratings",
-    });
+    log.error(
+      {
+        err: urErr,
+      },
+      "An error occurred while fetching user cube ratings",
+    );
     throw error(500, "An error occurred while fetching user cube ratings");
   }
 

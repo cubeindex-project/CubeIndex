@@ -11,10 +11,12 @@ export const load = (async ({ locals: { supabase, user, log } }) => {
     .single();
 
   if (err) {
-    log.error({
-      err,
-      msg: "An error occurred while retrieving your profile",
-    });
+    log.error(
+      {
+        err,
+      },
+      "An error occurred while retrieving your profile",
+    );
     throw error(500, "An error occurred while retrieving your profile");
   }
 

@@ -9,7 +9,7 @@ export const load = (async ({ setHeaders, locals: { log, supabase } }) => {
     .order("id", { ascending: true });
 
   if (err) {
-    log.error({ err, msg: "Unable to load user profiles" });
+    log.error({ err }, "Unable to load user profiles");
     throw error(500, "Unable to load user profiles");
   }
 

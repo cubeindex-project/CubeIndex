@@ -57,7 +57,7 @@ export function createAutofillHandler<Result>({
       .eq(supportedVendorsCapability, true);
 
     if (error) {
-      log.error({ err: error, msg: "Failed to fetch supported stores" });
+      log.error({ err: error }, "Failed to fetch supported stores");
       return json(
         { error: "Failed to fetch supported stores from database." },
         { status: 500 },
@@ -116,13 +116,15 @@ export function createAutofillHandler<Result>({
         detail?: string;
       } | null;
 
-      log.error({
-        err: {
-          jobID,
-          errorMessage: upstreamResult?.detail,
+      log.error(
+        {
+          err: {
+            jobID,
+            errorMessage: upstreamResult?.detail,
+          },
         },
-        msg: "Autofill job execution failed",
-      });
+        "Autofill job execution failed",
+      );
 
       return json(
         {

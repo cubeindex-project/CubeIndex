@@ -51,7 +51,7 @@ export const load = (async ({ locals: { user, supabase, log } }) => {
     .single();
 
   if (err) {
-    log.error({ err, msg: "Unable to load profile settings" });
+    log.error({ err }, "Unable to load profile settings");
     throw error(500, "Unable to load profile settings");
   }
 
@@ -226,7 +226,7 @@ export const actions: Actions = {
       .eq("user_id", user?.id);
 
     if (err) {
-      log.error({ err, msg: "Failed to update profile" });
+      log.error({ err }, "Failed to update profile");
       throw error(500, "Failed to update profile");
     }
 
@@ -267,7 +267,7 @@ export const actions: Actions = {
       .eq("user_id", user?.id);
 
     if (err) {
-      log.error({ err, msg: "Failed to update social links" });
+      log.error({ err }, "Failed to update social links");
       throw error(500, "Failed to update social links");
     }
 
@@ -303,7 +303,7 @@ export const actions: Actions = {
     );
 
     if (err) {
-      log.error({ err, msg: "Failed to update password" });
+      log.error({ err }, "Failed to update password");
       throw error(500, "Failed to update password");
     }
 

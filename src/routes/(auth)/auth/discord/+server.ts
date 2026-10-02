@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({
   });
 
   if (authError) {
-    log.error({ err: authError, msg: "Failed to initiate Discord login" });
+    log.error({ err: authError }, "Failed to initiate Discord login");
     throw error(500, "Failed to initiate Discord login");
   }
 

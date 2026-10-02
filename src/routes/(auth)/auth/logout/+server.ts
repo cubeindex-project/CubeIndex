@@ -8,10 +8,12 @@ export const GET = async ({ locals: { supabase, log }, url }) => {
     (scope && !SIGN_OUT_SCOPES.includes(scope as SignOutScope)) ||
     scope === ""
   ) {
-    log.error({
-      err: new Error("The scope is not correct"),
-      msg: "The scope is not correct",
-    });
+    log.error(
+      {
+        err: new Error("The scope is not correct"),
+      },
+      "The scope is not correct",
+    );
     throw error(400, "The scope is not correct");
   }
 

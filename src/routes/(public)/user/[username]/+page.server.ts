@@ -32,11 +32,11 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   ]);
 
   if (userCubesError) {
-    log.error({ err: userCubesError, msg: "Unable to load user cubes" });
+    log.error({ err: userCubesError }, "Unable to load user cubes");
     throw error(500, "Unable to load user cubes");
   }
   if (userRatingsError) {
-    log.error({ err: userRatingsError, msg: "Unable to load user ratings" });
+    log.error({ err: userRatingsError }, "Unable to load user ratings");
     throw error(500, "Unable to load user ratings");
   }
 
@@ -46,7 +46,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    log.error({ err, msg: "Failed to load vendors" });
+    log.error({ err }, "Failed to load vendors");
     throw error(500, "Failed to load vendors");
   }
 

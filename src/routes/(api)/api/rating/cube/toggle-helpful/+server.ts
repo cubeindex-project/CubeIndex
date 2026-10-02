@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({
     .eq("rating_id", payload.rating_id);
 
   if (countError) {
-    log.error({ err: countError, msg: "Unable to check helpful rating" });
+    log.error({ err: countError }, "Unable to check helpful rating");
     return json(
       { error: "Unable to update the helpful rating. Please try again." },
       { status: 500 },
@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({
       .eq("rating_id", payload.rating_id);
 
     if (error) {
-      log.error({ err: error, msg: "Unable to remove helpful rating" });
+      log.error({ err: error }, "Unable to remove helpful rating");
       return json(
         { error: "Unable to update the helpful rating. Please try again." },
         { status: 500 },
@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({
     });
 
     if (error) {
-      log.error({ err: error, msg: "Unable to add helpful rating" });
+      log.error({ err: error }, "Unable to add helpful rating");
       return json(
         { error: "Unable to update the helpful rating. Please try again." },
         { status: 500 },

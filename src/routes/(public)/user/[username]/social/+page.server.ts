@@ -32,11 +32,11 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   ]);
 
   if (followingErr) {
-    log.error({ err: followingErr, msg: "Unable to load following list" });
+    log.error({ err: followingErr }, "Unable to load following list");
     throw error(500, "Unable to load following list");
   }
   if (followedErr) {
-    log.error({ err: followedErr, msg: "Unable to load follower list" });
+    log.error({ err: followedErr }, "Unable to load follower list");
     throw error(500, "Unable to load follower list");
   }
 

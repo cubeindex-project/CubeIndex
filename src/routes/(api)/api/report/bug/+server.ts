@@ -74,15 +74,17 @@ export const POST: RequestHandler = async ({
     });
   } catch (error) {
     if (error instanceof RequestError) {
-      log.error({
-        err: {
-          message: error.message,
-          status: error.status,
-          requestID: error.request?.headers["x-github-request-id"],
-          response: error.response?.data,
+      log.error(
+        {
+          err: {
+            message: error.message,
+            status: error.status,
+            requestID: error.request?.headers["x-github-request-id"],
+            response: error.response?.data,
+          },
         },
-        msg: "An error occurred while creating GitHub issue",
-      });
+        "An error occurred while creating GitHub issue",
+      );
 
       return json(
         { error: "An error occurred while creating GitHub issue" },

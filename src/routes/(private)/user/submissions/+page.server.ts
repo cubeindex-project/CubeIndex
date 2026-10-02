@@ -12,10 +12,12 @@ export const load = (async ({ locals: { supabase, user, log } }) => {
     .limit(100);
 
   if (submissionsError) {
-    log.error({
-      err: submissionsError,
-      msg: "Failed to fetch cube submissions",
-    });
+    log.error(
+      {
+        err: submissionsError,
+      },
+      "Failed to fetch cube submissions",
+    );
     throw error(500, "Failed to fetch cube submissions");
   }
 

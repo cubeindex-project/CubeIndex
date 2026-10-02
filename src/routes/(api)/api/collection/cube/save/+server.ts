@@ -40,10 +40,12 @@ export const POST: RequestHandler = async ({
       .insert(payload);
 
     if (userCubesErr) {
-      log.error({
-        err: userCubesErr,
-        msg: "An error occurred while adding cube to collection",
-      });
+      log.error(
+        {
+          err: userCubesErr,
+        },
+        "An error occurred while adding cube to collection",
+      );
       return json(
         { error: "An error occorred while adding cube to collection" },
         { status: 500 },
@@ -60,10 +62,12 @@ export const POST: RequestHandler = async ({
       .select("id");
 
     if (userCubesErr) {
-      log.error({
-        err: userCubesErr,
-        msg: "An error occurred while editing cube in collection",
-      });
+      log.error(
+        {
+          err: userCubesErr,
+        },
+        "An error occurred while editing cube in collection",
+      );
       return json(
         { error: "An error occurred while editing cube in collection" },
         { status: 500 },

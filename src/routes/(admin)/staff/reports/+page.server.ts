@@ -7,7 +7,7 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (err) {
-    locals.log.error({ err, msg: "Unable to load reports" });
+    locals.log.error({ err }, "Unable to load reports");
     throw error(500, "Unable to load reports");
   }
 
@@ -16,7 +16,7 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (pErr) {
-    locals.log.error({ err: pErr, msg: "Unable to load profiles" });
+    locals.log.error({ err: pErr }, "Unable to load profiles");
     throw error(500, "Unable to load profiles");
   }
 
@@ -25,7 +25,7 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (ucrErr) {
-    locals.log.error({ err: ucrErr, msg: "Unable to load user cube ratings" });
+    locals.log.error({ err: ucrErr }, "Unable to load user cube ratings");
     throw error(500, "Unable to load user cube ratings");
   }
 

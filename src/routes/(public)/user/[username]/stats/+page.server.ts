@@ -23,7 +23,7 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
     .maybeSingle();
 
   if (statsErr) {
-    log.error({ err: statsErr, msg: "Failed to fetch user stats" });
+    log.error({ err: statsErr }, "Failed to fetch user stats");
     throw error(500, "Failed to fetch user stats");
   }
 

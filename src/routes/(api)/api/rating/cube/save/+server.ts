@@ -37,7 +37,7 @@ export const POST: RequestHandler = async ({
     .upsert(payload, { onConflict: "cube_id,user_id" });
 
   if (err) {
-    log.error({ err, msg: "An error occurred while adding rating" });
+    log.error({ err }, "An error occurred while adding rating");
     return json(
       { error: "An error occurred while adding rating" },
       { status: 500 },

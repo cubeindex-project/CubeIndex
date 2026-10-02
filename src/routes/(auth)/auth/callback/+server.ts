@@ -10,29 +10,33 @@ export const GET: RequestHandler = async ({
   const errorDescription = url.searchParams.get("error_description");
   if (error || errorDescription) {
     const errorMessage = errorDescription || error || "An error occurred!";
-    log.error({
-      err: {
-        error,
-        errorCode,
-        errorDescription,
+    log.error(
+      {
+        err: {
+          error,
+          errorCode,
+          errorDescription,
+        },
       },
-      msg: errorMessage,
-    });
+      errorMessage,
+    );
     redirect(303, `/?toast_error=${encodeURIComponent(errorMessage)}`);
   }
 
   const code = url.searchParams.get("code");
   if (!code) {
-    log.error({
-      err: new Error("Missing code parameter"),
-      msg: "Missing code parameter",
-    });
+    log.error(
+      {
+        err: new Error("Missing code parameter"),
+      },
+      "Missing code parameter",
+    );
     redirect(303, "/?toast_error=Missing+code+parameter");
   }
 
   const { data, error: err } = await supabase.auth.exchangeCodeForSession(code);
   if (err) {
-    log.error({ err, msg: "Failed to exchange code for session" });
+    log.error({ err }, "Failed to exchange code for session");
     redirect(303, "/?toast_error=Failed+to+exchange+code+for+session");
   }
 
@@ -45,7 +49,7 @@ export const GET: RequestHandler = async ({
     .maybeSingle();
 
   if (profileFetchError) {
-    log.error({ err: profileFetchError, msg: "Failed to retrieve profile" });
+    log.error({ err: profileFetchError }, "Failed to retrieve profile");
     redirect(303, `/?toast_error=Failed+to+retrieve+profile`);
   }
 
@@ -59,7 +63,7 @@ export const GET: RequestHandler = async ({
     .eq("user_id", user.id);
 
   if (profileUpdateError) {
-    log.error({ err: profileUpdateError, msg: "Failed to update profile" });
+    log.error({ err: profileUpdateError }, "Failed to update profile");
     redirect(303, `/?toast_error=Failed+to+update+profile`);
   }
 

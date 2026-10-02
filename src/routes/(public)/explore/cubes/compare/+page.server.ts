@@ -7,7 +7,7 @@ export const load = (async ({ locals: { log, supabase } }) => {
     .select("*");
 
   if (err) {
-    log.error({ err: err.message, msg: "Failed to fetch cubes" });
+    log.error({ err: err.message }, "Failed to fetch cubes");
     throw error(500, "Failed to fetch cubes");
   }
 

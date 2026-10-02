@@ -12,7 +12,7 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   const [ratingsRes] = await Promise.all([ratingsPromise]);
 
   if (ratingsRes.error) {
-    log.error({ err: ratingsRes.error, msg: "Unable to load cube ratings" });
+    log.error({ err: ratingsRes.error }, "Unable to load cube ratings");
     throw error(500, "Unable to load cube ratings");
   }
 

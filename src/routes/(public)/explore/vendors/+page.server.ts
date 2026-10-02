@@ -8,7 +8,7 @@ export const load = (async ({ setHeaders, locals: { log, supabase } }) => {
     .order("name", { ascending: true });
 
   if (vendorsErr) {
-    log.error({ err: vendorsErr, msg: "Unable to load vendors" });
+    log.error({ err: vendorsErr }, "Unable to load vendors");
     throw error(500, "Unable to load vendors");
   }
 

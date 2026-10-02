@@ -14,7 +14,12 @@ import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
 
 const context: Handle = async ({ event, resolve }) => {
-  event.locals.reqId = randomUUID();
+  const reqId = randomUUID();
+  const startedAt = performance.now();
+
+  event.locals.reqId = reqId;
+  event.setHeaders({ "x-request-id": reqId });
+
   const log = createLogger({
     reqId: event.locals.reqId,
     route: event.route.id,
@@ -22,7 +27,25 @@ const context: Handle = async ({ event, resolve }) => {
     path: new URL(event.request.url).pathname,
   });
   event.locals.log = log;
+
   const response = await resolve(event);
+
+  const durationMs = Math.round(performance.now() - startedAt);
+
+  const fields = {
+    event: "http.request.completed",
+    status: response.status,
+    durationMs,
+  };
+
+  if (response.status >= 500) {
+    log.error(fields, "Request completed with a server error");
+  } else if (response.status >= 400) {
+    log.warn(fields, "Request completed with a client error");
+  } else {
+    log.debug(fields, "Request completed");
+  }
+
   return response;
 };
 
@@ -62,10 +85,12 @@ const supabase: Handle = async ({ event, resolve }) => {
             try {
               event.setHeaders(headers);
             } catch (error) {
-              event.locals.log.warn({
-                err: error,
-                msg: "An error occurred while setting header",
-              });
+              event.locals.log.warn(
+                {
+                  err: error,
+                },
+                "An error occurred while setting header",
+              );
             }
           }
         },
@@ -110,6 +135,12 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
+    if (user) {
+      event.locals.log = event.locals.log.child({
+        actorUserId: user.id,
+      });
+    }
+
   if (!user) {
     if (event.url.pathname.startsWith("/staff")) {
       redirect(303, "/auth/login");
@@ -137,10 +168,12 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .maybeSingle();
 
   if (err) {
-    event.locals.log.error({
-      err,
-      msg: "An error occurred while fetching your profile",
-    });
+    event.locals.log.error(
+      {
+        err,
+      },
+      "An error occurred while fetching your profile",
+    );
     throw error(500, "An error occurred while fetching your profile");
   }
 
@@ -173,6 +206,6 @@ export const handle: Handle = sequence(context, supabase, authGuard);
 export const handleError: HandleServerError = ({ error: err, event }) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
-  log.error({ err: errorToLog, msg: "Unhandled error" });
+  log.error({ err: errorToLog }, "Unhandled error");
   return { message: "Something went wrong", reqId: event.locals.reqId };
 };

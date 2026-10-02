@@ -1,6 +1,7 @@
 import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
 import { env } from "$env/dynamic/private";
 import pino, { stdTimeFunctions, type LoggerOptions } from "pino";
+import axiomTransport from "@axiomhq/pino";
 
 const isProduction = NODE_ENV.toLowerCase() === "production";
 
@@ -36,13 +37,9 @@ const baseOptions: LoggerOptions = {
 export const logger = isProduction
   ? pino(
       baseOptions,
-      pino.transport({
-        target: "@axiomhq/pino",
-        options: {
-          dataset: env.AXIOM_DATASET,
-          token: env.AXIOM_TOKEN,
-          edge: "us-east-1.aws.edge.axiom.co",
-        },
+      await axiomTransport({
+        dataset: process.env.AXIOM_DATASET!,
+        token: process.env.AXIOM_TOKEN!,
       }),
     )
   : pino({

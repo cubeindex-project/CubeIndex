@@ -1,5 +1,10 @@
 import z from "zod/v4";
 
+const additionalInfoSchema = {
+  linkToAccount: z.boolean(),
+  githubUsername: z.string(),
+};
+
 export const bugReportSchema = z.object({
   title: z.string().max(80),
   reproductionSteps: z.string(),
@@ -13,12 +18,14 @@ export const bugReportSchema = z.object({
   browser: z.string(),
   imageURL: z.string(),
   extra: z.string(),
+  ...additionalInfoSchema
 });
 
 export const featureRequestSchema = z.object({
   title: z.string(),
   description: z.string(),
   extra: z.string(),
+  ...additionalInfoSchema
 });
 
 export type BugReportSchema = z.input<typeof bugReportSchema>;

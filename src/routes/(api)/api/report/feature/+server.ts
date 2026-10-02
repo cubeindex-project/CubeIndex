@@ -5,6 +5,7 @@ import { Octokit } from "@octokit/core";
 import { createAppAuth } from "@octokit/auth-app";
 import { RequestError } from "@octokit/request-error";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+
 import {
   GITHUB_APP_ID,
   GITHUB_APP_INSTALLATION_ID,
@@ -13,7 +14,8 @@ import {
 
 export const POST: RequestHandler = async ({
   request,
-  locals: { user, log },
+  locals: { user, supabase, log },
+  url,
 }) => {
   if (!user) {
     return json({ error: "Unauthorized" }, { status: 401 });
@@ -36,6 +38,20 @@ export const POST: RequestHandler = async ({
 
   const payload = parsedPayload.data;
 
+  const { data: profile } = payload.linkToAccount
+    ? await supabase
+        .from("profiles")
+        .select("username")
+        .eq("user_id", user.id)
+        .maybeSingle()
+    : { data: null };
+  const reporterAttribution = profile?.username
+    ? `*Issue opened from CubeIndex's feature request page by [@${profile.username}](${url.origin}/user/${encodeURIComponent(profile.username)})*`
+    : "*Issue opened from CubeIndex's feature request page*";
+  const linkedGitHubAccount = payload.githubUsername
+    ? `**GitHub account**\n@${payload.githubUsername}\n\n`
+    : "";
+
   const octokit = new Octokit({
     authStrategy: createAppAuth,
     auth: {
@@ -50,7 +66,7 @@ export const POST: RequestHandler = async ({
       owner: "cubeindex-project",
       repo: "CubeIndex",
       title: payload.title,
-      body: `**Description**\n${payload.description}\n\n**Additional Context**\n${payload.extra}\n\n*Issue opened from CubeIndex's feature request page*`,
+      body: `**Description**\n${payload.description}\n\n**Additional Context**\n${payload.extra}\n\n${linkedGitHubAccount}${reporterAttribution}`,
       labels: ["enhancement"],
       headers: {
         "X-GitHub-Api-Version": "2026-03-10",

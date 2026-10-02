@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import Modal from "$lib/components/ui/Modal.svelte";
   import type {
     BugReportSchema,
     FeatureRequestSchema,
@@ -16,8 +17,14 @@
   let isSubmitting = $state(false);
   let showSuccess = $state(false);
   let formMessage = $state("");
+  let consentOpen = $state(false);
 
-  let bugReportForm: BugReportSchema = $state({
+  let reportOptions = $state({
+    linkToAccount: false,
+    githubUsername: "",
+  });
+
+  let bugReportForm = $state({
     title: "",
     reproductionSteps: "",
     expected: "",
@@ -32,25 +39,33 @@
     extra: page.url.searchParams.get("error")
       ? `Error message: "${page.url.searchParams.get("error")}"`
       : "",
-  }) satisfies BugReportSchema;
+  }) satisfies Omit<BugReportSchema, "linkToAccount" | "githubUsername">;
 
-  let featureRequestForm: FeatureRequestSchema = $state({
+  let featureRequestForm = $state({
     title: "",
     description: "",
     useCase: "",
     priority: "Medium",
     extra: "",
-  }) satisfies FeatureRequestSchema;
+  }) satisfies Omit<FeatureRequestSchema, "linkToAccount" | "githubUsername">;
 
-  async function sendReport(e: SubmitEvent) {
+  function openConsent(e: SubmitEvent) {
     e.preventDefault();
+    formMessage = "";
+    consentOpen = true;
+  }
+
+  async function sendReport() {
     isSubmitting = true;
     formMessage = "";
     try {
       const response = await fetch("/api/report/bug", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bugReportForm),
+        body: JSON.stringify({
+          ...bugReportForm,
+          ...reportOptions,
+        }),
       });
 
       if (!response.ok) {
@@ -71,15 +86,17 @@
     }
   }
 
-  async function sendFeature(e: SubmitEvent) {
-    e.preventDefault();
+  async function sendFeature() {
     isSubmitting = true;
     formMessage = "";
     try {
       const response = await fetch("/api/report/feature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(featureRequestForm),
+        body: JSON.stringify({
+          ...featureRequestForm,
+          ...reportOptions,
+        }),
       });
 
       if (!response.ok) {
@@ -97,6 +114,16 @@
         error instanceof Error ? error.message : "An unknown error occurred";
     } finally {
       isSubmitting = false;
+    }
+  }
+
+  async function submitWithConsent() {
+    consentOpen = false;
+
+    if (currentTab === "bug") {
+      await sendReport();
+    } else {
+      await sendFeature();
     }
   }
 
@@ -155,7 +182,7 @@
         <form
           id="panel-bug"
           class="grid gap-6"
-          onsubmit={sendReport}
+          onsubmit={openConsent}
           aria-busy={isSubmitting}
           autocomplete="off"
         >
@@ -301,7 +328,7 @@
         <form
           id="panel-feature"
           class="grid gap-6"
-          onsubmit={sendFeature}
+          onsubmit={openConsent}
           aria-busy={isSubmitting}
           autocomplete="off"
         >
@@ -364,3 +391,54 @@
     </div>
   </div>
 </section>
+
+<Modal
+  bind:open={consentOpen}
+  title="Review report consent"
+  description="Your report will be posted as a public issue in the CubeIndex GitHub repository and may be visible to anyone."
+>
+  <div class="grid gap-4">
+    <div class="alert alert-warning text-sm">
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      <span> Do not include passwords, access tokens, or other secrets. </span>
+    </div>
+
+    <label class="flex items-center cursor-pointer justify-start gap-3">
+      <input
+        bind:checked={reportOptions.linkToAccount}
+        type="checkbox"
+        class="checkbox mt-0.5"
+      />
+      <span class="font-semibold">
+        Link this report to my CubeIndex account
+      </span>
+    </label>
+
+    <label class="flex flex-col gap-1">
+      <span class="font-semibold"
+        >GitHub username <span class="font-normal">(optional)</span></span
+      >
+      <input
+        bind:value={reportOptions.githubUsername}
+        class="input input-bordered rounded-xl w-full"
+        autocomplete="username"
+      />
+      <span class="text-xs text-base-content/60">
+        If provided, this account will be mentioned in the public issue.
+      </span>
+    </label>
+
+    <div class="flex justify-end gap-2">
+      <button
+        type="button"
+        class="btn btn-ghost"
+        onclick={() => (consentOpen = false)}
+      >
+        Go back
+      </button>
+      <button type="button" class="btn btn-primary" onclick={submitWithConsent}>
+        Send public report
+      </button>
+    </div>
+  </div>
+</Modal>

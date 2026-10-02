@@ -5,6 +5,7 @@ import { Octokit } from "@octokit/core";
 import { createAppAuth } from "@octokit/auth-app";
 import { RequestError } from "@octokit/request-error";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+
 import {
   GITHUB_APP_ID,
   GITHUB_APP_INSTALLATION_ID,
@@ -13,7 +14,8 @@ import {
 
 export const POST: RequestHandler = async ({
   request,
-  locals: { user, log },
+  locals: { user, supabase, log },
+  url,
 }) => {
   if (!user) {
     return json({ error: "Unauthorized" }, { status: 401 });
@@ -36,6 +38,20 @@ export const POST: RequestHandler = async ({
 
   const payload = parsedPayload.data;
 
+  const { data: profile } = payload.linkToAccount
+    ? await supabase
+        .from("profiles")
+        .select("username, display_name")
+        .eq("user_id", user.id)
+        .maybeSingle()
+    : { data: null };
+  const reporterAttribution = profile?.username
+    ? `*Issue opened from CubeIndex's bug report page by [@${profile.display_name}](${url.origin}/user/${encodeURIComponent(profile.username)})*`
+    : "*Issue opened from CubeIndex's bug report page*";
+  const linkedGitHubAccount = payload.githubUsername
+    ? `**GitHub account**\n@${payload.githubUsername}\n\n`
+    : "";
+
   const octokit = new Octokit({
     authStrategy: createAppAuth,
     auth: {
@@ -50,7 +66,7 @@ export const POST: RequestHandler = async ({
       owner: "cubeindex-project",
       repo: "CubeIndex",
       title: payload.title,
-      body: `**Expected behavior**\n${payload.expected}\n\n**Actual behavior**\n${payload.actual}\n\n**To Reproduce**\n${payload.reproductionSteps}\n\n${payload.imageURL ? `**Screenshot**\n![Screenshot URL](${payload.imageURL})\n\n` : ""}**Environment**\n- Affected URL: ${payload.affectedURL}\n- Request ID: ${payload.requestID}\n- Device: ${payload.deviceType}\n- OS: ${payload.os}\n- Browser: ${payload.browser}\n- User agent: ${payload.userAgent}\n\n**Additional context**\n${payload.extra}\n\n*Issue opened from CubeIndex's bug report page*`,
+      body: `**Expected behavior**\n${payload.expected}\n\n**Actual behavior**\n${payload.actual}\n\n**To Reproduce**\n${payload.reproductionSteps}\n\n${payload.imageURL ? `**Screenshot**\n![Screenshot URL](${payload.imageURL})\n\n` : ""}**Environment**\n- Affected URL: ${payload.affectedURL}\n- Request ID: ${payload.requestID}\n- Device: ${payload.deviceType}\n- OS: ${payload.os}\n- Browser: ${payload.browser}\n- User agent: ${payload.userAgent}\n\n**Additional context**\n${payload.extra}\n\n${linkedGitHubAccount}${reporterAttribution}`,
       labels: ["bug"],
       headers: {
         "X-GitHub-Api-Version": "2026-03-10",
@@ -71,7 +87,7 @@ export const POST: RequestHandler = async ({
       );
 
       return json(
-        { error: "An error ocurred while creating GitHub issue" },
+        { error: "An error occurred while creating GitHub issue" },
         {
           status:
             error.status >= 400 && error.status < 600 ? error.status : 502,

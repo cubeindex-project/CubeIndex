@@ -67,7 +67,7 @@ export const POST: RequestHandler = async ({
             response: error.response?.data,
           },
         },
-        "An error ocurred while creating GitHub issue",
+        "An error occurred while creating GitHub issue",
       );
 
       return json(

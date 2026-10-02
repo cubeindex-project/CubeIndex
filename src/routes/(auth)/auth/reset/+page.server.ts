@@ -12,7 +12,7 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase } }) => {
+  default: async ({ request, locals: { supabase, log } }) => {
     const form = await superValidate(request, zod4(resetPasswordSchema));
     if (!form.valid) {
       return fail(400, { form });
@@ -22,6 +22,7 @@ export const actions: Actions = {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
+      log.error({ err: error }, "Failed to reset password");
       return fail(500, {
         form: {
           ...form,

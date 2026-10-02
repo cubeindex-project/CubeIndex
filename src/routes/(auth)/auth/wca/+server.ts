@@ -1,20 +1,20 @@
-import { logError } from "$lib/server/logError";
 import type { RequestHandler } from "./$types";
-import { redirect } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({
   url,
   locals: { supabase, log },
 }) => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { data, error: authError } = await supabase.auth.signInWithOAuth({
     provider: "custom:wca",
     options: {
       redirectTo: `${url.origin}/auth/callback`,
     },
   });
 
-  if (error) {
-    logError(500, "Failed to initiate WCA login", log, error);
+  if (authError) {
+    log.error({ err: authError }, "Failed to initiate WCA login");
+    throw error(500, "Failed to initiate WCA login");
   }
 
   redirect(307, data.url);

@@ -11,7 +11,9 @@ export const load = (async ({ locals: { supabase, log } }) => {
 
   if (cubeSubmissionsError) {
     log.error(
-      { err: cubeSubmissionsError.message },
+      {
+        err: cubeSubmissionsError.message,
+      },
       "Failed to load cube submissions",
     );
     throw error(500, "Failed to load cube submissions");

@@ -1,4 +1,4 @@
-import { logError } from "$lib/server/logError";
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
@@ -23,12 +23,13 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .eq("user_id", profile.user_id);
 
   if (urErr) {
-    logError(
-      500,
+    log.error(
+      {
+        err: urErr,
+      },
       "An error occurred while fetching user cube ratings",
-      log,
-      urErr,
     );
+    throw error(500, "An error occurred while fetching user cube ratings");
   }
 
   return {

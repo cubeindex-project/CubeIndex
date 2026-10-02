@@ -1,5 +1,10 @@
 import { sequence } from "@sveltejs/kit/hooks";
-import { type Handle, redirect, type HandleServerError } from "@sveltejs/kit";
+import {
+  error,
+  type Handle,
+  redirect,
+  type HandleServerError,
+} from "@sveltejs/kit";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
@@ -7,18 +12,41 @@ import {
 } from "$env/static/public";
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
-import { logError } from "$lib/server/logError";
 
 const context: Handle = async ({ event, resolve }) => {
-  event.locals.reqId = randomUUID();
+  const reqId = randomUUID();
+  const startedAt = performance.now();
+
+  event.locals.reqId = reqId;
+  event.setHeaders({ "x-request-id": reqId });
+
   const log = createLogger({
     reqId: event.locals.reqId,
-    route: event.route?.id,
+    route: event.route.id,
     method: event.request.method,
     path: new URL(event.request.url).pathname,
   });
   event.locals.log = log;
+  log.debug({ event: "http.request.started" }, "Request started");
+
   const response = await resolve(event);
+
+  const durationMs = Math.round(performance.now() - startedAt);
+
+  const fields = {
+    event: "http.request.completed",
+    status: response.status,
+    durationMs,
+  };
+
+  if (response.status >= 500) {
+    event.locals.log.error(fields, "Request completed with a server error");
+  } else if (response.status >= 400) {
+    event.locals.log.warn(fields, "Request completed with a client error");
+  } else {
+    event.locals.log.debug(fields, "Request completed");
+  }
+
   return response;
 };
 
@@ -59,7 +87,10 @@ const supabase: Handle = async ({ event, resolve }) => {
               event.setHeaders(headers);
             } catch (error) {
               event.locals.log.warn(
-                `An error occured while setting header: ${error}`,
+                {
+                  err: error,
+                },
+                "An error occurred while setting header",
               );
             }
           }
@@ -105,6 +136,12 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
+  if (user) {
+    event.locals.log = event.locals.log.child({
+      actorUserId: user.id,
+    });
+  }
+
   if (!user) {
     if (event.url.pathname.startsWith("/staff")) {
       redirect(303, "/auth/login");
@@ -131,13 +168,16 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (err)
-    logError(
-      500,
+  if (err) {
+    event.locals.log.error(
+      {
+        event: "auth.profile.load_failed",
+        err,
+      },
       "An error occurred while fetching your profile",
-      event.locals.log,
-      err,
     );
+    throw error(500, "An error occurred while fetching your profile");
+  }
 
   if (
     (!profile || !profile.onboarded) &&
@@ -165,9 +205,36 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 export const handle: Handle = sequence(context, supabase, authGuard);
 
-export const handleError: HandleServerError = ({ error: err, event }) => {
+const errorMessages: Record<number, string> = {
+  400: "The request could not be understood.",
+  401: "You need to sign in to continue.",
+  403: "You do not have permission to access this resource.",
+  404: "This page does not exist.",
+  405: "This request method is not allowed.",
+  408: "The request timed out. Please try again.",
+  409: "The request conflicts with the current state of this resource.",
+  422: "The submitted data could not be processed.",
+  429: "Too many requests. Please try again later.",
+  500: "Something went wrong on our end.",
+  501: "This feature is not implemented.",
+  502: "The server received an invalid response.",
+  503: "The service is temporarily unavailable. Please try again later.",
+  504: "The server took too long to respond. Please try again later.",
+};
+
+export const handleError: HandleServerError = ({
+  error: err,
+  event,
+  status,
+}) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
-  log.error({ err: errorToLog }, "Unhandled error");
-  return { message: "Something went wrong", reqId: event.locals.reqId };
+  log.error(
+    { event: "http.request.unhandled_error", err: errorToLog, status },
+    "Unhandled error",
+  );
+  return {
+    message: errorMessages[status] ?? "Something went wrong",
+    reqId: event.locals.reqId,
+  };
 };

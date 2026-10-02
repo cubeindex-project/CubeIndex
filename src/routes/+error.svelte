@@ -1,25 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
   import type { ResolvedPathname } from "$app/types";
-
-  // DVD‐logo bouncing cube state
-  let cubeX = $state(50);
-  let cubeY = $state(50);
-  let velX = 0.8;
-  let velY = 0.6;
-  let rafId: number;
-
-  function bounce() {
-    cubeX += velX;
-    cubeY += velY;
-    if (cubeX <= 0 || cubeX >= 100) velX = -velX;
-    if (cubeY <= 0 || cubeY >= 100) velY = -velY;
-    cubeX = Math.min(100, Math.max(0, cubeX));
-    cubeY = Math.min(100, Math.max(0, cubeY));
-    rafId = requestAnimationFrame(bounce);
-  }
 
   function getReportURL(): ResolvedPathname {
     const searchParams = new URLSearchParams({
@@ -30,26 +12,24 @@
 
     return resolve(`/report?${searchParams.toString()}`);
   }
-
-  onMount(() => {
-    rafId = requestAnimationFrame(bounce);
-    return () => {
-      cancelAnimationFrame(rafId);
-    };
-  });
 </script>
 
 <section
   class="relative flex min-h-screen flex-col items-center justify-center px-6 text-center grid-bg overflow-hidden"
 >
   <div class="relative z-10">
-    <h1
-      class="font-clash text-[6rem] sm:text-[8rem] font-black text-primary drop-shadow-[0_0_40px_rgba(59,130,246,0.6)] animate-pulse"
-    >
+    <h1 class="font-clash text-[6rem] sm:text-[8rem] font-black text-primary">
       {page.status}
     </h1>
-    <p class="mb-6 text-xl font-medium sm:text-2xl">
-      <strong>{page.error?.message ?? "Something went wrong!"}</strong>
+    <p class="flex flex-col items-center mb-6">
+      <span class="text-xl font-medium sm:text-2xl">
+        {page.error?.message ?? "Something went wrong!"}
+      </span>
+      {#if page.error?.reqId}
+        <span>
+          Request ID: {page.error.reqId}
+        </span>
+      {/if}
     </p>
   </div>
 
@@ -66,29 +46,4 @@
       🐞 Report the Bug
     </a>
   </div>
-
-  <!-- Bouncing Cube -->
-  <img
-    src="/images/legendary-cube.webp"
-    alt="Legendary Cube"
-    class="w-20 sm:w-24 fixed z-30 pointer-events-none"
-    style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
-  />
 </section>
-
-<style>
-  .grid-bg::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      45deg,
-      rgba(59, 130, 246, 0.3),
-      rgba(59, 130, 246, 0.3) 2px,
-      transparent 2px,
-      transparent 40px
-    );
-    z-index: 0;
-    opacity: 0.5;
-  }
-</style>

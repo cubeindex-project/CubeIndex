@@ -1,7 +1,9 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ locals: { supabase, user } }) => {
+export const GET: RequestHandler = async ({
+  locals: { supabase, user, log },
+}) => {
   if (!user) {
     return json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
@@ -14,6 +16,7 @@ export const GET: RequestHandler = async ({ locals: { supabase, user } }) => {
     .order("created_at", { ascending: false });
 
   if (error) {
+    log.error({ err: error, userID: user.id }, "Failed to load notifications");
     return json(
       {
         success: false,

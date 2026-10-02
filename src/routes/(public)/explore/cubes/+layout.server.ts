@@ -1,4 +1,4 @@
-import { logError } from "$lib/server/logError";
+import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 
 export const load = (async ({ locals: { log, supabase } }) => {
@@ -8,7 +8,8 @@ export const load = (async ({ locals: { log, supabase } }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    return logError(500, "Failed to load vendors", log, err);
+    log.error({ err }, "Failed to load vendors");
+    throw error(500, "Failed to load vendors");
   }
 
   return {

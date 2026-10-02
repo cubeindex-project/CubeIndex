@@ -1,5 +1,5 @@
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals }) => {
   const { data: reports, error: err } = await locals.supabase
@@ -7,7 +7,8 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (err) {
-    return logError(500, "Unable to load reports", locals.log, err);
+    locals.log.error({ err }, "Unable to load reports");
+    throw error(500, "Unable to load reports");
   }
 
   const { data: profiles, error: pErr } = await locals.supabase
@@ -15,7 +16,8 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (pErr) {
-    return logError(500, "Unable to load profiles", locals.log, pErr);
+    locals.log.error({ err: pErr }, "Unable to load profiles");
+    throw error(500, "Unable to load profiles");
   }
 
   const { data: user_cube_ratings, error: ucrErr } = await locals.supabase
@@ -23,12 +25,8 @@ export const load = (async ({ locals }) => {
     .select("*");
 
   if (ucrErr) {
-    return logError(
-      500,
-      "Unable to load user cube ratings",
-      locals.log,
-      ucrErr,
-    );
+    locals.log.error({ err: ucrErr }, "Unable to load user cube ratings");
+    throw error(500, "Unable to load user cube ratings");
   }
 
   return { reports, profiles, user_cube_ratings };

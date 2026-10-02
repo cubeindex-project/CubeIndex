@@ -3,7 +3,6 @@ import { cleanLink } from "$lib/utils/linkCleaner";
 import { StatusError } from "$lib/errors/StatusError";
 import { camelToSnakeCase } from "$lib/utils/camelToSnakeCase";
 import { createCubeSubmissionPayload } from "$lib/utils/submissions/cube/createCubeSubmissionPayload";
-import type { AppLogger } from "$lib/server/logger";
 import type { Infer } from "sveltekit-superforms";
 
 /**
@@ -16,7 +15,7 @@ import type { Infer } from "sveltekit-superforms";
 export async function updateCube(
   data: Infer<CubeFormSchema>,
   supabase: App.Locals["supabase"],
-  log: AppLogger,
+  log: App.Locals["log"],
   targetCubeID: number,
 ): Promise<void> {
   const cube = await createCubeSubmissionPayload(data, supabase, targetCubeID);
@@ -38,6 +37,16 @@ export async function updateCube(
     price: vendorLink.price,
   }));
 
+  log.debug(
+    {
+      event: "cube.update.persist_requested",
+      cubeID: targetCubeID,
+      featureCount: featureCodes.length,
+      vendorLinkCount: vendorLinks.length,
+    },
+    "Cube update persistence requested",
+  );
+
   const { error } = await supabase.rpc("update_cube", {
     p_cube_id: targetCubeID,
     p_cube: cube,
@@ -48,6 +57,8 @@ export async function updateCube(
   if (error) {
     log.error(
       {
+        event: "cube.update.persist_failed",
+        cubeID: targetCubeID,
         err: error,
         databaseError: {
           message: error.message,
@@ -66,4 +77,14 @@ export async function updateCube(
         : "An error occurred while saving the cube",
     );
   }
+
+  log.info(
+    {
+      event: "cube.updated",
+      cubeID: targetCubeID,
+      featureCount: featureCodes.length,
+      vendorLinkCount: vendorLinks.length,
+    },
+    "Cube updated",
+  );
 }

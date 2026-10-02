@@ -71,10 +71,15 @@ export const GET = async ({ params, locals }) => {
     .eq("username", username)
     .maybeSingle();
 
-  if (error)
+  if (error) {
+    locals.log.error(
+      { err: error, username },
+      "Failed to load profile for userbar image",
+    );
     return new Response(`Unable to load profile: ${error.message}`, {
       status: 500,
     });
+  }
 
   if (!profile) return new Response("Profile not found", { status: 404 });
 

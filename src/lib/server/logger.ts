@@ -1,17 +1,22 @@
-import { NODE_ENV } from "$env/static/private";
+import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
 import { env } from "$env/dynamic/private";
-import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
+import pino, { stdTimeFunctions, type LoggerOptions } from "pino";
+import axiomTransport from "@axiomhq/pino";
 
-const isProduction =
-  (NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() === "production";
+const isProduction = NODE_ENV.toLowerCase() === "production";
 
-const level = env.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
+const level = LOG_LEVEL.toLowerCase();
+
+if (isProduction && (!env.AXIOM_DATASET || !env.AXIOM_TOKEN)) {
+  throw new Error(
+    "AXIOM_DATASET and AXIOM_TOKEN must be configured in production.",
+  );
+}
 
 const baseBindings: Record<string, string> = { app: "cubeindex" };
-const currentEnv = NODE_ENV ?? process.env.NODE_ENV;
+const currentEnv = NODE_ENV;
 if (currentEnv) baseBindings.env = currentEnv;
 
-// Base options shared in all envs
 const baseOptions: LoggerOptions = {
   level,
   base: baseBindings,
@@ -21,18 +26,32 @@ const baseOptions: LoggerOptions = {
       return { level: label };
     },
   },
-  errorKey: "error",
-  messageKey: "message",
+  errorKey: "err",
+  messageKey: "msg",
   redact: {
-    paths: ["*.token", "*.password", "req.headers.authorization"],
+    paths: [
+      "*.token",
+      "*.access_token",
+      "*.refresh_token",
+      "*.password",
+      "*.authorization",
+      "*.cookie",
+      "req.headers.authorization",
+      "req.headers.cookie",
+    ],
     remove: true,
   },
 };
 
-// Only attach pretty transport outside production
-const options: LoggerOptions = isProduction
-  ? baseOptions
-  : {
+export const logger = isProduction
+  ? pino(
+      baseOptions,
+      await axiomTransport({
+        dataset: process.env.AXIOM_DATASET!,
+        token: process.env.AXIOM_TOKEN!,
+      }),
+    )
+  : pino({
       ...baseOptions,
       transport: {
         target: "pino-pretty",
@@ -41,10 +60,7 @@ const options: LoggerOptions = isProduction
           translateTime: "SYS:standard",
         },
       },
-    };
-
-export const logger = pino(options);
-export type AppLogger = typeof logger;
+    });
 
 export const createLogger = (bindings?: Record<string, unknown>) =>
   bindings ? logger.child(bindings) : logger;

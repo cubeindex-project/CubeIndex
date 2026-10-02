@@ -1,5 +1,4 @@
 import type { LayoutServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 import { dev } from "$app/environment";
 import type { Tables } from "$lib/types/database.types";
 
@@ -19,12 +18,11 @@ export const load: LayoutServerLoad = async ({
       .single();
 
     if (err) {
-      logError(
-        Number(err.code),
+      log.error(
+        {
+          err,
+        },
         "Error while retrieving profile in layout",
-        log,
-        err,
-        false,
       );
     }
 

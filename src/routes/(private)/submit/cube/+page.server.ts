@@ -38,6 +38,15 @@ export const actions: Actions = {
       });
     }
 
+    log.debug(
+      {
+        event: "cube.submission.requested",
+        featureCount: Object.values(form.data.features).filter(Boolean).length,
+        vendorLinkCount: form.data.vendorLinks.length,
+      },
+      "Cube submission requested",
+    );
+
     try {
       await submitCube(form.data, supabase, log);
     } catch (cause) {
@@ -47,6 +56,8 @@ export const actions: Actions = {
       }
       throw cause;
     }
+
+    log.info({ event: "cube.submission.created" }, "Cube submitted for review");
 
     return message(
       form,

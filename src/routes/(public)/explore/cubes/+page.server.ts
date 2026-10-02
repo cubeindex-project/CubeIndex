@@ -1,5 +1,5 @@
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({
   locals: { supabase, log },
@@ -11,7 +11,8 @@ export const load: PageServerLoad = async ({
     .select("*");
 
   if (err) {
-    return logError(500, "Failed to load cubes", log, err);
+    log.error({ err }, "Failed to load cubes");
+    throw error(500, "Failed to load cubes");
   }
 
   const jsonLDItems = cubes

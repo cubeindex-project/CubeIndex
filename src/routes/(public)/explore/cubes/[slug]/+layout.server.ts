@@ -1,4 +1,3 @@
-import { logError } from "$lib/server/logError";
 import { formatPartialDate } from "$lib/utils/formatPartialDate";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
@@ -14,7 +13,9 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
 
   if (cubeErr) {
     log.error(
-      { err: cubeErr },
+      {
+        err: cubeErr,
+      },
       "An error occurred while fetching the cube data",
     );
     throw error(500, "An error occurred while fetching the cube data");
@@ -51,14 +52,15 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
   ]);
 
   if (sameSeriesRes.error || relatedRes.error || trimsRes.error) {
-    return logError(
-      500,
+    log.error(
+      {
+        err: new Error("", {
+          cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
+        }),
+      },
       "Unable to load related cube data",
-      log,
-      new Error("", {
-        cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
-      }),
     );
+    throw error(500, "Unable to load related cube data");
   }
 
   const { data: cube_vendor_links, error: cvrErr } = await supabase
@@ -68,7 +70,8 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
     .eq("is_dead", false);
 
   if (cvrErr) {
-    return logError(500, "Unable to load vendor links", log, cvrErr);
+    log.error({ err: cvrErr }, "Unable to load vendor links");
+    throw error(500, "Unable to load vendor links");
   }
 
   const title = `${cube.name} - CubeIndex`;

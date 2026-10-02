@@ -51,6 +51,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
+    "@axiomhq/pino": "^2.0.0",
     "@mdit/plugin-alert": "^2.0.0",
     "@mdit/plugin-emoji": "^1.2.0",
     "@mdit/plugin-footnote": "^1.1.0",

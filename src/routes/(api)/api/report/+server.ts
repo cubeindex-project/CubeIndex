@@ -3,7 +3,7 @@ import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
-  locals: { user, supabase },
+  locals: { user, supabase, log },
   request,
 }) => {
   if (!user)
@@ -47,7 +47,11 @@ export const POST: RequestHandler = async ({
 
   const { error: err } = await supabase.from("reports").insert([payload]);
 
-  if (err)
+  if (err) {
+    log.error(
+      { err, reportType: report_type, reporterUserID: user.id },
+      "Failed to create report",
+    );
     return json(
       {
         success: false,
@@ -55,6 +59,11 @@ export const POST: RequestHandler = async ({
       },
       { status: 500 },
     );
+  }
 
+  log.info(
+    { event: "report.created", reportType: report_type, reportedID: reported },
+    "Report created",
+  );
   return json({ success: true });
 };

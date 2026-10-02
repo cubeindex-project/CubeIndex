@@ -14,11 +14,16 @@ export const GET = async ({ params, locals }) => {
     .eq("slug", cubeName)
     .single();
 
-  if (cErr)
+  if (cErr) {
+    locals.log.error(
+      { err: cErr, cubeSlug: cubeName },
+      "Failed to load cube for OG image",
+    );
     return new Response(
       "An error occurred while fetching the cube: " + cErr.message,
       { status: 404 },
     );
+  }
 
   const [
     { error: urErr, count: ratingCount },
@@ -39,22 +44,37 @@ export const GET = async ({ params, locals }) => {
       .eq("cube_id", cube.id),
   ]);
 
-  if (urErr)
+  if (urErr) {
+    locals.log.error(
+      { err: urErr, cubeSlug: cubeName },
+      "Failed to count cube ratings for OG image",
+    );
     return new Response(
       "An error occurred while fetching user ratings count: " + urErr.message,
       { status: 404 },
     );
-  if (cvlErr)
+  }
+  if (cvlErr) {
+    locals.log.error(
+      { err: cvlErr, cubeSlug: cubeName },
+      "Failed to count cube vendor links for OG image",
+    );
     return new Response(
       "An error occurred while fetching the cube vendors count: " +
         cvlErr.message,
       { status: 404 },
     );
-  if (ucErr)
+  }
+  if (ucErr) {
+    locals.log.error(
+      { err: ucErr, cubeSlug: cubeName },
+      "Failed to count cube owners for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user cubes count: " + ucErr.message,
       { status: 404 },
     );
+  }
 
   // Load local font
   const clashFontPath = join(

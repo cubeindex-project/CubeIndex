@@ -11,7 +11,7 @@ type Body = Partial<BodySingle & BodyMany>;
 
 export const POST: RequestHandler = async ({
   request,
-  locals: { supabase, user },
+  locals: { supabase, user, log },
 }) => {
   if (!user) {
     return json({ success: false, error: "Unauthorized" }, { status: 401 });
@@ -55,8 +55,20 @@ export const POST: RequestHandler = async ({
     .select("notification_id"); // return affected IDs (optional)
 
   if (error) {
+    log.error(
+      { err: error, userID: user.id, notificationCount: ids.length },
+      "Failed to mark notifications as read",
+    );
     return json({ success: false, error: error.message }, { status: 500 });
   }
 
+  log.info(
+    {
+      event: "notification.marked_read",
+      requestedNotificationCount: ids.length,
+      updatedNotificationCount: data?.length ?? 0,
+    },
+    "Notifications marked as read",
+  );
   return json({ success: true, updated: data?.length ?? 0 }, { status: 200 });
 };

@@ -1,10 +1,7 @@
-import type { PageLoad } from "./$types";
-import { clientLogError } from "$lib/logger/clientLogError";
-import { clientLogger } from "$lib/logger/client";
+import { error } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ setHeaders, parent }) => {
-  const { supabase } = await parent();
-
+export const load = (async ({ setHeaders, locals: { log, supabase } }) => {
   const { data: profiles, error: err } = await supabase
     .from("v_detailed_profiles")
     .select("*")
@@ -12,7 +9,8 @@ export const load = (async ({ setHeaders, parent }) => {
     .order("id", { ascending: true });
 
   if (err) {
-    return clientLogError("Unable to load user profiles", clientLogger, err);
+    log.error({ err }, "Unable to load user profiles");
+    throw error(500, "Unable to load user profiles");
   }
 
   setHeaders({
@@ -27,4 +25,4 @@ export const load = (async ({ setHeaders, parent }) => {
         "Discover cubers on CubeIndex. Browse profiles, search by username, and explore collections, reviews, and activity to find people to follow and learn from.",
     },
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

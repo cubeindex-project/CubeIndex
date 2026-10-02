@@ -22,11 +22,20 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     },
   ]);
 
-  if (err)
+  if (err) {
+    locals.log.error(
+      { err, followingUserID: following_id, followerUserID: locals.user?.id },
+      "Failed to follow user",
+    );
     return json(
       { success: false, error: "An error occurred: " + err.message },
       { status: 500 },
     );
+  }
 
+  locals.log.info(
+    { event: "social.follow.created", followingUserID: following_id },
+    "User followed",
+  );
   return json({ success: true });
 };

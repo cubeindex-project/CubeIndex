@@ -1,5 +1,5 @@
+import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 import { removeMarkdown } from "$lib/utils/removeMarkdown";
 
 export const load = (async ({
@@ -16,16 +16,18 @@ export const load = (async ({
     .maybeSingle();
 
   if (err) {
-    return logError(500, "Unable to load profile", log, err);
+    log.error({ err }, "Unable to load profile");
+    throw error(500, "Unable to load profile");
   }
 
   if (!profile) {
-    return logError(
-      404,
+    log.error(
+      {
+        err: new Error(`Profile "${username}" not found`),
+      },
       "User not found",
-      log,
-      new Error(`Profile "${username}" not found`),
     );
+    throw error(404, "User not found");
   }
 
   const canViewProfile = !profile.private || user?.id === profile.user_id;
@@ -40,7 +42,8 @@ export const load = (async ({
       .eq("following_id", profile.user_id);
 
     if (followErr) {
-      return logError(500, "Unable to check follow status", log, followErr);
+      log.error({ err: followErr }, "Unable to check follow status");
+      throw error(500, "Unable to check follow status");
     }
 
     isFollowing = data.length !== 1;

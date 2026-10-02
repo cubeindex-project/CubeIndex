@@ -16,11 +16,22 @@ export const POST: RequestHandler = async ({
   try {
     body = await request.json();
   } catch {
+    log.warn(
+      { event: "collection.cube.invalid_json" },
+      "Collection cube request contained invalid JSON",
+    );
     return json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = cubeCollectionUpsertSchema.safeParse(body);
   if (!parsedPayload.success) {
+    log.warn(
+      {
+        event: "collection.cube.validation_failed",
+        issueCount: parsedPayload.error.issues.length,
+      },
+      "Collection cube request failed validation",
+    );
     return json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
@@ -28,6 +39,17 @@ export const POST: RequestHandler = async ({
   }
 
   const { collection_id, ...cubeData } = parsedPayload.data;
+  const operation = collection_id === undefined ? "create" : "update";
+  const operationLog = log.child({
+    cubeID: cubeData.cube_id,
+    collectionID: collection_id,
+    operation,
+  });
+
+  operationLog.debug(
+    { event: "collection.cube.save_requested" },
+    "Collection cube save requested",
+  );
 
   if (collection_id === undefined) {
     const payload: TablesInsert<"user_cubes"> = {
@@ -40,15 +62,23 @@ export const POST: RequestHandler = async ({
       .insert(payload);
 
     if (userCubesErr) {
-      log.error(
-        { err: userCubesErr },
-        "An error occorred while adding cube to collection",
+      operationLog.error(
+        {
+          event: "collection.cube.add_failed",
+          err: userCubesErr,
+        },
+        "An error occurred while adding cube to collection",
       );
       return json(
         { error: "An error occorred while adding cube to collection" },
         { status: 500 },
       );
     }
+
+    operationLog.info(
+      { event: "collection.cube.added" },
+      "Cube added to collection",
+    );
   } else {
     const payload: TablesUpdate<"user_cubes"> = cubeData;
 
@@ -60,9 +90,12 @@ export const POST: RequestHandler = async ({
       .select("id");
 
     if (userCubesErr) {
-      log.error(
-        { err: userCubesErr },
-        "An error occorred while editing cube in collection",
+      operationLog.error(
+        {
+          event: "collection.cube.update_failed",
+          err: userCubesErr,
+        },
+        "An error occurred while editing cube in collection",
       );
       return json(
         { error: "An error occurred while editing cube in collection" },
@@ -71,8 +104,17 @@ export const POST: RequestHandler = async ({
     }
 
     if (!data || data.length === 0) {
+      operationLog.warn(
+        { event: "collection.cube.not_found" },
+        "Collection cube entry was not found",
+      );
       return json({ error: "Collection entry not found." }, { status: 404 });
     }
+
+    operationLog.info(
+      { event: "collection.cube.updated" },
+      "Cube collection entry updated",
+    );
   }
 
   return new Response(null, { status: 204 });

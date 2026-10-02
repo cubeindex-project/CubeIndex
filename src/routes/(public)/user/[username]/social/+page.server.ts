@@ -1,4 +1,4 @@
-import { logError } from "$lib/server/logError";
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
@@ -32,10 +32,12 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   ]);
 
   if (followingErr) {
-    return logError(500, "Unable to load following list", log, followingErr);
+    log.error({ err: followingErr }, "Unable to load following list");
+    throw error(500, "Unable to load following list");
   }
   if (followedErr) {
-    return logError(500, "Unable to load follower list", log, followedErr);
+    log.error({ err: followedErr }, "Unable to load follower list");
+    throw error(500, "Unable to load follower list");
   }
 
   const following = (followingId ?? [])

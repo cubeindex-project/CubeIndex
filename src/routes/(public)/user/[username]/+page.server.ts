@@ -1,5 +1,5 @@
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
   const { profile, meta, canViewProfile } = await parent();
@@ -32,10 +32,12 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
   ]);
 
   if (userCubesError) {
-    return logError(500, "Unable to load user cubes", log, userCubesError);
+    log.error({ err: userCubesError }, "Unable to load user cubes");
+    throw error(500, "Unable to load user cubes");
   }
   if (userRatingsError) {
-    return logError(500, "Unable to load user ratings", log, userRatingsError);
+    log.error({ err: userRatingsError }, "Unable to load user ratings");
+    throw error(500, "Unable to load user ratings");
   }
 
   const { data: vendors, error: err } = await supabase
@@ -44,7 +46,8 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .order("name", { ascending: true });
 
   if (err) {
-    return logError(500, "Failed to load vendors", log, err);
+    log.error({ err }, "Failed to load vendors");
+    throw error(500, "Failed to load vendors");
   }
 
   return {

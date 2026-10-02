@@ -6,10 +6,10 @@ import {
 } from "sveltekit-superforms";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
-import { fail, redirect } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
-import { logError } from "$lib/server/logError";
+
 import type { TablesUpdate } from "$lib/types/database.types";
 
 const profileSchema = z.object({
@@ -51,7 +51,8 @@ export const load = (async ({ locals: { user, supabase, log } }) => {
     .single();
 
   if (err) {
-    return logError(500, "Unable to load profile settings", log, err);
+    log.error({ err }, "Unable to load profile settings");
+    throw error(500, "Unable to load profile settings");
   }
 
   const profileForm = await superValidate(
@@ -225,7 +226,8 @@ export const actions: Actions = {
       .eq("user_id", user?.id);
 
     if (err) {
-      return logError(500, "Failed to update profile", log, err);
+      log.error({ err }, "Failed to update profile");
+      throw error(500, "Failed to update profile");
     }
 
     // 4) Success: redirect back or return success data
@@ -265,7 +267,8 @@ export const actions: Actions = {
       .eq("user_id", user?.id);
 
     if (err) {
-      return logError(500, "Failed to update social links", log, err);
+      log.error({ err }, "Failed to update social links");
+      throw error(500, "Failed to update social links");
     }
 
     // 4) Success: redirect back or return success data
@@ -300,7 +303,8 @@ export const actions: Actions = {
     );
 
     if (err) {
-      return logError(500, "Failed to update password", log, err);
+      log.error({ err }, "Failed to update password");
+      throw error(500, "Failed to update password");
     }
 
     if (passUpdateData === "incorrect")

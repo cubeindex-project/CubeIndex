@@ -2,7 +2,7 @@ import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
-import { logError } from "$lib/server/logError";
+
 import { cubeFormSchema } from "$lib/schemas/cubeForm.js";
 import { getPartialDate } from "$lib/utils/getPartialDate.js";
 import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions.js";
@@ -22,16 +22,18 @@ export const load: PageServerLoad = async ({
     .maybeSingle();
 
   if (cubeErr) {
-    return logError(500, "Unable to load cubes", log, cubeErr);
+    log.error({ err: cubeErr }, "Unable to load cubes");
+    throw error(500, "Unable to load cubes");
   }
 
   if (!cube) {
-    return logError(
-      500,
+    log.error(
+      {
+        err: new Error("No cube was found"),
+      },
       "This cube doesn't exist",
-      log,
-      new Error("No cube was found"),
     );
+    throw error(500, "This cube doesn't exist");
   }
 
   const [
@@ -43,11 +45,14 @@ export const load: PageServerLoad = async ({
   ]);
 
   if (vlError) {
-    return logError(500, "Failed to load vendor links", log, vlError);
+    log.error({ err: vlError }, "Failed to load vendor links");
+    throw error(500, "Failed to load vendor links");
   }
   if (cubeFeaturesErr) {
     log.error(
-      { err: cubeFeaturesErr.message },
+      {
+        err: cubeFeaturesErr.message,
+      },
       "Failed to fetch the current cube features",
     );
     throw error(500, "Failed to fetch the current cube features");
@@ -134,6 +139,16 @@ export const actions: Actions = {
     if (!cube) {
       return setError(form, "Cube not found", { status: 400 });
     }
+
+    log.debug(
+      {
+        event: "cube.update.requested",
+        cubeID: cube.id,
+        featureCount: Object.values(form.data.features).filter(Boolean).length,
+        vendorLinkCount: form.data.vendorLinks.length,
+      },
+      "Cube update requested",
+    );
 
     try {
       await updateCube(form.data, supabase, log, cube.id);

@@ -3,7 +3,6 @@ import { cleanLink } from "$lib/utils/linkCleaner";
 import { StatusError } from "$lib/errors/StatusError";
 import { camelToSnakeCase } from "$lib/utils/camelToSnakeCase";
 import { createCubeSubmissionPayload } from "$lib/utils/submissions/cube/createCubeSubmissionPayload";
-import type { AppLogger } from "$lib/server/logger";
 import type { Infer } from "sveltekit-superforms";
 
 /** Saves every part of a cube form in one database transaction.
@@ -15,7 +14,7 @@ import type { Infer } from "sveltekit-superforms";
 export async function submitCube(
   data: Infer<CubeFormSchema>,
   supabase: App.Locals["supabase"],
-  log: AppLogger,
+  log: App.Locals["log"],
   targetCubeID?: number,
 ): Promise<void> {
   const cube = await createCubeSubmissionPayload(data, supabase, targetCubeID);
@@ -37,6 +36,16 @@ export async function submitCube(
     price: vendorLink.price,
   }));
 
+  log.debug(
+    {
+      event: "cube.submission.persist_requested",
+      featureCount: featureCodes.length,
+      vendorLinkCount: vendorLinks.length,
+      operation: targetCubeID ? "update" : "create",
+    },
+    "Cube submission persistence requested",
+  );
+
   const { error } = await supabase.rpc("submit_cube", {
     p_operation: targetCubeID ? "update" : "create",
     p_submitter_note: data.submitterNote,
@@ -48,12 +57,8 @@ export async function submitCube(
   if (error) {
     log.error(
       {
+        event: "cube.submission.persist_failed",
         err: error,
-        databaseError: {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-        },
       },
       "Failed to submit cube to database",
     );
@@ -66,4 +71,14 @@ export async function submitCube(
         : "An error occurred while saving the cube",
     );
   }
+
+  log.info(
+    {
+      event: "cube.submission.persisted",
+      featureCount: featureCodes.length,
+      vendorLinkCount: vendorLinks.length,
+      operation: targetCubeID ? "update" : "create",
+    },
+    "Cube submission persisted",
+  );
 }

@@ -83,11 +83,11 @@ export const POST: RequestHandler = async ({
             response: error.response?.data,
           },
         },
-        "An error ocurred while creating GitHub issue",
+        "An error occurred while creating GitHub issue",
       );
 
       return json(
-        { error: "An error ocurred while creating GitHub issue" },
+        { error: "An error occurred while creating GitHub issue" },
         {
           status:
             error.status >= 400 && error.status < 600 ? error.status : 502,

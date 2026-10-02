@@ -48,8 +48,15 @@
     >
       {page.status}
     </h1>
-    <p class="mb-6 text-xl font-medium sm:text-2xl">
-      <strong>{page.error?.message ?? "Something went wrong!"}</strong>
+    <p class="flex flex-col items-center mb-6">
+      <span class="text-xl font-medium sm:text-2xl">
+        {page.error?.message ?? "Something went wrong!"}
+      </span>
+      {#if page.error?.reqId}
+        <span>
+          Request ID: {page.error.reqId}
+        </span>
+      {/if}
     </p>
   </div>
 
@@ -68,12 +75,12 @@
   </div>
 
   <!-- Bouncing Cube -->
-  <img
+  <!-- <img
     src="/images/legendary-cube.webp"
     alt="Legendary Cube"
     class="w-20 sm:w-24 fixed z-30 pointer-events-none"
     style="top: {cubeY}%; left: {cubeX}%; transform: translate(-50%, -50%);"
-  />
+  /> -->
 </section>
 
 <style>

@@ -18,14 +18,14 @@ export const bugReportSchema = z.object({
   browser: z.string(),
   imageURL: z.string(),
   extra: z.string(),
-  ...additionalInfoSchema
+  ...additionalInfoSchema,
 });
 
 export const featureRequestSchema = z.object({
   title: z.string(),
   description: z.string(),
   extra: z.string(),
-  ...additionalInfoSchema
+  ...additionalInfoSchema,
 });
 
 export type BugReportSchema = z.input<typeof bugReportSchema>;

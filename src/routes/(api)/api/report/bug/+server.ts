@@ -66,7 +66,7 @@ export const POST: RequestHandler = async ({
       owner: "cubeindex-project",
       repo: "CubeIndex",
       title: payload.title,
-      body: `**Expected behavior**\n${payload.expected}\n\n**Actual behavior**\n${payload.actual}\n\n**To Reproduce**\n${payload.reproductionSteps}\n\n${payload.imageURL ? `**Screenshot**\n![Screenshot URL](&lt;${payload.imageURL}&gt;)\n\n` : ""}**Environment**\n- Affected URL: ${payload.affectedURL}\n- Request ID: ${payload.requestID}\n- Device: ${payload.deviceType}\n- OS: ${payload.os}\n- Browser: ${payload.browser}\n- User agent: ${payload.userAgent}\n\n**Additional context**\n${payload.extra}\n\n${linkedGitHubAccount}${reporterAttribution}`,
+      body: `**Expected behavior**\n${payload.expected}\n\n**Actual behavior**\n${payload.actual}\n\n**To Reproduce**\n${payload.reproductionSteps}\n\n${payload.imageURL ? `**Screenshot**\n![Screenshot URL](<${payload.imageURL}>)\n\n` : ""}**Environment**\n- Affected URL: ${payload.affectedURL}\n- Request ID: ${payload.requestID}\n- Device: ${payload.deviceType}\n- OS: ${payload.os}\n- Browser: ${payload.browser}\n- User agent: ${payload.userAgent}\n\n**Additional context**\n${payload.extra}\n\n${linkedGitHubAccount}${reporterAttribution}`,
       labels: ["bug"],
       headers: {
         "X-GitHub-Api-Version": "2026-03-10",

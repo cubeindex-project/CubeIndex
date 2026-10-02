@@ -67,9 +67,6 @@ export const POST: RequestHandler = async ({
     );
   }
 
-  operationLog.info(
-    { event: "rating.cube.saved" },
-    "Cube rating saved",
-  );
+  operationLog.info({ event: "rating.cube.saved" }, "Cube rating saved");
   return new Response(null, { status: 204 });
 };

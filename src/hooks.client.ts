@@ -7,7 +7,11 @@ export const handleError: HandleClientError = ({ error, event, status }) => {
       : { name: "UnknownError", message: String(error) };
 
   const url = new URL(event.url);
-  console.error("Unhandled client error", { error, status, path: url.pathname });
+  console.error("Unhandled client error", {
+    error,
+    status,
+    path: url.pathname,
+  });
 
   void fetch("/api/log/client-error", {
     method: "POST",

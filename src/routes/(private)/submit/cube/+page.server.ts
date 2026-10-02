@@ -57,10 +57,7 @@ export const actions: Actions = {
       throw cause;
     }
 
-    log.info(
-      { event: "cube.submission.created" },
-      "Cube submitted for review",
-    );
+    log.info({ event: "cube.submission.created" }, "Cube submitted for review");
 
     return message(
       form,

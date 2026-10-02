@@ -110,7 +110,12 @@ export const actions: Actions = {
       if (status === "Approved") {
         await approveSubmission(submissionID, supabase, log);
       } else {
-        await rejectSubmission(submissionID, form.data.staffNote, supabase, log);
+        await rejectSubmission(
+          submissionID,
+          form.data.staffNote,
+          supabase,
+          log,
+        );
       }
     } catch (err) {
       if (err instanceof StatusError) {

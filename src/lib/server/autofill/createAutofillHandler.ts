@@ -28,7 +28,10 @@ export function createAutofillHandler<Result>({
 
     if (!productURL) {
       log.warn(
-        { event: "autofill.request.missing_product_url", autofillEndpoint: endpoint },
+        {
+          event: "autofill.request.missing_product_url",
+          autofillEndpoint: endpoint,
+        },
         "Autofill request did not include a product URL",
       );
       return json(

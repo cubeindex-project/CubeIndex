@@ -2,7 +2,7 @@ import { redirect } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({
-  locals: { supabase, user },
+  locals: { supabase, user, log },
   url,
 }) => {
   if (!user?.email)
@@ -16,10 +16,15 @@ export const GET: RequestHandler = async ({
     options: { emailRedirectTo: `${url.origin}/auth/confirm` },
   });
 
-  if (error)
+  if (error) {
+    log.error(
+      { err: error, userID: user.id },
+      "Failed to resend verification email",
+    );
     return new Response(JSON.stringify({ message: error.message }), {
       status: 500,
     });
+  }
 
   redirect(307, "/");
 };

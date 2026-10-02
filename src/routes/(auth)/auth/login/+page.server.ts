@@ -18,7 +18,7 @@ export const load = (async () => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-  default: async ({ request, locals: { supabase }, url }) => {
+  default: async ({ request, locals: { supabase, log }, url }) => {
     const form = await superValidate(request, zod4(loginSchema));
     if (!form.valid) return fail(400, { form });
 
@@ -45,11 +45,18 @@ export const actions: Actions = {
       password,
     });
 
-    if (err) return fail(500, { form: { ...form, message: err.message } });
-    if (!user)
+    if (err) {
+      log.error({ err }, "Password sign-in failed unexpectedly");
+      return fail(500, { form: { ...form, message: err.message } });
+    }
+    if (!user) {
+      log.error(
+        "Supabase sign-in succeeded without returning a user",
+      );
       return fail(500, {
         form: { ...form, message: "User not returned by Supabase" },
       });
+    }
 
     const { data: profile, error: profileErr } = await supabase
       .from("profiles")
@@ -57,8 +64,13 @@ export const actions: Actions = {
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (profileErr)
+    if (profileErr) {
+      log.error(
+        { err: profileErr, userID: user.id },
+        "Failed to load profile after sign-in",
+      );
       return fail(500, { form: { ...form, message: profileErr.message } });
+    }
 
     if (!profile || !profile.onboarded) {
       redirect(303, "/auth/complete-profile");

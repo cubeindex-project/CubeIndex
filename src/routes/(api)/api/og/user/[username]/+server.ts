@@ -14,11 +14,13 @@ export const GET = async ({ params, locals }) => {
     .eq("username", username)
     .single();
 
-  if (err)
+  if (err) {
+    locals.log.error({ err, username }, "Failed to load profile for OG image");
     return new Response(
       "An error occurred while fetching the profile: " + err.message,
       { status: 404 },
     );
+  }
 
   const [
     { error: ecErr, count: userCubesCount },
@@ -49,35 +51,60 @@ export const GET = async ({ params, locals }) => {
       .eq("following_id", profile.user_id),
   ]);
 
-  if (ecErr)
+  if (ecErr) {
+    locals.log.error(
+      { err: ecErr, username },
+      "Failed to count user cubes for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user cubes count: " + ecErr.message,
       { status: 404 },
     );
-  if (userAchieveError)
+  }
+  if (userAchieveError) {
+    locals.log.error(
+      { err: userAchieveError, username },
+      "Failed to count user achievements for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user achievements count: " +
         userAchieveError.message,
       { status: 404 },
     );
-  if (urErr)
+  }
+  if (urErr) {
+    locals.log.error(
+      { err: urErr, username },
+      "Failed to count user ratings for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user ratings count: " +
         urErr.message,
       { status: 404 },
     );
-  if (followingErr)
+  }
+  if (followingErr) {
+    locals.log.error(
+      { err: followingErr, username },
+      "Failed to count following users for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user following count: " +
         followingErr.message,
       { status: 404 },
     );
-  if (followedErr)
+  }
+  if (followedErr) {
+    locals.log.error(
+      { err: followedErr, username },
+      "Failed to count followers for OG image",
+    );
     return new Response(
       "An error occurred while fetching the user followers count: " +
         followedErr.message,
       { status: 404 },
     );
+  }
 
   // Load local font
   const clashFontPath = join(

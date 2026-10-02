@@ -30,7 +30,7 @@ function normalizeHost(host: string) {
 
 export const GET: RequestHandler = async ({
   url,
-  locals: { safeGetSession },
+  locals: { safeGetSession, log },
 }) => {
   const { session } = await safeGetSession();
   if (!session) {
@@ -97,14 +97,19 @@ export const GET: RequestHandler = async ({
       body: payload,
       signal: controller.signal,
     });
-  } catch {
+  } catch (err) {
     clearTimeout(timeout);
+    log.error({ err, host }, "Autofill service request failed");
     return json({ error: "Autofill service is unreachable." }, { status: 502 });
   } finally {
     clearTimeout(timeout);
   }
 
   if (!res.ok) {
+    log.error(
+      { upstreamStatus: res.status, upstreamStatusText: res.statusText, host },
+      "Autofill service returned an error response",
+    );
     // Try to forward a useful message from the upstream service
     const upstreamText = await res.text().catch(() => "");
     return json(
@@ -119,7 +124,11 @@ export const GET: RequestHandler = async ({
   let autofillData: AutofillResult;
   try {
     autofillData = (await res.json()) as AutofillResult;
-  } catch {
+  } catch (err) {
+    log.error(
+      { err, upstreamStatus: res.status, host },
+      "Autofill service returned invalid JSON",
+    );
     return json(
       { error: "Autofill service returned invalid JSON." },
       { status: 502 },

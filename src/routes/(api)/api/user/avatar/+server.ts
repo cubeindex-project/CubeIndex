@@ -33,7 +33,7 @@ function bad(status: number, message: string) {
   });
 }
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals: { log } }) => {
   try {
     // Must be multipart/form-data
     const form = await request.formData();
@@ -101,6 +101,7 @@ export const POST: RequestHandler = async ({ request }) => {
       },
     });
   } catch (err: unknown) {
+    log.error({ err }, "Avatar image processing failed");
     // If this is running on an edge runtime, sharp will throw here.
     // Also catches any unexpected internal errors.
     const message =

@@ -59,7 +59,7 @@ export const actions: Actions = {
     redirect(303, resolve("/auth/complete-profile"));
   },
 
-  submitSurvey: async ({ request, locals: { supabase, user }, url }) => {
+  submitSurvey: async ({ request, locals: { supabase, user, log }, url }) => {
     const form = await superValidate(request, zod4(surveySchema));
     if (!user) {
       return fail(401, {
@@ -83,6 +83,10 @@ export const actions: Actions = {
     });
 
     if (insErr) {
+      log.error(
+        { err: insErr, userID: user.id },
+        "Failed to save onboarding survey",
+      );
       return fail(500, { surveyForm: { ...form, message: insErr.message } });
     }
 

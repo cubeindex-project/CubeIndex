@@ -1,6 +1,5 @@
 import type { LayoutServerLoad } from "./$types";
-import { redirect } from "@sveltejs/kit";
-import { logError } from "$lib/server/logError";
+import { error, redirect } from "@sveltejs/kit";
 
 export const load = (async ({ locals }) => {
   const { user, supabase, log } = locals;
@@ -13,7 +12,8 @@ export const load = (async ({ locals }) => {
     .single();
 
   if (err) {
-    return logError(500, "Unable to load profile", log, err);
+    log.error({ err, msg: "Unable to load profile" });
+    throw error(500, "Unable to load profile");
   }
 
   if (profile.role !== "Admin" && profile.role !== "Moderator")

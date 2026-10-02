@@ -1,4 +1,4 @@
-import { logError } from "$lib/server/logError";
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ parent, locals: { supabase, log } }) => {
@@ -14,7 +14,8 @@ export const load = (async ({ parent, locals: { supabase, log } }) => {
     .eq("cube_id", cube.id);
 
   if (pvhErr) {
-    return logError(500, "Unable to load price history", log, pvhErr);
+    log.error({ err: pvhErr, msg: "Unable to load price history" });
+    throw error(500, "Unable to load price history");
   }
 
   const cube_vendor_links = raw_cube_vendor_links.sort((a, b) => {

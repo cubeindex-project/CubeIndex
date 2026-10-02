@@ -1,6 +1,5 @@
 import type { RequestHandler } from "./$types";
 import { redirect } from "@sveltejs/kit";
-import { logError } from "$lib/server/logError";
 
 export const GET: RequestHandler = async ({
   url,
@@ -11,29 +10,23 @@ export const GET: RequestHandler = async ({
   const errorDescription = url.searchParams.get("error_description");
   if (error || errorDescription) {
     const errorMessage = errorDescription || error || "An error occurred!";
-    logError(
-      400,
-      errorMessage,
-      log,
-      {
+    log.error({
+      err: {
         error,
         errorCode,
         errorDescription,
       },
-      false,
-    );
+      msg: errorMessage,
+    });
     redirect(303, `/?toast_error=${encodeURIComponent(errorMessage)}`);
   }
 
   const code = url.searchParams.get("code");
   if (!code) {
-    logError(
-      400,
-      "Missing code parameter",
-      log,
-      new Error("Missing code parameter"),
-      false,
-    );
+    log.error({
+      err: new Error("Missing code parameter"),
+      msg: "Missing code parameter",
+    });
     redirect(303, "/?toast_error=Missing+code+parameter");
   }
 
@@ -41,7 +34,7 @@ export const GET: RequestHandler = async ({
     await supabase.auth.exchangeCodeForSession(code);
 
   if (authErr) {
-    logError(500, "Failed to exchange code for session", log, authErr, false);
+    log.error({ err: authErr, msg: "Failed to exchange code for session" });
     redirect(303, "/?toast_error=Failed+to+exchange+code+for+session");
   }
 
@@ -54,18 +47,15 @@ export const GET: RequestHandler = async ({
     .maybeSingle();
 
   if (profileErr) {
-    logError(500, "Failed to retrieve profile", log, profileErr, false);
+    log.error({ err: profileErr, msg: "Failed to retrieve profile" });
     redirect(303, "/?toast_error=Failed+to+retrieve+profile");
   }
 
   if (!existingProfile) {
-    logError(
-      400,
-      "No existing profile was found",
-      log,
-      new Error("No existing profile was found"),
-      false,
-    );
+    log.error({
+      err: new Error("No existing profile was found"),
+      msg: "No existing profile was found",
+    });
     redirect(303, "/?toast_error=No+existing+profile+was+found");
   }
 
@@ -75,7 +65,7 @@ export const GET: RequestHandler = async ({
     .eq("user_id", user.id);
 
   if (updateErr) {
-    logError(500, "Failed to update profile", log, updateErr, false);
+    log.error({ err: updateErr, msg: "Failed to update profile" });
     redirect(303, "/?toast_error=Failed+to+update+profile");
   }
 

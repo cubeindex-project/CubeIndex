@@ -1,5 +1,10 @@
 import { sequence } from "@sveltejs/kit/hooks";
-import { type Handle, redirect, type HandleServerError } from "@sveltejs/kit";
+import {
+  error,
+  type Handle,
+  redirect,
+  type HandleServerError,
+} from "@sveltejs/kit";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
@@ -7,13 +12,12 @@ import {
 } from "$env/static/public";
 import { randomUUID } from "node:crypto";
 import { createLogger } from "$lib/server/logger";
-import { logError } from "$lib/server/logError";
 
 const context: Handle = async ({ event, resolve }) => {
   event.locals.reqId = randomUUID();
   const log = createLogger({
     reqId: event.locals.reqId,
-    route: event.route?.id,
+    route: event.route.id,
     method: event.request.method,
     path: new URL(event.request.url).pathname,
   });
@@ -58,9 +62,10 @@ const supabase: Handle = async ({ event, resolve }) => {
             try {
               event.setHeaders(headers);
             } catch (error) {
-              event.locals.log.warn(
-                `An error occured while setting header: ${error}`,
-              );
+              event.locals.log.warn({
+                err: error,
+                msg: "An error occurred while setting header",
+              });
             }
           }
         },
@@ -131,13 +136,13 @@ const authGuard: Handle = async ({ event, resolve }) => {
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (err)
-    logError(
-      500,
-      "An error occurred while fetching your profile",
-      event.locals.log,
+  if (err) {
+    event.locals.log.error({
       err,
-    );
+      msg: "An error occurred while fetching your profile",
+    });
+    throw error(500, "An error occurred while fetching your profile");
+  }
 
   if (
     (!profile || !profile.onboarded) &&
@@ -168,6 +173,6 @@ export const handle: Handle = sequence(context, supabase, authGuard);
 export const handleError: HandleServerError = ({ error: err, event }) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
-  log.error({ err: errorToLog }, "Unhandled error");
+  log.error({ err: errorToLog, msg: "Unhandled error" });
   return { message: "Something went wrong", reqId: event.locals.reqId };
 };

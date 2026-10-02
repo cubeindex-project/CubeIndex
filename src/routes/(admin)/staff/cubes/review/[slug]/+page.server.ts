@@ -40,7 +40,10 @@ export const load = (async ({ params, locals: { supabase, log } }) => {
     .maybeSingle();
 
   if (cubeError) {
-    log.error({ err: cubeError.message }, "Failed to load cube submission");
+    log.error({
+      err: cubeError.message,
+      msg: "Failed to load cube submission",
+    });
     throw error(500, "Failed to load cube submission");
   }
   if (!cube) throw error(404, "Cube submission not found");
@@ -57,17 +60,17 @@ export const load = (async ({ params, locals: { supabase, log } }) => {
   ]);
 
   if (featuresResult.error) {
-    log.error(
-      { err: featuresResult.error.message },
-      "Failed to load cube submission features",
-    );
+    log.error({
+      err: featuresResult.error.message,
+      msg: "Failed to load cube submission features",
+    });
     throw error(500, "Failed to load cube submission features");
   }
   if (vendorLinksResult.error) {
-    log.error(
-      { err: vendorLinksResult.error.message },
-      "Failed to load cube submission vendor links",
-    );
+    log.error({
+      err: vendorLinksResult.error.message,
+      msg: "Failed to load cube submission vendor links",
+    });
     throw error(500, "Failed to load cube submission vendor links");
   }
 
@@ -105,7 +108,7 @@ export const actions: Actions = {
       }
     } catch (err) {
       if (err instanceof StatusError) {
-        log.error({ err: err.cause }, err.message);
+        log.error({ err: err.cause, msg: err.message });
         return setError(form, err.message, { status: err.status });
       }
       throw err;

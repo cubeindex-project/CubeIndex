@@ -32,7 +32,7 @@ export const POST: RequestHandler = async ({
     .eq("id", parsedPayload.data.rating_id);
 
   if (err) {
-    log.error({ err }, "An error occurred while deleting rating");
+    log.error({ err, msg: "An error occurred while deleting rating" });
     return json(
       { error: "An error occurred while deleting rating" },
       { status: 500 },

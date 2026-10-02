@@ -1,4 +1,3 @@
-import { logError } from "$lib/server/logError";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log } }) => {
@@ -27,35 +26,29 @@ export const load = (async ({ locals: { supabase, log } }) => {
   ]);
 
   if (cubeErr) {
-    logError(500, "Failed to fetch cube", log, cubeErr, false);
+    log.error({ err: cubeErr, msg: "Failed to fetch cube" });
   }
   if (cubeCountErr) {
-    logError(500, "Failed to fetch cube count", log, cubeCountErr, false);
+    log.error({ err: cubeCountErr, msg: "Failed to fetch cube count" });
   }
   if (userCountErr) {
-    logError(500, "Failed to fetch user count", log, userCountErr, false);
+    log.error({ err: userCountErr, msg: "Failed to fetch user count" });
   }
   if (vendorCountErr) {
-    logError(500, "Failed to fetch vendor count", log, vendorCountErr, false);
+    log.error({ err: vendorCountErr, msg: "Failed to fetch vendor count" });
   }
   if (trackedPricesCountErr) {
-    logError(
-      500,
-      "Failed to fetch tracked prices count",
-      log,
-      trackedPricesCountErr,
-      false,
-    );
+    log.error({
+      err: trackedPricesCountErr,
+      msg: "Failed to fetch tracked prices count",
+    });
   }
 
   if (!featuredCube) {
-    logError(
-      400,
-      "Featured cube not found",
-      log,
-      new Error("Featured cube not found"),
-      false,
-    );
+    log.error({
+      err: new Error("Featured cube not found"),
+      msg: "Featured cube not found",
+    });
   }
 
   return {

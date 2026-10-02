@@ -2,7 +2,7 @@ import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
-import { logError } from "$lib/server/logError";
+
 import { cubeFormSchema } from "$lib/schemas/cubeForm.js";
 import { getPartialDate } from "$lib/utils/getPartialDate.js";
 import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions.js";
@@ -22,16 +22,16 @@ export const load: PageServerLoad = async ({
     .maybeSingle();
 
   if (cubeErr) {
-    return logError(500, "Unable to load cubes", log, cubeErr);
+    log.error({ err: cubeErr, msg: "Unable to load cubes" });
+    throw error(500, "Unable to load cubes");
   }
 
   if (!cube) {
-    return logError(
-      500,
-      "This cube doesn't exist",
-      log,
-      new Error("No cube was found"),
-    );
+    log.error({
+      err: new Error("No cube was found"),
+      msg: "This cube doesn't exist",
+    });
+    throw error(500, "This cube doesn't exist");
   }
 
   const [
@@ -43,13 +43,14 @@ export const load: PageServerLoad = async ({
   ]);
 
   if (vlError) {
-    return logError(500, "Failed to load vendor links", log, vlError);
+    log.error({ err: vlError, msg: "Failed to load vendor links" });
+    throw error(500, "Failed to load vendor links");
   }
   if (cubeFeaturesErr) {
-    log.error(
-      { err: cubeFeaturesErr.message },
-      "Failed to fetch the current cube features",
-    );
+    log.error({
+      err: cubeFeaturesErr.message,
+      msg: "Failed to fetch the current cube features",
+    });
     throw error(500, "Failed to fetch the current cube features");
   }
 
@@ -89,7 +90,7 @@ export const load: PageServerLoad = async ({
   try {
     options = await loadCubeFormOptions(supabase);
   } catch (cause) {
-    log.error({ err: cause }, "Failed to load cube form options");
+    log.error({ err: cause, msg: "Failed to load cube form options" });
     throw error(500, "Failed to load cube form options");
   }
 
@@ -127,7 +128,7 @@ export const actions: Actions = {
       .maybeSingle();
 
     if (cubeErr) {
-      log.error({ err: cubeErr }, "Failed to fetch cube");
+      log.error({ err: cubeErr, msg: "Failed to fetch cube" });
       return setError(form, "Failed to fetch cube", { status: 500 });
     }
 
@@ -139,7 +140,7 @@ export const actions: Actions = {
       await updateCube(form.data, supabase, log, cube.id);
     } catch (err) {
       if (err instanceof StatusError) {
-        log.error({ err: err.cause }, err.message);
+        log.error({ err: err.cause, msg: err.message });
         return setError(form, err.message, { status: err.status });
       }
       throw err;

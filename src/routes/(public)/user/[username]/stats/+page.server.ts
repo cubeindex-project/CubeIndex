@@ -1,5 +1,5 @@
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals: { supabase, log }, parent }) => {
   const { profile, meta, canViewProfile } = await parent();
@@ -23,7 +23,8 @@ export const load = (async ({ locals: { supabase, log }, parent }) => {
     .maybeSingle();
 
   if (statsErr) {
-    return logError(500, "Failed to fetch user stats", log, statsErr);
+    log.error({ err: statsErr, msg: "Failed to fetch user stats" });
+    throw error(500, "Failed to fetch user stats");
   }
 
   return {

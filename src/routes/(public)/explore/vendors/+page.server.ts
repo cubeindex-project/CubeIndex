@@ -1,17 +1,15 @@
-import type { PageLoad } from "./$types";
-import { clientLogError } from "$lib/logger/clientLogError";
-import { clientLogger } from "$lib/logger/client";
+import { error } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
-export const load = (async ({ setHeaders, parent }) => {
-  const { supabase } = await parent();
-
+export const load = (async ({ setHeaders, locals: { log, supabase } }) => {
   const { data: vendors, error: vendorsErr } = await supabase
     .from("v_detailed_vendors")
     .select("*")
     .order("name", { ascending: true });
 
   if (vendorsErr) {
-    return clientLogError("Unable to load vendors", clientLogger, vendorsErr);
+    log.error({ err: vendorsErr, msg: "Unable to load vendors" });
+    throw error(500, "Unable to load vendors");
   }
 
   const sortedVendors = vendors.sort((a, b) => {
@@ -34,4 +32,4 @@ export const load = (async ({ setHeaders, parent }) => {
         "Browse vendors on CubeIndex. See each vendor’s location, default currency, and how many users have purchased from them.",
     },
   };
-}) satisfies PageLoad;
+}) satisfies PageServerLoad;

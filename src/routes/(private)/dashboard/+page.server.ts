@@ -1,6 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { redirect } from "@sveltejs/kit";
-import { logError } from "$lib/server/logError";
+import { error, redirect } from "@sveltejs/kit";
 
 export const load = (async ({ locals }) => {
   const { supabase, user, log } = locals;
@@ -13,7 +12,8 @@ export const load = (async ({ locals }) => {
     .single();
 
   if (pErr) {
-    return logError(500, "Unable to load profile", log, pErr);
+    log.error({ err: pErr, msg: "Unable to load profile" });
+    throw error(500, "Unable to load profile");
   }
 
   const { data: cubeSubmissions, error: rsErr } = await supabase
@@ -24,12 +24,11 @@ export const load = (async ({ locals }) => {
     .limit(5);
 
   if (rsErr) {
-    return logError(
-      500,
-      "Failed to load recent submission activity",
-      log,
-      rsErr ?? new Error("Missing recent submission activity data"),
-    );
+    log.error({
+      err: rsErr ?? new Error("Missing recent submission activity data"),
+      msg: "Failed to load recent submission activity",
+    });
+    throw error(500, "Failed to load recent submission activity");
   }
 
   return {

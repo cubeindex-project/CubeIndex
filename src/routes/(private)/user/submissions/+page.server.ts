@@ -1,19 +1,22 @@
-import { redirect } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { logError } from "$lib/server/logError";
 
 export const load = (async ({ locals: { supabase, user, log } }) => {
   if (!user) throw redirect(302, "/auth/login");
 
-  const { data: cubeSubmissions, error } = await supabase
+  const { data: cubeSubmissions, error: submissionsError } = await supabase
     .from("cube_submissions")
     .select("*, ...submissions!inner(*)")
     .eq("submissions.submitted_by_id", user.id)
     .order("created_at", { ascending: false })
     .limit(100);
 
-  if (error) {
-    return logError(500, "Failed to fetch cube submissions", log, error);
+  if (submissionsError) {
+    log.error({
+      err: submissionsError,
+      msg: "Failed to fetch cube submissions",
+    });
+    throw error(500, "Failed to fetch cube submissions");
   }
 
   return {

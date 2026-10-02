@@ -52,7 +52,7 @@ export const actions: Actions = {
       },
     });
     if (err) {
-      log.error(err);
+      log.error({ err, msg: "Failed to create account" });
       return fail(500, { accountForm: { ...form, message: err.message } });
     }
 

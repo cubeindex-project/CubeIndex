@@ -1,4 +1,4 @@
-import { logError } from "$lib/server/logError";
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { log, supabase } }) => {
@@ -6,7 +6,10 @@ export const load = (async ({ locals: { log, supabase } }) => {
     .from("v_detailed_cube_models")
     .select("*");
 
-  if (err) logError(500, "Failed to fetch cubes", log, err.message);
+  if (err) {
+    log.error({ err: err.message, msg: "Failed to fetch cubes" });
+    throw error(500, "Failed to fetch cubes");
+  }
 
   return {
     cubes,

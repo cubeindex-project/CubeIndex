@@ -1,10 +1,9 @@
-import { fail, redirect } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate, setError } from "sveltekit-superforms";
 import { completeProfileSchema } from "$lib/schemas/auth";
 import { addToEmailList } from "$lib/utils/addToEmailList";
-import { logError } from "$lib/server/logError";
 
 export const load: PageServerLoad = async ({
   locals: { user, supabase, log },
@@ -20,7 +19,8 @@ export const load: PageServerLoad = async ({
     .maybeSingle();
 
   if (profileErr) {
-    logError(500, "Failed to fetch error", log, profileErr);
+    log.error({ err: profileErr, msg: "Failed to fetch error" });
+    throw error(500, "Failed to fetch error");
   }
 
   if (profile?.onboarded && profile?.username) {
@@ -63,10 +63,10 @@ export const actions: Actions = {
     }
 
     if (profileUpdateError) {
-      log.error(
-        { error: profileUpdateError },
-        "Failed to update user profile row",
-      );
+      log.error({
+        err: profileUpdateError,
+        msg: "Failed to update user profile row",
+      });
       return fail(500, { form, message: profileUpdateError.message });
     }
 
@@ -75,7 +75,10 @@ export const actions: Actions = {
       display_name,
     );
     if (!addToEmailListResponse.success) {
-      log.warn(`Failed to add user to list: ${addToEmailListResponse.error}`);
+      log.warn({
+        err: addToEmailListResponse.error,
+        msg: "Failed to add user to list",
+      });
     }
 
     redirect(303, "/auth/signup?step=survey");

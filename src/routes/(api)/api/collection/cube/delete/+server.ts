@@ -33,7 +33,10 @@ export const POST: RequestHandler = async ({
     .eq("id", payload.collection_id);
 
   if (err) {
-    log.error({ err }, "An error occorred while deleting cube from collection");
+    log.error({
+      err,
+      msg: "An error occurred while deleting cube from collection",
+    });
     return json(
       { error: "An error occorred while deleting cube from collection" },
       { status: 500 },

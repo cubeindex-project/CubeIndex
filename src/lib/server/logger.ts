@@ -1,17 +1,21 @@
-import { NODE_ENV } from "$env/static/private";
+import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
 import { env } from "$env/dynamic/private";
-import { pino, stdTimeFunctions, type LoggerOptions } from "pino";
+import pino, { stdTimeFunctions, type LoggerOptions } from "pino";
 
-const isProduction =
-  (NODE_ENV ?? process.env.NODE_ENV ?? "").toLowerCase() === "production";
+const isProduction = NODE_ENV.toLowerCase() === "production";
 
-const level = env.LOG_LEVEL?.toLowerCase() ?? (isProduction ? "info" : "debug");
+const level = LOG_LEVEL.toLowerCase();
+
+if (isProduction && (!env.AXIOM_DATASET || !env.AXIOM_TOKEN)) {
+  throw new Error(
+    "AXIOM_DATASET and AXIOM_TOKEN must be configured in production.",
+  );
+}
 
 const baseBindings: Record<string, string> = { app: "cubeindex" };
-const currentEnv = NODE_ENV ?? process.env.NODE_ENV;
+const currentEnv = NODE_ENV;
 if (currentEnv) baseBindings.env = currentEnv;
 
-// Base options shared in all envs
 const baseOptions: LoggerOptions = {
   level,
   base: baseBindings,
@@ -21,17 +25,26 @@ const baseOptions: LoggerOptions = {
       return { level: label };
     },
   },
-  errorKey: "error",
-  messageKey: "message",
+  errorKey: "err",
+  messageKey: "msg",
   redact: {
     paths: ["*.token", "*.password", "req.headers.authorization"],
     remove: true,
   },
 };
 
-// Only attach pretty transport outside production
 const options: LoggerOptions = isProduction
-  ? baseOptions
+  ? {
+      ...baseOptions,
+      transport: {
+        target: "@axiomhq/pino",
+        options: {
+          dataset: env.AXIOM_DATASET,
+          token: env.AXIOM_TOKEN,
+          edge: "us-east-1.aws.edge.axiom.co",
+        },
+      },
+    }
   : {
       ...baseOptions,
       transport: {

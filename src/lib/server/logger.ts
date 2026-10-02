@@ -33,19 +33,19 @@ const baseOptions: LoggerOptions = {
   },
 };
 
-const options: LoggerOptions = isProduction
-  ? {
-      ...baseOptions,
-      transport: {
+export const logger = isProduction
+  ? pino(
+      baseOptions,
+      pino.transport({
         target: "@axiomhq/pino",
         options: {
           dataset: env.AXIOM_DATASET,
           token: env.AXIOM_TOKEN,
           edge: "us-east-1.aws.edge.axiom.co",
         },
-      },
-    }
-  : {
+      }),
+    )
+  : pino({
       ...baseOptions,
       transport: {
         target: "pino-pretty",
@@ -54,9 +54,7 @@ const options: LoggerOptions = isProduction
           translateTime: "SYS:standard",
         },
       },
-    };
-
-export const logger = pino(options);
+    });
 export type AppLogger = typeof logger;
 
 export const createLogger = (bindings?: Record<string, unknown>) =>

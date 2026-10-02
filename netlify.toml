@@ -2,10 +2,6 @@
   publish = "build"
   command = "npm run build"
 
-[functions]
-  node_bundler = "esbuild"
-  external_node_modules = ["@axiomhq/pino"]
-
 [[_redirects]]
   from = "/sitemap.xml"
   to = "/.netlify/functions/server"

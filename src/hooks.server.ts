@@ -135,11 +135,11 @@ const authGuard: Handle = async ({ event, resolve }) => {
   event.locals.session = session;
   event.locals.user = user;
 
-    if (user) {
-      event.locals.log = event.locals.log.child({
-        actorUserId: user.id,
-      });
-    }
+  if (user) {
+    event.locals.log = event.locals.log.child({
+      actorUserId: user.id,
+    });
+  }
 
   if (!user) {
     if (event.url.pathname.startsWith("/staff")) {

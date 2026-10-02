@@ -50,9 +50,7 @@ export const actions: Actions = {
       return fail(500, { form: { ...form, message: err.message } });
     }
     if (!user) {
-      log.error(
-        "Supabase sign-in succeeded without returning a user",
-      );
+      log.error("Supabase sign-in succeeded without returning a user");
       return fail(500, {
         form: { ...form, message: "User not returned by Supabase" },
       });

@@ -59,10 +59,6 @@ export const POST: RequestHandler = async ({
       .eq("user_id", user.id)
       .select("id");
 
-    if (!data || data.length === 0) {
-      return json({ error: "Collection entry not found." }, { status: 404 });
-    }
-
     if (userCubesErr) {
       log.error(
         { err: userCubesErr },
@@ -72,6 +68,10 @@ export const POST: RequestHandler = async ({
         { error: "An error occurred while editing cube in collection" },
         { status: 500 },
       );
+    }
+
+    if (!data || data.length === 0) {
+      return json({ error: "Collection entry not found." }, { status: 404 });
     }
   }
 

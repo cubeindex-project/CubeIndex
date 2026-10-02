@@ -108,9 +108,9 @@ export const actions: Actions = {
 
     try {
       if (status === "Approved") {
-        await approveSubmission(submissionID, supabase);
+        await approveSubmission(submissionID, supabase, log);
       } else {
-        await rejectSubmission(submissionID, form.data.staffNote, supabase);
+        await rejectSubmission(submissionID, form.data.staffNote, supabase, log);
       }
     } catch (err) {
       if (err instanceof StatusError) {

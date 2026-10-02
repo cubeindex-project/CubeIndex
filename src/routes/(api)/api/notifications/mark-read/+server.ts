@@ -62,5 +62,13 @@ export const POST: RequestHandler = async ({
     return json({ success: false, error: error.message }, { status: 500 });
   }
 
+  log.info(
+    {
+      event: "notification.marked_read",
+      requestedNotificationCount: ids.length,
+      updatedNotificationCount: data?.length ?? 0,
+    },
+    "Notifications marked as read",
+  );
   return json({ success: true, updated: data?.length ?? 0 }, { status: 200 });
 };

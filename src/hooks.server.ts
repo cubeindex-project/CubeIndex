@@ -27,6 +27,7 @@ const context: Handle = async ({ event, resolve }) => {
     path: new URL(event.request.url).pathname,
   });
   event.locals.log = log;
+  log.debug({ event: "http.request.started" }, "Request started");
 
   const response = await resolve(event);
 
@@ -170,6 +171,7 @@ const authGuard: Handle = async ({ event, resolve }) => {
   if (err) {
     event.locals.log.error(
       {
+        event: "auth.profile.load_failed",
         err,
       },
       "An error occurred while fetching your profile",
@@ -227,7 +229,10 @@ export const handleError: HandleServerError = ({
 }) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
-  log.error({ err: errorToLog }, "Unhandled error");
+  log.error(
+    { event: "http.request.unhandled_error", err: errorToLog, status },
+    "Unhandled error",
+  );
   return {
     message: errorMessages[status] ?? "Something went wrong",
     reqId: event.locals.reqId,

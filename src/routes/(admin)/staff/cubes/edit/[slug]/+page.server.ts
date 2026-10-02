@@ -140,6 +140,16 @@ export const actions: Actions = {
       return setError(form, "Cube not found", { status: 400 });
     }
 
+    log.debug(
+      {
+        event: "cube.update.requested",
+        cubeID: cube.id,
+        featureCount: Object.values(form.data.features).filter(Boolean).length,
+        vendorLinkCount: form.data.vendorLinks.length,
+      },
+      "Cube update requested",
+    );
+
     try {
       await updateCube(form.data, supabase, log, cube.id);
     } catch (err) {

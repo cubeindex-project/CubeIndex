@@ -33,5 +33,9 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     );
   }
 
+  locals.log.info(
+    { event: "social.follow.created", followingUserID: following_id },
+    "User followed",
+  );
   return json({ success: true });
 };

@@ -20,7 +20,11 @@ export const POST: RequestHandler = async ({ request, locals: { log } }) => {
   }
 
   const { error, status, url } = parsedPayload.data;
-  log.error({ clientError: error, status, url }, "Unhandled client error");
+  const path = new URL(url).pathname;
+  log.error(
+    { event: "client.unhandled_error", clientError: error, status, path },
+    "Unhandled client error",
+  );
 
   return new Response(null, { status: 204 });
 };

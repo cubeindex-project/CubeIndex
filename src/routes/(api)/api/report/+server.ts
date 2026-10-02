@@ -61,5 +61,9 @@ export const POST: RequestHandler = async ({
     );
   }
 
+  log.info(
+    { event: "report.created", reportType: report_type, reportedID: reported },
+    "Report created",
+  );
   return json({ success: true });
 };

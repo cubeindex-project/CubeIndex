@@ -31,5 +31,9 @@ export const POST: RequestHandler = async ({
     );
   }
 
+  log.info(
+    { event: "social.follow.removed", followingUserID: following_id },
+    "User unfollowed",
+  );
   return json({ success: true });
 };

@@ -27,6 +27,10 @@ export function createAutofillHandler<Result>({
     const { productURL } = await request.json();
 
     if (!productURL) {
+      log.warn(
+        { event: "autofill.request.missing_product_url", autofillEndpoint: endpoint },
+        "Autofill request did not include a product URL",
+      );
       return json(
         { error: "Provide a product link to continue." },
         { status: 400 },
@@ -38,6 +42,10 @@ export function createAutofillHandler<Result>({
     try {
       parsedURL = new URL(productURL);
     } catch {
+      log.warn(
+        { event: "autofill.request.invalid_url", autofillEndpoint: endpoint },
+        "Autofill request included an invalid product URL",
+      );
       return json(
         { error: "The provided link is not a valid URL." },
         { status: 400 },
@@ -73,6 +81,14 @@ export function createAutofillHandler<Result>({
     });
 
     if (!supported) {
+      log.warn(
+        {
+          event: "autofill.request.unsupported_vendor",
+          autofillEndpoint: endpoint,
+          productHost,
+        },
+        "Autofill request used an unsupported vendor",
+      );
       return json(
         {
           error: `This store is not yet supported. Supported stores are: ${supportedStores
@@ -84,6 +100,16 @@ export function createAutofillHandler<Result>({
     }
 
     const jobID = crypto.randomUUID();
+    const operationLog = log.child({
+      autofillEndpoint: endpoint,
+      jobID,
+      productHost,
+    });
+    const startedAt = performance.now();
+    operationLog.debug(
+      { event: "autofill.job.requested" },
+      "Autofill job requested",
+    );
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 120_000);
 
@@ -102,7 +128,17 @@ export function createAutofillHandler<Result>({
         }),
         signal: controller.signal,
       });
-    } catch {
+    } catch (err) {
+      operationLog.error(
+        {
+          event: controller.signal.aborted
+            ? "autofill.job.timed_out"
+            : "autofill.job.unreachable",
+          err,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+        "Autofill service request failed",
+      );
       return json(
         { error: "Autofill service is unreachable." },
         { status: 502 },
@@ -116,10 +152,12 @@ export function createAutofillHandler<Result>({
         detail?: string;
       } | null;
 
-      log.error(
+      operationLog.error(
         {
+          event: "autofill.job.failed",
+          upstreamStatus: response.status,
+          durationMs: Math.round(performance.now() - startedAt),
           err: {
-            jobID,
             errorMessage: upstreamResult?.detail,
           },
         },
@@ -137,8 +175,24 @@ export function createAutofillHandler<Result>({
     }
 
     try {
-      return json((await response.json()) as Result);
-    } catch {
+      const result = (await response.json()) as Result;
+      operationLog.info(
+        {
+          event: "autofill.job.completed",
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+        "Autofill job completed",
+      );
+      return json(result);
+    } catch (err) {
+      operationLog.error(
+        {
+          event: "autofill.job.invalid_response",
+          err,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+        "Autofill service returned invalid JSON",
+      );
       return json(
         { error: "Autofill service returned invalid JSON." },
         { status: 502 },

@@ -29,7 +29,16 @@ const baseOptions: LoggerOptions = {
   errorKey: "err",
   messageKey: "msg",
   redact: {
-    paths: ["*.token", "*.password", "req.headers.authorization"],
+    paths: [
+      "*.token",
+      "*.access_token",
+      "*.refresh_token",
+      "*.password",
+      "*.authorization",
+      "*.cookie",
+      "req.headers.authorization",
+      "req.headers.cookie",
+    ],
     remove: true,
   },
 };
@@ -52,7 +61,6 @@ export const logger = isProduction
         },
       },
     });
-export type AppLogger = typeof logger;
 
 export const createLogger = (bindings?: Record<string, unknown>) =>
   bindings ? logger.child(bindings) : logger;

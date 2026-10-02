@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
+  import type { ResolvedPathname } from "$app/types";
 
   // DVD‐logo bouncing cube state
   let cubeX = $state(50);
@@ -18,6 +19,16 @@
     cubeX = Math.min(100, Math.max(0, cubeX));
     cubeY = Math.min(100, Math.max(0, cubeY));
     rafId = requestAnimationFrame(bounce);
+  }
+
+  function getReportURL(): ResolvedPathname {
+    const searchParams = new URLSearchParams({
+      error: page.error?.message ?? "",
+      affectedURL: page.url.href,
+      requestID: page.error?.reqId ?? "",
+    });
+
+    return resolve(`/report?${searchParams.toString()}`);
   }
 
   onMount(() => {
@@ -51,12 +62,7 @@
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
     <a href={resolve("/")} class="btn btn-lg btn-primary"> 🏠 Return Home </a>
-    <a
-      class="btn btn-lg btn-error"
-      href={resolve(
-        `/report?error=${encodeURIComponent(page.error?.message || "")}`,
-      )}
-    >
+    <a class="btn btn-lg btn-error" href={getReportURL()}>
       🐞 Report the Bug
     </a>
   </div>

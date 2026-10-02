@@ -6,25 +6,25 @@ const additionalInfoSchema = {
 };
 
 export const bugReportSchema = z.object({
-  title: z.string().max(80),
-  reproductionSteps: z.string(),
-  expected: z.string(),
-  actual: z.string(),
+  title: z.string().trim().min(1).max(80),
+  reproductionSteps: z.string().trim().min(1).max(400),
+  expected: z.string().max(200),
+  actual: z.string().max(200),
   affectedURL: z.string(),
   requestID: z.string(),
   userAgent: z.string(),
   deviceType: z.string(),
   os: z.string(),
   browser: z.string(),
-  imageURL: z.string(),
-  extra: z.string(),
+  imageURL: z.url({ protocol: /^https?$/ }).or(z.literal("")),
+  extra: z.string().max(250),
   ...additionalInfoSchema,
 });
 
 export const featureRequestSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  extra: z.string(),
+  title: z.string().trim().min(1).max(80),
+  description: z.string().trim().min(1).max(400),
+  extra: z.string().max(250),
   ...additionalInfoSchema,
 });
 

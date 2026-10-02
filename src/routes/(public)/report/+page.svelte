@@ -197,8 +197,9 @@
                 class="input input-bordered rounded-xl w-full"
                 maxlength="80"
               />
-              <span class="text-xs text-base-content/60">Max 80 characters</span
-              >
+              <span class="text-xs text-base-content/60">
+                Max 80 characters
+              </span>
             </label>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -343,6 +344,9 @@
                 class="input input-bordered rounded-xl w-full"
                 maxlength="80"
               />
+              <span class="text-xs text-base-content/60">
+                Max 80 characters
+              </span>
             </label>
 
             <label class="flex flex-col gap-1">

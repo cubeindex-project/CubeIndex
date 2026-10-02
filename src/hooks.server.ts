@@ -203,9 +203,33 @@ const authGuard: Handle = async ({ event, resolve }) => {
 
 export const handle: Handle = sequence(context, supabase, authGuard);
 
-export const handleError: HandleServerError = ({ error: err, event }) => {
+const errorMessages: Record<number, string> = {
+  400: "The request could not be understood.",
+  401: "You need to sign in to continue.",
+  403: "You do not have permission to access this resource.",
+  404: "This page does not exist.",
+  405: "This request method is not allowed.",
+  408: "The request timed out. Please try again.",
+  409: "The request conflicts with the current state of this resource.",
+  422: "The submitted data could not be processed.",
+  429: "Too many requests. Please try again later.",
+  500: "Something went wrong on our end.",
+  501: "This feature is not implemented.",
+  502: "The server received an invalid response.",
+  503: "The service is temporarily unavailable. Please try again later.",
+  504: "The server took too long to respond. Please try again later.",
+};
+
+export const handleError: HandleServerError = ({
+  error: err,
+  event,
+  status,
+}) => {
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
   log.error({ err: errorToLog }, "Unhandled error");
-  return { message: "Something went wrong", reqId: event.locals.reqId };
+  return {
+    message: errorMessages[status] ?? "Something went wrong",
+    reqId: event.locals.reqId,
+  };
 };

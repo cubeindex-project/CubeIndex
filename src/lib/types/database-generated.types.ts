@@ -230,21 +230,18 @@ export type Database = {
           category_id: number;
           created_at: string;
           cube_id: number;
-          extra_info: string | null;
           id: number;
         };
         Insert: {
           category_id: number;
           created_at?: string;
           cube_id: number;
-          extra_info?: string | null;
           id?: number;
         };
         Update: {
           category_id?: number;
           created_at?: string;
           cube_id?: number;
-          extra_info?: string | null;
           id?: number;
         };
         Relationships: [
@@ -253,6 +250,13 @@ export type Database = {
             columns: ["category_id"];
             isOneToOne: false;
             referencedRelation: "awards_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "awards_nominee_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_awards_category";
             referencedColumns: ["id"];
           },
           {
@@ -302,6 +306,13 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "awards_user_vote_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_awards_category";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "awards_user_vote_nominee_category_fkey";
             columns: ["nominee_id", "category_id"];
             isOneToOne: false;
@@ -309,10 +320,24 @@ export type Database = {
             referencedColumns: ["id", "category_id"];
           },
           {
+            foreignKeyName: "awards_user_vote_nominee_category_fkey";
+            columns: ["nominee_id", "category_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_awards_nominee";
+            referencedColumns: ["id", "category_id"];
+          },
+          {
             foreignKeyName: "awards_user_vote_nominee_id_fkey";
             columns: ["nominee_id"];
             isOneToOne: false;
             referencedRelation: "awards_nominee";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "awards_user_vote_nominee_id_fkey";
+            columns: ["nominee_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_awards_nominee";
             referencedColumns: ["id"];
           },
           {
@@ -1022,13 +1047,6 @@ export type Database = {
             foreignKeyName: "cubes_model_features_cube_fkey";
             columns: ["cube"];
             isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "cubes_model_features_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
             referencedColumns: ["slug"];
           },
@@ -1597,13 +1615,6 @@ export type Database = {
             foreignKeyName: "user_cube_reviews_cube_fkey";
             columns: ["cube"];
             isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
-          },
-          {
-            foreignKeyName: "user_cube_reviews_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
             referencedRelation: "v_detailed_cube_models";
             referencedColumns: ["slug"];
           },
@@ -1990,11 +2001,32 @@ export type Database = {
         };
         Relationships: [];
       };
-      v_awards_category_winners: {
+      v_detailed_awards_category: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          event_id: number | null;
+          id: number | null;
+          name: string | null;
+          slug: string | null;
+          total_votes: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "awards_category_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "awards_event";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      v_detailed_awards_nominee: {
         Row: {
           category_id: number | null;
-          nominee_count: number | null;
-          nominee_slug: string | null;
+          created_at: string | null;
+          cube_id: number | null;
+          id: number | null;
           vote_count: number | null;
         };
         Relationships: [
@@ -2003,6 +2035,27 @@ export type Database = {
             columns: ["category_id"];
             isOneToOne: false;
             referencedRelation: "awards_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "awards_nominee_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_awards_category";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "awards_nominee_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "cube_models";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "awards_nominee_cube_id_fkey";
+            columns: ["cube_id"];
+            isOneToOne: false;
+            referencedRelation: "v_detailed_cube_models";
             referencedColumns: ["id"];
           },
         ];
@@ -2148,13 +2201,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "cube_models";
             referencedColumns: ["slug"];
-          },
-          {
-            foreignKeyName: "user_cube_reviews_cube_fkey";
-            columns: ["cube"];
-            isOneToOne: false;
-            referencedRelation: "v_awards_category_winners";
-            referencedColumns: ["nominee_slug"];
           },
           {
             foreignKeyName: "user_cube_reviews_cube_fkey";

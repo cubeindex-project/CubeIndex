@@ -17,6 +17,8 @@ values
 	('3x3', 100, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
 	('4x4', 85, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
 	('5x5', 75, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
+	('6x6', 50, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
+	('7x7', 45, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
 	('Pyraminx', 70, 'Tetrahedron', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
 	('Megaminx', 65, 'Dodecahedron', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
 	('Skewb', 60, 'Cube', '898d0e3a-3465-4c25-9b9f-b498b9884d1d'),
@@ -33,12 +35,21 @@ values
 
 insert into public.cube_series (name)
 values
+	('GAN 15'),
 	('GAN 16'),
 	('WeiLong'),
+	('Super WeiLong'),
 	('RS3 M'),
 	('Tornado'),
 	('QiYi MS'),
-	('MGC');
+	('M Pro'),
+	('MGC'),
+	('MGC 6x6'),
+	('MGC 7x7'),
+	('Bell'),
+	('GAN Megaminx'),
+	('Wingy'),
+	('QiYi Clock');
 
 insert into public.vendors (
 	slug,

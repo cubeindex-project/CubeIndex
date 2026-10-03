@@ -30,21 +30,19 @@
       link: resolve("/(public)/explore/users"),
     },
     {
+      title: "Awards",
+      icon: "fa-solid fa-award",
+      link: resolve("/(public)/awards"),
+    },
+    {
       title: "CubingAtlas",
       icon: "fa-solid fa-book-atlas",
       link: "https://atlas.thecubeindex.com",
-      external: true,
     },
     // {
     //   title: "Achievements",
     //   icon: "fa-solid fa-trophy",
     //   link: resolve("/(public)/explore/achievements"),
-    //   hidden: true,
-    // },
-    // {
-    //   title: "Awards",
-    //   icon: "fa-solid fa-award",
-    //   link: resolve("/(public)/awards"),
     //   hidden: true,
     // },
     // {
@@ -116,7 +114,9 @@
           <span class="font-clash text-2xl sm:text-3xl">CubeIndex</span>
         </a>
       </div>
+    </div>
 
+    <div class="navbar-center">
       <div class="hidden flex-none lg:flex">
         <ul class="menu menu-horizontal gap-1 px-0">
           {#each navigation as nav, index (index)}
@@ -128,24 +128,24 @@
                   {nav.title}
                 </a>
                 <!-- {:else if nav.subMenu}
-                  <details>
-                    <summary>
-                      <i class={nav.icon}></i>
-                      {nav.title}
-                    </summary>
-                    <ul>
-                      {#each nav.subMenu as subMenu, index (index)}
-                        {#if !subMenu.hidden}
-                          <li>
-                            <a href={subMenu.link}>
-                              <i class={subMenu.icon}></i>
-                              {subMenu.title}
-                            </a>
-                          </li>
-                        {/if}
-                      {/each}
-                    </ul>
-                  </details> -->
+                    <details>
+                      <summary>
+                        <i class={nav.icon}></i>
+                        {nav.title}
+                      </summary>
+                      <ul>
+                        {#each nav.subMenu as subMenu, index (index)}
+                          {#if !subMenu.hidden}
+                            <li>
+                              <a href={subMenu.link}>
+                                <i class={subMenu.icon}></i>
+                                {subMenu.title}
+                              </a>
+                            </li>
+                          {/if}
+                        {/each}
+                      </ul>
+                    </details> -->
               {/if}
             </li>
             <!-- {/if} -->
@@ -153,6 +153,7 @@
         </ul>
       </div>
     </div>
+
     <div class="navbar-end space-x-4">
       {#if profile}
         <a

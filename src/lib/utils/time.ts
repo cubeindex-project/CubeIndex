@@ -1,27 +1,44 @@
 interface Time {
+  days: number;
+  hours: number;
   minutes: number;
   seconds: number;
   milliseconds: number;
 }
 
 export function millisecondsToTime(milliseconds: number | null): Time {
-  if (!milliseconds) return { minutes: 0, seconds: 0, milliseconds: 0 };
+  if (!milliseconds)
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 0 };
 
-  const minutes = Math.floor(milliseconds / 60_000);
-  const remainingMilliseconds = milliseconds % 60_000;
+  const days = Math.floor(milliseconds / 86_400_000);
+  let remainingMilliseconds = milliseconds % 86_400_000;
+
+  const hours = Math.floor(remainingMilliseconds / 3_600_000);
+  remainingMilliseconds = milliseconds % 3_600_000;
+
+  const minutes = Math.floor(remainingMilliseconds / 60_000);
+  remainingMilliseconds = milliseconds % 60_000;
 
   const seconds = Math.floor(remainingMilliseconds / 1_000);
   const ms = remainingMilliseconds % 1_000;
 
-  return { minutes, seconds, milliseconds: ms };
+  return { days, hours, minutes, seconds, milliseconds: ms };
 }
 
 export function timeToMilliseconds({
+  days,
+  hours,
   minutes,
   seconds,
   milliseconds,
 }: Time): number {
-  return minutes * 60_000 + seconds * 1_000 + milliseconds;
+  return (
+    days * 86_400_000 +
+    hours * 3_600_000 +
+    minutes * 60_000 +
+    seconds * 1_000 +
+    milliseconds
+  );
 }
 
 export function formatTime({

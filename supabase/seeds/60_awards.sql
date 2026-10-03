@@ -45,38 +45,37 @@ values
 		'best-specialty-puzzle'
 	);
 
-insert into public.awards_nominee (category_id, cube_id, extra_info)
+insert into public.awards_nominee (category_id, cube_id)
 select
 	category.id,
-	cube.id,
-	nominees.extra_info
+	cube.id
 from (
 	values
-		(2025, 'best-3x3', 'gan-15-maglev', 'A refined flagship with a magnetic core.'),
-		(2025, 'best-3x3', 'moyu-super-weilong-v2', 'Light, fast, and highly adjustable.'),
-		(2025, 'best-3x3', 'moyu-weilong-wr-m-v10', 'A competition-ready all-rounder.'),
-		(2025, 'best-3x3', 'x-man-tornado-v4-pioneer', 'A fast and tactile performance option.'),
-		(2025, 'best-non-3x3', 'qiyi-m-pro-4x4', 'A compact magnetic 4x4.'),
-		(2025, 'best-non-3x3', 'yj-mgc-5x5', 'A proven 5x5 for speedsolving.'),
-		(2025, 'best-non-3x3', 'x-man-bell-v2-pyraminx', 'A controllable magnetic Pyraminx.'),
-		(2025, 'best-non-3x3', 'gan-megaminx-v2', 'A premium Megaminx with a ball core.'),
-		(2025, 'best-value', 'moyu-rs3-m-v5', 'Strong performance at an accessible price.'),
-		(2025, 'best-value', 'qiyi-ms-2x2', 'An affordable magnetic 2x2.'),
-		(2025, 'best-value', 'yj-mgc-square-1', 'Reliable magnetic Square-1 performance.'),
-		(2025, 'best-value', 'qiyi-wingy-magnetic-skewb', 'A capable, approachable magnetic Skewb.'),
-		(2026, 'flagship-of-the-year', 'gan-16-maglev', 'GAN''s latest flagship 3x3.'),
-		(2026, 'flagship-of-the-year', 'moyu-super-weilong-v2', 'MoYu''s premium flagship option.'),
-		(2026, 'flagship-of-the-year', 'moyu-weilong-wr-m-v10', 'A lightweight magnetic-core 3x3.'),
-		(2026, 'flagship-of-the-year', 'x-man-tornado-v4-pioneer', 'A flagship with a distinct, fast feel.'),
-		(2026, 'best-big-cube', 'qiyi-m-pro-4x4', 'A modern, compact 4x4.'),
-		(2026, 'best-big-cube', 'yj-mgc-5x5', 'A stable and well-regarded 5x5.'),
-		(2026, 'best-big-cube', 'yj-mgc-6x6', 'A magnetic 6x6 for ambitious solves.'),
-		(2026, 'best-big-cube', 'yj-mgc-7x7', 'A capable 7x7 for the largest WCA cubes.'),
-		(2026, 'best-specialty-puzzle', 'x-man-bell-v2-pyraminx', 'A magnetic Pyraminx built for speed.'),
-		(2026, 'best-specialty-puzzle', 'qiyi-wingy-magnetic-skewb', 'A smooth magnetic Skewb.'),
-		(2026, 'best-specialty-puzzle', 'qiyi-magnetic-clock', 'A magnetic Clock for WCA event practice.'),
-		(2026, 'best-specialty-puzzle', 'yj-mgc-square-1', 'A dependable magnetic Square-1.')
-) as nominees(year, category_slug, cube_slug, extra_info)
+		(2025, 'best-3x3', 'gan-15-maglev'),
+		(2025, 'best-3x3', 'moyu-super-weilong-v2'),
+		(2025, 'best-3x3', 'moyu-weilong-wr-m-v10'),
+		(2025, 'best-3x3', 'x-man-tornado-v4-pioneer'),
+		(2025, 'best-non-3x3', 'qiyi-m-pro-4x4'),
+		(2025, 'best-non-3x3', 'yj-mgc-5x5'),
+		(2025, 'best-non-3x3', 'x-man-bell-v2-pyraminx'),
+		(2025, 'best-non-3x3', 'gan-megaminx-v2'),
+		(2025, 'best-value', 'moyu-rs3-m-v5'),
+		(2025, 'best-value', 'qiyi-ms-2x2'),
+		(2025, 'best-value', 'yj-mgc-square-1'),
+		(2025, 'best-value', 'qiyi-wingy-magnetic-skewb'),
+		(2026, 'flagship-of-the-year', 'gan-16-maglev'),
+		(2026, 'flagship-of-the-year', 'moyu-super-weilong-v2'),
+		(2026, 'flagship-of-the-year', 'moyu-weilong-wr-m-v10'),
+		(2026, 'flagship-of-the-year', 'x-man-tornado-v4-pioneer'),
+		(2026, 'best-big-cube', 'qiyi-m-pro-4x4'),
+		(2026, 'best-big-cube', 'yj-mgc-5x5'),
+		(2026, 'best-big-cube', 'yj-mgc-6x6'),
+		(2026, 'best-big-cube', 'yj-mgc-7x7'),
+		(2026, 'best-specialty-puzzle', 'x-man-bell-v2-pyraminx'),
+		(2026, 'best-specialty-puzzle', 'qiyi-wingy-magnetic-skewb'),
+		(2026, 'best-specialty-puzzle', 'qiyi-magnetic-clock'),
+		(2026, 'best-specialty-puzzle', 'yj-mgc-square-1')
+) as nominees(year, category_slug, cube_slug)
 join public.awards_event as event on event.year = nominees.year
 join public.awards_category as category
 	on category.event_id = event.id

@@ -101,50 +101,50 @@ insert into public.profiles (
 	user_id,
 	username,
 	display_name,
+	profile_picture,
 	bio,
 	socials,
 	verified,
 	certified,
 	role,
-	onboarded,
-	beta_flags
+	onboarded
 )
 values
 	(
 		'898d0e3a-3465-4c25-9b9f-b498b9884d1d',
 		'cubeindex_admin',
 		'CubeIndex Admin',
+		'https://api.dicebear.com/9.x/initials/svg?seed=CubeIndex%20Admin&backgroundColor=1d4ed8',
 		'Local development administrator account.',
 		'{"github":"cubeindex-project"}'::jsonb,
 		true,
 		true,
 		'Admin',
-		true,
-		'{"seeded":true}'::jsonb
+		true
 	),
 	(
 		'11111111-1111-4111-8111-111111111111',
 		'alex.turner',
 		'Alex Turner',
+		'https://api.dicebear.com/9.x/initials/svg?seed=Alex%20Turner&backgroundColor=0f766e',
 		'Speedcuber, collector, and hardware tinkerer.',
 		'{"wca":"2024TURN01"}'::jsonb,
 		true,
 		false,
 		'User',
-		true,
-		'{"seeded":true}'::jsonb
+		true
 	),
 	(
 		'22222222-2222-4222-8222-222222222222',
 		'maya.chen',
 		'Maya Chen',
+		'https://api.dicebear.com/9.x/initials/svg?seed=Maya%20Chen&backgroundColor=9333ea',
 		'Learning blindfolded solving one algorithm at a time.',
 		'{"youtube":"@mayacubes"}'::jsonb,
 		true,
 		false,
 		'User',
-		true,
-		'{"seeded":true}'::jsonb
+		true
 	);
 
 commit;

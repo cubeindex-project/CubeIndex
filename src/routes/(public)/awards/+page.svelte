@@ -47,19 +47,15 @@
     return eventPhase === "upcoming" ? "Starts in" : "Ends in";
   });
 
-  const countdownParts = $derived.by(() => {
-    if (!countdownTarget) return null;
-    const diff = countdownTarget.getTime() - now.getTime();
-    return millisecondsToTime(diff);
-  });
-
   const countdownSegments = $derived.by(() => {
-    if (!countdownParts) return [];
+    if (!countdownTarget) return [];
+    const diff = countdownTarget.getTime() - now.getTime();
+    const { days, hours, minutes, seconds } = millisecondsToTime(diff);
     return [
-      { label: "Days", value: countdownParts.days },
-      { label: "Hours", value: countdownParts.hours },
-      { label: "Minutes", value: countdownParts.minutes },
-      { label: "Seconds", value: countdownParts.seconds },
+      { label: "Days", value: days },
+      { label: "Hours", value: hours },
+      { label: "Minutes", value: minutes },
+      { label: "Seconds", value: seconds },
     ];
   });
 
@@ -121,7 +117,7 @@
   >
     <source src="/videos/cubeindex-awards-background.mp4" type="video/mp4" />
   </video>
-  <div class="absolute inset-0 bg-base-100/70 backdrop-blur-sm"></div>
+  <div class="absolute inset-0 backdrop-blur-sm"></div>
 
   <div class="relative z-10 mx-auto max-w-7xl text-left">
     <div
@@ -138,7 +134,7 @@
             <p class="mt-3 text-xs italic text-base-content/60">
               Logo designed by <a
                 href={resolve("/(public)/user/[username]", {
-                  username: logoDesigner.username ?? "",
+                  username: logoDesigner.username,
                 })}
                 class="link link-hover"
               >
@@ -186,10 +182,8 @@
 
       <div>
         {#if countdownSegments.length}
-          <div class="aura aura-rainbow aura-sm w-full max-w-lg">
-            <div
-              class="rounded-2xl border border-base-200/80 bg-base-100 p-4 shadow-lg shadow-base-content/5 backdrop-blur sm:p-5"
-            >
+          <div class="w-full max-w-lg">
+            <div class="rounded-2xl bg-base-100 p-4 sm:p-5">
               <div class="flex flex-col items-start gap-1">
                 <p
                   class={`inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] ${eventPhase === "live" ? "text-secondary" : "text-primary"}`}
@@ -199,9 +193,6 @@
                   ></i>
                   {countdownLabel}
                 </p>
-                {#if eventDateRange}
-                  <p class="text-sm text-base-content/60">{eventDateRange}</p>
-                {/if}
               </div>
 
               <div class="mt-4 grid grid-cols-4 gap-2">

@@ -12,12 +12,14 @@
   <div
     class="relative mx-auto flex max-w-6xl flex-col gap-8 px-5 py-14 sm:py-16"
   >
-    <header class="flex justify-between items-center gap-5 text-center">
+    <header
+      class="flex flex-col items-start gap-5 text-left sm:flex-row sm:items-center sm:justify-between"
+    >
       <h1 class="text-4xl font-clash font-extrabold leading-tight sm:text-5xl">
         {event.title}
       </h1>
       <div
-        class="flex flex-wrap justify-center divide-x divide-base-300 overflow-hidden rounded-2xl bg-base-200"
+        class="flex flex-wrap divide-x divide-base-300 overflow-hidden rounded-2xl bg-base-200"
       >
         <div class="px-5 py-3 text-left">
           <p class="text-xs uppercase tracking-[0.2em] text-base-content/60">
@@ -64,7 +66,7 @@
                 aria-label={`Show nominees for ${category.name}`}
               />
               <div
-                class="collapse-title flex items-center justify-between gap-4 pr-12"
+                class="collapse-title flex flex-col items-start gap-4 pr-12 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div class="space-y-1">
                   <h3 class="text-xl font-clash font-semibold">
@@ -74,7 +76,7 @@
                     {category.description}
                   </p>
                 </div>
-                <div class="flex gap-5">
+                <div class="flex gap-2">
                   <span class="badge badge-outline shrink-0">
                     {categoryNominees.length}
                     {plural(categoryNominees.length, "nominee")}

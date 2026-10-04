@@ -14,6 +14,8 @@ The Supabase CLI loads these files in lexicographic order through the
    achievements, and notifications.
 6. `50_submissions.sql` adds a pending cube submission for staff workflow
    testing.
+7. `60_awards.sql` adds a completed 2025 awards event with votes and winners,
+   plus a live 2026 ballot with four nominees in each category.
 
 Each SQL file owns a dependency layer. Add new files with a numeric prefix and
 place them after every file that provides data they reference.

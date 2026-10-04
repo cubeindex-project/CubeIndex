@@ -118,6 +118,29 @@ export type Database = MergeDeep<
             created_at: string;
           };
         };
+        v_detailed_awards_nominee: {
+          Row: {
+            category_id: number;
+            event_id: number;
+            created_at: string;
+            cube_id: number;
+            id: number;
+            vote_count: number;
+            winner: boolean;
+            rank: number;
+          };
+        };
+        v_detailed_awards_category: {
+          Row: {
+            created_at: string;
+            description: string;
+            event_id: number;
+            id: number;
+            name: string;
+            slug: string;
+            total_votes: number;
+          };
+        };
       };
     };
   }

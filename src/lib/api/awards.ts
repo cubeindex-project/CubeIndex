@@ -24,8 +24,6 @@ export async function submitAwardsVote(
       },
       body: JSON.stringify(parsedPayload.data),
     });
-
-    result = await response.json();
   } catch (error) {
     throw new Error(
       "Network error. Please check your connection and try again.",
@@ -34,6 +32,7 @@ export async function submitAwardsVote(
   }
 
   if (!response.ok) {
+    result = await response.json();
     throw new Error(result.error || "Vote failed");
   }
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateAll } from "$app/navigation";
   import { resolve } from "$app/paths";
   import { submitAwardsVote } from "$lib/api/awards.js";
   import CubeCardSkeleton from "$lib/components/cube/CubeCardSkeleton.svelte";
@@ -31,6 +32,7 @@
 
       voted = true;
       showConfetti = true;
+      await invalidateAll();
     } catch (error) {
       voteError =
         error instanceof Error
@@ -178,6 +180,7 @@
               class="btn btn-primary w-full md:w-auto"
               onclick={handleSubmit}
               disabled={voted ||
+                voting ||
                 nominees.length === 0 ||
                 selectedNomineeID === null}
             >

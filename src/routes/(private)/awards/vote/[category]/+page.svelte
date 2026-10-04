@@ -16,6 +16,7 @@
   );
 
   let voted = $derived(userVote !== null);
+  let showConfetti = $state(false);
   let voting = $state(false);
   let voteError: string | null = $state(null);
 
@@ -29,6 +30,7 @@
       await submitAwardsVote(currentCategory.id, selectedNomineeID);
 
       voted = true;
+      showConfetti = true;
     } catch (error) {
       voteError =
         error instanceof Error
@@ -39,6 +41,16 @@
     }
   }
 </script>
+
+{#if showConfetti}
+  <div class="confetti" aria-hidden="true">
+    {#each [...Array(32).keys()] as index (index)}
+      <i
+        style={`--delay: ${index * 35}ms; --x: ${index % 2 === 0 ? "1rem" : "calc(100vw - 1rem)"}; --drift: ${index % 2 === 0 ? 120 + ((index * 17) % 260) : -120 - ((index * 17) % 260)}px; --rise: ${55 + ((index * 13) % 40)}vh; --color: hsl(${(index * 47) % 360} 85% 60%);`}
+      ></i>
+    {/each}
+  </div>
+{/if}
 
 <div class="min-h-screen bg-base-100">
   <div class="mx-auto max-w-6xl space-y-10 px-4 py-12">
@@ -94,8 +106,7 @@
                     class:btn-outline={nominee.id !== selectedNomineeID}
                     aria-pressed={nominee.id === selectedNomineeID}
                     onclick={() => (selectedNomineeID = nominee.id)}
-                    disabled={userVote &&
-                      userVote.nominee_id !== nominee.id}
+                    disabled={userVote && userVote.nominee_id !== nominee.id}
                   >
                     {#if userVote && userVote.nominee_id === nominee.id}
                       Your vote
@@ -187,3 +198,42 @@
     </div>
   </div>
 </div>
+
+<style>
+  .confetti {
+    position: fixed;
+    z-index: 50;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .confetti i {
+    position: absolute;
+    bottom: -1rem;
+    left: var(--x);
+    width: 0.65rem;
+    height: 1rem;
+    background: var(--color);
+    animation: launch 2.8s cubic-bezier(0.2, 0.8, 0.4, 1) var(--delay) forwards;
+  }
+
+  .confetti i:nth-child(odd) {
+    border-radius: 999px;
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  @keyframes launch {
+    to {
+      transform: translate(var(--drift), calc(-1 * var(--rise))) rotate(720deg);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .confetti {
+      display: none;
+    }
+  }
+</style>

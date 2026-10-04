@@ -58,7 +58,7 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
         .eq("cube_id", cube.id)
         .eq("winner", true)
         .lt("event.end_at", new Date().toISOString())
-        .order("year", { referencedTable: "event", ascending: false }),
+        .order("event(year)", { ascending: false }),
     ]);
 
   if (

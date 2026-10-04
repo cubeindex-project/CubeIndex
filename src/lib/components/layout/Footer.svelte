@@ -26,7 +26,7 @@
             href="https://github.com/cubeindex-project/CubeIndex"
             aria-label="CubeIndex on GitHub"
             data-umami-event="outbound-link-click"
-            data-umami-event-destination="https://github.com/cubeindex-project/CubeIndex"
+            data-umami-event-destination="github"
           >
             <i class="fa-brands fa-github text-lg"></i>
           </a>
@@ -35,7 +35,7 @@
             href="https://twitter.com/thecubeindex"
             aria-label="CubeIndex on Twitter"
             data-umami-event="outbound-link-click"
-            data-umami-event-destination="https://twitter.com/thecubeindex"
+            data-umami-event-destination="twitter"
           >
             <i class="fa-brands fa-twitter text-lg"></i>
           </a>
@@ -44,7 +44,7 @@
             href="https://www.youtube.com/@cubeindex"
             aria-label="CubeIndex on YouTube"
             data-umami-event="outbound-link-click"
-            data-umami-event-destination="https://www.youtube.com/@cubeindex"
+            data-umami-event-destination="youtube"
           >
             <i class="fa-brands fa-youtube text-lg"></i>
           </a>
@@ -73,7 +73,7 @@
           class="link link-hover"
           href="https://github.com/orgs/cubeindex-project/projects/1"
           data-umami-event="outbound-link-click"
-          data-umami-event-destination="https://github.com/orgs/cubeindex-project/projects/1"
+          data-umami-event-destination="roadmap"
         >
           Roadmap
         </a>

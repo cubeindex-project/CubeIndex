@@ -2,6 +2,7 @@ import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "$lib/types/database.types.js"; // import generated types
 import type { AppLogger } from "$lib/server/logger";
 import type { Meta } from "$lib/types/meta.types";
+import type { UmamiTracker } from "$lib/types/umami.types";
 
 declare global {
   namespace App {
@@ -25,6 +26,9 @@ declare global {
     }
     // interface PageState {}
     // interface Platform {}
+  }
+  interface Window {
+    umami: UmamiTracker;
   }
 }
 

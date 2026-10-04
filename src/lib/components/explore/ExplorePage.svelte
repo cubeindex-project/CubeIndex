@@ -51,6 +51,7 @@
     noResultsMessage: string;
     noResultsIcon: string;
     noResultsAction?: Snippet;
+    onNoResults?: (params: UseQueryStatesReturn<UseQueryStatesKeysMap>) => void;
   }
 
   const {
@@ -72,6 +73,7 @@
     noResultsMessage,
     noResultsIcon,
     noResultsAction,
+    onNoResults,
   }: Props = $props();
 
   const params = $state(
@@ -152,6 +154,20 @@
   const totalPages = $derived(
     Math.max(Math.ceil(sortedItems.length / params.size.current), 1),
   );
+
+  let previousNoResultsState = $state<string | undefined>();
+
+  $effect(() => {
+    if (!onNoResults || sortedItems.length > 0) {
+      previousNoResultsState = undefined;
+      return;
+    }
+
+    if (query === previousNoResultsState) return;
+
+    previousNoResultsState = query;
+    onNoResults(params);
+  });
 
   function resetFilters() {
     params.set(null);

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import Modal from "$lib/components/ui/Modal.svelte";
+  import { trackEvent } from "$lib/utils/umami";
 
   interface Props {
     open: boolean;
@@ -95,6 +96,7 @@ Add any other context about the problem here.`;
       });
       const data = await res.json();
       if (data.success) {
+        trackEvent("report-submitted", { report_type: reportType });
         showSuccess = true;
         setTimeout(() => (open = false), 900);
       } else {

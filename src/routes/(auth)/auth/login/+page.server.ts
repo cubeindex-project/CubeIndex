@@ -5,6 +5,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { TURNSTILE_SECRET_KEY } from "$env/static/private";
 import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
 import { loginSchema } from "$lib/schemas/auth";
+import { trackServerEvent } from "$lib/server/umami";
 
 export const load = (async () => {
   return {
@@ -71,8 +72,13 @@ export const actions: Actions = {
     }
 
     if (!profile || !profile.onboarded) {
+      await trackServerEvent("user-logged-in", {
+        onboarding_complete: "false",
+      });
       redirect(303, "/auth/complete-profile");
     }
+
+    await trackServerEvent("user-logged-in", { onboarding_complete: "true" });
 
     const redirect_to = url.searchParams.get("redirect_to");
 

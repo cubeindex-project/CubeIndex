@@ -6,6 +6,7 @@ import { cubeFormSchema } from "$lib/schemas/cubeForm";
 import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions";
 import { StatusError } from "$lib/errors/StatusError";
 import { submitCube } from "$lib/server/cube/submitCube";
+import { trackServerEvent } from "$lib/server/umami";
 
 export const load = (async ({ locals: { supabase, log } }) => {
   const formPromise = superValidate(zod4(cubeFormSchema), { errors: false });
@@ -58,6 +59,9 @@ export const actions: Actions = {
     }
 
     log.info({ event: "cube.submission.created" }, "Cube submitted for review");
+    await trackServerEvent("cube-submission-created", {
+      vendor_link_count: form.data.vendorLinks.length,
+    });
 
     return message(
       form,

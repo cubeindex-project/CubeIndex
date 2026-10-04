@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { trackEvent } from "$lib/utils/umami";
+
   interface Props {
     url: string;
     text?: string;
@@ -18,6 +20,7 @@
     if (navigator.share) {
       try {
         await navigator.share({ title: document.title, text, url });
+        trackEvent("content-shared", { method: "native" });
       } catch (err) {
         console.warn(
           "Sharing link was canceled or failed.",
@@ -30,6 +33,7 @@
 
     try {
       await navigator.clipboard.writeText(url);
+      trackEvent("content-shared", { method: "clipboard" });
       alert("Link copied to clipboard");
     } catch (err) {
       new Error(

@@ -4,6 +4,7 @@ import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate, setError } from "sveltekit-superforms";
 import { completeProfileSchema } from "$lib/schemas/auth";
 import { addToEmailList } from "$lib/utils/addToEmailList";
+import { trackServerEvent } from "$lib/server/umami";
 
 export const load: PageServerLoad = async ({
   locals: { user, supabase, log },
@@ -71,6 +72,8 @@ export const actions: Actions = {
       );
       return fail(500, { form, message: profileUpdateError.message });
     }
+
+    await trackServerEvent("profile-completed");
 
     const addToEmailListResponse = await addToEmailList(
       user.email,

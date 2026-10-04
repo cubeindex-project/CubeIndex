@@ -10,46 +10,18 @@
   import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
   import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
+  import { identifyVisitor } from "$lib/utils/umami";
+  import { goto, invalidate } from "$app/navigation";
+  import { onMount } from "svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
+  import {
+    PUBLIC_UMAMI_DOMAINS,
+    PUBLIC_UMAMI_WEBSITE_ID,
+  } from "$env/static/public";
 
   let { data, children } = $props();
 
-  import { goto, invalidate } from "$app/navigation";
-  import { onMount } from "svelte";
-
-  let { session, supabase, profile, isDevelopmentEnvironment } = $derived(data);
-  onMount(() => {
-    const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
-      if (newSession?.expires_at !== session?.expires_at) {
-        invalidate("supabase:auth");
-      }
-    });
-
-    const toastError = page.url.searchParams.get("toast_error");
-    const toastSuccess = page.url.searchParams.get("toast_success");
-
-    const removeToastParam = (newUrl: URL) =>
-      goto((newUrl.pathname + newUrl.search) as ResolvedPathname, {
-        replaceState: true,
-        keepFocus: true,
-        noScroll: true,
-      });
-
-    if (toastError) {
-      toast.error(toastError);
-      const newUrl = new URL(page.url);
-      newUrl.searchParams.delete("toast_error");
-      removeToastParam(newUrl);
-    } else if (toastSuccess) {
-      toast.success(toastSuccess);
-      const newUrl = new URL(page.url);
-      newUrl.searchParams.delete("toast_success");
-      removeToastParam(newUrl);
-    }
-
-    return () => data.subscription.unsubscribe();
-  });
-
-  import Footer from "$lib/components/layout/Footer.svelte";
+  let { session, supabase, profile, user } = $derived(data);
 
   const meta: ResolvedMeta = $derived.by(() => {
     const pageMeta = page.data.meta;
@@ -89,6 +61,44 @@
       canonical: page.url.href,
     };
   });
+
+  $effect(() => {
+    if (user && profile) {
+      identifyVisitor(user.id, { role: profile.role });
+    }
+  });
+
+  onMount(() => {
+    const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
+      if (newSession?.expires_at !== session?.expires_at) {
+        invalidate("supabase:auth");
+      }
+    });
+
+    const toastError = page.url.searchParams.get("toast_error");
+    const toastSuccess = page.url.searchParams.get("toast_success");
+
+    const removeToastParam = (newUrl: URL) =>
+      goto((newUrl.pathname + newUrl.search) as ResolvedPathname, {
+        replaceState: true,
+        keepFocus: true,
+        noScroll: true,
+      });
+
+    if (toastError) {
+      toast.error(toastError);
+      const newUrl = new URL(page.url);
+      newUrl.searchParams.delete("toast_error");
+      removeToastParam(newUrl);
+    } else if (toastSuccess) {
+      toast.success(toastSuccess);
+      const newUrl = new URL(page.url);
+      newUrl.searchParams.delete("toast_success");
+      removeToastParam(newUrl);
+    }
+
+    return () => data.subscription.unsubscribe();
+  });
 </script>
 
 <svelte:head>
@@ -117,11 +127,14 @@
     <meta name="robots" content="noindex" />
   {/if}
 
-  {#if isDevelopmentEnvironment}
+  {#if PUBLIC_UMAMI_WEBSITE_ID}
     <script
       defer
       src="https://cloud.umami.is/script.js"
-      data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
+      data-website-id={PUBLIC_UMAMI_WEBSITE_ID}
+      data-domains={PUBLIC_UMAMI_DOMAINS}
+      data-performance="true"
+      data-do-not-track="true"
     ></script>
   {/if}
 

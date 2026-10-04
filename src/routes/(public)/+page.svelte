@@ -286,6 +286,9 @@
               href={partner.url}
               target="_blank"
               rel="noopener noreferrer external"
+              data-umami-event="outbound-link-click"
+              data-umami-event-destination={partner.name}
+              data-umami-event-source="homepage-partners"
             >
               <img
                 class={partner.logo.class}

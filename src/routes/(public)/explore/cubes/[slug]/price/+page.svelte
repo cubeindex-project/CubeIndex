@@ -158,6 +158,9 @@
             rel="noopener noreferrer"
             class="group block rounded-xl border border-base-300 bg-base-200 hover:bg-base-300/70 focus:outline-none focus-visible:ring focus-visible:ring-primary/40 transition-colors duration-200 p-4"
             aria-label={`Open ${shop.vendor.name} in a new tab`}
+            data-umami-event="outbound-link-click"
+            data-umami-event-destination={shop.vendor.name}
+            data-umami-event-source="cube-price-tab"
           >
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">

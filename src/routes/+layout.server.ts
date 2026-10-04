@@ -1,5 +1,4 @@
 import type { LayoutServerLoad } from "./$types";
-import { dev } from "$app/environment";
 import type { Tables } from "$lib/types/database.types";
 
 export const load: LayoutServerLoad = async ({
@@ -29,13 +28,10 @@ export const load: LayoutServerLoad = async ({
     profile = data;
   }
 
-  const isDevelopmentEnvironment = !dev;
-
   return {
     profile,
     user,
     session,
     cookies: cookies.getAll(),
-    isDevelopmentEnvironment,
   };
 };

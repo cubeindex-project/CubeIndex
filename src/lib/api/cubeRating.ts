@@ -4,6 +4,7 @@ import {
   type CubeRatingForm,
 } from "$lib/schemas/cubeRating";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { trackEvent } from "$lib/utils/umami";
 
 export async function saveCubeRating(
   cubeID: number,
@@ -44,6 +45,11 @@ export async function saveCubeRating(
       data?.error ?? "Unable to submit rating. Please try again.",
     );
   }
+
+  trackEvent("cube-rating-saved", {
+    rating: form.rating,
+    has_comment: Boolean(form.comment),
+  });
 }
 
 export async function deleteCubeRating(ratingID: number): Promise<void> {
@@ -81,4 +87,6 @@ export async function deleteCubeRating(ratingID: number): Promise<void> {
       data?.error ?? "Unable to delete the rating. Please try again.",
     );
   }
+
+  trackEvent("cube-rating-deleted");
 }

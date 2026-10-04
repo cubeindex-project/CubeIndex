@@ -7,6 +7,7 @@ import { setError } from "sveltekit-superforms";
 import { TURNSTILE_SECRET_KEY } from "$env/static/private";
 import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
 import { resolve } from "$app/paths";
+import { trackServerEvent } from "$lib/server/umami";
 
 export const load: PageServerLoad = async ({ url }) => {
   const step = (url.searchParams.get("step") ?? "account") as
@@ -56,6 +57,7 @@ export const actions: Actions = {
       return fail(500, { accountForm: { ...form, message: err.message } });
     }
 
+    await trackServerEvent("account-created");
     redirect(303, resolve("/auth/complete-profile"));
   },
 
@@ -90,6 +92,10 @@ export const actions: Actions = {
       return fail(500, { surveyForm: { ...form, message: insErr.message } });
     }
 
+    await trackServerEvent("onboarding-survey-completed", {
+      discovery_channel: discovered_via,
+      feature_count: form.data.interested_features.length,
+    });
     redirect(303, `${url.pathname}?step=done`);
   },
 };

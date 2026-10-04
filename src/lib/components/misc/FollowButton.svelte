@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { trackEvent } from "$lib/utils/umami";
+
   interface Props {
     user_id: string;
     isFollowing: boolean;
@@ -17,6 +19,7 @@
       });
       const data = await res.json();
       if (data.success) {
+        trackEvent("user-followed");
         location.reload();
       } else {
         throw new Error(`Failed to follow user: ${data.error}`);
@@ -37,6 +40,7 @@
       });
       const data = await res.json();
       if (data.success) {
+        trackEvent("user-unfollowed");
         location.reload();
       } else {
         new Error(`Failed to unfollow user: ${data.error}`);

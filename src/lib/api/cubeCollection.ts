@@ -4,6 +4,7 @@ import {
   type CubeCollectionForm,
 } from "$lib/schemas/cubeCollection";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { trackEvent } from "$lib/utils/umami";
 
 export async function saveCubeInCollection(
   cubeID: number,
@@ -44,6 +45,10 @@ export async function saveCubeInCollection(
   if (!response.ok) {
     throw new Error(data?.error ?? "Unable to add the cube. Please try again.");
   }
+
+  trackEvent("collection-cube-saved", {
+    action: collectionID === undefined ? "added" : "updated",
+  });
 }
 
 export async function deleteCubeFromCollection(
@@ -83,4 +88,6 @@ export async function deleteCubeFromCollection(
       data?.error ?? "Unable to delete the cube. Please try again.",
     );
   }
+
+  trackEvent("collection-cube-deleted");
 }

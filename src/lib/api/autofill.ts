@@ -2,6 +2,7 @@ import type {
   CubeDetailsAutofillResult,
   VendorOfferAutofillResult,
 } from "$lib/types/autofill.types";
+import { trackEvent } from "$lib/utils/umami";
 
 async function sendAutofillRequest(endpoint: string, url: string) {
   let response: Response;
@@ -28,6 +29,8 @@ async function sendAutofillRequest(endpoint: string, url: string) {
       result?.error || "We could not process that link right now.";
     throw new Error(message);
   }
+
+  trackEvent("autofill-completed", { endpoint });
 
   return result;
 }

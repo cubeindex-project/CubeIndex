@@ -3,6 +3,7 @@ import {
   type HelpfulRatingToggle,
 } from "$lib/schemas/helpfulRating";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { trackEvent } from "$lib/utils/umami";
 
 export async function toggleHelpfulCubeRating(
   payload: HelpfulRatingToggle,
@@ -39,4 +40,6 @@ export async function toggleHelpfulCubeRating(
       data?.error ?? "Unable to update the helpful rating. Please try again.",
     );
   }
+
+  trackEvent("cube-rating-helpfulness-toggled");
 }

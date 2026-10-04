@@ -49,6 +49,8 @@ Then visit localhost:5173
 - `LOG_LEVEL`: Server-side Pino log level (`debug`, `info`, `warn`, etc.)
 - `PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`: For Cloudflare's turnstile service
 - `AUTOFILL_SERVICE_URL`: The autofill service URL for the cube submission page
+- `PUBLIC_UMAMI_WEBSITE_ID`: Public Umami website ID used by browser and server-side event tracking. Analytics are disabled when it is absent.
+- `PUBLIC_UMAMI_DOMAINS`: Optional comma-separated list of domains the browser tracker may collect for.
 - `GITHUB_APP_ID`: ID of the GitHub App used to create bug reports and feature requests as issues
 - `GITHUB_APP_INSTALLATION_ID`: Installation ID for that GitHub App on `cubeindex-project/CubeIndex`
 - `GITHUB_APP_PRIVATE_KEY`: Private key for the GitHub App. Keep this server-side and preserve its newline characters in the deployment environment.

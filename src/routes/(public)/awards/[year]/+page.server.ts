@@ -2,6 +2,8 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log }, params }) => {
+  const now = new Date().getTime();
+
   const year = Number(params.year);
 
   if (Number.isNaN(year) || year < 0) throw error(404, "Event not found");
@@ -19,6 +21,12 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
 
   if (!event) {
     throw error(404, "Event not found");
+  }
+
+  const endAt = new Date(event.end_at).getTime();
+
+  if (endAt >= now) {
+    throw error(404, "This event is currently active");
   }
 
   const { data: categories, error: categoriesErr } = await supabase

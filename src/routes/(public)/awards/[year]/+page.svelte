@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { getEventPhase } from "$lib/utils/eventPhase";
   import { formatDate } from "$lib/utils/formatDate";
   import { plural } from "$lib/utils/plural";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
   const { event, categories, nominees } = $derived(data);
-
-  const eventFinished = $derived(getEventPhase(event) === "past");
 </script>
 
 <section class="relative isolate overflow-hidden min-h-screen">
@@ -39,17 +36,6 @@
         </div>
       </div>
     </header>
-
-    {#if !eventFinished}
-      <div
-        class="rounded-2xl border border-dashed border-base-300 bg-base-200/60 px-5 py-4 text-sm text-base-content/80"
-      >
-        <i class="fa-regular fa-hourglass-half mr-2 text-primary"></i>
-        Results will appear once the event concludes. Check back after {formatDate(
-          event.end_at,
-        )}.
-      </div>
-    {/if}
 
     <section class="space-y-4">
       {#if categories.length === 0}
@@ -102,11 +88,7 @@
                 </div>
               </div>
               <div class="collapse-content">
-                {#if !eventFinished}
-                  <p class="pt-2 text-sm text-base-content/70">
-                    Nominees and results will appear after the event concludes.
-                  </p>
-                {:else if orderedNominees.length === 0}
+                {#if orderedNominees.length === 0}
                   <p class="pt-2 text-sm text-base-content/70">
                     No nominees were found for this category.
                   </p>

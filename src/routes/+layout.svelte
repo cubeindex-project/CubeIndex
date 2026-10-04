@@ -89,6 +89,12 @@
       canonical: page.url.href,
     };
   });
+
+  $effect(() => {
+    if (user && profile) {
+      window.umami.identify(user.id, { role: profile.role });
+    }
+  });
 </script>
 
 <svelte:head>

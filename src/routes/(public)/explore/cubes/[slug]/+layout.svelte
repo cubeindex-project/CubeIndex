@@ -126,7 +126,7 @@
               href={resolve("/(public)/awards/[year]", {
                 year: String(award.event.year),
               })}
-              class="badge badge-warning badge-outline gap-1"
+              class="badge badge-warning badge-soft gap-1"
               title={`CubeIndex Awards ${award.event.year} winner: ${award.category.name}`}
             >
               <i class="fa-solid fa-trophy" aria-hidden="true"></i>

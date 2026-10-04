@@ -10,6 +10,7 @@
   } from "nuqs-svelte";
   import TriStateCheckbox from "$lib/components/explore/TriStateCheckbox.svelte";
   import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
+  import { trackEvent } from "$lib/utils/umami";
 
   const SORT_FIELDS = ["name", "rating", "owners", "date", "price"] as const;
 
@@ -173,6 +174,31 @@
   noResultsTitle="No cubes found"
   noResultsMessage="We couldn't find any cubes matching your search or filters; try adjusting them or resetting to see everything. If the cube you're looking for isn't listed, consider submitting it to help grow our database."
   noResultsIcon="fa-solid fa-cube"
+  onNoResults={(params) => {
+    const filters = {
+      type: params.type.current,
+      sub_type: params.sub.current,
+      brand: params.brand.current,
+      year: params.year.current,
+      wca_legal: params.wca.current,
+      magnetic: params.mag.current,
+      smart: params.smart.current,
+      modded: params.mod.current,
+      stickered: params.stick.current,
+      base: params.base.current,
+      variant: params.variant.current,
+      limited: params.limit.current,
+    };
+
+    trackEvent("cube-explore-no-results", {
+      search_query: params.q.current.trim(),
+      filters: Object.fromEntries(
+        Object.entries(filters).filter(
+          ([, value]) => value !== "All" && value !== null,
+        ),
+      ),
+    });
+  }}
 >
   {#snippet header()}
     <ExploreHeader

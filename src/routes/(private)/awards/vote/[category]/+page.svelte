@@ -15,15 +15,25 @@
     untrack(() => userVote?.nominee_id ?? null),
   );
 
+  let voted = $derived(userVote !== null);
   let voting = $state(false);
+  let voteError: string | null = $state(null);
 
   async function handleSubmit() {
     if (selectedNomineeID === null) return;
 
     voting = true;
+    voteError = null;
 
     try {
       await submitAwardsVote(currentCategory.id, selectedNomineeID);
+
+      voted = true;
+    } catch (error) {
+      voteError =
+        error instanceof Error
+          ? error.message
+          : "Unable to submit your vote. Please try again.";
     } finally {
       voting = false;
     }
@@ -84,11 +94,11 @@
                     class:btn-outline={nominee.id !== selectedNomineeID}
                     aria-pressed={nominee.id === selectedNomineeID}
                     onclick={() => (selectedNomineeID = nominee.id)}
-                    disabled={userVote !== null &&
+                    disabled={userVote &&
                       userVote.nominee_id !== nominee.id}
                   >
-                    {#if userVote !== null && userVote.nominee_id === nominee.id}
-                      Voted
+                    {#if userVote && userVote.nominee_id === nominee.id}
+                      Your vote
                     {:else}
                       {nominee.id === selectedNomineeID ? "Selected" : "Select"}
                     {/if}
@@ -138,6 +148,11 @@
         <div
           class="rounded-2xl border border-base-200 bg-base-100 p-5 shadow-sm"
         >
+          {#if voteError}
+            <div class="alert alert-error mb-4" role="alert">
+              <span>{voteError}</span>
+            </div>
+          {/if}
           <div
             class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
           >
@@ -151,14 +166,14 @@
             <button
               class="btn btn-primary w-full md:w-auto"
               onclick={handleSubmit}
-              disabled={userVote !== null ||
+              disabled={voted ||
                 nominees.length === 0 ||
                 selectedNomineeID === null}
             >
               {#if voting}
                 <span class="loading loading-spinner"></span>
                 Voting...
-              {:else if userVote !== null}
+              {:else if voted}
                 You have already voted!
               {:else if selectedNomineeID === null}
                 Select a nominee to vote

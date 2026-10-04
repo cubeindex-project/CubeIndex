@@ -72,7 +72,9 @@ export const actions: Actions = {
     }
 
     if (!profile || !profile.onboarded) {
-      await trackServerEvent("user-logged-in", { onboarding_complete: "false" });
+      await trackServerEvent("user-logged-in", {
+        onboarding_complete: "false",
+      });
       redirect(303, "/auth/complete-profile");
     }
 

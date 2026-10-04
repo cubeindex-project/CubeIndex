@@ -51,9 +51,7 @@
     noResultsMessage: string;
     noResultsIcon: string;
     noResultsAction?: Snippet;
-    onNoResults?: (
-      params: UseQueryStatesReturn<UseQueryStatesKeysMap>,
-    ) => void;
+    onNoResults?: (params: UseQueryStatesReturn<UseQueryStatesKeysMap>) => void;
   }
 
   const {

@@ -56,7 +56,8 @@ export type TrackedProperties = {
 export type WithRequired<T, K extends keyof T> = T & {
   [P in K]-?: T[P];
 };
-export type EventDataValue = boolean | number | string | null | EventData | EventDataValue[];
+export type EventDataValue =
+  boolean | number | string | null | EventData | EventDataValue[];
 /**
  *
  * Event Data can work with any JSON data. There are a few rules in place to maintain performance.
@@ -74,8 +75,8 @@ export type EventProperties = {
    */
   name: string;
   data?: EventData;
-} & WithRequired<TrackedProperties, 'website'>;
-export type PageViewProperties = WithRequired<TrackedProperties, 'website'>;
+} & WithRequired<TrackedProperties, "website">;
+export type PageViewProperties = WithRequired<TrackedProperties, "website">;
 export type CustomEventFunction = (
   props: PageViewProperties,
 ) => EventProperties | PageViewProperties;

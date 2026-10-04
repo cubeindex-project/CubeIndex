@@ -100,7 +100,7 @@ export const POST: RequestHandler = async ({
   if (auvErr) {
     if (auvErr.code === "23505") {
       return json(
-        { error: "You have already voted for this cube in this category" },
+        { error: "You have already voted for this category" },
         { status: 400 },
       );
     }

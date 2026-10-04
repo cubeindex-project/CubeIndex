@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from "$app/paths";
   import { formatDate } from "$lib/utils/formatDate";
   import { plural } from "$lib/utils/plural";
   import type { PageProps } from "./$types";
@@ -96,8 +97,11 @@
                   <div class="flex gap-3 overflow-x-auto pt-2 pb-2">
                     {#each orderedNominees as nominee (nominee.cube.id)}
                       {@const isWinner = orderedNominees[0].id === nominee.id}
-                      <article
-                        class={`relative w-72 shrink-0 overflow-hidden rounded-xl border bg-base-200/50 ${
+                      <a
+                        href={resolve("/(public)/explore/cubes/[slug]", {
+                          slug: nominee.cube.slug,
+                        })}
+                        class={`relative block w-72 shrink-0 overflow-hidden rounded-xl border bg-base-200/50 ${
                           isWinner
                             ? "border-primary bg-primary/10"
                             : "border-base-300"
@@ -129,7 +133,7 @@
                             {plural(nominee.vote_count, "vote")}
                           </p>
                         </div>
-                      </article>
+                      </a>
                     {/each}
                   </div>
                 {/if}

@@ -16,7 +16,7 @@
   import { goto, invalidate } from "$app/navigation";
   import { onMount } from "svelte";
 
-  let { session, supabase, profile, isDevelopmentEnvironment } = $derived(data);
+  let { session, supabase, profile, user } = $derived(data);
   onMount(() => {
     const { data } = supabase.auth.onAuthStateChange((_, newSession) => {
       if (newSession?.expires_at !== session?.expires_at) {
@@ -117,13 +117,14 @@
     <meta name="robots" content="noindex" />
   {/if}
 
-  {#if isDevelopmentEnvironment}
-    <script
-      defer
-      src="https://cloud.umami.is/script.js"
-      data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
-    ></script>
-  {/if}
+  <script
+    defer
+    src="https://cloud.umami.is/script.js"
+    data-website-id="ae53069f-0a53-4de4-863a-5fa75c1d813f"
+    data-domains="thecubeindex.com"
+    data-performance="true"
+    data-do-not-track="true"
+  ></script>
 
   <script>
     (function () {

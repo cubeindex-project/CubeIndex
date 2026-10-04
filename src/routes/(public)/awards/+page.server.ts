@@ -38,7 +38,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
   const { data: previousEvents, error: prevErr } = await supabase
     .from("awards_event")
     .select("*")
-    .lte("end_at", now)
+    .lt("end_at", now)
     .order("year", { ascending: false });
 
   if (prevErr) {

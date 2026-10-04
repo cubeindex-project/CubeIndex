@@ -40,7 +40,7 @@ create or replace view "public"."v_detailed_awards_nominee" as  WITH nominee_vot
     rn.created_at,
     rn.vote_count,
     rn.rank,
-    (rn.rank = 1) AS winner,
+    ((rn.rank = 1) AND (rn.vote_count > 0)) AS winner,
     ac.event_id
    FROM (ranked_nominees rn
      LEFT JOIN public.awards_category ac ON ((ac.id = rn.category_id)))

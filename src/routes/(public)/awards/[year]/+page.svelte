@@ -93,11 +93,11 @@
                     No nominees were found for this category.
                   </p>
                 {:else}
-                  <div class="grid gap-3 pt-2 sm:grid-cols-2 lg:grid-cols-3">
+                  <div class="flex gap-3 overflow-x-auto pt-2 pb-2">
                     {#each orderedNominees as nominee (nominee.cube.id)}
                       {@const isWinner = orderedNominees[0].id === nominee.id}
                       <article
-                        class={`relative overflow-hidden rounded-xl border bg-base-200/50 ${
+                        class={`relative w-72 shrink-0 overflow-hidden rounded-xl border bg-base-200/50 ${
                           isWinner
                             ? "border-primary bg-primary/10"
                             : "border-base-300"

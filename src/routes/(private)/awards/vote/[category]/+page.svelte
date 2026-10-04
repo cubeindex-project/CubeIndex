@@ -4,7 +4,7 @@
   import CubeCardSkeleton from "$lib/components/cube/CubeCardSkeleton.svelte";
   import AwardsCountdown from "$lib/components/misc/AwardsCountdown.svelte";
   import { getEventPhase } from "$lib/utils/eventPhase.js";
-  import { formatDate } from "$lib/utils/formatDate.js";
+
   import { untrack } from "svelte";
 
   let { data } = $props();
@@ -16,27 +16,8 @@
   );
 
   const eventPhase = $derived(getEventPhase(currentEvent));
-  const startDateLabel = $derived(
-    currentEvent ? formatDate(currentEvent.start_at) : null,
-  );
-  const endDateLabel = $derived(
-    currentEvent ? formatDate(currentEvent.end_at) : null,
-  );
 
   const votingEnabled = $derived(eventPhase === "live");
-
-  const voteStatusMessage = $derived.by(() => {
-    if (eventPhase === "upcoming" && startDateLabel) {
-      return `Voting opens on ${startDateLabel}.`;
-    }
-    if (eventPhase === "past" && endDateLabel) {
-      return `Voting closed on ${endDateLabel}.`;
-    }
-    if (eventPhase === "unknown") {
-      return "Voting is not available right now.";
-    }
-    return "";
-  });
 
   let voting = $state(false);
 
@@ -78,9 +59,6 @@
           countdownLabel="Voting closes in"
         />
       </div>
-      {#if voteStatusMessage}
-        <p class="text-xs text-warning/80">{voteStatusMessage}</p>
-      {/if}
     </header>
 
     <div class="gap-6 space-y-4">

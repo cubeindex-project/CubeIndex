@@ -32,7 +32,7 @@ export async function submitAwardsVote(
   }
 
   if (!response.ok) {
-    result = await response.json();
+    result = await response.json().catch(() => ({}));
     throw new Error(result.error || "Vote failed");
   }
 }

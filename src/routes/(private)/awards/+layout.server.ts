@@ -19,7 +19,7 @@ export const load = (async ({ locals: { supabase, log } }) => {
   }
 
   if (!currentEvent) {
-    throw error(404, "No event are currently active");
+    throw error(404, "No event is currently active");
   }
 
   return { currentEvent };

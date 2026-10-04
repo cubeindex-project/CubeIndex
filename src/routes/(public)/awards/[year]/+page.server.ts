@@ -42,12 +42,13 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
   const { data: nominees, error: nomineesErr } = await supabase
     .from("v_detailed_awards_nominee")
     .select(
-      "id, cube_id, vote_count, category_id, cube:v_detailed_cube_models!cube_id(id, slug, name, image_url)",
+      "id, cube_id, vote_count, category_id, winner, rank, cube:v_detailed_cube_models!cube_id(id, slug, name, image_url)",
     )
     .in(
       "category_id",
       categories.map((category) => category.id),
-    );
+    )
+    .order("rank", { ascending: true });
 
   if (nomineesErr) {
     log.error({ err: nomineesErr }, "Failed to fetch the event winners");

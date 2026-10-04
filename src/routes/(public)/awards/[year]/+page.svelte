@@ -56,9 +56,6 @@
             {@const categoryNominees = nominees.filter(
               (nominee) => nominee.category_id === category.id,
             )}
-            {@const orderedNominees = [...categoryNominees].sort(
-              (a, b) => b.vote_count - a.vote_count,
-            )}
             <div
               class="collapse collapse-arrow border border-base-300 bg-base-100 shadow-sm"
             >
@@ -89,20 +86,19 @@
                 </div>
               </div>
               <div class="collapse-content">
-                {#if orderedNominees.length === 0}
+                {#if categoryNominees.length === 0}
                   <p class="pt-2 text-sm text-base-content/70">
                     No nominees were found for this category.
                   </p>
                 {:else}
                   <div class="flex gap-3 overflow-x-auto pt-2 pb-2">
-                    {#each orderedNominees as nominee (nominee.cube.id)}
-                      {@const isWinner = orderedNominees[0].id === nominee.id}
+                    {#each categoryNominees as nominee (nominee.cube.id)}
                       <a
                         href={resolve("/(public)/explore/cubes/[slug]", {
                           slug: nominee.cube.slug,
                         })}
                         class={`relative block w-72 shrink-0 overflow-hidden rounded-xl border bg-base-200/50 ${
-                          isWinner
+                          nominee.winner
                             ? "border-primary bg-primary/10"
                             : "border-base-300"
                         }`}
@@ -118,7 +114,7 @@
                         <div class="space-y-2 p-4">
                           <div class="flex items-start justify-between gap-2">
                             <h4 class="font-semibold">{nominee.cube.name}</h4>
-                            {#if isWinner}
+                            {#if nominee.winner}
                               <span
                                 class="badge badge-primary badge-sm shrink-0"
                               >

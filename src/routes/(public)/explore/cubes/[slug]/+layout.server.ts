@@ -25,37 +25,57 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
     throw error(404, "Cube not found");
   }
 
-  const [sameSeriesRes, relatedRes, trimsRes] = await Promise.all([
-    cube.series_id
-      ? supabase
-          .from("v_detailed_cube_models")
-          .select("slug, name, series, image_url")
-          .eq("series_id", cube.series_id)
-          .eq("version_type", "Base")
-          .neq("id", cube.id)
-          .order("name", { ascending: true })
-          .limit(12)
-      : Promise.resolve({ data: null, error: null }),
-    cube.related_to_id
-      ? supabase
-          .from("v_detailed_cube_models")
-          .select("slug, name, series, image_url")
-          .eq("id", cube.related_to_id)
-          .maybeSingle()
-      : Promise.resolve({ data: null, error: null }),
-    supabase
-      .from("v_detailed_cube_models")
-      .select("slug, name, series, image_url")
-      .eq("related_to_id", cube.id)
-      .order("name", { ascending: true })
-      .limit(24),
-  ]);
+  const [sameSeriesRes, relatedRes, trimsRes, winnerAwardsRes] =
+    await Promise.all([
+      cube.series_id
+        ? supabase
+            .from("v_detailed_cube_models")
+            .select("slug, name, series, image_url")
+            .eq("series_id", cube.series_id)
+            .eq("version_type", "Base")
+            .neq("id", cube.id)
+            .order("name", { ascending: true })
+            .limit(12)
+        : Promise.resolve({ data: null, error: null }),
+      cube.related_to_id
+        ? supabase
+            .from("v_detailed_cube_models")
+            .select("slug, name, series, image_url")
+            .eq("id", cube.related_to_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+      supabase
+        .from("v_detailed_cube_models")
+        .select("slug, name, series, image_url")
+        .eq("related_to_id", cube.id)
+        .order("name", { ascending: true })
+        .limit(24),
+      supabase
+        .from("v_detailed_awards_nominee")
+        .select(
+          "winner, category:awards_category!category_id(name), event:awards_event!event_id!inner(year, end_at)",
+        )
+        .eq("cube_id", cube.id)
+        .eq("winner", true)
+        .lt("event.end_at", new Date().toISOString())
+        .order("year", { referencedTable: "event", ascending: false }),
+    ]);
 
-  if (sameSeriesRes.error || relatedRes.error || trimsRes.error) {
+  if (
+    sameSeriesRes.error ||
+    relatedRes.error ||
+    trimsRes.error ||
+    winnerAwardsRes.error
+  ) {
     log.error(
       {
         err: new Error("", {
-          cause: [sameSeriesRes.error, relatedRes.error, trimsRes.error],
+          cause: [
+            sameSeriesRes.error,
+            relatedRes.error,
+            trimsRes.error,
+            winnerAwardsRes.error,
+          ],
         }),
       },
       "Unable to load related cube data",
@@ -100,6 +120,7 @@ export const load = (async ({ locals: { supabase, log }, params, url }) => {
     sameSeries: sameSeriesRes.data ?? [],
     relatedCube: relatedRes.data ?? null,
     cubeTrims: trimsRes.data ?? [],
+    winnerAwards: winnerAwardsRes.data,
     submitter: cube.submitter,
     cube_vendor_links,
     meta: {

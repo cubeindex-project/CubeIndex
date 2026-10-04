@@ -2026,10 +2026,20 @@ export type Database = {
           category_id: number | null;
           created_at: string | null;
           cube_id: number | null;
+          event_id: number | null;
           id: number | null;
+          rank: number | null;
           vote_count: number | null;
+          winner: boolean | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "awards_category_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "awards_event";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "awards_nominee_category_id_fkey";
             columns: ["category_id"];

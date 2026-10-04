@@ -14,7 +14,8 @@
   import { formatPartialDate } from "$lib/utils/formatPartialDate";
 
   let { data, children }: LayoutProps = $props();
-  let { cube, sameSeries, relatedCube, cubeTrims } = $derived(data);
+  let { cube, sameSeries, relatedCube, cubeTrims, winnerAwards } =
+    $derived(data);
 
   let isAddingCube = $state(false);
   let isReportingCube = $state(false);
@@ -120,6 +121,18 @@
               Discontinued
             </span>
           {/if}
+          {#each winnerAwards as award, index (index)}
+            <a
+              href={resolve("/(public)/awards/[year]", {
+                year: String(award.event.year),
+              })}
+              class="badge badge-warning badge-outline gap-1"
+              title={`CubeIndex Awards ${award.event.year} winner: ${award.category.name}`}
+            >
+              <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+              {award.category.name} winner
+            </a>
+          {/each}
         </div>
 
         <h1

@@ -15,10 +15,6 @@
     untrack(() => userVote?.nominee_id ?? null),
   );
 
-  const eventPhase = $derived(getEventPhase(currentEvent));
-
-  const votingEnabled = $derived(eventPhase === "live");
-
   let voting = $state(false);
 
   async function handleSubmit() {
@@ -55,7 +51,7 @@
         </div>
         <AwardsCountdown
           event={currentEvent}
-          {eventPhase}
+          eventPhase={getEventPhase(currentEvent)}
           countdownLabel="Voting closes in"
         />
       </div>
@@ -88,8 +84,8 @@
                     class:btn-outline={nominee.id !== selectedNomineeID}
                     aria-pressed={nominee.id === selectedNomineeID}
                     onclick={() => (selectedNomineeID = nominee.id)}
-                    disabled={!votingEnabled ||
-                      (userVote !== null && userVote.nominee_id !== nominee.id)}
+                    disabled={userVote !== null &&
+                      userVote.nominee_id !== nominee.id}
                   >
                     {#if userVote !== null && userVote.nominee_id === nominee.id}
                       Voted
@@ -155,16 +151,13 @@
             <button
               class="btn btn-primary w-full md:w-auto"
               onclick={handleSubmit}
-              disabled={!votingEnabled ||
-                userVote !== null ||
+              disabled={userVote !== null ||
                 nominees.length === 0 ||
                 selectedNomineeID === null}
             >
               {#if voting}
                 <span class="loading loading-spinner"></span>
                 Voting...
-              {:else if !votingEnabled}
-                Voting not open
               {:else if userVote !== null}
                 You have already voted!
               {:else if selectedNomineeID === null}

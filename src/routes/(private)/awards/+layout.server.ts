@@ -34,5 +34,9 @@ export const load = (async ({ locals: { supabase, log } }) => {
     currentEvent = nextEvent;
   }
 
+  if (!currentEvent) {
+    throw error(404, "No event are currently active");
+  }
+
   return { currentEvent };
 }) satisfies LayoutServerLoad;

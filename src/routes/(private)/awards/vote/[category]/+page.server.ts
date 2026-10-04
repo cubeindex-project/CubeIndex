@@ -13,10 +13,6 @@ export const load = (async ({
   const { currentEvent } = await parent();
   const currentCategorySlug = params.category;
 
-  if (!currentEvent) {
-    throw error(404, "This event doesn't exist");
-  }
-
   const { data: currentCategory, error: ccErr } = await supabase
     .from("awards_category")
     .select("*")

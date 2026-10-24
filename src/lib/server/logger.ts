@@ -2,6 +2,7 @@ import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
 import { env } from "$env/dynamic/private";
 import pino, { stdTimeFunctions, type LoggerOptions } from "pino";
 import axiomTransport from "@axiomhq/pino";
+import pretty from "pino-pretty";
 
 const isProduction = NODE_ENV.toLowerCase() === "production";
 
@@ -51,16 +52,14 @@ export const logger = isProduction
         token: process.env.AXIOM_TOKEN!,
       }),
     )
-  : pino({
-      ...baseOptions,
-      transport: {
-        target: "pino-pretty",
-        options: {
-          colorize: true,
-          translateTime: "SYS:standard",
-        },
-      },
-    });
+  : pino(
+      baseOptions,
+      pretty({
+        levelFirst: true,
+        colorize: true,
+        ignore: "time,hostname,pid",
+      }),
+    );
 
 export const createLogger = (bindings?: Record<string, unknown>) =>
   bindings ? logger.child(bindings) : logger;

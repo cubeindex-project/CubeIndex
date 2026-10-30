@@ -24,9 +24,6 @@
 
   let edit = $state(false);
 
-  const collectionURL = $derived(
-    resolve("/(public)/user/[username]", { username: page.params.username! }),
-  );
   const showExplorer = $derived(
     [
       "view",
@@ -248,7 +245,12 @@
       >
         {#snippet action()}
           <div class="flex items-center gap-2">
-            <a href={collectionURL} class="btn btn-ghost btn-sm">
+            <a
+              href={resolve("/(public)/user/[username]", {
+                username: page.params.username!,
+              })}
+              class="btn btn-ghost btn-sm"
+            >
               <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
               Collection
             </a>

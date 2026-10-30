@@ -2,6 +2,7 @@
   import { resolve } from "$app/paths";
   import { formatDate } from "$lib/utils/formatDate";
   import { plural } from "$lib/utils/plural";
+  import { trackEvent } from "$lib/utils/umami";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
@@ -64,6 +65,14 @@
               <input
                 type="checkbox"
                 aria-label={`Show nominees for ${category.name}`}
+                onchange={(event) => {
+                  if (event.currentTarget.checked) {
+                    trackEvent("awards-results-category-expanded", {
+                      year: data.event.year,
+                      category_id: category.id,
+                    });
+                  }
+                }}
               />
               <div
                 class="collapse-title flex flex-col items-start gap-4 pr-12 sm:flex-row sm:items-center sm:justify-between"
@@ -96,6 +105,10 @@
                   <div class="flex gap-3 overflow-x-auto pt-2 pb-2">
                     {#each categoryNominees as nominee (nominee.cube.id)}
                       <a
+                        data-umami-event="awards-cube-details-click"
+                        data-umami-event-source="results"
+                        data-umami-event-year={event.year}
+                        data-umami-event-category_id={category.id}
                         href={resolve("/(public)/explore/cubes/[slug]", {
                           slug: nominee.cube.slug,
                         })}

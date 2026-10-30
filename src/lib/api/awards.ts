@@ -1,5 +1,6 @@
 import { awardsVoteSchema } from "$lib/schemas/awards";
 import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { trackEvent } from "$lib/utils/umami";
 
 export async function submitAwardsVote(
   category_id: number,
@@ -11,8 +12,11 @@ export async function submitAwardsVote(
   });
 
   if (!parsedPayload.success) {
+    trackEvent("awards-vote-failed", { reason: "validation" });
     throw new Error(getZodErrorMessage(parsedPayload.error));
   }
+
+  trackEvent("awards-vote-started", { category_id });
 
   let response: Response;
   let result: { error?: string };
@@ -25,6 +29,7 @@ export async function submitAwardsVote(
       body: JSON.stringify(parsedPayload.data),
     });
   } catch (error) {
+    trackEvent("awards-vote-failed", { category_id, reason: "network" });
     throw new Error(
       "Network error. Please check your connection and try again.",
       { cause: error },
@@ -32,7 +37,14 @@ export async function submitAwardsVote(
   }
 
   if (!response.ok) {
+    trackEvent("awards-vote-failed", {
+      category_id,
+      reason: "server",
+      status: response.status,
+    });
     result = await response.json().catch(() => ({}));
     throw new Error(result.error || "Vote failed");
   }
+
+  trackEvent("awards-vote-submitted", { category_id });
 }

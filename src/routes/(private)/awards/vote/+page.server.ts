@@ -2,7 +2,13 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log, user }, parent }) => {
+  const startedAt = performance.now();
+
   if (!user) {
+    log.warn(
+      { event: "awards.vote.unauthorized" },
+      "Unauthorized awards voting access",
+    );
     throw error(401, "Unauthorized");
   }
 
@@ -15,7 +21,15 @@ export const load = (async ({ locals: { supabase, log, user }, parent }) => {
     .order("name", { ascending: true });
 
   if (acErr) {
-    log.error({ err: acErr }, "Failed to fetch the current event categories");
+    log.error(
+      {
+        event: "awards.vote.categories_failed",
+        errorCode: acErr.code,
+        eventID: currentEvent.id,
+        year: currentEvent.year,
+      },
+      "Failed to fetch the current event categories",
+    );
     throw error(500, "Failed to fetch the current event categories");
   }
 
@@ -29,9 +43,28 @@ export const load = (async ({ locals: { supabase, log, user }, parent }) => {
     );
 
   if (auvErr) {
-    log.error({ err: auvErr }, "Failed to fetch the user votes");
+    log.error(
+      {
+        event: "awards.vote.user_votes_failed",
+        errorCode: auvErr.code,
+        eventID: currentEvent.id,
+        year: currentEvent.year,
+      },
+      "Failed to fetch the user votes",
+    );
     throw error(500, "Failed to fetch the user votes");
   }
+
+  log.info(
+    {
+      event: "awards.vote.loaded",
+      eventID: currentEvent.id,
+      year: currentEvent.year,
+      categoryCount: eventCategories.length,
+      durationMs: performance.now() - startedAt,
+    },
+    "Loaded awards voting categories",
+  );
 
   return {
     eventCategories: eventCategories.map((category) => ({

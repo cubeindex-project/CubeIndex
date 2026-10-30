@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log } }) => {
+  const startedAt = performance.now();
   const now = new Date().toISOString();
 
   const { data: fetchedCurrentEvent, error: ceErr } = await supabase
@@ -14,7 +15,10 @@ export const load = (async ({ locals: { supabase, log } }) => {
   let currentEvent = fetchedCurrentEvent;
 
   if (ceErr) {
-    log.error({ err: ceErr }, "Failed to fetch current event");
+    log.error(
+      { event: "awards.index.current_event_failed", errorCode: ceErr.code },
+      "Failed to fetch current event",
+    );
     throw error(500, "Failed to fetch current event");
   }
 
@@ -28,7 +32,13 @@ export const load = (async ({ locals: { supabase, log } }) => {
       .maybeSingle();
 
     if (nextEventErr) {
-      log.error({ err: nextEventErr }, "Failed to fetch next event");
+      log.error(
+        {
+          event: "awards.index.next_event_failed",
+          errorCode: nextEventErr.code,
+        },
+        "Failed to fetch next event",
+      );
       throw error(500, "Failed to fetch next event");
     }
 
@@ -42,7 +52,15 @@ export const load = (async ({ locals: { supabase, log } }) => {
     .order("year", { ascending: false });
 
   if (prevErr) {
-    log.error({ err: prevErr }, "Failed to fetch previous awards events");
+    log.error(
+      {
+        event: "awards.index.previous_events_failed",
+        errorCode: prevErr.code,
+        eventID: currentEvent?.id,
+        year: currentEvent?.year,
+      },
+      "Failed to fetch previous awards events",
+    );
     throw error(500, "Failed to fetch previous awards events");
   }
 
@@ -53,9 +71,28 @@ export const load = (async ({ locals: { supabase, log } }) => {
     .maybeSingle();
 
   if (err) {
-    log.error({ err }, "Unable to fetch the logo designer profile details");
+    log.error(
+      {
+        event: "awards.index.logo_designer_failed",
+        errorCode: err.code,
+        eventID: currentEvent?.id,
+        year: currentEvent?.year,
+      },
+      "Unable to fetch the logo designer profile details",
+    );
     throw error(500, "Unable to fetch the logo designer profile details");
   }
+
+  log.info(
+    {
+      event: "awards.index.loaded",
+      eventID: currentEvent?.id,
+      year: currentEvent?.year,
+      previousEventCount: previousEvents.length,
+      durationMs: performance.now() - startedAt,
+    },
+    "Loaded awards index",
+  );
 
   return {
     currentEvent,

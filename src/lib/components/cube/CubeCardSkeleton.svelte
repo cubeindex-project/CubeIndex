@@ -20,6 +20,7 @@
 
   interface SharedProps {
     top?: Snippet<[]>;
+    class?: string;
     content: Snippet<[]>;
     bottom?: Snippet<[]>;
   }
@@ -34,7 +35,15 @@
       | { rating: false; cube: BaseCube & Partial<RatingCube> }
     );
 
-  let { cube, top, rating, content, bottom, showMeta = true }: Props = $props();
+  let {
+    cube,
+    top,
+    rating,
+    content,
+    bottom,
+    showMeta = true,
+    class: cardClass = "",
+  }: Props = $props();
 
   const preloadImage = $derived(
     `https://res.cloudinary.com/dc7wdwv4h/image/fetch/f_webp,q_auto,w_403/${cube.image_url}`,
@@ -53,7 +62,7 @@
 </svelte:head>
 
 <div
-  class="relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden flex flex-col h-full"
+  class={`relative bg-base-200 border border-base-300 rounded-2xl shadow-lg overflow-hidden flex flex-col h-full ${cardClass}`}
 >
   {@render top?.()}
   <a

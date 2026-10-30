@@ -6,7 +6,10 @@
   import { resolve } from "$app/paths";
   import { deleteCubeFromCollection } from "$lib/api/cubeCollection";
   import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
-  import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
+  import {
+    getUserCubeStatusLabel,
+    USER_CUBE_STATUS_PRESENTATION,
+  } from "$lib/utils/getUserCubeStatusLabel";
   import { formatTime, millisecondsToTime } from "$lib/utils/time";
 
   interface Props {
@@ -27,6 +30,9 @@
     onDelete,
   }: Props = $props();
 
+  const statusPresentation = $derived(
+    USER_CUBE_STATUS_PRESENTATION[user_details.status],
+  );
   const best_time = $derived(millisecondsToTime(user_details.best_time_ms));
   const formatted_best_time = $derived(formatTime(best_time));
 
@@ -51,16 +57,23 @@
 </script>
 
 {#snippet top()}
-  {#if mode === "view"}
+  <div
+    class="absolute left-3 top-3 right-3 flex flex-wrap items-center gap-2 pointer-events-none"
+  >
+    <div
+      class={`badge gap-1 ${statusPresentation.badgeClass} ${user_details.status === "previously_owned" ? "bg-base-100" : ""}`}
+      title="Status"
+    >
+      <i class={statusPresentation.icon} aria-hidden="true"></i>
+      {getUserCubeStatusLabel(user_details.status)}
+    </div>
     {#if user_details.main}
-      <div class="absolute left-3 top-3">
-        <div class="badge badge-ghost gap-1" title="Main cube">
-          <i class="fa-solid fa-thumbtack"></i>
-          Main
-        </div>
+      <div class="badge badge-neutral gap-1" title="Main cube">
+        <i class="fa-solid fa-thumbtack" aria-hidden="true"></i>
+        Main
       </div>
     {/if}
-  {/if}
+  </div>
 {/snippet}
 {#snippet content()}
   {#if mode === "view"}
@@ -80,13 +93,6 @@
           <div class="badge badge-success badge-lg gap-1" title="Best time">
             <i class="fa-solid fa-stopwatch"></i>
             {formatted_best_time}
-          </div>
-        {/if}
-
-        {#if user_details.status}
-          <div class="badge badge-lg gap-1 bg-base-300" title="Status">
-            <i class="fa-solid fa-clipboard-check"></i>
-            {getUserCubeStatusLabel(user_details.status)}
           </div>
         {/if}
 

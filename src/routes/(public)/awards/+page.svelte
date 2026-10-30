@@ -131,7 +131,7 @@
             class="h-28 w-auto rounded-2xl object-contain sm:h-32"
           />
           {#if logoDesigner}
-            <p class="mt-3 text-xs italic text-base-content/60">
+            <p class="mt-3 text-xs italic text-white">
               Logo designed by <a
                 href={resolve("/(public)/user/[username]", {
                   username: logoDesigner.username,
@@ -146,11 +146,11 @@
 
         <div class="mt-8 space-y-6">
           <h1
-            class="font-clash max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
+            class="font-clash max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
           >
             {heroHeadline}
           </h1>
-          <p class="max-w-2xl text-lg text-base-content/75 sm:text-xl">
+          <p class="max-w-2xl text-lg text-white sm:text-xl">
             {heroDescription}
           </p>
         </div>
@@ -179,7 +179,7 @@
             </a>
           {/if}
           <button
-            class="btn btn-outline btn-lg"
+            class="btn btn-outline btn-lg text-white"
             onclick={() => (showTrailer = true)}
             data-umami-event="awards-trailer-opened"
           >
@@ -224,7 +224,7 @@
           </div>
         {:else}
           <div
-            class="w-full max-w-lg rounded-2xl border border-base-200/80 bg-base-100/75 p-5 backdrop-blur"
+            class="w-full max-w-lg rounded-2xl border border-base-200/80 bg-base-100 p-5"
           >
             {#if !hasEvent}
               <div class="space-y-3">

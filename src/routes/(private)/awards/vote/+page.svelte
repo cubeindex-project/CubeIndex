@@ -48,6 +48,10 @@
             class="group rounded-2xl border p-5 transition focus-visible:outline-none focus-visible:ring focus-visible:ring-primary/40 {category.alreadyVoted
               ? 'border-success bg-success/10 hover:border-success'
               : 'border-base-200 bg-base-200 hover:border-primary/50'}"
+            data-umami-event="awards-category-click"
+            data-umami-event-year={currentEvent.year}
+            data-umami-event-category_id={category.id}
+            data-umami-event-already_voted={category.alreadyVoted}
             href={resolve("/(private)/awards/vote/[category]", {
               category: category.slug,
             })}

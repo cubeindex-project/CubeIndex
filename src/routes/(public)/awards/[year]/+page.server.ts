@@ -2,11 +2,15 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log }, params }) => {
+  const startedAt = performance.now();
   const now = new Date().getTime();
 
   const year = Number(params.year);
 
-  if (Number.isNaN(year) || year < 0) throw error(404, "Event not found");
+  if (Number.isNaN(year) || year < 0) {
+    log.warn({ event: "awards.results.invalid_year" }, "Invalid awards year");
+    throw error(404, "Event not found");
+  }
 
   const { data: event, error: eventErr } = await supabase
     .from("awards_event")
@@ -15,17 +19,39 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     .maybeSingle();
 
   if (eventErr) {
-    log.error({ err: eventErr }, "Failed to fetch the event data");
+    log.error(
+      {
+        event: "awards.results.event_failed",
+        errorCode: eventErr.code,
+        year: Number.isSafeInteger(year) ? year : undefined,
+      },
+      "Failed to fetch the event data",
+    );
     throw error(500, "Failed to fetch the event data");
   }
 
   if (!event) {
+    log.warn(
+      {
+        event: "awards.results.event_not_found",
+        year: Number.isSafeInteger(year) ? year : undefined,
+      },
+      "Awards event not found",
+    );
     throw error(404, "Event not found");
   }
 
   const endAt = new Date(event.end_at).getTime();
 
   if (endAt >= now) {
+    log.warn(
+      {
+        event: "awards.results.event_active",
+        eventID: event.id,
+        year: event.year,
+      },
+      "Awards results are not available for an active event",
+    );
     throw error(404, "This event is currently active");
   }
 
@@ -35,7 +61,15 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     .eq("event_id", event.id);
 
   if (categoriesErr) {
-    log.error({ err: categoriesErr }, "Failed to fetch the categories data");
+    log.error(
+      {
+        event: "awards.results.categories_failed",
+        errorCode: categoriesErr.code,
+        eventID: event.id,
+        year: event.year,
+      },
+      "Failed to fetch the categories data",
+    );
     throw error(500, "Failed to fetch the categories data");
   }
 
@@ -51,9 +85,29 @@ export const load = (async ({ locals: { supabase, log }, params }) => {
     .order("rank", { ascending: true });
 
   if (nomineesErr) {
-    log.error({ err: nomineesErr }, "Failed to fetch the event winners");
+    log.error(
+      {
+        event: "awards.results.nominees_failed",
+        errorCode: nomineesErr.code,
+        eventID: event.id,
+        year: event.year,
+      },
+      "Failed to fetch the event winners",
+    );
     throw error(500, "Failed to fetch the event winners");
   }
+
+  log.info(
+    {
+      event: "awards.results.loaded",
+      eventID: event.id,
+      year: event.year,
+      categoryCount: categories.length,
+      nomineeCount: nominees.length,
+      durationMs: performance.now() - startedAt,
+    },
+    "Loaded awards results",
+  );
 
   return {
     event,

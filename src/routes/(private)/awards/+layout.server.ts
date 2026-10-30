@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 
 export const load = (async ({ locals: { supabase, log } }) => {
+  const startedAt = performance.now();
   const now = new Date().toISOString();
 
   const { data: currentEvent, error: currentEventErr } = await supabase
@@ -14,13 +15,33 @@ export const load = (async ({ locals: { supabase, log } }) => {
     .maybeSingle();
 
   if (currentEventErr) {
-    log.error({ err: currentEventErr }, "Failed to fetch current event");
+    log.error(
+      {
+        event: "awards.layout.current_event_failed",
+        errorCode: currentEventErr.code,
+      },
+      "Failed to fetch current event",
+    );
     throw error(500, "Failed to fetch current event");
   }
 
   if (!currentEvent) {
+    log.warn(
+      { event: "awards.layout.no_active_event" },
+      "No awards event is currently active",
+    );
     throw error(404, "No event is currently active");
   }
+
+  log.info(
+    {
+      event: "awards.layout.loaded",
+      eventID: currentEvent.id,
+      year: currentEvent.year,
+      durationMs: performance.now() - startedAt,
+    },
+    "Loaded active awards event",
+  );
 
   return { currentEvent };
 }) satisfies LayoutServerLoad;

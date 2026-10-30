@@ -7,7 +7,13 @@ export const POST: RequestHandler = async ({
   request,
   locals: { supabase, log, user },
 }) => {
+  const startedAt = performance.now();
+
   if (!user) {
+    log.warn(
+      { event: "awards.vote.submit_unauthorized" },
+      "Unauthenticated awards vote submission rejected",
+    );
     return json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -40,6 +46,7 @@ export const POST: RequestHandler = async ({
   }
 
   const payload = parsedPayload.data;
+  const voteLog = log.child({ categoryID: payload.category_id });
 
   const { data: currentEvent, error: ceErr } = await supabase
     .from("awards_event")
@@ -49,7 +56,10 @@ export const POST: RequestHandler = async ({
     .maybeSingle();
 
   if (ceErr) {
-    log.error({ err: ceErr }, "Failed to verify the current event");
+    voteLog.error(
+      { event: "awards.vote.event_lookup_failed", errorCode: ceErr.code },
+      "Failed to verify the current event",
+    );
     return json(
       {
         error: "Failed to verify the current event",
@@ -59,6 +69,10 @@ export const POST: RequestHandler = async ({
   }
 
   if (!currentEvent) {
+    voteLog.warn(
+      { event: "awards.vote.no_active_event" },
+      "Awards vote rejected because no event is active",
+    );
     return json(
       {
         error: "No event is currently active",
@@ -74,8 +88,12 @@ export const POST: RequestHandler = async ({
     .eq("category_id", payload.category_id);
 
   if (auvcErr) {
-    log.error(
-      { err: auvcErr },
+    voteLog.error(
+      {
+        event: "awards.vote.existing_vote_lookup_failed",
+        eventID: currentEvent.id,
+        errorCode: auvcErr.code,
+      },
       "Failed to verify if you have already voted for this category",
     );
     return json(
@@ -87,6 +105,10 @@ export const POST: RequestHandler = async ({
   }
 
   if (awardsUserVoteCount && awardsUserVoteCount >= 1) {
+    voteLog.warn(
+      { event: "awards.vote.duplicate", eventID: currentEvent.id },
+      "Duplicate awards vote rejected",
+    );
     return json(
       { error: "You have already voted for this category" },
       { status: 400 },
@@ -99,12 +121,23 @@ export const POST: RequestHandler = async ({
 
   if (auvErr) {
     if (auvErr.code === "23505") {
+      voteLog.warn(
+        { event: "awards.vote.duplicate", eventID: currentEvent.id },
+        "Duplicate awards vote rejected by database constraint",
+      );
       return json(
         { error: "You have already voted for this category" },
         { status: 400 },
       );
     }
-    log.error({ err: auvErr }, "Failed to insert user vote");
+    voteLog.error(
+      {
+        event: "awards.vote.insert_failed",
+        eventID: currentEvent.id,
+        errorCode: auvErr.code,
+      },
+      "Failed to insert user vote",
+    );
     return json(
       {
         error: "Failed to insert user vote",
@@ -112,6 +145,15 @@ export const POST: RequestHandler = async ({
       { status: 500 },
     );
   }
+
+  voteLog.info(
+    {
+      event: "awards.vote.submitted",
+      eventID: currentEvent.id,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    "Awards vote submitted",
+  );
 
   return new Response(null, { status: 204 });
 };

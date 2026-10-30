@@ -108,6 +108,8 @@
                     class:btn-outline={nominee.id !== selectedNomineeID}
                     aria-pressed={nominee.id === selectedNomineeID}
                     onclick={() => (selectedNomineeID = nominee.id)}
+                    data-umami-event="awards-nominee-selected"
+                    data-umami-event-category_id={currentCategory.id}
                     disabled={userVote && userVote.nominee_id !== nominee.id}
                   >
                     {#if userVote && userVote.nominee_id === nominee.id}
@@ -122,6 +124,9 @@
                     })}
                     class="btn btn-ghost border border-base-300 flex-1 justify-center"
                     aria-label="View Cube Details"
+                    data-umami-event="awards-cube-details-click"
+                    data-umami-event-source="ballot"
+                    data-umami-event-category_id={currentCategory.id}
                   >
                     View details
                   </a>
@@ -152,7 +157,12 @@
               <p class="text-sm text-base-content/70">
                 Check back soon to vote once nominations are announced.
               </p>
-              <a class="btn btn-primary" href={resolve("/awards/vote")}>
+              <a
+                class="btn btn-primary"
+                href={resolve("/awards/vote")}
+                data-umami-event="awards-categories-click"
+                data-umami-event-source="empty-ballot"
+              >
                 Back to categories
               </a>
             </div>

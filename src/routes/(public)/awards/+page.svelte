@@ -157,13 +157,21 @@
 
         <div class="mt-8 flex flex-wrap justify-start gap-3">
           {#if eventPhase === "live"}
-            <a href={resolve("/awards/vote")} class="btn btn-primary btn-lg">
+            <a
+              href={resolve("/awards/vote")}
+              class="btn btn-primary btn-lg"
+              data-umami-event="awards-vote-click"
+              data-umami-event-year={currentEvent?.year}
+            >
               <i class="fa-solid fa-cube"></i>
               Nominate a cube
             </a>
           {:else if eventPhase === "past" && currentEvent}
             <a
               href={resolve(`/awards/${currentEvent.year}`)}
+              data-umami-event="awards-results-click"
+              data-umami-event-year={currentEvent.year}
+              data-umami-event-source="hero"
               class="btn btn-primary btn-lg"
             >
               <i class="fa-solid fa-trophy"></i>
@@ -173,6 +181,7 @@
           <button
             class="btn btn-outline btn-lg"
             onclick={() => (showTrailer = true)}
+            data-umami-event="awards-trailer-opened"
           >
             <i class="fa-solid fa-play"></i>
             Watch the trailer
@@ -282,6 +291,9 @@
           <a
             class="group relative overflow-hidden rounded-2xl border border-base-200/70 bg-base-200/70 p-6 shadow-sm transition hover:border-primary/60 hover:shadow-lg"
             href={resolve(`/awards/${event.year}`)}
+            data-umami-event="awards-results-click"
+            data-umami-event-year={event.year}
+            data-umami-event-source="archive"
           >
             <div class="flex items-start justify-between gap-2">
               <div class="space-y-1 text-left">

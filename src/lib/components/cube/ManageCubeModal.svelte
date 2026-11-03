@@ -7,7 +7,7 @@
   import { saveCubeInCollection } from "$lib/api/cubeCollection";
   import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
   import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
-  import { millisecondsToTime, timeToMilliseconds } from "$lib/utils/time";
+  import { formatTimeInput, parseTimeInput } from "$lib/utils/time";
 
   interface Props {
     open: boolean;
@@ -66,7 +66,27 @@
 
   const vendors = $derived(page.data.vendors);
 
-  let best_time = $state(millisecondsToTime(form.best_time_ms));
+  let bestTimeInput = $state(untrack(() => formatTimeInput(form.best_time_ms)));
+  let bestTimeError = $state("");
+
+  function validateBestTime(): number | null | undefined {
+    try {
+      const milliseconds = parseTimeInput(bestTimeInput);
+      bestTimeError = "";
+      return milliseconds;
+    } catch (error) {
+      bestTimeError =
+        error instanceof Error ? error.message : "Enter a valid time.";
+      return undefined;
+    }
+  }
+
+  function normalizeBestTime() {
+    const milliseconds = validateBestTime();
+    if (milliseconds !== undefined) {
+      bestTimeInput = formatTimeInput(milliseconds);
+    }
+  }
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
@@ -77,6 +97,9 @@
       return;
     }
 
+    const bestTimeMilliseconds = validateBestTime();
+    if (bestTimeMilliseconds === undefined) return;
+
     isSubmitting = true;
 
     try {
@@ -84,7 +107,7 @@
         cube.id,
         {
           ...form,
-          best_time_ms: timeToMilliseconds(best_time),
+          best_time_ms: bestTimeMilliseconds,
         },
         collectionID,
       );
@@ -219,40 +242,24 @@
     </div>
 
     <fieldset class="fieldset min-w-0 flex-1">
-      <legend class="fieldset-legend">Best time</legend>
-      <label class="input w-full gap-1">
-        <input
-          class="min-w-0 flex-1 text-center"
-          type="number"
-          name="best_time_minutes"
-          bind:value={best_time.minutes}
-          min="0"
-          inputmode="numeric"
-          aria-label="Best time minutes"
-        />
-        <span aria-hidden="true">:</span>
-        <input
-          class="min-w-0 flex-1 text-center"
-          type="number"
-          name="best_time_seconds"
-          bind:value={best_time.seconds}
-          min="0"
-          max="59"
-          inputmode="numeric"
-          aria-label="Best time seconds"
-        />
-        <span aria-hidden="true">.</span>
-        <input
-          class="min-w-0 flex-1 text-center"
-          type="number"
-          name="best_time_milliseconds"
-          bind:value={best_time.milliseconds}
-          min="0"
-          max="999"
-          inputmode="numeric"
-          aria-label="Best time milliseconds"
-        />
-      </label>
+      <legend class="fieldset-legend">Best time (optional)</legend>
+      <input
+        class="input w-full tabular-nums"
+        class:input-error={Boolean(bestTimeError)}
+        type="text"
+        name="best_time"
+        bind:value={bestTimeInput}
+        placeholder="e.g. 12.34 or 1:23.45"
+        autocomplete="off"
+        spellcheck={false}
+        aria-invalid={Boolean(bestTimeError)}
+        oninput={() => (bestTimeError = "")}
+        onblur={normalizeBestTime}
+      />
+      <p class="label">Seconds or minutes:seconds. Up to 3 decimal places.</p>
+      <p class="text-error text-sm" aria-live="polite">
+        {bestTimeError}
+      </p>
     </fieldset>
 
     <fieldset class="fieldset">

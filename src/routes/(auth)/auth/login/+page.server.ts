@@ -94,6 +94,7 @@ export const actions: Actions = {
       if (
         target &&
         target.origin === url.origin &&
+        !target.pathname.startsWith("//") &&
         redirect_to.startsWith("/") &&
         !redirect_to.startsWith("//")
       ) {

@@ -129,10 +129,25 @@
       async onResult({ result, cancel }) {
         if (result.type === "redirect") {
           cancel();
-          await goto(result.location as ResolvedPathname, {
-            replaceState: true,
-            invalidateAll: true,
-          });
+          const destination = new URL(result.location, window.location.href);
+          if (destination.origin !== window.location.origin) {
+            window.location.href = destination.href;
+            return;
+          }
+
+          try {
+            await goto(
+              (destination.pathname +
+                destination.search +
+                destination.hash) as ResolvedPathname,
+              {
+                replace: true,
+                refreshAll: true,
+              },
+            );
+          } catch {
+            window.location.href = destination.href;
+          }
         }
       },
     },

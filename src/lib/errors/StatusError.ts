@@ -1,8 +1,8 @@
-import type { NumericRange } from "@sveltejs/kit";
+import type { IntRange } from "type-fest";
 
 export class StatusError extends Error {
   constructor(
-    public readonly status: NumericRange<400, 599>,
+    public readonly status: IntRange<400, 600>,
     message: string,
     options?: ErrorOptions,
   ) {

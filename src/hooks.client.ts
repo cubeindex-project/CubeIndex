@@ -1,6 +1,9 @@
-import type { HandleClientError } from "@sveltejs/kit";
+import type { HandleClientError } from "@sveltejs/kit/hooks";
 
-export const handleError: HandleClientError = ({ error, event, status }) => {
+export const handleError: HandleClientError = ({ error, event, kind }) => {
+  if (kind !== "unknown") return;
+
+  const status = 500;
   const clientError =
     error instanceof Error
       ? { name: error.name, message: error.message, stack: error.stack }

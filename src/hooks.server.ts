@@ -1,17 +1,16 @@
-import { sequence } from "@sveltejs/kit/hooks";
+import { error, redirect } from "@sveltejs/kit";
 import {
-  error,
+  sequence,
   type Handle,
-  redirect,
   type HandleServerError,
-} from "@sveltejs/kit";
+} from "@sveltejs/kit/hooks";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-} from "$env/static/public";
+} from "$app/env/public";
 import { randomUUID } from "node:crypto";
-import { createLogger } from "$lib/server/logger";
+import { createLogger } from "#lib/server/logger.ts";
 
 const context: Handle = async ({ event, resolve }) => {
   const reqId = randomUUID();
@@ -222,14 +221,15 @@ const errorMessages: Record<number, string> = {
   504: "The server took too long to respond. Please try again later.",
 };
 
-export const handleError: HandleServerError = ({
-  error: err,
-  event,
-  status,
-}) => {
+export const handleError: HandleServerError = ({ error: err, event, kind }) => {
+  if (kind !== "unknown") {
+    return { reqId: event.locals.reqId };
+  }
+
+  const status = 500;
   const log = event.locals.log;
   const errorToLog = err instanceof Error ? err : new Error(String(err));
-  log.error(
+  log?.error(
     { event: "http.request.unhandled_error", err: errorToLog, status },
     "Unhandled error",
   );

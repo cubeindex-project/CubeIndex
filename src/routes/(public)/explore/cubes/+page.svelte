@@ -208,7 +208,7 @@
   {/snippet}
   {#snippet action()}
     <a
-      href={resolve("/explore/cubes/compare")}
+      href={resolve("explore/cubes/compare")}
       class="btn bg-primary text-primary-content"
     >
       <i class="fa-solid fa-code-compare sm:mr-2"></i>
@@ -282,7 +282,7 @@
     />
   {/snippet}
   {#snippet noResultsAction()}
-    <a href={resolve("/submit/cube")} class="btn btn-primary flex items-center">
+    <a href={resolve("submit/cube")} class="btn btn-primary flex items-center">
       <i class="fa-solid fa-plus mr-2"></i>
       Submit a New Cube
     </a>

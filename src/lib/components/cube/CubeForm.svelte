@@ -106,7 +106,7 @@
     { key: "sources", label: "Sources & notes" },
   ];
 
-  const cubeSubmissionManualPath = "/docs/submission-manual/cubes";
+  const cubeSubmissionManualPath = "/(docs)/docs/submission-manual/cubes";
 
   const {
     form,

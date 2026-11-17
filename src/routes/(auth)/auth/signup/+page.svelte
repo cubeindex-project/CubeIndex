@@ -177,14 +177,12 @@
             />
             <div class="text-sm select-none">
               I accept the
-              <a
-                href={resolve("/tos")}
-                target="_blank"
-                class="link link-primary">Terms of Service</a
+              <a href={resolve("tos")} target="_blank" class="link link-primary"
+                >Terms of Service</a
               >
               and
               <a
-                href={resolve("/privacy")}
+                href={resolve("privacy")}
                 target="_blank"
                 class="link link-primary">Privacy Policy</a
               >

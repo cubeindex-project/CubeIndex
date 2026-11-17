@@ -18,13 +18,11 @@
     <button
       type="button"
       class="btn flex-1 sm:flex-none"
-      onclick={() => (open = false)}
+      onclick={() => (open = false)}>Cancel</button
     >
-      Cancel
-    </button>
 
-    <a href={resolve("/auth/logout")} class="btn btn-error flex-1 sm:flex-none">
-      Sign Out
-    </a>
+    <a href={resolve("auth/logout")} class="btn btn-error flex-1 sm:flex-none"
+      >Sign Out</a
+    >
   </div>
 </Modal>

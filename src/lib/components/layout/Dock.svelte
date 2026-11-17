@@ -6,7 +6,7 @@
     {
       title: "Home",
       icon: "fa-solid fa-house",
-      link: resolve("/"),
+      link: resolve("/(public)"),
     },
     {
       title: "Cubes",

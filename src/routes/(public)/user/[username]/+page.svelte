@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
+  import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
   import { Constants } from "#lib/types/database.types.ts";
   import {
@@ -53,7 +54,6 @@
       ),
     ).sort(),
   );
-
   const allConditions = $derived(
     Array.from(
       new Set(
@@ -81,9 +81,9 @@
       >
         {#snippet action()}
           <a
-            href={resolve("/(public)/user/[username]?view=explore&status=All", {
+            href={`${resolve("/(public)/user/[username]", {
               username: page.params.username!,
-            })}
+            })}?view=explore&status=All` as ResolvedPathname}
             class="btn btn-ghost btn-sm"
           >
             View all
@@ -95,10 +95,9 @@
         {#each statusCollections as { status, cubes } (status)}
           {@const presentation = USER_CUBE_STATUS_PRESENTATION[status]}
           <a
-            href={resolve(
-              `/(public)/user/[username]?view=explore&status=${status}`,
-              { username: page.params.username! },
-            )}
+            href={`${resolve("/(public)/user/[username]", {
+              username: page.params.username!,
+            })}?view=explore&status=${status}` as ResolvedPathname}
             class="card card-border bg-base-200 transition-colors hover:border-base-content/30 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
             aria-label={`View ${getUserCubeStatusLabel(status).toLowerCase()} cubes (${cubes.length})`}
           >
@@ -325,7 +324,7 @@
     {/snippet}
     {#snippet noResultsAction()}
       {#if total === 0 && user?.id === profile.user_id}
-        <a href={resolve("/explore/cubes")} class="btn btn-primary">
+        <a href={resolve("explore/cubes")} class="btn btn-primary">
           Browse cubes
           <i class="fa-solid fa-arrow-right"></i>
         </a>

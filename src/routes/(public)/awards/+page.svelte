@@ -158,7 +158,7 @@
         <div class="mt-8 flex flex-wrap justify-start gap-3">
           {#if eventPhase === "live"}
             <a
-              href={resolve("/awards/vote")}
+              href={resolve("awards/vote")}
               class="btn btn-primary btn-lg"
               data-umami-event="awards-vote-click"
               data-umami-event-year={currentEvent?.year}
@@ -168,7 +168,7 @@
             </a>
           {:else if eventPhase === "past" && currentEvent}
             <a
-              href={resolve(`/awards/${currentEvent.year}`)}
+              href={resolve(`awards/${currentEvent.year}`)}
               data-umami-event="awards-results-click"
               data-umami-event-year={currentEvent.year}
               data-umami-event-source="hero"
@@ -290,7 +290,7 @@
         {#each previousEvents as event (event.id)}
           <a
             class="group relative overflow-hidden rounded-2xl border border-base-200/70 bg-base-200/70 p-6 shadow-sm transition hover:border-primary/60 hover:shadow-lg"
-            href={resolve(`/awards/${event.year}`)}
+            href={resolve(`awards/${event.year}`)}
             data-umami-event="awards-results-click"
             data-umami-event-year={event.year}
             data-umami-event-source="archive"

@@ -45,7 +45,8 @@
       <div class="card-body">
         <div class="flex items-center justify-between gap-2">
           <h2 class="card-title">Recent Submissions</h2>
-          <a class="btn btn-xs" href={resolve("/user/submissions")}>View all</a>
+
+          <a class="btn btn-xs" href={resolve("user/submissions")}>View all</a>
         </div>
         {#if recent.cubeSubmissions.length === 0}
           <div class="text-sm opacity-70">

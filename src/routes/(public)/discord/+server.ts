@@ -4,5 +4,5 @@ import { trackServerEvent } from "#lib/server/umami.ts";
 
 export const GET: RequestHandler = async () => {
   await trackServerEvent("discord-invite-visited");
-  redirect(308, "https://discord.gg/76ExrEAE7s");
+  redirect(308, "https://discord.gg/76ExrEAE7s", { external: true });
 };

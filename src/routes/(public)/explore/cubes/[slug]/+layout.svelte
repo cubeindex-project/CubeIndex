@@ -224,8 +224,8 @@
           <a
             href={resolve(
               tab.path
-                ? `/explore/cubes/${cube.slug}/${tab.path}`
-                : `/explore/cubes/${cube.slug}`,
+                ? `explore/cubes/${cube.slug}/${tab.path}`
+                : `explore/cubes/${cube.slug}`,
             )}
             class="tab tab-sm sm:tab-md whitespace-nowrap"
             class:tab-active={tab.key === currentTab}

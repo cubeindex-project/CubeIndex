@@ -107,10 +107,7 @@
 
     <p class="text-sm text-center text-gray-500 mt-6">
       Remembered it?
-      <a
-        href={resolve("/auth/login")}
-        class="link link-primary link-hover ml-1"
-      >
+      <a href={resolve("auth/login")} class="link link-primary link-hover ml-1">
         Back to Login
       </a>
     </p>

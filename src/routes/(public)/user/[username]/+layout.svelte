@@ -184,12 +184,9 @@
 
             <div class="flex flex-wrap gap-1 items-center">
               <a
-                href={resolve(
-                  "/(public)/user/[username]/social?tab=followers",
-                  {
-                    username: profile.username ?? "",
-                  },
-                )}
+                href={`${resolve("/(public)/user/[username]/social", {
+                  username: profile.username ?? "",
+                })}?tab=followers` as ResolvedPathname}
               >
                 <i class="fa-solid fa-users text-xs opacity-70"></i>
                 <span class="text-sm">
@@ -201,12 +198,9 @@
               <span class="mx-1 opacity-60" aria-hidden="true">•</span>
 
               <a
-                href={resolve(
-                  "/(public)/user/[username]/social?tab=following",
-                  {
-                    username: profile.username ?? "",
-                  },
-                )}
+                href={`${resolve("/(public)/user/[username]/social", {
+                  username: profile.username ?? "",
+                })}?tab=following` as ResolvedPathname}
               >
                 <span class="text-sm">
                   {stats.followingCount}
@@ -244,7 +238,7 @@
               </div>
               {#if user?.id === profile.user_id}
                 <a
-                  href={resolve("/user/settings")}
+                  href={resolve("user/settings")}
                   class="flex items-center gap-2 p-2 btn btn-ghost"
                   aria-label="User Settings"
                   title="User Settings"
@@ -304,7 +298,7 @@
     >
       {#each tabs as tab, index (index)}
         <a
-          href={resolve(`/user/${profile.username}${tab.link}`)}
+          href={resolve(`user/${profile.username}${tab.link}`)}
           class="hover:text-primary border-0 {activeTab === tab.title
             ? 'border-b-4'
             : ''} border-primary"
@@ -318,7 +312,7 @@
       {/each}
       <!-- {#if user?.id === profile.user_id}
         <a
-          href={resolve("/user/submissions")}
+          href={resolve("user/submissions")}
           class="hover:text-primary border-0 {activeTab === 'Submissions'
             ? 'border-b-4'
             : ''} border-primary"

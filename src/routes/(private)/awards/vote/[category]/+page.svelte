@@ -159,7 +159,7 @@
               </p>
               <a
                 class="btn btn-primary"
-                href={resolve("/awards/vote")}
+                href={resolve("awards/vote")}
                 data-umami-event="awards-categories-click"
                 data-umami-event-source="empty-ballot"
               >

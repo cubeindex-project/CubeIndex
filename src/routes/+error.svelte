@@ -10,7 +10,7 @@
       requestID: page.error?.reqId ?? "",
     });
 
-    return resolve(`/report?${searchParams.toString()}`);
+    return resolve(`report?${searchParams.toString()}`);
   }
 </script>
 
@@ -41,7 +41,7 @@
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href={resolve("/")} class="btn btn-lg btn-primary"> 🏠 Return Home </a>
+    <a href={resolve("/(public)")} class="btn btn-lg btn-primary"> 🏠 Return Home </a>
     <a class="btn btn-lg btn-error" href={getReportURL()}>
       🐞 Report the Bug
     </a>

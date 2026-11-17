@@ -58,7 +58,7 @@ export const actions: Actions = {
     }
 
     await trackServerEvent("account-created");
-    redirect(303, resolve("/auth/complete-profile"));
+    redirect(303, resolve("auth/complete-profile"));
   },
 
   submitSurvey: async ({ request, locals: { supabase, user, log }, url }) => {

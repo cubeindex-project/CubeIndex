@@ -8,7 +8,7 @@
   <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
     <div class="footer footer-vertical sm:footer-horizontal">
       <div class="max-w-md">
-        <a class="inline-flex items-center gap-3" href={resolve("/")}>
+        <a class="inline-flex items-center gap-3" href={resolve("/(public)")}>
           <img
             class="size-12 rounded-xl"
             src="/images/CubeIndex_Logo.webp"

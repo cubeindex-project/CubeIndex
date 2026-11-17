@@ -105,7 +105,7 @@
   <nav class="navbar mx-auto min-h-16 max-w-7xl px-4 lg:px-6">
     <div class="navbar-start gap-6">
       <div class="flex items-center gap-2">
-        <a class="flex items-center space-x-3" href={resolve("/")}>
+        <a class="flex items-center space-x-3" href={resolve("/(public)")}>
           <img
             class="size-10 rounded-xl"
             src="/images/CubeIndex_Logo.webp"

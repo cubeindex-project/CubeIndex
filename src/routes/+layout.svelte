@@ -17,7 +17,7 @@
   import {
     PUBLIC_UMAMI_DOMAINS,
     PUBLIC_UMAMI_WEBSITE_ID,
-  } from "$env/static/public";
+  } from "$app/env/public";
 
   let { data, children } = $props();
 

@@ -820,7 +820,7 @@
 
                   <a
                     class="btn btn-sm btn-ghost"
-                    href={resolve("/discord")}
+                    href={resolve("discord")}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -828,10 +828,9 @@
                     Discord
                   </a>
 
-                  <a class="btn btn-sm btn-ghost" href={resolve("/report")}>
-                    <i class="fa-solid fa-bug"></i>
-                    Report an issue
-                  </a>
+                  <a class="btn btn-sm btn-ghost" href={resolve("report")}
+                    ><i class="fa-solid fa-bug"></i> Report an issue</a
+                  >
 
                   <a
                     class="btn btn-sm btn-ghost"
@@ -903,14 +902,14 @@
                         ></i>
                         <span>
                           Read the
-                          <a
-                            class="link link-primary"
-                            href={resolve("/privacy")}>Privacy Policy</a
+                          <a class="link link-primary" href={resolve("privacy")}
+                            >Privacy Policy</a
                           >
                           and
-                          <a class="link link-primary" href={resolve("/tos")}
+                          <a class="link link-primary" href={resolve("tos")}
                             >Terms of Service</a
-                          >.
+                          >
+                          .
                         </span>
                       </p>
 
@@ -987,7 +986,7 @@
 
                           <a
                             class="link link-hover link-primary flex items-center gap-2"
-                            href={resolve("/discord")}
+                            href={resolve("discord")}
                             target="_blank"
                             rel="noreferrer"
                           >

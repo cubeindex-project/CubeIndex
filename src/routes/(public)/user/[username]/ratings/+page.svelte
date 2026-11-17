@@ -169,7 +169,7 @@
   {/snippet}
   {#snippet noResultsAction()}
     {#if total === 0 && user?.id === profile.user_id}
-      <a href={resolve("/explore/cubes")} class="btn btn-primary">
+      <a href={resolve("explore/cubes")} class="btn btn-primary">
         Browse cubes to rate
         <i class="fa-solid fa-arrow-right"></i>
       </a>

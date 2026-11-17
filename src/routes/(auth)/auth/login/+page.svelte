@@ -172,7 +172,7 @@
     <p class="text-sm text-center text-gray-500 mt-6">
       Don't have an account?
       <a
-        href={resolve("/auth/signup")}
+        href={resolve("auth/signup")}
         class="link link-primary link-hover ml-1"
       >
         Sign Up

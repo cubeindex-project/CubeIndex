@@ -1,5 +1,5 @@
-import { AUTOFILL_SERVICE_URL } from "$env/static/private";
-import { json, type RequestHandler } from "@sveltejs/kit";
+import { AUTOFILL_SERVICE_URL } from "$app/env/private";
+import type { RequestHandler } from "@sveltejs/kit";
 
 type ScrapingCapability =
   "supports_product_scraping" | "supports_price_scraping";

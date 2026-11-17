@@ -1,4 +1,4 @@
-import { AUTOFILL_SERVICE_URL } from "$env/static/private";
+import { AUTOFILL_SERVICE_URL } from "$app/env/private";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ fetch, locals: { log } }) => {

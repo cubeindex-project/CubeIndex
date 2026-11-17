@@ -10,7 +10,7 @@ import {
   GITHUB_APP_ID,
   GITHUB_APP_INSTALLATION_ID,
   GITHUB_APP_PRIVATE_KEY,
-} from "$env/static/private";
+} from "$app/env/private";
 
 export const POST: RequestHandler = async ({
   request,

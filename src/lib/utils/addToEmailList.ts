@@ -1,4 +1,4 @@
-import { BREVO_API_KEY } from "$env/static/private";
+import { BREVO_API_KEY } from "$app/env/private";
 
 export async function addToEmailList(
   email: string | undefined,

@@ -1,5 +1,6 @@
 import type { RequestHandler } from "./$types";
 import { error, redirect } from "@sveltejs/kit";
+import { PUBLIC_SUPABASE_URL } from "$app/env/public";
 
 export const GET: RequestHandler = async ({
   url,
@@ -17,5 +18,7 @@ export const GET: RequestHandler = async ({
     throw error(500, "Failed to initiate Google login");
   }
 
-  redirect(307, data.url);
+  redirect(307, data.url, {
+    external: [new URL(PUBLIC_SUPABASE_URL).origin],
+  });
 };

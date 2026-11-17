@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { browser } from "$app/environment";
+  import { browser } from "$app/env";
   import { superForm } from "sveltekit-superforms";
   import Avatar from "#lib/components/user/Avatar.svelte";
   import { parseAsStringLiteral, useQueryState } from "nuqs-svelte";

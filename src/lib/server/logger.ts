@@ -1,5 +1,9 @@
-import { NODE_ENV, LOG_LEVEL } from "$env/static/private";
-import { env } from "$env/dynamic/private";
+import {
+  NODE_ENV,
+  LOG_LEVEL,
+  AXIOM_DATASET,
+  AXIOM_TOKEN,
+} from "$app/env/private";
 import pino, { stdTimeFunctions, type LoggerOptions } from "pino";
 import axiomTransport from "@axiomhq/pino";
 import pretty from "pino-pretty";
@@ -8,7 +12,7 @@ const isProduction = NODE_ENV.toLowerCase() === "production";
 
 const level = LOG_LEVEL.toLowerCase();
 
-if (isProduction && (!env.AXIOM_DATASET || !env.AXIOM_TOKEN)) {
+if (isProduction && (!AXIOM_DATASET || !AXIOM_TOKEN)) {
   throw new Error(
     "AXIOM_DATASET and AXIOM_TOKEN must be configured in production.",
   );
@@ -48,8 +52,8 @@ export const logger = isProduction
   ? pino(
       baseOptions,
       await axiomTransport({
-        dataset: process.env.AXIOM_DATASET!,
-        token: process.env.AXIOM_TOKEN!,
+        dataset: AXIOM_DATASET,
+        token: AXIOM_TOKEN,
       }),
     )
   : pino(

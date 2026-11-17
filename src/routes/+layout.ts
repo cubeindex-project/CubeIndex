@@ -6,7 +6,7 @@ import {
 import {
   PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   PUBLIC_SUPABASE_URL,
-} from "$env/static/public";
+} from "$app/env/public";
 import type { LayoutLoad } from "./$types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "#lib/types/database.types.ts";

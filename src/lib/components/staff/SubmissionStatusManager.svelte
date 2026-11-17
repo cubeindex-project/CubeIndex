@@ -1,8 +1,7 @@
 <script lang="ts">
   import Modal from "../ui/Modal.svelte";
-  import type { Enums } from "$lib/types/database.types";
-  import { enhance } from "$app/forms";
-  import type { SubmitFunction } from "@sveltejs/kit";
+  import type { Enums } from "#lib/types/database.types.ts";
+  import { enhance, type SubmitFunction } from "$app/forms";
 
   /**
    * Inputs that identify the submission whose status can be updated.

@@ -1,12 +1,12 @@
 <script lang="ts" generics="T, SortFields extends readonly SortFieldOption[]">
-  import Pagination from "$lib/components/explore/Pagination.svelte";
-  import SearchBar from "$lib/components/explore/SearchBar.svelte";
-  import FilterSidebar from "$lib/components/explore/FilterSidebar.svelte";
-  import ItemsPerPageSelector from "$lib/components/explore/ItemsPerPageSelector.svelte";
+  import Pagination from "#lib/components/explore/Pagination.svelte";
+  import SearchBar from "#lib/components/explore/SearchBar.svelte";
+  import FilterSidebar from "#lib/components/explore/FilterSidebar.svelte";
+  import ItemsPerPageSelector from "#lib/components/explore/ItemsPerPageSelector.svelte";
   import SortSelector, {
     type SortDirection,
     type SortFieldOption,
-  } from "$lib/components/explore/SortSelector.svelte";
+  } from "#lib/components/explore/SortSelector.svelte";
   import Fuse, { type IFuseOptions } from "fuse.js";
   import {
     useQueryStates,

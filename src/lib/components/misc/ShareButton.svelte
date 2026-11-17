@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { trackEvent } from "$lib/utils/umami";
+  import { trackEvent } from "#lib/utils/umami.ts";
 
   interface Props {
     url: string;

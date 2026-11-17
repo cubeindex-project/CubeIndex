@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Constants, type Tables } from "$lib/types/database.types";
+  import { Constants, type Tables } from "#lib/types/database.types.ts";
   import { page } from "$app/state";
-  import Modal from "$lib/components/ui/Modal.svelte";
-  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  import Modal from "#lib/components/ui/Modal.svelte";
+  import { getCurrencySymbol } from "#lib/utils/getCurrencySymbol.ts";
   import { tick, untrack } from "svelte";
-  import { saveCubeInCollection } from "$lib/api/cubeCollection";
-  import type { CubeCollectionForm } from "$lib/schemas/cubeCollection";
-  import { getUserCubeStatusLabel } from "$lib/utils/getUserCubeStatusLabel";
-  import { formatTimeInput, parseTimeInput } from "$lib/utils/time";
+  import { saveCubeInCollection } from "#lib/api/cubeCollection.ts";
+  import type { CubeCollectionForm } from "#lib/schemas/cubeCollection.ts";
+  import { getUserCubeStatusLabel } from "#lib/utils/getUserCubeStatusLabel.ts";
+  import { formatTimeInput, parseTimeInput } from "#lib/utils/time.ts";
 
   interface Props {
     open: boolean;

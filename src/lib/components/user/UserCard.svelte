@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import Avatar from "./Avatar.svelte";
   import RoleBadge from "./RoleBadge.svelte";
 

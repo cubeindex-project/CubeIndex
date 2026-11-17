@@ -2,7 +2,7 @@
   import UserRatingCard from "./UserRatingCard.svelte";
   import Pagination from "../explore/Pagination.svelte";
   import SearchBar from "../explore/SearchBar.svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import { page } from "$app/state";
 
   interface Props {

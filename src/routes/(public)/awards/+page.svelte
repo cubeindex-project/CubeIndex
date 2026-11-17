@@ -2,11 +2,11 @@
   import { resolve } from "$app/paths";
   import { onMount } from "svelte";
   import NumberFlow from "@number-flow/svelte";
-  import type { Tables } from "$lib/types/database.types.js";
-  import YoutubeVideoCard from "$lib/components/misc/YoutubeVideoCard.svelte";
-  import { formatDate } from "$lib/utils/formatDate.js";
-  import { millisecondsToTime } from "$lib/utils/time.js";
-  import { getEventPhase } from "$lib/utils/eventPhase.js";
+  import type { Tables } from "#lib/types/database.types.js";
+  import YoutubeVideoCard from "#lib/components/misc/YoutubeVideoCard.svelte";
+  import { formatDate } from "#lib/utils/formatDate.js";
+  import { millisecondsToTime } from "#lib/utils/time.js";
+  import { getEventPhase } from "#lib/utils/eventPhase.js";
 
   const { data } = $props();
   const { currentEvent, previousEvents, logoDesigner } = $derived(data);

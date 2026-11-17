@@ -2,15 +2,15 @@
   import { formatDate } from "../../utils/formatDate";
   import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
   import ManageCubeModal from "./ManageCubeModal.svelte";
-  import { type Tables } from "$lib/types/database.types";
+  import { type Tables } from "#lib/types/database.types.ts";
   import { resolve } from "$app/paths";
-  import { deleteCubeFromCollection } from "$lib/api/cubeCollection";
-  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  import { deleteCubeFromCollection } from "#lib/api/cubeCollection.ts";
+  import { getCurrencySymbol } from "#lib/utils/getCurrencySymbol.ts";
   import {
     getUserCubeStatusLabel,
     USER_CUBE_STATUS_PRESENTATION,
-  } from "$lib/utils/getUserCubeStatusLabel";
-  import { formatTime, millisecondsToTime } from "$lib/utils/time";
+  } from "#lib/utils/getUserCubeStatusLabel.ts";
+  import { formatTime, millisecondsToTime } from "#lib/utils/time.ts";
 
   interface Props {
     mode?: "view" | "edit";

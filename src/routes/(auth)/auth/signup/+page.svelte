@@ -3,8 +3,8 @@
   import { superForm } from "sveltekit-superforms";
   import { passwordStrength } from "$lib/utils/passwordStrength";
   import { Turnstile } from "svelte-turnstile";
-  import { PUBLIC_TURNSTILE_SITE_KEY } from "$env/static/public";
-  import ExternalAuthProviders from "$lib/components/layout/ExternalAuthProviders.svelte";
+  import { PUBLIC_TURNSTILE_SITE_KEY } from "$app/env/public";
+  import ExternalAuthProviders from "#lib/components/layout/ExternalAuthProviders.svelte";
   import { untrack } from "svelte";
 
   let { data } = $props();

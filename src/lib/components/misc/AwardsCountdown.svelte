@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Tables } from "$lib/types/database.types";
-  import type { EventPhase } from "$lib/utils/eventPhase";
-  import { formatDate } from "$lib/utils/formatDate";
-  import { millisecondsToTime } from "$lib/utils/time";
+  import type { Tables } from "#lib/types/database.types.ts";
+  import type { EventPhase } from "#lib/utils/eventPhase.ts";
+  import { formatDate } from "#lib/utils/formatDate.ts";
+  import { millisecondsToTime } from "#lib/utils/time.ts";
 
   interface Props {
     countdownLabel: string;

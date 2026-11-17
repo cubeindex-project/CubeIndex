@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { passwordStrength } from "$lib/utils/passwordStrength";
+  import { passwordStrength } from "#lib/utils/passwordStrength.ts";
   import { untrack } from "svelte";
   import { superForm } from "sveltekit-superforms";
 

@@ -1,4 +1,4 @@
-import type { TablesInsert } from "$lib/types/database.types";
+import type { TablesInsert } from "#lib/types/database.types.ts";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

@@ -4,8 +4,8 @@
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
-  import { deleteCubeRating } from "$lib/api/cubeRating";
-  import type { Tables } from "$lib/types/database.types";
+  import { deleteCubeRating } from "#lib/api/cubeRating.ts";
+  import type { Tables } from "#lib/types/database.types.ts";
 
   const supabase = page.data.supabase;
 

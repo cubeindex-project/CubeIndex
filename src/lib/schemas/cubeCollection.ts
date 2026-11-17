@@ -1,4 +1,4 @@
-import { Constants } from "$lib/types/database.types";
+import { Constants } from "#lib/types/database.types.ts";
 import { z } from "zod";
 
 const MAX_PURCHASE_PRICE = 100_000;

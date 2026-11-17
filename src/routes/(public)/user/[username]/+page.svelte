@@ -1,14 +1,14 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import { page } from "$app/state";
-  import { Constants } from "$lib/types/database.types";
+  import { Constants } from "#lib/types/database.types.ts";
   import {
     getUserCubeStatusLabel,
     USER_CUBE_STATUS_PRESENTATION,
-  } from "$lib/utils/getUserCubeStatusLabel";
-  import UserCubeCard from "$lib/components/cube/UserCubeCard.svelte";
-  import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
+  } from "#lib/utils/getUserCubeStatusLabel.ts";
+  import UserCubeCard from "#lib/components/cube/UserCubeCard.svelte";
+  import ExplorePage from "#lib/components/explore/ExplorePage.svelte";
+  import UserExploreHeader from "#lib/components/explore/UserExploreHeader.svelte";
   import {
     parseAsInteger,
     parseAsString,

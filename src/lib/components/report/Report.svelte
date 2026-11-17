@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import Modal from "$lib/components/ui/Modal.svelte";
-  import { trackEvent } from "$lib/utils/umami";
+  import Modal from "#lib/components/ui/Modal.svelte";
+  import { trackEvent } from "#lib/utils/umami.ts";
 
   interface Props {
     open: boolean;

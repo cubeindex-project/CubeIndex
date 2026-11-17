@@ -9,26 +9,26 @@
     normalizeReleaseDate,
     sizePattern,
     type CubeFormSchema,
-  } from "$lib/schemas/cubeForm.js";
+  } from "#lib/schemas/cubeForm.js";
   import { onMount, untrack } from "svelte";
   import SearchValues, {
     type SearchValue,
-  } from "$lib/components/ui/SearchValues.svelte";
-  import type { Tables } from "$lib/types/database.types";
-  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol";
+  } from "#lib/components/ui/SearchValues.svelte";
+  import type { Tables } from "#lib/types/database.types.ts";
+  import { getCurrencySymbol } from "#lib/utils/getCurrencySymbol.ts";
   import type {
     AutofillState,
     CubeDetailsAutofillResult,
-  } from "$lib/types/autofill.types";
-  import CubeDetailsAutofillDialog from "$lib/components/autofill/CubeDetailsAutofillDialog.svelte";
+  } from "#lib/types/autofill.types.ts";
+  import CubeDetailsAutofillDialog from "#lib/components/autofill/CubeDetailsAutofillDialog.svelte";
   import { goto } from "$app/navigation";
   import type { ResolvedPathname } from "$app/types";
   import FormField from "../form/FormField.svelte";
   import FormFooter from "../form/FormFooter.svelte";
   import FormHelpLink from "../form/FormHelpLink.svelte";
   import FormHeader from "../form/FormHeader.svelte";
-  import { fetchVendorOfferAutofill } from "$lib/api/autofill";
-  import { isValueOther, VALUE_OTHER } from "$lib/utils/isValueOther";
+  import { fetchVendorOfferAutofill } from "#lib/api/autofill.ts";
+  import { isValueOther, VALUE_OTHER } from "#lib/utils/isValueOther.ts";
 
   interface Props {
     cubes: Pick<

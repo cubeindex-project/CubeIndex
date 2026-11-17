@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import { onMount } from "svelte";
   import ConfirmSignOut from "../user/ConfirmSignOut.svelte";
 

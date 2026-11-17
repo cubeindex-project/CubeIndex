@@ -1,4 +1,4 @@
-import { formatPartialDate } from "$lib/utils/formatPartialDate";
+import { formatPartialDate } from "#lib/utils/formatPartialDate.ts";
 import type { LayoutServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 

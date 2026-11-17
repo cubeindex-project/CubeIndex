@@ -1,6 +1,5 @@
-import { json } from "@sveltejs/kit";
-import { clientErrorSchema } from "$lib/schemas/clientError";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { clientErrorSchema } from "#lib/schemas/clientError.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler = async ({ request, locals: { log } }) => {

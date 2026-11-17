@@ -1,9 +1,9 @@
 <script lang="ts">
   import StarRating from "./StarRating.svelte";
   import { page } from "$app/state";
-  import Modal from "$lib/components/ui/Modal.svelte";
-  import { saveCubeRating } from "$lib/api/cubeRating";
-  import type { Tables } from "$lib/types/database.types";
+  import Modal from "#lib/components/ui/Modal.svelte";
+  import { saveCubeRating } from "#lib/api/cubeRating.ts";
+  import type { Tables } from "#lib/types/database.types.ts";
 
   interface Props {
     open: boolean;

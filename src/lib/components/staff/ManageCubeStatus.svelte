@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
   import { page } from "$app/state";
-  import { isValueOther } from "$lib/utils/isValueOther";
+  import { isValueOther } from "#lib/utils/isValueOther.ts";
 
   interface Props {
     reason: "Accept" | "Reject";

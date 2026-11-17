@@ -2,10 +2,10 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { TURNSTILE_SECRET_KEY } from "$env/static/private";
-import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
-import { loginSchema } from "$lib/schemas/auth";
-import { trackServerEvent } from "$lib/server/umami";
+import { TURNSTILE_SECRET_KEY } from "$app/env/private";
+import { validateTurnstileToken } from "#lib/utils/validateTurnstileToken.ts";
+import { loginSchema } from "#lib/schemas/auth.ts";
+import { trackServerEvent } from "#lib/server/umami.ts";
 
 export const load = (async () => {
   return {

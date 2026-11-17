@@ -1,19 +1,19 @@
 <script lang="ts">
   import "../app.css";
-  import Navbar from "$lib/components/layout/Navbar.svelte";
-  import Dock from "$lib/components/layout/Dock.svelte";
+  import Navbar from "#lib/components/layout/Navbar.svelte";
+  import Dock from "#lib/components/layout/Dock.svelte";
   import { toast, Toaster } from "svelte-sonner";
   import { SvelteKitTopLoader } from "sveltekit-top-loader";
-  import ClientErrorReporter from "$lib/components/misc/ClientErrorReporter.svelte";
-  import ScrollToTop from "$lib/components/misc/ScrollToTop.svelte";
-  import type { ResolvedMeta } from "$lib/types/meta.types";
+  import ClientErrorReporter from "#lib/components/misc/ClientErrorReporter.svelte";
+  import ScrollToTop from "#lib/components/misc/ScrollToTop.svelte";
+  import type { ResolvedMeta } from "#lib/types/meta.types.ts";
   import type { ResolvedPathname } from "$app/types";
   import { page } from "$app/state";
   import { NuqsAdapter } from "nuqs-svelte/adapters/svelte-kit";
-  import { identifyVisitor } from "$lib/utils/umami";
+  import { identifyVisitor } from "#lib/utils/umami.ts";
   import { goto, invalidate } from "$app/navigation";
   import { onMount } from "svelte";
-  import Footer from "$lib/components/layout/Footer.svelte";
+  import Footer from "#lib/components/layout/Footer.svelte";
   import {
     PUBLIC_UMAMI_DOMAINS,
     PUBLIC_UMAMI_WEBSITE_ID,

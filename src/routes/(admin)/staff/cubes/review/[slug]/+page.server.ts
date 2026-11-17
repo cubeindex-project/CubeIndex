@@ -2,11 +2,11 @@ import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { updateSubmissionStatus } from "$lib/schemas/submissionStatus";
+import { updateSubmissionStatus } from "#lib/schemas/submissionStatus.ts";
 import { fail } from "@sveltejs/kit";
-import { rejectSubmission } from "$lib/server/staff/rejectSubmission";
-import { approveSubmission } from "$lib/server/staff/approveSubmission";
-import { StatusError } from "$lib/errors/StatusError";
+import { rejectSubmission } from "#lib/server/staff/rejectSubmission.ts";
+import { approveSubmission } from "#lib/server/staff/approveSubmission.ts";
+import { StatusError } from "#lib/errors/StatusError.ts";
 
 /**
  * Loads a cube submission and its related review data for staff.

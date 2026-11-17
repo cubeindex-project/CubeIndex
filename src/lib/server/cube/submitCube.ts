@@ -1,8 +1,8 @@
-import type { CubeFormSchema } from "$lib/schemas/cubeForm";
-import { cleanLink } from "$lib/utils/linkCleaner";
-import { StatusError } from "$lib/errors/StatusError";
-import { camelToSnakeCase } from "$lib/utils/camelToSnakeCase";
-import { createCubeSubmissionPayload } from "$lib/utils/submissions/cube/createCubeSubmissionPayload";
+import type { CubeFormSchema } from "#lib/schemas/cubeForm.ts";
+import { cleanLink } from "#lib/utils/linkCleaner.ts";
+import { StatusError } from "#lib/errors/StatusError.ts";
+import { camelToSnakeCase } from "#lib/utils/camelToSnakeCase.ts";
+import { createCubeSubmissionPayload } from "#lib/utils/submissions/cube/createCubeSubmissionPayload.ts";
 import type { Infer } from "sveltekit-superforms";
 
 /** Saves every part of a cube form in one database transaction.

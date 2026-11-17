@@ -1,8 +1,8 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import { formatDate } from "$lib/utils/formatDate";
-  import { plural } from "$lib/utils/plural";
-  import { trackEvent } from "$lib/utils/umami";
+  import { formatDate } from "#lib/utils/formatDate.ts";
+  import { plural } from "#lib/utils/plural.ts";
+  import { trackEvent } from "#lib/utils/umami.ts";
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();

@@ -1,6 +1,6 @@
 import z from "zod/v4";
-import { Constants, type Enums } from "$lib/types/database.types";
-import { VALUE_OTHER } from "$lib/utils/isValueOther";
+import { Constants, type Enums } from "#lib/types/database.types.ts";
+import { VALUE_OTHER } from "#lib/utils/isValueOther.ts";
 
 export const sizePattern =
   /^[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?\sx\s[0-9]+(\.[0-9]+)?$/;

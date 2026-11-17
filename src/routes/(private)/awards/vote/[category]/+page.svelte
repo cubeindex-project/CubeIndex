@@ -1,10 +1,10 @@
 <script lang="ts">
   import { invalidateAll } from "$app/navigation";
   import { resolve } from "$app/paths";
-  import { submitAwardsVote } from "$lib/api/awards.js";
-  import CubeCardSkeleton from "$lib/components/cube/CubeCardSkeleton.svelte";
-  import AwardsCountdown from "$lib/components/misc/AwardsCountdown.svelte";
-  import { getEventPhase } from "$lib/utils/eventPhase.js";
+  import { submitAwardsVote } from "#lib/api/awards.js";
+  import CubeCardSkeleton from "#lib/components/cube/CubeCardSkeleton.svelte";
+  import AwardsCountdown from "#lib/components/misc/AwardsCountdown.svelte";
+  import { getEventPhase } from "#lib/utils/eventPhase.js";
 
   import { untrack } from "svelte";
 

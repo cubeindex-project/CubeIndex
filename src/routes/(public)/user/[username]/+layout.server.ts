@@ -1,6 +1,6 @@
 import { error } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
-import { removeMarkdown } from "$lib/utils/removeMarkdown";
+import { removeMarkdown } from "#lib/utils/removeMarkdown.ts";
 
 export const load = (async ({
   locals: { user, log, supabase },

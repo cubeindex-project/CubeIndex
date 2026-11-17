@@ -1,6 +1,6 @@
 <script lang="ts">
-  import StaffCubeSubmissionCard from "$lib/components/staff/StaffCubeSubmissionCard.svelte";
-  import StaffSubmissionExplore from "$lib/components/staff/StaffSubmissionExplore.svelte";
+  import StaffCubeSubmissionCard from "#lib/components/staff/StaffCubeSubmissionCard.svelte";
+  import StaffSubmissionExplore from "#lib/components/staff/StaffSubmissionExplore.svelte";
 
   const { data } = $props();
   const submissions = $derived(

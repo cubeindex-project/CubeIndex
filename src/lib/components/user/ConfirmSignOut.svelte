@@ -1,6 +1,6 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import Modal from "$lib/components/ui/Modal.svelte";
+  import Modal from "#lib/components/ui/Modal.svelte";
 
   interface Props {
     open: boolean;

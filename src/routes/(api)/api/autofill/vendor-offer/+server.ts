@@ -1,5 +1,5 @@
-import { createAutofillHandler } from "$lib/server/autofill/createAutofillHandler";
-import type { VendorOfferAutofillResult } from "$lib/types/autofill.types";
+import { createAutofillHandler } from "#lib/server/autofill/createAutofillHandler.ts";
+import type { VendorOfferAutofillResult } from "#lib/types/autofill.types.ts";
 import type { RequestHandler } from "./$types";
 
 export const POST: RequestHandler =

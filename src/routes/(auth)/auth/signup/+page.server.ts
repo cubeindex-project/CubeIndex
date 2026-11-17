@@ -2,12 +2,12 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms";
-import { accountSchema, surveySchema } from "$lib/schemas/auth";
+import { accountSchema, surveySchema } from "#lib/schemas/auth.ts";
 import { setError } from "sveltekit-superforms";
-import { TURNSTILE_SECRET_KEY } from "$env/static/private";
-import { validateTurnstileToken } from "$lib/utils/validateTurnstileToken";
+import { TURNSTILE_SECRET_KEY } from "$app/env/private";
+import { validateTurnstileToken } from "#lib/utils/validateTurnstileToken.ts";
 import { resolve } from "$app/paths";
-import { trackServerEvent } from "$lib/server/umami";
+import { trackServerEvent } from "#lib/server/umami.ts";
 
 export const load: PageServerLoad = async ({ url }) => {
   const step = (url.searchParams.get("step") ?? "account") as

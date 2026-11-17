@@ -1,8 +1,8 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types.js";
-  import SearchValues from "$lib/components/ui/SearchValues.svelte";
-  import { formatPartialDate } from "$lib/utils/formatPartialDate.js";
+  import type { Tables } from "#lib/types/database.types.js";
+  import SearchValues from "#lib/components/ui/SearchValues.svelte";
+  import { formatPartialDate } from "#lib/utils/formatPartialDate.js";
 
   type DetailedCubeModelsKeys = keyof Tables<"v_detailed_cube_models">;
 

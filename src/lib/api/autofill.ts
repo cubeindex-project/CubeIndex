@@ -1,8 +1,8 @@
 import type {
   CubeDetailsAutofillResult,
   VendorOfferAutofillResult,
-} from "$lib/types/autofill.types";
-import { trackEvent } from "$lib/utils/umami";
+} from "#lib/types/autofill.types.ts";
+import { trackEvent } from "#lib/utils/umami.ts";
 
 async function sendAutofillRequest(endpoint: string, url: string) {
   let response: Response;

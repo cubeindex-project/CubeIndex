@@ -1,4 +1,4 @@
-import { StatusError } from "$lib/errors/StatusError";
+import { StatusError } from "#lib/errors/StatusError.ts";
 
 export async function rejectSubmission(
   submissionID: number,

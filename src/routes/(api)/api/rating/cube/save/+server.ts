@@ -1,6 +1,6 @@
-import { cubeRatingUpsertSchema } from "$lib/schemas/cubeRating";
-import type { TablesInsert } from "$lib/types/database.types";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { cubeRatingUpsertSchema } from "#lib/schemas/cubeRating.ts";
+import type { TablesInsert } from "#lib/types/database.types.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

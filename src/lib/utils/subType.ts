@@ -1,4 +1,4 @@
-import type { Enums } from "$lib/types/database.types";
+import type { Enums } from "#lib/types/database.types.ts";
 
 /**
  * Return the sub-type(s) corresponding to a twisty-puzzle “type”.

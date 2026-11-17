@@ -1,8 +1,8 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types";
-  import { formatDate } from "$lib/utils/formatDate";
-  import { getSubmissionStatusBadgeColor } from "$lib/utils/getSubmissionStatusBadgeColor";
+  import type { Tables } from "#lib/types/database.types.ts";
+  import { formatDate } from "#lib/utils/formatDate.ts";
+  import { getSubmissionStatusBadgeColor } from "#lib/utils/getSubmissionStatusBadgeColor.ts";
 
   interface CubeSubmission extends Tables<"cube_submissions"> {
     submission: Tables<"submissions"> & {

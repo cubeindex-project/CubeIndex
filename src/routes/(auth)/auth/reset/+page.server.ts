@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
-import { resetPasswordSchema } from "$lib/schemas/auth";
+import { resetPasswordSchema } from "#lib/schemas/auth.ts";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { fail } from "@sveltejs/kit";

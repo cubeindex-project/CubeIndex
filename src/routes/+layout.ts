@@ -9,7 +9,7 @@ import {
 } from "$env/static/public";
 import type { LayoutLoad } from "./$types";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "$lib/types/database.types";
+import type { Database } from "#lib/types/database.types.ts";
 
 export const load = (async ({ data, depends, fetch }) => {
   /**

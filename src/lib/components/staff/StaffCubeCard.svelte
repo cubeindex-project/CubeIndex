@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
   import CubeCardSkeleton from "../cube/CubeCardSkeleton.svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
 
   interface Props {
     cube: Tables<"v_detailed_cube_models">;

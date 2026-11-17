@@ -1,10 +1,10 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import Modal from "$lib/components/ui/Modal.svelte";
+  import Modal from "#lib/components/ui/Modal.svelte";
   import type {
     BugReportSchema,
     FeatureRequestSchema,
-  } from "$lib/schemas/report.js";
+  } from "#lib/schemas/report.js";
   import { onMount } from "svelte";
 
   const { data } = $props();

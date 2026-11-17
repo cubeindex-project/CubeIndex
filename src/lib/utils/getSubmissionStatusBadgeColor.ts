@@ -1,4 +1,4 @@
-import type { Enums } from "$lib/types/database.types";
+import type { Enums } from "#lib/types/database.types.ts";
 
 /**
  * The set of workflow states a submission can have.

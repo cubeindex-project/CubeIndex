@@ -2,9 +2,9 @@ import { error, fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { superValidate, setError } from "sveltekit-superforms";
-import { completeProfileSchema } from "$lib/schemas/auth";
-import { addToEmailList } from "$lib/utils/addToEmailList";
-import { trackServerEvent } from "$lib/server/umami";
+import { completeProfileSchema } from "#lib/schemas/auth.ts";
+import { addToEmailList } from "#lib/utils/addToEmailList.ts";
+import { trackServerEvent } from "#lib/server/umami.ts";
 
 export const load: PageServerLoad = async ({
   locals: { user, supabase, log },

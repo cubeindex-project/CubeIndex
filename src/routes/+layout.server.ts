@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from "./$types";
-import type { Tables } from "$lib/types/database.types";
+import type { Tables } from "#lib/types/database.types.ts";
 
 export const load: LayoutServerLoad = async ({
   locals: { safeGetSession, supabase, log },

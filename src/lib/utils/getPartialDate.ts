@@ -1,4 +1,4 @@
-import type { Enums } from "$lib/types/database.types";
+import type { Enums } from "#lib/types/database.types.ts";
 
 /**
  * Truncates an ISO-like date string to its specified precision.

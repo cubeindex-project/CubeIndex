@@ -1,6 +1,6 @@
 <script lang="ts">
-  import SubmissionCubeCard from "$lib/components/cube/SubmissionCubeCard.svelte";
-  // import VendorSubmissionCard from "$lib/components/submission/VendorSubmissionCard.svelte";
+  import SubmissionCubeCard from "#lib/components/cube/SubmissionCubeCard.svelte";
+  // import VendorSubmissionCard from "#lib/components/submission/VendorSubmissionCard.svelte";
 
   const { data } = $props();
   const {

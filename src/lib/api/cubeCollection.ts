@@ -2,9 +2,9 @@ import {
   cubeCollectionDeleteSchema,
   cubeCollectionUpsertSchema,
   type CubeCollectionForm,
-} from "$lib/schemas/cubeCollection";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
-import { trackEvent } from "$lib/utils/umami";
+} from "#lib/schemas/cubeCollection.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
+import { trackEvent } from "#lib/utils/umami.ts";
 
 export async function saveCubeInCollection(
   cubeID: number,

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import StaffRatingCard from "$lib/components/rating/StaffRatingCard.svelte";
-  import SearchBar from "$lib/components/explore/SearchBar.svelte";
+  import StaffRatingCard from "#lib/components/rating/StaffRatingCard.svelte";
+  import SearchBar from "#lib/components/explore/SearchBar.svelte";
 
   type RatingFilter = "all" | "5" | "4plus" | "3plus" | "2plus" | "1plus";
   type SortOrder = "newest" | "oldest" | "highest" | "lowest";

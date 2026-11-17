@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CubeForm from "$lib/components/cube/CubeForm.svelte";
+  import CubeForm from "#lib/components/cube/CubeForm.svelte";
 
   const { data } = $props();
   const { form, formOptions } = $derived(data);

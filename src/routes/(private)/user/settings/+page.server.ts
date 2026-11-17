@@ -10,7 +10,7 @@ import { error, fail, redirect } from "@sveltejs/kit";
 import { zod4 } from "sveltekit-superforms/adapters";
 import { z } from "zod/v4";
 
-import type { TablesUpdate } from "$lib/types/database.types";
+import type { TablesUpdate } from "#lib/types/database.types.ts";
 
 const profileSchema = z.object({
   // Accept a file upload for the avatar; optional

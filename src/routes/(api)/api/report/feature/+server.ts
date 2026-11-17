@@ -1,10 +1,10 @@
-import { featureRequestSchema } from "$lib/schemas/report";
+import { featureRequestSchema } from "#lib/schemas/report.ts";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 import { Octokit } from "@octokit/core";
 import { createAppAuth } from "@octokit/auth-app";
 import { RequestError } from "@octokit/request-error";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 
 import {
   GITHUB_APP_ID,

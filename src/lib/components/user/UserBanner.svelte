@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
 
   interface Props {
     profile: Pick<Tables<"profiles">, "banner" | "username">;

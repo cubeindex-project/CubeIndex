@@ -1,4 +1,4 @@
-import { StatusError } from "$lib/errors/StatusError";
+import { StatusError } from "#lib/errors/StatusError.ts";
 
 /**
  * Approves a submission through the database RPC.

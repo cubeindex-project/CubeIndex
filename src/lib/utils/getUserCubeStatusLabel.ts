@@ -1,4 +1,4 @@
-import type { Enums } from "$lib/types/database.types";
+import type { Enums } from "#lib/types/database.types.ts";
 
 type UserCubeStatusLabelMap = Record<Enums<"user_cube_status">, string>;
 

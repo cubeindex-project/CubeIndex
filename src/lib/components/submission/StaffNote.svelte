@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ExpandableText from "$lib/components/ui/ExpandableText.svelte";
+  import ExpandableText from "#lib/components/ui/ExpandableText.svelte";
 
   interface Props {
     staff_note: string;

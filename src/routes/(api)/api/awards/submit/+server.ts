@@ -1,5 +1,5 @@
-import { awardsVoteSchema } from "$lib/schemas/awards";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { awardsVoteSchema } from "#lib/schemas/awards.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

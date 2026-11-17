@@ -1,5 +1,5 @@
-import { cubeCollectionDeleteSchema } from "$lib/schemas/cubeCollection";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
+import { cubeCollectionDeleteSchema } from "#lib/schemas/cubeCollection.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 

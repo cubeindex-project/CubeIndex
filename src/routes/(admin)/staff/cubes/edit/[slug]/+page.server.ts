@@ -3,11 +3,11 @@ import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
 import type { PageServerLoad } from "./$types.js";
 
-import { cubeFormSchema } from "$lib/schemas/cubeForm.js";
-import { getPartialDate } from "$lib/utils/getPartialDate.js";
-import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions.js";
-import { StatusError } from "$lib/errors/StatusError.js";
-import { updateCube } from "$lib/server/staff/updateCube";
+import { cubeFormSchema } from "#lib/schemas/cubeForm.js";
+import { getPartialDate } from "#lib/utils/getPartialDate.js";
+import { loadCubeFormOptions } from "#lib/server/cube/loadCubeFormOptions.js";
+import { StatusError } from "#lib/errors/StatusError.js";
+import { updateCube } from "#lib/server/staff/updateCube.ts";
 
 export const load: PageServerLoad = async ({
   params,

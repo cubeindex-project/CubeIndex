@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RequiredFieldMarker from "$lib/components/ui/RequiredFieldMarker.svelte";
+  import RequiredFieldMarker from "#lib/components/ui/RequiredFieldMarker.svelte";
   import type { Snippet } from "svelte";
   import FormHelpLink from "./FormHelpLink.svelte";
 

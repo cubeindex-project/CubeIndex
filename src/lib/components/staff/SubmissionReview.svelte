@@ -9,12 +9,12 @@
 </script>
 
 <script lang="ts">
-  import { formatDate } from "$lib/utils/formatDate";
+  import { formatDate } from "#lib/utils/formatDate.ts";
   import type { Snippet } from "svelte";
   import SubmissionStatusManager from "./SubmissionStatusManager.svelte";
   import type { ResolvedPathname } from "$app/types";
-  import { getSubmissionStatusBadgeColor } from "$lib/utils/getSubmissionStatusBadgeColor";
-  import type { Enums } from "$lib/types/database.types";
+  import { getSubmissionStatusBadgeColor } from "#lib/utils/getSubmissionStatusBadgeColor.ts";
+  import type { Enums } from "#lib/types/database.types.ts";
   import StaffNote from "../submission/StaffNote.svelte";
 
   /**

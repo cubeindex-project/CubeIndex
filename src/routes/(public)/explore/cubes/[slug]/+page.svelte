@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import MissingValue from "$lib/components/ui/MissingValue.svelte";
-  import { formatDate } from "$lib/utils/formatDate.js";
+  import MissingValue from "#lib/components/ui/MissingValue.svelte";
+  import { formatDate } from "#lib/utils/formatDate.js";
 
   let { data } = $props();
   let { cube, submitter } = $derived(data);

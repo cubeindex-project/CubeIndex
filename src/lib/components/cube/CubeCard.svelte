@@ -4,7 +4,7 @@
   import CubeCardSkeleton from "./CubeCardSkeleton.svelte";
   import AddToCollectionButton from "../misc/AddToCollectionButton.svelte";
   import RateCubeButton from "../misc/RateCubeButton.svelte";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import { resolve } from "$app/paths";
 
   interface Props {

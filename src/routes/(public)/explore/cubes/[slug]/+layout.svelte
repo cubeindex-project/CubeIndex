@@ -1,17 +1,17 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import type { LayoutProps } from "./$types";
-  import CubeVersionType from "$lib/components/cube/CubeVersionType.svelte";
-  import AddToCollectionButton from "$lib/components/misc/AddToCollectionButton.svelte";
-  import RateCubeButton from "$lib/components/misc/RateCubeButton.svelte";
-  import ShareButton from "$lib/components/misc/ShareButton.svelte";
+  import CubeVersionType from "#lib/components/cube/CubeVersionType.svelte";
+  import AddToCollectionButton from "#lib/components/misc/AddToCollectionButton.svelte";
+  import RateCubeButton from "#lib/components/misc/RateCubeButton.svelte";
+  import ShareButton from "#lib/components/misc/ShareButton.svelte";
   import { page } from "$app/state";
-  import Report from "$lib/components/report/Report.svelte";
-  import ManageCubeModal from "$lib/components/cube/ManageCubeModal.svelte";
-  import RateCubeModal from "$lib/components/rating/RateCubeModal.svelte";
-  import StarRating from "$lib/components/rating/StarRating.svelte";
-  import { formatPartialDate } from "$lib/utils/formatPartialDate";
+  import Report from "#lib/components/report/Report.svelte";
+  import ManageCubeModal from "#lib/components/cube/ManageCubeModal.svelte";
+  import RateCubeModal from "#lib/components/rating/RateCubeModal.svelte";
+  import StarRating from "#lib/components/rating/StarRating.svelte";
+  import { formatPartialDate } from "#lib/utils/formatPartialDate.ts";
 
   let { data, children }: LayoutProps = $props();
   let { cube, sameSeries, relatedCube, cubeTrims, winnerAwards } =

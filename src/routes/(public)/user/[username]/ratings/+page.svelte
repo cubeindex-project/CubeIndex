@@ -1,8 +1,8 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import UserExploreHeader from "$lib/components/explore/UserExploreHeader.svelte";
-  import UserRatingCard from "$lib/components/rating/UserRatingCard.svelte";
+  import ExplorePage from "#lib/components/explore/ExplorePage.svelte";
+  import UserExploreHeader from "#lib/components/explore/UserExploreHeader.svelte";
+  import UserRatingCard from "#lib/components/rating/UserRatingCard.svelte";
   import {
     createParser,
     parseAsInteger,

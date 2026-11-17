@@ -1,9 +1,9 @@
 import {
   helpfulRatingToggleSchema,
   type HelpfulRatingToggle,
-} from "$lib/schemas/helpfulRating";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
-import { trackEvent } from "$lib/utils/umami";
+} from "#lib/schemas/helpfulRating.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
+import { trackEvent } from "#lib/utils/umami.ts";
 
 export async function toggleHelpfulCubeRating(
   payload: HelpfulRatingToggle,

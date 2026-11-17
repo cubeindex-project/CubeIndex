@@ -1,4 +1,4 @@
-import type { Tables } from "$lib/types/database.types";
+import type { Tables } from "#lib/types/database.types.ts";
 
 export type EventPhase = "upcoming" | "live" | "past" | "unknown";
 

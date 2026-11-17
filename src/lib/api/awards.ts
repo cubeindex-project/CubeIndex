@@ -1,6 +1,6 @@
-import { awardsVoteSchema } from "$lib/schemas/awards";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
-import { trackEvent } from "$lib/utils/umami";
+import { awardsVoteSchema } from "#lib/schemas/awards.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
+import { trackEvent } from "#lib/utils/umami.ts";
 
 export async function submitAwardsVote(
   category_id: number,

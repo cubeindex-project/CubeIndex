@@ -1,4 +1,4 @@
-import type { EventData } from "$lib/types/umami.types";
+import type { EventData } from "#lib/types/umami.types.ts";
 
 /** Sends a browser analytics event when the Umami tracker is available. */
 export function trackEvent(eventName: string, data?: EventData): void {

@@ -1,8 +1,8 @@
 <script lang="ts">
   import Chart from "chart.js/auto";
   import { onMount } from "svelte";
-  import { getCurrencySymbol } from "$lib/utils/getCurrencySymbol.js";
-  import type { Tables } from "$lib/types/database.types.js";
+  import { getCurrencySymbol } from "#lib/utils/getCurrencySymbol.js";
+  import type { Tables } from "#lib/types/database.types.js";
 
   let { data } = $props();
   let { vendor_links, per_vendor_history } = $derived(data);

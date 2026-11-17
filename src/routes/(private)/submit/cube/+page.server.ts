@@ -2,11 +2,11 @@ import type { Actions, PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import { message, setError, superValidate } from "sveltekit-superforms";
 import { zod4 } from "sveltekit-superforms/adapters";
-import { cubeFormSchema } from "$lib/schemas/cubeForm";
-import { loadCubeFormOptions } from "$lib/server/cube/loadCubeFormOptions";
-import { StatusError } from "$lib/errors/StatusError";
-import { submitCube } from "$lib/server/cube/submitCube";
-import { trackServerEvent } from "$lib/server/umami";
+import { cubeFormSchema } from "#lib/schemas/cubeForm.ts";
+import { loadCubeFormOptions } from "#lib/server/cube/loadCubeFormOptions.ts";
+import { StatusError } from "#lib/errors/StatusError.ts";
+import { submitCube } from "#lib/server/cube/submitCube.ts";
+import { trackServerEvent } from "#lib/server/umami.ts";
 
 export const load = (async ({ locals: { supabase, log } }) => {
   const formPromise = superValidate(zod4(cubeFormSchema), { errors: false });

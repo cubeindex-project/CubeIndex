@@ -1,4 +1,4 @@
-import { PUBLIC_UMAMI_WEBSITE_ID } from "$env/static/public";
+import { PUBLIC_UMAMI_WEBSITE_ID } from "$app/env/public";
 import { Umami, type UmamiEventData } from "@umami/node";
 
 /** Sends an opt-in server-side Umami event without affecting the request outcome. */

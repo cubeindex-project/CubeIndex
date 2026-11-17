@@ -1,4 +1,4 @@
-import { Constants } from "$lib/types/database.types.js";
+import { Constants } from "#lib/types/database.types.js";
 
 export async function loadCubeFormOptions(supabase: App.Locals["supabase"]) {
   const [brands, types, series, features, vendors, cubes] = await Promise.all([

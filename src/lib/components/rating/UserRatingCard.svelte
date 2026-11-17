@@ -5,10 +5,10 @@
   import RateCubeModal from "./RateCubeModal.svelte";
   import Report from "../report/Report.svelte";
   import { page } from "$app/state";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import { resolve } from "$app/paths";
-  import { deleteCubeRating } from "$lib/api/cubeRating";
-  import { toggleHelpfulCubeRating } from "$lib/api/helpfulRating";
+  import { deleteCubeRating } from "#lib/api/cubeRating.ts";
+  import { toggleHelpfulCubeRating } from "#lib/api/helpfulRating.ts";
 
   const MAX_COMMENT_LENGTH = 300;
 

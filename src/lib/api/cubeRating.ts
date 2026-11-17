@@ -2,9 +2,9 @@ import {
   cubeRatingDeleteSchema,
   cubeRatingUpsertSchema,
   type CubeRatingForm,
-} from "$lib/schemas/cubeRating";
-import { getZodErrorMessage } from "$lib/utils/getZodErrorMessage";
-import { trackEvent } from "$lib/utils/umami";
+} from "#lib/schemas/cubeRating.ts";
+import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
+import { trackEvent } from "#lib/utils/umami.ts";
 
 export async function saveCubeRating(
   cubeID: number,

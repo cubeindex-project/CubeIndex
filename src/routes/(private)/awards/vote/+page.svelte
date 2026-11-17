@@ -1,7 +1,7 @@
 <script lang="ts">
   import { resolve } from "$app/paths";
-  import AwardsCountdown from "$lib/components/misc/AwardsCountdown.svelte";
-  import { getEventPhase } from "$lib/utils/eventPhase.js";
+  import AwardsCountdown from "#lib/components/misc/AwardsCountdown.svelte";
+  import { getEventPhase } from "#lib/utils/eventPhase.js";
 
   let { data } = $props();
   const { currentEvent, eventCategories } = $derived(data);

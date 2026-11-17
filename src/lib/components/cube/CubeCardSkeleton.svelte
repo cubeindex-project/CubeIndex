@@ -1,9 +1,9 @@
 ﻿<script lang="ts">
   import { resolve } from "$app/paths";
-  import type { Tables } from "$lib/types/database.types";
+  import type { Tables } from "#lib/types/database.types.ts";
   import StarRating from "../rating/StarRating.svelte";
   import CubeVersionType from "./CubeVersionType.svelte";
-  import { formatCurrency } from "$lib/utils/formatCurrency";
+  import { formatCurrency } from "#lib/utils/formatCurrency.ts";
   import type { Snippet } from "svelte";
 
   type CubeModel = Tables<"v_detailed_cube_models">;

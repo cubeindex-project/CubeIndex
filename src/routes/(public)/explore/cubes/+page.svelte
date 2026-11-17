@@ -1,6 +1,6 @@
 <script lang="ts">
-  import ExplorePage from "$lib/components/explore/ExplorePage.svelte";
-  import CubeCard from "$lib/components/cube/CubeCard.svelte";
+  import ExplorePage from "#lib/components/explore/ExplorePage.svelte";
+  import CubeCard from "#lib/components/cube/CubeCard.svelte";
   import { resolve } from "$app/paths";
   import {
     createParser,
@@ -8,9 +8,9 @@
     parseAsInteger,
     parseAsStringLiteral,
   } from "nuqs-svelte";
-  import TriStateCheckbox from "$lib/components/explore/TriStateCheckbox.svelte";
-  import ExploreHeader from "$lib/components/explore/ExploreHeader.svelte";
-  import { trackEvent } from "$lib/utils/umami";
+  import TriStateCheckbox from "#lib/components/explore/TriStateCheckbox.svelte";
+  import ExploreHeader from "#lib/components/explore/ExploreHeader.svelte";
+  import { trackEvent } from "#lib/utils/umami.ts";
 
   const SORT_FIELDS = ["name", "rating", "owners", "date", "price"] as const;
 

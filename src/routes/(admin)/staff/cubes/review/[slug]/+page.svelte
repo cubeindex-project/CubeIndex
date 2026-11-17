@@ -1,5 +1,5 @@
 <script lang="ts">
-  import CubeSubmissionReview from "$lib/components/staff/CubeSubmissionReview.svelte";
+  import CubeSubmissionReview from "#lib/components/staff/CubeSubmissionReview.svelte";
 
   const { data } = $props();
 </script>

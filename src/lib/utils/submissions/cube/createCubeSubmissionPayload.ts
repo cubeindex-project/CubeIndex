@@ -1,12 +1,12 @@
-import { cleanLink } from "$lib/utils/linkCleaner";
-import { getSubTypes } from "$lib/utils/subType";
+import { cleanLink } from "#lib/utils/linkCleaner.ts";
+import { getSubTypes } from "#lib/utils/subType.ts";
 import {
   normalizeReleaseDate,
   type CubeFormSchema,
-} from "$lib/schemas/cubeForm";
+} from "#lib/schemas/cubeForm.ts";
 import type { Infer } from "sveltekit-superforms";
-import type { Tables } from "$lib/types/database.types";
-import { isValueOther } from "$lib/utils/isValueOther";
+import type { Tables } from "#lib/types/database.types.ts";
+import { isValueOther } from "#lib/utils/isValueOther.ts";
 
 export async function createCubeSubmissionPayload(
   data: Infer<CubeFormSchema>,

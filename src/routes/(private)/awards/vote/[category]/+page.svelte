@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { invalidateAll } from "$app/navigation";
+  import { refreshAll } from "$app/navigation";
   import { resolve } from "$app/paths";
   import { submitAwardsVote } from "#lib/api/awards.js";
   import CubeCardSkeleton from "#lib/components/cube/CubeCardSkeleton.svelte";
@@ -32,7 +32,7 @@
 
       voted = true;
       showConfetti = true;
-      await invalidateAll();
+      await refreshAll();
     } catch (error) {
       voteError =
         error instanceof Error

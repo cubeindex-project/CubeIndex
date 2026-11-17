@@ -310,9 +310,11 @@
                 disabled={isSubmitting || !isConnected}
               >
                 {#if isSubmitting}
-                  <span class="loading loading-spinner"></span> Reporting…
+                  <span class="loading loading-spinner"></span>
+                  Reporting…
                 {:else if showSuccess}
-                  <i class="fa-solid fa-check"></i> Reported!
+                  <i class="fa-solid fa-check"></i>
+                  Reported!
                 {:else}
                   Send Report
                 {/if}
@@ -376,9 +378,11 @@
                 disabled={isSubmitting || !isConnected}
               >
                 {#if isSubmitting}
-                  <span class="loading loading-spinner"></span> Sending…
+                  <span class="loading loading-spinner"></span>
+                  Sending…
                 {:else if showSuccess}
-                  <i class="fa-solid fa-check"></i> Sent!
+                  <i class="fa-solid fa-check"></i>
+                  Sent!
                 {:else}
                   Send Suggestion
                 {/if}
@@ -404,7 +408,7 @@
   <div class="grid gap-4">
     <div class="alert alert-warning text-sm">
       <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-      <span> Do not include passwords, access tokens, or other secrets. </span>
+      <span>Do not include passwords, access tokens, or other secrets.</span>
     </div>
 
     <label class="flex items-center cursor-pointer justify-start gap-3">
@@ -419,9 +423,9 @@
     </label>
 
     <label class="flex flex-col gap-1">
-      <span class="font-semibold"
-        >GitHub username <span class="font-normal">(optional)</span></span
-      >
+      <span class="font-semibold">
+        GitHub username <span class="font-normal">(optional)</span>
+      </span>
       <input
         bind:value={reportOptions.githubUsername}
         class="input input-bordered rounded-xl w-full"

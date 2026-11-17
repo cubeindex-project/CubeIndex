@@ -5,7 +5,10 @@ export const POST: RequestHandler = async ({
   request,
 }) => {
   if (!user)
-    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   const {
     following_id,

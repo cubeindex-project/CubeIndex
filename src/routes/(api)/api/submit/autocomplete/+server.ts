@@ -99,7 +99,10 @@ export const GET: RequestHandler = async ({
   } catch (err) {
     clearTimeout(timeout);
     log.error({ err, host }, "Autofill service request failed");
-    return Response.json({ error: "Autofill service is unreachable." }, { status: 502 });
+    return Response.json(
+      { error: "Autofill service is unreachable." },
+      { status: 502 },
+    );
   } finally {
     clearTimeout(timeout);
   }

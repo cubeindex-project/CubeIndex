@@ -13,7 +13,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       { err, reportID: id, resolverUserID: locals.user?.id },
       "Failed to mark report resolved",
     );
-    return Response.json({ success: false, error: err.message }, { status: 500 });
+    return Response.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 
   return Response.json({ success: true });

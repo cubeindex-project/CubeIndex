@@ -128,9 +128,9 @@
       <div class="flex items-center gap-2">
         <h1 class="text-3xl sm:text-4xl font-clash font-bold">Notifications</h1>
         {#if unreadCount > 0}
-          <span class="badge badge-info badge-sm sm:badge-md"
-            >{unreadCount} unread</span
-          >
+          <span class="badge badge-info badge-sm sm:badge-md">
+            {unreadCount} unread
+          </span>
         {/if}
       </div>
       <div class="flex items-center gap-2 flex-wrap w-full sm:w-fit">
@@ -195,7 +195,8 @@
         </div>
       {:else if notifications.length === 0}
         <div class="py-16 text-center text-base-content/50 text-lg">
-          <i class="fa-solid fa-bell-slash text-3xl mb-2"></i><br />
+          <i class="fa-solid fa-bell-slash text-3xl mb-2"></i>
+          <br />
           You have no notifications yet.
         </div>
       {:else}
@@ -284,7 +285,8 @@
                     title="Mark as read"
                   >
                     {#if markingIds.has(n.id)}
-                      <span class="loading loading-spinner loading-xs mr-2"
+                      <span
+                        class="loading loading-spinner loading-xs mr-2"
                       ></span>
                     {/if}
                     Mark read

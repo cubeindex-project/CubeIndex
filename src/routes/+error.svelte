@@ -34,16 +34,17 @@
   </div>
 
   <p class="mb-8 max-w-md relative z-10">
-    It seems you encountered an error.<br />
+    It seems you encountered an error.
+    <br />
     If you think this is a bug, please let us know!
   </p>
 
   <div
     class="flex flex-col sm:flex-row gap-4 justify-center mb-4 z-10 relative"
   >
-    <a href={resolve("/(public)")} class="btn btn-lg btn-primary"> 🏠 Return Home </a>
-    <a class="btn btn-lg btn-error" href={getReportURL()}>
-      🐞 Report the Bug
+    <a href={resolve("/(public)")} class="btn btn-lg btn-primary">
+      🏠 Return Home
     </a>
+    <a class="btn btn-lg btn-error" href={getReportURL()}>🐞 Report the Bug</a>
   </div>
 </section>

@@ -135,8 +135,9 @@
       >
         <span
           class="text-primary-content font-semibold tracking-wider uppercase text-xs"
-          >CubeIndex Manager</span
         >
+          CubeIndex Manager
+        </span>
       </div>
       <h1
         class="text-4xl font-black text-primary font-clash mb-2 tracking-tight"
@@ -145,8 +146,11 @@
       </h1>
       <p class="text-base font-medium">
         Welcome, trusted staff member. You help keep CubeIndex <span
-          class="text-primary font-bold">clean, fair, and awesome</span
-        >.
+          class="text-primary font-bold"
+        >
+          clean, fair, and awesome
+        </span>
+        .
       </p>
     </header>
 
@@ -161,7 +165,8 @@
         </div>
         <div>
           <h2 class="text-2xl font-semibold mb-2 text-primary">
-            The <span class="lowercase">{profile?.role}</span> role:
+            The <span class="lowercase">{profile?.role}</span>
+            role:
           </h2>
           <p class="text-sm leading-relaxed mb-2">
             {currentRole.description}
@@ -218,8 +223,10 @@
     <!-- Reminder -->
     <div class="text-sm text-center mt-10 tracking-wide italic">
       All actions you take here are <span class="text-primary">logged</span>
-      for transparency.<br />
-      Be fair, clear, and kind. <span class="text-lg">🫶</span>
+      for transparency.
+      <br />
+      Be fair, clear, and kind.
+      <span class="text-lg">🫶</span>
     </div>
   </div>
 </section>

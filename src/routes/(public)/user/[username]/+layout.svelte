@@ -191,7 +191,7 @@
                 <i class="fa-solid fa-users text-xs opacity-70"></i>
                 <span class="text-sm">
                   {stats.followersCount}
-                  <span class="opacity-70"> followers </span>
+                  <span class="opacity-70">followers</span>
                 </span>
               </a>
 
@@ -204,7 +204,7 @@
               >
                 <span class="text-sm">
                   {stats.followingCount}
-                  <span class="opacity-70"> following </span>
+                  <span class="opacity-70">following</span>
                 </span>
               </a>
             </div>

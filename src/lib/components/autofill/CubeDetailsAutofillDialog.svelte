@@ -85,7 +85,7 @@
       {#if autofill.success}
         <div class="alert alert-success text-sm">
           <i class="fa-solid fa-bolt"></i>
-          <span> Link processed. </span>
+          <span>Link processed.</span>
         </div>
       {:else if autofill.errorMessage}
         <div class="alert alert-error text-sm">

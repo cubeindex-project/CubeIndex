@@ -270,8 +270,10 @@
       {:else}
         <a
           class="btn btn-ghost btn-sm sm:btn-md"
-          href={resolve("/(auth)/auth/login")}>Log In</a
+          href={resolve("/(auth)/auth/login")}
         >
+          Log In
+        </a>
         <a
           class="btn btn-primary btn-sm sm:btn-md"
           href={resolve("/(auth)/auth/signup")}

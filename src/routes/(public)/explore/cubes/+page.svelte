@@ -212,7 +212,8 @@
       class="btn bg-primary text-primary-content"
     >
       <i class="fa-solid fa-code-compare sm:mr-2"></i>
-      Compare <span class="hidden sm:block">Cubes</span>
+      Compare
+      <span class="hidden sm:block">Cubes</span>
     </a>
   {/snippet}
   {#snippet filterContent(params)}

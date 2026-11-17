@@ -260,7 +260,8 @@
                 type="button"
                 onclick={() => (edit = !edit)}
               >
-                <i class={edit ? "fa-solid fa-xmark" : "fa-solid fa-pencil"}
+                <i
+                  class={edit ? "fa-solid fa-xmark" : "fa-solid fa-pencil"}
                 ></i>
                 {edit ? "Cancel" : "Edit"}
               </button>

@@ -7,7 +7,10 @@ export const POST: RequestHandler = async ({
   locals: { user, supabase, log },
 }) => {
   if (!user)
-    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
 
   let body: unknown;
   try {
@@ -17,7 +20,10 @@ export const POST: RequestHandler = async ({
       { event: "collection.cube.delete_invalid_json" },
       "Collection cube deletion request contained invalid JSON",
     );
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const parsedPayload = cubeCollectionDeleteSchema.safeParse(body);

@@ -371,8 +371,10 @@
                     <div class="flex-1 space-y-2">
                       <label
                         class="block text-sm font-semibold"
-                        for="profile_picture">Upload new avatar</label
+                        for="profile_picture"
                       >
+                        Upload new avatar
+                      </label>
                       <input
                         id="profile_picture"
                         name="profile_picture"
@@ -420,9 +422,9 @@
                       </div>
                     </div>
                     <div class="flex-1 space-y-2">
-                      <label class="block text-sm font-semibold" for="banner"
-                        >Upload new banner</label
-                      >
+                      <label class="block text-sm font-semibold" for="banner">
+                        Upload new banner
+                      </label>
                       <input
                         id="banner"
                         name="banner"
@@ -453,9 +455,9 @@
                       bind:checked={$form.private_profile}
                       class="toggle bg-base-100"
                     />
-                    <span class="label-text"
-                      >Make my profile private (only visible to me)</span
-                    >
+                    <span class="label-text">
+                      Make my profile private (only visible to me)
+                    </span>
                   </label>
                   {#if $errors.private_profile}
                     <p class="text-error">{$errors.private_profile}</p>
@@ -503,9 +505,10 @@
                 <!-- Website -->
                 <label class="form-control w-full">
                   <span class="label">
-                    <span class="label-text font-semibold"
-                      ><i class="fa-solid fa-globe"></i> Personal Website</span
-                    >
+                    <span class="label-text font-semibold">
+                      <i class="fa-solid fa-globe"></i>
+                      Personal Website
+                    </span>
                   </span>
                   <input
                     type="text"
@@ -521,7 +524,8 @@
 
                 <!-- Twitter/X -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-x-twitter"></i> Twitter/X
+                  <i class="fa-brands fa-x-twitter"></i>
+                  Twitter/X
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">x.com/</span>
                     <input
@@ -559,7 +563,8 @@
 
                 <!-- Discord -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-discord"></i> Discord
+                  <i class="fa-brands fa-discord"></i>
+                  Discord
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">discord.com/users/</span>
                     <input
@@ -577,7 +582,8 @@
 
                 <!-- YouTube -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-youtube"></i> YouTube
+                  <i class="fa-brands fa-youtube"></i>
+                  YouTube
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">youtube.com/</span>
                     <input
@@ -595,7 +601,8 @@
 
                 <!-- Reddit -->
                 <label class="form-control w-full">
-                  <i class="fa-brands fa-reddit-alien"></i> Reddit
+                  <i class="fa-brands fa-reddit-alien"></i>
+                  Reddit
                   <label class="input input-bordered w-full">
                     <span class="hidden sm:flex">reddit.com/u/</span>
                     <input
@@ -651,11 +658,11 @@
               >
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
                   <label class="form-control w-full">
-                    <span class="label"
-                      ><span class="label-text font-semibold"
-                        >Current Password</span
-                      ></span
-                    >
+                    <span class="label">
+                      <span class="label-text font-semibold">
+                        Current Password
+                      </span>
+                    </span>
                     <input
                       type="password"
                       name="currentPassword"
@@ -670,10 +677,9 @@
                   </label>
 
                   <label class="form-control w-full">
-                    <span class="label"
-                      ><span class="label-text font-semibold">New Password</span
-                      ></span
-                    >
+                    <span class="label">
+                      <span class="label-text font-semibold">New Password</span>
+                    </span>
                     <input
                       type="password"
                       name="newPassword"
@@ -828,9 +834,10 @@
                     Discord
                   </a>
 
-                  <a class="btn btn-sm btn-ghost" href={resolve("report")}
-                    ><i class="fa-solid fa-bug"></i> Report an issue</a
-                  >
+                  <a class="btn btn-sm btn-ghost" href={resolve("report")}>
+                    <i class="fa-solid fa-bug"></i>
+                    Report an issue
+                  </a>
 
                   <a
                     class="btn btn-sm btn-ghost"
@@ -872,8 +879,11 @@
                             class="link link-primary"
                             href="https://github.com/cubeindex-project/CubeIndex"
                             target="_blank"
-                            rel="noreferrer">GitHub</a
-                          >.
+                            rel="noreferrer"
+                          >
+                            GitHub
+                          </a>
+                          .
                         </span>
                       </p>
                     </div>
@@ -902,13 +912,16 @@
                         ></i>
                         <span>
                           Read the
-                          <a class="link link-primary" href={resolve("privacy")}
-                            >Privacy Policy</a
+                          <a
+                            class="link link-primary"
+                            href={resolve("privacy")}
                           >
+                            Privacy Policy
+                          </a>
                           and
-                          <a class="link link-primary" href={resolve("tos")}
-                            >Terms of Service</a
-                          >
+                          <a class="link link-primary" href={resolve("tos")}>
+                            Terms of Service
+                          </a>
                           .
                         </span>
                       </p>
@@ -947,7 +960,8 @@
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <i class="fa-brands fa-github text-base-content/60"
+                            <i
+                              class="fa-brands fa-github text-base-content/60"
                             ></i>
                             <span>GitHub</span>
                             <i
@@ -976,7 +990,8 @@
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <i class="fa-brands fa-youtube text-base-content/60"
+                            <i
+                              class="fa-brands fa-youtube text-base-content/60"
                             ></i>
                             <span>YouTube</span>
                             <i
@@ -990,7 +1005,8 @@
                             target="_blank"
                             rel="noreferrer"
                           >
-                            <i class="fa-brands fa-discord text-base-content/60"
+                            <i
+                              class="fa-brands fa-discord text-base-content/60"
                             ></i>
                             <span>Discord</span>
                             <i
@@ -1002,7 +1018,8 @@
                             class="link link-hover link-primary flex items-center gap-2"
                             href="mailto:thecubeindex@gmail.com"
                           >
-                            <i class="fa-solid fa-envelope text-base-content/60"
+                            <i
+                              class="fa-solid fa-envelope text-base-content/60"
                             ></i>
                             <span>Email</span>
                           </a>

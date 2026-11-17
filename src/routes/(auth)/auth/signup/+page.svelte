@@ -120,7 +120,8 @@
                 />
                 <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
 
-                <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"
+                <i
+                  class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"
                 ></i>
               </label>
             </div>
@@ -178,15 +179,21 @@
             />
             <div class="text-sm select-none">
               I accept the
-              <a href={resolve("tos")} target="_blank" class="link link-primary"
-                >Terms of Service</a
+              <a
+                href={resolve("tos")}
+                target="_blank"
+                class="link link-primary"
               >
+                Terms of Service
+              </a>
               and
               <a
                 href={resolve("privacy")}
                 target="_blank"
-                class="link link-primary">Privacy Policy</a
+                class="link link-primary"
               >
+                Privacy Policy
+              </a>
             </div>
           </div>
           {#if $accountMessage}
@@ -229,9 +236,9 @@
         <p class="text-sm text-center mt-6">
           Already have an account?
 
-          <a href={resolve("auth/login")} class="link link-primary link-hover"
-            >Log in</a
-          >
+          <a href={resolve("auth/login")} class="link link-primary link-hover">
+            Log in
+          </a>
         </p>
       {:else if step === "survey"}
         <form

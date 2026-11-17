@@ -18,7 +18,10 @@ export const POST: RequestHandler = async ({
       { event: "rating.cube.delete_invalid_json" },
       "Cube rating deletion request contained invalid JSON",
     );
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const parsedPayload = cubeRatingDeleteSchema.safeParse(body);

@@ -49,9 +49,9 @@
       </p>
       <h1 class="font-clash text-3xl font-semibold">{submission.name}</h1>
     </div>
-    <span class="badge {getSubmissionStatusBadgeColor(submission.status)}"
-      >{submission.status}</span
-    >
+    <span class="badge {getSubmissionStatusBadgeColor(submission.status)}">
+      {submission.status}
+    </span>
   </header>
 
   <div class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">

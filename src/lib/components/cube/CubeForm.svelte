@@ -343,7 +343,9 @@
                     id="cube-identity-heading"
                     class="flex items-center gap-2 text-xl font-semibold"
                   >
-                    <i class="fa-solid fa-cube text-primary" aria-hidden="true"
+                    <i
+                      class="fa-solid fa-cube text-primary"
+                      aria-hidden="true"
                     ></i>
                     Cube identity
                   </h2>
@@ -457,7 +459,9 @@
                           $form.otherBrand = "";
                         }}
                       >
-                        <i class="fa-solid fa-arrow-left" aria-hidden="true"
+                        <i
+                          class="fa-solid fa-arrow-left"
+                          aria-hidden="true"
                         ></i>
                         <span class="hidden sm:inline">Back</span>
                       </button>
@@ -506,7 +510,9 @@
                           $form.otherType = "";
                         }}
                       >
-                        <i class="fa-solid fa-arrow-left" aria-hidden="true"
+                        <i
+                          class="fa-solid fa-arrow-left"
+                          aria-hidden="true"
                         ></i>
                         <span class="hidden sm:inline">Back</span>
                       </button>
@@ -1045,9 +1051,7 @@
                                       class="fa-solid fa-triangle-exclamation"
                                       aria-hidden="true"
                                     ></i>
-                                    <span class="hidden xl:inline">
-                                      Error
-                                    </span>
+                                    <span class="hidden xl:inline">Error</span>
                                   {:else}
                                     <i
                                       class="fa-solid fa-wand-magic-sparkles"

@@ -313,8 +313,10 @@
                     <button
                       class="btn btn-ghost btn-xs"
                       onclick={() => toggleTitle(i)}
-                      aria-label="View full title">View</button
+                      aria-label="View full title"
                     >
+                      View
+                    </button>
                   </div>
 
                   {#if showTitle[i]}

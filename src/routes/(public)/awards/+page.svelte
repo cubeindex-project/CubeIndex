@@ -139,7 +139,8 @@
                 class="link link-hover"
               >
                 {logoDesigner.display_name}
-              </a>.
+              </a>
+              .
             </p>
           {/if}
         </div>

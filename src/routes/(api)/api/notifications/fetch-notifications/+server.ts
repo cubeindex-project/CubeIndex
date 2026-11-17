@@ -4,7 +4,10 @@ export const GET: RequestHandler = async ({
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
   }
 
   // One query: rows where user_id = current user OR user_id IS NULL (broadcast)

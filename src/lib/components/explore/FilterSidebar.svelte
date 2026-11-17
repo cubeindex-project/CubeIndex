@@ -10,7 +10,10 @@
 </script>
 
 <div class="drawer-side top-16 xl:h-[calc(100dvh-4rem)]">
-  <label for="filter-drawer" aria-label="close sidebar" class="drawer-overlay"
+  <label
+    for="filter-drawer"
+    aria-label="close sidebar"
+    class="drawer-overlay"
   ></label>
   <aside
     class="flex flex-col min-h-full min-w-80 bg-base-200 gap-2 p-6 xl:h-full xl:overflow-y-auto"

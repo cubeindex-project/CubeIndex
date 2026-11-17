@@ -13,7 +13,10 @@ export const POST: RequestHandler = async ({
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json(
+      { success: false, error: "Unauthorized" },
+      { status: 401 },
+    );
   }
 
   let body: Body;
@@ -58,7 +61,10 @@ export const POST: RequestHandler = async ({
       { err: error, userID: user.id, notificationCount: ids.length },
       "Failed to mark notifications as read",
     );
-    return Response.json({ success: false, error: error.message }, { status: 500 });
+    return Response.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 
   log.info(
@@ -69,5 +75,8 @@ export const POST: RequestHandler = async ({
     },
     "Notifications marked as read",
   );
-  return Response.json({ success: true, updated: data?.length ?? 0 }, { status: 200 });
+  return Response.json(
+    { success: true, updated: data?.length ?? 0 },
+    { status: 200 },
+  );
 };

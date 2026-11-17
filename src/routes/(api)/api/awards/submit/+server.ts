@@ -26,7 +26,10 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.submit_invalid_json" },
       "Awards vote submit request contained invalid JSON",
     );
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const parsedPayload = awardsVoteSchema.safeParse(body);

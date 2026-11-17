@@ -218,7 +218,9 @@
             <span class="font-clash text-xl">
               {vendor.price}
             </span>
-            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"
+            <i
+              class="fa-solid fa-arrow-up-right-from-square"
+              aria-hidden="true"
             ></i>
           </div>
         </div>
@@ -233,7 +235,9 @@
       <div class="flex flex-col gap-8 md:flex-row md:items-center lg:gap-14">
         <div class="max-w-2xl text-left">
           <h1 class="font-clash text-6xl tracking-tight sm:text-7xl">
-            Give your cubes<br /> a new home.
+            Give your cubes
+            <br />
+            a new home.
           </h1>
           <p class="mt-7 text-lg leading-8 text-base-content/70 sm:text-xl">
             Build your collection, find your next puzzle, and share what you
@@ -375,7 +379,9 @@
             <div
               class="mx-auto mb-5 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-content sm:mb-6 sm:size-16"
             >
-              <i class="fa-solid fa-cubes-stacked text-2xl" aria-hidden="true"
+              <i
+                class="fa-solid fa-cubes-stacked text-2xl"
+                aria-hidden="true"
               ></i>
             </div>
             <h2 class="font-clash text-3xl leading-tight sm:text-5xl">

@@ -124,7 +124,8 @@
           onclick={swapSelections}
           disabled={!cube1Value && !cube2Value}
         >
-          <i class="fa-solid fa-right-left mr-2"></i> Swap
+          <i class="fa-solid fa-right-left mr-2"></i>
+          Swap
         </button>
         <button
           class="btn btn-ghost btn-xs"

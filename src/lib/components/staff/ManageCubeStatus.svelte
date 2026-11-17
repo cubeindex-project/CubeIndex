@@ -134,9 +134,11 @@
         disabled={isSubmitting || showSuccess}
       >
         {#if isSubmitting}
-          <span class="loading loading-spinner"></span>{reason}ing...
+          <span class="loading loading-spinner"></span>
+          {reason}ing...
         {:else if showSuccess}
-          <i class="fa-solid fa-check mr-2"></i>{reason}ed!
+          <i class="fa-solid fa-check mr-2"></i>
+          {reason}ed!
         {:else}
           {reason}
         {/if}

@@ -234,8 +234,10 @@
                       class="link"
                       href={link.url}
                       target="_blank"
-                      rel="noreferrer external">Open</a
+                      rel="noreferrer external"
                     >
+                      Open
+                    </a>
                   </td>
                 </tr>
               {/each}

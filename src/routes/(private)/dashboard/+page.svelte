@@ -51,9 +51,10 @@
         {#if recent.cubeSubmissions.length === 0}
           <div class="text-sm opacity-70">
             Share cubes that are missing from the catalog and track their status
-            from here. <a class="link" href={resolve("/(private)/submit/cube")}
-              >Submit a cube</a
-            > to get started.
+            from here. <a class="link" href={resolve("/(private)/submit/cube")}>
+              Submit a cube
+            </a>
+            to get started.
           </div>
         {:else}
           <ul class="divide-y divide-base-300">

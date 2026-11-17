@@ -148,9 +148,9 @@
   {/snippet}
   {#snippet noResultsAction()}
     {#if total === 0 && isFollowingTab && profile.user_id === user?.id}
-      <a href={resolve("explore/users")} class="btn btn-primary"
-        >Find users to follow</a
-      >
+      <a href={resolve("explore/users")} class="btn btn-primary">
+        Find users to follow
+      </a>
     {:else if total === 0 && !isFollowingTab && profile.user_id !== user?.id}
       <FollowButton user_id={profile.user_id} {isFollowing} />
     {/if}

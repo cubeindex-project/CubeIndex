@@ -133,7 +133,9 @@
                               <span
                                 class="badge badge-primary badge-sm shrink-0"
                               >
-                                <i class="fa-solid fa-trophy" aria-hidden="true"
+                                <i
+                                  class="fa-solid fa-trophy"
+                                  aria-hidden="true"
                                 ></i>
                                 Winner
                               </span>

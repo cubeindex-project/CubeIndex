@@ -185,7 +185,9 @@
       <button class="btn btn-sm btn-primary" onclick={download}>
         Download PNG
       </button>
-      <span class="opacity-70">Size: <code>350 x 19 px</code></span>
+      <span class="opacity-70">
+        Size: <code>350 x 19 px</code>
+      </span>
     </div>
   </section>
 
@@ -195,28 +197,34 @@
     <div class="tabs tabs-boxed mb-3">
       <button
         class={`tab ${active === "Markdown" ? "tab-active" : ""}`}
-        onclick={() => (active = "Markdown")}>Markdown</button
+        onclick={() => (active = "Markdown")}
       >
+        Markdown
+      </button>
       <button
         class={`tab ${active === "HTML" ? "tab-active" : ""}`}
-        onclick={() => (active = "HTML")}>HTML</button
+        onclick={() => (active = "HTML")}
       >
+        HTML
+      </button>
       <button
         class={`tab ${active === "BBCode" ? "tab-active" : ""}`}
-        onclick={() => (active = "BBCode")}>BBCode</button
+        onclick={() => (active = "BBCode")}
       >
+        BBCode
+      </button>
       <button
         class={`tab ${active === "Direct URL" ? "tab-active" : ""}`}
-        onclick={() => (active = "Direct URL")}>Direct URL</button
+        onclick={() => (active = "Direct URL")}
       >
+        Direct URL
+      </button>
     </div>
 
     {#if active === "Markdown"}
       <div class="relative">
         <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
-            >{markdown}</code
-          ></pre>
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code>{markdown}</code></pre>
         <button
           class={`btn btn-xs absolute top-2 right-2 ${copied === "Markdown" ? "btn-success" : ""}`}
           onclick={() => copy(markdown, "Markdown")}
@@ -228,9 +236,7 @@
     {:else if active === "HTML"}
       <div class="relative">
         <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
-            >{html}</code
-          ></pre>
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code>{html}</code></pre>
         <button
           class={`btn btn-xs absolute top-2 right-2 ${copied === "HTML" ? "btn-success" : ""}`}
           onclick={() => copy(html, "HTML")}
@@ -242,9 +248,7 @@
     {:else if active === "BBCode"}
       <div class="relative">
         <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
-            >{bbcode}</code
-          ></pre>
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code>{bbcode}</code></pre>
         <button
           class={`btn btn-xs absolute top-2 right-2 ${copied === "BBCode" ? "btn-success" : ""}`}
           onclick={() => copy(bbcode, "BBCode")}
@@ -256,9 +260,7 @@
     {:else}
       <div class="relative">
         <pre
-          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code
-            >{directUrl}</code
-          ></pre>
+          class="mockup-code whitespace-pre-wrap break-all text-xs rounded-md p-3 bg-base-200 text-base-content border border-base-300"><code>{directUrl}</code></pre>
         <button
           class={`btn btn-xs absolute top-2 right-2 ${copied === "Direct URL" ? "btn-success" : ""}`}
           onclick={() => copy(directUrl, "Direct URL")}

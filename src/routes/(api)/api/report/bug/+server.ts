@@ -24,7 +24,10 @@ export const POST: RequestHandler = async ({
   try {
     body = await request.json();
   } catch {
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const parsedPayload = bugReportSchema.safeParse(body);

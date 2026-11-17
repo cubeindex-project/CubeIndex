@@ -231,7 +231,9 @@
       <div
         class="w-full h-80 rounded-xl border border-base-300 bg-base-200 p-3"
       >
-        <canvas bind:this={canvas} aria-label="Line chart of price history"
+        <canvas
+          bind:this={canvas}
+          aria-label="Line chart of price history"
         ></canvas>
       </div>
     {:else}

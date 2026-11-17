@@ -19,7 +19,10 @@ export const POST: RequestHandler = async ({
       { event: "collection.cube.invalid_json" },
       "Collection cube request contained invalid JSON",
     );
-    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json(
+      { error: "Request body must be valid JSON." },
+      { status: 400 },
+    );
   }
 
   const parsedPayload = cubeCollectionUpsertSchema.safeParse(body);
@@ -107,7 +110,10 @@ export const POST: RequestHandler = async ({
         { event: "collection.cube.not_found" },
         "Collection cube entry was not found",
       );
-      return Response.json({ error: "Collection entry not found." }, { status: 404 });
+      return Response.json(
+        { error: "Collection entry not found." },
+        { status: 404 },
+      );
     }
 
     operationLog.info(

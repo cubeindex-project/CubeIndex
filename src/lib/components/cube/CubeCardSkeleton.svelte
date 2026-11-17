@@ -88,7 +88,7 @@
       <p class="text-sm text-gray-400">
         {cube.type}
         {#if cube.brand}
-          <span> - {cube.brand}</span>
+          <span>- {cube.brand}</span>
         {/if}
       </p>
     {/if}

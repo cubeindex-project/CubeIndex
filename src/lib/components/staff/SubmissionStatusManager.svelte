@@ -86,14 +86,16 @@
     type="button"
     onclick={() => openStatusModal("Approved")}
   >
-    <i class="fa-solid fa-check mr-2"></i>Accept
+    <i class="fa-solid fa-check mr-2"></i>
+    Accept
   </button>
   <button
     class="btn btn-error flex-1"
     type="button"
     onclick={() => openStatusModal("Rejected")}
   >
-    <i class="fa-solid fa-xmark mr-2"></i>Reject
+    <i class="fa-solid fa-xmark mr-2"></i>
+    Reject
   </button>
 </div>
 
@@ -129,9 +131,11 @@
         disabled={isSubmitting || showSuccess}
       >
         {#if isSubmitting}
-          <span class="loading loading-spinner"></span>{actionVerb}...
+          <span class="loading loading-spinner"></span>
+          {actionVerb}...
         {:else if showSuccess}
-          <i class="fa-solid fa-check mr-2"></i>{actionAdjective}!
+          <i class="fa-solid fa-check mr-2"></i>
+          {actionAdjective}!
         {:else}
           {actionNoun}
         {/if}

@@ -32,8 +32,10 @@
           href={historyURL}
           target="_blank"
           rel="noopener external"
-          class="link link-hover">View change history on GitHub</a
+          class="link link-hover"
         >
+          View change history on GitHub
+        </a>
       </p>
 
       {#each sections as section, i (i)}

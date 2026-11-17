@@ -43,7 +43,8 @@
       <span>
         Some data is missing: <span class="font-bold">
           {missingFields.join(", ")}
-        </span>. If you know these values, please create a report.
+        </span>
+        . If you know these values, please create a report.
       </span>
     </div>
   {/if}

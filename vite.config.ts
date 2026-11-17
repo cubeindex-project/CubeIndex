@@ -1,3 +1,5 @@
+import adapter from "@sveltejs/adapter-netlify";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
@@ -6,12 +8,12 @@ import devtoolsJson from "vite-plugin-devtools-json";
 
 export default defineConfig(() => {
   return {
-    server: {
-      fs: {
-        allow: [".."],
-      },
-    },
-    plugins: [devtoolsJson(), tailwindcss(), sveltekit()],
+    server: { fs: { allow: [".."] } },
+    plugins: [
+      devtoolsJson(),
+      tailwindcss(),
+      sveltekit({ preprocess: vitePreprocess(), adapter: adapter() }),
+    ],
     test: {
       projects: [
         {

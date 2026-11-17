@@ -35,14 +35,14 @@ export async function saveCubeInCollection(
     );
   }
 
-  let data: { error?: string } | undefined;
-  try {
-    data = (await response.json()) as { error?: string };
-  } catch {
-    // An error response is allowed not to have a JSON body.
-  }
-
   if (!response.ok) {
+    let data: { error?: string } | undefined;
+    try {
+      data = (await response.json()) as { error?: string };
+    } catch {
+      // An error response is allowed not to have a JSON body.
+    }
+
     throw new Error(data?.error ?? "Unable to add the cube. Please try again.");
   }
 
@@ -76,14 +76,14 @@ export async function deleteCubeFromCollection(
     );
   }
 
-  let data: { error?: string } | undefined;
-  try {
-    data = (await response.json()) as { error?: string };
-  } catch {
-    // An error response is allowed not to have a JSON body.
-  }
-
   if (!response.ok) {
+    let data: { error?: string } | undefined;
+    try {
+      data = (await response.json()) as { error?: string };
+    } catch {
+      // An error response is allowed not to have a JSON body.
+    }
+
     throw new Error(
       data?.error ?? "Unable to delete the cube. Please try again.",
     );

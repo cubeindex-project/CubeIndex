@@ -28,14 +28,14 @@ export async function toggleHelpfulCubeRating(
     );
   }
 
-  let data: { error?: string } | undefined;
-  try {
-    data = (await response.json()) as { error?: string };
-  } catch {
-    // An error response is allowed not to have a JSON body.
-  }
-
   if (!response.ok) {
+    let data: { error?: string } | undefined;
+    try {
+      data = (await response.json()) as { error?: string };
+    } catch {
+      // An error response is allowed not to have a JSON body.
+    }
+
     throw new Error(
       data?.error ?? "Unable to update the helpful rating. Please try again.",
     );

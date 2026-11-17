@@ -33,14 +33,14 @@ export async function saveCubeRating(
     );
   }
 
-  let data: { error?: string } | undefined;
-  try {
-    data = (await response.json()) as { error?: string };
-  } catch {
-    // An error response is allowed not to have a JSON body.
-  }
-
   if (!response.ok) {
+    let data: { error?: string } | undefined;
+    try {
+      data = (await response.json()) as { error?: string };
+    } catch {
+      // An error response is allowed not to have a JSON body.
+    }
+
     throw new Error(
       data?.error ?? "Unable to submit rating. Please try again.",
     );
@@ -75,14 +75,14 @@ export async function deleteCubeRating(ratingID: number): Promise<void> {
     );
   }
 
-  let data: { error?: string } | undefined;
-  try {
-    data = (await response.json()) as { error?: string };
-  } catch {
-    // An error response is allowed not to have a JSON body.
-  }
-
   if (!response.ok) {
+    let data: { error?: string } | undefined;
+    try {
+      data = (await response.json()) as { error?: string };
+    } catch {
+      // An error response is allowed not to have a JSON body.
+    }
+
     throw new Error(
       data?.error ?? "Unable to delete the rating. Please try again.",
     );

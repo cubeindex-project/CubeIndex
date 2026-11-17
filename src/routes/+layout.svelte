@@ -77,24 +77,27 @@
 
     const toastError = page.url.searchParams.get("toast_error");
     const toastSuccess = page.url.searchParams.get("toast_success");
-
-    const removeToastParam = (newUrl: URL) =>
-      goto((newUrl.pathname + newUrl.search) as ResolvedPathname, {
-        replaceState: true,
-        keepFocus: true,
-        noScroll: true,
-      });
+    const removeToastParam = (newURL: URL) =>
+      goto(
+        (newURL.pathname + newURL.search + newURL.hash) as ResolvedPathname,
+        {
+          shallow: true,
+          replace: true,
+          reset: false,
+          state: page.state,
+        },
+      );
 
     if (toastError) {
       toast.error(toastError);
-      const newUrl = new URL(page.url);
-      newUrl.searchParams.delete("toast_error");
-      removeToastParam(newUrl);
+      const newURL = new URL(page.url.href);
+      newURL.searchParams.delete("toast_error");
+      void removeToastParam(newURL);
     } else if (toastSuccess) {
       toast.success(toastSuccess);
-      const newUrl = new URL(page.url);
-      newUrl.searchParams.delete("toast_success");
-      removeToastParam(newUrl);
+      const newURL = new URL(page.url.href);
+      newURL.searchParams.delete("toast_success");
+      void removeToastParam(newURL);
     }
 
     return () => data.subscription.unsubscribe();

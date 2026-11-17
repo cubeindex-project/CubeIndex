@@ -1,8 +1,8 @@
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
-import type { Database } from "$lib/types/database.types.js"; // import generated types
-import type { AppLogger } from "$lib/server/logger";
-import type { Meta } from "$lib/types/meta.types";
-import type { UmamiTracker } from "$lib/types/umami.types";
+import type { Database } from "#lib/types/database.types.js"; // import generated types
+import type { AppLogger } from "#lib/server/logger.ts";
+import type { Meta } from "#lib/types/meta.types.ts";
+import type { UmamiTracker } from "#lib/types/umami.types.ts";
 
 declare global {
   namespace App {

@@ -230,7 +230,7 @@
             class="tab tab-sm sm:tab-md whitespace-nowrap"
             class:tab-active={tab.key === currentTab}
             role="tab"
-            data-sveltekit-noscroll
+            data-sveltekit-reset="false"
           >
             <i class={`fa-solid ${tab.icon} mr-2`}></i>
             {tab.label}

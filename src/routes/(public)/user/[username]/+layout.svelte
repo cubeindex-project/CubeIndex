@@ -305,7 +305,7 @@
           onclick={() => {
             activeTab = tab.title;
           }}
-          data-sveltekit-noscroll
+          data-sveltekit-reset="false"
         >
           {tab.title}
         </a>

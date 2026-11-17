@@ -1,14 +1,13 @@
 import { helpfulRatingToggleSchema } from "#lib/schemas/helpfulRating.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   locals: { supabase, user, log },
   request,
 }) => {
   if (!user) {
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;
@@ -19,7 +18,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.helpful.invalid_json" },
       "Helpful rating request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = helpfulRatingToggleSchema.safeParse(body);
@@ -31,7 +30,7 @@ export const POST: RequestHandler = async ({
       },
       "Helpful rating request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -54,7 +53,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.helpful.check_failed", err: countError },
       "Unable to check helpful rating",
     );
-    return json(
+    return Response.json(
       { error: "Unable to update the helpful rating. Please try again." },
       { status: 500 },
     );
@@ -72,7 +71,7 @@ export const POST: RequestHandler = async ({
         { event: "rating.helpful.remove_failed", err: error },
         "Unable to remove helpful rating",
       );
-      return json(
+      return Response.json(
         { error: "Unable to update the helpful rating. Please try again." },
         { status: 500 },
       );
@@ -93,7 +92,7 @@ export const POST: RequestHandler = async ({
         { event: "rating.helpful.add_failed", err: error },
         "Unable to add helpful rating",
       );
-      return json(
+      return Response.json(
         { error: "Unable to update the helpful rating. Please try again." },
         { status: 500 },
       );

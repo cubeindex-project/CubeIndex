@@ -1,4 +1,3 @@
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 
 interface BodySingle {
@@ -14,14 +13,14 @@ export const POST: RequestHandler = async ({
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
   let body: Body;
   try {
     body = (await request.json()) as Body;
   } catch {
-    return json(
+    return Response.json(
       { success: false, error: "Invalid JSON body" },
       { status: 400 },
     );
@@ -34,7 +33,7 @@ export const POST: RequestHandler = async ({
   const ids = raw.filter((v) => typeof v === "number");
 
   if (ids.length === 0) {
-    return json(
+    return Response.json(
       { success: false, error: "Provide 'id' or 'ids' as string(s)" },
       { status: 400 },
     );
@@ -59,7 +58,7 @@ export const POST: RequestHandler = async ({
       { err: error, userID: user.id, notificationCount: ids.length },
       "Failed to mark notifications as read",
     );
-    return json({ success: false, error: error.message }, { status: 500 });
+    return Response.json({ success: false, error: error.message }, { status: 500 });
   }
 
   log.info(
@@ -70,5 +69,5 @@ export const POST: RequestHandler = async ({
     },
     "Notifications marked as read",
   );
-  return json({ success: true, updated: data?.length ?? 0 }, { status: 200 });
+  return Response.json({ success: true, updated: data?.length ?? 0 }, { status: 200 });
 };

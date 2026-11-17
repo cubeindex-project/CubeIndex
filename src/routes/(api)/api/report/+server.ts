@@ -1,13 +1,12 @@
 import type { TablesInsert } from "#lib/types/database.types.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   locals: { user, supabase, log },
   request,
 }) => {
   if (!user)
-    return json(
+    return Response.json(
       {
         success: false,
         error: "Unauthorized",
@@ -19,7 +18,7 @@ export const POST: RequestHandler = async ({
     await request.json();
 
   if (!report_type || !reported)
-    return json(
+    return Response.json(
       {
         success: false,
         error: "An error occurred",
@@ -28,7 +27,7 @@ export const POST: RequestHandler = async ({
     );
 
   if (!title || !comment)
-    return json(
+    return Response.json(
       {
         success: false,
         error: "Please make sure you filled all the required fields",
@@ -52,7 +51,7 @@ export const POST: RequestHandler = async ({
       { err, reportType: report_type, reporterUserID: user.id },
       "Failed to create report",
     );
-    return json(
+    return Response.json(
       {
         success: false,
         error: err.message,
@@ -65,5 +64,5 @@ export const POST: RequestHandler = async ({
     { event: "report.created", reportType: report_type, reportedID: reported },
     "Report created",
   );
-  return json({ success: true });
+  return Response.json({ success: true });
 };

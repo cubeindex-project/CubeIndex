@@ -1,14 +1,13 @@
 import { cubeCollectionDeleteSchema } from "#lib/schemas/cubeCollection.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
   locals: { user, supabase, log },
 }) => {
   if (!user)
-    return json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
 
   let body: unknown;
   try {
@@ -18,7 +17,7 @@ export const POST: RequestHandler = async ({
       { event: "collection.cube.delete_invalid_json" },
       "Collection cube deletion request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = cubeCollectionDeleteSchema.safeParse(body);
@@ -30,7 +29,7 @@ export const POST: RequestHandler = async ({
       },
       "Collection cube deletion request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -56,7 +55,7 @@ export const POST: RequestHandler = async ({
       },
       "An error occurred while deleting cube from collection",
     );
-    return json(
+    return Response.json(
       { error: "An error occorred while deleting cube from collection" },
       { status: 500 },
     );

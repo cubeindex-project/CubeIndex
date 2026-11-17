@@ -1,5 +1,4 @@
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({ locals, request }) => {
   const {
@@ -9,7 +8,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
   } = await request.json();
 
   if (following_id === locals.user?.id)
-    return json(
+    return Response.json(
       { success: false, error: "You can't follow yourself!" },
       { status: 500 },
     );
@@ -27,7 +26,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
       { err, followingUserID: following_id, followerUserID: locals.user?.id },
       "Failed to follow user",
     );
-    return json(
+    return Response.json(
       { success: false, error: "An error occurred: " + err.message },
       { status: 500 },
     );
@@ -37,5 +36,5 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     { event: "social.follow.created", followingUserID: following_id },
     "User followed",
   );
-  return json({ success: true });
+  return Response.json({ success: true });
 };

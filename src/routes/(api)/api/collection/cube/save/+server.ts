@@ -2,14 +2,13 @@ import { cubeCollectionUpsertSchema } from "#lib/schemas/cubeCollection.ts";
 import type { TablesInsert, TablesUpdate } from "#lib/types/database.types.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;
@@ -20,7 +19,7 @@ export const POST: RequestHandler = async ({
       { event: "collection.cube.invalid_json" },
       "Collection cube request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = cubeCollectionUpsertSchema.safeParse(body);
@@ -32,7 +31,7 @@ export const POST: RequestHandler = async ({
       },
       "Collection cube request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -69,7 +68,7 @@ export const POST: RequestHandler = async ({
         },
         "An error occurred while adding cube to collection",
       );
-      return json(
+      return Response.json(
         { error: "An error occorred while adding cube to collection" },
         { status: 500 },
       );
@@ -97,7 +96,7 @@ export const POST: RequestHandler = async ({
         },
         "An error occurred while editing cube in collection",
       );
-      return json(
+      return Response.json(
         { error: "An error occurred while editing cube in collection" },
         { status: 500 },
       );
@@ -108,7 +107,7 @@ export const POST: RequestHandler = async ({
         { event: "collection.cube.not_found" },
         "Collection cube entry was not found",
       );
-      return json({ error: "Collection entry not found." }, { status: 404 });
+      return Response.json({ error: "Collection entry not found." }, { status: 404 });
     }
 
     operationLog.info(

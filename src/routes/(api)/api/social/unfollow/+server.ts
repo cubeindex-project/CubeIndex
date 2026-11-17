@@ -1,12 +1,11 @@
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   locals: { supabase, user, log },
   request,
 }) => {
   if (!user)
-    return json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
 
   const {
     following_id,
@@ -25,7 +24,7 @@ export const POST: RequestHandler = async ({
       { err, followingUserID: following_id, followerUserID: user.id },
       "Failed to unfollow user",
     );
-    return json(
+    return Response.json(
       { success: false, error: "An error occurred: " + err.message },
       { status: 500 },
     );
@@ -35,5 +34,5 @@ export const POST: RequestHandler = async ({
     { event: "social.follow.removed", followingUserID: following_id },
     "User unfollowed",
   );
-  return json({ success: true });
+  return Response.json({ success: true });
 };

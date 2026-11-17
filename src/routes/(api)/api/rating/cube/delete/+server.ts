@@ -1,14 +1,13 @@
 import { cubeRatingDeleteSchema } from "#lib/schemas/cubeRating.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;
@@ -19,7 +18,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.cube.delete_invalid_json" },
       "Cube rating deletion request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = cubeRatingDeleteSchema.safeParse(body);
@@ -31,7 +30,7 @@ export const POST: RequestHandler = async ({
       },
       "Cube rating deletion request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -53,7 +52,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.cube.delete_failed", err },
       "An error occurred while deleting rating",
     );
-    return json(
+    return Response.json(
       { error: "An error occurred while deleting rating" },
       { status: 500 },
     );

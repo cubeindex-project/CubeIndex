@@ -2,14 +2,13 @@ import { cubeRatingUpsertSchema } from "#lib/schemas/cubeRating.ts";
 import type { TablesInsert } from "#lib/types/database.types.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
   locals: { supabase, log, user },
 }) => {
   if (!user) {
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;
@@ -20,7 +19,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.cube.save_invalid_json" },
       "Cube rating request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = cubeRatingUpsertSchema.safeParse(body);
@@ -32,7 +31,7 @@ export const POST: RequestHandler = async ({
       },
       "Cube rating request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -61,7 +60,7 @@ export const POST: RequestHandler = async ({
       { event: "rating.cube.save_failed", err },
       "An error occurred while adding rating",
     );
-    return json(
+    return Response.json(
       { error: "An error occurred while adding rating" },
       { status: 500 },
     );

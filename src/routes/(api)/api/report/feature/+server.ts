@@ -1,6 +1,5 @@
 import { featureRequestSchema } from "#lib/schemas/report.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 import { Octokit } from "@octokit/core";
 import { createAppAuth } from "@octokit/auth-app";
 import { RequestError } from "@octokit/request-error";
@@ -18,19 +17,19 @@ export const POST: RequestHandler = async ({
   url,
 }) => {
   if (!user) {
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = featureRequestSchema.safeParse(body);
   if (!parsedPayload.success) {
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -86,7 +85,7 @@ export const POST: RequestHandler = async ({
         "An error occurred while creating GitHub issue",
       );
 
-      return json(
+      return Response.json(
         { error: "An error occurred while creating GitHub issue" },
         {
           status:

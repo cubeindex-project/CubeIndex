@@ -18,7 +18,7 @@ export function createAutofillHandler<Result>({
 }: AutofillHandlerOptions): RequestHandler {
   return async ({ request, locals: { user, session, supabase, log } }) => {
     if (!user || !session) {
-      return json(
+      return Response.json(
         { error: "You must be logged in to use this feature." },
         { status: 401 },
       );
@@ -34,7 +34,7 @@ export function createAutofillHandler<Result>({
         },
         "Autofill request did not include a product URL",
       );
-      return json(
+      return Response.json(
         { error: "Provide a product link to continue." },
         { status: 400 },
       );
@@ -49,14 +49,14 @@ export function createAutofillHandler<Result>({
         { event: "autofill.request.invalid_url", autofillEndpoint: endpoint },
         "Autofill request included an invalid product URL",
       );
-      return json(
+      return Response.json(
         { error: "The provided link is not a valid URL." },
         { status: 400 },
       );
     }
 
     if (!["http:", "https:"].includes(parsedURL.protocol)) {
-      return json(
+      return Response.json(
         { error: "Only HTTP and HTTPS links are allowed." },
         { status: 400 },
       );
@@ -69,7 +69,7 @@ export function createAutofillHandler<Result>({
 
     if (error) {
       log.error({ err: error }, "Failed to fetch supported stores");
-      return json(
+      return Response.json(
         { error: "Failed to fetch supported stores from database." },
         { status: 500 },
       );
@@ -78,6 +78,7 @@ export function createAutofillHandler<Result>({
     const productHost = normalizeHost(parsedURL.hostname);
     const supported = supportedStores.some(({ base_url: baseURL }) => {
       const vendorHost = normalizeHost(new URL(baseURL).hostname);
+
       return (
         productHost === vendorHost || productHost.endsWith(`.${vendorHost}`)
       );
@@ -92,7 +93,7 @@ export function createAutofillHandler<Result>({
         },
         "Autofill request used an unsupported vendor",
       );
-      return json(
+      return Response.json(
         {
           error: `This store is not yet supported. Supported stores are: ${supportedStores
             .map(({ name }) => name)
@@ -142,7 +143,7 @@ export function createAutofillHandler<Result>({
         },
         "Autofill service request failed",
       );
-      return json(
+      return Response.json(
         { error: "Autofill service is unreachable." },
         { status: 502 },
       );
@@ -167,7 +168,7 @@ export function createAutofillHandler<Result>({
         "Autofill job execution failed",
       );
 
-      return json(
+      return Response.json(
         {
           error:
             upstreamResult?.detail ??
@@ -186,7 +187,7 @@ export function createAutofillHandler<Result>({
         },
         "Autofill job completed",
       );
-      return json(result);
+      return Response.json(result);
     } catch (err) {
       operationLog.error(
         {
@@ -196,7 +197,7 @@ export function createAutofillHandler<Result>({
         },
         "Autofill service returned invalid JSON",
       );
-      return json(
+      return Response.json(
         { error: "Autofill service returned invalid JSON." },
         { status: 502 },
       );

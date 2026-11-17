@@ -1,11 +1,10 @@
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({
   locals: { supabase, user, log },
 }) => {
   if (!user) {
-    return json({ success: false, error: "Unauthorized" }, { status: 401 });
+    return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
   // One query: rows where user_id = current user OR user_id IS NULL (broadcast)
@@ -17,7 +16,7 @@ export const GET: RequestHandler = async ({
 
   if (error) {
     log.error({ err: error, userID: user.id }, "Failed to load notifications");
-    return json(
+    return Response.json(
       {
         success: false,
         error: `Failed to load notifications: ${error.message}`,
@@ -26,5 +25,5 @@ export const GET: RequestHandler = async ({
     );
   }
 
-  return json({ success: true, data: data ?? [] }, { status: 200 });
+  return Response.json({ success: true, data: data ?? [] }, { status: 200 });
 };

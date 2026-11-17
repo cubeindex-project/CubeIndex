@@ -1,4 +1,3 @@
-import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { AUTOFILL_SERVICE_URL } from "$app/env/private";
 import type { Enums } from "#lib/types/database.types.ts";
@@ -34,7 +33,7 @@ export const GET: RequestHandler = async ({
 }) => {
   const { session } = await safeGetSession();
   if (!session) {
-    return json(
+    return Response.json(
       { error: "You must be logged in to use this feature." },
       { status: 401 },
     );
@@ -42,7 +41,7 @@ export const GET: RequestHandler = async ({
 
   const storeUrl = url.searchParams.get("url");
   if (!storeUrl) {
-    return json(
+    return Response.json(
       { error: "Provide a product link to continue." },
       { status: 400 },
     );
@@ -52,14 +51,14 @@ export const GET: RequestHandler = async ({
   try {
     parsedUrl = new URL(storeUrl);
   } catch {
-    return json(
+    return Response.json(
       { error: "The provided link is not a valid URL." },
       { status: 400 },
     );
   }
 
   if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-    return json(
+    return Response.json(
       { error: "Only HTTP and HTTPS links are allowed." },
       { status: 400 },
     );
@@ -67,7 +66,7 @@ export const GET: RequestHandler = async ({
 
   const host = normalizeHost(parsedUrl.hostname);
   if (!SUPPORTED_STORES.has(host)) {
-    return json(
+    return Response.json(
       {
         error:
           "This store is not yet supported. Supported stores are: " +
@@ -100,7 +99,7 @@ export const GET: RequestHandler = async ({
   } catch (err) {
     clearTimeout(timeout);
     log.error({ err, host }, "Autofill service request failed");
-    return json({ error: "Autofill service is unreachable." }, { status: 502 });
+    return Response.json({ error: "Autofill service is unreachable." }, { status: 502 });
   } finally {
     clearTimeout(timeout);
   }
@@ -112,7 +111,7 @@ export const GET: RequestHandler = async ({
     );
     // Try to forward a useful message from the upstream service
     const upstreamText = await res.text().catch(() => "");
-    return json(
+    return Response.json(
       {
         error:
           upstreamText || "Failed to fetch data from the autofill service.",
@@ -129,11 +128,12 @@ export const GET: RequestHandler = async ({
       { err, upstreamStatus: res.status, host },
       "Autofill service returned invalid JSON",
     );
-    return json(
+
+    return Response.json(
       { error: "Autofill service returned invalid JSON." },
       { status: 502 },
     );
   }
 
-  return json(autofillData);
+  return Response.json(autofillData);
 };

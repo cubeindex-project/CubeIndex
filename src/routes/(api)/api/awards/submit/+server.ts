@@ -1,7 +1,6 @@
 import { awardsVoteSchema } from "#lib/schemas/awards.ts";
 import { getZodErrorMessage } from "#lib/utils/getZodErrorMessage.ts";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
 
 export const POST: RequestHandler = async ({
   request,
@@ -14,7 +13,7 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.submit_unauthorized" },
       "Unauthenticated awards vote submission rejected",
     );
-    return json({ error: "Unauthorized" }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const now = new Date().toISOString();
@@ -27,7 +26,7 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.submit_invalid_json" },
       "Awards vote submit request contained invalid JSON",
     );
-    return json({ error: "Request body must be valid JSON." }, { status: 400 });
+    return Response.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
   const parsedPayload = awardsVoteSchema.safeParse(body);
@@ -39,7 +38,7 @@ export const POST: RequestHandler = async ({
       },
       "Awards vote submit request failed validation",
     );
-    return json(
+    return Response.json(
       { error: getZodErrorMessage(parsedPayload.error) },
       { status: 400 },
     );
@@ -60,7 +59,7 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.event_lookup_failed", errorCode: ceErr.code },
       "Failed to verify the current event",
     );
-    return json(
+    return Response.json(
       {
         error: "Failed to verify the current event",
       },
@@ -73,7 +72,7 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.no_active_event" },
       "Awards vote rejected because no event is active",
     );
-    return json(
+    return Response.json(
       {
         error: "No event is currently active",
       },
@@ -96,7 +95,7 @@ export const POST: RequestHandler = async ({
       },
       "Failed to verify if you have already voted for this category",
     );
-    return json(
+    return Response.json(
       {
         error: "Failed to verify if you have already voted for this category",
       },
@@ -109,7 +108,7 @@ export const POST: RequestHandler = async ({
       { event: "awards.vote.duplicate", eventID: currentEvent.id },
       "Duplicate awards vote rejected",
     );
-    return json(
+    return Response.json(
       { error: "You have already voted for this category" },
       { status: 400 },
     );
@@ -125,7 +124,7 @@ export const POST: RequestHandler = async ({
         { event: "awards.vote.duplicate", eventID: currentEvent.id },
         "Duplicate awards vote rejected by database constraint",
       );
-      return json(
+      return Response.json(
         { error: "You have already voted for this category" },
         { status: 400 },
       );
@@ -138,7 +137,7 @@ export const POST: RequestHandler = async ({
       },
       "Failed to insert user vote",
     );
-    return json(
+    return Response.json(
       {
         error: "Failed to insert user vote",
       },

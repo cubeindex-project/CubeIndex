@@ -119,6 +119,7 @@
                   class="sr-only peer"
                 />
                 <i class="fa-solid fa-eye swap-off ml-2 cursor-pointer"></i>
+
                 <i class="fa-solid fa-eye-slash swap-on ml-2 cursor-pointer"
                 ></i>
               </label>
@@ -227,9 +228,10 @@
 
         <p class="text-sm text-center mt-6">
           Already have an account?
-          <a href={resolve("/auth/login")} class="link link-primary link-hover">
-            Log in
-          </a>
+
+          <a href={resolve("auth/login")} class="link link-primary link-hover"
+            >Log in</a
+          >
         </p>
       {:else if step === "survey"}
         <form

@@ -3,7 +3,7 @@
   import Navbar from "#lib/components/layout/Navbar.svelte";
   import Dock from "#lib/components/layout/Dock.svelte";
   import { toast, Toaster } from "svelte-sonner";
-  import { SvelteKitTopLoader } from "sveltekit-top-loader";
+  import { SvelteKitTopLoader } from "sveltekit-top-loading";
   import ClientErrorReporter from "#lib/components/misc/ClientErrorReporter.svelte";
   import ScrollToTop from "#lib/components/misc/ScrollToTop.svelte";
   import type { ResolvedMeta } from "#lib/types/meta.types.ts";

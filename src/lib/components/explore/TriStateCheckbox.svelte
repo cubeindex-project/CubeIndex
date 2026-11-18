@@ -24,10 +24,6 @@
     if (box) {
       box.checked = value === true;
       box.indeterminate = value === false;
-      box.setAttribute(
-        "aria-checked",
-        value === null ? "mixed" : value ? "true" : "false",
-      );
     }
   });
 </script>
@@ -36,6 +32,8 @@
   <input
     class="checkbox bg-base-100"
     type="checkbox"
+    aria-checked={value === false ? "mixed" : value === true}
+    title={value === null ? "No filter" : value ? "Included" : "Excluded"}
     bind:this={box}
     onclick={cycle}
     {onchange}
